@@ -15,7 +15,7 @@ use Drupal\aculta_mailer\Type\MailTypeInterface;
  * interna da denúncia. Requer o submódulo opt-in `aculta_mailer`; sem ele o
  * serviço não é instanciado.
  */
-final class UgcReportNoticeMailType implements MailTypeInterface {
+final class CguReportNoticeMailType implements MailTypeInterface {
 
   public const ID = 'aculta_ugc_report_notice';
 

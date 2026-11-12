@@ -13,20 +13,20 @@ use Drupal\Core\Link;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\aculta_cgu\ModerationScope;
-use Drupal\aculta_cgu\Service\UgcReportQueue;
+use Drupal\aculta_cgu\Service\CguReportQueue;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Painel administrativo unificado de denúncias e moderação de UGC (ADM1).
  */
-final class UgcModerationDashboardController extends ControllerBase {
+final class CguModerationDashboardController extends ControllerBase {
 
   /**
    * Construtor do controller.
    */
   public function __construct(
-    private readonly UgcReportQueue $ugcQueue,
+    private readonly CguReportQueue $ugcQueue,
     private readonly EntityTypeManagerInterface $entityTypeMgr,
     private readonly DateFormatterInterface $dateFormatter,
   ) {}
@@ -37,7 +37,7 @@ final class UgcModerationDashboardController extends ControllerBase {
   public static function create(ContainerInterface $container): self {
     $queue = $container->has('aculta_cgu.report_queue')
       ? $container->get('aculta_cgu.report_queue')
-      : $container->get('aculta_ugc.report_queue');
+      : $container->get('aculta_cgu.report_queue');
     return new self(
       $queue,
       $container->get('entity_type.manager'),

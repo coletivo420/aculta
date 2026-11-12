@@ -12,7 +12,7 @@ use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
-use Drupal\aculta_cgu\Entity\UgcReport;
+use Drupal\aculta_cgu\Entity\CguReport;
 use Drupal\aculta_cgu\ModerationScope;
 use Drupal\aculta_cgu\Service\ReportService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -21,12 +21,12 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 /**
  * Formulário de avaliação e decisão de moderação sobre denúncia UGC (ADM1).
  */
-final class UgcReportDecisionForm extends FormBase {
+final class CguReportDecisionForm extends FormBase {
 
   /**
    * Denúncia sob julgamento.
    */
-  protected ?UgcReport $report = NULL;
+  protected ?CguReport $report = NULL;
 
   /**
    * Construtor do formulário.
@@ -43,7 +43,7 @@ final class UgcReportDecisionForm extends FormBase {
   public static function create(ContainerInterface $container): self {
     $service = $container->has('aculta_cgu.report_service')
       ? $container->get('aculta_cgu.report_service')
-      : $container->get('aculta_ugc.report_service');
+      : $container->get('aculta_cgu.report_service');
     return new self(
       $service,
       $container->get('entity_type.manager'),
@@ -61,7 +61,7 @@ final class UgcReportDecisionForm extends FormBase {
   /**
    * Checagem de acesso à decisão de denúncia por escopo do moderador.
    */
-  public function access(AccountInterface $account, ?UgcReport $aculta_ugc_report = NULL): AccessResultInterface {
+  public function access(AccountInterface $account, ?CguReport $aculta_ugc_report = NULL): AccessResultInterface {
     if ($account->isAnonymous()) {
       return AccessResult::forbidden()->cachePerUser();
     }
@@ -78,7 +78,7 @@ final class UgcReportDecisionForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state, ?UgcReport $aculta_ugc_report = NULL): array {
+  public function buildForm(array $form, FormStateInterface $form_state, ?CguReport $aculta_ugc_report = NULL): array {
     if ($aculta_ugc_report === NULL) {
       throw new NotFoundHttpException();
     }
@@ -244,7 +244,7 @@ final class UgcReportDecisionForm extends FormBase {
           ->execute();
 
         if (!empty($otherPendingIds)) {
-          /** @var \Drupal\aculta_cgu\Entity\UgcReport[] $otherReports */
+          /** @var \Drupal\aculta_cgu\Entity\CguReport[] $otherReports */
           $otherReports = $storage->loadMultiple($otherPendingIds);
           foreach ($otherReports as $otherReport) {
             $this->reportService->decideReport($otherReport, $moderator, $decision, $notes);

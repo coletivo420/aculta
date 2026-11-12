@@ -4,14 +4,6 @@ services:
     parent: logger.channel_base
     arguments: ['aculta_cgu']
 
-  logger.channel.aculta_contributions:
-    parent: logger.channel_base
-    arguments: ['aculta_cgu']
-
-  logger.channel.aculta_ugc:
-    parent: logger.channel_base
-    arguments: ['aculta_cgu']
-
   # Contributions / Propostas
   aculta_cgu.contribution_adapter_registry:
     class: Drupal\aculta_cgu\Adapter\ContributionAdapterRegistry
@@ -52,39 +44,17 @@ services:
       - '@logger.channel.aculta_cgu'
 
   aculta_cgu.report_queue:
-    class: Drupal\aculta_cgu\Service\UgcReportQueue
+    class: Drupal\aculta_cgu\Service\CguReportQueue
     arguments:
       - '@entity_type.manager'
       - '@current_user'
       - '@database'
 
   aculta_cgu.mail_type.report_notice:
-    class: Drupal\aculta_cgu\Mail\UgcReportNoticeMailType
+    class: Drupal\aculta_cgu\Mail\CguReportNoticeMailType
     arguments: ['@string_translation']
     tags:
       - { name: aculta_mailer.type }
-
-  # Aliases legados para retrocompatibilidade
-  aculta_contributions.adapter_registry:
-    alias: aculta_cgu.contribution_adapter_registry
-
-  aculta_contributions.lifecycle:
-    alias: aculta_cgu.contribution_lifecycle
-
-  aculta_contributions.state_machine:
-    alias: aculta_cgu.contribution_state_machine
-
-  aculta_ugc.moderation_notifier:
-    alias: aculta_cgu.moderation_notifier
-
-  aculta_ugc.report_service:
-    alias: aculta_cgu.report_service
-
-  aculta_ugc.report_queue:
-    alias: aculta_cgu.report_queue
-
-  aculta_ugc.mail_type.report_notice:
-    alias: aculta_cgu.mail_type.report_notice
 
   # Indicadores internos de moderação do Fórum; descobertos só quando o
   # Statistics está presente, pela tag opcional.

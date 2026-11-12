@@ -5,14 +5,14 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_cgu\Kernel;
 
 use Drupal\Core\Form\FormState;
-use Drupal\aculta_cgu\Form\UgcReportDecisionForm;
+use Drupal\aculta_cgu\Form\CguReportDecisionForm;
 use Symfony\Component\HttpFoundation\Request;
-use Drupal\aculta_cgu\Controller\UgcModerationDashboardController;
+use Drupal\aculta_cgu\Controller\CguModerationDashboardController;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\aculta_events\Entity\Event;
-use Drupal\aculta_cgu\Entity\UgcRecipientConfig;
-use Drupal\aculta_cgu\Entity\UgcReport;
+use Drupal\aculta_cgu\Entity\CguRecipientConfig;
+use Drupal\aculta_cgu\Entity\CguReport;
 use Drupal\aculta_cgu\Exception\ReportNotAllowedException;
 use Drupal\aculta_user\Organization\OrganizationAccessService;
 use Drupal\user\Entity\Role;
@@ -120,12 +120,12 @@ final class CguModerationKernelTest extends KernelTestBase {
    */
   public function testReportLifecycleAndPrivacy(): void {
     /** @var \Drupal\aculta_cgu\Service\ReportService $reportService */
-    $reportService = $this->container->get('aculta_ugc.report_service');
+    $reportService = $this->container->get('aculta_cgu.report_service');
     /** @var \Drupal\aculta_cgu\Service\ModerationNotifier $notifier */
-    $notifier = $this->container->get('aculta_ugc.moderation_notifier');
+    $notifier = $this->container->get('aculta_cgu.moderation_notifier');
 
     // Configura destinatários de notificação para o purpose 'eventos' (D-03).
-    UgcRecipientConfig::create([
+    CguRecipientConfig::create([
       'id' => 'eventos',
       'label' => 'Equipe de Eventos',
       'emails' => ['eventos-mod@example.invalid'],
@@ -141,7 +141,7 @@ final class CguModerationKernelTest extends KernelTestBase {
 
     // Cria denúncia.
     $report = $reportService->createReport($event, $this->reporterUser, 'spam');
-    $this->assertInstanceOf(UgcReport::class, $report);
+    $this->assertInstanceOf(CguReport::class, $report);
     $this->assertSame('pendente', $report->get('status')->value);
     $this->assertSame('eventos', $report->get('purpose')->value);
 
@@ -171,7 +171,7 @@ final class CguModerationKernelTest extends KernelTestBase {
    */
   public function testModerationDecisionAndAccess(): void {
     /** @var \Drupal\aculta_cgu\Service\ReportService $reportService */
-    $reportService = $this->container->get('aculta_ugc.report_service');
+    $reportService = $this->container->get('aculta_cgu.report_service');
 
     $event = Event::create([
       'title' => 'Evento Regular',
@@ -202,9 +202,9 @@ final class CguModerationKernelTest extends KernelTestBase {
    */
   public function testPendingQueueGrouping(): void {
     /** @var \Drupal\aculta_cgu\Service\ReportService $reportService */
-    $reportService = $this->container->get('aculta_ugc.report_service');
-    /** @var \Drupal\aculta_cgu\Service\UgcReportQueue $queue */
-    $queue = $this->container->get('aculta_ugc.report_queue');
+    $reportService = $this->container->get('aculta_cgu.report_service');
+    /** @var \Drupal\aculta_cgu\Service\CguReportQueue $queue */
+    $queue = $this->container->get('aculta_cgu.report_queue');
 
     $event1 = Event::create(['title' => 'Evento 1', 'field_status' => 'publicado']);
     $event1->save();
@@ -237,8 +237,8 @@ final class CguModerationKernelTest extends KernelTestBase {
    * Valida idempotência da migração de flags legadas.
    */
   public function testMigrationIdempotence(): void {
-    /** @var \Drupal\aculta_cgu\Service\UgcReportQueue $queue */
-    $queue = $this->container->get('aculta_ugc.report_queue');
+    /** @var \Drupal\aculta_cgu\Service\CguReportQueue $queue */
+    $queue = $this->container->get('aculta_cgu.report_queue');
 
     $stats = $queue->migrateFromReportQueue();
     $this->assertIsArray($stats);
@@ -250,9 +250,9 @@ final class CguModerationKernelTest extends KernelTestBase {
   /**
    * Valida o dashboard de moderação e o formulário de decisão (ADM1, ARQ-06).
    */
-  public function testUgcModerationDashboardControllerAndDecisionForm(): void {
+  public function testCguModerationDashboardControllerAndDecisionForm(): void {
     /** @var \Drupal\aculta_cgu\Service\ReportService $reportService */
-    $reportService = $this->container->get('aculta_ugc.report_service');
+    $reportService = $this->container->get('aculta_cgu.report_service');
 
     $event = Event::create(['title' => 'Oficina Cultural Sob Análise', 'field_status' => 'publicado']);
     $event->save();
@@ -260,7 +260,7 @@ final class CguModerationKernelTest extends KernelTestBase {
     $report = $reportService->createReport($event, $this->reporterUser, 'spam', 'eventos');
 
     // 1. Acesso ao dashboard.
-    $controller = UgcModerationDashboardController::create($this->container);
+    $controller = CguModerationDashboardController::create($this->container);
     $accessDenied = $controller->access($this->commonUser);
     $this->assertFalse($accessDenied->isAllowed());
 
@@ -278,7 +278,7 @@ final class CguModerationKernelTest extends KernelTestBase {
     $this->assertSame(1, $build['table']['#rows'][0]['total']);
 
     // 3. Formulário de decisão.
-    $formObject = UgcReportDecisionForm::create($this->container);
+    $formObject = CguReportDecisionForm::create($this->container);
     $this->assertFalse($formObject->access($this->commonUser, $report)->isAllowed());
     $this->assertTrue($formObject->access($this->adminModerator, $report)->isAllowed());
 
@@ -292,7 +292,7 @@ final class CguModerationKernelTest extends KernelTestBase {
     $formObject->submitForm($form, $formState);
 
     // 4. Verificação pós-decisão.
-    $reloadedReport = UgcReport::load($report->id());
+    $reloadedReport = CguReport::load($report->id());
     $this->assertNotNull($reloadedReport);
     $this->assertSame('procedente', $reloadedReport->get('status')->value);
     $this->assertSame((int) $this->adminModerator->id(), (int) $reloadedReport->get('decided_by')->value);

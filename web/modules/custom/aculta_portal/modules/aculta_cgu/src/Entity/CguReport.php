@@ -21,7 +21,7 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
   id: 'aculta_ugc_report',
   label: new TranslatableMarkup('Denúncia UGC'),
   handlers: [
-    'access' => UgcReportAccessControlHandler::class,
+    'access' => CguReportAccessControlHandler::class,
   ],
   base_table: 'aculta_ugc_report',
   entity_keys: [
@@ -31,7 +31,7 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
   admin_permission: 'moderar denuncias ugc',
   internal: TRUE,
 )]
-final class UgcReport extends ContentEntityBase {
+final class CguReport extends ContentEntityBase {
 
   use EntityChangedTrait;
 

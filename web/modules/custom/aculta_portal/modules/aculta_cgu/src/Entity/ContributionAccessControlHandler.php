@@ -30,7 +30,7 @@ final class ContributionAccessControlHandler extends EntityAccessControlHandler 
   public static function createInstance(ContainerInterface $container, EntityTypeInterface $entity_type): static {
     $registry = $container->has('aculta_cgu.contribution_adapter_registry')
       ? $container->get('aculta_cgu.contribution_adapter_registry')
-      : $container->get('aculta_contributions.adapter_registry');
+      : $container->get('aculta_cgu.contribution_adapter_registry');
     return new static($entity_type, $registry);
   }
 

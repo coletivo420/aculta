@@ -28,7 +28,7 @@ final class ReportQueueController extends ControllerBase {
    */
   public static function create(ContainerInterface $container): self {
     return new self(
-      $container->has('aculta_ugc.report_queue') ? $container->get('aculta_ugc.report_queue') : NULL,
+      $container->has('aculta_cgu.report_queue') ? $container->get('aculta_cgu.report_queue') : NULL,
     );
   }
 

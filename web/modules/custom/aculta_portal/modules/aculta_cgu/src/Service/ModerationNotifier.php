@@ -8,8 +8,8 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\aculta_mailer\Api\AcultaMailerInterface;
 use Drupal\aculta_mailer\Message\MailMessage;
 use Drupal\aculta_mailer\Message\MessageIdFactory;
-use Drupal\aculta_cgu\Entity\UgcReport;
-use Drupal\aculta_cgu\Mail\UgcReportNoticeMailType;
+use Drupal\aculta_cgu\Entity\CguReport;
+use Drupal\aculta_cgu\Mail\CguReportNoticeMailType;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -39,7 +39,7 @@ final class ModerationNotifier {
    *
    * Preserva a privacidade estrita: nenhum dado do denunciante é transmitido.
    */
-  public function notifyNewReport(UgcReport $report): void {
+  public function notifyNewReport(CguReport $report): void {
     $purpose = (string) $report->get('purpose')->value;
     $targetType = (string) $report->get('target_type')->value;
     $targetId = (int) $report->get('target_id')->value;
@@ -103,7 +103,7 @@ final class ModerationNotifier {
 
     try {
       $message = new MailMessage(
-        UgcReportNoticeMailType::ID,
+        CguReportNoticeMailType::ID,
         $email,
         'pt-br',
         $context,
@@ -156,7 +156,7 @@ final class ModerationNotifier {
    */
   public function getRecipientsForPurpose(string $purpose): array {
     $configStorage = $this->entityTypeManager->getStorage('aculta_ugc_recipients');
-    /** @var \Drupal\aculta_cgu\Entity\UgcRecipientConfig|null $config */
+    /** @var \Drupal\aculta_cgu\Entity\CguRecipientConfig|null $config */
     $config = $configStorage->load($purpose);
 
     if ($config !== NULL && !empty($config->getEmails())) {
@@ -164,7 +164,7 @@ final class ModerationNotifier {
     }
 
     // Fallback padrão homologado se configurado como 'default'.
-    /** @var \Drupal\aculta_cgu\Entity\UgcRecipientConfig|null $defaultConfig */
+    /** @var \Drupal\aculta_cgu\Entity\CguRecipientConfig|null $defaultConfig */
     $defaultConfig = $configStorage->load('default');
     if ($defaultConfig !== NULL && !empty($defaultConfig->getEmails())) {
       return array_values(array_filter($defaultConfig->getEmails(), static fn (string $mail): bool => (bool) filter_var($mail, FILTER_VALIDATE_EMAIL)));

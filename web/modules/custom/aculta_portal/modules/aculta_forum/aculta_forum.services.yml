@@ -234,13 +234,9 @@ services:
     class: Drupal\aculta_forum\Service\ForumReadMarker
     arguments: ['@entity_type.manager', '@aculta_portal.domain_site', '@current_user', '@string_translation', '@messenger']
 
-  Drupal\aculta_forum\Hook\ForumReportUgcBridgeHooks:
-    class: Drupal\aculta_forum\Hook\ForumReportUgcBridgeHooks
-    arguments: ['@entity_type.manager', '@?aculta_ugc.moderation_notifier', '@lock', '@datetime.time', '@?logger.channel.aculta_forum']
-    public: true
-
-  aculta_forum.report_ugc_bridge:
-    alias: Drupal\aculta_forum\Hook\ForumReportUgcBridgeHooks
+  Drupal\aculta_forum\Hook\ForumReportCguBridgeHooks:
+    class: Drupal\aculta_forum\Hook\ForumReportCguBridgeHooks
+    arguments: ['@entity_type.manager', '@?aculta_cgu.moderation_notifier', '@lock', '@datetime.time', '@?logger.channel.aculta_forum']
     public: true
 
   Drupal\aculta_forum\Context\Provider\LmsDiscussionContextProvider:

@@ -6,12 +6,12 @@ namespace Drupal\Tests\aculta_cgu\Kernel;
 
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\KernelTests\KernelTestBase;
-use Drupal\aculta_cgu\Entity\UgcRecipientConfig;
-use Drupal\aculta_cgu\Entity\UgcReport;
+use Drupal\aculta_cgu\Entity\CguRecipientConfig;
+use Drupal\aculta_cgu\Entity\CguReport;
 use Drupal\aculta_cgu\ModerationScope;
 use Drupal\aculta_cgu\Service\ModerationNotifier;
 use Drupal\aculta_cgu\Service\ReportService;
-use Drupal\aculta_cgu\Service\UgcReportQueue;
+use Drupal\aculta_cgu\Service\CguReportQueue;
 use Drupal\flag\Entity\Flag;
 use Drupal\flag\Entity\Flagging;
 use Drupal\node\Entity\Node;
@@ -27,7 +27,7 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
  */
 #[Group('aculta_ugc')]
 #[RunTestsInSeparateProcesses]
-final class UgcNotifierAndQueueKernelTest extends KernelTestBase {
+final class CguNotifierAndQueueKernelTest extends KernelTestBase {
 
   /**
    * {@inheritdoc}
@@ -51,7 +51,7 @@ final class UgcNotifierAndQueueKernelTest extends KernelTestBase {
   /**
    * Fila de moderação.
    */
-  private UgcReportQueue $queue;
+  private CguReportQueue $queue;
 
   /**
    * Notificador de moderação.
@@ -128,9 +128,9 @@ final class UgcNotifierAndQueueKernelTest extends KernelTestBase {
     $this->outsider = User::create(['name' => 'outsider', 'mail' => 'outsider@example.com', 'status' => 1]);
     $this->outsider->save();
 
-    $this->reportService = $this->container->get('aculta_ugc.report_service');
-    $this->queue = $this->container->get('aculta_ugc.report_queue');
-    $this->notifier = $this->container->get('aculta_ugc.moderation_notifier');
+    $this->reportService = $this->container->get('aculta_cgu.report_service');
+    $this->queue = $this->container->get('aculta_cgu.report_queue');
+    $this->notifier = $this->container->get('aculta_cgu.moderation_notifier');
   }
 
   /**
@@ -141,7 +141,7 @@ final class UgcNotifierAndQueueKernelTest extends KernelTestBase {
     $this->assertSame([], $recipients);
 
     // Se configurar destinatários para o purpose, deve retornar apenas eles.
-    UgcRecipientConfig::create([
+    CguRecipientConfig::create([
       'id' => 'portal',
       'label' => 'Moderadores Portal',
       'emails' => ['mod-portal@test.org', 'invalid-mail'],
@@ -155,7 +155,7 @@ final class UgcNotifierAndQueueKernelTest extends KernelTestBase {
    * Testa aviso de denúncia com privacidade absoluta e ausência de dados do denunciante.
    */
   public function testNotificationDispatchedWithStrictPrivacy(): void {
-    UgcRecipientConfig::create([
+    CguRecipientConfig::create([
       'id' => 'forum',
       'label' => 'Moderadores Forum',
       'emails' => ['forum-mod@test.org'],
@@ -165,7 +165,7 @@ final class UgcNotifierAndQueueKernelTest extends KernelTestBase {
     $topic->save();
 
     $report = $this->reportService->createReport($topic, $this->reporter, 'spam', 'forum');
-    $this->assertInstanceOf(UgcReport::class, $report);
+    $this->assertInstanceOf(CguReport::class, $report);
 
     $dispatched = $this->notifier->getDispatchedNotifications();
     $this->assertNotEmpty($dispatched);
@@ -294,7 +294,7 @@ final class UgcNotifierAndQueueKernelTest extends KernelTestBase {
     // Confirma gravação com legacy_flag_id preservado.
     $createdReports = $this->container->get('entity_type.manager')->getStorage('aculta_ugc_report')->loadMultiple();
     $this->assertCount(1, $createdReports);
-    /** @var \Drupal\aculta_cgu\Entity\UgcReport $migrated */
+    /** @var \Drupal\aculta_cgu\Entity\CguReport $migrated */
     $migrated = reset($createdReports);
     $this->assertSame('sinalizacao_legada_forum', $migrated->get('motivo')->value);
     $this->assertSame((int) $flagging->id(), (int) $migrated->get('legacy_flag_id')->value);

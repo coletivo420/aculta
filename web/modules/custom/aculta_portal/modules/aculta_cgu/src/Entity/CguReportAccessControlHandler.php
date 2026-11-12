@@ -16,7 +16,7 @@ use Drupal\aculta_cgu\ModerationScope;
  * Moderadores só acessam denúncias do purpose que moderam (ARQ-06A). O
  * denunciante vê somente as próprias denúncias.
  */
-final class UgcReportAccessControlHandler extends EntityAccessControlHandler {
+final class CguReportAccessControlHandler extends EntityAccessControlHandler {
 
   /**
    * {@inheritdoc}

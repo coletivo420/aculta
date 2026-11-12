@@ -57,8 +57,8 @@ final class EventOrganizationForm extends ContentEntityForm {
     if ($container->has('aculta_events.organization_suggestion')) {
       $instance->suggestionService = $container->get('aculta_events.organization_suggestion');
     }
-    if ($container->has('aculta_contributions.lifecycle')) {
-      $instance->contributions = $container->get('aculta_contributions.lifecycle');
+    if ($container->has('aculta_cgu.contribution_lifecycle')) {
+      $instance->contributions = $container->get('aculta_cgu.contribution_lifecycle');
     }
     if ($container->has('aculta_events.organization_contribution_adapter')) {
       $instance->organizationAdapter = $container->get('aculta_events.organization_contribution_adapter');

@@ -16,4 +16,4 @@ moderar denuncias ugc:
   restrict access: true
 
 permission_callbacks:
-  - Drupal\aculta_cgu\UgcPermissions::permissions
+  - Drupal\aculta_cgu\CguPermissions::permissions

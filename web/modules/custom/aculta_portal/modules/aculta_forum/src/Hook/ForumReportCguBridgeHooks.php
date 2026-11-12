@@ -19,14 +19,14 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 /**
  * Conecta sinalizações do Fórum à infraestrutura UGC (ARQ-06F, ARQ-06G).
  */
-final class ForumReportUgcBridgeHooks {
+final class ForumReportCguBridgeHooks {
 
   public const FLAGS = ['sinalizar_topico', 'sinalizar_comentario', 'sinalizar_post_forum'];
 
   public function __construct(
     #[Autowire(service: 'entity_type.manager')]
     private readonly EntityTypeManagerInterface $entityTypeManager,
-    #[Autowire(service: 'aculta_ugc.moderation_notifier')]
+    #[Autowire(service: 'aculta_cgu.moderation_notifier')]
     private readonly mixed $notifier = NULL,
     #[Autowire(service: 'lock')]
     private readonly ?LockBackendInterface $lock = NULL,
@@ -142,7 +142,7 @@ final class ForumReportUgcBridgeHooks {
 
       $flagIdNum = (int) $entity->id();
 
-      /** @var \Drupal\aculta_cgu\Entity\UgcReport $report */
+      /** @var \Drupal\aculta_cgu\Entity\CguReport $report */
       $report = $reportStorage->create([
         'target_type' => $targetType,
         'target_id' => $targetId,

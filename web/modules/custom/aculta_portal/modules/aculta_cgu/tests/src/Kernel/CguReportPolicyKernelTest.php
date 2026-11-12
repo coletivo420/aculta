@@ -6,7 +6,7 @@ namespace Drupal\Tests\aculta_cgu\Kernel;
 
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\KernelTests\KernelTestBase;
-use Drupal\aculta_cgu\Entity\UgcReport;
+use Drupal\aculta_cgu\Entity\CguReport;
 use Drupal\aculta_cgu\Exception\ReportNotAllowedException;
 use Drupal\aculta_cgu\ModerationScope;
 use Drupal\aculta_cgu\Service\ReportService;
@@ -23,7 +23,7 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
  */
 #[Group('aculta_ugc')]
 #[RunTestsInSeparateProcesses]
-final class UgcReportPolicyKernelTest extends KernelTestBase {
+final class CguReportPolicyKernelTest extends KernelTestBase {
 
   /**
    * {@inheritdoc}
@@ -109,7 +109,7 @@ final class UgcReportPolicyKernelTest extends KernelTestBase {
     $this->portalModerator = $this->makeUser('mod_portal', 'mod_portal');
     $this->forumModerator = $this->makeUser('mod_forum', 'mod_forum');
     $this->globalModerator = $this->makeUser('mod_global', 'mod_global');
-    $this->service = $this->container->get('aculta_ugc.report_service');
+    $this->service = $this->container->get('aculta_cgu.report_service');
   }
 
   /**
@@ -342,7 +342,7 @@ final class UgcReportPolicyKernelTest extends KernelTestBase {
    */
   public function testEntityAccessHandlerScoping(): void {
     $forumReport = $this->service->createReport($this->makeNode('aculta_forum_topic'), $this->reporter, 'spam');
-    $this->assertInstanceOf(UgcReport::class, $forumReport);
+    $this->assertInstanceOf(CguReport::class, $forumReport);
 
     $this->assertTrue($forumReport->access('view', $this->forumModerator));
     $this->assertTrue($forumReport->access('update', $this->forumModerator));

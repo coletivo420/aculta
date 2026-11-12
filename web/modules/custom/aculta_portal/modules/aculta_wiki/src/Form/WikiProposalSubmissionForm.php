@@ -34,7 +34,7 @@ final class WikiProposalSubmissionForm extends FormBase {
     return new static(
       $container->get('entity_type.manager'),
       $container->get('aculta_wiki.proposal_submission'),
-      $container->get('aculta_contributions.lifecycle'),
+      $container->get('aculta_cgu.contribution_lifecycle'),
     );
   }
 

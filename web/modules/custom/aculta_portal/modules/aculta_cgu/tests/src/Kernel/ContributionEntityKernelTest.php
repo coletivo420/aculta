@@ -48,7 +48,7 @@ final class ContributionEntityKernelTest extends KernelTestBase {
     $account->save();
     $outsider = $user_storage->create(['name' => 'outsider', 'status' => 1]);
     $outsider->save();
-    $registry = $this->container->get('aculta_contributions.adapter_registry');
+    $registry = $this->container->get('aculta_cgu.contribution_adapter_registry');
     self::assertInstanceOf(ContributionAdapterRegistry::class, $registry);
     $registry->addAdapter(new ContributionTestAdapter($this->container->get('entity_type.manager')));
     $storage = $this->container->get('entity_type.manager')->getStorage('aculta_contribution');

@@ -9,7 +9,7 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\aculta_cgu\Entity\UgcReport;
+use Drupal\aculta_cgu\Entity\CguReport;
 use Drupal\aculta_cgu\Exception\ReportNotAllowedException;
 use Drupal\aculta_cgu\ModerationScope;
 use Psr\Log\LoggerInterface;
@@ -91,7 +91,7 @@ final class ReportService {
     if ($account->isAnonymous()) {
       return 'anonimo';
     }
-    if ($entity instanceof UgcReport || $entity->isNew()) {
+    if ($entity instanceof CguReport || $entity->isNew()) {
       return 'alvo_invalido';
     }
     // Só denuncia o que a própria conta pode ler.
@@ -136,7 +136,7 @@ final class ReportService {
    *
    * @throws \Drupal\aculta_cgu\Exception\ReportNotAllowedException
    */
-  public function createReport(EntityInterface $entity, AccountInterface $account, string $motivo, ?string $purpose = NULL): UgcReport {
+  public function createReport(EntityInterface $entity, AccountInterface $account, string $motivo, ?string $purpose = NULL): CguReport {
     $motivo = strtolower(trim($motivo));
     if (!in_array($motivo, self::REASONS, TRUE)) {
       throw new ReportNotAllowedException('Motivo de denúncia inválido.');
@@ -155,7 +155,7 @@ final class ReportService {
       if ($this->reportDenial($entity, $account) !== NULL) {
         throw new ReportNotAllowedException('Denúncia não permitida.');
       }
-      /** @var \Drupal\aculta_cgu\Entity\UgcReport $report */
+      /** @var \Drupal\aculta_cgu\Entity\CguReport $report */
       $report = $this->entityTypeManager->getStorage('aculta_ugc_report')->create([
         'target_type' => $entity->getEntityTypeId(),
         'target_id' => (int) $entity->id(),
@@ -192,7 +192,7 @@ final class ReportService {
    * @throws \Drupal\aculta_cgu\Exception\ReportNotAllowedException
    *   Status ou transição inválidos, ou parecer longo demais.
    */
-  public function decideReport(UgcReport $report, AccountInterface $moderator, string $status, string $notes): void {
+  public function decideReport(CguReport $report, AccountInterface $moderator, string $status, string $notes): void {
     $purpose = (string) $report->get('purpose')->value;
     if (!ModerationScope::allows($moderator, $purpose)) {
       throw new AccessDeniedHttpException('Usuário sem permissão para moderar denúncias deste purpose.');

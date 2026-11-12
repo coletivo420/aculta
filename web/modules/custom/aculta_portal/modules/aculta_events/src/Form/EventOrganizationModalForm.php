@@ -59,7 +59,7 @@ final class EventOrganizationModalForm extends FormBase {
     protected readonly EventRouteContext $eventRouteContext,
     #[Autowire(service: 'aculta_user.ownership_claim_service')]
     protected readonly ?OwnershipClaimService $claimService = NULL,
-    #[Autowire(service: 'aculta_contributions.lifecycle')]
+    #[Autowire(service: 'aculta_cgu.contribution_lifecycle')]
     protected readonly ?ContributionLifecycle $contributions = NULL,
     #[Autowire(service: 'aculta_events.organization_contribution_adapter')]
     protected readonly ?OrganizationContributionAdapter $organizationAdapter = NULL,
@@ -77,7 +77,7 @@ final class EventOrganizationModalForm extends FormBase {
       $container->get('renderer'),
       $container->get('aculta_events.route_context'),
       $container->has('aculta_user.ownership_claim_service') ? $container->get('aculta_user.ownership_claim_service') : NULL,
-      $container->has('aculta_contributions.lifecycle') ? $container->get('aculta_contributions.lifecycle') : NULL,
+      $container->has('aculta_cgu.contribution_lifecycle') ? $container->get('aculta_cgu.contribution_lifecycle') : NULL,
       $container->has('aculta_events.organization_contribution_adapter') ? $container->get('aculta_events.organization_contribution_adapter') : NULL,
     );
   }

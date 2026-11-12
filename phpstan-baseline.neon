@@ -883,7 +883,7 @@ parameters:
 			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::get().'
 			identifier: method.notFound
 			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_cgu/src/Entity/UgcReportAccessControlHandler.php
+			path: web/modules/custom/aculta_portal/modules/aculta_cgu/src/Entity/CguReportAccessControlHandler.php
 
 		-
 			rawMessage: 'Call to an undefined method Drupal\aculta_mailer\Delivery\SendResult::isAccepted().'
@@ -895,31 +895,31 @@ parameters:
 			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::getCreatedTime().'
 			identifier: method.notFound
 			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_cgu/src/Service/UgcReportQueue.php
+			path: web/modules/custom/aculta_portal/modules/aculta_cgu/src/Service/CguReportQueue.php
 
 		-
 			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::getFlaggableId().'
 			identifier: method.notFound
 			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_cgu/src/Service/UgcReportQueue.php
+			path: web/modules/custom/aculta_portal/modules/aculta_cgu/src/Service/CguReportQueue.php
 
 		-
 			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::getFlaggableType().'
 			identifier: method.notFound
 			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_cgu/src/Service/UgcReportQueue.php
+			path: web/modules/custom/aculta_portal/modules/aculta_cgu/src/Service/CguReportQueue.php
 
 		-
 			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::getOwnerId().'
 			identifier: method.notFound
 			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_cgu/src/Service/UgcReportQueue.php
+			path: web/modules/custom/aculta_portal/modules/aculta_cgu/src/Service/CguReportQueue.php
 
 		-
 			rawMessage: 'Strict comparison using !== between Drupal\Core\Database\Connection and null will always evaluate to true.'
 			identifier: notIdentical.alwaysTrue
 			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_cgu/src/Service/UgcReportQueue.php
+			path: web/modules/custom/aculta_portal/modules/aculta_cgu/src/Service/CguReportQueue.php
 
 		-
 			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityStorageInterface::loadRevision().'
@@ -985,13 +985,13 @@ parameters:
 			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::get().'
 			identifier: method.notFound
 			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_cgu/tests/src/Kernel/ForumUgcIntegrationKernelTest.php
+			path: web/modules/custom/aculta_portal/modules/aculta_cgu/tests/src/Kernel/ForumCguIntegrationKernelTest.php
 
 		-
 			rawMessage: 'Call to method PHPUnit\Framework\Assert::assertTrue() with true will always evaluate to true.'
 			identifier: method.alreadyNarrowedType
 			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_cgu/tests/src/Kernel/ForumUgcIntegrationKernelTest.php
+			path: web/modules/custom/aculta_portal/modules/aculta_cgu/tests/src/Kernel/ForumCguIntegrationKernelTest.php
 
 		-
 			rawMessage: 'Call to method PHPUnit\Framework\Assert::assertArrayHasKey() with ''flags_lidas'' and array{dry_run: bool, flags_lidas: int, novas_denuncias: int, ignoradas_duplicadas: int, alvos_invalidos: int} will always evaluate to true.'
@@ -1012,7 +1012,7 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_cgu/tests/src/Kernel/CguModerationKernelTest.php
 
 		-
-			rawMessage: 'Call to method PHPUnit\Framework\Assert::assertInstanceOf() with ''Drupal\\aculta_cgu\\Entity\\UgcReport'' and Drupal\aculta_cgu\Entity\UgcReport will always evaluate to true.'
+			rawMessage: 'Call to method PHPUnit\Framework\Assert::assertInstanceOf() with ''Drupal\\aculta_cgu\\Entity\\CguReport'' and Drupal\aculta_cgu\Entity\CguReport will always evaluate to true.'
 			identifier: method.alreadyNarrowedType
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_cgu/tests/src/Kernel/CguModerationKernelTest.php
@@ -1030,28 +1030,28 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_cgu/tests/src/Kernel/CguModerationKernelTest.php
 
 		-
-			rawMessage: 'Call to method PHPUnit\Framework\Assert::assertInstanceOf() with ''Drupal\\aculta_cgu\\Entity\\UgcReport'' and Drupal\aculta_cgu\Entity\UgcReport will always evaluate to true.'
+			rawMessage: 'Call to method PHPUnit\Framework\Assert::assertInstanceOf() with ''Drupal\\aculta_cgu\\Entity\\CguReport'' and Drupal\aculta_cgu\Entity\CguReport will always evaluate to true.'
 			identifier: method.alreadyNarrowedType
 			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_cgu/tests/src/Kernel/UgcNotifierAndQueueKernelTest.php
+			path: web/modules/custom/aculta_portal/modules/aculta_cgu/tests/src/Kernel/CguNotifierAndQueueKernelTest.php
 
 		-
 			rawMessage: 'Call to method PHPUnit\Framework\Assert::assertTrue() with true will always evaluate to true.'
 			identifier: method.alreadyNarrowedType
 			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_cgu/tests/src/Kernel/UgcNotifierAndQueueKernelTest.php
+			path: web/modules/custom/aculta_portal/modules/aculta_cgu/tests/src/Kernel/CguNotifierAndQueueKernelTest.php
 
 		-
-			rawMessage: 'Call to method PHPUnit\Framework\Assert::assertInstanceOf() with ''Drupal\\aculta_cgu\\Entity\\UgcReport'' and Drupal\aculta_cgu\Entity\UgcReport will always evaluate to true.'
+			rawMessage: 'Call to method PHPUnit\Framework\Assert::assertInstanceOf() with ''Drupal\\aculta_cgu\\Entity\\CguReport'' and Drupal\aculta_cgu\Entity\CguReport will always evaluate to true.'
 			identifier: method.alreadyNarrowedType
 			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_cgu/tests/src/Kernel/UgcReportPolicyKernelTest.php
+			path: web/modules/custom/aculta_portal/modules/aculta_cgu/tests/src/Kernel/CguReportPolicyKernelTest.php
 
 		-
 			rawMessage: 'Call to method PHPUnit\Framework\Assert::assertTrue() with true will always evaluate to true.'
 			identifier: method.alreadyNarrowedType
 			count: 3
-			path: web/modules/custom/aculta_portal/modules/aculta_cgu/tests/src/Kernel/UgcReportPolicyKernelTest.php
+			path: web/modules/custom/aculta_portal/modules/aculta_cgu/tests/src/Kernel/CguReportPolicyKernelTest.php
 
 		-
 			rawMessage: 'Function aculta_commerce_post_update_migrate_shipping_methods() has an unused parameter $sandbox.'

@@ -29,7 +29,7 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
   ],
   admin_permission: 'moderar denuncias ugc',
 )]
-final class UgcRecipientConfig extends ConfigEntityBase {
+final class CguRecipientConfig extends ConfigEntityBase {
 
   /**
    * The purpose identifier.

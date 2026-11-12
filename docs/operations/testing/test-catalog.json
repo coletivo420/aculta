@@ -520,12 +520,12 @@
             "test_methods": 2,
             "assertions": 3,
             "assertions_per_test": 1.5,
-            "first_import": "Drupal\\aculta_cgu\\Entity\\UgcReport",
+            "first_import": "Drupal\\aculta_cgu\\Entity\\CguReport",
             "fixture": false,
             "flags": []
         },
         {
-            "path": "web/modules/custom/aculta_portal/modules/aculta_cgu/tests/src/Kernel/ForumUgcIntegrationKernelTest.php",
+            "path": "web/modules/custom/aculta_portal/modules/aculta_cgu/tests/src/Kernel/ForumCguIntegrationKernelTest.php",
             "extension": "src",
             "type": "kernel",
             "base_class": "KernelTestBase",
@@ -555,7 +555,7 @@
             "flags": []
         },
         {
-            "path": "web/modules/custom/aculta_portal/modules/aculta_cgu/tests/src/Kernel/UgcNotifierAndQueueKernelTest.php",
+            "path": "web/modules/custom/aculta_portal/modules/aculta_cgu/tests/src/Kernel/CguNotifierAndQueueKernelTest.php",
             "extension": "src",
             "type": "kernel",
             "base_class": "KernelTestBase",
@@ -570,7 +570,7 @@
             "flags": []
         },
         {
-            "path": "web/modules/custom/aculta_portal/modules/aculta_cgu/tests/src/Kernel/UgcReportPolicyKernelTest.php",
+            "path": "web/modules/custom/aculta_portal/modules/aculta_cgu/tests/src/Kernel/CguReportPolicyKernelTest.php",
             "extension": "src",
             "type": "kernel",
             "base_class": "KernelTestBase",

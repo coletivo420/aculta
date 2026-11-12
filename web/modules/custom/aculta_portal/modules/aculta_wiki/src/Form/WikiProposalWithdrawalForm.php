@@ -38,7 +38,7 @@ final class WikiProposalWithdrawalForm extends FormBase {
     return new static(
       $container->get('entity_type.manager'),
       $container->get('aculta_wiki.proposal_withdrawal'),
-      $container->get('aculta_contributions.lifecycle'),
+      $container->get('aculta_cgu.contribution_lifecycle'),
       $container->get('messenger'),
     );
   }

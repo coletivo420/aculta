@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_cgu\Kernel;
 
-use Drupal\aculta_cgu\Entity\UgcReport;
+use Drupal\aculta_cgu\Entity\CguReport;
 use Drupal\aculta_cgu\Service\ReportService;
 use Drupal\aculta_cgu\Statistics\ForumModerationMetricsProvider;
 use Drupal\KernelTests\KernelTestBase;
@@ -89,7 +89,7 @@ final class ForumModerationMetricsProviderKernelTest extends KernelTestBase {
    * Cria uma denúncia UGC de propósito forum por padrão.
    */
   private function report(string $targetType, int $targetId, string $status, int $created, ?int $decidedAt, string $purpose = 'forum'): void {
-    UgcReport::create([
+    CguReport::create([
       'target_type' => $targetType,
       'target_id' => $targetId,
       'uid' => $this->reporter->id(),

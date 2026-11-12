@@ -20,7 +20,7 @@ use Drupal\aculta_events\Form\EventOrganizationRecoveryForm;
 use Drupal\aculta_image\FileRemover;
 use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
 use Drupal\aculta_portal\Domain\DomainSiteManager;
-use Drupal\aculta_cgu\Entity\UgcReport;
+use Drupal\aculta_cgu\Entity\CguReport;
 use Drupal\aculta_user\Controller\OwnershipClaimAdminController;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
@@ -328,7 +328,7 @@ final class EventOrganizationAdminAndModalKernelTest extends KernelTestBase {
     ])->save();
 
     // Adiciona denúncia UGC em org3.
-    UgcReport::create([
+    CguReport::create([
       'target_type' => 'aculta_event_organization',
       'target_id' => (int) $org3->id(),
       'uid' => (int) $this->commonUser->id(),

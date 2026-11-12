@@ -48,7 +48,7 @@ final class EventLocationModalForm extends FormBase {
     protected readonly RendererInterface $renderer,
     #[Autowire(service: 'aculta_events.route_context')]
     protected readonly EventRouteContext $eventRouteContext,
-    #[Autowire(service: 'aculta_contributions.lifecycle')]
+    #[Autowire(service: 'aculta_cgu.contribution_lifecycle')]
     protected readonly ?ContributionLifecycle $contributions = NULL,
     #[Autowire(service: 'aculta_events.location_contribution_adapter')]
     protected readonly ?LocationContributionAdapter $locationAdapter = NULL,
@@ -63,7 +63,7 @@ final class EventLocationModalForm extends FormBase {
       $container->get('aculta_events.permission_policy'),
       $container->get('renderer'),
       $container->get('aculta_events.route_context'),
-      $container->has('aculta_contributions.lifecycle') ? $container->get('aculta_contributions.lifecycle') : NULL,
+      $container->has('aculta_cgu.contribution_lifecycle') ? $container->get('aculta_cgu.contribution_lifecycle') : NULL,
       $container->has('aculta_events.location_contribution_adapter') ? $container->get('aculta_events.location_contribution_adapter') : NULL,
     );
   }

@@ -53,8 +53,8 @@ final class EventLocationForm extends ContentEntityForm {
       $container->get('datetime.time'),
       $container->get('aculta_events.permission_policy'),
     );
-    $form->contributions = $container->has('aculta_contributions.lifecycle')
-      ? $container->get('aculta_contributions.lifecycle')
+    $form->contributions = $container->has('aculta_cgu.contribution_lifecycle')
+      ? $container->get('aculta_cgu.contribution_lifecycle')
       : NULL;
     $form->locationAdapter = $container->has('aculta_events.location_contribution_adapter')
       ? $container->get('aculta_events.location_contribution_adapter')

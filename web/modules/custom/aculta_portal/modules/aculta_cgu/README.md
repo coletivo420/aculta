@@ -14,27 +14,18 @@ Resulta da fusão e consolidação dos antigos módulos `aculta_contributions` e
 - **Adapters por Domínio**:
   - Registro extensível via service tag `aculta_cgu.contribution_adapter` coletado por `aculta_cgu.contribution_adapter_registry`.
   - Adapters ativos para `wiki` (verbetes da Wiki420), `events_event`, `events_location` e `events_organization` (Eventos ACULTA).
-- **Aliases legados mantidos para compatibilidade de injeção**:
-  - `aculta_contributions.lifecycle` -> `aculta_cgu.contribution_lifecycle`
-  - `aculta_contributions.adapter_registry` -> `aculta_cgu.contribution_adapter_registry`
-  - `aculta_contributions.state_machine` -> `aculta_cgu.contribution_state_machine`
 
 ### 2. Denúncias e Moderação Transversal (ex-UGC)
 - **Entidade `aculta_ugc_report`**: Registro sigiloso e padronizado de denúncias sem vazamento de dados do denunciante para o denunciado.
 - **Fila Centralizada de Moderação**:
   - Painel administrativo unificado em `/painel-administrativo/moderacao/denuncias`.
-  - Operações de decisão individual e em lote (`UgcReportDecisionForm`).
+  - Operações de decisão individual e em lote (`CguReportDecisionForm`).
   - Serviço `aculta_cgu.report_queue` para consulta paginada e triagem.
 - **Configuração de Notificação por Domínio/Purpose**:
   - Entidade de configuração `aculta_ugc_recipients` com destinatários dedicados por purpose (fórum, revista, wiki, eventos).
   - Serviço `aculta_cgu.moderation_notifier` integrado ao `aculta_mailer`.
 - **Ponte com Flagging**:
   - Sincronização e integração com flags de denúncia da comunidade (Growroom420/Fórum).
-- **Aliases legados mantidos para compatibilidade de injeção**:
-  - `aculta_ugc.report_service` -> `aculta_cgu.report_service`
-  - `aculta_ugc.report_queue` -> `aculta_cgu.report_queue`
-  - `aculta_ugc.moderation_notifier` -> `aculta_cgu.moderation_notifier`
-  - `aculta_ugc.mail_type.report_notice` -> `aculta_cgu.mail_type.report_notice`
 
 ## Arquitetura e Segurança
 - O módulo é transversal e neutro: não depende de lógicas específicas de apresentação dos módulos clientes.

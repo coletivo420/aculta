@@ -15,10 +15,10 @@ use Symfony\Component\DependencyInjection\Reference;
 use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\KernelTests\KernelTestBase;
-use Drupal\aculta_cgu\Entity\UgcRecipientConfig;
+use Drupal\aculta_cgu\Entity\CguRecipientConfig;
 use Drupal\aculta_cgu\ModerationScope;
 use Drupal\aculta_cgu\Service\ModerationNotifier;
-use Drupal\aculta_cgu\Service\UgcReportQueue;
+use Drupal\aculta_cgu\Service\CguReportQueue;
 use Drupal\aculta_user\Controller\ReportQueueController;
 use Drupal\flag\Entity\Flag;
 use Drupal\flag\Entity\Flagging;
@@ -36,7 +36,7 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
  */
 #[Group('aculta_ugc')]
 #[RunTestsInSeparateProcesses]
-final class ForumUgcIntegrationKernelTest extends KernelTestBase {
+final class ForumCguIntegrationKernelTest extends KernelTestBase {
 
   /**
    * {@inheritdoc}
@@ -63,7 +63,7 @@ final class ForumUgcIntegrationKernelTest extends KernelTestBase {
   /**
    * Fila de moderação UGC.
    */
-  private UgcReportQueue $queue;
+  private CguReportQueue $queue;
 
   /**
    * Notificador de moderação.
@@ -129,7 +129,7 @@ final class ForumUgcIntegrationKernelTest extends KernelTestBase {
     $container->register('aculta_user.author_card_builder', AuthorCardBuilder::class)
       ->setFactory([self::class, 'createDummyAuthorCardBuilder']);
 
-    $container->register('aculta_user.active_associate', ForumUgcTestActiveAssociate::class);
+    $container->register('aculta_user.active_associate', ForumCguTestActiveAssociate::class);
 
     foreach ([
       'aculta_file_uploader.unused_file_cleaner',
@@ -242,14 +242,14 @@ final class ForumUgcIntegrationKernelTest extends KernelTestBase {
     ]);
     $this->flagTopic->save();
 
-    UgcRecipientConfig::create([
+    CguRecipientConfig::create([
       'id' => 'forum',
       'label' => 'Equipe de Moderação do Fórum',
       'emails' => ['mod-forum@example.invalid'],
     ])->save();
 
-    $this->queue = $this->container->get('aculta_ugc.report_queue');
-    $this->notifier = $this->container->get('aculta_ugc.moderation_notifier');
+    $this->queue = $this->container->get('aculta_cgu.report_queue');
+    $this->notifier = $this->container->get('aculta_cgu.moderation_notifier');
   }
 
   /**
@@ -281,7 +281,7 @@ final class ForumUgcIntegrationKernelTest extends KernelTestBase {
     ]);
     $this->assertCount(1, $reports);
 
-    /** @var \Drupal\aculta_cgu\Entity\UgcReport $report */
+    /** @var \Drupal\aculta_cgu\Entity\CguReport $report */
     $report = reset($reports);
     $this->assertSame('forum', $report->get('purpose')->value);
     $this->assertSame('node', $report->get('target_type')->value);
@@ -436,7 +436,7 @@ final class ForumUgcIntegrationKernelTest extends KernelTestBase {
 
     // O hook de bridge não deve criar denúncia se não houver acesso de view.
     $this->expectException(AccessDeniedHttpException::class);
-    $this->container->get('aculta_forum.report_ugc_bridge')->flaggingInsert($flagging);
+    $this->container->get('aculta_forum.report_cgu_bridge')->flaggingInsert($flagging);
   }
 
   /**
@@ -506,7 +506,7 @@ final class ForumUgcIntegrationKernelTest extends KernelTestBase {
     $reports = $reportStorage->loadByProperties(['legacy_flag_id' => (int) $flagging->id()]);
     $this->assertCount(1, $reports);
 
-    /** @var \Drupal\aculta_cgu\Entity\UgcReport $report */
+    /** @var \Drupal\aculta_cgu\Entity\CguReport $report */
     $report = reset($reports);
     $report->set('status', 'em_analise')->save();
 
@@ -645,7 +645,7 @@ final class ForumUgcIntegrationKernelTest extends KernelTestBase {
     ]);
 
     $this->expectException(AccessDeniedHttpException::class);
-    $this->container->get('aculta_forum.report_ugc_bridge')->flaggingInsert($flagging);
+    $this->container->get('aculta_forum.report_cgu_bridge')->flaggingInsert($flagging);
   }
 
   /**
@@ -796,7 +796,7 @@ final class ForumUgcIntegrationKernelTest extends KernelTestBase {
 /**
  * Test double for ActiveAssociateInterface without loading aculta_user.
  */
-class ForumUgcTestActiveAssociate implements ActiveAssociateInterface {
+class ForumCguTestActiveAssociate implements ActiveAssociateInterface {
 
   /**
    * {@inheritdoc}

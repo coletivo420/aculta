@@ -751,8 +751,8 @@ Montadas por concatenação no módulo (o gate não enxerga cada valor; a famíl
 | `events-admin-overview` | `aculta-events-admin-overview` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventAdminOverviewController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
 | `events-upcoming-block` | `aculta-events-upcoming` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/Block/UpcomingEventsBlock.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
 | `events-upcoming-link` | `aculta-events-upcoming__link` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/Block/UpcomingEventsBlock.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
-| `ugc-admin-purpose-filters` | `aculta-admin-purpose-filters`, `action-links` | `web/modules/custom/aculta_portal/modules/aculta_ugc/src/Controller/UgcModerationDashboardController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
-| `ugc-admin-status-filters` | `aculta-admin-status-filters`, `action-links` | `web/modules/custom/aculta_portal/modules/aculta_ugc/src/Controller/UgcModerationDashboardController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `ugc-admin-purpose-filters` | `aculta-admin-purpose-filters`, `action-links` | `web/modules/custom/aculta_portal/modules/aculta_ugc/src/Controller/CguModerationDashboardController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `ugc-admin-status-filters` | `aculta-admin-status-filters`, `action-links` | `web/modules/custom/aculta_portal/modules/aculta_ugc/src/Controller/CguModerationDashboardController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
 | `user-admin-filters` | `aculta-admin-filters`, `action-links` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Controller/OwnershipClaimAdminController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
 ## Painéis de vendas e doações (dev.69 e 0.6.0-dev.67)
 

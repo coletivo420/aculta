@@ -14,7 +14,7 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 /**
  * Fila unificada de moderação e migração controlada (ARQ-06C, ARQ-06D, ARQ-06G).
  */
-final class UgcReportQueue {
+final class CguReportQueue {
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
@@ -314,7 +314,7 @@ final class UgcReportQueue {
       return [];
     }
 
-    /** @var \Drupal\aculta_cgu\Entity\UgcReport[] $reports */
+    /** @var \Drupal\aculta_cgu\Entity\CguReport[] $reports */
     $reports = $storage->loadMultiple($ids);
     $grupos = [];
     $validTargets = [];

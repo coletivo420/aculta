@@ -9,7 +9,7 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 /**
  * Permissões de moderação por purpose (ARQ-06A).
  */
-final class UgcPermissions {
+final class CguPermissions {
 
   use StringTranslationTrait;
 

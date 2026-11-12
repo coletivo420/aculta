@@ -2795,7 +2795,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     ]);
     $legacy->save();
     $this->container->get('current_user')->setAccount($author);
-    $adapter = $this->container->get('aculta_contributions.adapter_registry')->get('wiki');
+    $adapter = $this->container->get('aculta_cgu.contribution_adapter_registry')->get('wiki');
     self::assertFalse($this->container->get('aculta_wiki.contribution_migration_gate')->isComplete());
     self::assertFalse($adapter->submitAccess($author, 'update', $target));
 
@@ -3016,7 +3016,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $this->container->get('aculta_portal.email_confirmation_policy')->markConfirmed((int) $submitter->id());
     $this->container->get('current_user')->setAccount($submitter);
 
-    $wikiAdapter = $this->container->get('aculta_contributions.adapter_registry')->get('wiki');
+    $wikiAdapter = $this->container->get('aculta_cgu.contribution_adapter_registry')->get('wiki');
     self::assertTrue($wikiAdapter->submitAccess($submitter, 'update', $target));
     self::assertFalse($wikiAdapter->submitAccess($unconfirmed, 'update', $target));
     $domainNegotiator = $this->container->get(DomainNegotiatorInterface::class);
@@ -3801,7 +3801,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     }
 
     $this->container->get('current_user')->setAccount($submitter);
-    $wikiAdapter = $this->container->get('aculta_contributions.adapter_registry')->get('wiki');
+    $wikiAdapter = $this->container->get('aculta_cgu.contribution_adapter_registry')->get('wiki');
     try {
       $wikiAdapter->validatePayload('update', ['field_wiki_image' => 999999], $target);
       self::fail('A missing Wiki image must be rejected by the shared adapter.');

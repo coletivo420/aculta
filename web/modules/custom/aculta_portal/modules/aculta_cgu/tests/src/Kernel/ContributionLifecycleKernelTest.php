@@ -46,7 +46,7 @@ final class ContributionLifecycleKernelTest extends KernelTestBase {
     [$author, $target] = $this->createAccountsAndTarget();
     $this->registerAdapter($this->createAdapter());
     $this->container->get('current_user')->setAccount($author);
-    $lifecycle = $this->container->get('aculta_contributions.lifecycle');
+    $lifecycle = $this->container->get('aculta_cgu.contribution_lifecycle');
     $token = str_repeat('a', 64);
     $proposal = $lifecycle->submit(
       'test_user',
@@ -82,7 +82,7 @@ final class ContributionLifecycleKernelTest extends KernelTestBase {
     [$author, $target] = $this->createAccountsAndTarget();
     $this->registerAdapter($this->createAdapter());
     $this->container->get('current_user')->setAccount($author);
-    $lifecycle = $this->container->get('aculta_contributions.lifecycle');
+    $lifecycle = $this->container->get('aculta_cgu.contribution_lifecycle');
     $proposal = $lifecycle->submit('test_user', 'update', $target->uuid(), 'Rename profile', 'Correct the display name.', ['name' => 'Suggested name'], str_repeat('b', 64));
 
     $target->set('name', 'Independent update');
@@ -106,7 +106,7 @@ final class ContributionLifecycleKernelTest extends KernelTestBase {
   public function testRevisionAfterFeedbackAndWithdrawal(): void {
     [$author, $target] = $this->createAccountsAndTarget();
     $this->registerAdapter($this->createAdapter());
-    $lifecycle = $this->container->get('aculta_contributions.lifecycle');
+    $lifecycle = $this->container->get('aculta_cgu.contribution_lifecycle');
     $this->container->get('current_user')->setAccount($author);
     $proposal = $lifecycle->submit(
       'test_user',
@@ -165,7 +165,7 @@ final class ContributionLifecycleKernelTest extends KernelTestBase {
     self::assertTrue($observer->acquire($lock_name, 30.0));
     try {
       try {
-        $this->container->get('aculta_contributions.lifecycle')->submit(
+        $this->container->get('aculta_cgu.contribution_lifecycle')->submit(
           'test_user',
           'update',
           $target->uuid(),
@@ -220,7 +220,7 @@ final class ContributionLifecycleKernelTest extends KernelTestBase {
       $lock_signal = fread($pipes[1], 1);
       if ($lock_signal === 'L') {
         try {
-          $this->container->get('aculta_contributions.lifecycle')->submit(
+          $this->container->get('aculta_cgu.contribution_lifecycle')->submit(
             'test_user',
             'update',
             $target->uuid(),
@@ -265,7 +265,7 @@ final class ContributionLifecycleKernelTest extends KernelTestBase {
     $this->registerAdapter($this->createAdapter());
     $this->container->get('current_user')->setAccount($outsider);
     try {
-      $this->container->get('aculta_contributions.lifecycle')->submit(
+      $this->container->get('aculta_cgu.contribution_lifecycle')->submit(
         'test_user',
         'update',
         $target->uuid(),
@@ -289,7 +289,7 @@ final class ContributionLifecycleKernelTest extends KernelTestBase {
     $this->registerAdapter($this->createAdapter());
     $this->container->get('current_user')->setAccount($author);
     try {
-      $this->container->get('aculta_contributions.lifecycle')->submit(
+      $this->container->get('aculta_cgu.contribution_lifecycle')->submit(
         'test_user',
         'update',
         $target->uuid(),
@@ -317,7 +317,7 @@ final class ContributionLifecycleKernelTest extends KernelTestBase {
 
     $this->expectException(\InvalidArgumentException::class);
     try {
-      $this->container->get('aculta_contributions.lifecycle')->submit(
+      $this->container->get('aculta_cgu.contribution_lifecycle')->submit(
         'test_user',
         'update',
         $target->uuid(),
@@ -348,7 +348,7 @@ final class ContributionLifecycleKernelTest extends KernelTestBase {
       ->set('flood_limit', 1)
       ->set('flood_window', 3600)
       ->save();
-    $lifecycle = $this->container->get('aculta_contributions.lifecycle');
+    $lifecycle = $this->container->get('aculta_cgu.contribution_lifecycle');
     $lifecycle->submit('test_user', 'update', $target->uuid(), 'First proposal', 'First rationale.', ['name' => 'First'], str_repeat('e', 64));
     try {
       $lifecycle->submit('test_user', 'update', $target->uuid(), 'Second proposal', 'Second rationale.', ['name' => 'Second'], str_repeat('f', 64));
@@ -366,7 +366,7 @@ final class ContributionLifecycleKernelTest extends KernelTestBase {
     [$author, $target] = $this->createAccountsAndTarget();
     $this->registerAdapter($this->createAdapter(TRUE));
     $this->container->get('current_user')->setAccount($author);
-    $lifecycle = $this->container->get('aculta_contributions.lifecycle');
+    $lifecycle = $this->container->get('aculta_cgu.contribution_lifecycle');
     $proposal = $lifecycle->submit('test_user', 'update', $target->uuid(), 'Rename profile', 'Correct the display name.', ['name' => 'Suggested name'], str_repeat('6', 64));
     $this->container->get('current_user')->setAccount($this->createReviewer());
     try {
@@ -386,7 +386,7 @@ final class ContributionLifecycleKernelTest extends KernelTestBase {
     [$author, $target] = $this->createAccountsAndTarget();
     $this->registerAdapter($this->createAdapter(FALSE, TRUE));
     $this->container->get('current_user')->setAccount($author);
-    $lifecycle = $this->container->get('aculta_contributions.lifecycle');
+    $lifecycle = $this->container->get('aculta_cgu.contribution_lifecycle');
     $proposal = $lifecycle->submit(
       'test_user',
       'update',
@@ -417,7 +417,7 @@ final class ContributionLifecycleKernelTest extends KernelTestBase {
     [$author, $target] = $this->createAccountsAndTarget();
     $this->registerAdapter($this->createAdapter());
     $this->container->get('current_user')->setAccount($author);
-    $proposal = $this->container->get('aculta_contributions.lifecycle')->submit(
+    $proposal = $this->container->get('aculta_cgu.contribution_lifecycle')->submit(
       'test_user',
       'update',
       $target->uuid(),
@@ -430,7 +430,7 @@ final class ContributionLifecycleKernelTest extends KernelTestBase {
     $this->container->get('current_user')->setAccount($this->createReviewer());
     $this->expectException(\InvalidArgumentException::class);
     try {
-      $this->container->get('aculta_contributions.lifecycle')->decide(
+      $this->container->get('aculta_cgu.contribution_lifecycle')->decide(
         $proposal,
         'accepted',
         'Verified correction.',
@@ -488,7 +488,7 @@ final class ContributionLifecycleKernelTest extends KernelTestBase {
   /**
    * Registers a test domain adapter through the production service registry. */
   private function registerAdapter(ContributionAdapterInterface $adapter): void {
-    $registry = $this->container->get('aculta_contributions.adapter_registry');
+    $registry = $this->container->get('aculta_cgu.contribution_adapter_registry');
     self::assertInstanceOf(ContributionAdapterRegistry::class, $registry);
     $registry->addAdapter($adapter);
   }
