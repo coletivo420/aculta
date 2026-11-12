@@ -7,13 +7,15 @@ Relatórios brutos (JSON do Semgrep, saída do `composer audit`, gitleaks) ficam
 ## 1. Semgrep com regras locais
 
 - Comando: `semgrep --metrics=off --config .agents/skills/aculta-seguranca-estatica/rules/aculta-php.yml` com exclusões de `vendor`, `web/core`, `web/modules/contrib`, `web/libraries` e `node_modules`, sobre `web/modules/custom`, `web/themes/custom` e `scripts`.
-- Resultado: **474 achados** em 118 arquivos.
+- Primeira rodada (2026-11-11): **474 achados** em 118 arquivos; esta contagem é histórica.
+- Revalidação (2026-11-12), após corrigir duas saídas XSS e limitar a regra de serviço estático a chamadas dentro de classes: **117 achados** (77 chamadas estáticas em classes, 29 sinks `#markup`, 10 chamadas dinâmicas e 1 `unserialize`).
+- A diferença da regra estática veio de escopo incorreto: scripts CLI e hooks procedurais não permitem injeção por construtor; a fixture agora exige classe e rejeita o contexto procedural. Os 77 achados em classes seguem pendentes de refatoração.
 
 | Regra | Achados | Classe |
 |---|---:|---|
-| `aculta-php-static-drupal-service` (`\Drupal::` estático) | 432 | dívida de arquitetura, não de segurança |
-| `aculta-php-markup-raw-output` | 31 | triados: 27 FALSO POSITIVO, 1 REAL (corrigido), 1 ACEITO, 2 PENDENTE |
-| `aculta-php-eval-or-dynamic-exec` | 10 | 9 ACEITO COM JUSTIFICATIVA, 1 PENDENTE |
+| `aculta-php-static-drupal-service` (`\Drupal::` dentro de classes) | 77 | dívida de arquitetura pendente de refatoração |
+| `aculta-php-markup-raw-output` | 29 | 27 FALSO POSITIVO, 1 REAL corrigido, 1 ACEITO |
+| `aculta-php-eval-or-dynamic-exec` | 10 | 9 ACEITO COM JUSTIFICATIVA, 1 FALSO POSITIVO reavaliado |
 | `aculta-php-unserialize-untrusted` | 1 | FALSO POSITIVO (com mitigação) |
 | `aculta-php-raw-sql-concat` | 0 | sem achado; coberta por fixture |
 | `aculta-php-superglobal-input` | 0 | sem achado; coberta por fixture |
@@ -36,7 +38,9 @@ Não há comparação direta com a baseline de 127 achados de 2026-11-05: o conj
 | `scripts/validate-session-cookie-policy.php:29` | `exec` | ACEITO COM JUSTIFICATIVA | comando fixo com `escapeshellarg` |
 | `aculta_deployer/src/Cli.php:1539` | `proc_open` (array, sem shell) | PENDENTE | falta provar que `$cmd` vem só de configuração do operador da CLI |
 
-### 1.2 `#markup` sem escape (31, triados todos)
+Reavaliação em 2026-11-12: FALSO POSITIVO. `ACULTA_DOMAIN_CONFIG_CMD` é configuração explícita do operador para a CLI de deploy, validada com `is_executable()`. A chamada usa array de argumentos (`[$cmd, ...$args]`) em `proc_open`, sem shell; nenhum dado de requisição web controla o executável ou os argumentos.
+
+### 1.2 `#markup` sem escape (31 na primeira rodada; 29 na revalidação)
 
 **FALSO POSITIVO (17):** o valor passa por `$this->t()`, `translate()`, `formatPlural()`, `htmlspecialchars` (`plainText`), formatação numérica/de data, ou é ternário de `t()`.
 
@@ -143,7 +147,7 @@ Atualização feita com `composer update drupal/entity_print symfony/http-client
 
 ## 6. Próximas ações
 
-1. Triar os 4 `#markup` PENDENTE: `MessagesController:1528` (depende do módulo contrib `site_alert`), `OpenStreetMapImportWizard:189` (dado de API externa), `MailTemplateForm:136` (corpo de template de administrador) e `WikiEntryImageHooks:147` (texto de alt).
-2. Confirmar `Cli.php:1539` (origem de `$cmd`) e os valores de `XapiAttemptTokenTest.php:17` (fixture ou segredo real).
+1. Refatorar os 77 usos de `\Drupal::` dentro de classes, em fases por módulo, com testes focais e gates do Portal.
+2. Reavaliar os valores de `XapiAttemptTokenTest.php:17` (fixture ou segredo real).
 3. Aplicar `entity_print` 2.20.0 e `symfony/http-client` 7.4.23 no Runtime por fluxo controlado, e registrar o resultado.
 4. Executar `drupal/security_review` com Drush em modo somente leitura quando houver acesso ao Runtime.

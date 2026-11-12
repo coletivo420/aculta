@@ -30,7 +30,15 @@ $connection->query("SELECT * FROM users WHERE id = " . $id);
 // ok: aculta-php-raw-sql-concat
 $connection->query("SELECT * FROM users WHERE id = :id", [':id' => $id]);
 
-// ruleid: aculta-php-static-drupal-service
+class StaticServiceFixture {
+  public function unsafe(): void {
+    // ruleid: aculta-php-static-drupal-service
+    $db = \Drupal::database();
+  }
+}
+
+// Acesso procedural de scripts/hooks não oferece injeção por construtor.
+// ok: aculta-php-static-drupal-service
 $db = \Drupal::database();
 // ok: aculta-php-static-drupal-service
 $db = $this->database;

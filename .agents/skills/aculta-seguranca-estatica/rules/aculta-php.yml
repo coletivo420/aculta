@@ -40,7 +40,12 @@ rules:
     languages: [php]
     severity: WARNING
     message: "\\Drupal:: estático em código de classe. Injete o serviço pelo construtor (padrão Drupal 12, seção 7)."
-    pattern-regex: '\\?Drupal::\w+\('
+    patterns:
+      - pattern-regex: '\\?Drupal::\w+\('
+      - pattern-inside: |
+          class $CLASS {
+            ...
+          }
 
 
   - id: aculta-php-raw-redirect-cross-host
