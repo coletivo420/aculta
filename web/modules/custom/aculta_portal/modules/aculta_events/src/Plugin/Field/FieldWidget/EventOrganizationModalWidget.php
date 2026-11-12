@@ -59,7 +59,7 @@ final class EventOrganizationModalWidget extends WidgetBase {
         'data-field-name' => $fieldName,
       ],
       '#attached' => [
-        'library' => ['core/drupal.dialog.ajax'],
+        'library' => ['core/drupal.dialog.ajax', 'aculta_events/events-portal-ui'],
       ],
     ];
 

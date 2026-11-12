@@ -45,6 +45,7 @@ final class EventLocationModalWidget extends WidgetBase {
     $element['#attributes']['id'] = $wrapperId;
     $element['#attributes']['data-portal-ui'] = 'event-location-widget';
     $element['#attached']['library'][] = 'core/drupal.dialog.ajax';
+    $element['#attached']['library'][] = 'aculta_events/events-portal-ui';
 
     $element += self::buildCardOrEmpty((int) $targetId, $fieldName, $wrapperId);
 

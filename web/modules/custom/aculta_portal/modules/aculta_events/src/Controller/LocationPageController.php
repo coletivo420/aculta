@@ -260,6 +260,7 @@ final class LocationPageController extends ControllerBase {
 
     $jsonLd = json_encode($placeLd, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     $json = str_replace('</', '<\\/', (string) $jsonLd);
+    $build['#attached']['library'][] = 'aculta_events/events-portal-ui';
     $build['#attached']['html_head'][] = [
       [
         '#type' => 'html_tag',

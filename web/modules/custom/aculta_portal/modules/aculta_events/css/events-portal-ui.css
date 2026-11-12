@@ -1,0 +1,26 @@
+/* Estilo das classes do módulo aculta_events (Locais, widgets de Local e Organização,
+   painel administrativo). Movido de portal-ui-map.css do tema: só regras cujos seletores
+   são exclusivos deste módulo. Anexado por #attached nos pontos de renderização. */
+
+.badge--danger { color: var(--color-status-error-text); background: var(--color-status-error-surface); }
+
+.badge--info { color: var(--color-text-primary); background: var(--color-surface-highlight); }
+
+.badge--success { color: var(--color-status-ok-text); background: var(--color-status-ok-surface); }
+
+.badge--warning { color: var(--color-status-warning-text); background: var(--color-status-warning-surface); }
+
+.aculta-events-admin-overview,
+.aculta-locations-list-page,
+.aculta-location-page { display: grid; gap: 1rem; }
+
+.aculta-location-header,
+.aculta-location-summary-card { display: grid; gap: .5rem; }
+
+.aculta-location-title { margin: 0; font-family: var(--font-family-heading); font-size: 1.375rem; }
+
+.aculta-location-address,
+.aculta-location-empty,
+.aculta-location-target-id { color: var(--color-text-muted); }
+
+.aculta-location-badge { display: inline-flex; }

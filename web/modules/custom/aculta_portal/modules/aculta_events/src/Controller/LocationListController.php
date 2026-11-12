@@ -110,6 +110,8 @@ final class LocationListController extends ControllerBase {
       '#empty' => $this->t('Nenhum local encontrado.'),
     ];
 
+    $build['#attached']['library'][] = 'aculta_events/events-portal-ui';
+
     $build['pager'] = [
       '#type' => 'pager',
     ];

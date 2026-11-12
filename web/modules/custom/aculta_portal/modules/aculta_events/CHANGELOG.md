@@ -1,3 +1,10 @@
+## Não versionado — biblioteca events-portal-ui (2026-11-12)
+
+- Nova biblioteca `aculta_events/events-portal-ui` (`aculta_events.libraries.yml`, `css/events-portal-ui.css`) com 9 regras movidas do tema para estilos de Locais, widgets de Local e Organização e painel administrativo.
+- Anexada por `#attached` em: `LocationListController`, `LocationPageController`, `EventAdminOverviewController`, `EventOrganizationAdminController`, `EventLocationModalWidget` e `EventOrganizationModalWidget`.
+- Estado: PHP sem erro de sintaxe; gates de CSS do tema PASS. Captura visual e Kernel: DEFERRED.
+- Observação: os widgets de Local e Organização ainda usam `core/drupal.dialog.ajax` (Drupal AJAX legado). Migração para HTMX fica como pendência separada (ADR-050).
+
 > Nota de 2026-11-02: os caminhos `/studio/we-sativa`, `/studio/green-stash`, `/wesativa`, `/greenstash`, `/wiki/busca`, `/wiki/verbetes` e `/wiki/propostas` citados abaixo foram substituídos por `/we-sativa`, `/green-stash`, `/busca-wiki`, `/verbetes` e `/propostas`. Registro histórico preservado; veja a retificação no ADR-038.
 
 ## Não versionado — mapa: Local sem coordenadas volta a geocodificar (2026-11-07)

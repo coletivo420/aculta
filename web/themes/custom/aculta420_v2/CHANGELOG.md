@@ -1,3 +1,10 @@
+## Não versionado — piloto de realocação de CSS: aculta_events (2026-11-12)
+
+- 9 regras de `portal-ui-map.css` (14 classes exclusivas de `aculta_events`: Locais, widgets de Local e Organização, painel administrativo) saíram do global e foram para a biblioteca `aculta_events/events-portal-ui`, anexada por `#attached` nos pontos que as renderizam.
+- Ficaram no tema as regras de seletores compartilhados e as classes sem dono exclusivo. Excluídos do piloto: `sponsor-name` e `sponsor-cota` (presenter só usado em teste) e `aculta-map__location-route` (também definido em `aculta_maps`).
+- Gate `validate-aculta420-mapped-classes.php` passou a varrer também o CSS dos módulos em `aculta_portal/modules/*/css`. PASS, 482 classes, 0 exceções.
+- Estado: `validate-aculta420-css-scope.php` PASS (49 checks). Captura visual 320/1440 px claro e escuro: DEFERRED (sem execução de browser nesta sessão). Kernel de `aculta_events`: DEFERRED (requer banco de teste).
+
 ## Não versionado — títulos de cards e dívida de gates (2026-11-12)
 
 - `forum-topic-card`, `revista-teaser` (teaser da Revista), `wiki-entry`

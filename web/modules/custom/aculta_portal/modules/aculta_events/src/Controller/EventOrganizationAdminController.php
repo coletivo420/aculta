@@ -344,6 +344,8 @@ final class EventOrganizationAdminController extends ControllerBase {
     ]);
     $cacheMetadata->applyTo($build);
 
+    $build['#attached']['library'][] = 'aculta_events/events-portal-ui';
+
     return $build;
   }
 

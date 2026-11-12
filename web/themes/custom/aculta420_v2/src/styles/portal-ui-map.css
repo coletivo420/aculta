@@ -32,10 +32,6 @@
 .badge-location-type,
 .badge-reason,
 .coorganizer-item__badge { display: inline-flex; align-items: center; padding: .125rem .5rem; border-radius: var(--radius-full); font-size: .875rem; }
-.badge--danger { color: var(--color-status-error-text); background: var(--color-status-error-surface); }
-.badge--info { color: var(--color-text-primary); background: var(--color-surface-highlight); }
-.badge--success { color: var(--color-status-ok-text); background: var(--color-status-ok-surface); }
-.badge--warning { color: var(--color-status-warning-text); background: var(--color-status-warning-surface); }
 .badge-location-type,
 .badge-reason,
 .coorganizer-item__badge { color: var(--color-text-primary); background: var(--color-surface-highlight); }
@@ -88,16 +84,6 @@
 .location-actions,
 .location-admin-actions,
 .location-agenda { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; }
-.aculta-events-admin-overview,
-.aculta-locations-list-page,
-.aculta-location-page { display: grid; gap: 1rem; }
-.aculta-location-header,
-.aculta-location-summary-card { display: grid; gap: .5rem; }
-.aculta-location-title { margin: 0; font-family: var(--font-family-heading); font-size: 1.375rem; }
-.aculta-location-address,
-.aculta-location-empty,
-.aculta-location-target-id { color: var(--color-text-muted); }
-.aculta-location-badge { display: inline-flex; }
 .event-card__aviso,
 .event-card__meta,
 .event-card__subtitulo,
