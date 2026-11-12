@@ -44,6 +44,7 @@
   inline-size: 100%;
   max-inline-size: var(--page-content-max);
   margin-inline: 0;
+  padding-inline: 0;
   justify-self: start;
 }
 
