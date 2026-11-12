@@ -27,7 +27,7 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
  */
 #[Group('aculta_ugc')]
 #[RunTestsInSeparateProcesses]
-final class UgcModerationKernelTest extends KernelTestBase {
+final class CguModerationKernelTest extends KernelTestBase {
 
   /**
    * {@inheritdoc}
