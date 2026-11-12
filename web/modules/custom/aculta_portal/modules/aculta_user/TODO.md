@@ -1,10 +1,10 @@
 # TODO — aculta_user
 
-Estado: Dev · versão 0.4.0-dev.96 (`aculta_user.info.yml`) · status: `docs/operations/status/aculta_user.yml`.
+Estado: Dev · versão 0.4.0-dev.96 (`aculta_user.info.yml`) · OrganizationClaimKernelTest instala schema `path_alias` omitido no JUnit histórico; lint PASS, PHPUnit não executado após reboots · status: `docs/operations/status/aculta_user.yml`.
 
 ## Próximo passo
 
-Sem lacuna isolada de instalação/rollback: a cadeia Portal↔MP exige aculta_portal, aculta_commerce e aculta_pagamentos_mercadopago em RC e janela operacional. Pendentes do módulo: revisão visual/Runtime e concorrência de cadastro.
+Verificar em CI o schema `path_alias` do OrganizationClaimKernelTest; sem lacuna isolada de instalação/rollback. A cadeia Portal↔MP exige aculta_portal, aculta_commerce e aculta_pagamentos_mercadopago em RC e janela operacional. Pendentes do módulo: revisão visual/Runtime e concorrência de cadastro.
 
 ## Leitura
 

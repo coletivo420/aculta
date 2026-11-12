@@ -1,5 +1,7 @@
 # TODO — aculta_wiki
 
+Kernel histórico: WikiLeadImageLifecycleKernelTest instala agora o schema `group_relationship` necessário ao acesso via Groups; lint PASS, PHPUnit não executado após reboots.
+
 Estado: Dev · versão 0.1.0-dev.138 (`aculta_wiki.info.yml`) · status: `docs/operations/status/aculta_wiki.yml`.
 
 ## Estado atual

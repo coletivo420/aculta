@@ -122,6 +122,7 @@ final class OrganizationClaimKernelTest extends KernelTestBase {
 
     $this->installEntitySchema('user');
     $this->installEntitySchema('profile');
+    $this->installEntitySchema('path_alias');
     $this->installSchema('user', ['users_data']);
     $this->installSchema('file', ['file_usage']);
     $this->installSchema('aculta_user', ['aculta_user_nickname']);

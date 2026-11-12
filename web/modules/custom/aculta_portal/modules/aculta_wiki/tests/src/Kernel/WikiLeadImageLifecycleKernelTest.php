@@ -139,6 +139,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     // native node form is submitted, so keep the entity schema available to
     // the isolated Kernel fixture even when the test does not exercise menus.
     $this->installEntitySchema('menu_link_content');
+    $this->installEntitySchema('group_relationship');
     $this->installEntitySchema('aculta_wiki_proposal');
     $this->installEntitySchema('aculta_contribution');
     require_once dirname(__DIR__, 3) . '/aculta_wiki.install';

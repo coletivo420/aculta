@@ -1,6 +1,6 @@
 # TODO — aculta_events
 
-Estado: Dev · versão 0.2.0-dev.10 (`aculta_events.info.yml`) · acesso delegado falha fechado quando o serviço externo não está no container; EventAccess e EventLocationManagement focais: 12 testes PASS. O harness de EventDomainBoundary agora injeta o serviço real, removendo cinco TypeErrors históricos; PHP lint/PHPCS PASS, PHPUnit não repetido após os reboots. No SHA `103ac9c91`, lint/PHPStan/Unit/estático PASS; Kernel foi cancelado sem JUnit · status: `docs/operations/status/aculta_events.yml`.
+Estado: Dev · versão 0.2.0-dev.10 (`aculta_events.info.yml`) · acesso delegado falha fechado sem serviço externo; EventAccess/EventLocationManagement focais: 12 testes PASS. EventDomainBoundary usa serviço real para remover cinco TypeErrors; lifecycle instala schema `path_alias` omitido no JUnit histórico. Lint PASS; suíte não repetida após reboots · status: `docs/operations/status/aculta_events.yml`.
 
 ## Próximo passo
 

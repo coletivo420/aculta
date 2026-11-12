@@ -65,6 +65,7 @@ final class ContentIndexWikiAccessKernelTest extends KernelTestBase {
     $this->installEntitySchema('path_alias');
     $this->installEntitySchema('node');
     $this->installEntitySchema('comment');
+    $this->installEntitySchema('group_relationship');
     $this->installEntitySchema('flagging');
     $this->installEntitySchema('domain');
     $this->installEntitySchema('taxonomy_term');
