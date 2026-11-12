@@ -272,3 +272,25 @@ textual e seletor alcançável: `.flex`, `.justify-center`, `.align-center`
 
 O HTML do Runtime é uma amostra das homes; estados autenticados e telas
 internas não estão nela. Por isso "sem evidência" não autoriza remoção.
+
+## 12. Auditoria de consumidores do mapa de tokens (2026-11-12)
+
+`PortalUiHooks::TOKENS` tem 529 entradas, 45 delas com lista de classes
+vazia. O cruzamento com templates, PHP, JS, YAML e Config Sync encontrou
+apenas 10 tokens sem referência textual externa:
+
+`button-ghost`, `button-outline`, `card-cultural-accent-{green,yellow,red}`,
+`revista-teaser-accent-{green,yellow,red}`, `domain-brand-image` e
+`event-date-cancel`.
+
+Nenhum foi removido: os tokens de botão são exigidos pelo UI Styles
+(`button_outline`/`button_ghost`), `event-date-cancel` atende envios de
+formulário com `data-portal-ui`, e os demais pertencem a variantes editoriais
+aplicadas por configuração. O mapa permanece com 529 entradas e 480 classes
+cobertas pelo gate.
+
+Conclusão da Fase 4 nesta rodada: não há entrada de token comprovadamente
+morta. A migração de `aculta-u-*` e dos mapas `portal-ui-*` para composição
+SDC continua dependente dos render arrays dos módulos do Portal, fora do
+escopo do tema e sem autorização para alterar módulos com trabalho
+concorrente.

@@ -15,9 +15,12 @@
   breadcrumb do Fórum. Runtime Sync BLOCKED por worktree concorrente/RX,
   sem drift de updatedb/config/deploy. Sessão autenticada, modais, gavetas,
   teclado e leitor de tela: DEFERRED.
-- Pendente: homologação visual do CSS restante, aceite de claro/escuro e
-  a migração dos utilitários `aculta-u-*` emitidos por `PortalUiHooks` para
-  composição SDC. Captura e navegador: DEFERRED.
+- Pendente: homologação visual de telas autenticadas/modais/gavetas e a
+  migração dos utilitários `aculta-u-*` emitidos por `PortalUiHooks` para
+  composição SDC. A auditoria do mapa (529 tokens) não encontrou entrada
+  comprovadamente morta: as 10 sem referência textual são exigidas por UI
+  Styles, envios de formulário ou configuração editorial. Captura e
+  navegador autenticado: DEFERRED.
 
 ## Títulos de cards e dívida de gates (2026-11-12)
 
