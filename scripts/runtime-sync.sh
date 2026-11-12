@@ -84,10 +84,10 @@ command -v python3 >/dev/null || fail 'python3 indisponivel'
 
 mode="${1:-plan}"
 case "$mode" in
-  plan|doctor|status|sync-code|verify|structural-plan|structural-complete|isolation-plan)
+  plan | doctor | status | sync-code | verify | structural-plan | structural-complete | isolation-plan)
     shift || true
     ;;
-  help|-h|--help)
+  help | -h | --help)
     usage
     exit 0
     ;;
@@ -108,7 +108,7 @@ while [[ $# -gt 0 ]]; do
     --refresh)
       OPT_REFRESH=1
       ;;
-    --format=json|--json)
+    --format=json | --json)
       FORMAT_JSON=1
       ;;
     --adopt-baseline)
@@ -120,7 +120,7 @@ while [[ $# -gt 0 ]]; do
     --plan=*)
       OPT_PLAN_FILE="${1#--plan=}"
       ;;
-    -h|--help)
+    -h | --help)
       usage
       exit 0
       ;;
@@ -158,7 +158,7 @@ git_root="$(cd -- "$(git rev-parse --show-toplevel 2>/dev/null)" && pwd -P)" || 
 state_dir="${ACULTA_SYNC_STATE_DIR:-$root/var/runtime-sync}"
 # Garantir que state_dir nao fique dentro de web/ (DocumentRoot)
 case "$state_dir" in
-  "$root/web"|"$root/web/"*)
+  "$root/web" | "$root/web/"*)
     fail 'ACULTA_SYNC_STATE_DIR nao pode ficar dentro do DocumentRoot (web/)'
     ;;
 esac
@@ -167,7 +167,6 @@ run_id="$(date -u +%Y-%m-%dT%H:%M:%SZ)-$$-$RANDOM"
 run_timestamp="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 tmp_dir=""
 staging_repo=""
-interrupted=0
 
 cleanup() {
   local rc=$?
@@ -182,9 +181,8 @@ cleanup() {
 trap cleanup EXIT
 
 on_signal() {
-  interrupted=1
   notice "SINAL recebido: interrompendo operacao com seguranca (estado preservado)."
-  if [[ -n "$tmp_dir" && -d "$tmp_dir" && ( "$mode" == "sync-code" || "$mode" == "verify" || "$mode" == "structural-complete" ) ]]; then
+  if [[ -n "$tmp_dir" && -d "$tmp_dir" && ("$mode" == "sync-code" || "$mode" == "verify" || "$mode" == "structural-complete") ]]; then
     cat >"$tmp_dir/interrupt-run.json" <<EOF
 {
   "run_id": "$run_id",
@@ -215,7 +213,6 @@ state_wrapper="$(python3 "$helper_py" read-state --repo-root "$root" --state-dir
 state_status="$(printf '%s' "$state_wrapper" | python3 -c 'import json,sys; d=json.load(sys.stdin); print(d["state_status"])')"
 last_validated_sha="$(printf '%s' "$state_wrapper" | python3 -c 'import json,sys; d=json.load(sys.stdin); print(d["state"].get("last_validated_sha") or "UNKNOWN")')"
 last_cache_success_sha="$(printf '%s' "$state_wrapper" | python3 -c 'import json,sys; d=json.load(sys.stdin); print(d["state"].get("last_cache_success_sha") or "UNKNOWN")')"
-last_code_sync_sha="$(printf '%s' "$state_wrapper" | python3 -c 'import json,sys; d=json.load(sys.stdin); print(d["state"].get("last_code_sync_sha") or "UNKNOWN")')"
 state_error_msg="$(printf '%s' "$state_wrapper" | python3 -c 'import json,sys; d=json.load(sys.stdin); print(d["state"].get("state_error") or "")')"
 
 # Comando: status (estritamente leitura local, sem rede e sem Drush)
@@ -226,7 +223,8 @@ if [[ "$mode" == "status" ]]; then
   worktree_clean="true"
   [[ -z "$dirty_now" ]] || worktree_clean="false"
 
-  status_json="$(python3 - "$state_wrapper" "$current_head" "$current_branch" "$worktree_clean" <<'PY'
+  status_json="$(
+    python3 - "$state_wrapper" "$current_head" "$current_branch" "$worktree_clean" <<'PY'
 import json, sys
 wrapper = json.loads(sys.argv[1])
 head = sys.argv[2]
@@ -271,7 +269,7 @@ if st.get("state_error"):
     out["state_error"] = st["state_error"]
 print(json.dumps(out, indent=2, ensure_ascii=True))
 PY
-)"
+  )"
   if [[ "$FORMAT_JSON" -eq 1 ]]; then
     printf '%s\n' "$status_json"
   else
@@ -439,8 +437,6 @@ delta_json="$(python3 "$helper_py" classify --repo-root "$diff_repo" --base-sha 
 delta_risk="$(printf '%s' "$delta_json" | python3 -c 'import json,sys; print(json.load(sys.stdin)["risk"])')"
 delta_allow_sync="$(printf '%s' "$delta_json" | python3 -c 'import json,sys; print("1" if json.load(sys.stdin)["allow_sync_code"] else "0")')"
 delta_req_cache="$(printf '%s' "$delta_json" | python3 -c 'import json,sys; print("1" if json.load(sys.stdin)["requires_cache_rebuild"] else "0")')"
-delta_diff_avail="$(printf '%s' "$delta_json" | python3 -c 'import json,sys; print("1" if json.load(sys.stdin)["diff_available"] else "0")')"
-delta_is_ff="$(printf '%s' "$delta_json" | python3 -c 'import json,sys; print("1" if json.load(sys.stdin)["is_fast_forward"] else "0")')"
 
 # Se current == remote e last_validated_sha != remote, precisamos saber se o cache esta pendente!
 cache_pending=0
@@ -473,7 +469,6 @@ PY
 # Funcao auxiliar para rodar checagens de Drush quando disponivel e configurado
 run_drush_inspection() {
   local require_env="$1"
-  DRUSH_OK=0
   DRUSH_SUMMARY_JSON=""
   DRUSH_ACTUAL_DB=""
 
@@ -561,7 +556,6 @@ run_drush_inspection() {
     fail 'saida do Drush malformada ou erro em updatedb:status / config:status'
   fi
 
-  DRUSH_OK=1
   return 0
 }
 
@@ -655,17 +649,18 @@ fi
 
 # Comando: structural-complete (F5) - fecha a janela ja executada pelo responsavel.
 if [[ "$mode" == "structural-complete" ]]; then
-  [[ "${ACULTA_SYNC_STRUCTURAL_CONFIRM:-0}" == "1" ]] \
-    || fail 'defina ACULTA_SYNC_STRUCTURAL_CONFIRM=1 depois de concluir a janela autorizada'
+  [[ "${ACULTA_SYNC_STRUCTURAL_CONFIRM:-0}" == "1" ]] ||
+    fail 'defina ACULTA_SYNC_STRUCTURAL_CONFIRM=1 depois de concluir a janela autorizada'
   [[ -n "$OPT_PLAN_FILE" ]] || fail 'informe --plan=<arquivo.json gerado por structural-plan>'
   [[ -f "$OPT_PLAN_FILE" ]] || fail 'arquivo do plano nao encontrado'
   [[ "$worktree_is_clean" -eq 1 ]] || fail 'checkout nao esta limpo'
   [[ "$current" == "$remote" ]] || fail 'HEAD difere de origin/dev; atualize o checkout na janela'
   [[ "$last_validated_sha" =~ ^[0-9a-f]{40}$ ]] || fail 'baseline validado ausente'
-  git merge-base --is-ancestor "$last_validated_sha" "$current" \
-    || fail 'baseline validado nao e ancestral de HEAD'
+  git merge-base --is-ancestor "$last_validated_sha" "$current" ||
+    fail 'baseline validado nao e ancestral de HEAD'
 
-  plan_check="$(python3 -I - "$OPT_PLAN_FILE" "$last_validated_sha" "$current" <<'PY'
+  plan_check="$(
+    python3 -I - "$OPT_PLAN_FILE" "$last_validated_sha" "$current" <<'PY'
 import json, sys
 path, base, target = sys.argv[1], sys.argv[2], sys.argv[3]
 try:
@@ -687,7 +682,7 @@ if errors:
     print("err|" + "; ".join(errors)); raise SystemExit(0)
 print("ok|" + str(plan.get("risk")))
 PY
-)"
+  )"
   [[ "$plan_check" == ok\|* ]] || fail "${plan_check#err|}"
   plan_risk="${plan_check#ok|}"
 
@@ -718,9 +713,9 @@ PY
   "summary": "Janela ainda nao concluida: updatedb=$updb_pending_count, deploy_hooks=$deploy_pending_count, config_drift=$config_drift_count.",
   "drift_summary": $DRUSH_SUMMARY_JSON,
   "gates": [
-    {"id": "updatedb-clean", "result": "$( [[ "$updb_pending_count" -eq 0 ]] && printf PASS || printf FAIL )", "reason": "$updb_pending_count update(s)"},
-    {"id": "deploy-hooks-clean", "result": "$( [[ "$deploy_pending_count" -eq 0 ]] && printf PASS || printf FAIL )", "reason": "$deploy_pending_count hook(s)"},
-    {"id": "config-drift-clean", "result": "$( [[ "$config_drift_count" -eq 0 ]] && printf PASS || printf FAIL )", "reason": "$config_drift_count item(ns)"}
+    {"id": "updatedb-clean", "result": "$([[ "$updb_pending_count" -eq 0 ]] && printf PASS || printf FAIL)", "reason": "$updb_pending_count update(s)"},
+    {"id": "deploy-hooks-clean", "result": "$([[ "$deploy_pending_count" -eq 0 ]] && printf PASS || printf FAIL)", "reason": "$deploy_pending_count hook(s)"},
+    {"id": "config-drift-clean", "result": "$([[ "$config_drift_count" -eq 0 ]] && printf PASS || printf FAIL)", "reason": "$config_drift_count item(ns)"}
   ],
   "writes": ["var/runtime-sync/state.json", "var/runtime-sync/latest.json"]
 }
@@ -757,8 +752,8 @@ EOF
   updb_after="$(printf '%s' "$DRUSH_SUMMARY_JSON" | python3 -c 'import json,sys; print(json.load(sys.stdin)["updatedb_pending_count"])')"
   deploy_after="$(printf '%s' "$DRUSH_SUMMARY_JSON" | python3 -c 'import json,sys; print(json.load(sys.stdin)["deploy_hook_pending_count"])')"
   drift_after="$(printf '%s' "$DRUSH_SUMMARY_JSON" | python3 -c 'import json,sys; print(json.load(sys.stdin)["config_drift_count"])')"
-  [[ "$updb_after" -eq 0 && "$deploy_after" -eq 0 && "$drift_after" -eq 0 ]] \
-    || fail "pendencias surgiram apos drush cr: updatedb=$updb_after deploy=$deploy_after drift=$drift_after"
+  [[ "$updb_after" -eq 0 && "$deploy_after" -eq 0 && "$drift_after" -eq 0 ]] ||
+    fail "pendencias surgiram apos drush cr: updatedb=$updb_after deploy=$deploy_after drift=$drift_after"
 
   cat >"$tmp_dir/structural-complete-run.json" <<EOF
 {
@@ -811,7 +806,6 @@ if [[ "$mode" == "doctor" ]]; then
 
   drush_gate="DEFERRED"
   drush_reason="Drush nao inspecionado ou ambiente sem variaveis/conexao"
-  DRUSH_OK=0
   DRUSH_SUMMARY_JSON=""
   DRUSH_ACTUAL_DB=""
 
@@ -821,7 +815,7 @@ if [[ "$mode" == "doctor" ]]; then
   elif [[ -n "${ACULTA_SYNC_EXPECTED_HOST:-}" && "$(hostname -s)" != "$ACULTA_SYNC_EXPECTED_HOST" ]]; then
     drush_gate="FAIL"
     drush_reason="Host nao corresponde ao declarado em ACULTA_SYNC_EXPECTED_HOST"
-  elif [[ -n "${ACULTA_SYNC_URI:-}" ]] && ( [[ "$ACULTA_SYNC_URI" =~ \.aculta\.org(/|$|:) || "$ACULTA_SYNC_URI" =~ ^https://aculta\.org(/|$|:) ]] ); then
+  elif [[ -n "${ACULTA_SYNC_URI:-}" ]] && ([[ "$ACULTA_SYNC_URI" =~ \.aculta\.org(/|$|:) || "$ACULTA_SYNC_URI" =~ ^https://aculta\.org(/|$|:) ]]); then
     drush_gate="FAIL"
     drush_reason="ACULTA_SYNC_URI aponta para dominio de producao (.aculta.org)"
   else
@@ -852,7 +846,6 @@ if [[ "$mode" == "doctor" ]]; then
             --deploy-rc "$dep_rc" --deploy-file "$tmp_dir/dep.out")"
           parsed_ok="$(printf '%s' "$DRUSH_SUMMARY_JSON" | python3 -c 'import json,sys; print("1" if json.load(sys.stdin)["ok"] else "0")')"
           if [[ "$parsed_ok" == "1" ]]; then
-            DRUSH_OK=1
             drush_gate="PASS"
             drush_reason="Drush operacional e banco conectado"
           else
@@ -869,7 +862,8 @@ if [[ "$mode" == "doctor" ]]; then
 
   printf '%s' "$DRUSH_SUMMARY_JSON" >"$tmp_dir/doctor-drush.json"
   [[ -s "$tmp_dir/doctor-drush.json" ]] || printf '{}' >"$tmp_dir/doctor-drush.json"
-  doctor_json="$(python3 - "$run_id" "$run_timestamp" "$remote" "$current" "$last_validated_sha" "$last_cache_success_sha" "$worktree_is_clean" "$lock_busy" "$drush_gate" "$drush_reason" "$delta_json" "$tmp_dir/doctor-drush.json" <<'PY'
+  doctor_json="$(
+    python3 - "$run_id" "$run_timestamp" "$remote" "$current" "$last_validated_sha" "$last_cache_success_sha" "$worktree_is_clean" "$lock_busy" "$drush_gate" "$drush_reason" "$delta_json" "$tmp_dir/doctor-drush.json" <<'PY'
 import json, sys
 run_id, ts, rem, cur, last_val, last_cache, clean, lock_busy, d_gate, d_reason, delta_raw, drush_file = sys.argv[1:13]
 delta = json.loads(delta_raw)
@@ -921,7 +915,7 @@ out = {
 }
 print(json.dumps(out, indent=2, ensure_ascii=True))
 PY
-)"
+  )"
   if [[ "$FORMAT_JSON" -eq 1 ]]; then
     printf '%s\n' "$doctor_json"
   else
@@ -960,13 +954,13 @@ if [[ "$mode" == "verify" ]]; then
   "remote_sha": "$remote",
   "checkout_sha": "$current",
   "last_validated_sha": "$last_validated_sha",
-  "new_last_validated_sha": "$( [[ "$verify_outcome" == "VALIDATED" ]] && printf '%s' "$current" || printf 'UNKNOWN' )",
+  "new_last_validated_sha": "$([[ "$verify_outcome" == "VALIDATED" ]] && printf '%s' "$current" || printf 'UNKNOWN')",
   "risk": "$delta_risk",
   "summary": "Verificacao concluida com resultado $verify_outcome.",
   "drift_summary": $DRUSH_SUMMARY_JSON,
   "gates": [
-    {"id": "git-sha-match", "result": "$( [[ "$current" == "$remote" ]] && printf PASS || printf FAIL )", "reason": "HEAD == origin/dev"},
-    {"id": "cache-validated-for-sha", "result": "$( [[ "$last_cache_success_sha" == "$current" ]] && printf PASS || printf FAIL )", "reason": "last_cache_success_sha=$last_cache_success_sha"},
+    {"id": "git-sha-match", "result": "$([[ "$current" == "$remote" ]] && printf PASS || printf FAIL)", "reason": "HEAD == origin/dev"},
+    {"id": "cache-validated-for-sha", "result": "$([[ "$last_cache_success_sha" == "$current" ]] && printf PASS || printf FAIL)", "reason": "last_cache_success_sha=$last_cache_success_sha"},
     {"id": "drush-status", "result": "PASS", "reason": "Banco e bootstrap verificados"}
   ],
   "writes": ["var/runtime-sync/state.json", "var/runtime-sync/latest.json"]
@@ -1004,7 +998,6 @@ state_status="$(printf '%s' "$state_wrapper" | python3 -c 'import json,sys; d=js
 [[ "$state_status" != "CORRUPT" ]] || fail 'estado persistente corrompido detectado apos lock'
 last_validated_sha="$(printf '%s' "$state_wrapper" | python3 -c 'import json,sys; d=json.load(sys.stdin); print(d["state"].get("last_validated_sha") or "UNKNOWN")')"
 last_cache_success_sha="$(printf '%s' "$state_wrapper" | python3 -c 'import json,sys; d=json.load(sys.stdin); print(d["state"].get("last_cache_success_sha") or "UNKNOWN")')"
-last_code_sync_sha="$(printf '%s' "$state_wrapper" | python3 -c 'import json,sys; d=json.load(sys.stdin); print(d["state"].get("last_code_sync_sha") or "UNKNOWN")')"
 
 # Verificar se ha updates de banco ou deploy hooks pendentes no Runtime antes de prosseguir
 updb_pending_count="$(printf '%s' "$DRUSH_SUMMARY_JSON" | python3 -c 'import json,sys; print(json.load(sys.stdin)["updatedb_pending_count"])')"
@@ -1120,10 +1113,8 @@ EOF
 fi
 
 # Executar fast-forward se o checkout ainda estiver atras de target
-did_ff=0
 if [[ "$current" != "$target" ]]; then
   git merge --ff-only "$target" || fail 'fast-forward falhou; nenhuma limpeza automatica'
-  did_ff=1
   PARTIAL_AFTER_FF="PARTIAL"
 fi
 
@@ -1269,7 +1260,7 @@ cat >"$tmp_dir/success-run.json" <<EOF
   "gates": [
     {"id": "worktree-clean", "result": "PASS", "reason": "Worktree limpo antes e depois"},
     {"id": "risk-allow-sync-code", "result": "PASS", "reason": "Delta classificado como $delta_risk"},
-    {"id": "drush-cache-rebuild", "result": "$( [[ "$need_cr" -eq 1 ]] && printf PASS || printf SKIP )", "reason": "$( [[ "$need_cr" -eq 1 ]] && printf 'drush cr executado com sucesso' || printf '%s' "$cr_skip_reason" )"},
+    {"id": "drush-cache-rebuild", "result": "$([[ "$need_cr" -eq 1 ]] && printf PASS || printf SKIP)", "reason": "$([[ "$need_cr" -eq 1 ]] && printf 'drush cr executado com sucesso' || printf '%s' "$cr_skip_reason")"},
     {"id": "post-drush-checks", "result": "PASS", "reason": "updatedb:status e config:status pos-sync conferidos"}
   ],
   "writes": ["var/runtime-sync/state.json", "var/runtime-sync/latest.json"]
