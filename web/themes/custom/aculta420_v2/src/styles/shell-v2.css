@@ -19,8 +19,6 @@
 .page-shell-v2__contextual {
   display: grid;
   grid-area: contextual;
-  justify-content: start;
-  justify-items: start;
   gap: var(--spacing-sm);
   min-inline-size: 0;
 }
