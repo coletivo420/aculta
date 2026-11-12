@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_forum\Kernel;
 
 use Drupal\aculta_forum\Context\Provider\LmsDiscussionContextProvider;
+use Drupal\aculta_image\ImageCatalog;
+use Drupal\aculta_image\ImageRenderer;
 use Drupal\comment\CommentingStatus;
 use Drupal\comment\Entity\CommentType;
 use Drupal\Core\Entity\EntityInterface;
@@ -23,6 +25,9 @@ use Drupal\user\Entity\User;
 use PHPUnit\Framework\Attributes\Group as TestGroup;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Symfony\Component\Yaml\Yaml;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Definition;
+use Symfony\Component\DependencyInjection\Reference;
 
 /**
  * Proves the LMS discussion context fails closed outside its exact Group.
@@ -71,6 +76,25 @@ final class LmsDiscussionContextIsolationKernelTest extends KernelTestBase {
    * The provider under test.
    */
   private LmsDiscussionContextProvider $provider;
+
+  /**
+   * {@inheritdoc}
+   */
+  public function register(ContainerBuilder $container): void {
+    parent::register($container);
+    $this->registerLmsDependencyServices($container);
+    $container->setDefinition(
+      'aculta_image.catalog',
+      (new Definition(ImageCatalog::class))->setPublic(TRUE),
+    );
+    $container->setDefinition(
+      'aculta_image.render',
+      (new Definition(ImageRenderer::class, [
+        new Reference('aculta_image.catalog'),
+        new Reference('entity_type.manager'),
+      ]))->setPublic(TRUE),
+    );
+  }
 
   /**
    * {@inheritdoc}
