@@ -479,3 +479,18 @@ sincronizador Runtime está bloqueado por RX e drift de configuração.
 - `runtime-sync.sh doctor --format=json` não conseguiu confirmar `origin/dev`;
   sincronização, `drush cr` e matriz visual seguem pendentes. Não declarar
   homologação até executar essas verificações no Runtime atualizado.
+
+### Continuação — escopo SDC (2026-11-13)
+
+- Drupal Core injeta a biblioteca declarada pelo componente SDC ao compilar e
+  renderizar seu template (`ComponentNodeVisitor` chama `attach_library()`;
+  `ComponentPluginManager` monta a biblioteca a partir dos assets do manifesto).
+- `surface-panel.css` só possui emissores no template `surface-panel`; não há
+  emissor PHP/Twig externo nem opção UI Styles que aplique essas classes. A folha
+  foi retirada de `global-styling`, permanecendo declarada no manifesto SDC.
+- `validate-aculta420-css-scope.php`: PASS (183 checks); `SurfaceSdcComponentsTest`:
+  PASS (4 testes/46 assertions). `global-styling` caiu de 58.770 para 52.919
+  bytes locais (−5.851 bytes); 11 folhas locais. O inventário total permanece
+  145 folhas/413.888 bytes porque o asset segue no repositório e é anexado por
+  componente. Audit, classify, verify, testes PurgeCSS, Stylelint e gates SDC/
+  classes mapeadas passaram. Runtime visual ainda não homologado.

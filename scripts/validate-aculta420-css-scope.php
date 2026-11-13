@@ -31,6 +31,9 @@ $assert = static function (bool $condition, string $message) use (&$failures, &$
 
 $libraries = Yaml::parseFile($theme . '/aculta420_v2.libraries.yml');
 $global = array_keys($libraries['global-styling']['css']['theme'] ?? []);
+$surfacePanelComponent = (string) file_get_contents($theme . '/components/surface-panel/surface-panel.component.yml');
+$assert(!in_array('components/surface-panel/surface-panel.css', $global, TRUE), 'surface-panel.css voltou ao global-styling.');
+$assert(str_contains($surfacePanelComponent, 'surface-panel.css'), 'O SDC surface-panel deixou de declarar seu CSS próprio.');
 $portalExtrasPath = $theme . '/src/styles/portal-ui-extras.css';
 $portalExtrasCss = is_file($portalExtrasPath) ? (string) file_get_contents($portalExtrasPath) : '';
 $addressFieldsCss = (string) file_get_contents($theme . '/src/styles/address-fields.css');

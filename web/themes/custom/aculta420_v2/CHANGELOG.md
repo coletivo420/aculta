@@ -1786,4 +1786,7 @@ State: Dev. No RC, production deployment, or release tag is declared.
   que o Twig do SDC `account-experience-dashboard` já imprime.
 - O carrossel da Conta agora declara seu JavaScript e dependências no asset do
   SDC `account-experience-dashboard`; removida a anexação a biblioteca ausente.
+- `surface-panel.css` saiu de `global-styling`: seus emissores são somente o
+  template SDC `surface-panel`, que declara e anexa o asset ao renderizar. O
+  gate de escopo verifica a declaração local e a ausência da folha global.
 
