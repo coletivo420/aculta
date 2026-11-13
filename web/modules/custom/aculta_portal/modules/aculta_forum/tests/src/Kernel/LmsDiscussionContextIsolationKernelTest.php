@@ -152,18 +152,7 @@ final class LmsDiscussionContextIsolationKernelTest extends KernelTestBase {
         ->setData($data)
         ->save();
     }
-    $this->installConfig(['system', 'user', 'node', 'comment', 'image', 'media', 'media_library', 'photoswipe', 'media_gallery', 'aculta_lms']);
-    $this->container->get('entity_field.manager')->clearCachedFieldDefinitions();
-    $this->container->get('group_relation_type.manager')->clearCachedPluginMaps();
-
-    $this->installConfig(['group']);
-    foreach ([
-      'field.field.group_relationship.lms_course-group_membership.group_roles',
-      'field.field.group_relationship.lms_class-group_membership.group_roles',
-    ] as $config_id) {
-      FieldConfig::create(Yaml::parseFile(dirname(__DIR__, 9) . '/config/sync/' . $config_id . '.yml'))->save();
-    }
-
+    $this->installConfig(['system', 'user', 'node', 'comment', 'image', 'media', 'media_library', 'photoswipe', 'media_gallery']);
     CommentType::create([
       'id' => 'aculta_discussion_post',
       'label' => 'Discussion post',
@@ -185,6 +174,18 @@ final class LmsDiscussionContextIsolationKernelTest extends KernelTestBase {
       'cardinality' => 1,
       'translatable' => TRUE,
     ])->save();
+    $this->installConfig(['aculta_lms']);
+    $this->container->get('entity_field.manager')->clearCachedFieldDefinitions();
+    $this->container->get('group_relation_type.manager')->clearCachedPluginMaps();
+
+    $this->installConfig(['group']);
+    foreach ([
+      'field.field.group_relationship.lms_course-group_membership.group_roles',
+      'field.field.group_relationship.lms_class-group_membership.group_roles',
+    ] as $config_id) {
+      FieldConfig::create(Yaml::parseFile(dirname(__DIR__, 9) . '/config/sync/' . $config_id . '.yml'))->save();
+    }
+
     $this->container->get('config.installer')
       ->installDefaultConfig('module', 'aculta_lms');
     self::assertInstanceOf(NodeType::class, NodeType::load('aculta_lms_topic'));
