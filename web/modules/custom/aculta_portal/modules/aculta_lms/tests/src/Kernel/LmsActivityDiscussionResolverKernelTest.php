@@ -173,8 +173,8 @@ final class LmsActivityDiscussionResolverKernelTest extends KernelTestBase {
 
     $build = $resolver->build($activity, $course, $student);
 
-    self::assertCount(1, $build['links']['#items']);
-    self::assertSame('Discussão da atividade', $build['links']['#items'][0]['#title']);
+    self::assertCount(1, $build['#slots']['content']['#items']);
+    self::assertSame('Discussão da atividade', $build['#slots']['content']['#items'][0]['#title']);
     self::assertContains('user.group_permissions', $build['#cache']['contexts']);
     self::assertContains('group_relationship_list:plugin:group_node:aculta_lms_topic', $build['#cache']['tags']);
   }

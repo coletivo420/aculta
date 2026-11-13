@@ -128,6 +128,15 @@ trait AcultaLmsDependencyHarnessTrait {
   protected function prepareAcultaLmsPartialConfigDependencies(): void {
     $this->installConfig(['node', 'media', 'comment']);
 
+    if (!FieldStorageConfig::load('node.body')) {
+      FieldStorageConfig::create([
+        'entity_type' => 'node',
+        'field_name' => 'body',
+        'type' => 'text_with_summary',
+        'cardinality' => 1,
+        'translatable' => TRUE,
+      ])->save();
+    }
     if (!NodeType::load('wiki_entry')) {
       NodeType::create(['type' => 'wiki_entry', 'name' => 'Wiki entry'])->save();
     }

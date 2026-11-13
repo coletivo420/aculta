@@ -58,6 +58,7 @@ final class LmsClassEducatorPermissionKernelTest extends KernelTestBase {
     'key',
     'user',
     'file',
+    'image',
     'media',
     'media_gallery',
     'media_library',

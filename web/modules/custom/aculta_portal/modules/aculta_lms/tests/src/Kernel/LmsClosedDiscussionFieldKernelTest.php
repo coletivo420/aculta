@@ -62,6 +62,7 @@ final class LmsClosedDiscussionFieldKernelTest extends KernelTestBase {
     'aculta_lms',
     'key',
     'file',
+    'image',
     'media',
     'media_gallery',
     'media_library',

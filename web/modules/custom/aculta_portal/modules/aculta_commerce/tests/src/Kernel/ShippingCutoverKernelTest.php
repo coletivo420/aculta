@@ -5,11 +5,14 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_commerce\Kernel;
 
 use Drupal\Core\Entity\Entity\EntityFormDisplay;
+use Drupal\aculta_events\Occurrence\EventDateOccurrences;
 use Drupal\commerce_order\Entity\Order;
 use Drupal\commerce_store\Entity\Store;
 use Drupal\KernelTests\KernelTestBase;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Reference;
 
 /**
  * Cutover do frete: instalação do motor e migração de FlatRate.
@@ -158,6 +161,15 @@ class ShippingCutoverKernelTest extends KernelTestBase {
     'workflows',
     'commerce_shipping',
   ];
+
+  /**
+   * {@inheritdoc}
+   */
+  public function register(ContainerBuilder $container): void {
+    parent::register($container);
+    $container->register('aculta_events.occurrences', EventDateOccurrences::class)
+      ->addArgument(new Reference('entity_type.manager'));
+  }
 
   /**
    * Instala o schema do motor e do contrib.

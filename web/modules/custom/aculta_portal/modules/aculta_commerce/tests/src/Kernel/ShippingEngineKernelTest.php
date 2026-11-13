@@ -10,6 +10,7 @@ use Drupal\aculta_commerce\Plugin\Commerce\CheckoutPane\AcultaShippingInformatio
 use Drupal\aculta_commerce\Shipping\ProposedShipment;
 use Drupal\aculta_commerce\Shipping\ShipmentItem;
 use Drupal\aculta_commerce\Shipping\ShipmentManagerInterface;
+use Drupal\aculta_events\Occurrence\EventDateOccurrences;
 use Drupal\commerce_checkout\Plugin\Commerce\CheckoutFlow\CheckoutFlowWithPanesInterface;
 use Drupal\commerce_order\Entity\Order;
 use Drupal\commerce_order\Entity\OrderItem;
@@ -29,6 +30,8 @@ use Drupal\profile\Entity\Profile;
 use Drupal\profile\Entity\ProfileInterface;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use PHPUnit\Framework\Attributes\Group;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Reference;
 
 /**
  * Validates the ACULTA shipping entity model and rate calculation.
@@ -152,6 +155,15 @@ final class ShippingEngineKernelTest extends KernelTestBase {
     'vvjs',
     'workflows',
   ];
+
+  /**
+   * {@inheritdoc}
+   */
+  public function register(ContainerBuilder $container): void {
+    parent::register($container);
+    $container->register('aculta_events.occurrences', EventDateOccurrences::class)
+      ->addArgument(new Reference('entity_type.manager'));
+  }
 
   /**
    * The shipment manager.
