@@ -1,5 +1,5 @@
 {% set accent_side = accent_side is defined ? accent_side : 'start' %}
-<article{% if theme == 'dark' %} data-theme="dark"{% endif %} class="forum-post-card forum-post-card--author-{{ author_position|default('top') }} forum-post-card--density-{{ density|default('default') }} forum-post-card--stripe-{{ stripe|default('brand') }}{% if accent_side %} forum-post-card--side-{{ accent_side }} forum-post-card--accent-{{ accent_color|default('green') }}{% endif %}">
+<article{% if theme == 'dark' %} data-theme="dark"{% endif %} class="forum-post-card forum-post-card--author-{{ author_position|default('top') }} forum-post-card--density-{{ density|default('default') }}{% if density == 'compact' %} aculta-mobile-frame{% endif %} forum-post-card--stripe-{{ stripe|default('brand') }}{% if accent_side %} forum-post-card--side-{{ accent_side }} forum-post-card--accent-{{ accent_color|default('green') }}{% endif %}">
   <div class="forum-post-card__stripe"></div>
   {% if accent_side %}
     <div class="forum-post-card__side-stripe" aria-hidden="true"></div>

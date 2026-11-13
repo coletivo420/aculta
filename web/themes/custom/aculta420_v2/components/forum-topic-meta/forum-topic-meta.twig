@@ -4,7 +4,7 @@
  * Bloco de interação / meta do tópico: título, status e indicadores.
  */
 #}
-<section{% if theme == 'dark' %} data-theme="dark"{% endif %} class="forum-topic-meta forum-topic-meta--density-{{ density|default('default') }}">
+<section{% if theme == 'dark' %} data-theme="dark"{% endif %} class="forum-topic-meta forum-topic-meta--density-{{ density|default('default') }}{% if density == 'compact' %} aculta-mobile-frame{% endif %}">
   <div class="forum-topic-meta__tricolor" aria-hidden="true">
     <span class="forum-topic-meta__tricolor-segment forum-topic-meta__tricolor-segment--green"></span>
     <span class="forum-topic-meta__tricolor-segment forum-topic-meta__tricolor-segment--yellow"></span>

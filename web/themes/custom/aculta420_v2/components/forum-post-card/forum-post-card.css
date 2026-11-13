@@ -554,7 +554,13 @@
 }
 
 /* Densidade compacta (modelo mobile): menos espaçamento, cabeçalho e rodapé empilhados, ações menores. */
+/* Versão mobile: autoria em cima, corpo embaixo, em uma coluna, também na tela desktop
+   (a grade de duas colunas do @media 48rem não se aplica a ela). */
 .forum-post-card--density-compact .forum-post-card__inner {
+  display: flex;
+  flex-direction: column;
+  grid-template-areas: none;
+  grid-template-columns: none;
   padding: var(--spacing-sm);
   gap: var(--spacing-xs);
 }
@@ -597,11 +603,6 @@
   }
 }
 
-/* Versão mobile: largura de celular, em uma coluna só (não ocupa a largura da biblioteca). */
-.forum-post-card--density-compact {
-  max-inline-size: 26rem;
-  margin-inline: auto;
-}
 
 /* Autoria lateral (author_position: side): corpo à esquerda, autoria em coluna à direita, rodapé na largura toda.
    Só no desktop; no celular o cartão empilha como antes. */
@@ -622,4 +623,15 @@
   }
   .forum-post-card--author-side .forum-post-card__body { grid-area: body; }
   .forum-post-card--author-side .forum-post-card__footer { grid-area: footer; }
+}
+
+/* Versão mobile: autor no topo, à direita, na mesma linha do avatar; avatar menor e proporcional. */
+.forum-post-card--density-compact .forum-post-card__author {
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.forum-post-card--density-compact .forum-author-line {
+  --avatar-size: 2.25rem;
 }

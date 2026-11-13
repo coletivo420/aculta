@@ -1,0 +1,60 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Popup
+status: stable
+description: Janela modal padrão do ACULTA, com faixas tricolores, título, X e área de conteúdo vazia por padrão. Modelo para todos os popups do site (login, publicação e fórum).
+group: Elementos básicos
+libraryOverrides:
+  dependencies:
+    - aculta420_v2/utility-drawers
+props:
+  type: object
+  additionalProperties: false
+  required: [id, title]
+  properties:
+    id:
+      type: string
+      title: ID único do popup
+      pattern: '^[A-Za-z][A-Za-z0-9_-]*$'
+    title:
+      type: string
+      title: Título
+      minLength: 1
+    subtitle:
+      type: [string, 'null']
+      title: Subtítulo (opcional)
+      default: null
+    trigger_label:
+      type: [string, 'null']
+      title: Rótulo do botão que abre o popup (vazio = sem gatilho)
+      default: null
+    trigger_url:
+      type: [string, 'null']
+      title: Destino do gatilho sem JavaScript
+      default: null
+      format: uri-reference
+    header_variant:
+      type: string
+      title: Apresentação do cabeçalho
+      enum: [neutral, institutional]
+      default: neutral
+    show_accent_stripes:
+      type: boolean
+      title: Mostrar as faixas tricolores
+      default: true
+    close_label:
+      type: string
+      title: Rótulo acessível do botão de fechar
+      default: Fechar
+    attributes:
+      type: 'Drupal\Core\Template\Attribute'
+      title: Atributos HTML do diálogo
+    close_attributes:
+      type: 'Drupal\Core\Template\Attribute'
+      title: Atributos HTML do botão de fechar
+slots:
+  content:
+    title: Conteúdo
+    description: Conteúdo do popup, fornecido pelo módulo proprietário. Vazio por padrão.
+  footer:
+    title: Rodapé
+    description: Ações ou links do rodapé, opcionais.

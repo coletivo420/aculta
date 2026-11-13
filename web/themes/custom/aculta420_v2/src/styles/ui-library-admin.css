@@ -248,4 +248,5 @@ main:has(.ui_patterns_component) {
 #aculta-components-container[data-viewport="mobile"] .aculta-component-library__group-wrapper,
 #aculta-components-container[data-viewport="mobile"] .aculta-component-library__full-grid {
   display: block;
+  column-count: 1;
 }

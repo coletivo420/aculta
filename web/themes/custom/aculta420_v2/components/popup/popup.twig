@@ -1,0 +1,54 @@
+{#
+/**
+ * @file
+ * Popup padrão do ACULTA: casca do Diálogo de Autenticação (faixas, título, X).
+ * Abre pelo gatilho opcional (trigger_label) ou por qualquer link/botão com
+ * aria-controls apontando para o id. Atributos extras (data-*) vão no <dialog>
+ * pela prop attributes; atributos do botão X vão por close_attributes.
+ */
+#}
+{% if trigger_label %}
+  {{ include('aculta420_v2:button', {
+    text: trigger_label,
+    url: trigger_url|default('#' ~ id),
+    variant: 'secondary',
+    attributes: create_attribute({
+      class: ['aculta-dialog__trigger'],
+      'aria-controls': id,
+      'aria-expanded': 'false',
+      'aria-haspopup': 'dialog',
+      'data-aculta-dialog-trigger': '',
+    }),
+  }, with_context = false) }}
+{% endif %}
+
+<dialog{{ attributes.addClass(['aculta-popup', 'aculta-popup--' ~ (header_variant|default('neutral'))]) }} id="{{ id }}" aria-labelledby="{{ id }}-title" aria-modal="true" tabindex="-1" data-aculta-utility-drawer>
+  <div class="aculta-popup__surface">
+    <header class="aculta-popup__header">
+      {% if show_accent_stripes|default(true) %}
+        <div class="aculta-popup__stripes" aria-hidden="true">
+          <span class="aculta-popup__stripe aculta-popup__stripe--green"></span>
+          <span class="aculta-popup__stripe aculta-popup__stripe--yellow"></span>
+          <span class="aculta-popup__stripe aculta-popup__stripe--red"></span>
+        </div>
+      {% endif %}
+      <div class="aculta-popup__header-main">
+        <div class="aculta-popup__titles">
+          <h2 class="aculta-popup__title" id="{{ id }}-title">{{ title }}</h2>
+          {% if subtitle %}
+            <p class="aculta-popup__subtitle">{{ subtitle }}</p>
+          {% endif %}
+        </div>
+        <button type="button" class="aculta-popup__close" data-aculta-dialog-close aria-label="{{ close_label|default('Fechar') }}"{{ close_attributes }}>
+          {{ include('aculta420_v2:icon', { name: 'x', variant: 'duotone', size: 'md' }, with_context = false) }}
+        </button>
+      </div>
+    </header>
+    <div class="aculta-popup__body">
+      {{ content }}
+      {% if footer %}
+        <footer class="aculta-popup__footer">{{ footer }}</footer>
+      {% endif %}
+    </div>
+  </div>
+</dialog>

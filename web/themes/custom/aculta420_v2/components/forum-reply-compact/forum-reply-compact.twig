@@ -5,7 +5,7 @@
  * Faixa tricolor no topo (cores do tema) e faixa verde à esquerda.
  */
 #}
-<article{% if theme == 'dark' %} data-theme="dark"{% endif %} class="forum-reply-compact forum-reply-compact--density-{{ density|default('default') }}{% if reacted %} is-reacted{% endif %}{% if accent_side == 'end' %} forum-reply-compact--side-end{% endif %}">
+<article{% if theme == 'dark' %} data-theme="dark"{% endif %} class="forum-reply-compact forum-reply-compact--density-{{ density|default('default') }}{% if density == 'compact' %} aculta-mobile-frame{% endif %}{% if reacted %} is-reacted{% endif %}{% if accent_side == 'end' %} forum-reply-compact--side-end{% endif %}">
   <div class="forum-reply-compact__tricolor" aria-hidden="true">
     <span class="forum-reply-compact__tricolor-segment forum-reply-compact__tricolor-segment--green"></span>
     <span class="forum-reply-compact__tricolor-segment forum-reply-compact__tricolor-segment--yellow"></span>

@@ -119,6 +119,8 @@ global-styling:
       src/styles/tokens.css: {}
       src/styles/base.css: {}
       src/styles/layout.css: {}
+      src/styles/mobile-frame.css: {}
+      components/avatar/avatar.css: {}
       src/styles/buttons.css: {}
       components/button/button.css: {}
       components/surface/surface.css: {}

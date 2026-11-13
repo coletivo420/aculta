@@ -1,0 +1,9 @@
+name: Popup institucional
+description: Mesmo popup, com cabeçalho verde institucional e subtítulo.
+props:
+  id: popup-institucional
+  title: Título institucional
+  subtitle: Subtítulo explicativo do popup
+  header_variant: institutional
+  trigger_label: Abrir popup institucional
+  trigger_url: '#popup-institucional'
