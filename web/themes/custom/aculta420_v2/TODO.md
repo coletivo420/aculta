@@ -1,25 +1,20 @@
 # TODO — aculta420_v2
 
-Estado: Dev · versão 1.5.0 (`aculta420_v2.info.yml`) · status: `docs/operations/status/aculta420_v2.yml`. ADR-054/055 seguem abertas.
+Estado: Dev · versão 1.5.0 (`aculta420_v2.info.yml`) · ADR-056 aceita; plano de corte legado passa primeiro pela reconciliação da documentação com o checkout.
 
 ## Próximo passo
 
-- Studio Conta: validar no Runtime a composição direta dos quatro SDCs, slots de avatar/link, dados vazios e autenticados, cache e stories da UI Patterns Library; conferir o modificador do `layout-page` em claro/escuro e mobile/desktop.
-- Catálogo `eventos_publicos`: configuração de UI Patterns Views e corte do template/CSS legado presentes no código; validar renderização do SDC `layout-grid` e aceite visual responsivo no Runtime.
-- Link do aviso Mercado Pago agora valida HTTPS/host e usa `link()` do Drupal; CI pendente.
-- **Superfícies 2026-11-12:** canvas branco e tom green-soft por padrão nos três SDCs; raised neutro. Rodar gates, UI Library, dez domínios, acessibilidade e aceite visual real antes de declarar homologado. Ver docs/architecture/ACULTA420-V2-HOMOLOGACAO-SUPERFICIES-2026-11-12.md.
-
-- **US/RN:** layouts 22 configs/gate 276; Skins 300/300 em dez domínios, cinco larguras e dois modos, contraste ≥7,16:1 e sem overflow. Pendem cache, zoom 200%, teclado, perfis, tecnologia assistiva e aceite humano. UI Patterns Views parcial; Wiki 247/247 e Loja 10/10.
-- Composer: Skins ^1.2 e Icons ^2.1; Field Group `BLOCKED_UPSTREAM` (Core 12). UI Styles CKEditor 5/Entity Status ativos; Patterns CKEditor 5 sem uso; Picker ativo, validação parcial.
-- Inventário: atualizar gerador após cada microfase; SDC `layout-grid` inclui `max_columns`. Manter componentes descobertos por UI Patterns Library.
-- Biblioteca: o checkout tem 127 manifests SDC e 188 stories; reconstruir cache no Runtime e confirmar `event-page-layout` no seletor de layouts. `sales-panel` e `secret-reveal` ainda não têm story.
-- CSP (2026-11-11): zero violações `style-src` nas rotas públicas válidas testadas; nonce UI Skins, estilos HTMX externos e modal sem atributo inline. Autenticado DEFERRED: UID 205 ausente no Runtime.
-- CSP: zero violações públicas de `style-src`; sessão autenticada DEFERRED no Runtime.
+- **P0 — documentação:** concluir o cruzamento de `architecture.md`, `components.md`, `gates.md`, `ui-styles.md`, `layouts-plan.md` e ADR-054/055 com código, Config Sync e Composer. A primeira passada corrigiu contagens, shell, UI Styles e usos obsoletos de Evento/FAQ; a matriz completa permanece pendente.
+- **P1 — SDC/Library:** 136 manifests e 216 stories; todos os SDCs têm story. Props de topo têm título e slots têm título/descrição, com gate. Permanecem 440 descrições específicas e auditoria semântica de defaults, variantes, includes e escaping. Duas props de links agora usam o prop type oficial; restam 22 props `unknown` em 13 SDCs, classificadas na ADR-056. Confirmar dados editoriais persistidos no Runtime e seletor de `event-page-layout`.
+- **P2/P3 — integrações e corte:** mapear consumidores dos 136 SDCs e tentar remover todos os 19 templates Twig, um por vez, com substituição funcional comprovada. O bloco de próximos eventos agora renderiza `aculta420_v2:events-upcoming-block` diretamente e deixou de usar o `#theme`/Twig customizado do módulo; falta homologar a saída no Runtime. Migrar o presenter de reações com revisão R2. Preservar acesso, cache, traduções, attachments, rotas e Form API.
+- **P4 — homologação:** depois dos lotes, validar consumidores reais, estado público/autenticado, cache-hit, claro/escuro, teclado e larguras. Runtime Sync depende de preflight liberado.
+- Link do aviso Mercado Pago: validar no CI o contrato Twig de HTTPS/host oficial e `link()`.
+- UI Skins e superfícies: aceite visual humano continua pendente apesar dos gates e capturas técnicas já registrados; ver documentos de homologação vinculados no roadmap.
 
 ## Marcos e pendências
 
-- SDC/Library: catálogo admin 84 SDCs; Drawer Claro fora da viewport a 320; zoom e teclado pendentes.
-- Pendentes: completar inventário das dez áreas e interfaces administrativas; P8/P9, cache isolation/hit, contraste, zoom, teclado/perfis, rollback e aceite amplo.
+- UI Patterns Library: 136 manifests/216 stories no checkout; Runtime ainda não revalidado. Todos os SDCs são descobertos pelo provider e têm stories. `aculta_ui_library` será removido por completo após desinstalação estrutural; a configuração Sync já deixou de habilitá-lo.
+- Pendem cruzamento completo de consumidores dos SDCs, tentativa de remoção dos templates, cache/configuração ativa e aceite visual/acessível por domínio.
 
 ## Leitura e entrega
 

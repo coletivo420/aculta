@@ -1,0 +1,6 @@
+name: Orientação complementar
+description: Nota secundária abaixo de um campo de formulário.
+props:
+  tone: muted
+slots:
+  content: A busca considera somente conteúdo público.

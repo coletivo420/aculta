@@ -188,8 +188,6 @@ final class PortalUiHooks {
     'event-supporters-list' => ['sponsor-logos-list'],
     'events-admin-overview' => ['aculta-events-admin-overview'],
     'events-organization-admin-overview' => ['aculta-events-organization-admin-overview'],
-    'events-upcoming-block' => ['aculta-events-upcoming-block__list'],
-    'events-upcoming-link' => ['aculta-events-upcoming-block__link'],
     'fiscal-identity-other-data' => ['aculta-fiscal-identity-other-data'],
     'forum-category-count' => ['aculta-forum-category__count'],
     'forum-report-pager' => ['aculta-pager'],

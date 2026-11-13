@@ -5,9 +5,8 @@
  * Enforces the ACULTA420 V2 SDC and UI Patterns Library contract.
  *
  * Every SDC must have its own Twig template and at least one UI Patterns
- * story. Three storyless components are grandfathered as explicit ADR-056
- * debt; no new exception is allowed. The ACULTA compatibility module may only
- * redirect to UI Patterns Library and may not catalog or render blocks.
+ * story. The official UI Patterns Library is the only component catalog; the
+ * custom ACULTA module is scheduled for complete removal.
  *
  * Usage: `php scripts/validate-aculta420-sdc-library-contract.php`.
  */
@@ -20,15 +19,6 @@ $moduleRoot = $root . '/web/modules/custom/aculta_portal/modules/aculta_ui_libra
 $errors = [];
 $componentCount = 0;
 $storyCount = 0;
-
-// These pre-existing storyless SDCs remain pending the ADR-056 consumer audit.
-// If any is removed or receives a story, remove it from this debt allowlist.
-$storylessDebt = [
-  'hint',
-  'sales-panel',
-  'secret-reveal',
-];
-$storylessFound = [];
 
 if (!is_dir($componentsRoot)) {
   fwrite(STDERR, "FAIL: diretório de componentes SDC não encontrado.\n");
@@ -60,10 +50,7 @@ foreach ($iterator as $file) {
   $stories = glob($directory . '/' . $name . '.*.story.yml') ?: [];
   $storyCount += count($stories);
   if ($stories === []) {
-    $storylessFound[] = $name;
-    if (!in_array($name, $storylessDebt, TRUE)) {
-      $errors[] = "SDC novo ou não autorizado sem story: {$name}.";
-    }
+    $errors[] = "SDC sem story na UI Patterns Library: {$name}.";
   }
 
   foreach (glob($directory . '/*.story.yml') ?: [] as $story) {
@@ -87,13 +74,6 @@ foreach (new RecursiveIteratorIterator(
   if (!str_starts_with($file->getFilename(), $name . '.')) {
     $errors[] = "Nome de story não corresponde ao SDC {$name}: {$file->getPathname()}.";
   }
-}
-
-sort($storylessFound);
-$expectedDebt = $storylessDebt;
-sort($expectedDebt);
-if ($storylessFound !== $expectedDebt) {
-  $errors[] = 'A lista explícita de SDCs sem story não corresponde à dívida existente; atualize o allowlist após corrigir ou remover componentes.';
 }
 
 // Component directories containing top-level Twig templates must be SDCs.
@@ -173,8 +153,7 @@ if ($errors !== []) {
 }
 
 printf(
-  "PASS — validate-aculta420-sdc-library-contract (%d SDCs, %d stories; %d exceções storyless existentes; catálogo oficial único)\n",
+  "PASS — validate-aculta420-sdc-library-contract (%d SDCs, %d stories; todos com story; catálogo oficial único)\n",
   $componentCount,
   $storyCount,
-  count($storylessFound),
 );

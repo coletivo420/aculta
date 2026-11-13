@@ -492,10 +492,17 @@ foreach (glob($sync . '/block.block.*.yml') ?: [] as $path) {
     array_keys($block['visibility'] ?? []),
     array_values($block['visibility'] ?? []),
   ));
+  $isUpcomingEventsSdcBlock = FALSE;
+  if ($pluginId === 'aculta_events_upcoming') {
+    $upcomingEventsBlockPath = $customModules . '/aculta_portal/modules/aculta_events/src/Plugin/Block/UpcomingEventsBlock.php';
+    $upcomingEventsBlockSource = is_file($upcomingEventsBlockPath)
+      ? (string) file_get_contents($upcomingEventsBlockPath)
+      : '';
+    $isUpcomingEventsSdcBlock = str_contains($upcomingEventsBlockSource, "'#component' => 'aculta420_v2:events-upcoming-block'");
+  }
   $isDonationSdcPlacement = in_array($pluginId, [
     'aculta_donation_quick',
     'aculta_donation_donate',
-    'aculta_events_upcoming',
     'aculta_institution_bar',
   ], TRUE);
   $isNativeBlockPlacement = str_starts_with($pluginId, 'system_')
@@ -513,21 +520,27 @@ foreach (glob($sync . '/block.block.*.yml') ?: [] as $path) {
     'row_plugin' => '',
     'style_plugin' => $blockUiStylesVerified ? 'ui_styles_block' : ($viewStyleVerified ? 'ui_patterns_views' : ''),
     'ui_patterns_configured' => $blockUiStylesVerified ? implode(',', $selectedStyles) : ($viewStyleVerified ? 'style:' . ($runtimeViewDisplay['style_component'] ?? $runtimeViewDisplay['row_component'] ?? $runtimeViewDisplay['display_component']) : 'no_ui_styles_selection'),
-    'status' => ($runtimeVerified || $isDonationSdcPlacement) ? 'UI_SUITE_NATIVE' : ($isNativeBlockPlacement ? 'FUNCTIONAL_NATIVE_EXCEPTION' : 'MIGRATION_IN_PROGRESS'),
+    'status' => ($runtimeVerified || $isDonationSdcPlacement || $isUpcomingEventsSdcBlock) ? 'UI_SUITE_NATIVE' : ($isNativeBlockPlacement ? 'FUNCTIONAL_NATIVE_EXCEPTION' : 'MIGRATION_IN_PROGRESS'),
     'replacement_or_action' => $runtimeVerified
       ? ($blockUiStylesVerified
         ? 'UI Styles Block applies existing ACULTA surface and spacing styles on the MAIN transparency block; preserve native Views output and block visibility'
         : 'View display applies its UI Patterns SDC to native row render arrays; preserve this block placement and its visibility/access/cache configuration')
-      : ($isNativeBlockPlacement
+      : ($isUpcomingEventsSdcBlock
+        ? 'UpcomingEventsBlock builds the events-upcoming-block SDC render element; Drupal block label remains the visible heading; event selection, canonical URLs, cache metadata and visibility stay in their owners'
+        : ($isNativeBlockPlacement
         ? 'Native Core, content or Views block placement; presentation is owned by the block plugin, View or view mode. Preserve plugin data, visibility, access and cache'
-        : 'Inspect rendered output and map the block to existing SDC/UI Styles integrations; preserve plugin data, visibility, access and cache'),
+        : 'Inspect rendered output and map the block to existing SDC/UI Styles integrations; preserve plugin data, visibility, access and cache')),
     'risk_or_evidence_gap' => $runtimeVerified
       ? ($blockUiStylesVerified
         ? 'Anonymous Runtime and Firefox verified at 320/390/768/1024/1440 in light/dark with keyboard focus; cache-hit and zoom 200% remain open'
         : 'Anonymous View output and Firefox verified at 320/390/768/1024/1440 in light/dark with visible H1/main and focus; cache-hit and zoom 200% remain open')
-      : 'Runtime output, domain/path visibility, cache and visual replacement remain unverified; config visibility: ' . $visibility,
+      : ($isUpcomingEventsSdcBlock
+        ? 'Source now renders the existing SDC and retains user/url.site contexts, event-list/date-list tags and 900-second max-age; Runtime output/cache/access and browser appearance remain unobserved; config visibility: ' . $visibility
+        : 'Runtime output, domain/path visibility, cache and visual replacement remain unverified; config visibility: ' . $visibility),
     'rollback' => 'Restore only this block configuration; no content data changes',
-    'detected_consumers' => $pluginId,
+    'detected_consumers' => $isUpcomingEventsSdcBlock
+      ? 'UpcomingEventsBlock::build() -> aculta420_v2:events-upcoming-block; block visibility retained'
+      : $pluginId,
     'runtime_status' => $runtimeVerified
       ? ($blockUiStylesVerified
         ? 'active; ' . ($runtimeBlock['region'] ?? 'region unknown') . '; ' . ($runtimeBlock['row_count'] ?? 'unknown') . ' rows; anonymous access; ' . ($runtimeBlock['evidence_manifest'] ?? 'browser evidence recorded')

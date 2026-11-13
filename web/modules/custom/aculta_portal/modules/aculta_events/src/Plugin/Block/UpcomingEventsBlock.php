@@ -94,9 +94,14 @@ final class UpcomingEventsBlock extends BlockBase implements ContainerFactoryPlu
     }
 
     return [
-      '#theme' => 'aculta_events_upcoming_block',
-      '#items' => $itens,
-      '#empty_text' => (string) $this->t('Nenhum evento publicado no momento.'),
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:events-upcoming-block',
+      '#props' => [
+        // O block label visível fornece o heading para esta instância.
+        'title' => '',
+        'items' => $itens,
+        'empty_text' => (string) $this->t('Nenhum evento publicado no momento.'),
+      ],
       '#cache' => [
         // A visibilidade de eventos de turma do LMS depende da conta.
         'contexts' => ['user', 'url.site'],
