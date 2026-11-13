@@ -2,6 +2,7 @@
 
 - O tema usa a função Drupal `link()` com classe e atributos do tema; a URL
   validada vem do Portal.
+- Teste Unit verifica `target` e `rel` nas opções Twig do `link()`.
 
 ## Não versionado — utilitários eliminados e contraste corrigido (2026-11-12)
 

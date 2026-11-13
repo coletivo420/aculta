@@ -21,7 +21,8 @@ final class PortalThemeAdaptersTest extends UnitTestCase {
     self::assertStringContainsString("include('aculta420_v2:surface'", $template);
     self::assertStringContainsString("tone: 'raised'", $template);
     self::assertStringContainsString('data-portal-payment-notice', $template);
-    self::assertStringContainsString('target="_blank" rel="noopener"', $template);
+    self::assertStringContainsString("target: '_blank'", $template);
+    self::assertStringContainsString("rel: 'noopener'", $template);
     self::assertStringNotContainsString('aculta-panel--default', $template);
   }
 
