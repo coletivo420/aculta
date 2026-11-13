@@ -69,6 +69,18 @@
   }
 
   /**
+   * IDs de todos os componentes com stories no escopo, inclusive os que já
+   * trocaram o botão pela prévia renderizada.
+   */
+  function getScopeIds() {
+    return Array.from(document.querySelectorAll('.ui_patterns_component'))
+      .filter((section) => !section.closest('[hidden]'))
+      .filter((section) => section.querySelector('.ui_patterns_component__stories-container'))
+      .map((section) => section.id)
+      .filter(Boolean);
+  }
+
+  /**
    * Atualiza a interface (rótulo do botão e texto de status acessível).
    * Contadores consideram somente o escopo visível.
    */
@@ -79,7 +91,7 @@
     }
 
     const btnText = getButtonTextElement(btn);
-    const scopeIds = getScopeItems().map((item) => item.componentId);
+    const scopeIds = getScopeIds();
     const total = scopeIds.length;
     const loaded = scopeIds.filter((id) => state.loadedSet.has(id)).length;
     const errors = scopeIds.filter((id) => state.errorSet.has(id)).length;
@@ -229,57 +241,14 @@
       processQueue();
     };
 
-    // Procura o botão HTMX nativo para disparo padrão ou usa fetch sob fallback
-    const singleBtn = targetEl.querySelector('.aculta-load-preview-btn');
-    if (singleBtn && window.htmx && window.htmx.trigger) {
-      // Escuta o término do ciclo HTMX especificamente neste target
-      const onAfterSwap = (evt) => {
-        const swapTarget = evt.detail ? evt.detail.target : evt.target;
-        if (swapTarget && (swapTarget === targetEl || targetEl.contains(swapTarget) || swapTarget.closest(`#preview-container-${componentId}`))) {
-          document.body.removeEventListener('htmx:afterSwap', onAfterSwap);
-          document.body.removeEventListener('htmx:responseError', onError);
-          document.body.removeEventListener('htmx:sendError', onError);
-          onComplete(true);
-        }
-      };
-
-      const onError = (evt) => {
-        const errElt = evt.detail ? (evt.detail.elt || evt.detail.target) : evt.target;
-        if (errElt && (errElt === singleBtn || singleBtn.contains(errElt))) {
-          document.body.removeEventListener('htmx:afterSwap', onAfterSwap);
-          document.body.removeEventListener('htmx:responseError', onError);
-          document.body.removeEventListener('htmx:sendError', onError);
-          onComplete(false);
-        }
-      };
-
-      document.body.addEventListener('htmx:afterSwap', onAfterSwap);
-      document.body.addEventListener('htmx:responseError', onError);
-      document.body.addEventListener('htmx:sendError', onError);
-
-      // Timeout de segurança caso o evento htmx não dispare
-      setTimeout(() => {
-        if (!settled) {
-          document.body.removeEventListener('htmx:afterSwap', onAfterSwap);
-          document.body.removeEventListener('htmx:responseError', onError);
-          document.body.removeEventListener('htmx:sendError', onError);
-          const loadedContainer = document.querySelector(`#preview-container-${componentId}`);
-          const storiesWrapper = loadedContainer ? loadedContainer.querySelector(selectSelector) : null;
-          onComplete(storiesWrapper !== null || !document.querySelector(targetSelector));
-        }
-      }, 10000);
-
-      // Dispara o clique no botão HTMX para acionar o ciclo completo do framework
-      singleBtn.click();
-    }
-    else {
-      // Fallback com fetch direto
-      fetch(url, {
-        headers: {
-          'HX-Request': 'true',
-          'X-Requested-With': 'XMLHttpRequest',
-        },
-      })
+    // Carrega apenas o fragmento selecionado. Simular o clique HTMX no link
+    // pode aplicar HX-Push-Url e retirar o administrador do catálogo durante
+    // o lote; fetch mantém a rota atual.
+    fetch(url, {
+      headers: {
+        'X-Requested-With': 'XMLHttpRequest',
+      },
+    })
       .then((res) => {
         if (!res.ok) {
           throw new Error('Network error');
@@ -291,6 +260,10 @@
         const doc = parser.parseFromString(html, 'text/html');
         const fragment = doc.querySelector(selectSelector);
         if (fragment && targetEl.parentNode) {
+          // A story inclui o fallback <noscript> do BigPipe dentro do wrapper.
+          // Ao inserir o fragmento num documento com JS ativo, o meta refresh
+          // redireciona o catálogo para a página individual da story.
+          fragment.querySelectorAll('noscript').forEach((fallback) => fallback.remove());
           targetEl.parentNode.replaceChild(fragment, targetEl);
           Drupal.attachBehaviors(fragment);
           onComplete(true);
@@ -302,7 +275,6 @@
       .catch(() => {
         onComplete(false);
       });
-    }
   }
 
   /**
