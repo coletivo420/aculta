@@ -147,13 +147,15 @@ Atualização feita com `composer update drupal/entity_print symfony/http-client
 
 ## 6. Próximas ações
 
-1. Reavaliar os valores de `XapiAttemptTokenTest.php:17` (fixture ou segredo real), conforme confirmação pendente do responsável.
-2. Aplicar `entity_print` 2.20.0 e `symfony/http-client` 7.4.23 no Runtime por fluxo controlado, e registrar o resultado.
-3. Executar `drupal/security_review` com Drush em modo somente leitura quando houver acesso ao Runtime.
+- `XapiAttemptTokenTest.php:17` foi confirmado pelo responsável como fixture em 2026-11-11 e classificado como falso positivo; reabrir somente se houver evidência de uso real.
+1. Aplicar `entity_print` 2.20.0 e `symfony/http-client` 7.4.23 no Runtime por fluxo controlado, e registrar o resultado.
+2. Executar `drupal/security_review` com Drush em modo somente leitura quando houver acesso ao Runtime.
 
 ## 7. Reavaliação ampla de achados JavaScript (2026-11-13)
 
 - A varredura ampla anterior registrava dois achados `react-unsanitized-method` nos popups de criação de tópico do Fórum e de publicação do Studio. Ambos reanexavam mensagens Drupal capturadas da resposta HTMX convertendo nós parseados em string HTML e usando `insertAdjacentHTML`.
 - Corrigido: os dois popups agora clonam a região `[data-drupal-messages]` com `document.importNode()` e a anexam com `prepend()`, preservando a mensagem renderizada pelo Drupal sem reconstruir uma string HTML.
 - Revalidação dos dois arquivos com Semgrep `p/security-audit`: **0 achados**. `node --check` passou nos dois arquivos.
+- Também triados os sinks `href` dos templates de popup de mapa: `MapRenderer::safePopupUrl()` rejeita esquemas fora de HTTPS e URLs relativas malformadas; `RouteLinkBuilder::build()` restringe o destino a HTTPS em hosts/caminhos do Google Maps, e codifica o destino. A validação do formulário de configuração aplica as mesmas restrições. FALSO POSITIVO: a regra não acompanha essas guardas PHP.
+- FALSO POSITIVO: links sociais de perfil passam por `SocialNetworks::linksOf()`/`keyForUri()`, que aceitam apenas HTTP(S) e hosts das redes suportadas; o teaser da Revista recebe a URL canônica gerada pelo template Drupal de nó.
 - Esta rodada não reconcilia a contagem histórica de 427 achados informada pelo responsável. O Code Scanning API retornou `no analysis found`; a varredura ampla disponível usa outro conjunto de regras e não é uma comparação direta.
