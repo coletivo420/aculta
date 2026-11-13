@@ -5,6 +5,7 @@ next_phase: >-
   Verificar em CI os testes de ciclo de rebuild/auditoria e o schema `group_relationship` do ContentIndexWikiAccessKernelTest; concluir grants/Domain dos providers owners, avaliar catálogo representativo e homologação operacional; manter Dev e não fazer rebuild no Runtime nesta integração.
   Incluir o incremento LOC/IDX-LOC conforme [plano](docs/architecture/PLANO-LOCAIS-ACULTA-EVENTS-INDEX.md), sem substituir os gates anteriores. Continuar a correção da dívida Kernel geral por componente.
 progress_note: >-
+  Auditoria GitHub: PHPStan acusava duplicação de uma asserção `sources` impossível (baseline count=1, ocorrência=2) no laço que avança o cursor; removida a verificação redundante interna, preservada a asserção da transição de fase. PHP lint e CI do novo SHA pendentes.
   CI Kernel histórico: testes de rebuild vazio, backfill e auditoria agora avançam por todos os providers até `complete`; a auditoria seleciona o provider da fixture antes de validar o teto de IDs. PHPUnit remoto pendente.
   CI Kernel histórico: ContentIndexSchemaKernelTest agora espera `file` e `image`, alinhado aos providers nativos no container. PHP lint PASS; execução remota pendente.
   Dev.182: submódulo aculta_index_file integrado diretamente a aculta_index como provider nativo FileContentIndexProvider (serviço aculta_index.file_provider). Unit 53/286 e Kernel ContentIndexStatisticsBridgeKernelTest 3/55 PASS.
