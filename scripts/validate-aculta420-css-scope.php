@@ -161,6 +161,9 @@ $assert(!str_contains($studioShellCss, '[data-portal-ui="studio-heading"]'), 'O 
 $assert(str_contains($studioSectionHeaderCss, '[data-portal-ui="studio-heading"]'), 'O SDC studio-section-header perdeu o estilo do título Marley.');
 $assert(!str_contains($studioShellCss, '.studio__panel'), 'O seletor studio__panel permaneceu no CSS geral do shell.');
 $assert(!str_contains($portalUiHooks, "'studio-panel' => ['studio__panel'"), 'O mapa voltou a emitir classe de painel genérica para studio-panel.');
+$assert(!str_contains($portalUiHooks, "'studio-panel' =>"), 'O token studio-panel permaneceu após a migração do painel para surface-panel.');
+$assert(!str_contains($portalUiHooks, "'event-location-summary-card' =>"), 'O token event-location-summary-card permaneceu após a migração para SDC.');
+$assert(!str_contains($portalUiHooks, "'checkout-guest-registration' =>"), 'O token sem emissor checkout-guest-registration permaneceu no mapa.');
 $assert(!str_contains($studioShellCss, '--aculta-studio-fidelity-row-gap'), 'O alias de espaçamento da Conta permaneceu no shell do Studio.');
 $assert(str_contains($accountDashboardCss, 'gap: var(--spacing-lg)'), 'O espaçamento de identidade da Conta não foi internalizado no SDC.');
 $lmsBaseCss = (string) file_get_contents($theme . '/src/styles/base.css');

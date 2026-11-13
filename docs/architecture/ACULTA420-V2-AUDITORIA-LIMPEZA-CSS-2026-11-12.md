@@ -506,3 +506,22 @@ sincronizador Runtime está bloqueado por RX e drift de configuração.
   142 seletores rejeitados continuam todos classificados com evidência. A carga
   global local está em 52.851 bytes (−5.919 bytes desde 61.926). Runtime visual
   não homologado.
+- A inspeção dos 42 tokens vazios do mapa identificou três sem emissores em
+  código ou configuração versionada: `checkout-guest-registration`,
+  `event-location-summary-card` e `studio-panel`. Saíram do mapa após verificar
+  o widget de Localização e `MarleyController` compondo `surface-panel`; o
+  wrapper de checkout legado também não possui emissor. O gate de escopo agora
+  protege essa remoção. O mapa ficou com 418 tokens e 361 classes emitidas.
+- O gate documental também expôs oito tokens ativos sem mapa/família descrita.
+  Inspecionei os emissores e estilos: `social-links-*` e
+  `aculta-learning-journey*`/`aculta-learning-room*` são selecionados por CSS
+  contextual dos SDCs/UI Libraries; `requirements*` e
+  `studio-saved-summary*` não recebem apresentação própria do tema. As famílias
+  estão documentadas sem adicionar classes compatibilidade. `validate-portal-ui-docs.php`
+  passa (418 tokens no mapa, 379 usados, 159 atributos); o gate de classes
+  passa com 361 classes e o gate de escopo com 188 checks. Após o commit
+  concorrente da aba Todos na UI Library, a auditoria foi recalculada: 146 folhas,
+  414.123 bytes, 2.365 regras e 2.812 seletores; PurgeCSS retém 392.753 bytes e
+  mantém os mesmos 142 rejeitados classificados com evidência. `css:verify`,
+  `css:test` (3), Stylelint e `git diff --check`: PASS. A edição concorrente foi
+  preservada e não entrou no commit desta remoção.

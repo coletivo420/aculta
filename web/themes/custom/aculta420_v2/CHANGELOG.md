@@ -1794,4 +1794,8 @@ State: Dev. No RC, production deployment, or release tag is declared.
   pelo Portal. O asset do link carrega junto do aviso.
 - `payment-notice` tem story padrão na UI Patterns Library e teste que protege
   o vínculo template → SDC → folha, sem deslocar a política de URL do Portal.
+- Três tokens sem emissores ativos saíram de `PortalUiHooks::TOKENS`: o painel
+  do Studio e o resumo de Localização agora compõem `surface-panel`; o wrapper
+  de cadastro do checkout já não existe. Os tokens funcionais mantidos sem mapa
+  foram documentados por família após inspeção dos emissores e seletores.
 

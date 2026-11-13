@@ -507,6 +507,14 @@ Montadas por concatenação no módulo (o gate não enxerga cada valor; a famíl
   no Claro.
 - `studio-mercadopago-*`: conteúdo contextual do Studio sem estilo próprio no
   ACULTA420.
+- `requirements*`: marcador das tabelas do relatório de deploy; mantém a
+  apresentação nativa de tabelas do Drupal.
+- `social-links-*`: escopos do formulário administrativo, da lista pública e
+  do rodapé, estilizados por UI Libraries/SDCs que preservam o atributo.
+- `studio-saved-summary*`: conteúdo descritivo no slot do SDC de salvos, sem
+  apresentação própria.
+- `aculta-learning-journey*` e `aculta-learning-room*`: ganchos de marcação
+  estilizados pelos SDCs LMS correspondentes; o tema mantém os atributos no DOM.
 
 ## Tokens com mapeamento de tema
 
@@ -1360,3 +1368,16 @@ Mapa `PortalUiHooks::TOKENS` do `aculta420_v2`. Classes copiadas do mapa do V1 (
 | `data-aculta-topic-composer` | identifica o compositor de novo tópico público do Fórum |
 | `data-aculta-comment-new` | marca o comentário recém-publicado para foco e destaque |
 | `data-aculta-content-composer` | identifica o compositor de conteúdo do Studio |
+
+## Tokens removidos do mapa V2 em 2026-11-13
+
+Os registros abaixo permanecem nas tabelas históricas como referência da
+origem V1, mas não fazem mais parte de `aculta420_v2/src/Hook/PortalUiHooks.php`.
+Não há emissores ativos desses nomes no código ou configuração versionada:
+
+- `checkout-guest-registration`: substituído pelo markup semântico de login do
+  checkout; não há emissor do token nem da classe histórica `aculta-checkout__guest`.
+- `event-location-summary-card`: o widget de Localização agora compõe
+  `surface-panel` diretamente.
+- `studio-panel`: `MarleyController` compõe `surface-panel` diretamente e usa
+  `data-aculta-studio="panel"` para comportamento.

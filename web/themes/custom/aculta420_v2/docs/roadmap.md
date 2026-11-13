@@ -63,9 +63,10 @@
   administrativos permanecem na biblioteca contextual. CSS scope (176),
   Stylelint e CSS audit/verify: PASS. Inventário atual: 142 folhas/416.436
   bytes/2.381 regras/2.833 seletores; 228 classes dinâmicas preservadas.
-- O token `studio-panel` conserva as classes compartilhadas `aculta-panel` e
-  `aculta-panel__body`; apenas o alias legado sem regra `.studio__panel` saiu.
-  O atributo funcional do módulo segue intacto.
+- O painel de Marley agora é o SDC `surface-panel`, com atributos de
+  comportamento `data-aculta-studio` próprios. O token obsoleto `studio-panel`
+  foi removido do mapa V2; o Portal de Pessoas e demais emissores sem SDC não
+  foram alterados nesta migração.
 
 - O espaçamento usado só pela identidade da Conta saiu das variáveis de
   fidelidade do `studio-shell` e foi resolvido por `spacing-lg` no CSS do SDC
