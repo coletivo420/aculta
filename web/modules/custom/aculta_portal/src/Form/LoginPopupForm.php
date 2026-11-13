@@ -205,7 +205,7 @@ final class LoginPopupForm extends UserLoginForm {
     }
     $url->setOption('query', $query);
     $markup = sprintf(
-      '<a class="aculta-auth-dialog__google-btn aculta-auth-dialog__google-btn--injected" href="%s" data-portal-ui="auth-google"><span>%s <strong>Google</strong></span></a>',
+      '<a class="aculta-login-dialog__google-btn" href="%s"><span>%s <strong>Google</strong></span></a>',
       Html::escape($url->toString()),
       Html::escape((string) $this->t('Continuar com')),
     );

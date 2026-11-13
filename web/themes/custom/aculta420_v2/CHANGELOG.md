@@ -54,8 +54,9 @@
 - As dicas de busca usadas por Search e Wiki agora são renderizadas pelo SDC
   `hint`, com variantes normal e atenuada; os tokens `hint` e `hint-muted` e as
   regras globais correspondentes foram removidos.
-- O estilo global `aculta-auth-google` foi removido: autenticação do popup,
-  checkout e Conta agora usam estilos do auth-dialog e bibliotecas contextuais.
+- O estilo global `aculta-auth-google` foi removido: o popup, o auth-dialog,
+  checkout e Conta agora usam estilos do `multidomain-bar` e bibliotecas
+  contextuais.
 
 - Catálogo da UI Patterns Library atualizado para o inventário do checkout
   (127 manifests SDC, 188 stories), com registro das composições de eventos,

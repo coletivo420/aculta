@@ -220,20 +220,6 @@
   inline-size: 100%;
 }
 
-.aculta-auth-dialog__google-btn--injected::before {
-  flex: none;
-  content: "";
-  background: url("../../assets/icons/brand/google.svg") center / contain no-repeat;
-  block-size: 1.25rem;
-  inline-size: 1.25rem;
-}
-
-.aculta-auth-dialog__google-btn--injected:is(:hover, :focus-visible) {
-  color: var(--color-text-primary);
-  border-color: var(--color-border);
-  background-color: var(--color-surface-highlight, var(--color-surface-raised));
-}
-
 .aculta-auth-dialog__content [data-portal-ui="login-popup-divider"] {
   margin: var(--spacing-xs) 0;
   border: 0;

@@ -276,10 +276,10 @@ html body:has(.aculta-institution-bar) .toolbar .toolbar-tray-vertical {
   border-block-start: 2px solid var(--color-surface);
   inline-size: min(100%, 22rem);
 }
-.aculta-login-dialog__content form [data-portal-ui="auth-google"] { position: relative; display: flex; align-items: center; justify-content: center; box-sizing: border-box; padding: var(--spacing-sm) var(--spacing-base); text-decoration: none; color: var(--color-auth-provider-text); border: 1px solid var(--color-border); border-radius: 3px; background: var(--color-auth-provider-surface); box-shadow: var(--shadow-sm); gap: var(--spacing-md); inline-size: min(100%, 22rem); margin-inline: auto; min-block-size: 3rem; }
-.aculta-login-dialog__content [data-portal-ui="auth-google"]::before { flex: none; content: ""; background: url("../../assets/icons/brand/google.svg") center / contain no-repeat; block-size: 1.5rem; inline-size: 1.5rem; }
-.aculta-login-dialog__content [data-portal-ui="auth-google"]:is(:hover, :focus-visible) { color: var(--color-auth-provider-text); background: var(--color-auth-secondary-surface); }
-.aculta-login-dialog__content [data-portal-ui="auth-google"] :is(span, strong) { color: inherit; }
+.aculta-login-dialog__content .aculta-login-dialog__google-btn { position: relative; display: flex; align-items: center; justify-content: center; box-sizing: border-box; padding: var(--spacing-sm) var(--spacing-base); text-decoration: none; color: var(--color-auth-provider-text); border: 1px solid var(--color-border); border-radius: 3px; background: var(--color-auth-provider-surface); box-shadow: var(--shadow-sm); gap: var(--spacing-md); inline-size: min(100%, 22rem); margin-inline: auto; min-block-size: 3rem; }
+.aculta-login-dialog__content .aculta-login-dialog__google-btn::before { flex: none; content: ""; background: url("../../assets/icons/brand/google.svg") center / contain no-repeat; block-size: 1.5rem; inline-size: 1.5rem; }
+.aculta-login-dialog__content .aculta-login-dialog__google-btn:is(:hover, :focus-visible) { color: var(--color-auth-provider-text); background: var(--color-auth-secondary-surface); }
+.aculta-login-dialog__content .aculta-login-dialog__google-btn :is(span, strong) { color: inherit; }
 .aculta-login-dialog__content [data-portal-ui="login-popup-links"] { display: grid; gap: var(--spacing-sm); justify-items: center; margin-block-start: var(--spacing-xs); }
 .aculta-login-dialog__content [data-portal-ui="login-popup-links"] a { text-decoration: none; }
 .aculta-login-dialog__content [data-portal-ui="login-popup-links"] a:first-of-type {

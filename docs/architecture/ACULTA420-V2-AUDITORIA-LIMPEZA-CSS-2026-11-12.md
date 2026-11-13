@@ -453,8 +453,8 @@ sincronizador Runtime está bloqueado por RX e drift de configuração.
 - A classe de alinhamento `aculta-u-block-start` foi retirada do bloco de
   breadcrumbs em `config/sync` e da folha global; o posicionamento já é
   fornecido pelo SDC Breadcrumb e pelo contêiner da região.
-- Relatório recalculado após o corte: 145 folhas de tema, 414.331 bytes,
-  2.366 regras e 2.813 seletores. O PurgeCSS retém 392.961 bytes e identifica
+- Relatório recalculado após o corte: 145 folhas de tema, 413.890 bytes,
+  2.364 regras e 2.811 seletores. O PurgeCSS retém 392.520 bytes e identifica
   21.370 bytes / 142
   seletores removíveis; todos permanecem classificados com evidência (2
   dinâmicos, 43 no HTML Runtime, 68 por padrão Drupal e 29 por fonte). Não se
