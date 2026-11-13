@@ -81,6 +81,7 @@ final class WikiSearchFormBuilderTest extends UnitTestCase {
     $this->assertSame('search-preview-input', $build['q']['#attributes']['data-portal-ui']);
     $this->assertSame('/busca-wiki/previa', $build['q']['#attributes']['data-preview-url']);
     $this->assertSame((string) SearchPageController::MIN_CHARS, $build['q']['#attributes']['data-min-chars']);
+    $this->assertSame('aculta420_v2:hint', $build['preview']['#slots']['content']['hint']['#component']);
     $attributes = $build['preview']['#props']['attributes'];
     $this->assertSame('aculta-wiki-search-preview', $attributes['id']->value());
     $this->assertSame('region', $attributes['role']->value());

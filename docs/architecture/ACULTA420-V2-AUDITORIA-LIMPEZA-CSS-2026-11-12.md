@@ -420,13 +420,16 @@ sincronizador Runtime está bloqueado por RX e drift de configuração.
 
 ## 17. Migração contextual de consumidores do mapa (2026-11-13)
 
-- Vinte e quatro regras e 39 identidades de seletor saíram de
+- Vinte e oito regras e 43 identidades de seletor saíram de
   `src/styles/portal-ui-map.css`: hosts de calendário, DNS de superfícies,
   filtros/fila/pager de moderação, Loja, filtros/badges de Eventos, Mensageiro,
   workspace da Wiki, checkout, bio, Conta, status Google, aviso de pagamento,
-  badges de recomendações e títulos de seção. O mapa passou da base de 31
-  regras/46 seletores e 4.187 bytes para 7/7 e 1.400 bytes (-2.787 bytes,
-  -66,6%).
+  badges de recomendações, títulos de seção, o seletor `.inline` sem emissor,
+  dicas de busca migradas ao SDC `hint` e autenticação Google contextualizada.
+  O mapa passou da base de 31 regras/46 seletores e 4.187 bytes para 3/3 e 716
+  bytes (-3.471 bytes, -82,9%).
+  `container-inline` permanece por ter emissores em vários formulários Drupal
+  Core.
 - As regras foram para bibliotecas de propriedade dos módulos:
   `aculta_calendar/embed-hosts`, `aculta_paths/surfaces`,
   `aculta_cgu/moderation-queue`, `aculta_user/report-queue` e
@@ -436,6 +439,8 @@ sincronizador Runtime está bloqueado por RX e drift de configuração.
   folha contextual `portal-account`. Os painéis de bio, localização de evento,
   Studio e identidade da conta migraram para o SDC `surface-panel`; checkout
   mantém o `fieldset` semântico com estilos na biblioteca `checkout-presentation`.
+  Os links Google usam CSS contextual de auth-dialog, checkout e Conta; o
+  seletor global `.aculta-auth-google` saiu do mapa.
   As regras `.aculta-panel*` e hover saíram do `content.css` global. Wiki usa
   `aculta_wiki/contribution-workspace`;
   títulos migraram para SDCs (`layout-section`, `event-page-layout`), e outros
@@ -445,24 +450,31 @@ sincronizador Runtime está bloqueado por RX e drift de configuração.
 - O gate `validate-aculta420-mapped-classes.php` agora inspeciona CSS da raiz
   de `aculta_portal/css` além dos submódulos. A migração da Loja revelou que o
   gate anterior não considerava folhas CSS da raiz do módulo.
-- Relatório recalculado após o corte: 144 folhas de tema, 412.286 bytes,
-  2.362 regras e 2.807 seletores. O PurgeCSS retém 390.916 bytes e identifica
-  21.371 bytes / 142
+- A classe de alinhamento `aculta-u-block-start` foi retirada do bloco de
+  breadcrumbs em `config/sync` e da folha global; o posicionamento já é
+  fornecido pelo SDC Breadcrumb e pelo contêiner da região.
+- Relatório recalculado após o corte: 145 folhas de tema, 414.331 bytes,
+  2.366 regras e 2.813 seletores. O PurgeCSS retém 392.961 bytes e identifica
+  21.370 bytes / 142
   seletores removíveis; todos permanecem classificados com evidência (2
   dinâmicos, 43 no HTML Runtime, 68 por padrão Drupal e 29 por fonte). Não se
   aplicou purge destrutivo.
-- A verificação de escopo informa 58.853 bytes de CSS local em
-  `global-styling` (-3.073 bytes contra a base 61.926). A remoção do arquivo
-  mapa é 2.787 bytes; as regras de painel saíram do CSS global e os componentes
+- A verificação de escopo informa 58.770 bytes de CSS local em
+  `global-styling` (-3.156 bytes contra a base 61.926). A redução do arquivo
+  mapa é 3.471 bytes; as regras de painel saíram do CSS global e os componentes
   passaram a compor `surface-panel`. Folhas SDC seguem globais quando
   serve também UI Styles. `css:audit`,
-  `css:classify`, `css:verify`, `css:test`, `lint:css`, Stylelint das folhas
+  `css:classify`, `css:verify`, `css:test`, Stylelint das folhas
   novas, YAML/PHP lint, PHPUnit unitário (56 testes/227 assertions em
   checkout, fila e Messenger), `validate-aculta420-mapped-classes.php` e
   `validate-aculta420-css-scope.php`: PASS. Uma depreciação preexistente do
   `private_message` foi reportada. Os Kernel tests de Calendar/CGU foram
   tentados, mas o sandbox não permitiu conexão ao socket MySQL; não são
   evidência de Runtime.
+- As novas dicas SDC Search/Wiki passaram em 17 testes/96 assertions. Stylelint
+  das folhas desta mudança passou; `npm run lint:css` ainda aponta três erros
+  de ordem/formatagem na alteração concorrente `multidomain-bar.css`, não editada
+  nesta migração.
 - `runtime-sync.sh doctor --format=json` não conseguiu confirmar `origin/dev`;
   sincronização, `drush cr` e matriz visual seguem pendentes. Não declarar
   homologação até executar essas verificações no Runtime atualizado.

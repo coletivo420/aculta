@@ -318,6 +318,7 @@ final class WikiControllerTest extends UnitTestCase {
     $this->assertSame('no-store, private', $response->headers->get('Cache-Control'));
     $this->assertSame('<p>prévia</p>', $response->getContent());
     $this->assertArrayHasKey('hint', $this->lastPreviewedBuild);
+    $this->assertSame('aculta420_v2:hint', $this->lastPreviewedBuild['hint']['#component']);
     $this->assertArrayNotHasKey('empty', $this->lastPreviewedBuild);
   }
 
@@ -331,6 +332,7 @@ final class WikiControllerTest extends UnitTestCase {
     self::assertSame('no-store, private', $response->headers->get('Cache-Control'));
     self::assertSame('<p>prévia</p>', $response->getContent());
     self::assertArrayHasKey('hint', $this->lastPreviewedBuild);
+    self::assertSame('aculta420_v2:hint', $this->lastPreviewedBuild['hint']['#component']);
     self::assertArrayNotHasKey('empty', $this->lastPreviewedBuild);
   }
 

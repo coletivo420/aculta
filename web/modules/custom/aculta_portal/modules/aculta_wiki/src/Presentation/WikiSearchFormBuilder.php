@@ -68,10 +68,9 @@ final class WikiSearchFormBuilder implements WikiSearchFormBuilderInterface {
           'hidden' => TRUE,
         ])],
         '#slots' => ['content' => ['hint' => [
-          '#theme' => 'aculta_portal_element',
-          '#tag' => 'p',
-          '#element_attributes' => ['data-portal-ui' => 'hint'],
-          '#value' => (string) $this->translation->translate('Digite pelo menos @n caracteres para ver resultados.', ['@n' => SearchPageController::MIN_CHARS]),
+          '#type' => 'component',
+          '#component' => 'aculta420_v2:hint',
+          '#slots' => ['content' => ['#plain_text' => (string) $this->translation->translate('Digite pelo menos @n caracteres para ver resultados.', ['@n' => SearchPageController::MIN_CHARS])]],
         ]]],
       ],
       'submit' => [

@@ -2,16 +2,8 @@
    Regras funcionais com tokens semânticos, sem desenho novo por componente.
    O gate scripts/validate-aculta420-mapped-classes.php exige cobertura. */
 
-/* Classes do Drupal Core ainda emitidas fora do mapa de tokens.
-   `.container-inline` vem de formulários de busca/filtros expostos do Core;
-   `.inline` é atribuída por `links.html.twig` a listas de links inline. */
-.inline { display: inline; }
+/* Classe do Drupal Core emitida por formulários de busca/filtros. */
 .container-inline { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; }
-
-/* Classes semânticas que substituíram os utilitários aculta-u-* (2026-11-12).
-   Cada regra pertence a um token de PortalUiHooks::TOKENS. */
-.aculta-hint { color: var(--color-text-secondary); font-size: .875em; }
-.aculta-hint--muted { color: var(--color-text-muted); }
 
 /* Botões próprios do Portal. */
 
@@ -21,12 +13,3 @@
   outline-offset: .125rem;
 }
 .aculta-content-status--unpublished .aculta-content-status--unpublished { outline: none; }
-
-/* Conta, perfil e autenticação. */
-.aculta-auth-google { display: inline-flex; align-items: center; gap: .5rem; min-block-size: 2.75rem; }
-
-/* Login e popup. */
-
-/* Segredos e administração. */
-
-/* Estatísticas e Studio. */

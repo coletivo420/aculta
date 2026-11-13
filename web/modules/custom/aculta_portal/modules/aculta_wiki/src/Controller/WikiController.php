@@ -11,7 +11,6 @@ use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Link;
-use Drupal\Core\Template\Attribute;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\aculta_portal\Domain\DomainSiteManager;
@@ -213,13 +212,12 @@ final class WikiController extends ControllerBase {
     $build = ['#cache' => ['max-age' => 0]];
     if (mb_strlen($term) < SearchPageController::MIN_CHARS) {
       $build['hint'] = [
-        '#theme' => 'aculta_portal_element',
-        '#tag' => 'p',
-        '#element_attributes' => new Attribute(['data-portal-ui' => 'hint']),
-        '#value' => $this->t(
+        '#type' => 'component',
+        '#component' => 'aculta420_v2:hint',
+        '#slots' => ['content' => ['#plain_text' => $this->t(
           'Digite pelo menos @n caracteres para ver resultados.',
           ['@n' => SearchPageController::MIN_CHARS],
-        ),
+        )]],
       ];
       return $this->previewResponse($build);
     }

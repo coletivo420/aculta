@@ -249,7 +249,7 @@ final class AcultaCheckoutLogin extends Login {
       $query['aculta_destination_site_key'] = $siteKey->value;
     }
     $url->setOption('query', $query);
-    $link = sprintf('<a href="%s" data-portal-ui="auth-google">%s <strong>Google</strong></a>', Html::escape($url->toString()), Html::escape((string) $this->t('Continuar com')));
+    $link = sprintf('<a class="aculta-checkout__google-link" href="%s">%s <strong>Google</strong></a>', Html::escape($url->toString()), Html::escape((string) $this->t('Continuar com')));
     return [
       '#attached' => ['library' => ['aculta_portal/checkout-presentation']],
       '#type' => 'container',

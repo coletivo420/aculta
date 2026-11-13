@@ -609,23 +609,24 @@ html body:has(.aculta-institution-bar) .toolbar .toolbar-tray-vertical {
 
 /* Contadores dos gatilhos da barra: amarelo da marca no lugar do vermelho de erro. */
 .aculta-institution-bar .aculta-unread-count {
-  background: var(--institution-bar-badge-surface);
   color: var(--institution-bar-badge-text);
+  background: var(--institution-bar-badge-surface);
 }
 
 /* Faixa tricolor na base da barra, nas mesmas proporções do rodapé: verde até 68%,
    amarelo até 84%, vermelho até 100%. Substitui a linha de borda inferior.  */
 .aculta-institution-bar::after {
-  content: "";
   position: absolute;
+  content: "";
   inset-block-end: 0;
   inset-inline: 0;
   block-size: 3px;
   pointer-events: none;
-  background: linear-gradient(
-    to right,
-    var(--institution-bar-stripe-brand) 0 68%,
-    var(--institution-bar-stripe-highlight) 68% 84%,
-    var(--institution-bar-stripe-alert) 84% 100%
-  );
+  background:
+    linear-gradient(
+      to right,
+      var(--institution-bar-stripe-brand) 0 68%,
+      var(--institution-bar-stripe-highlight) 68% 84%,
+      var(--institution-bar-stripe-alert) 84% 100%
+    );
 }

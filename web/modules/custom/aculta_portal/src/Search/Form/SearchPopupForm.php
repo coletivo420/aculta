@@ -96,13 +96,12 @@ final class SearchPopupForm extends FormBase implements ContainerInjectionInterf
         'aria-live' => 'polite',
       ])],
       '#slots' => ['content' => ['hint' => [
-        '#theme' => 'aculta_portal_element',
-        '#tag' => 'p',
-        '#element_attributes' => new Attribute(['data-portal-ui' => 'hint']),
-        '#value' => $this->t(
+        '#type' => 'component',
+        '#component' => 'aculta420_v2:hint',
+        '#slots' => ['content' => ['#plain_text' => $this->t(
           'Digite pelo menos @n caracteres para ver resultados.',
           ['@n' => SearchPageController::MIN_CHARS],
-        ),
+        )]],
       ]]],
     ];
     $form['actions'] = ['#type' => 'actions', 'submit' => ['#type' => 'submit', '#value' => $this->t('Buscar')]];

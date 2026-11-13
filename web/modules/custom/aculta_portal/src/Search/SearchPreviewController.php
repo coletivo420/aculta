@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Search;
 
-use Drupal\Core\Template\Attribute;
 use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
@@ -81,13 +80,12 @@ final class SearchPreviewController implements ContainerInjectionInterface {
       return [
         '#cache' => ['max-age' => 0],
         'hint' => [
-          '#theme' => 'aculta_portal_element',
-          '#tag' => 'p',
-          '#element_attributes' => new Attribute(['data-portal-ui' => 'hint']),
-          '#value' => $this->t(
+          '#type' => 'component',
+          '#component' => 'aculta420_v2:hint',
+          '#slots' => ['content' => ['#plain_text' => $this->t(
             'Digite pelo menos @n caracteres para ver resultados.',
             ['@n' => SearchPageController::MIN_CHARS],
-          ),
+          )]],
         ],
       ];
     }

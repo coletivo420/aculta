@@ -19,9 +19,4 @@ settings:
   label: Breadcrumbs
   label_display: '0'
   provider: system
-third_party_settings:
-  ui_styles:
-    block:
-      selected: {  }
-      extra: aculta-u-block-start
 visibility: {  }

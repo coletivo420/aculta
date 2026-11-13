@@ -43,10 +43,19 @@
   todos têm evidência (2 dinâmicos, 43 no HTML Runtime, 68 cobertos por padrões
   Drupal/UI e 29 com referência no repositório). Não houve cortes por falta de
   evidência nem purge destrutivo. Os cortes seguintes foram migrações de
-  consumidores: 24 regras/39 seletores saíram do mapa, incluindo a troca dos
+  consumidores: 28 regras/43 seletores saíram do mapa, incluindo a troca dos
   wrappers `aculta-panel` por composição SDC `surface-panel`; as regras V1 de
   painel também saíram de `content.css` global. Auditoria, classificação, verify,
   testes e Stylelint passaram; aceite visual no Runtime segue pendente.
+- O seletor sem emissor `.inline` e o alinhamento UI Styles `aculta-u-block-start`
+  saíram do CSS. O bloco de breadcrumbs já é posicionado pelo SDC e pelo
+  contêiner da região. `container-inline` permanece porque o Drupal Core o emite
+  em diversos formulários.
+- As dicas de busca usadas por Search e Wiki agora são renderizadas pelo SDC
+  `hint`, com variantes normal e atenuada; os tokens `hint` e `hint-muted` e as
+  regras globais correspondentes foram removidos.
+- O estilo global `aculta-auth-google` foi removido: autenticação do popup,
+  checkout e Conta agora usam estilos do auth-dialog e bibliotecas contextuais.
 
 - Catálogo da UI Patterns Library atualizado para o inventário do checkout
   (127 manifests SDC, 188 stories), com registro das composições de eventos,

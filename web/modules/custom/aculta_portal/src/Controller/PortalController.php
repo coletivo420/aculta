@@ -342,7 +342,7 @@ final class PortalController extends ControllerBase {
       return [
         '#type' => 'html_tag',
         '#tag' => 'a',
-        '#attributes' => ['href' => $url->toString(), 'data-portal-ui' => 'auth-google'],
+        '#attributes' => ['href' => $url->toString(), 'class' => ['portal-account__google-auth']],
         '#value' => $markup,
       ];
     }

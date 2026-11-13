@@ -1,0 +1,22 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Texto de apoio
+description: Texto auxiliar contextual para buscas e formulários.
+status: stable
+group: Formulários
+props:
+  type: object
+  additionalProperties: false
+  properties:
+    tone:
+      type: string
+      enum: [normal, muted]
+      default: normal
+      title: Ênfase
+slots:
+  content:
+    title: Texto
+    description: Conteúdo acessível do texto de apoio.
+assets:
+  css:
+    component:
+      hint.css: {}
