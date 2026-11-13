@@ -7,6 +7,7 @@ namespace Drupal\aculta_forum\Service;
 use Drupal\aculta_editor\Service\FluentEmojiIconAdapterInterface;
 use Drupal\aculta_forum\Access\DiscussionReactionEndpointAccess;
 use Drupal\Core\Access\CsrfTokenGenerator;
+use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
@@ -60,21 +61,24 @@ class DiscussionReactionBuilder {
 
     $targetId = "discussion-reactions-{$entityType}-{$entityId}";
 
-    return [
-      '#theme' => 'discussion_reaction_bar',
-      '#target_id' => $targetId,
-      '#entity_type' => $entityType,
-      '#entity_id' => (string) $entityId,
-      '#reactions' => $reactionsData['reactions'],
-      '#total_count' => $reactionsData['total_count'],
-      '#user_reaction' => $reactionsData['user_reaction'],
-      '#allowed_reactions' => $allowedReactions,
-      '#default_reaction' => $defaultReaction,
-      '#can_react' => $canReact,
-      '#is_own_content' => $isOwnContent,
-      '#react_url' => $reactUrl,
-      '#picker_url' => $pickerUrl,
-      '#csrf_token' => $csrfToken,
+    $build = [
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:discussion-reaction-bar',
+      '#props' => [
+        'target_id' => $targetId,
+        'entity_type' => $entityType,
+        'entity_id' => (string) $entityId,
+        'reactions' => $reactionsData['reactions'],
+        'total_count' => $reactionsData['total_count'],
+        'user_reaction' => $reactionsData['user_reaction'],
+        'allowed_reactions' => $allowedReactions,
+        'default_reaction' => $defaultReaction,
+        'can_react' => $canReact,
+        'is_own_content' => $isOwnContent,
+        'react_url' => $reactUrl,
+        'picker_url' => $pickerUrl,
+        'csrf_token' => $csrfToken,
+      ],
       '#attached' => [
         'library' => [
           'core/drupal.htmx',
@@ -88,6 +92,11 @@ class DiscussionReactionBuilder {
         ]),
       ],
     ];
+    $cacheMetadata = CacheableMetadata::createFromRenderArray($build);
+    $cacheMetadata->addCacheableDependency($access);
+    $cacheMetadata->applyTo($build);
+
+    return $build;
   }
 
   /**
@@ -128,7 +137,7 @@ class DiscussionReactionBuilder {
         $filteredItems = [];
         foreach ($allowedReactions as $reactionKey => $reactionInfo) {
           $emojiIcon = $reactionInfo['icon'];
-          // Se o ícone do emoji existir nesta categoria do catálogo
+          // Se o ícone do emoji existir nesta categoria do catálogo.
           if (isset($items[$emojiIcon])) {
             $catItem = $items[$emojiIcon];
             $filteredItems[$reactionKey] = [

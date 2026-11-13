@@ -42,15 +42,16 @@ anteriores e não substituem a conferência do código atual.
   Library oficial. `config/sync/core.extension.yml` já foi atualizado para não
   habilitar o módulo; a exportação ainda não foi importada no Runtime. A
   desinstalação precisa ocorrer antes de apagar o código. O Runtime
-  atual bloqueia janela estrutural: risco cumulativo RX/R4, worktree suja e
+  atual bloqueia janela estrutural: risco RX, worktree suja e
   compartilhada com Apache, três itens de drift (`aculta420_v2.settings`,
   `core.entity_view_display.block_content.aculta_institution.footer` e
   `core.extension`) e baseline validada/cache em
-  `e37f3d8d45ecba9719d4b97dde67effc2236b13f`, abaixo do checkout/remote
-  `c61b7a37ffe9b60288d20b4178b91c68ae363efb`. Nenhuma alteração de Runtime será
-  feita até liberação do preflight.
-- Restam 19 templates Twig no tema. A lista inclui shell, templates Core,
-  presenters de módulos, templates de mapa/e-mail e quatro templates da UI
+  `e37f3d8d45ecba9719d4b97dde67effc2236b13f`, com checkout servido atrás do
+  remote, worktree suja e compartilhada. Nenhuma alteração de Runtime será
+  feita até a reconciliação dos drifts e liberação do preflight.
+- Restam 51 templates Twig no tema neste branch. A lista de 19 candidatos
+  abaixo é apenas a primeira triagem e está incompleta; o inventário deve cobrir
+  todos os 51, incluindo shell, templates Core, presenters, mapa/e-mail e UI
   Patterns Library. Nenhum será removido só por pertencer a `templates/`.
 - O catálogo de Eventos compõe `card-cultural` pela row de Views; não depende do
   antigo template de card. A verificação HTTP recente respondeu 200; a
@@ -74,11 +75,11 @@ anteriores e não substituem a conferência do código atual.
    descrição específica, em 93 SDCs. A checagem do provider instalado encontrou
    22 props com tipo `unknown`, em 13 SDCs; três são obrigatórias e não há
    Sources UI Patterns para esse tipo. A auditoria classificou os produtores
-   encontrados e registrou as fontes na ADR-056. O bloco de próximos eventos
-   agora chama o SDC existente e preserva canonicalização/cache na origem;
-   saída do Runtime ainda não homologada. Resta migrar o presenter de Reações
-   (R2), além das descrições específicas das props e confirmação de uso
-   editorial persistido no Runtime. Avançar na
+   encontrados e registrou as fontes na ADR-056. Os presenters de Eventos e
+   Reações agora chamam seus SDCs existentes e preservam dados, acesso e cache
+   nos módulos proprietários; as saídas do Runtime ainda não foram homologadas.
+   Restam descrições específicas das props e confirmação de uso editorial
+   persistido no Runtime. Avançar na
    auditoria semântica restante: nomes, tipagem, slots/props,
    variants/defaults, includes e escaping. Renomear apenas conceitos realmente
    reutilizáveis com plano de compatibilidade das referências persistidas.
@@ -86,8 +87,9 @@ anteriores e não substituem a conferência do código atual.
    Config Sync/PHP/Twig: Manage Display, Layout Builder, Views, Field Formatters,
    Blocks, Library ou uso interno. Confirmar Sources da versão instalada e
    manter consulta, acesso, cache e negócio nos donos atuais.
-4. **P3 — tentar eliminar os 19 templates:** a triagem por fonte está abaixo.
-   Buscar substituição por displays/UI Patterns ou render arrays SDC em cada
+4. **P3 — tentar eliminar todos os 51 templates:** a lista abaixo é uma
+   primeira triagem, não o inventário completo. Buscar substituição por
+   displays/UI Patterns ou render arrays SDC em cada
    arquivo. Testar fallback Core e preservar apenas presenters mínimos quando
    não houver display builder ou plugin substituto.
 5. **P4 — homologar:** gates focais e comparação real por consumidor, incluindo
@@ -108,7 +110,7 @@ gates que o carregam, status e referências operacionais; (5) confirmar que a
 rota oficial da UI Patterns Library continua habilitada. Não apagar os arquivos
 do módulo antes da desinstalação, pois o checkout é compartilhado com Apache.
 
-### Arquivos que exigem classificação individual em P3
+### Primeira lista de arquivos que exigem classificação individual em P3
 
 `aculta-mailer-wrap.html.twig`, `aculta-maps-marker-icon-template.html.twig`,
 `aculta-maps-popup-content.html.twig`,
@@ -122,7 +124,7 @@ do módulo antes da desinstalação, pois o checkout é compartilhado com Apache
 `ui-patterns-single-page.html.twig`, `ui-patterns-stories-compact.html.twig` e
 `ui-patterns-stories-full.html.twig`.
 
-### Classificação inicial dos 19 templates pelo código
+### Classificação inicial de uma primeira amostra de templates pelo código
 
 | Grupo/arquivos | Evidência encontrada | Direção de planejamento |
 | --- | --- | --- |

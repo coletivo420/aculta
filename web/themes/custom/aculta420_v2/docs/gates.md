@@ -9,12 +9,12 @@ Os caminhos são relativos à raiz do repositório. Gates "Drush" rodam com `php
 | Gate | Como rodar | O que verifica | Quando |
 | --- | --- | --- | --- |
 | `validate-aculta420-sdc-schemas.php` | `php scripts/validate-aculta420-sdc-schemas.php` | schemas dos componentes SDC | toda mudança em `components/` |
-| `validate-aculta420-sdc-library-contract.php` | `php scripts/validate-aculta420-sdc-library-contract.php` | cada SDC tem Twig e story; lista explicitamente apenas a dívida storyless atual; impede rota/catalogação/prévia paralela em `aculta_ui_library` | criação, remoção ou alteração de SDC, story, ou da ponte UI Patterns |
+| `validate-aculta420-sdc-library-contract.php` | `php scripts/validate-aculta420-sdc-library-contract.php` | cada SDC tem Twig e story, sem exceção storyless; impede catálogo/prévia paralela em `aculta_ui_library` durante sua retirada | criação, remoção ou alteração de SDC, story, ou da ponte UI Patterns |
 | `validate-aculta420-design-foundations.php` | `php scripts/validate-aculta420-design-foundations.php` | fundações de design do tema | mudança em tokens, base ou layout |
 | `validate-browser-validators.php` | `php scripts/validate-browser-validators.php` | validadores de navegador | mudança em JavaScript ou em formulários |
 | `validate-aculta420-v2-foundations.php` | `php scripts/validate-aculta420-v2-foundations.php` | tokens e pares de contraste da V2 em claro/escuro, incluindo texto do cabeçalho `surface-panel` (mínimo 4,5:1), foco e bordas (mínimo 3:1) | mudança em tokens ou cores |
 | Stylelint do CSS V2 | `npm run lint:css` | convenções CSS Drupal e exceções compatíveis com os recursos usados pelo tema | toda mudança de CSS |
-| `validate-aculta420-v2-sdc.php` | `php vendor/drush/drush.php php:script scripts/validate-aculta420-v2-sdc.php` | descoberta, schema estrito, assets e renderização isolada dos componentes V2, incluindo catálogo, currículo, materiais, dashboard H5P e página de aula LMS; usa descoberta com backend nulo para incluir SDCs novos sem limpar cache persistente | toda mudança em componente |
+| `validate-aculta420-v2-sdc.php` | `php vendor/drush/drush.php php:script scripts/validate-aculta420-v2-sdc.php` | descoberta, schema estrito, assets e renderização isolada dos componentes V2, incluindo bloco de eventos, barra de reações, catálogo, currículo, materiais e páginas LMS; usa descoberta com backend nulo sem limpar cache persistente | toda mudança em componente |
 | Configurações de superfície | `php vendor/drush/drush/drush.php config:status` e verificação da disponibilidade de `ThemeSettingsProvider` | consistência do Config Sync e serviço usado por `SurfaceSettingsHooks` | alteração das opções administrativas do tema |
 | `validate-aculta420-mapped-classes.php` | `php scripts/validate-aculta420-mapped-classes.php` | toda classe de `PortalUiHooks::TOKENS` tem CSS ou exceção em `docs/classes-sem-css-excecoes.md`; nomes Bootstrap proibidos no mapa | mudança no mapa de tokens ou nos estilos |
 | `validate-aculta420-theme-settings.php` | `php scripts/validate-aculta420-theme-settings.php` | painel antigo ausente; superfícies e UI Styles presentes; paleta de purpose/schema removidos; plugin UI Skins declarado | mudança em `theme-settings.php`, schema ou CSS variables |
@@ -26,7 +26,7 @@ Os caminhos são relativos à raiz do repositório. Gates "Drush" rodam com `php
 | `validate-aculta420-layout-builder-batch.php` | `php scripts/validate-aculta420-layout-builder-batch.php` (delega ao Drush) | 22 displays habilitados, `allow_custom` conforme contrato, ComponentLayout UI Patterns ligado ao SDC, props/slots esperados, config ativa igual ao Sync, saída via Layout Builder ou adapter SDC Wiki e acesso às rotas de defaults | mudança de `layout_builder` em displays ou no lote |
 | `validate-ui-patterns-views-cutover.php` | `php scripts/validate-ui-patterns-views-cutover.php` | Row/style/display ligados aos SDCs, sources dos fields e partes do display, pager, filtros, ordenação e acesso nativos preservados | mudança no piloto UI Patterns Views |
 
-Última execução do gate `validate-aculta420-v2-sdc.php`: PASS, 79 componentes
+Última execução do gate `validate-aculta420-v2-sdc.php`: PASS, 85 componentes
 descobertos e renderizados isoladamente em 2026-11-13; inclui
 `courses-catalog`, `lms-course-curriculum`, `lms-course-materials`,
 `lms-h5p-course`, `lms-lesson-page`, `layout-section`, `article-authors`,
@@ -34,7 +34,8 @@ descobertos e renderizados isoladamente em 2026-11-13; inclui
 `secret-reveal`, `search-preview`, `account-courses`, `portal-requirements` e
 `document-download`, `donation-presentation`, `saved-content-page` e
 `green-stash-page`, `studio-account-section-layout`, `studio-section-header`, `studio-form`, `studio-listing-table`,
-`studio-revista-form`, `studio-profile-editor` e `studio-course-authoring-page`.
+`studio-revista-form`, `studio-profile-editor` e `studio-course-authoring-page`,
+`events-upcoming-block` e `discussion-reaction-bar`.
 Também inclui `account-shell`, `account-profile-card`, `forum-list-page`,
 `forum-category-page` e `forum-search-page` com seus assets CSS locais.
 | `validate-aculta420-layouts.php` | `php scripts/validate-aculta420-layouts.php` (delega ao Drush) | descoberta dos layouts SDC pelo `ui_patterns_layouts` (mesmo registro do Layout Builder), categoria/regiões e renderização real de cada layout | criação ou alteração de layout SDC |
@@ -626,3 +627,16 @@ alterações indevidas nos 22 displays, não aplicar o novo tom em massa.
   seu asset local, e o Twig conserva o ID, `hidden` e `data-dialog-title`.
 - O gate CSS scope verifica o contrato de template, CSS e atributos; o gate SDC
   renderiza o componente isoladamente. Resultado desta revisão ainda pendente.
+
+## Atualização — presenters de Eventos e Reações migrados para SDC (2026-11-13)
+
+- `UpcomingEventsBlock` e `DiscussionReactionBuilder` agora emitem os SDCs
+  existentes diretamente. Removidos os respectivos hooks/templates Twig; o
+  bloco mantém o título Drupal visível, e o presenter do Fórum preserva CSRF,
+  `core/drupal.htmx`, contexts/tags e incorpora a cache metadata do AccessResult.
+- Render isolado: 85 componentes PASS; schemas: 136 componentes/168 includes/
+  2.640 checks PASS; contrato Library: 136 SDCs/216 stories, todos com story;
+  matriz: 482 registros; acesso Fórum: 5 testes/25 asserções PASS; PHPCS, PHP
+  lint, status index e `git diff --check` PASS. Revisão R2 independente PASS.
+- Saída, acesso e cache no Runtime continuam DEFERRED pelo preflight compartilhado
+  e pelos três drifts de configuração.

@@ -86,9 +86,11 @@ $component_ids = [
   'dialog',
   'data-table',
   'document-download',
+  'discussion-reaction-bar',
   'donation-presentation',
   'empty-state',
   'event-page-layout',
+  'events-upcoming-block',
   'filter-chips',
   'form-field',
   'forum-category',
@@ -312,6 +314,25 @@ $samples = [
     '#props' => ['format' => 'PDF', 'size' => '2,4 MB', 'format_token' => 'pdf'],
     '#slots' => ['link' => Markup::create('<a href="/manual.pdf">Manual do curso</a>')],
   ],
+  'discussion-reaction-bar' => [
+    '#props' => [
+      'target_id' => 'discussion-reactions-aculta_forum_post-42',
+      'entity_type' => 'aculta_forum_post',
+      'entity_id' => '42',
+      'reactions' => ['broccoli' => ['id' => 'broccoli', 'count' => 2, 'user_reacted' => FALSE]],
+      'total_count' => 2,
+      'user_reaction' => NULL,
+      'allowed_reactions' => [
+        'broccoli' => ['id' => 'broccoli', 'label' => 'Brócolis', 'icon' => 'broccoli', 'enabled' => TRUE],
+      ],
+      'default_reaction' => 'broccoli',
+      'can_react' => TRUE,
+      'is_own_content' => FALSE,
+      'react_url' => '/discussion/aculta_forum_post/42/react',
+      'picker_url' => '/discussion/aculta_forum_post/42/reactions',
+      'csrf_token' => 'token-de-teste',
+    ],
+  ],
   'donation-presentation' => [
     '#props' => ['variant' => 'thanks'],
     '#slots' => ['content' => Markup::create('<p class="donation-presentation__donor">Pessoa de exemplo</p>')],
@@ -321,6 +342,14 @@ $samples = [
     '#slots' => [
       'message' => Markup::create('<p>Você ainda não está matriculado em nenhum curso.</p>'),
       'actions' => Markup::create('<a href="/catalogo">Explorar o catálogo de cursos</a>'),
+    ],
+  ],
+  'events-upcoming-block' => [
+    '#props' => [
+      'title' => 'Próximos eventos',
+      'items' => [
+        ['title' => 'Evento de demonstração', 'url' => '/eventos/demonstracao'],
+      ],
     ],
   ],
   'dialog' => [
