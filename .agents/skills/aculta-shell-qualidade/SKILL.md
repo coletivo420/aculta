@@ -14,7 +14,7 @@ Use junto com `aculta-runtime-sync` (fluxo e riscos), `aculta-gates-por-escopo` 
 | ShellCheck | INSTALLED (`/usr/bin/shellcheck`) | `shellcheck -S warning <arquivos>` |
 | shfmt | INSTALLED (`/usr/bin/shfmt`) | `shfmt -d -i 2 -ci <arquivos>` (somente diff, nunca `-w` em legado) |
 | Bats-core | INSTALLED (`/usr/bin/bats`) | testes em `tests/shell/` com fixtures temporárias |
-| actionlint | MISSING neste ambiente | gate definido no CI; localmente, DEFERRED até instalação fixada |
+| actionlint | INSTALLED (`/usr/local/bin/actionlint`, v1.7.12) | `actionlint .github/workflows/*.yml`; CI usa versão fixada |
 | `bash -n` | sempre disponível | sintaxe de `scripts/runtime-sync.sh` e de scripts novos |
 
 Não afirme que uma ferramenta passou se ela não foi executada. Registre DEFERRED com o motivo.
@@ -47,6 +47,7 @@ Regras obrigatórias:
 ## Comandos
 
 ```bash
+actionlint .github/workflows/*.yml
 shellcheck -S warning <scripts novos ou alterados>
 shfmt -d -i 2 -ci <scripts novos ou alterados>
 bash -n scripts/runtime-sync.sh

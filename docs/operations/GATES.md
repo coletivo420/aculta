@@ -72,7 +72,7 @@ Critérios: PASS (executado e verde), FAIL, DEFERRED (não roda aqui; motivo), N
 | Autenticação e sessão | `validate-session-cookie-policy.php`, `validate-turnstile-exceptions.php` | DEFERRED (Drush/Runtime) |
 | Runtime Sync | `bash -n scripts/runtime-sync.sh`; `bash scripts/test-runtime-sync.sh` | PASS (30/30, simulado; inclui `structural-complete`) |
 | Scripts shell | `shellcheck -S warning` e `shfmt -d` nos arquivos alterados; `bash -n` | ShellCheck e shfmt: executados; legado com dívida |
-| GitHub Actions | `actionlint` no CI e opcional local | DEFERRED na estação de auditoria 2026-11-11; job de CI confirmado em 2026-11-13 |
+| GitHub Actions | `actionlint .github/workflows/*.yml` local e no CI (`quality-static.yml`, versão fixada) | PASS local em 2026-11-13 (v1.7.12); job de CI já integrado |
 | Skills | `python3 scripts/validate-agent-skills.py`; `php scripts/validate-agent-token-budget.php` | Resultado deve ser obtido nesta entrega; avisos de tamanho nao sao FAIL |
 | Teste de navegador | `php scripts/validate-browser-index.php` e `npm run test:list` | `test:list`: PASS (130); índice: FAIL pré-existente |
 

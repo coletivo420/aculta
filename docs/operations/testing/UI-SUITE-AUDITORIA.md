@@ -38,7 +38,7 @@ Estados: INSTALLED, CONFIGURED, EXECUTABLE, CI, DEFERRED, MISSING. Ferramenta s�
 | drupal/security_review | DEFERRED | Runtime (Drush) | idem | somente leitura | não | não executado (sem Drush/Runtime) |
 | ShellCheck | INSTALLED, EXECUTABLE | `/usr/bin/shellcheck` | `aculta-shell-qualidade` | `-S warning` em arquivos alterados | `quality-static.yml` | legado: 27 avisos (dívida) |
 | shfmt | INSTALLED, EXECUTABLE | `/usr/bin/shfmt` | idem | `-d` em arquivos alterados | idem | legado sem formatação (dívida); arquivo novo `.bats` formatado |
-| actionlint 1.7.12 | INSTALLED, EXECUTABLE (wheel `actionlint-py==1.7.12.25`, venv de teste) | fora do repositório | `aculta-shell-qualidade` | sintaxe dos workflows | `quality-static.yml` (workflow-lint): SUCCESS em fb7e3e87c | PASS nos 2 workflows (`php-quality.yml`, `quality-static.yml`) |
+| actionlint 1.7.12 | INSTALLED, EXECUTABLE (`/usr/local/bin/actionlint`, build oficial via Go; instalação global em 2026-11-13) | fora do repositório | `aculta-shell-qualidade` | `actionlint .github/workflows/*.yml` | `quality-static.yml` (workflow-lint): SUCCESS em fb7e3e87c | PASS nos 2 workflows (`php-quality.yml`, `quality-static.yml`); revalidado localmente em 2026-11-13 |
 | Bats-core | INSTALLED, EXECUTABLE | `/usr/bin/bats` | `aculta-shell-qualidade` | `bats tests/shell/` | `quality-static.yml` (bats-runtime-sync): SUCCESS em fb7e3e87c | PASS 5/5 em `tests/shell/runtime-sync.bats` |
 | `bash -n` + `runtime-sync` | EXECUTABLE | `scripts/` | `aculta-runtime-sync` | obrigatório | não | PASS |
 | `scripts/test-runtime-sync.sh` | EXECUTABLE | `scripts/` | `aculta-runtime-sync` | obrigatório | não | PASS 24/24 (simulado) |
