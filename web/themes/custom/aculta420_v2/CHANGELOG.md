@@ -1,5 +1,13 @@
 ## Não versionado — corte SDC-first de CSS e LMS (2026-11-13)
 
+- A classificação PurgeCSS foi revisada seletor por seletor. Os 22 sem
+  evidência não tinham emissores em Twig/PHP/YAML/JavaScript; removidas suas
+  24 regras (3.295 bytes, contando espaço em branco associado). Os outros 144
+  seletores rejeitados foram mantidos: 2 dinâmicos, 46 vistos no HTML Runtime,
+  68 cobertos por padrões Drupal/UI, e 28 com referência no repositório.
+  CSS audit, verify, testes e Stylelint passaram; aceite visual no Runtime segue
+  pendente.
+
 - Catálogo da UI Patterns Library atualizado para o inventário do checkout
   (127 manifests SDC, 188 stories), com registro das composições de eventos,
   Conta Studio e LMS desta sessão e dos sete layouts do grupo `Layouts`.

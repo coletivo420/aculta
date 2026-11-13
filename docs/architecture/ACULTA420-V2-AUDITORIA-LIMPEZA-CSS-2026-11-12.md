@@ -368,3 +368,26 @@ o contraste em frente de UI Skins. Resultado:
   educador (`/ganjalab`), que recebem 403 com as contas disponíveis;
   verificação manual com Orca; composição SDC incremental; comparação pixel a
   pixel histórica (a partir de agora há baseline determinístico).
+
+## 15. Revisão da classificação e cortes (2026-11-13)
+
+A classificação foi inspecionada por categoria. Os 22 seletores marcados sem
+evidência foram pesquisados em todas as fontes Twig, PHP, YAML e JavaScript do
+tema e módulos customizados; nenhum emissor foi encontrado. Removidos 24 nós de
+regra (22 seletores únicos) em `donation-presentation.css`, `sales-panel.css` e
+`studio-connections-page.css`. O diff remove 3.295 bytes, incluindo espaço em
+branco associado. Os 144 seletores rejeitados restantes foram mantidos: 2
+dinâmicos, 46 encontrados no HTML de Runtime, 68 cobertos por padrões
+Drupal/UI e 28 com referências no repositório.
+
+| Métrica | Antes | Depois |
+| --- | ---: | ---: |
+| CSS-fonte inventariado | 415.291 bytes | 411.996 bytes |
+| Regras / seletores no inventário | 2.381 / 2.835 | 2.357 / 2.811 |
+| CSS retido pelo PurgeCSS | 390.345 bytes | 390.250 bytes |
+| CSS removível pelo PurgeCSS | 24.946 bytes | 21.746 bytes |
+
+`npm run css:audit`, `npm run css:verify`, `npm run css:test`,
+`npm run lint:css` e `git diff --check`: PASS. A busca por consumidores é
+estática; o aceite visual depois do corte continua pendente, pois o
+sincronizador Runtime está bloqueado por RX e drift de configuração.

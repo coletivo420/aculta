@@ -2,6 +2,17 @@
 
 ## Continuação do corte CSS SDC-first (2026-11-13)
 
+- Revisão da classificação PurgeCSS: os 22 seletores sem evidência foram
+  procurados em todas as fontes Twig/PHP/YAML/JavaScript do tema e módulos
+  customizados, sem consumidores. Removidos 24 nós de regra em
+  `donation-presentation`, `sales-panel` e `studio-connections-page` (3.295
+  bytes no diff incluindo espaço em branco). Os 144 rejeitados restantes foram
+  inspecionados por categoria e mantidos por serem dinâmicos, presentes no
+  Runtime, cobertos por padrão Drupal/UI ou referenciados no código. Inventário
+  atual: 144 folhas, 411.996 bytes, 2.357 regras e 2.811 seletores. Auditoria
+  PurgeCSS: 390.250 bytes retidos e 21.746 removidos. Aceite visual após corte
+  não executado; sincronização Runtime bloqueada por risco RX/drift.
+
 - UI Patterns Library / Biblioteca de Layouts: catálogo atualizado para 127
   manifests e 188 stories descobertos no código. As mudanças desta sessão
   usam SDCs existentes e suas stories, incluindo eventos, Conta Studio e LMS.

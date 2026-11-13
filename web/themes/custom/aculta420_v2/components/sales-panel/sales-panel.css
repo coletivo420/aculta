@@ -10,12 +10,6 @@
   min-inline-size: 0;
 }
 
-.aculta-sales-panel__heading {
-  margin: 0 0 .5rem;
-  color: var(--color-text-primary);
-  font-family: var(--font-family-heading);
-}
-
 .aculta-sales-panel__table {
   min-width: 100%;
   color: var(--color-text-primary);

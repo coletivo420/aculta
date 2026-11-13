@@ -31,7 +31,6 @@
 .donation-presentation__honor { font-style: italic; }
 .donation-presentation__clause { color: var(--color-text-muted); }
 .donation-presentation__document-link { color: var(--color-brand-primary); }
-.donation-presentation__invite { margin-block-start: 1rem; }
 
 .donation-presentation__monthly {
   display: inline-flex;
