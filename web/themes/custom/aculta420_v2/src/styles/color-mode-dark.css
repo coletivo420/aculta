@@ -1,0 +1,64 @@
+/* Modo escuro das peças de terceiros dentro de um contêiner [data-theme="dark"]:
+   CKEditor 5 (editor e painéis) e as abas verticais do admin. Só age dentro do escuro. */
+[data-theme="dark"] .ck,
+body:has([data-theme="dark"]) .ck-body-wrapper {
+  --ck-color-base-background: var(--color-surface);
+  --ck-color-base-text: var(--color-text-primary);
+  --ck-color-base-border: var(--color-border);
+  --ck-color-base-foreground: var(--color-surface-raised);
+  --ck-color-base-active: var(--color-brand-primary);
+  --ck-color-focus-border: var(--color-brand-primary);
+  --ck-color-toolbar-background: var(--color-surface-raised);
+  --ck-color-toolbar-border: var(--color-border);
+  --ck-color-input-background: var(--color-surface);
+  --ck-color-input-text: var(--color-text-primary);
+  --ck-color-input-border: var(--color-border);
+  --ck-color-panel-background: var(--color-surface-raised);
+  --ck-color-panel-border: var(--color-border);
+  --ck-color-button-default-background: transparent;
+  --ck-color-button-default-hover-background: var(--color-surface);
+  --ck-color-button-default-active-background: var(--color-surface);
+  --ck-color-button-default-disabled-background: transparent;
+  --ck-color-button-on-background: var(--color-surface);
+  --ck-color-button-on-color: var(--color-text-primary);
+  --ck-color-button-on-hover-background: var(--color-surface);
+  --ck-color-text: var(--color-text-primary);
+}
+
+[data-theme="dark"] .ck-editor__editable {
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+}
+
+[data-theme="dark"] .vertical-tabs,
+[data-theme="dark"] .vertical-tabs__menu,
+[data-theme="dark"] .vertical-tabs__menu-item {
+  background: var(--color-surface-raised);
+  color: var(--color-text-primary);
+}
+
+[data-theme="dark"] .vertical-tabs__menu-item-title {
+  color: var(--color-text-primary);
+}
+
+[data-theme="dark"] .vertical-tabs__menu-item-summary {
+  color: var(--color-text-secondary);
+}
+
+/* Painéis do CKEditor (emoji, menus) ficam fora do contêiner da story, anexados ao body. */
+body:has([data-theme="dark"]) .ck-body-wrapper .ck-dropdown__panel,
+body:has([data-theme="dark"]) .ck-body-wrapper .ck-aculta-fluent-emoji-panel {
+  background: var(--color-surface-raised);
+  color: var(--color-text-primary);
+}
+
+/* Campos de formulário dentro do escuro: superfície e texto do tema escuro (campos de busca e similares). */
+[data-theme="dark"] :is(input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]), select, textarea) {
+  background-color: var(--color-surface);
+  color: var(--color-text-primary);
+  border-color: var(--color-border);
+}
+
+[data-theme="dark"] :is(input, select, textarea)::placeholder {
+  color: var(--color-text-muted);
+}

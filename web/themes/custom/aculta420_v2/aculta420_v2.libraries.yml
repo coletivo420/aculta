@@ -149,6 +149,7 @@ component-library-mode:
   css:
     component:
       src/styles/component-library-mode.css: {}
+      src/styles/color-mode-dark.css: {}
   js:
     js/component-library-mode.js: { attributes: { defer: true } }
   dependencies:

@@ -103,7 +103,8 @@
         // Tema: as variáveis CSS herdam para dentro do shadow root; o atributo de tema vai para o wrapper.
         const wrap = document.createElement('div');
         wrap.className = 'aculta-preview-host__content';
-        wrap.setAttribute('data-theme', document.documentElement.getAttribute('data-theme') || 'light');
+        // Modo da biblioteca (seletor Claro/Escuro): o ancestral mais próximo com data-theme, não o <html>.
+        wrap.setAttribute('data-theme', section.closest('[data-theme]')?.getAttribute('data-theme') || 'light');
         wrap.appendChild(document.importNode(fragment, true));
         // O título do card da biblioteca já mostra o nome do componente: o título grande do story é removido aqui.
         wrap.querySelectorAll('.ui_patterns_story__name').forEach((title) => title.remove());

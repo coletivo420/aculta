@@ -40,6 +40,14 @@
     Array.prototype.forEach.call(previews, function (node) {
       node.setAttribute('data-theme', mode);
     });
+    // Prévias já montadas em Shadow DOM (carregamento em lote): atualiza o contêiner interno de cada uma.
+    Array.prototype.forEach.call(document.querySelectorAll('.aculta-preview-host'), function (host) {
+      const root = host.shadowRoot;
+      const wrap = root && root.querySelector('.aculta-preview-host__content');
+      if (wrap) {
+        wrap.setAttribute('data-theme', mode);
+      }
+    });
   }
 
   function buildSelector(initial) {
