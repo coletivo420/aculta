@@ -1,57 +1,39 @@
-# ACULTA — instruções para agentes
+# ACULTA - instrucoes para agentes
 
-PROJECT-STATUS-INDEX-GUARD: 2026-10-21
+Regra compartilhada de Claude, Codex e demais agentes. Politica de revisao: `docs/operations/AGENT-REVIEW-POLICY.md`. Aplicar instrucoes locais e skills conforme a tarefa.
 
-Regras de todos os agentes. Em conflito, vale a instrução explícita mais recente do responsável e as regras de segurança abaixo. Texto integral: `docs/operations/AGENT-REGRAS-DETALHADAS.md`.
+## Autonomia e precedencia
 
-## Sessão
+- O pedido do responsavel ja autoriza pesquisa, implementacao, testes, refatoracao, documentacao e correcoes no escopo, inclusive no tema V2. Nao exigir segunda confirmacao para trabalho tecnico reversivel.
+- Resolver decisoes tecnicas a partir do codigo e das ADRs vigentes. Perguntar so sobre escolha de produto, dado essencial ausente ou operacao sensivel; executar a parte independente.
+- Precedencia: seguranca e integridade > instrucao explicita vigente do responsavel > ADR/contrato atual > regra local do componente > skill > runbook/historico. Excecao tecnica justificada pode substituir preferencia global, nunca protecao de seguranca.
+- Conferir fatos atuais no codigo, manifests e ambiente. Nao inventar APIs, hosts, CNPJ, enderecos, rotas ou status de runtime.
 
-- Leitura de partida: `TODO.md` do projeto e do componente. Para continuar fase, leia `docs/operations/ESTADO-DA-SESSAO.md` (até 3 entradas).
-- **Ao concluir uma fase:** atualize o `TODO.md` do componente e o status YAML no mesmo commit, sem acrescentar histórico ao TODO.
-- Handoff: ao encerrar fase/trabalho, registre em `docs/operations/ESTADO-DA-SESSAO.md` objetivo, arquivos, verificações, pendências e próximos passos. Máximo de 3 entradas; antigas vão para `docs/history/operations/`. Sem segredos.
+## Git e entrega
 
-## Git e Runtime
+- Integrar em `dev`, por commit atomico em portugues e push fast-forward em `origin/dev`; selecionar apenas arquivos da tarefa e revisar diff/staged. Worktree isolada e permitida; preservar alteracoes de outros agentes.
+- Nao usar force push, reset destrutivo ou reescrita de historico compartilhado. Se `dev` avancar, integrar sem perder o trabalho alheio e revisar de novo. PR, merge em `main` e tag so sob pedido explicito.
+- Trailer de CLI e opcional e deve identificar a sessao real; nao atribuir coautoria ficticia. Informar hashes confirmados, resultados de testes e pendencias.
+- Apos push que altera codigo servido, consultar a skill `aculta-runtime-sync` quando houver ambiente comprovado. Alteracao apenas documental nao exige sincronizacao/cache. Sem acesso, baseline confiavel ou worktree isolado: DEFERRED/BLOCKED, sem contornar preflight.
 
-- Branch `dev`. Cada entrega: um commit só com os seus arquivos (staged verificado), enviado a `origin/dev` logo após o commit. Mensagem em português, trailer `Claude-Session`, sem `Co-Authored-By`. Sem branch, PR ou merge em `main` sem ordem explícita.
-- Nunca force push, reset destrutivo nem reescrita de histórico compartilhado. Preserve o trabalho alheio e paralelo.
-- Após push: `aculta-runtime-sync` para código/cache; bloqueio ou baseline incerto impede sync. `updatedb`, `config:import`, `pm:uninstall`, `DROP` e exclusões exigem ordem explícita; ver `aculta-runtime-migracoes`.
-- Ao concluir, informe commits com hash e validações. Não diga que publicou sem confirmar o push, nem alegue teste que não executou.
+## Seguranca e Runtime
 
-## Escopo e segurança
+- Nunca versionar segredos, senhas, tokens, dados pessoais, backups ou arquivos locais de configuracao. Sem deploy em producao. Ambiente de desenvolvimento: `docs/architecture/environments.md`.
+- Composer no Runtime, `updatedb`, `config:import`, `pm:uninstall`, DROP, exclusoes persistentes e cutover exigem plano, reversibilidade e autorizacao explicita por operacao. Push nao autoriza migracao. Kernel usa apenas banco de teste, nunca `aculta_runtime`.
+- Preservar permissoes, ownership, isolamento multidominio, caches privados, escape, consentimento, contratos de pagamento e integridade de dados. Nao trocar `system.theme` para testar.
+- Evitar caminhos absolutos de maquina e URLs fixas de ambiente em codigo versionado; usar configuracao e variaveis.
 
-- Altere só o necessário. Não faça deploy nem alteração de produção sem autorização.
-- Não invente contratos, hosts, CNPJ, endereço ou dados institucionais. Sem fonte, use placeholder ou pergunte.
-- Sem caminhos absolutos de máquina nem URLs de ambiente fixas em código, testes ou docs. Use caminhos relativos e variáveis de ambiente.
-- Segredos, tokens e senhas ficam fora do Git.
+## Implementacao
 
-## Ambientes e URLs
+- Drupal 11 efetivo e compatibilidade Drupal 12 quando aplicavel. Preferir HTML nativo/Form API; HTMX para fragmentos onde agrega valor. Drupal AJAX e legado: migrar com justificativa e regressao, nao por obrigacao cega. jQuery local sob demanda conforme regra da area, sem carga global desnecessaria.
+- Reutilizar SDC, UI Suite, tokens e componentes existentes. Priorizar acessibilidade, responsividade e contratos de renderizacao; alternativas tecnicas sao permitidas com justificativa.
+- Ler `TODO.md` e handoff do componente quando houver fase a retomar, nao por ritual. Preferir `rg`, trecho relevante e APIs instaladas; Core/contrib e referencias podem ser lidos quando necessarios.
 
-- O servidor de desenvolvimento (`*.aculta.toca.net.br`) é o único ambiente. Não há produção; `*.aculta.org` é futuro sem data. Não sugerir deploy. Ver `docs/architecture/environments.md`.
-- O bypass `skip CAPTCHA` é permitido nos testes autenticados do servidor de desenvolvimento (runtime `test`). Antes da rodada, confirme `captcha.settings:enable_globally=0`. Não conceda bypass em produção.
-- URL pública usa slug em português, minúsculo, com hífen e sem acento (`docs/portal/FRIENDLY-PORTUGUESE-SLUGS.md`; gate `validate-public-slugs.php`).
+## Revisao e documentacao
 
-## Interações no front-end: HTMX antes de AJAX
+- Toda entrega exige autorrevisao do diff e gates proporcionais. Classificar R0-R3 segundo `docs/operations/AGENT-REVIEW-POLICY.md`; R2/R3 exigem revisao independente e R3 autorizacao operacional. Essa escala e diferente da classificacao R0-R4/RX do Runtime Sync.
+- Rodar gates somente do diff e dos consumidores afetados (`docs/operations/GATES.md`). Declarar PASS somente quando executado, FAIL quando falhar, DEFERRED se indisponivel e N/A fora de escopo. Teste pulado nao e PASS.
+- Atualizar documento dono apenas quando mudar API, contrato, decisao, fase ou marco. Fix simples nao obriga repetir CHANGELOG, roadmap, TODO, status e handoff. Handoff para fase parcial/transferencia; nao para cada microalteracao.
+- Saida verbosa: `python3 scripts/agent-output.py --lines 60 -- COMANDO`, preservando diagnosticos.
 
-- Use HTMX em toda interação nova ou alterada: envios, links e diálogos. Atributos `data-hx-*` (via `Drupal\Core\Htmx\Htmx`) e a biblioteca `core/drupal.htmx`.
-- Drupal AJAX (`#ajax`, `use-ajax`, `core/drupal.ajax`) é legado. Não crie interação nova com ele.
-- Interação existente que usa AJAX migra para HTMX quando houver rota e fragmento claros. Se não houver, registre a exceção em `docs/htmx-envios.md` com o motivo técnico.
-- Não adicione jQuery nem `core/drupal.dialog.ajax` (ver `web/themes/custom/aculta420_v2/AGENTS.md`).
-- Envio de formulário continua sendo submit do Form API: `name`, `value`, `id`, `#submit` e `formnovalidate` são preservados.
-- Toda rota HTMX nova tem teste que verifique os atributos `data-hx-*` e a resposta do fragmento.
-
-## Arquitetura e validação
-
-- Endereço centralizado em `aculta_portal_cep` e país exclusivo Brasil (BR), ADR-034 (`docs/decisions/ADR-034-pais-unico-brasil-endereco-central.md`). Padrão Drupal 11+ e 12: `docs/portal/DRUPAL-12-STANDARDS.md`.
-- **Tema de validação:** só o tema ACULTA ativo. Não alterne `system.theme`.
-- Rotas administrativas e de integração só no domínio principal; `/studio` segue as regras do `aculta_studio`.
-- Aceite único de Termos e Política: `docs/portal/ACEITE-UNICO.md`.
-- **Gates por escopo:** só os do diff e dos módulos dependentes (`docs/operations/GATES.md`). Gate fora do escopo: N/A com motivo. Gate que não roda no ambiente: DEFERRED com motivo.
-- Saída verbosa: `python3 scripts/agent-output.py --lines 60 -- COMANDO`.
-- **Não ler por padrão:** `data/`, `references/`, `vendor/`, `handoff/`, `docs/history/`, logs, `web/core/` e `web/modules/contrib/` (`docs/portal/AGENT-TOKEN-ECONOMY.md`).
-
-## Referências
-
-- Detalhes: `AGENT-REGRAS-DETALHADAS.md`, `AGENT-OPERATIONS.md`, `AGENT-POLICY-INDEX.md`, `MAPA-PARA-AGENTES.md`.
-- Testes de navegador: `docs/operations/NAVEGADOR-TESTES.md`.
-- Capturas de evidência: `tests/browser/capturas/<frente>/<AAAA-MM-DD>/`; PNG fora do Git; `manifest.json` versionado.
-- Decisões: `docs/architecture/DECISOES-RESPONSAVEL-2026-10-28.md`. Skills canônicas: `.agents/skills/<nome>/SKILL.md` (Codex e Claude); `docs/agent-skills/` é alias compatível. Gates e economia: `docs/operations/GATES.md`, `docs/portal/AGENT-TOKEN-ECONOMY.md`.
+Indice por area: `docs/operations/AGENT-POLICY-INDEX.md`. Skills canonicas: `.agents/skills/`. Procedimentos de Runtime: `docs/operations/RUNTIME-SYNC.md`.

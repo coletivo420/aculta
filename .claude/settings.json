@@ -9,42 +9,7 @@
       "Read(./web/sites/*/settings.secrets.php)",
       "Read(./web/sites/*/settings.hostinger.php)",
       "Read(./web/sites/*/settings.homelab.php)",
-      "Read(./web/sites/*/aculta.secrets.php)",
-      "Read(./web/libraries/pdf.js/**)",
-      "Read(./web/modules/custom/aculta_portal/modules/aculta_user/assets/avatars/**)"
-    ]
-  },
-  "hooks": {
-    "PreToolUse": [
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "[ -f .graphify/graph.json ] && echo '{\"hookSpecificOutput\":{\"hookEventName\":\"PreToolUse\",\"additionalContext\":\"graphify: knowledge graph at .graphify/. For focused questions, run `graphify query \\\"<question>\\\"` (scoped subgraph, usually much smaller than GRAPH_REPORT.md) instead of grepping raw files. Read GRAPH_REPORT.md only for broad architecture context.\"}}' || true"
-          }
-        ]
-      },
-      {
-        "matcher": "Bash|Grep",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "graphify hook-guard search",
-            "timeout": 10
-          }
-        ]
-      },
-      {
-        "matcher": "Read|Glob",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "graphify hook-guard read",
-            "timeout": 10
-          }
-        ]
-      }
+      "Read(./web/sites/*/aculta.secrets.php)"
     ]
   },
   "worktree": {
