@@ -4,15 +4,15 @@ O arquivo `docs/history/operations/AGENT-GUARDRAILS-FULL.md` é **arquivo histó
 
 | Escopo | Regras ativas/localizadas |
 |---|---|
-| Todos os agentes | `AGENTS.md`; Claude Code: `CLAUDE.md` |
+| Todos os agentes | `AGENTS.md`; `docs/operations/AGENT-REVIEW-POLICY.md`; Claude Code: `CLAUDE.md` |
 | Portal | `web/modules/custom/aculta_portal/AGENTS.md` e `web/modules/custom/aculta_portal/docs/AGENT-POLICIES.md` |
 | Fórum | `web/modules/custom/aculta_portal/modules/aculta_forum/AGENTS.md` e `docs/AGENT-POLICIES.md` local |
 | Mailer | `web/modules/custom/aculta_portal/modules/aculta_mailer/AGENTS.md` |
 | Studio | `web/modules/custom/aculta_portal/modules/aculta_studio/AGENTS.md` |
 | Usuários | `web/modules/custom/aculta_portal/modules/aculta_user/AGENTS.md` |
 | Avatar e identidade de autoria | `docs/architecture/avatar.md`; detalhe do módulo em `web/modules/custom/aculta_portal/modules/aculta_user/docs/AVATAR-PADRAO.md` |
-| Tema / mobile-first global | `web/themes/custom/aculta420/AGENTS.md`; norma transversal em `docs/architecture/ACULTA420-MOBILE-FIRST-GUARDRAILS.md`, obrigatória para todos os agentes que alterem UI no tema |
-| Git, commits, push e Runtime | `AGENTS.md` (resumo) e `docs/operations/AGENT-REGRAS-DETALHADAS.md` (texto integral) |
+| Tema / mobile-first global | `web/themes/custom/aculta420_v2/AGENTS.md`; norma transversal em `docs/architecture/ACULTA420-MOBILE-FIRST-GUARDRAILS.md`, obrigatória para todos os agentes que alterem UI no tema |
+| Git, commits, push e Runtime | `AGENTS.md` (contrato), `docs/operations/AGENT-REVIEW-POLICY.md` (revisao), skills `aculta-commit-entrega`, `aculta-runtime-sync` e `aculta-runtime-migracoes` |
 | Ambientes, Drush, servidor web e banco de teste | `docs/operations/AGENT-OPERATIONS.md` |
 | Testes visuais de navegador (localizar ou criar script) | `docs/operations/NAVEGADOR-TESTES.md`; índice de frentes com caminho completo em `tests/browser/INDICE.md` (gerado por `tests/browser/gerar-indice.py`); scripts em `tests/browser/<purpose>/<frente>/` |
 | Rotas e domínios | `docs/architecture/AGENT-ROUTES.md` |

@@ -4,7 +4,7 @@ Regra: rode **somente** os gates do escopo do diff e dos módulos que dependem d
 
 ## CI
 
-`.github/workflows/php-quality.yml` roda lint PHP, descoberta PHPUnit e as suítes Unit e Kernel (Kernel com MariaDB de serviço) em push e PR para `main` e `dev`. O PHPStan roda `analyse` com `phpstan-baseline.neon`: novos erros e entradas de baseline resolvidas falham o job. Nenhum validador de `scripts/validate-*.php` roda em CI. Os gates abaixo são executados pelo agente ou pelo responsável.
+`.github/workflows/php-quality.yml` roda lint PHP, descoberta PHPUnit e as suítes Unit e Kernel (Kernel com MariaDB de serviço) em push e PR para `main` e `dev`. O PHPStan roda `analyse` com `phpstan-baseline.neon`: novos erros e entradas de baseline resolvidas falham o job. Os validadores de contratos dos agentes rodam tambem no job PHP lint; os demais validadores de `scripts/validate-*.php` sao por escopo. Verificar execucao efetiva dos jobs: skipped/cancelled nao equivalem a PASS.
 
 ## Como rodar
 
@@ -43,8 +43,9 @@ Regra: rode **somente** os gates do escopo do diff e dos módulos que dependem d
 | Qualquer teste PHPUnit, `phpunit.xml`, `phpunit.performance.xml` ou `scripts/phpunit-suites.php` | `php scripts/phpunit-suites.php --check` e `vendor/bin/phpunit --testsuite unit` | A guarda falha se um `*Test.php` ficar fora das suítes ou se uma suíte obrigatória esvaziar. Benchmarks: `vendor/bin/phpunit -c phpunit.performance.xml` (opt-in) |
 | Análise estática PHP | `vendor/bin/phpstan analyse` | Usa `phpstan-baseline.neon` revisado; não regenere o baseline no CI. Dívida por módulo/identificador: `docs/operations/testing/phpstan-debt.md` |
 | Qualquer arquivo PHP alterado | `php -l` nos arquivos alterados | Projeto inteiro: via `agent-output.py` |
-| Skills dos agentes e sincronização do Runtime | `python3 scripts/validate-agent-skills.py`, `php scripts/validate-agent-token-budget.php`; para alterações no shell ou no Runtime Sync v2, `bash -n scripts/runtime-sync.sh` e `bash scripts/test-runtime-sync.sh` | Matrizes em `docs/operations/TESTES-SKILLS-RUNTIME-SYNC.md`; não apresentar testes falsos como Runtime real |
-| Documentos de leitura de partida (`AGENTS.md`, `CLAUDE.md`, `TODO.md`, TODO de componente, handoff) | `php scripts/validate-agent-token-budget.php` | Limites de bytes, versão do TODO igual ao `info.yml`, roadmap citado existe, handoff com até 3 entradas, cada skill com link em `.claude/skills/`, trechos exigidos por gates no AGENTS |
+| Skills e instrucoes dos agentes | `python3 scripts/validate-agent-skills.py`, `php scripts/validate-agent-token-budget.php` | Verificar tambem comportamento nas CLIs quando mudar roteamento/hook; limite de bytes e aviso, nao bloqueio |
+| Scripts Runtime Sync | `bash -n scripts/runtime-sync.sh`, `bash scripts/test-runtime-sync.sh` | Apenas ao modificar o mecanismo de sincronizacao, nao por edicao de skill/docs |
+| Documentos de leitura de partida (`AGENTS.md`, `CLAUDE.md`, `TODO.md`, TODO de componente, handoff) | `php scripts/validate-agent-token-budget.php` | Estrutura essencial de contratos e alertas de custo de contexto; tamanho de TODO/skill nao bloqueia entrega. Symlinks e frontmatter sao verificados em `validate-agent-skills.py` |
 | Tabela "Não ler por padrão" (`AGENT-TOKEN-ECONOMY.md`) | `php scripts/validate-agent-economy-paths.php` | Caminhos existem e tamanhos declarados batem com o real (±2x); `vendor/` ausente é aceito |
 
 ## Matriz por tipo de arquivo (2026-11-11)
@@ -56,11 +57,11 @@ Critérios: PASS (executado e verde), FAIL, DEFERRED (não roda aqui; motivo), N
 | PHP alterado | `php -l` nos arquivos; `php scripts/phpunit-suites.php --check`; `phpstan analyse` (com `vendor/`) | `php -l` e suites: PASS. PHPStan: DEFERRED (sem `vendor/`) |
 | Twig | validadores SDC do tema; `php -l` em módulos com PHP | DEFERRED onde o validador depende de Drush |
 | CSS (tema) | `npm run lint:css` (Stylelint 13 do projeto) | PASS (0 erros) |
-| JavaScript novo ou alterado | ESLint com configuração própria do projeto | DEFERRED: ESLint não declarado no projeto; criar configuração é pendência |
+| JavaScript novo ou alterado | `npm run lint:js` (ESLint 9 na raiz) | Executar no ambiente da entrega; consultar o CI atual para PASS/FAIL |
 | SDC | `validate-aculta420-sdc-schemas.php`, `validate-aculta420-v2-sdc.php` | DEFERRED (depende do ambiente Drupal) |
 | UI Patterns | `validate-ui-patterns-views-cutover.php` | DEFERRED (Runtime/browser) |
 | UI Styles | `validate-aculta420-ui-styles.php` | DEFERRED (ambiente Drupal) |
-| UI Skins | sem validador dedicado; regressão visual (`aculta-regressao-visual`) | DEFERRED: sem suíte visual |
+| UI Skins | `php scripts/validate-aculta420-ui-skins.php` e regressao visual focal | Verificar cobertura do componente e ambiente efetivo |
 | UI Icons | teste Unit `UiIconsPackTest` do tema (`phpunit --testsuite unit`) | DEFERRED (sem `vendor/`) |
 | HTMX | `aculta-navegador-testes` + suíte `playwright.a11y.spec.mjs` | DEFERRED (sem origem de ambiente) |
 | Rotas | `validate-admin-routes-main-domain.php` | DEFERRED (Drush) |
@@ -72,7 +73,7 @@ Critérios: PASS (executado e verde), FAIL, DEFERRED (não roda aqui; motivo), N
 | Runtime Sync | `bash -n scripts/runtime-sync.sh`; `bash scripts/test-runtime-sync.sh` | PASS (30/30, simulado; inclui `structural-complete`) |
 | Scripts shell | `shellcheck -S warning` e `shfmt -d` nos arquivos alterados; `bash -n` | ShellCheck e shfmt: executados; legado com dívida |
 | GitHub Actions | `actionlint` (gate no CI pretendido) | DEFERRED: binário não instalado neste ambiente |
-| Skills | `python3 scripts/validate-agent-skills.py`; `php scripts/validate-agent-token-budget.php` | Skills: PASS; orçamento: FAIL pré-existente (`TODO.md`, `css`, `htmx`, `sdc`, `ui-patterns`) |
+| Skills | `python3 scripts/validate-agent-skills.py`; `php scripts/validate-agent-token-budget.php` | Resultado deve ser obtido nesta entrega; avisos de tamanho nao sao FAIL |
 | Teste de navegador | `php scripts/validate-browser-index.php` e `npm run test:list` | `test:list`: PASS (130); índice: FAIL pré-existente |
 
 Mudança em contrato compartilhado (SDC, UI Styles, UI Library, serviço de pagamento) exige também os consumidores dependentes listados na skill `aculta-gates-por-escopo`.

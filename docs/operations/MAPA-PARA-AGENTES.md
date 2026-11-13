@@ -34,7 +34,7 @@ Todos ficam em `web/modules/custom/aculta_portal/modules/`. O quadro de status (
 | Eventos e calendário | `aculta_events`, `aculta_calendar`, `aculta_events_openstreetmap` (em andamento), `aculta_maps` (só docs) | `aculta_events/docs/ROADMAP.md`, `aculta_calendar/docs/ROADMAP.md` |
 | Conteúdo e mídia | `aculta_magazine`, `aculta_gallery`, `aculta_image`, `aculta_document_viewer`, `aculta_editor`, `aculta_faq`, `aculta_content_admin` | README de cada módulo |
 | Plataforma | `aculta_deployer`, `aculta_secrets_manager`, `aculta_patcher`, `aculta_index`, `aculta_statistics`, `aculta_portal_sitemap`, `aculta_linkweed`, `aculta_qrcode`, `aculta_activity`, `aculta_game`, `aculta_studio` | README de cada módulo |
-| Tema | `web/themes/custom/aculta420` | `web/themes/custom/aculta420/AGENTS.md` |
+| Tema ativo | `web/themes/custom/aculta420_v2` | `web/themes/custom/aculta420_v2/AGENTS.md` |
 
 Observação: `aculta_ugc` existe só como documentação (`web/modules/custom/aculta_portal/modules/aculta_ugc/docs/README.md` e `.../docs/PLANO-IMPLANTACAO.md`), sem código. Não o trate como módulo instalado.
 
@@ -61,6 +61,12 @@ Carrinho da barra: um pedido por carrinho, com fluxo mais exigente entre as cate
 - `README.md` da raiz: tabela entre os marcadores `PROJECT-STATUS-INDEX`. Não edite à mão.
 - Para regenerar: `php scripts/validate-project-status-index.php --write`. Para só validar: sem `--write`.
 - Cada componente tem um arquivo em `docs/operations/status/<módulo>.yml`. A versão precisa coincidir com o `info.yml`.
+
+## Governanca de agentes
+
+- Contrato atual: `AGENTS.md`; classes de revisao: `docs/operations/AGENT-REVIEW-POLICY.md`.
+- Skills canonicas: `.agents/skills/`; Claude e Codex usam symlinks, sem tres copias editaveis.
+- Handoff e TODO sao consulta de fase; nao substituem HEAD, manifests nem testes.
 
 ## Documentos que não são instrução padrão
 

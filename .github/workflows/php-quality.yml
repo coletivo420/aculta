@@ -64,6 +64,11 @@ jobs:
         php-version: '8.4'
         tools: composer
 
+    - name: Validate agent contracts and skill discovery
+      run: |
+        php scripts/validate-agent-token-budget.php
+        python3 scripts/validate-agent-skills.py
+
     - name: Install dependencies
       run: |
         composer install --no-dev --prefer-dist --no-interaction

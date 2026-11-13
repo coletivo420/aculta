@@ -5,7 +5,7 @@ prevalece a regra geral mais recente do responsável.
 
 ## Branch e publicação
 - Faça o trabalho autorizado diretamente na branch `dev` e envie commits para
-  `origin/dev`. Não crie branches, worktrees de escrita ou PRs.
+  `origin/dev`. Worktrees isoladas, inclusive detached, podem ser usadas para preservar trabalho concorrente. PRs e merge em main somente com pedido.
 - Antes de editar, confira `git status --short --branch` e preserve mudanças
   paralelas. Não sobrescreva trabalho de outras pessoas.
 - Faça commits pequenos, limitados à tarefa. Publique por fast-forward; nunca
@@ -14,8 +14,7 @@ prevalece a regra geral mais recente do responsável.
   de publicar novamente.
 
 ## Runtime e dados
-- Não faça deploy, alterações de produção ou operações persistentes no Runtime
-  sem autorização explícita.
+- Nao faca deploy de producao ou operacoes estruturais/persistentes sem autorizacao especifica. Sincronizacao de codigo/cache em dev segue o preflight do Runtime Sync.
 - Antes de qualquer operação autorizada, confirme host, diretório, URI e banco
   e consulte `docs/architecture/environments.md`.
 - Os bancos existentes são `aculta_runtime` e `aculta_simpletest`. Nunca crie
@@ -25,8 +24,7 @@ prevalece a regra geral mais recente do responsável.
   sem autorização explícita. Prefira verificações somente leitura.
 
 ## Validação e registro
-- Execute as verificações pertinentes ao escopo e relate somente o que foi
-  realmente executado. Para documentação, confira links e `git diff --check`.
+- Classifique R0-R3 conforme `docs/operations/AGENT-REVIEW-POLICY.md`, execute gates do escopo e relate somente testes realmente executados. Para documentacao, confira links e `git diff --check`.
 - Registre ações operacionais no histórico indicado pelo responsável. Não
   acrescente snapshots ao histórico por rotina.
 - Ao concluir, informe arquivos alterados, commit enviado, verificações e

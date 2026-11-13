@@ -54,7 +54,7 @@ Os testes de Kernel usam o MariaDB dedicado `aculta_simpletest`, com a configura
 
 ## Regra de encerramento de fase
 
-Toda fase ou subfase concluída deve terminar em commit(s) atômicos publicados em `origin/dev` e sincronizados no Runtime (D-70). PR só é criado quando o responsável solicitar. Quando solicitado, o PR deve:
+Entregas de codigo sao publicadas em `origin/dev` apos revisao e gates do escopo. Runtime Sync e condicional ao impacto no codigo servido, acesso seguro e preflight; mudanca documental nao exige rebuild. Revisao R0-R3: `docs/operations/AGENT-REVIEW-POLICY.md`. PR so por pedido explicito. Quando solicitado, o PR deve:
 
 - representar uma unidade lógica clara;
 - listar entregas e limites;
@@ -68,4 +68,4 @@ Não declarar Alpha validado sem evidência do servidor de desenvolvimento.
 
 ## Versionamento de mudanças
 
-Antes de alterar código do Portal ou do tema, siga `web/themes/custom/aculta420/docs/versioning.md` e `docs/operations/RELEASES.md`. Portal e tema têm versões independentes; mantenha manifest e CHANGELOG correspondentes coerentes e não marque estado ainda não validado. Mudanças apenas documentais não avançam versão. Não criar tags sem pedido explícito do responsável.
+Antes de alterar código do Portal ou do tema, siga `web/themes/custom/aculta420_v2/docs/versioning.md` e `docs/operations/RELEASES.md`. Portal e tema têm versões independentes; mantenha manifest e CHANGELOG correspondentes coerentes e não marque estado ainda não validado. Mudanças apenas documentais não avançam versão. Não criar tags sem pedido explícito do responsável.

@@ -15,14 +15,14 @@ Começar pelo modelo econômico **somente quando seguro e verificável**. Escala
 
 ## Economia de contexto e tokens
 
-1. Definir uma única subfase e o menor conjunto de arquivos-alvo. Forneça ao agente apenas o `TODO.md` do componente (ou o `TODO.md` raiz, se a tarefa for transversal) e o arquivo que será alterado; o resto entra por `rg` quando a tarefa pedir.
-2. Usar `rg -n` e leitura por linha; não carregar repositório, vendor, Core, contrib ou logs inteiros sem motivo.
+1. Definir escopo e comecar pelos arquivos-alvo. Ler TODO e handoff quando a tarefa envolve fase/continuacao; expandir para contratos e fontes adicionais sempre que necessario.
+2. Preferir `rg -n` e leitura por trechos; vendor, Core, contrib e logs podem ser consultados focalmente para verificar APIs e diagnosticar falhas.
 3. Preferir `git diff --stat` e `git diff --check`; preservar erros e linhas úteis.
 4. Não repetir roadmap extenso; citar caminhos canônicos e só registrar novas decisões.
 5. Agrupar leituras independentes e aproveitar evidências verificadas.
 6. Reportar sucintamente objetivo, arquivos, SHA, verificações executadas, pendências e próximo passo.
 7. Após duas tentativas equivalentes sem progresso, reformular ou escalar.
-8. **Nunca economizar tokens sacrificando segurança, testes, documentação, revisão ou honestidade sobre resultados.**
+8. **Nunca economizar tokens sacrificando seguranca, testes, documentacao, revisao ou honestidade sobre resultados.** Metas de tamanho e numero de arquivos sao orientativas, nao gates de qualidade.
 
 ## CLI somente leitura
 
