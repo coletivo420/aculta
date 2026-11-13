@@ -11,6 +11,10 @@ props:
     author_name:
       type: string
       title: Nome público
+    profile_url:
+      type: [string, 'null']
+      title: Link para a conta pública do autor
+      default: null
     timestamp:
       type: [string, 'null']
       title: Horário (texto já formatado)

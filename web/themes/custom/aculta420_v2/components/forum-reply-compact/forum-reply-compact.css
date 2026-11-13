@@ -16,18 +16,8 @@
   background: var(--accent-green-stripe);
 }
 
-.forum-reply-compact__tricolor {
-  display: flex;
-  block-size: 4px;
-}
 
-.forum-reply-compact__tricolor-segment {
-  flex: 1 1 0;
-}
 
-.forum-reply-compact__tricolor-segment--green { background: var(--accent-green-stripe); }
-.forum-reply-compact__tricolor-segment--yellow { background: var(--accent-yellow-stripe); }
-.forum-reply-compact__tricolor-segment--red { background: var(--accent-red-stripe); }
 
 .forum-reply-compact__body {
   display: flex;
@@ -103,3 +93,46 @@
 /* Densidade compacta (celular): cabeçalho quebra linha e texto um degrau menor. */
 .forum-reply-compact--density-compact .forum-reply-compact__header { flex-wrap: wrap; }
 .forum-reply-compact--density-compact .forum-reply-compact__text { font-size: var(--font-size-sm); }
+
+/* Rodapé: barra de reações à esquerda e barra de respostas à direita, na mesma linha. */
+.forum-reply-compact__footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-xs);
+  margin-block-start: var(--spacing-xs);
+}
+
+.forum-reply-compact__reactions {
+  display: flex;
+  align-items: center;
+}
+
+.forum-reply-compact__actions {
+  display: flex;
+  align-items: center;
+  margin-inline-start: auto;
+}
+
+/* Contador geral de reações: emoji de brócolis e o número ao lado. */
+.forum-reply-compact__count {
+  display: inline-flex;
+  align-items: center;
+  gap: .25rem;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+/* Cabeçalho: autor à esquerda e barra de reações recebidas à direita, na mesma linha. */
+.forum-reply-compact__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-xs);
+}
+
+.forum-reply-compact__received {
+  margin-inline-start: auto;
+}
+

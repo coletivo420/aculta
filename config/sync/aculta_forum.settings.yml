@@ -4,12 +4,17 @@ restricted_group_type: ''
 reactions_enabled: true
 reply_max_depth: 2
 topic_author_delete_policy: moderation_queue
-default_reaction: heart
+default_reaction: broccoli
 allowed_reactions:
+  -
+    id: broccoli
+    icon: broccoli
+    label: Curtir
+    enabled: true
   -
     id: heart
     icon: heart
-    label: Curtir
+    label: Coração
     enabled: true
   -
     id: thumbs_up

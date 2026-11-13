@@ -106,7 +106,7 @@ final class ForumSettingsForm extends ConfigFormBase {
     ];
 
     $allowedReactions = (array) ($config->get('allowed_reactions') ?? []);
-    $defaultReaction = (string) ($config->get('default_reaction') ?? 'heart');
+    $defaultReaction = (string) ($config->get('default_reaction') ?? 'broccoli');
 
     $options = [];
     foreach ($allowedReactions as $reaction) {

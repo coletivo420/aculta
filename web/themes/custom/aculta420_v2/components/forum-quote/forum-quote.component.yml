@@ -37,7 +37,26 @@ props:
       type: [string, 'null']
       title: Link para a publicação citada
       default: null
+    edit_url:
+      type: [string, 'null']
+      title: URL para editar
+      default: null
+    delete_url:
+      type: [string, 'null']
+      title: URL para excluir
+      default: null
+    quote_url:
+      type: [string, 'null']
+      title: URL para citar
+      default: null
     reply_url:
       type: [string, 'null']
       title: URL para responder
       default: null
+slots:
+  content:
+    title: Conteúdo
+    description: Texto citado.
+  reactions_slot:
+    title: Barra de reações
+    description: aculta420_v2:discussion-reaction-bar, fornecida pelo módulo proprietário.

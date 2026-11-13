@@ -1,6 +1,6 @@
 $schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
 name: "Reply compacto: resposta"
-description: "Resposta compacta do fórum: autor, horário, texto e ações (reação e menu), com faixa tricolor no topo e faixa verde à esquerda."
+description: "Resposta compacta do fórum: autor, horário, texto e ações, com barra de reações no topo, barra de respostas abaixo do texto e faixa verde à esquerda."
 status: stable
 group: Comunidade
 props:
@@ -8,6 +8,10 @@ props:
   additionalProperties: false
   required: [author_name]
   properties:
+    author_url:
+      type: [string, 'null']
+      title: Link para a conta pública do autor
+      default: null
     theme:
       type: string
       title: Tema
@@ -30,10 +34,6 @@ props:
       type: string
       title: Nome do autor
       minLength: 1
-    avatar:
-      type: [string, 'null']
-      title: Mídia do avatar do autor (markup da imagem)
-      default: null
     timestamp:
       type: [string, 'null']
       title: Horário da resposta
@@ -46,3 +46,19 @@ props:
       type: [integer, 'null']
       title: Contagem de reações
       default: null
+slots:
+  avatar:
+    title: Avatar do autor
+    description: Imagem própria do autor (markup). Vazio usa o avatar padrão do componente aculta420_v2:avatar.
+  content:
+    title: Conteúdo da resposta
+    description: Texto da resposta.
+  reactions_slot:
+    title: Barra de reações
+    description: aculta420_v2:discussion-reaction-bar, fornecida pelo módulo proprietário.
+  actions:
+    title: Barra de respostas
+    description: aculta420_v2:content-reply-bar, fornecida pelo módulo proprietário.
+  received_slot:
+    title: Barra de reações recebidas
+    description: aculta420_v2:discussion-reactions-received, no topo à direita.

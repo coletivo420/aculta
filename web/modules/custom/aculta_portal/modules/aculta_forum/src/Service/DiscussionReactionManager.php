@@ -54,7 +54,7 @@ class DiscussionReactionManager {
    * Returns default reaction ID.
    */
   public function getDefaultReaction(): string {
-    return (string) ($this->configFactory->get('aculta_forum.settings')->get('default_reaction') ?: 'heart');
+    return (string) ($this->configFactory->get('aculta_forum.settings')->get('default_reaction') ?: 'broccoli');
   }
 
   /**

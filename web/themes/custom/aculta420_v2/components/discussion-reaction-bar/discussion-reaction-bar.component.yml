@@ -41,7 +41,7 @@ props:
     default_reaction:
       type: string
       title: Emoji padrão de clique rápido
-      default: heart
+      default: broccoli
     can_react:
       type: boolean
       title: Se o usuário atual pode reagir

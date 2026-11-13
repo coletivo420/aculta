@@ -14,6 +14,10 @@ props:
       enum: [light, dark]
       default: light
       description: "dark aplica os tokens de modo escuro somente a este cartão."
+    author_url:
+      type: [string, 'null']
+      title: Link para a conta pública do autor
+      default: null
     author_position:
       type: string
       title: Posição da autoria

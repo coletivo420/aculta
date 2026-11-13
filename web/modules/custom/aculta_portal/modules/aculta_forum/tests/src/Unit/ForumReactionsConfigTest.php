@@ -29,11 +29,11 @@ final class ForumReactionsConfigTest extends UnitTestCase {
     self::assertSame($installConfig, $syncConfig);
     self::assertArrayHasKey('reactions_enabled', $installConfig);
     self::assertTrue($installConfig['reactions_enabled']);
-    self::assertSame('heart', $installConfig['default_reaction']);
+    self::assertSame('broccoli', $installConfig['default_reaction']);
     self::assertIsArray($installConfig['allowed_reactions']);
 
     $reactionIds = array_column($installConfig['allowed_reactions'], 'id');
-    self::assertContains('heart', $reactionIds);
+    self::assertContains('broccoli', $reactionIds);
     self::assertContains('thumbs_up', $reactionIds);
     self::assertContains('seedling', $reactionIds);
     self::assertContains('herb', $reactionIds);

@@ -10,7 +10,7 @@
         {% set avatar_markup = avatar is iterable ? render_var(avatar) : avatar %}
         {% set has_avatar = avatar_markup and ('<img' in avatar_markup or '<svg' in avatar_markup or avatar_markup|striptags|trim != '') %}
         {# Avatar e nome vêm do componente forum-author-line; sem avatar próprio, ele usa aculta420_v2:avatar. #}
-        {{ include('aculta420_v2:forum-author-line', { author_name: author_name, timestamp: null, avatar: has_avatar ? avatar_markup : null }, with_context = false) }}
+        {{ include('aculta420_v2:forum-author-line', { author_name: author_name, profile_url: author_url, timestamp: null, avatar: has_avatar ? avatar_markup : null }, with_context = false) }}
         <div class="forum-post-card__author-info">
           {% if author_role %}
             <div class="forum-post-card__author-name-row">
@@ -22,12 +22,6 @@
               <span class="forum-post-card__post-count">{{ author_posts }} {{ 'posts'|t }}</span>
             {% else %}
               <span class="forum-post-card__post-count">—<span class="visually-hidden">{{ 'Dado indisponível'|t }}</span></span>
-            {% endif %}
-            {% if author_reactions is not null and author_reactions is not same as('') %}
-              <span class="forum-post-card__reaction-stat" title="{{ 'Reações recebidas'|t }}">
-                {{ include('aculta420_v2:reaction-emoji', { name: 'broccoli', variant: 'color', size: 'xs', label: 'Reações recebidas'|t }, with_context = false) }}
-                <span>{{ author_reactions }} {{ 'reações'|t }}</span>
-              </span>
             {% endif %}
             {% if timestamp %}
               <span class="forum-post-card__time">· {{ timestamp }}</span>

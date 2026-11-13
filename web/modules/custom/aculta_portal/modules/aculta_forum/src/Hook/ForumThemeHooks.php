@@ -44,7 +44,7 @@ class ForumThemeHooks {
           'total_count' => 0,
           'user_reaction' => NULL,
           'allowed_reactions' => [],
-          'default_reaction' => 'heart',
+          'default_reaction' => 'broccoli',
           'can_react' => FALSE,
           'is_own_content' => FALSE,
           'react_url' => '',

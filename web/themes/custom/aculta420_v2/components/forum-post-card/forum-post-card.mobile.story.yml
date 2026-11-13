@@ -28,7 +28,7 @@ slots:
       entity_id: '1'
       total_count: 19
       user_reaction: thumbs_up
-      default_reaction: heart
+      default_reaction: broccoli
       can_react: true
       react_url: '#'
       csrf_token: story-token

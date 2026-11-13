@@ -24,18 +24,16 @@
     </div>
   </div>
   <footer class="forum-quote__actions">
-    {% if permalink_url %}
-      <a href="{{ permalink_url }}" class="forum-quote__action" aria-label="{{ 'Link permanente'|t }}" title="{{ 'Link permanente'|t }}">
-        {{ include('aculta420_v2:icon', { name: 'link', variant: 'regular', size: 'md' }, with_context = false) }}
-      </a>
+    {% if reactions_slot %}
+      {{ reactions_slot }}
     {% endif %}
-    <span class="forum-quote__action" aria-hidden="true">
-      {{ include('aculta420_v2:icon', { name: 'heart', variant: 'regular', size: 'md' }, with_context = false) }}
-    </span>
-    {% if reply_url %}
-      <a href="{{ reply_url }}" class="forum-quote__action" aria-label="{{ 'Responder'|t }}" title="{{ 'Responder'|t }}">
-        {{ include('aculta420_v2:icon', { name: 'arrow-bend-up-left', variant: 'regular', size: 'md' }, with_context = false) }}
-      </a>
-    {% endif %}
+    {{ include('aculta420_v2:content-reply-bar', {
+      permalink_url: permalink_url|default(null),
+      edit_url: edit_url|default(null),
+      delete_url: delete_url|default(null),
+      quote_url: quote_url|default(null),
+      reply_url: reply_url|default(null),
+      target_id: 'aculta-reply-dialog-body',
+    }, with_context = false) }}
   </footer>
 </blockquote>

@@ -1,38 +1,30 @@
 {#
 /**
  * @file
- * Reply compacto: resposta do fórum com autor, horário, texto e ações.
- * Faixa tricolor no topo (cores do tema) e faixa verde à esquerda.
+ * Reply compacto: autor, horário, barra de reações e contador (topo); texto e barra de respostas (base).
+ * Faixa verde à esquerda, sem faixa tricolor no topo.
  */
 #}
 <article{% if theme == 'dark' %} data-theme="dark"{% endif %} class="forum-reply-compact forum-reply-compact--density-{{ density|default('default') }}{% if density == 'compact' %} aculta-mobile-frame{% endif %}{% if reacted %} is-reacted{% endif %}{% if accent_side == 'end' %} forum-reply-compact--side-end{% endif %}">
-  <div class="forum-reply-compact__tricolor" aria-hidden="true">
-    <span class="forum-reply-compact__tricolor-segment forum-reply-compact__tricolor-segment--green"></span>
-    <span class="forum-reply-compact__tricolor-segment forum-reply-compact__tricolor-segment--yellow"></span>
-    <span class="forum-reply-compact__tricolor-segment forum-reply-compact__tricolor-segment--red"></span>
-  </div>
   <div class="forum-reply-compact__body">
     <div class="forum-reply-compact__main">
       <header class="forum-reply-compact__header">
-        {{ include('aculta420_v2:forum-author-line', { author_name: author_name, timestamp: timestamp, avatar: avatar }, with_context = false) }}
-        <div class="forum-reply-compact__tools">
-          {{ include('aculta420_v2:button', {
-            aria_label: 'Reagir'|t,
-            variant: 'ghost',
-            size: 'small',
-            icon_before: 'heart',
-            attributes: create_attribute({
-              class: ['forum-reply-compact__heart', reacted ? 'is-active'],
-            }),
-          }, with_context = false) }}
-          <span class="forum-reply-compact__more" aria-hidden="true">
-            {{ include('aculta420_v2:icon', { name: 'dots-three', variant: 'regular', size: 'sm' }, with_context = false) }}
-          </span>
-        </div>
+        {{ include('aculta420_v2:forum-author-line', { author_name: author_name, profile_url: author_url, timestamp: timestamp, avatar: avatar }, with_context = false) }}
+        {% if received_slot %}
+          <div class="forum-reply-compact__received">{{ received_slot }}</div>
+        {% endif %}
       </header>
       <div class="forum-reply-compact__text">
         {{ content }}
       </div>
+      <footer class="forum-reply-compact__footer">
+        {% if reactions_slot %}
+          <div class="forum-reply-compact__reactions">{{ reactions_slot }}</div>
+        {% endif %}
+        {% if actions %}
+          <div class="forum-reply-compact__actions">{{ actions }}</div>
+        {% endif %}
+      </footer>
     </div>
   </div>
 </article>

@@ -238,3 +238,4 @@
 .discussion-reaction-bar__popover[popover]:not(:popover-open) {
   display: none;
 }
+
