@@ -61,6 +61,8 @@ final class LmsDiscussionContextIsolationKernelTest extends KernelTestBase {
     'node',
     'image',
     'media',
+    'media_library',
+    'photoswipe',
     'media_gallery',
     'options',
     'flexible_permissions',
@@ -150,7 +152,7 @@ final class LmsDiscussionContextIsolationKernelTest extends KernelTestBase {
         ->setData($data)
         ->save();
     }
-    $this->installConfig(['system', 'user', 'node', 'comment', 'image', 'media', 'media_gallery', 'aculta_lms']);
+    $this->installConfig(['system', 'user', 'node', 'comment', 'image', 'media', 'media_library', 'photoswipe', 'media_gallery', 'aculta_lms']);
     $this->container->get('entity_field.manager')->clearCachedFieldDefinitions();
     $this->container->get('group_relation_type.manager')->clearCachedPluginMaps();
 
