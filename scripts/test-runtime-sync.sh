@@ -15,8 +15,8 @@ PASS_COUNT=0
 FAIL_COUNT=0
 
 assert_ok() {
-  local cond="$1" msg="$2"
-  if eval "$cond"; then
+  local msg="$1" result="$2"
+  if [[ "$result" == PASS ]]; then
     printf 'PASS %s\n' "$msg"
     PASS_COUNT=$((PASS_COUNT + 1))
   else
@@ -157,23 +157,19 @@ head_sha="$(git -C "$fix/runtime" rev-parse HEAD)"
 
 # 1a. Plan deve apontar que cache/validacao está pendente mesmo com HEAD == origin/dev
 plan_json="$(run_sync "$fix" plan --format=json)"
-assert_ok '[[ "$(printf "%s" "$plan_json" | python3 -c "import json,sys; print(json.load(sys.stdin)[\"outcome\"])")" != "NOOP" ]]' \
-  "T01a: plan com HEAD == origin/dev e baseline UNKNOWN nao reporta falso NOOP"
+assert_ok "T01a: plan com HEAD == origin/dev e baseline UNKNOWN nao reporta falso NOOP" "$([[ "$(printf "%s" "$plan_json" | python3 -c "import json,sys; print(json.load(sys.stdin)[\"outcome\"])")" != "NOOP" ]] && printf PASS || printf FAIL)"
 
 # 1b. sync-code deve rodar drush cr mesmo com HEAD == origin/dev!
 run_sync "$fix" sync-code >/dev/null 2>&1
 cr_calls="$(cat "$fix/cr.count")"
 st_json="$(run_sync "$fix" status --format=json)"
-assert_ok '[[ "$cr_calls" -eq 1 ]]' \
-  "T01b: sync-code com HEAD == origin/dev e cache pendente executa drush cr exatamente 1 vez"
-assert_ok '[[ "$(printf "%s" "$st_json" | python3 -c "import json,sys; print(json.load(sys.stdin)[\"last_validated_sha\"])")" == "$head_sha" ]]' \
-  "T01c: last_validated_sha passa a registrar o SHA validado apos drush cr"
+assert_ok "T01b: sync-code com HEAD == origin/dev e cache pendente executa drush cr exatamente 1 vez" "$([[ "$cr_calls" -eq 1 ]] && printf PASS || printf FAIL)"
+assert_ok "T01c: last_validated_sha passa a registrar o SHA validado apos drush cr" "$([[ "$(printf "%s" "$st_json" | python3 -c "import json,sys; print(json.load(sys.stdin)[\"last_validated_sha\"])")" == "$head_sha" ]] && printf PASS || printf FAIL)"
 
 # 2. Executar sync-code novamente no mesmo SHA: deve retornar NOOP e NAO rodar drush cr
 sync2_json="$(run_sync "$fix" sync-code --format=json)"
 cr_calls_after="$(cat "$fix/cr.count")"
-assert_ok '[[ "$cr_calls_after" -eq 1 && "$(printf "%s" "$sync2_json" | python3 -c "import json,sys; print(json.load(sys.stdin)[\"outcome\"])")" == "NOOP" ]]' \
-  "T02: segunda execucao com HEAD == origin/dev e cache ja validado retorna NOOP sem novo drush cr"
+assert_ok "T02: segunda execucao com HEAD == origin/dev e cache ja validado retorna NOOP sem novo drush cr" "$([[ "$cr_calls_after" -eq 1 && "$(printf "%s" "$sync2_json" | python3 -c "import json,sys; print(json.load(sys.stdin)[\"outcome\"])")" == "NOOP" ]] && printf PASS || printf FAIL)"
 
 # ==============================================================================
 # Caso 3 & 4: Fast-forward seguro de codigo (R1) vs mudanca apenas documental (R0)
@@ -187,15 +183,12 @@ r1_sha="$(git -C "$fix/Author" rev-parse HEAD)"
 
 # 3a. plan --refresh deve conseguir classificar R1 sem alterar HEAD do runtime
 plan_ref_json="$(run_sync "$fix" plan --refresh --format=json)"
-assert_ok '[[ "$(printf "%s" "$plan_ref_json" | python3 -c "import json,sys; print(json.load(sys.stdin)[\"risk\"])")" == "R1" ]]' \
-  "T03a: plan --refresh classifica delta remoto R1 sem modificar checkout"
-assert_ok '[[ "$(git -C "$fix/runtime" rev-parse HEAD)" == "$head_sha" ]]' \
-  "T03b: plan --refresh preserva HEAD local inalterado"
+assert_ok "T03a: plan --refresh classifica delta remoto R1 sem modificar checkout" "$([[ "$(printf "%s" "$plan_ref_json" | python3 -c "import json,sys; print(json.load(sys.stdin)[\"risk\"])")" == "R1" ]] && printf PASS || printf FAIL)"
+assert_ok "T03b: plan --refresh preserva HEAD local inalterado" "$([[ "$(git -C "$fix/runtime" rev-parse HEAD)" == "$head_sha" ]] && printf PASS || printf FAIL)"
 
 # 3b. sync-code faz fast-forward e roda drush cr 1 vez
 run_sync "$fix" sync-code >/dev/null 2>&1
-assert_ok '[[ "$(git -C "$fix/runtime" rev-parse HEAD)" == "$r1_sha" && "$(cat "$fix/cr.count")" -eq 2 ]]' \
-  "T03c: sync-code aplica fast-forward R1 e reconstroi cache"
+assert_ok "T03c: sync-code aplica fast-forward R1 e reconstroi cache" "$([[ "$(git -C "$fix/runtime" rev-parse HEAD)" == "$r1_sha" && "$(cat "$fix/cr.count")" -eq 2 ]] && printf PASS || printf FAIL)"
 
 # 4. Commit exclusivamente documental (R0) apos baseline validado -> atualiza SHA e dispensa drush cr
 echo "Nova linha de doc" >>"$fix/Author/docs/README.md"
@@ -205,8 +198,7 @@ git -C "$fix/Author" push -q origin dev
 r0_sha="$(git -C "$fix/Author" rev-parse HEAD)"
 
 r0_sync_json="$(run_sync "$fix" sync-code --format=json)"
-assert_ok '[[ "$(git -C "$fix/runtime" rev-parse HEAD)" == "$r0_sha" && "$(cat "$fix/cr.count")" -eq 2 ]]' \
-  "T04: delta exclusivamente documental (R0) com baseline valido atualiza checkout sem drush cr desnecessario"
+assert_ok "T04: delta exclusivamente documental (R0) com baseline valido atualiza checkout sem drush cr desnecessario" "$([[ "$(git -C "$fix/runtime" rev-parse HEAD)" == "$r0_sha" && "$(cat "$fix/cr.count")" -eq 2 ]] && printf PASS || printf FAIL)"
 
 # ==============================================================================
 # Caso 5: Bloqueio de mudancas estruturais (composer.lock, config/sync, .install, hook, rename)
@@ -225,8 +217,7 @@ git -C "$fix5/Author" push -q origin dev
 rc=0
 run_sync "$fix5" sync-code >/dev/null 2>&1 || rc=$?
 st5="$(run_sync "$fix5" status --format=json)"
-assert_ok '[[ "$rc" -ne 0 && "$(printf "%s" "$st5" | python3 -c "import json,sys; print(json.load(sys.stdin)[\"pending_structural_risk\"])")" == "R2" ]]' \
-  "T05a: alteracao em composer.lock e classificada como R2 e bloqueia sync-code"
+assert_ok "T05a: alteracao em composer.lock e classificada como R2 e bloqueia sync-code" "$([[ "$rc" -ne 0 && "$(printf "%s" "$st5" | python3 -c "import json,sys; print(json.load(sys.stdin)[\"pending_structural_risk\"])")" == "R2" ]] && printf PASS || printf FAIL)"
 
 # 5b. Alterar config/sync e .install (R3) e arquivo com newline/hook
 echo "foo: bar" >"$fix5/Author/config/sync/system.site.yml"
@@ -238,8 +229,7 @@ git -C "$fix5/Author" push -q origin dev
 rc=0
 run_sync "$fix5" sync-code >/dev/null 2>&1 || rc=$?
 st5b="$(run_sync "$fix5" status --format=json)"
-assert_ok '[[ "$rc" -ne 0 && "$(printf "%s" "$st5b" | python3 -c "import json,sys; print(json.load(sys.stdin)[\"pending_structural_risk\"])")" == "R3" ]]' \
-  "T05b: alteracao em config/sync e .install e classificada como R3 e bloqueia sync-code"
+assert_ok "T05b: alteracao em config/sync e .install e classificada como R3 e bloqueia sync-code" "$([[ "$rc" -ne 0 && "$(printf "%s" "$st5b" | python3 -c "import json,sys; print(json.load(sys.stdin)[\"pending_structural_risk\"])")" == "R3" ]] && printf PASS || printf FAIL)"
 
 # ==============================================================================
 # Caso 6: Worktree suja, untracked, branch errada, heads divergentes -> BLOCK sem perda
@@ -251,8 +241,7 @@ ACULTA_SYNC_ADOPT_BASELINE=1 run_sync "$fix6" sync-code --adopt-baseline >/dev/n
 echo "trabalho de outro agente" >"$fix6/runtime/untracked-agent.txt"
 rc=0
 run_sync "$fix6" sync-code >/dev/null 2>&1 || rc=$?
-assert_ok '[[ "$rc" -ne 0 && -f "$fix6/runtime/untracked-agent.txt" ]]' \
-  "T06a: arquivo untracked de outro agente bloqueia sync-code e e integralmente preservado"
+assert_ok "T06a: arquivo untracked de outro agente bloqueia sync-code e e integralmente preservado" "$([[ "$rc" -ne 0 && -f "$fix6/runtime/untracked-agent.txt" ]] && printf PASS || printf FAIL)"
 rm -f "$fix6/runtime/untracked-agent.txt"
 
 # Heads divergentes (non-fast-forward)
@@ -264,8 +253,7 @@ git -C "$fix6/Author" push -q origin dev
 
 rc=0
 run_sync "$fix6" sync-code >/dev/null 2>&1 || rc=$?
-assert_ok '[[ "$rc" -ne 0 ]]' \
-  "T06b: heads divergentes (nao fast-forward) bloqueiam sync-code"
+assert_ok "T06b: heads divergentes (nao fast-forward) bloqueiam sync-code" "$([[ "$rc" -ne 0 ]] && printf PASS || printf FAIL)"
 
 # ==============================================================================
 # Caso 7 & 8: Host, URI (incluindo producao), DB errados, Drush malformado e pendencias Drush
@@ -276,22 +264,22 @@ fix7="$WORK_BASE/c7_env_drush"
 rc=0
 TEST_SYNC_HOST="host-invalido" run_sync "$fix7" sync-code >/dev/null 2>&1 || rc=$?
 unset TEST_SYNC_HOST
-assert_ok '[[ "$rc" -ne 0 ]]' "T07a: host incorreto bloqueia sync-code"
+assert_ok "T07a: host incorreto bloqueia sync-code" "$([[ "$rc" -ne 0 ]] && printf PASS || printf FAIL)"
 
 rc=0
 TEST_SYNC_DB="banco_errado" run_sync "$fix7" sync-code >/dev/null 2>&1 || rc=$?
 unset TEST_SYNC_DB
-assert_ok '[[ "$rc" -ne 0 ]]' "T07b: banco ativo divergente do esperado bloqueia sync-code"
+assert_ok "T07b: banco ativo divergente do esperado bloqueia sync-code" "$([[ "$rc" -ne 0 ]] && printf PASS || printf FAIL)"
 
 rc=0
 TEST_SYNC_URI="https://aculta.org" run_sync "$fix7" sync-code >/dev/null 2>&1 || rc=$?
 unset TEST_SYNC_URI
-assert_ok '[[ "$rc" -ne 0 ]]' "T07c: URI de producao (aculta.org) e estritamente bloqueada (T14)"
+assert_ok "T07c: URI de producao (aculta.org) e estritamente bloqueada (T14)" "$([[ "$rc" -ne 0 ]] && printf PASS || printf FAIL)"
 
 rc=0
 FAKE_DRUSH_MALFORMED=1 run_sync "$fix7" sync-code >/dev/null 2>&1 || rc=$?
 unset FAKE_DRUSH_MALFORMED
-assert_ok '[[ "$rc" -ne 0 ]]' "T07d: saida malformada do Drush bloqueia sync-code (fail-closed)"
+assert_ok "T07d: saida malformada do Drush bloqueia sync-code (fail-closed)" "$([[ "$rc" -ne 0 ]] && printf PASS || printf FAIL)"
 
 # 8. Relatorio fiel de updatedb pendente e config drift no doctor
 export FAKE_DRUSH_UPDB_JSON='{"mod_1001":{"module":"mod","update_id":1001}}'
@@ -299,8 +287,7 @@ export FAKE_DRUSH_CFG_JSON='{"diff_1":{"name":"diff_1","state":"Different"}}'
 doc_out="$(run_sync "$fix7" doctor --format=json 2>/dev/null)"
 unset FAKE_DRUSH_UPDB_JSON FAKE_DRUSH_CFG_JSON
 doc_parsed="$(printf '%s' "$doc_out" | python3 -c 'import json,sys; d=json.load(sys.stdin); dc=d.get("drush_checks") or {}; print(dc.get("updatedb_pending_count"), dc.get("config_drift_count"))')"
-assert_ok '[[ "$doc_parsed" == "1 1" ]]' \
-  "T08: doctor captura, normaliza e relata updatedb:status e config:status como dados estruturados ($doc_parsed)"
+assert_ok "T08: doctor captura, normaliza e relata updatedb:status e config:status como dados estruturados ($doc_parsed)" "$([[ "$doc_parsed" == "1 1" ]] && printf PASS || printf FAIL)"
 
 # ==============================================================================
 # Caso 9: Falha de drush cr APOS fast-forward -> estado PARTIAL, sem carimbar last_validated_sha
@@ -319,16 +306,13 @@ rc=0
 FAKE_DRUSH_CR_FAIL=1 run_sync "$fix9" sync-code >/dev/null 2>&1 || rc=$?
 unset FAKE_DRUSH_CR_FAIL
 st9="$(run_sync "$fix9" status --format=json)"
-assert_ok '[[ "$rc" -ne 0 && "$(git -C "$fix9/runtime" rev-parse HEAD)" == "$new_sha9" ]]' \
-  "T09a: falha de drush cr apos fast-forward retorna erro sem rollback destrutivo de Git"
-assert_ok '[[ "$(printf "%s" "$st9" | python3 -c "import json,sys; d=json.load(sys.stdin); print(d[\"overall_status\"], d[\"last_code_sync_sha\"], d[\"last_validated_sha\"])")" == "PARTIAL $new_sha9 $initial_sha9" ]]' \
-  "T09b: falha de drush cr registra outcome PARTIAL, atualiza last_code_sync_sha mas preserva last_validated_sha anterior"
+assert_ok "T09a: falha de drush cr apos fast-forward retorna erro sem rollback destrutivo de Git" "$([[ "$rc" -ne 0 && "$(git -C "$fix9/runtime" rev-parse HEAD)" == "$new_sha9" ]] && printf PASS || printf FAIL)"
+assert_ok "T09b: falha de drush cr registra outcome PARTIAL, atualiza last_code_sync_sha mas preserva last_validated_sha anterior" "$([[ "$(printf "%s" "$st9" | python3 -c "import json,sys; d=json.load(sys.stdin); print(d[\"overall_status\"], d[\"last_code_sync_sha\"], d[\"last_validated_sha\"])")" == "PARTIAL $new_sha9 $initial_sha9" ]] && printf PASS || printf FAIL)"
 
 # Recuperacao: quando drush cr volta a funcionar, sync-code (mesmo com HEAD == origin/dev) corrige e valida!
 run_sync "$fix9" sync-code >/dev/null 2>&1
 st9_rec="$(run_sync "$fix9" status --format=json)"
-assert_ok '[[ "$(printf "%s" "$st9_rec" | python3 -c "import json,sys; d=json.load(sys.stdin); print(d[\"overall_status\"], d[\"last_validated_sha\"])")" == "VALIDATED $new_sha9" ]]' \
-  "T09c: reexecucao de sync-code apos falha parcial reconstroi cache pendente e promove estado para VALIDATED"
+assert_ok "T09c: reexecucao de sync-code apos falha parcial reconstroi cache pendente e promove estado para VALIDATED" "$([[ "$(printf "%s" "$st9_rec" | python3 -c "import json,sys; d=json.load(sys.stdin); print(d[\"overall_status\"], d[\"last_validated_sha\"])")" == "VALIDATED $new_sha9" ]] && printf PASS || printf FAIL)"
 
 # ==============================================================================
 # Caso 10: Concorrencia - duas instancias simultaneas de sync-code (flock)
@@ -347,8 +331,7 @@ sleep 0.3
 rc2=0
 run_sync "$fix10" sync-code >/dev/null 2>&1 || rc2=$?
 wait "$pid1" || true
-assert_ok '[[ "$rc2" -ne 0 ]]' \
-  "T10: segunda instancia simultanea de sync-code e bloqueada pelo lock cooperativo"
+assert_ok "T10: segunda instancia simultanea de sync-code e bloqueada pelo lock cooperativo" "$([[ "$rc2" -ne 0 ]] && printf PASS || printf FAIL)"
 
 # ==============================================================================
 # Caso 11 & 12: Estado persistente corrompido, symlink inesperado e redacao de segredos
@@ -361,16 +344,14 @@ ACULTA_SYNC_ADOPT_BASELINE=1 run_sync "$fix12" sync-code --adopt-baseline >/dev/
 echo "{corrupted json" >"$fix12/runtime/var/runtime-sync/state.json"
 rc=0
 run_sync "$fix12" sync-code >/dev/null 2>&1 || rc=$?
-assert_ok '[[ "$rc" -ne 0 ]]' \
-  "T12a: state.json corrompido faz sync-code falhar fechado (BLOCKED)"
+assert_ok "T12a: state.json corrompido faz sync-code falhar fechado (BLOCKED)" "$([[ "$rc" -ne 0 ]] && printf PASS || printf FAIL)"
 
 # Testar protecao contra symlink em state.json
 rm -f "$fix12/runtime/var/runtime-sync/state.json"
 ln -s /tmp/alvo-inexistente "$fix12/runtime/var/runtime-sync/state.json"
 rc=0
 run_sync "$fix12" status >/dev/null 2>&1 || rc=$?
-assert_ok '[[ "$rc" -ne 0 ]]' \
-  "T12b: symlink em state.json e detectado e recusado"
+assert_ok "T12b: symlink em state.json e detectado e recusado" "$([[ "$rc" -ne 0 ]] && printf PASS || printf FAIL)"
 
 # ==============================================================================
 # Caso 13: Runbook especial commerce_shipping no structural-plan (F5)
@@ -391,8 +372,7 @@ git -C "$fix13/Author" commit -q -m "Cutover commerce_shipping"
 git -C "$fix13/Author" push -q origin dev
 
 splan13="$(run_sync "$fix13" structural-plan --refresh --format=json)"
-assert_ok '[[ "$(printf "%s" "$splan13" | python3 -c "import json,sys; d=json.load(sys.stdin); print(d[\"special_runbooks\"][0][\"id\"], d[\"ordered_steps\"][2][\"phase\"])")" == "commerce_shipping_cutover special_cutover_commerce_shipping" ]]' \
-  "T13: structural-plan detecta cutover de commerce_shipping e prescreve updatedb/uninstall ANTES de composer install"
+assert_ok "T13: structural-plan detecta cutover de commerce_shipping e prescreve updatedb/uninstall ANTES de composer install" "$([[ "$(printf "%s" "$splan13" | python3 -c "import json,sys; d=json.load(sys.stdin); print(d[\"special_runbooks\"][0][\"id\"], d[\"ordered_steps\"][2][\"phase\"])")" == "commerce_shipping_cutover special_cutover_commerce_shipping" ]] && printf PASS || printf FAIL)"
 
 # ==============================================================================
 # Caso 14: structural-complete fecha a janela apenas com drift/updb/deploy zerados
@@ -414,35 +394,29 @@ run_sync "$fix14" structural-plan --format=json >"$fix14/plan.json"
 
 rc=0
 run_sync "$fix14" structural-complete --plan="$fix14/plan.json" >/dev/null 2>&1 || rc=$?
-assert_ok '[[ "$rc" -ne 0 ]]' \
-  "T14a: structural-complete exige ACULTA_SYNC_STRUCTURAL_CONFIRM=1"
+assert_ok "T14a: structural-complete exige ACULTA_SYNC_STRUCTURAL_CONFIRM=1" "$([[ "$rc" -ne 0 ]] && printf PASS || printf FAIL)"
 
 rc=0
 ACULTA_SYNC_STRUCTURAL_CONFIRM=1 FAKE_DRUSH_CFG_JSON='{"system.site":{"state":"Different"}}' \
   run_sync "$fix14" structural-complete --plan="$fix14/plan.json" >/dev/null 2>&1 || rc=$?
 st14_drift="$(run_sync "$fix14" status --format=json)"
-assert_ok '[[ "$rc" -ne 0 && "$(printf "%s" "$st14_drift" | python3 -c "import json,sys; print(json.load(sys.stdin)[\"pending_structural_risk\"])")" == "R3" ]]' \
-  "T14b: drift de config impede fechar a janela e preserva pending_structural_risk=R3"
+assert_ok "T14b: drift de config impede fechar a janela e preserva pending_structural_risk=R3" "$([[ "$rc" -ne 0 && "$(printf "%s" "$st14_drift" | python3 -c "import json,sys; print(json.load(sys.stdin)[\"pending_structural_risk\"])")" == "R3" ]] && printf PASS || printf FAIL)"
 unset FAKE_DRUSH_CFG_JSON
 
 rc=0
 ACULTA_SYNC_STRUCTURAL_CONFIRM=1 FAKE_DRUSH_UPDB_JSON='[{"module":"aculta_portal","update_id":"10001"}]' \
   run_sync "$fix14" structural-complete --plan="$fix14/plan.json" >/dev/null 2>&1 || rc=$?
-assert_ok '[[ "$rc" -ne 0 ]]' \
-  "T14c: updatedb pendente impede fechar a janela"
+assert_ok "T14c: updatedb pendente impede fechar a janela" "$([[ "$rc" -ne 0 ]] && printf PASS || printf FAIL)"
 unset FAKE_DRUSH_UPDB_JSON
 
 cr_before14="$(cat "$fix14/cr.count")"
 ACULTA_SYNC_STRUCTURAL_CONFIRM=1 run_sync "$fix14" structural-complete --plan="$fix14/plan.json" >/dev/null 2>&1
 st14="$(run_sync "$fix14" status --format=json)"
-assert_ok '[[ "$(printf "%s" "$st14" | python3 -c "import json,sys; d=json.load(sys.stdin); print(d[\"last_validated_sha\"], d[\"last_cache_success_sha\"], d[\"pending_structural_sha\"], d[\"pending_structural_risk\"])")" == "$target14 $target14 None None" ]]' \
-  "T14d: janela fechada avanca baseline, cache e limpa a pendencia estrutural"
-assert_ok '[[ "$(cat "$fix14/cr.count")" -eq $((cr_before14 + 1)) ]]' \
-  "T14e: structural-complete reconstroi o cache uma vez"
+assert_ok "T14d: janela fechada avanca baseline, cache e limpa a pendencia estrutural" "$([[ "$(printf "%s" "$st14" | python3 -c "import json,sys; d=json.load(sys.stdin); print(d[\"last_validated_sha\"], d[\"last_cache_success_sha\"], d[\"pending_structural_sha\"], d[\"pending_structural_risk\"])")" == "$target14 $target14 None None" ]] && printf PASS || printf FAIL)"
+assert_ok "T14e: structural-complete reconstroi o cache uma vez" "$([[ "$(cat "$fix14/cr.count")" -eq $((cr_before14 + 1)) ]] && printf PASS || printf FAIL)"
 
 plan14_after="$(run_sync "$fix14" plan --format=json)"
-assert_ok '[[ "$(printf "%s" "$plan14_after" | python3 -c "import json,sys; print(json.load(sys.stdin)[\"risk\"])")" != "R3" ]]' \
-  "T14f: apos fechar a janela, o delta cumulativo deixa de ser R3"
+assert_ok "T14f: apos fechar a janela, o delta cumulativo deixa de ser R3" "$([[ "$(printf "%s" "$plan14_after" | python3 -c "import json,sys; print(json.load(sys.stdin)[\"risk\"])")" != "R3" ]] && printf PASS || printf FAIL)"
 
 printf '\nResumo da suite Runtime Sync v2: %d PASS, %d FAIL\n' "$PASS_COUNT" "$FAIL_COUNT"
 [[ "$FAIL_COUNT" -eq 0 ]]
