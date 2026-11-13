@@ -48,7 +48,7 @@ final class ForumReportCguBridgeHooks {
     if (!in_array($flagId, self::FLAGS, TRUE)) {
       return;
     }
-    if (!$this->entityTypeManager->hasDefinition('aculta_ugc_report')) {
+    if (!$this->entityTypeManager->hasDefinition('aculta_cgu_report')) {
       return;
     }
 
@@ -87,10 +87,10 @@ final class ForumReportCguBridgeHooks {
       throw new AccessDeniedHttpException('O conteúdo denunciado não pertence ao Fórum.');
     }
 
-    $reportStorage = $this->entityTypeManager->getStorage('aculta_ugc_report');
+    $reportStorage = $this->entityTypeManager->getStorage('aculta_cgu_report');
 
     // 6. Lock contra concorrência para evitar duplicidade simultânea.
-    $lockName = sprintf('aculta_ugc:flag_bridge:%s:%d:%d', $targetType, $targetId, $uid);
+    $lockName = sprintf('aculta_cgu:flag_bridge:%s:%d:%d', $targetType, $targetId, $uid);
     if ($this->lock !== NULL && !$this->lock->acquire($lockName, 10.0)) {
       return;
     }
@@ -186,12 +186,12 @@ final class ForumReportCguBridgeHooks {
     if (!in_array($flagId, self::FLAGS, TRUE)) {
       return;
     }
-    if (!$this->entityTypeManager->hasDefinition('aculta_ugc_report')) {
+    if (!$this->entityTypeManager->hasDefinition('aculta_cgu_report')) {
       return;
     }
 
     $flagIdNum = (int) $entity->id();
-    $reportStorage = $this->entityTypeManager->getStorage('aculta_ugc_report');
+    $reportStorage = $this->entityTypeManager->getStorage('aculta_cgu_report');
 
     // Só exclui se a denúncia estiver estritamente 'pendente'.
     // Denúncias 'em_analise', 'procedente' ou 'improcedente' são preservadas.

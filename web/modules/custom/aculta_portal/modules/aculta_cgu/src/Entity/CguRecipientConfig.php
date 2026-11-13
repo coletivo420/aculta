@@ -15,7 +15,7 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
  * de configuração própria, substituindo listas estáticas e ECA.
  */
 #[ConfigEntityType(
-  id: 'aculta_ugc_recipients',
+  id: 'aculta_cgu_recipients',
   label: new TranslatableMarkup('Destinatários de notificação UGC'),
   config_prefix: 'recipients',
   entity_keys: [
@@ -27,7 +27,7 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
     'label',
     'emails',
   ],
-  admin_permission: 'moderar denuncias ugc',
+  admin_permission: 'moderar denuncias cgu',
 )]
 final class CguRecipientConfig extends ConfigEntityBase {
 

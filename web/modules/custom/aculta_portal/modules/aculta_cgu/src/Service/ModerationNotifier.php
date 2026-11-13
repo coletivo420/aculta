@@ -88,7 +88,7 @@ final class ModerationNotifier {
       return;
     }
 
-    $idempotencyKey = sprintf('ugc_report:%s:%s', $reportUuid, strtolower($email));
+    $idempotencyKey = sprintf('cgu_report:%s:%s', $reportUuid, strtolower($email));
     $correlationId = class_exists(MessageIdFactory::class)
       ? MessageIdFactory::correlationIdFor($idempotencyKey)
       : $this->generateCorrelationId($idempotencyKey);
@@ -155,7 +155,7 @@ final class ModerationNotifier {
    *   Lista de endereços válidos de moderadores.
    */
   public function getRecipientsForPurpose(string $purpose): array {
-    $configStorage = $this->entityTypeManager->getStorage('aculta_ugc_recipients');
+    $configStorage = $this->entityTypeManager->getStorage('aculta_cgu_recipients');
     /** @var \Drupal\aculta_cgu\Entity\CguRecipientConfig|null $config */
     $config = $configStorage->load($purpose);
 

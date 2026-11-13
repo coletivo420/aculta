@@ -25,7 +25,7 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 /**
  * Valida a moderação transversal e UGC (ARQ-06, D-03, D-04).
  */
-#[Group('aculta_ugc')]
+#[Group('aculta_cgu')]
 #[RunTestsInSeparateProcesses]
 final class CguModerationKernelTest extends KernelTestBase {
 
@@ -90,22 +90,22 @@ final class CguModerationKernelTest extends KernelTestBase {
 
     $this->installEntitySchema('user');
     $this->installEntitySchema('taxonomy_term');
-    $this->installEntitySchema('aculta_ugc_report');
+    $this->installEntitySchema('aculta_cgu_report');
     $this->installEntitySchema('aculta_event');
     $this->installConfig(['system', 'user']);
 
     $roleMod = Role::create([
-      'id' => 'moderador_ugc',
+      'id' => 'moderador_cgu',
       'label' => 'Moderador UGC',
     ]);
-    $roleMod->grantPermission('moderar denuncias ugc');
+    $roleMod->grantPermission('moderar denuncias cgu');
     $roleMod->save();
 
     $rootUser = User::create(['name' => 'root', 'mail' => 'root@example.com', 'status' => 1]);
     $rootUser->save();
 
     $this->adminModerator = User::create(['name' => 'moderador', 'mail' => 'mod@example.com', 'status' => 1]);
-    $this->adminModerator->addRole('moderador_ugc');
+    $this->adminModerator->addRole('moderador_cgu');
     $this->adminModerator->save();
 
     $this->reporterUser = User::create(['name' => 'reporter', 'mail' => 'reporter@example.com', 'status' => 1]);

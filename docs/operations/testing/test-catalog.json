@@ -515,7 +515,7 @@
             "type": "kernel",
             "base_class": "KernelTestBase",
             "groups": [
-                "aculta_ugc"
+                "aculta_cgu"
             ],
             "test_methods": 2,
             "assertions": 3,
@@ -530,7 +530,7 @@
             "type": "kernel",
             "base_class": "KernelTestBase",
             "groups": [
-                "aculta_ugc"
+                "aculta_cgu"
             ],
             "test_methods": 15,
             "assertions": 48,
@@ -545,7 +545,7 @@
             "type": "kernel",
             "base_class": "KernelTestBase",
             "groups": [
-                "aculta_ugc"
+                "aculta_cgu"
             ],
             "test_methods": 5,
             "assertions": 39,
@@ -560,7 +560,7 @@
             "type": "kernel",
             "base_class": "KernelTestBase",
             "groups": [
-                "aculta_ugc"
+                "aculta_cgu"
             ],
             "test_methods": 6,
             "assertions": 36,
@@ -575,7 +575,7 @@
             "type": "kernel",
             "base_class": "KernelTestBase",
             "groups": [
-                "aculta_ugc"
+                "aculta_cgu"
             ],
             "test_methods": 12,
             "assertions": 57,

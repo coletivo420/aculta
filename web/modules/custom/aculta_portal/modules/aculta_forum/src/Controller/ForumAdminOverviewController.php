@@ -131,8 +131,8 @@ final class ForumAdminOverviewController extends ControllerBase implements Conta
         ];
       }
       if ($account->hasPermission('moderar denuncias do forum')
-        || $account->hasPermission('moderar denuncias ugc')
-        || $account->hasPermission('moderar denuncias ugc: forum')) {
+        || $account->hasPermission('moderar denuncias cgu')
+        || $account->hasPermission('moderar denuncias cgu: forum')) {
         $build['public_links']['#items'][] = [
           '#type' => 'link',
           '#title' => $this->t('Fila de denúncias do Fórum'),

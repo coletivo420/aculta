@@ -16,13 +16,13 @@ Resulta da fusão e consolidação dos antigos módulos `aculta_contributions` e
   - Adapters ativos para `wiki` (verbetes da Wiki420), `events_event`, `events_location` e `events_organization` (Eventos ACULTA).
 
 ### 2. Denúncias e Moderação Transversal (ex-UGC)
-- **Entidade `aculta_ugc_report`**: Registro sigiloso e padronizado de denúncias sem vazamento de dados do denunciante para o denunciado.
+- **Entidade `aculta_cgu_report`**: Registro sigiloso e padronizado de denúncias sem vazamento de dados do denunciante para o denunciado.
 - **Fila Centralizada de Moderação**:
   - Painel administrativo unificado em `/painel-administrativo/moderacao/denuncias`.
   - Operações de decisão individual e em lote (`CguReportDecisionForm`).
   - Serviço `aculta_cgu.report_queue` para consulta paginada e triagem.
 - **Configuração de Notificação por Domínio/Purpose**:
-  - Entidade de configuração `aculta_ugc_recipients` com destinatários dedicados por purpose (fórum, revista, wiki, eventos).
+  - Entidade de configuração `aculta_cgu_recipients` com destinatários dedicados por purpose (fórum, revista, wiki, eventos).
   - Serviço `aculta_cgu.moderation_notifier` integrado ao `aculta_mailer`.
 - **Ponte com Flagging**:
   - Sincronização e integração com flags de denúncia da comunidade (Growroom420/Fórum).

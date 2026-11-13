@@ -9,22 +9,6 @@ aculta_cgu.settings:
       type: integer
       label: 'Submission limit window in seconds'
 
-aculta_ugc.recipients.*:
-  type: config_entity
-  label: 'Destinatários de notificação de denúncia por purpose'
-  mapping:
-    id:
-      type: string
-      label: 'Identificador do purpose'
-    label:
-      type: label
-      label: 'Rótulo'
-    emails:
-      type: sequence
-      label: 'E-mails dos moderadores'
-      sequence:
-        type: email
-
 aculta_cgu.recipients.*:
   type: config_entity
   label: 'Destinatários de notificação de denúncia por purpose'

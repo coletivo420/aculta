@@ -325,7 +325,7 @@ Publicar eventos mínimos no bus central. O Messenger envia avisos conforme pref
 
 ### F8 - Importação e integrações ampliadas
 - [x] Avaliar ICS como gerador de Contributions em lote. O importer de `aculta_calendar` já tem fontes autorizadas, identidade estável por `(source, external_uid)`, reconciliação `created/updated/unchanged/absent`, revisões para alterações e revisão administrativa antes de publicar `aculta_calendar_imported_item`. Converter sua revisão para Events Contributions perderia o owner do item externo e misturaria identidade/reconciliação de fonte com autoria comunitária; manter separado.
-- [x] Avaliar Fórum e UGC. `aculta_ugc_report`, seu `ModerationScope` e as pontes de denúncia do Fórum têm alvo, privacidade e decisão próprios. Não há fluxo claro que justifique criar uma Contribution paralela ou converter denúncias; manter nos owners existentes.
+- [x] Avaliar Fórum e UGC. `aculta_cgu_report`, seu `ModerationScope` e as pontes de denúncia do Fórum têm alvo, privacidade e decisão próprios. Não há fluxo claro que justifique criar uma Contribution paralela ou converter denúncias; manter nos owners existentes.
 - [x] Index, Calendar e Maps recebem mudanças somente através das entidades oficiais aprovadas/publicadas. `aculta_contribution` não tem provider de Index; itens ICS importados têm provider próprio e só são projetados depois de publicação editorial.
 **Saída:** a avaliação não encontrou integração necessária nesta fase; os três fluxos preservam seus owners e controles atuais.
 

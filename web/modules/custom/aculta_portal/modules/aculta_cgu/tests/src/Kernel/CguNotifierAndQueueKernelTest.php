@@ -25,7 +25,7 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 /**
  * Valida notificações, fila com escopo de acesso e migração de flags (ARQ-06B, C, D).
  */
-#[Group('aculta_ugc')]
+#[Group('aculta_cgu')]
 #[RunTestsInSeparateProcesses]
 final class CguNotifierAndQueueKernelTest extends KernelTestBase {
 
@@ -95,7 +95,7 @@ final class CguNotifierAndQueueKernelTest extends KernelTestBase {
     $this->installEntitySchema('user');
     $this->installEntitySchema('node');
     $this->installEntitySchema('flagging');
-    $this->installEntitySchema('aculta_ugc_report');
+    $this->installEntitySchema('aculta_cgu_report');
     $this->installSchema('node', ['node_access']);
     $this->installSchema('flag', ['flag_counts']);
     $this->installConfig(['system', 'user', 'filter', 'node', 'flag']);
@@ -282,7 +282,7 @@ final class CguNotifierAndQueueKernelTest extends KernelTestBase {
     $this->assertSame(0, $dryStats['ignoradas_duplicadas']);
 
     // Confirma que nenhuma denúncia foi criada no dry-run.
-    $reports = $this->container->get('entity_type.manager')->getStorage('aculta_ugc_report')->loadMultiple();
+    $reports = $this->container->get('entity_type.manager')->getStorage('aculta_cgu_report')->loadMultiple();
     $this->assertEmpty($reports);
 
     // 2. Execução real.
@@ -292,7 +292,7 @@ final class CguNotifierAndQueueKernelTest extends KernelTestBase {
     $this->assertSame(1, $realStats['novas_denuncias']);
 
     // Confirma gravação com legacy_flag_id preservado.
-    $createdReports = $this->container->get('entity_type.manager')->getStorage('aculta_ugc_report')->loadMultiple();
+    $createdReports = $this->container->get('entity_type.manager')->getStorage('aculta_cgu_report')->loadMultiple();
     $this->assertCount(1, $createdReports);
     /** @var \Drupal\aculta_cgu\Entity\CguReport $migrated */
     $migrated = reset($createdReports);
@@ -308,7 +308,7 @@ final class CguNotifierAndQueueKernelTest extends KernelTestBase {
     // 4. Rollback: remove com segurança apenas as denúncias migradas.
     $removed = $this->queue->rollbackMigration();
     $this->assertSame(1, $removed);
-    $remaining = $this->container->get('entity_type.manager')->getStorage('aculta_ugc_report')->loadMultiple();
+    $remaining = $this->container->get('entity_type.manager')->getStorage('aculta_cgu_report')->loadMultiple();
     $this->assertEmpty($remaining);
   }
 

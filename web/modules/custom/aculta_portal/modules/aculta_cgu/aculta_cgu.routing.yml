@@ -9,7 +9,7 @@ aculta_cgu.admin_reports:
     _admin_route: true
 
 aculta_cgu.report_decide:
-  path: '/painel-administrativo/moderacao/denuncias/{aculta_ugc_report}/decidir'
+  path: '/painel-administrativo/moderacao/denuncias/{aculta_cgu_report}/decidir'
   defaults:
     _form: '\Drupal\aculta_cgu\Form\CguReportDecisionForm'
     _title: 'Decidir denúncia de conteúdo'

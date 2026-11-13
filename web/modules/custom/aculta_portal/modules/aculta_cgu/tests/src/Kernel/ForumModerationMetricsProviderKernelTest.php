@@ -15,7 +15,7 @@ use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 /**
  * Indicadores de moderação calculados a partir da denúncia UGC.
  */
-#[Group('aculta_ugc')]
+#[Group('aculta_cgu')]
 #[RunTestsInSeparateProcesses]
 final class ForumModerationMetricsProviderKernelTest extends KernelTestBase {
 
@@ -50,7 +50,7 @@ final class ForumModerationMetricsProviderKernelTest extends KernelTestBase {
   protected function setUp(): void {
     parent::setUp();
     $this->installEntitySchema('user');
-    $this->installEntitySchema('aculta_ugc_report');
+    $this->installEntitySchema('aculta_cgu_report');
     $this->reporter = User::create(['name' => 'denunciante', 'status' => 1]);
     $this->reporter->save();
     $this->provider = new ForumModerationMetricsProvider($this->container->get('database'));

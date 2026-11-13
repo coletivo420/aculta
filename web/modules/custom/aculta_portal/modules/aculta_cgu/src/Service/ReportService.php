@@ -100,7 +100,7 @@ final class ReportService {
     }
 
     $uid = (int) $account->id();
-    $storage = $this->entityTypeManager->getStorage('aculta_ugc_report');
+    $storage = $this->entityTypeManager->getStorage('aculta_cgu_report');
 
     // Não permite denúncia duplicada em aberto para o mesmo objeto.
     $existing = $storage->getQuery()
@@ -147,7 +147,7 @@ final class ReportService {
     }
 
     // A checagem e a gravação ficam sob lock para evitar duplicata por corrida.
-    $lockName = sprintf('aculta_ugc:report:%s:%d:%d', $entity->getEntityTypeId(), (int) $entity->id(), (int) $account->id());
+    $lockName = sprintf('aculta_cgu:report:%s:%d:%d', $entity->getEntityTypeId(), (int) $entity->id(), (int) $account->id());
     if (!$this->lock->acquire($lockName, 15.0)) {
       throw new ReportNotAllowedException('Denúncia não permitida neste momento.');
     }
@@ -156,7 +156,7 @@ final class ReportService {
         throw new ReportNotAllowedException('Denúncia não permitida.');
       }
       /** @var \Drupal\aculta_cgu\Entity\CguReport $report */
-      $report = $this->entityTypeManager->getStorage('aculta_ugc_report')->create([
+      $report = $this->entityTypeManager->getStorage('aculta_cgu_report')->create([
         'target_type' => $entity->getEntityTypeId(),
         'target_id' => (int) $entity->id(),
         'uid' => (int) $account->id(),

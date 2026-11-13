@@ -55,20 +55,20 @@ final class CguReportDecisionForm extends FormBase {
    * {@inheritdoc}
    */
   public function getFormId(): string {
-    return 'aculta_ugc_report_decision_form';
+    return 'aculta_cgu_report_decision_form';
   }
 
   /**
    * Checagem de acesso à decisão de denúncia por escopo do moderador.
    */
-  public function access(AccountInterface $account, ?CguReport $aculta_ugc_report = NULL): AccessResultInterface {
+  public function access(AccountInterface $account, ?CguReport $aculta_cgu_report = NULL): AccessResultInterface {
     if ($account->isAnonymous()) {
       return AccessResult::forbidden()->cachePerUser();
     }
-    if ($aculta_ugc_report === NULL) {
+    if ($aculta_cgu_report === NULL) {
       return AccessResult::forbidden()->cachePerUser();
     }
-    $purpose = (string) $aculta_ugc_report->get('purpose')->value;
+    $purpose = (string) $aculta_cgu_report->get('purpose')->value;
     if (ModerationScope::allows($account, $purpose)) {
       return AccessResult::allowed()->cachePerUser();
     }
@@ -78,11 +78,11 @@ final class CguReportDecisionForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state, ?CguReport $aculta_ugc_report = NULL): array {
-    if ($aculta_ugc_report === NULL) {
+  public function buildForm(array $form, FormStateInterface $form_state, ?CguReport $aculta_cgu_report = NULL): array {
+    if ($aculta_cgu_report === NULL) {
       throw new NotFoundHttpException();
     }
-    $this->report = $aculta_ugc_report;
+    $this->report = $aculta_cgu_report;
 
     $targetType = (string) $this->report->get('target_type')->value;
     $targetId = (int) $this->report->get('target_id')->value;
@@ -115,7 +115,7 @@ final class CguReportDecisionForm extends FormBase {
       ],
     ];
 
-    $storage = $this->entityTypeMgr->getStorage('aculta_ugc_report');
+    $storage = $this->entityTypeMgr->getStorage('aculta_cgu_report');
     $userStorage = $this->entityTypeMgr->getStorage('user');
 
     if ($status === ReportService::STATUS_UPHELD || $status === ReportService::STATUS_REJECTED) {
@@ -233,7 +233,7 @@ final class CguReportDecisionForm extends FormBase {
       $this->reportService->decideReport($this->report, $moderator, $decision, $notes);
 
       if ($batchApply) {
-        $storage = $this->entityTypeMgr->getStorage('aculta_ugc_report');
+        $storage = $this->entityTypeMgr->getStorage('aculta_cgu_report');
         $otherPendingIds = $storage->getQuery()
           ->accessCheck(FALSE)
           ->condition('target_type', (string) $this->report->get('target_type')->value)

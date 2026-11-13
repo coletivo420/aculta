@@ -18,17 +18,17 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
  * nunca é exposto em notificações ou relatórios públicos.
  */
 #[ContentEntityType(
-  id: 'aculta_ugc_report',
+  id: 'aculta_cgu_report',
   label: new TranslatableMarkup('Denúncia UGC'),
   handlers: [
     'access' => CguReportAccessControlHandler::class,
   ],
-  base_table: 'aculta_ugc_report',
+  base_table: 'aculta_cgu_report',
   entity_keys: [
     'id' => 'id',
     'uuid' => 'uuid',
   ],
-  admin_permission: 'moderar denuncias ugc',
+  admin_permission: 'moderar denuncias cgu',
   internal: TRUE,
 )]
 final class CguReport extends ContentEntityBase {

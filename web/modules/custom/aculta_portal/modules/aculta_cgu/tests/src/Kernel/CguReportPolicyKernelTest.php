@@ -21,7 +21,7 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 /**
  * Valida políticas de denúncia, escopo por purpose e transições (ARQ-06A).
  */
-#[Group('aculta_ugc')]
+#[Group('aculta_cgu')]
 #[RunTestsInSeparateProcesses]
 final class CguReportPolicyKernelTest extends KernelTestBase {
 
@@ -89,7 +89,7 @@ final class CguReportPolicyKernelTest extends KernelTestBase {
     parent::setUp();
     $this->installEntitySchema('user');
     $this->installEntitySchema('node');
-    $this->installEntitySchema('aculta_ugc_report');
+    $this->installEntitySchema('aculta_cgu_report');
     $this->installSchema('node', ['node_access']);
     $this->installConfig(['system', 'user', 'filter', 'node']);
 
@@ -210,7 +210,7 @@ final class CguReportPolicyKernelTest extends KernelTestBase {
     catch (ReportNotAllowedException) {
       $this->assertTrue(TRUE);
     }
-    $this->assertSame([], $this->container->get('entity_type.manager')->getStorage('aculta_ugc_report')->loadMultiple());
+    $this->assertSame([], $this->container->get('entity_type.manager')->getStorage('aculta_cgu_report')->loadMultiple());
 
     $report = $this->service->createReport($topic, $this->reporter, 'spam', 'forum');
     $this->assertSame('forum', $report->get('purpose')->value);

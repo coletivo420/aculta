@@ -119,7 +119,7 @@ final class EventProposalEditorialApprovalKernelTest extends KernelTestBase {
     $this->installEntitySchema('taxonomy_term');
     $this->installEntitySchema('aculta_org_member');
     $this->installEntitySchema('aculta_ownership_claim');
-    $this->installEntitySchema('aculta_ugc_report');
+    $this->installEntitySchema('aculta_cgu_report');
     $this->installSchema('aculta_index', [
       'aculta_index_generation',
       'aculta_index_state',

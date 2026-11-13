@@ -162,7 +162,7 @@ final class ReportQueueController extends ControllerBase {
 
     $cacheability = (new CacheableMetadata())
       ->addCacheContexts(['user.permissions', 'url.query_args:page'])
-      ->addCacheTags(['aculta_ugc_report_list', 'flagging_list']);
+      ->addCacheTags(['aculta_cgu_report_list', 'flagging_list']);
     $cacheability->applyTo($build);
 
     return $build;

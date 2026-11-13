@@ -199,5 +199,5 @@ o painel de turma do LMS), com as mesmas permissões.
 - Consumo: `ForumActivitySubscriber`, `ForumReactionSubscriber` e `ForumSearchSubscriber` gravam apenas no catálogo central. `ForumMetricsProvider` é opcional por tag `aculta_statistics.metric_provider`.
 - Retratos: `MetricProviderCollector` substitui o dia; `SnapshotReconciliation` compara e corrige com dry-run. `aculta-forum:reconcile-reactions` reclassifica reações antigas.
 - Detalhamento: `forum.replies.created` usa o ID do tópico como dimensão; `AuthorizedEntityMetricAggregator` aceita somente `node:aculta_forum_topic` e exige `view content-level statistics`. O Index revalida acesso antes de enviar candidatos.
-- Moderação: owner é `aculta_cgu` (`aculta_ugc_report`), com status, `created` e `decided_at`; `ForumModerationMetricsProvider` expõe abertas, resolvidas e mediana sem denunciante, alvo nominal ou parecer. Nenhum ledger paralelo foi criado.
+- Moderação: owner é `aculta_cgu` (`aculta_cgu_report`), com status, `created` e `decided_at`; `ForumModerationMetricsProvider` expõe abertas, resolvidas e mediana sem denunciante, alvo nominal ou parecer. Nenhum ledger paralelo foi criado.
 - Privacidade: sem UID, IP, e-mail, termo de busca ou texto em dimensões. Coleta de busca desligada por padrão; habilitada apenas no desenvolvimento por decisão de 2026-11-10, com finalidade no inventário LGPD.

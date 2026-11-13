@@ -17,7 +17,7 @@ use Drupal\aculta_mailer\Type\MailTypeInterface;
  */
 final class CguReportNoticeMailType implements MailTypeInterface {
 
-  public const ID = 'aculta_ugc_report_notice';
+  public const ID = 'aculta_cgu_report_notice';
 
   public function __construct(
     private readonly TranslationInterface $translation,

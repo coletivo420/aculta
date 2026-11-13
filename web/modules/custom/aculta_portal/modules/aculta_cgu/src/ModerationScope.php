@@ -9,7 +9,7 @@ use Drupal\Core\Session\AccountInterface;
 /**
  * Escopo de moderação por purpose (ARQ-06A).
  *
- * A permissão geral `moderar denuncias ugc` cobre todos os purposes (papel
+ * A permissão geral `moderar denuncias cgu` cobre todos os purposes (papel
  * transversal). Cada purpose tem também uma permissão própria, para que a
  * equipe de uma área não decida denúncias de outra (D-03, D-24).
  */
@@ -18,7 +18,7 @@ final class ModerationScope {
   /**
    * Permissão transversal: modera todos os purposes.
    */
-  public const GLOBAL_PERMISSION = 'moderar denuncias ugc';
+  public const GLOBAL_PERMISSION = 'moderar denuncias cgu';
 
   /**
    * Purposes que aceitam denúncia.

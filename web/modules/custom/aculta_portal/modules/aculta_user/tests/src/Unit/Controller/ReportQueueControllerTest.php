@@ -77,7 +77,7 @@ final class ReportQueueControllerTest extends UnitTestCase {
     self::assertSame(Cache::PERMANENT, $build['#cache']['max-age']);
     self::assertContains('user.permissions', $build['#cache']['contexts']);
     self::assertContains('url.query_args:page', $build['#cache']['contexts']);
-    self::assertContains('aculta_ugc_report_list', $build['#cache']['tags']);
+    self::assertContains('aculta_cgu_report_list', $build['#cache']['tags']);
   }
 
 }

@@ -202,7 +202,7 @@ final class EventOrganizationPageController extends ControllerBase {
       }
     }
 
-    if ($this->currentUser()->hasPermission('moderar denuncias ugc') && $this->purposes !== NULL) {
+    if ($this->currentUser()->hasPermission('moderar denuncias cgu') && $this->purposes !== NULL) {
       $reportsUrl = $this->purposes->environmentPathUrl(SiteKey::Main, '/painel-administrativo/moderacao/denuncias');
       if ($reportsUrl !== NULL) {
         $build['actions']['admin_reports'] = [

@@ -59,14 +59,14 @@ final class EventOrganizationAdminController extends ControllerBase {
       $query->condition('reivindicacao_status', 'confirmada');
     }
 
-    if ($filterDenuncias === '1' && $this->entities->hasDefinition('aculta_ugc_report')) {
-      $reportQuery = $this->entities->getStorage('aculta_ugc_report')->getQuery()
+    if ($filterDenuncias === '1' && $this->entities->hasDefinition('aculta_cgu_report')) {
+      $reportQuery = $this->entities->getStorage('aculta_cgu_report')->getQuery()
         ->accessCheck(FALSE)
         ->condition('target_type', 'aculta_event_organization')
         ->condition('status', ['pending', 'assigned'], 'IN');
       $reportedIds = $reportQuery->execute();
       if (!empty($reportedIds)) {
-        $reports = $this->entities->getStorage('aculta_ugc_report')->loadMultiple($reportedIds);
+        $reports = $this->entities->getStorage('aculta_cgu_report')->loadMultiple($reportedIds);
         $targetOrgIds = [];
         foreach ($reports as $rep) {
           if (!$rep instanceof CguReport) {
@@ -150,8 +150,8 @@ final class EventOrganizationAdminController extends ControllerBase {
         }
 
         // Checar denúncias abertas.
-        if ($this->entities->hasDefinition('aculta_ugc_report')) {
-          $ugcCount = (int) $this->entities->getStorage('aculta_ugc_report')->getQuery()
+        if ($this->entities->hasDefinition('aculta_cgu_report')) {
+          $ugcCount = (int) $this->entities->getStorage('aculta_cgu_report')->getQuery()
             ->accessCheck(FALSE)
             ->condition('target_type', 'aculta_event_organization')
             ->condition('target_id', (int) $org->id())
@@ -213,7 +213,7 @@ final class EventOrganizationAdminController extends ControllerBase {
         if (isset($ugcCount) && $ugcCount > 0) {
           $operations['reports'] = [
             'title' => $this->t('Ver denúncias'),
-            'url' => Url::fromRoute('aculta_ugc.moderation_dashboard', [], [
+            'url' => Url::fromRoute('aculta_cgu.admin_reports', [], [
               'query' => ['target_type' => 'aculta_event_organization'],
             ]),
           ];
@@ -341,7 +341,7 @@ final class EventOrganizationAdminController extends ControllerBase {
       'aculta_event_organization_list',
       'aculta_org_member_list',
       'aculta_ownership_claim_list',
-      'aculta_ugc_report_list',
+      'aculta_cgu_report_list',
     ]);
     $cacheMetadata->applyTo($build);
 

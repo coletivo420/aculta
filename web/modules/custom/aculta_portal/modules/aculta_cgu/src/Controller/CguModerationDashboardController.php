@@ -87,7 +87,7 @@ final class CguModerationDashboardController extends ControllerBase {
 
     $rows = [];
     $storage = $this->entityTypeMgr;
-    $reportStorage = $storage->getStorage('aculta_ugc_report');
+    $reportStorage = $storage->getStorage('aculta_cgu_report');
 
     foreach ($queueData['items'] as $item) {
       $targetType = $item['target_type'];
@@ -152,7 +152,7 @@ final class CguModerationDashboardController extends ControllerBase {
         $reportId = (int) reset($reportIdQuery);
         $actions[] = [
           'title' => ($status === 'pendente' || $status === 'em_analise') ? $this->t('Julgar / Parecer') : $this->t('Ver detalhes'),
-          'url' => Url::fromRoute('aculta_cgu.report_decide', ['aculta_ugc_report' => $reportId]),
+          'url' => Url::fromRoute('aculta_cgu.report_decide', ['aculta_cgu_report' => $reportId]),
         ];
       }
 
@@ -230,7 +230,7 @@ final class CguModerationDashboardController extends ControllerBase {
         '#type' => 'pager',
       ],
       '#cache' => [
-        'tags' => ['aculta_ugc_report_list'],
+        'tags' => ['aculta_cgu_report_list'],
         'contexts' => ['user.permissions', 'url.query_args:status', 'url.query_args:purpose'],
       ],
     ];

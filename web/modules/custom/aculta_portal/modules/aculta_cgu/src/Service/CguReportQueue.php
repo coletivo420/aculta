@@ -69,11 +69,11 @@ final class CguReportQueue {
     $migratedFlagIds = [];
     $decidedTargets = [];
 
-    if ($db !== NULL && $db->schema()->tableExists('aculta_ugc_report')) {
+    if ($db !== NULL && $db->schema()->tableExists('aculta_cgu_report')) {
       // 1. Identifica TODOS os legacy_flag_id já presentes na base UGC.
       // Impede reincorporação de flags já analisadas ou decididas.
-      if ($db->schema()->fieldExists('aculta_ugc_report', 'legacy_flag_id')) {
-        $migratedFlagIds = $db->select('aculta_ugc_report', 'r')
+      if ($db->schema()->fieldExists('aculta_cgu_report', 'legacy_flag_id')) {
+        $migratedFlagIds = $db->select('aculta_cgu_report', 'r')
           ->fields('r', ['legacy_flag_id'])
           ->condition('legacy_flag_id', 0, '>')
           ->condition('purpose', 'forum')
@@ -84,7 +84,7 @@ final class CguReportQueue {
 
       // Alvos já decididos não devem ser reabertos via flags legadas.
       if ($status === 'pendente' && in_array('forum', $allowedPurposes, TRUE)) {
-        $decidedRows = $db->select('aculta_ugc_report', 'r')
+        $decidedRows = $db->select('aculta_cgu_report', 'r')
           ->fields('r', ['target_type', 'target_id'])
           ->condition('purpose', 'forum')
           ->condition('status', ['procedente', 'improcedente'], 'IN')
@@ -97,7 +97,7 @@ final class CguReportQueue {
       }
 
       // 2. Consulta agregada SQL no status e purposes solicitados.
-      $ugcQuery = $db->select('aculta_ugc_report', 'r');
+      $ugcQuery = $db->select('aculta_cgu_report', 'r');
       $ugcQuery->fields('r', ['target_type', 'target_id', 'purpose']);
       $ugcQuery->addExpression('COUNT(*)', 'total');
       $ugcQuery->addExpression('MAX(created)', 'ultima');
@@ -243,7 +243,7 @@ final class CguReportQueue {
           ->condition('purpose', $pItem['purpose']);
         $orCond->condition($andCond);
       }
-      $motivoQuery = $db->select('aculta_ugc_report', 'r')
+      $motivoQuery = $db->select('aculta_cgu_report', 'r')
         ->fields('r', ['target_type', 'target_id', 'purpose', 'motivo'])
         ->condition($orCond)
         ->condition('status', $status)
@@ -299,7 +299,7 @@ final class CguReportQueue {
     if (!ModerationScope::allows($moderator, $checkPurpose)) {
       throw new AccessDeniedHttpException('Acesso negado: sem permissão para consultar denúncias deste purpose.');
     }
-    $storage = $this->entityTypeManager->getStorage('aculta_ugc_report');
+    $storage = $this->entityTypeManager->getStorage('aculta_cgu_report');
     $query = $storage->getQuery()
       ->accessCheck(FALSE)
       ->condition('status', 'pendente')
@@ -353,7 +353,7 @@ final class CguReportQueue {
   }
 
   /**
-   * Migração controlada das sinalizações legadas do ReportQueue para aculta_ugc_report (ARQ-06D, D-04).
+   * Migração controlada das sinalizações legadas do ReportQueue para aculta_cgu_report (ARQ-06D, D-04).
    *
    * @param bool $dryRun
    *   Quando TRUE, apenas simula a operação e calcula as contagens sem persistir.
@@ -375,7 +375,7 @@ final class CguReportQueue {
     }
 
     $flagStorage = $this->entityTypeManager->getStorage('flagging');
-    $reportStorage = $this->entityTypeManager->getStorage('aculta_ugc_report');
+    $reportStorage = $this->entityTypeManager->getStorage('aculta_cgu_report');
 
     $flagIds = $flagStorage->getQuery()
       ->accessCheck(FALSE)
@@ -474,7 +474,7 @@ final class CguReportQueue {
    *   Quantidade de denúncias removidas.
    */
   public function rollbackMigration(): int {
-    $reportStorage = $this->entityTypeManager->getStorage('aculta_ugc_report');
+    $reportStorage = $this->entityTypeManager->getStorage('aculta_cgu_report');
     $ids = $reportStorage->getQuery()
       ->accessCheck(FALSE)
       ->condition('motivo', 'sinalizacao_legada_forum')

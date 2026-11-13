@@ -34,7 +34,7 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 /**
  * Valida a integração operacional entre Fórum e moderação UGC (ARQ-06F).
  */
-#[Group('aculta_ugc')]
+#[Group('aculta_cgu')]
 #[RunTestsInSeparateProcesses]
 final class ForumCguIntegrationKernelTest extends KernelTestBase {
 
@@ -194,7 +194,7 @@ final class ForumCguIntegrationKernelTest extends KernelTestBase {
     $this->installEntitySchema('node');
     $this->installEntitySchema('comment');
     $this->installEntitySchema('flagging');
-    $this->installEntitySchema('aculta_ugc_report');
+    $this->installEntitySchema('aculta_cgu_report');
     $this->installEntitySchema('aculta_legado_autor');
     $this->installEntitySchema('aculta_forum_post');
     $this->installSchema('node', ['node_access']);
@@ -274,8 +274,8 @@ final class ForumCguIntegrationKernelTest extends KernelTestBase {
     ]);
     $flagging->save();
 
-    // Verifica que a denúncia foi espelhada em aculta_ugc_report.
-    $reportStorage = $this->container->get('entity_type.manager')->getStorage('aculta_ugc_report');
+    // Verifica que a denúncia foi espelhada em aculta_cgu_report.
+    $reportStorage = $this->container->get('entity_type.manager')->getStorage('aculta_cgu_report');
     $reports = $reportStorage->loadByProperties([
       'legacy_flag_id' => (int) $flagging->id(),
     ]);
@@ -313,8 +313,8 @@ final class ForumCguIntegrationKernelTest extends KernelTestBase {
     $topic2 = Node::create(['type' => 'aculta_forum_topic', 'title' => 'Tópico 2', 'status' => 1]);
     $topic2->save();
 
-    // Tópico 1 possui denúncia direta em aculta_ugc_report (nova).
-    $reportStorage = $this->container->get('entity_type.manager')->getStorage('aculta_ugc_report');
+    // Tópico 1 possui denúncia direta em aculta_cgu_report (nova).
+    $reportStorage = $this->container->get('entity_type.manager')->getStorage('aculta_cgu_report');
     $ugcReport = $reportStorage->create([
       'target_type' => 'node',
       'target_id' => $topic1->id(),
@@ -355,7 +355,7 @@ final class ForumCguIntegrationKernelTest extends KernelTestBase {
     $topic = Node::create(['type' => 'aculta_forum_topic', 'title' => 'Tópico Fórum', 'status' => 1]);
     $topic->save();
 
-    $reportStorage = $this->container->get('entity_type.manager')->getStorage('aculta_ugc_report');
+    $reportStorage = $this->container->get('entity_type.manager')->getStorage('aculta_cgu_report');
     $reportStorage->create([
       'target_type' => 'node',
       'target_id' => $topic->id(),
@@ -377,7 +377,7 @@ final class ForumCguIntegrationKernelTest extends KernelTestBase {
     $topic = Node::create(['type' => 'aculta_forum_topic', 'title' => 'Tópico em Moderação', 'status' => 1]);
     $topic->save();
 
-    $reportStorage = $this->container->get('entity_type.manager')->getStorage('aculta_ugc_report');
+    $reportStorage = $this->container->get('entity_type.manager')->getStorage('aculta_cgu_report');
     $reportStorage->create([
       'target_type' => 'node',
       'target_id' => $topic->id(),
@@ -398,7 +398,7 @@ final class ForumCguIntegrationKernelTest extends KernelTestBase {
     $this->assertSame('table', $build['table']['#type']);
     $this->assertCount(1, $build['table']['#rows']);
     $this->assertArrayHasKey('#cache', $build);
-    $this->assertContains('aculta_ugc_report_list', $build['table']['#rows'] ? $build['#cache']['tags'] : []);
+    $this->assertContains('aculta_cgu_report_list', $build['table']['#rows'] ? $build['#cache']['tags'] : []);
 
     // Usuário comum sem permissão recebe 403.
     $this->container->get('current_user')->setAccount($this->outsider);
@@ -436,7 +436,7 @@ final class ForumCguIntegrationKernelTest extends KernelTestBase {
 
     // O hook de bridge não deve criar denúncia se não houver acesso de view.
     $this->expectException(AccessDeniedHttpException::class);
-    $this->container->get('aculta_forum.report_cgu_bridge')->flaggingInsert($flagging);
+    $this->container->get('Drupal\aculta_forum\Hook\ForumReportCguBridgeHooks')->flaggingInsert($flagging);
   }
 
   /**
@@ -451,7 +451,7 @@ final class ForumCguIntegrationKernelTest extends KernelTestBase {
     $topic->save();
 
     // Cria denúncia UGC já procedente/decidida pela moderação.
-    $reportStorage = $this->container->get('entity_type.manager')->getStorage('aculta_ugc_report');
+    $reportStorage = $this->container->get('entity_type.manager')->getStorage('aculta_cgu_report');
     $reportStorage->create([
       'target_type' => 'node',
       'target_id' => $topic->id(),
@@ -502,7 +502,7 @@ final class ForumCguIntegrationKernelTest extends KernelTestBase {
     ]);
     $flagging->save();
 
-    $reportStorage = $this->container->get('entity_type.manager')->getStorage('aculta_ugc_report');
+    $reportStorage = $this->container->get('entity_type.manager')->getStorage('aculta_cgu_report');
     $reports = $reportStorage->loadByProperties(['legacy_flag_id' => (int) $flagging->id()]);
     $this->assertCount(1, $reports);
 
@@ -529,7 +529,7 @@ final class ForumCguIntegrationKernelTest extends KernelTestBase {
     ]);
     $topic->save();
 
-    $reportStorage = $this->container->get('entity_type.manager')->getStorage('aculta_ugc_report');
+    $reportStorage = $this->container->get('entity_type.manager')->getStorage('aculta_cgu_report');
     $reportStorage->create([
       'target_type' => 'node',
       'target_id' => $topic->id(),
@@ -556,7 +556,7 @@ final class ForumCguIntegrationKernelTest extends KernelTestBase {
    */
   public function testModeratorOfDifferentPurposeForbidden(): void {
     $roleMag = Role::create(['id' => 'mod_magazine', 'label' => 'Mod Magazine']);
-    $roleMag->grantPermission('moderar denuncias ugc: magazine');
+    $roleMag->grantPermission('moderar denuncias cgu: magazine');
     $roleMag->save();
 
     $magModerator = User::create(['name' => 'mag_mod', 'mail' => 'mag@example.com', 'status' => 1]);
@@ -575,7 +575,7 @@ final class ForumCguIntegrationKernelTest extends KernelTestBase {
    * Valida ordenação determinística e paginação da fila unificada.
    */
   public function testDeterministicPagination(): void {
-    $reportStorage = $this->container->get('entity_type.manager')->getStorage('aculta_ugc_report');
+    $reportStorage = $this->container->get('entity_type.manager')->getStorage('aculta_cgu_report');
 
     $topics = [];
     for ($i = 1; $i <= 3; $i++) {
@@ -612,7 +612,7 @@ final class ForumCguIntegrationKernelTest extends KernelTestBase {
    * Valida rejeição imediata de flag quando denunciante atinge limite diário.
    */
   public function testFlagDeniedIfDailyLimitReached(): void {
-    $reportStorage = $this->container->get('entity_type.manager')->getStorage('aculta_ugc_report');
+    $reportStorage = $this->container->get('entity_type.manager')->getStorage('aculta_cgu_report');
     $now = \Drupal::time()->getRequestTime();
 
     // Cria 20 denúncias no mesmo dia para o denunciante.
@@ -645,7 +645,7 @@ final class ForumCguIntegrationKernelTest extends KernelTestBase {
     ]);
 
     $this->expectException(AccessDeniedHttpException::class);
-    $this->container->get('aculta_forum.report_cgu_bridge')->flaggingInsert($flagging);
+    $this->container->get('Drupal\aculta_forum\Hook\ForumReportCguBridgeHooks')->flaggingInsert($flagging);
   }
 
   /**
@@ -694,7 +694,7 @@ final class ForumCguIntegrationKernelTest extends KernelTestBase {
     ]);
     $topic->save();
 
-    $reportStorage = $this->container->get('entity_type.manager')->getStorage('aculta_ugc_report');
+    $reportStorage = $this->container->get('entity_type.manager')->getStorage('aculta_cgu_report');
 
     // Denúncia no propósito 'forum'.
     $reportStorage->create([
@@ -743,7 +743,7 @@ final class ForumCguIntegrationKernelTest extends KernelTestBase {
     ]);
     $topic->save();
 
-    $reportStorage = $this->container->get('entity_type.manager')->getStorage('aculta_ugc_report');
+    $reportStorage = $this->container->get('entity_type.manager')->getStorage('aculta_cgu_report');
 
     // Motivo em forum / pendente.
     $reportStorage->create([

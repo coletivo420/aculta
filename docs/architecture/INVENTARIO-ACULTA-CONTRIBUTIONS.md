@@ -59,7 +59,7 @@ o migration gate Wiki retorna completo.
 | `aculta_content_admin` | Não possui entidade editorial nem fila própria. `ModeratableCollectionRegistry` descobre allowlist de rotas controller e Views page no MAIN com content entity como base. | A tela verifica autorização nativa por `AccessManager`; aparição não concede acesso à decisão. A allowlist inclui sugestões de Organizações e propostas de Locais/Eventos, protegidas por `administer aculta events`; decisão e Entity Access permanecem no owner. | Unit da registry: 1 teste / 8 assertions PASS; Kernel `EventOrganizationLifecycleKernelTest` valida fila/revisão de Evento. Não replica nem armazena propostas. |
 | `aculta_messenger` | Avisos do Fórum em `aculta_aviso`; notificações pessoais persistentes em bundles da entidade `message`, com adapter paginado e estado de leitura ownerado. | Consumers validam source/evento; lista, leitura e abertura revalidam autor e acesso atual no módulo de domínio. | Bundle `aculta_msg_events_contrib_notice`, updates 10015–10017 executados e config sync limpo no Runtime; categoria `eventos_contribuicoes` mantém inbox e oferece escolha por site/imediato/digest (padrão site). Unit 402/4.374 PASS; SMTP/autenticado pendentes. |
 | `aculta_index` | Projeções de conteúdo oficial via providers tagueados; providers Wiki, Events, Organização/Local e categorias usam entidades de origem. Contribution não possui provider. | Admin de estado em `/painel-administrativo/indice`; acesso `administer aculta index`. Consumidores consultam Entity Access do owner. | Queue ID `aculta_index_update`; updates 10001–10018 e suíte Kernel de provider/access/rebuild. Não adicionar provider para `aculta_contribution`; validar que aplicação aprovada invalida/atualiza a projeção oficial sem indexar payload privado. |
-| `aculta_ugc` | `aculta_ugc_report` e `aculta_ugc_recipients`; denúncias têm alvo, autor, motivo, purpose, estado e decisão. | `/painel-administrativo/moderacao/denuncias` e decisão própria, escopadas por `ModerationScope`. | Update 10001 e Kernels próprios de fila, decisão e Fórum. Denúncia permanece UGC. |
+| `aculta_ugc` | `aculta_cgu_report` e `aculta_cgu_recipients`; denúncias têm alvo, autor, motivo, purpose, estado e decisão. | `/painel-administrativo/moderacao/denuncias` e decisão própria, escopadas por `ModerationScope`. | Update 10001 e Kernels próprios de fila, decisão e Fórum. Denúncia permanece UGC. |
 
 ### Consumidores Wiki na transição dual-store
 
@@ -111,7 +111,7 @@ de dados compatível.
   Não há integração com `aculta_contributions`. Essa identidade externa e a
   reconciliação recorrente são ownership próprio do Calendar, sem caso claro
   para substituir por propostas comunitárias de Events.
-- `aculta_ugc_report` e as pontes de denúncias do Fórum mantêm alvo, motivo,
+- `aculta_cgu_report` e as pontes de denúncias do Fórum mantêm alvo, motivo,
   escopo de moderação, privacidade do denunciante e decisão em `aculta_ugc`/
   `aculta_forum`. A busca de código não encontrou uso de `aculta_contribution`
   nesses owners. Não converter denúncias ou decisões de moderação em propostas.

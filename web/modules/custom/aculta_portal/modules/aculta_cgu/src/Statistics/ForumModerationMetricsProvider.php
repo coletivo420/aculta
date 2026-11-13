@@ -11,7 +11,7 @@ use Drupal\Core\Database\Connection;
 /**
  * Indicadores de moderação do Fórum a partir da denúncia UGC.
  *
- * O owner real é o `aculta_cgu`: a entidade `aculta_ugc_report` guarda
+ * O owner real é o `aculta_cgu`: a entidade `aculta_cgu_report` guarda
  * situação, `created` e `decided_at`. Nenhum denunciante, alvo nominal,
  * parecer ou conteúdo sai daqui; apenas contagens e tempo agregado.
  *
@@ -24,7 +24,7 @@ final class ForumModerationMetricsProvider implements MetricProviderInterface {
   /**
    * Tabela da denúncia UGC.
    */
-  public const TABLE = 'aculta_ugc_report';
+  public const TABLE = 'aculta_cgu_report';
 
   /**
    * Estados ainda abertos.
