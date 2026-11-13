@@ -10,6 +10,7 @@ use Drupal\aculta_events\Entity\Event;
 use Drupal\aculta_events\Entity\EventLocation;
 use Drupal\aculta_events\Entity\EventOrganization;
 use Drupal\aculta_events\Occurrence\UpcomingDates;
+use Drupal\aculta_events\Service\WebsiteUrl;
 use Drupal\aculta_maps\MapRenderer;
 use Drupal\aculta_maps\RouteLinkBuilder;
 use Drupal\aculta_portal\Domain\DomainSiteManager;
@@ -435,6 +436,11 @@ final class EventPageController extends ControllerBase {
       }
     }
 
+    $websiteUrl = (string) $evento->get('field_url')->value;
+    if (!WebsiteUrl::isValid($websiteUrl)) {
+      $websiteUrl = '';
+    }
+
     return [
       '#theme' => 'aculta_event_page',
       '#prefix' => $prefix !== '' ? $prefix : NULL,
@@ -448,7 +454,7 @@ final class EventPageController extends ControllerBase {
       '#classificacao_etaria' => $classificacao !== '' ? $classificacao : NULL,
       '#selos_acessibilidade' => $selosAcessibilidade,
       '#seguranca' => $seguranca !== '' ? $seguranca : NULL,
-      '#url' => (string) $evento->get('field_url')->value,
+      '#url' => $websiteUrl !== '' ? Url::fromUri($websiteUrl) : NULL,
       '#datas' => $linhas,
       '#mapa' => $mapaRender,
       '#cancelado' => $evento->get('field_status')->value === 'cancelado',

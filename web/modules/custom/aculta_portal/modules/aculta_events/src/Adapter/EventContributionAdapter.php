@@ -13,6 +13,7 @@ use Drupal\aculta_events\Entity\EventLocation;
 use Drupal\aculta_events\Entity\EventOrganization;
 use Drupal\aculta_events\Event\OrganizationContributionOutcomeRecordedEvent;
 use Drupal\aculta_events\Service\OrganizationContributionEventQueue;
+use Drupal\aculta_events\Service\WebsiteUrl;
 use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\aculta_user\Organization\OrganizationAccessService;
 use Drupal\Core\Access\AccessResult;
@@ -166,8 +167,8 @@ final class EventContributionAdapter implements ContributionAdapterInterface {
       if ($key === 'title' && $value === '') {
         throw new UnprocessableEntityHttpException('O título do Evento não pode ficar vazio.');
       }
-      if ($key === 'field_url' && $value !== '' && filter_var($value, FILTER_VALIDATE_URL) === FALSE) {
-        throw new UnprocessableEntityHttpException('O site do Evento precisa ser uma URL válida.');
+      if ($key === 'field_url' && $value !== '' && !WebsiteUrl::isValid($value)) {
+        throw new UnprocessableEntityHttpException('O site do Evento precisa ser uma URL HTTP ou HTTPS válida.');
       }
       $normalized[$key] = $value;
     }

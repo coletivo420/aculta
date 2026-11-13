@@ -1,7 +1,8 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.2.0-dev.10
+version: 0.2.0-dev.11
 state: Dev
 progress_note: >-
+  2026-11-12: corrige vetor de URL executável em Site do Evento; propostas agora aceitam só HTTP/HTTPS e a página pública omite valores antigos com outros esquemas. O template usa link() do Drupal. PHP lint PASS; suíte PHP não executada neste checkout após os reboots, CI remoto pendente.
   2026-11-12: handlers de Evento, Local, Organização e membros falham fechado sem serviço externo; EventAccess (3/33) e EventLocationManagement (9 testes) focais PASS. EventDomainBoundary usa OrganizationAccessService real para remover cinco TypeErrors; EventOrganizationLifecycle instala schema `path_alias` omitido no JUnit histórico. Lint PASS; sem PHPUnit local após os reboots. No SHA 103ac9c91, CI estático, descoberta, PHP lint, PHPStan e Unit PASS; `phpunit-kernel` cancelado sem JUnit. Não alegar suíte Kernel verde.
   Semgrep 2026-11-12: widgets de Local/Organização e o renderer/route context do fluxo HTMX usam serviços injetados; pré-save de Evento/Local também. Testes Kernel atualizados para os novos construtores; dependência externa aculta_user é sintética no harness isolado. Unit Events 35/70, PHPStan completo, PHPCS, fixtures 20/20, descoberta PHPUnit e gate Portal 1.234 PASS; varredura global 40 achados, nenhum serviço estático em Eventos.
   2026-11-10 ADR-054/055: o cartão da lista pública passou a usar o SDC `card-cultural` pelo template override do tema; Kernel focal 7/7 (130 assertions) valida dados ACL-filtrados e estado cancelado. Render no tema ativo/browser aguardam cutover autorizado.
