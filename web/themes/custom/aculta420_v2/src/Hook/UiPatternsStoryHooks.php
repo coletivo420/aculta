@@ -40,6 +40,9 @@ final class UiPatternsStoryHooks {
       return;
     }
 
+    // Total de componentes para o contador da aba "Todos".
+    $variables['aculta_total_components'] = array_sum(array_map('count', array_filter($variables['groups'], 'is_array')));
+
     // Componentes em ordem alfabética (pelo nome exibido) dentro de cada grupo/aba.
     $collator = class_exists(\Collator::class) ? new \Collator('pt_BR') : NULL;
     foreach ($variables['groups'] as $groupName => $items) {

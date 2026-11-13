@@ -23,7 +23,7 @@
     </div>
 
     {% set tab_links %}
-      <a href="#painel-todos" aria-current="page">{{ 'Todos'|t }}</a>
+      <a href="#painel-todos" aria-current="page">{{ 'Todos'|t }} ({{ aculta_total_components }})</a>
       {% for group_name, components in groups %}
         <a href="#painel-{{ aculta_group_anchors[group_name] }}">{{ group_name }} ({{ components|length }})</a>
       {% endfor %}
