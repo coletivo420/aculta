@@ -96,6 +96,17 @@ third_party_settings:
                 third_party_settings: {  }
             weight: 1
             additional: {  }
+          f3acf056-e991-4923-9d48-f0e0cdca32de:
+            uuid: f3acf056-e991-4923-9d48-f0e0cdca32de
+            region: legal
+            configuration:
+              id: aculta_footer_build_info
+              label: 'Rodapé: copyright e versão'
+              label_display: '0'
+              provider: aculta_portal
+              context_mapping: {  }
+            weight: 0
+            additional: {  }
         third_party_settings: {  }
 id: block_content.aculta_institution.footer
 targetEntityType: block_content
