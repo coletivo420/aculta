@@ -551,6 +551,11 @@ final class LmsDiscussionContextIsolationKernelTest extends KernelTestBase {
    * Asserts the member context is readable and replyable, never moderated.
    */
   private function assertContextAllowed(EntityInterface $topic, AccountInterface $account): void {
+    // The negative isolation assertions may have cached the previous Node
+    // access result before the Group relationship was created.
+    $this->container->get('entity_type.manager')
+      ->getAccessControlHandler('node')
+      ->resetCache();
     $context = $this->provider->getContext($topic, $account);
     $relationshipStorage = $this->container->get('entity_type.manager')
       ->getStorage('group_relationship');
