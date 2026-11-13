@@ -560,3 +560,22 @@ sincronizador Runtime está bloqueado por RX e drift de configuração.
   e homologação visual permanecem pendentes. As capturas arquivadas não provam
   os viewports declarados: resultados anteriores registram viewport efetivo de
   1024 px para todos. Não declarar homologação visual.
+
+### Continuação (2026-11-13)
+
+- A inspeção dos seletores rejeitados encontrou dois resíduos legados com
+  emissores substituídos: `.forum-post-card a[href*="?quote="]` (substituído
+  por `data-action="resposta-citar"`) e cinco seletores Bootstrap `.accordion*`
+  do Messenger (substituídos pelo disclosure nativo `details`/`summary`). Os
+  arquivos-fonte perderam 467 bytes; o CSS global não foi alterado. O gate
+  `validate-aculta420-css-scope.php` agora exige os contratos de emissão atuais.
+- No checkout atual, o inventário mede 146 folhas/414.012 bytes. PurgeCSS
+  retém 393.758 bytes e rejeita 20.254 bytes/132 seletores; 22 seletores retidos
+  são reescritos. As 250 classes dinâmicas permanecem preservadas. Esses números
+  incluem alterações locais ainda não commitadas em componentes de reações.
+- `css:verify`, classificação, testes CSS (3 suítes), Stylelint nas duas folhas
+  alteradas, CSS scope (212 checks), schema SDC (2.423 checks) e `git diff
+  --check` passaram. O Stylelint global continua falhando em arquivos locais de
+  `discussion-reaction-bar` e `reaction-emoji`, fora deste corte.
+- O Runtime permanece em RX/BLOCKED; não há origem de site configurada neste
+  ambiente. Sincronização, `drush cr` e captura Playwright não foram executados.

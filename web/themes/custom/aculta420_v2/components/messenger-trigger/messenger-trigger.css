@@ -158,24 +158,6 @@
   padding-inline: .45rem;
 }
 
-.aculta-messenger-conversation__actions .accordion,
-.aculta-messenger-conversation__actions .accordion-item {
-  border: 0;
-  background: transparent;
-}
-
-.aculta-messenger-conversation__actions .accordion-header {
-  border: 0;
-}
-
-.aculta-messenger-conversation__actions .accordion-body {
-  padding: 0;
-}
-
-.aculta-messenger-conversation__actions .accordion-body:not(:has(.aculta-messenger-options__panel > *)) {
-  display: none;
-}
-
 .aculta-messenger-conversation__actions .aculta-messenger-options__panel {
   position: absolute;
   inset-inline-end: 0;

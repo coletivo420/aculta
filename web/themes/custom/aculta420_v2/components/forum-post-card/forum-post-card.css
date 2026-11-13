@@ -350,8 +350,7 @@
 }
 
 .forum-post-card a[data-action="resposta-citar"],
-.forum-post-card a.resposta-acao--citar,
-.forum-post-card a[href*="?quote="] {
+.forum-post-card a.resposta-acao--citar {
   display: inline-flex;
   align-items: center;
   text-decoration: none;

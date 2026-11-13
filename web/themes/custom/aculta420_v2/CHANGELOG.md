@@ -20,6 +20,10 @@
   foi removido dos templates, do CSS global, dos seletores de Conta/Fórum e do
   preprocess. O gate exige essa composição SDC; Runtime e captura visual seguem
   pendentes.
+- Na inspeção dos seletores rejeitados pelo PurgeCSS, foram removidos o
+  seletor de citação por `?quote=` (o módulo emite `data-action`) e os estilos
+  Bootstrap `.accordion*` do Messenger (o módulo usa `details`/`summary`):
+  −467 bytes e 6 seletores. Gate de escopo liga os CSSs aos emissores atuais.
 
 - Auditoria PurgeCSS: `css:verify` agora exige todos os arquivos de fonte e
   staging, valida os bytes e conjuntos de seletores por folha, hashes, versões,
