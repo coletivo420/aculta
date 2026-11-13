@@ -20,7 +20,7 @@ final class AccountMenuPresentationHooks {
     private readonly AccountProxyInterface $currentUser,
     #[Autowire(service: 'entity_type.manager')]
     private readonly EntityTypeManagerInterface $entityTypeManager,
-    #[Autowire(service: 'aculta_user.account_menu_presentation')]
+    #[Autowire(service: 'aculta_user.portal_menu_presentation')]
     private readonly AccountMenuPresentationBuilder $builder,
   ) {}
 

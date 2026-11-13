@@ -238,7 +238,7 @@ final class PagePresentationHooks {
     $variables['aculta_page_title'] = [];
     $variables['aculta_breadcrumb'] = [];
     $variables['aculta_help'] = [];
-    $variables['aculta_account_menu'] = [];
+    $variables['aculta_portal_menu'] = [];
     $variables['aculta_account_authenticated'] = $this->currentUser->isAuthenticated();
     $variables['aculta_account_avatar'] = $variables['aculta_account_avatar'] ?? NULL;
     $variables['aculta_account_name'] = $variables['aculta_account_name'] ?? NULL;
@@ -259,8 +259,8 @@ final class PagePresentationHooks {
       // sem isso a rota renderiza um segundo H1 oculto por CSS.
       $variables['aculta_page_title'] = [];
     }
-    $variables['aculta_account_menu'] = $this->buildAccountMenuComponent(
-      $variables['aculta_account_menu'],
+    $variables['aculta_portal_menu'] = $this->buildAccountMenuComponent(
+      $variables['aculta_portal_menu'],
       $variables['aculta_account_authenticated'],
       $variables['aculta_account_avatar'],
       $variables['aculta_account_name'],
@@ -830,7 +830,7 @@ final class PagePresentationHooks {
 
         case 'system_menu_block:account':
           if ($this->currentUser->isAuthenticated()) {
-            $variables['aculta_account_menu'][$key] = $block;
+            $variables['aculta_portal_menu'][$key] = $block;
           }
           unset($variables['page']['header'][$key]);
           break;

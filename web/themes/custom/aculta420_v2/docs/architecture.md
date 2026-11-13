@@ -52,7 +52,7 @@ O tema não conhece hostnames, domínio Drupal ou regras de acesso. Ele recebe v
 | `domain_presentation.accent` | Portal; **pendente (D1)** | valor neutro `green`, `yellow` ou `red` para o SDC `card-cultural`; ausente no contrato atual, então consumers não devem enviar/mapeamento permanece DRAFT |
 | `aculta_domain_sites` | Portal (`DomainPresentationBuilder`) | links dos sites publicados, com site key, nome, URL e sinalização do atual |
 | `aculta_account_name` | Portal (`aculta_user`) | apelido aparado da pessoa autenticada; `NULL` sem apelido |
-| `aculta_account_menu` | Portal (render array de `system_menu_block:account`) | slot de itens do menu de conta; o PHP do tema o encaixa no SDC |
+| `aculta_portal_menu` | Portal (render array de `system_menu_block:account`) | slot de itens do menu de conta; o PHP do tema o encaixa no SDC |
 | `aculta_account_authenticated` | tema (`PagePresentationHooks`, via `current_user`) | escolhe o estado visitante ou autenticado do menu |
 | `aculta_account_avatar` | Portal (`aculta_user`, AvatarResolver) | slot do avatar do menu de conta; ausente → ícone neutro |
 | `aculta_cart` | Portal (Commerce) | gatilho e painel do carrinho |

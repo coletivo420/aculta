@@ -131,6 +131,6 @@ services:
     class: Drupal\aculta_user\Organization\OrganizationAccessService
     arguments: ['@aculta_user.organization_membership_manager']
 
-  aculta_user.account_menu_presentation:
+  aculta_user.portal_menu_presentation:
     class: Drupal\aculta_user\Identity\AccountMenuPresentationBuilder
     arguments: ['@entity_type.manager', '@aculta_user.public_profile_policy', '@aculta_user.avatar_resolver']

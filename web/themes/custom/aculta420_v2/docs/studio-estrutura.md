@@ -98,7 +98,7 @@ Decisões de 2026-11-05 (ADR-047, emenda).
 ### 3.4 Contrato com o Portal
 
 O `aculta_user` entrega ao tema, por contrato neutro: `authenticated`,
-`aculta_account_avatar` (sem inicial), `aculta_account_menu` (itens com access
+`aculta_account_avatar` (sem inicial), `aculta_portal_menu` (itens com access
 e cache) e `aculta_account_name` (nome de exibição definido pela política do Portal).
 O tema não lê usuário, Profile, `user_picture` nem e-mail.
 

@@ -569,7 +569,7 @@ etapas; controle de fluxo e permissões permanecem no módulo proprietário
 ### multidomain-bar — Barra institucional
 - **Papel:** faixa institucional fixa com logotipo, utilidades (busca, carrinho, mensagens, avisos, conta) e vitrine de portais na home principal.
 - **Props:** `brand_home_url`, `logo_base_url`, `logo_alt`, `is_account_domain`, `show_utility_bar`, `account_authenticated`, `cart_*`, `messages_*`, `alerts_*`, `links`.
-- **Slots:** `search`, `account_menu`.
+- **Slots:** `search`, `portal_menu`.
 - **JS:** `multidomain-bar.js` (login e busca por HTMX, com fragmento fornecido pelo Portal; gatilhos nativos preservados como fallback e `htmx:abort` ao fechar).
 - **CSS:** estilos de layout dos fragmentos de login e cadastro HTMX acompanham o asset do SDC, não o mapa global.
 - **Estado:** entregue. Verificada em 320, 390, 768, 959, 960 e 1440 px, claro/escuro, zoom 200%, anônimo e autenticado (gavetas e conta de teste); leitor de tela permanece pendente.

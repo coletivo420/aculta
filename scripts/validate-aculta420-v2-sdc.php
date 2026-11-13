@@ -537,7 +537,7 @@ $samples = [
     ],
     '#slots' => [
       'search' => '',
-      'account_menu' => '<ul class="menu"><li><a href="/conta">Minha conta</a></li><li><a href="/sair">Sair</a></li></ul>',
+      'portal_menu' => '<ul class="menu"><li><a href="/conta">Minha conta</a></li><li><a href="/sair">Sair</a></li></ul>',
     ],
   ],
   'navigation-bar' => [
@@ -793,7 +793,7 @@ foreach ($component_ids as $component_id) {
     }
     $template = file_get_contents($theme_root . '/components/multidomain-bar/multidomain-bar.twig');
     $javascript = file_get_contents($theme_root . '/components/multidomain-bar/multidomain-bar.js');
-    foreach (['account_menu', 'data-aculta-login-dialog-template', 'data-aculta-login-dialog'] as $required_markup) {
+    foreach (['portal_menu', 'data-aculta-login-dialog-template', 'data-aculta-login-dialog'] as $required_markup) {
       if (!str_contains($template, $required_markup)) {
         throw new RuntimeException(sprintf('Institution bar template is missing: %s', $required_markup));
       }

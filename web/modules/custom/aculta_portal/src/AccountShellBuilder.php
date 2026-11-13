@@ -169,7 +169,7 @@ final class AccountShellBuilder {
     ];
     // The shell owns the only H1. Keep account actions in its sidebar.
     $variables['aculta_page_title'] = [];
-    $variables['aculta_account_menu'] = [];
+    $variables['aculta_portal_menu'] = [];
   }
 
   /**

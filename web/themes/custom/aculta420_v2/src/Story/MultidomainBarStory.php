@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta420_v2\Story;
 
 use Drupal\Core\Extension\ExtensionList;
+use Drupal\Core\Render\Markup;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\ui_patterns_library\StoryDefault;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -70,7 +71,27 @@ final class MultidomainBarStory extends StoryDefault implements ContainerFactory
    * {@inheritdoc}
    */
   public function slots(): array {
-    return [];
+    // O menu da conta é um SDC próprio (aculta420_v2:account-menu) e faz parte da
+    // barra: no site, o bloco o entrega pelo slot portal_menu. A história faz o mesmo.
+    return [
+      'portal_menu' => [
+        '#type' => 'component',
+        '#component' => 'aculta420_v2:account-menu',
+        '#props' => [
+          'authenticated' => FALSE,
+          'summary_label' => 'Abrir menu de conta',
+          'sites' => [
+            ['purpose' => 'main', 'title' => 'ACULTA', 'url' => 'https://main.example.invalid/', 'current' => TRUE],
+            ['purpose' => 'wiki', 'title' => 'Wiki420', 'url' => 'https://wiki.example.invalid/', 'current' => FALSE],
+          ],
+        ],
+        '#slots' => [
+          'menu_items' => [
+            '#markup' => Markup::create('<ul class="menu"><li><a href="/entrar/janela">Entrar</a></li></ul>'),
+          ],
+        ],
+      ],
+    ];
   }
 
 }

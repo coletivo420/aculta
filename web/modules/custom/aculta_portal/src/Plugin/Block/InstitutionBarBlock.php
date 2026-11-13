@@ -80,7 +80,7 @@ final class InstitutionBarBlock extends BlockBase implements ContainerFactoryPlu
       'logo_alt' => (string) new TranslatableMarkup('ACULTA - Associação Cultural Antiproibicionista'),
       'is_account_domain' => (bool) $this->get($variables, 'domain_presentation.layout.institution_bar_account', FALSE),
       'show_utility_bar' => (bool) $this->get($variables, 'domain_presentation.layout.show_utility_bar', TRUE) && !$library,
-      'account_menu' => $library ? NULL : $this->get($variables, 'aculta_account_menu', NULL),
+      'portal_menu' => $library ? NULL : $this->get($variables, 'aculta_portal_menu', NULL),
       'cart_url' => $this->get($variables, 'aculta_cart.url', NULL),
       'cart_count' => $this->get($variables, 'aculta_cart.count', 0),
       'cart_empty' => $this->get($variables, 'aculta_cart.empty', TRUE),

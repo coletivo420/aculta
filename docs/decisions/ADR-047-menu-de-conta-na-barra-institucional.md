@@ -7,7 +7,7 @@
 ## 1. Contexto
 
 - A barra institucional é contrato do shell (ADR-046): não é redesenhada sem decisão explícita, e a largura mínima é verificada em todos os purposes.
-- Hoje o menu de conta é renderizado por `system_menu_block:account` e montado por `AccountShellBuilder` (Portal). O tema V2 recebe a variável `aculta_account_menu` em `PagePresentationHooks`.
+- Hoje o menu de conta é renderizado por `system_menu_block:account` e montado por `AccountShellBuilder` (Portal). O tema V2 recebe a variável `aculta_portal_menu` em `PagePresentationHooks`.
 - O usuário logado precisa de acesso rápido a avatar, nome, notificações, carrinho e às ações de conta. O visitante precisa de busca, carrinho e entrada.
 - O responsável decidiu que o menu fica **fixo na barra institucional**, em todos os purposes, e que "Entrar" **abre o popup de login** (diálogo).
 
@@ -16,7 +16,7 @@
 1. **Local e fixação.** O menu de conta é um item da barra institucional, fixa, presente em todos os purposes. Não há menu de conta separado no cabeçalho de domínio.
 2. **Estado logado.** A barra mostra avatar, nome de exibição, sino com contador de notificações, carrinho e um dropdown com Meu perfil, Minha conta e Sair.
 3. **Estado visitante.** A barra mostra busca, carrinho e "Entrar". Nenhum dado de conta, nome, avatar ou contador é renderizado para visitante.
-4. **Dados vêm do Portal.** `AccountShellBuilder` (ou o serviço do `aculta_user`, se a responsabilidade for dele) monta um contrato neutro `account_menu` com: `authenticated`, nome de exibição (apelido do `aculta_user`), avatar pelo `AvatarResolver` (foto liberada → acervo, nunca inicial), itens da Menu API (`account`, preservando access e cache) e contadores. O tema não lê entidade, usuário, Profile ou `user_picture`.
+4. **Dados vêm do Portal.** `AccountShellBuilder` (ou o serviço do `aculta_user`, se a responsabilidade for dele) monta um contrato neutro `portal_menu` com: `authenticated`, nome de exibição (apelido do `aculta_user`), avatar pelo `AvatarResolver` (foto liberada → acervo, nunca inicial), itens da Menu API (`account`, preservando access e cache) e contadores. O tema não lê entidade, usuário, Profile ou `user_picture`.
 5. **Cacheability.** Contexto `user` e tags do usuário. Contadores com `max-age: 0` ou atualizados na próxima carga de página. Nenhum conteúdo de conta vai para cache público.
 6. **Links entre purposes.** Links para Minha conta e outras áreas de conta saem absolutos pelo `DomainPurposeManager`. Nenhum POST ou proxy de escrita atravessa purpose.
 7. **Componente.** Novo SDC `account-menu`, com schema estrito e `with_context = false`, usado dentro da barra institucional. Recebe só o contrato neutro, sem entidade ou usuário.

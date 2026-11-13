@@ -103,6 +103,6 @@ slots:
   search:
     title: Pesquisa
     description: Gatilho de busca do ACULTA Portal, como render array.
-  account_menu:
+  portal_menu:
     title: Ações de conta
-    description: Menu de conta Drupal com links de login, Minha conta e logout.
+    description: Componente aculta420_v2:account-menu (SDC) com o gatilho de três linhas, links de login, Minha conta e logout. Faz parte da barra institucional.
