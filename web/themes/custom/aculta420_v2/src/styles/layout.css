@@ -36,7 +36,6 @@
 }
 
 /* Trilha dentro do título: ocupa a coluna do título, sem recuo próprio. */
-.page .page__title .page__breadcrumb,
 .page .layout-page__title .page__breadcrumb {
   inline-size: 100%;
   margin-inline: 0;
@@ -53,59 +52,6 @@
   padding-inline: var(--page-gutter);
 }
 
-/* Compatibility while Drupal's persistent SDC discovery cache is warm. */
-.page__main {
-  display: grid;
-  grid-area: main;
-  grid-template-columns: minmax(0, 1fr);
-  align-content: start;
-  gap: var(--spacing-xl);
-  min-block-size: 0;
-  padding-block: var(--spacing-lg);
-}
-
-.page__title,
-.page__content,
-.page__sidebar {
-  min-inline-size: 0;
-  overflow-wrap: anywhere;
-}
-
-.page__title { grid-column: 1 / -1; }
-.page__content,
-.page__sidebar { min-inline-size: 0; }
-
-@media (min-width: 60rem) {
-  /* Fallback com a mesma geometria do layout-page--aside. */
-  .page__main--with-sidebar {
-    grid-template-areas:
-      "title title"
-      "aside content";
-    grid-template-columns: minmax(14rem, 1fr) minmax(0, 2fr);
-  }
-
-  .page__main--with-sidebar:not(:has(.page__title)) {
-    grid-template-areas: "aside content";
-  }
-
-  .page__main--with-sidebar .page__title {
-    grid-area: title;
-  }
-
-  .page__main--with-sidebar .page__content {
-    grid-area: content;
-  }
-
-  .page__main--with-sidebar .page__sidebar {
-    grid-area: aside;
-  }
-
-  /* Páginas de leitura e conteúdo estreito */
-  .page__main--stack {
-    inline-size: min(100%, var(--aculta-narrow-container-width, 750px));
-  }
-}
-
 /* Desktop: nenhuma região do site passa de --page-content-max (1200 px),
    centralizada. O rodapé já é contido no próprio .site-footer__inner.
    Exceções são declaradas no seletor :not(...) abaixo. */
@@ -118,7 +64,7 @@
   }
 
   /* Conteúdo principal mantém a variante (stack, aside, full); só limita o teto. */
-  :is(.layout-page, .page__main):not(.layout-page--studio-dashboard) {
+  .layout-page:not(.layout-page--studio-dashboard) {
     max-inline-size: var(--page-content-max);
     margin-inline: auto;
   }
@@ -129,7 +75,7 @@
    (component) e de módulos; o !important garante ausência de overflow
    horizontal em telas estreitas, conforme docs/layouts-plan.md 5.3. */
 @media (max-width: 59.9375rem) {
-  :is(.layout-page, .page__main, .page__navigation, .page__highlighted, .page__help, .page__breadcrumb) {
+  :is(.layout-page, .page__navigation, .page__highlighted, .page__help, .page__breadcrumb) {
     inline-size: 100% !important;
     max-inline-size: 100% !important;
   }

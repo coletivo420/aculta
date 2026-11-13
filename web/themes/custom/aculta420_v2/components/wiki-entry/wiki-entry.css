@@ -1,4 +1,4 @@
-.page__main:has(.aculta-wiki-entry--full) .page__title { display: none; }
+.layout-page:has(.aculta-wiki-entry--full) .layout-page__title { display: none; }
 
 .aculta-wiki-article {
   color: var(--color-text-primary);

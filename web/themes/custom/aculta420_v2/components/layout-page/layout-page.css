@@ -12,8 +12,8 @@
   overflow-wrap: anywhere;
 }
 
-/* Container externo do stack: acompanha o slider de largura estreita do tema,
-   como o fallback .page__main--stack. A medida de leitura (68–70ch) fica no
+/* Container externo do stack: acompanha o slider de largura estreita do tema.
+   A medida de leitura (68–70ch) fica no
    conteúdo textual, para não estrangular formulários e tabelas. */
 .layout-page--stack {
   inline-size: min(100%, var(--aculta-narrow-container-width, 750px));
@@ -28,7 +28,7 @@
 }
 
 /* O Dashboard da Conta reserva colunas para os SDCs de menu e calendário. */
-.layout-page--studio-dashboard :is(.layout-page__title, .page__title) {
+.layout-page--studio-dashboard .layout-page__title {
   position: absolute;
   inline-size: 1px;
   block-size: 1px;

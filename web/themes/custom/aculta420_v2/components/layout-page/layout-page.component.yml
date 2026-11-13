@@ -7,6 +7,10 @@ props:
   type: object
   additionalProperties: false
   properties:
+    studio_dashboard:
+      type: boolean
+      default: false
+      title: Dashboard do Studio
     variant:
       type: string
       enum: [stack, aside, full]

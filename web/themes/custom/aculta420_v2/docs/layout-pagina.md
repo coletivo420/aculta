@@ -14,6 +14,10 @@ Plano de execução: [layouts-plan.md](layouts-plan.md). Telas do Studio:
 
 ## 0. Como ler
 
+**Estado implementado (2026-11-13):** os shells clássico e `shell-v2` compõem
+diretamente o SDC `layout-page`; o fallback de markup e CSS `.page__main` foi
+removido. A homologação visual no Runtime ainda está pendente.
+
 - **Alvo:** o layout que a V2 deve ter ao fim da fase P1 do ADR-048.
 - **Hoje:** o que o `page.html.twig` faz agora. Onde difere do alvo, está marcado **muda**.
 - **Padrão:** valor adotado como recomendação, sem confirmação do responsável. Marcado **padrão**.
@@ -66,7 +70,7 @@ Entre 40rem e 60rem o layout é o do mobile, com cartões em duas colunas a part
 | 4 | Ajuda | `help` | `div.page__help` | — | existe | existe |
 | 5 | Trilha | `breadcrumb` | `div.page__breadcrumb` | `navigation` (SDC `breadcrumb`) | existe | existe |
 | 6b | Conteúdo | `content` | `main#main-content` | `main` | existe | slot `content` do `layout-page` (**muda**) |
-| 6a | Barra lateral | `sidebar_first` | `aside.page__sidebar` | `complementary`, só com conteúdo | existe | slot `aside` (**muda**) |
+| 6a | Barra lateral | `sidebar_first` | `aside.layout-page__aside` | `complementary`, só com conteúdo | existe | slot `aside` (**muda**) |
 | 7 | Rodapé | `footer` | `footer.page__footer` | `contentinfo` | existe | existe |
 
 **Ordem no HTML:** a barra e as zonas 2 a 5 vêm antes do conteúdo. O conteúdo

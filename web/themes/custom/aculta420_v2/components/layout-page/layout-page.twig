@@ -2,7 +2,7 @@
 {% if variant not in ['stack', 'aside', 'full'] %}
   {% set variant = 'stack' %}
 {% endif %}
-<main{{ attributes.addClass('layout-page', 'layout-page--' ~ variant) }} id="main-content" tabindex="-1">
+<main class="layout-page layout-page--{{ variant }}{% if studio_dashboard|default(false) %} layout-page--studio-dashboard{% endif %}" id="main-content" tabindex="-1">
   {% if title %}
     <div class="layout-page__title">{{ title }}</div>
   {% endif %}

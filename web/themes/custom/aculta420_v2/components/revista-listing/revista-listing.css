@@ -1,4 +1,4 @@
-.page__main:has(.revista-listing) .page__title { display: none; }
+.layout-page:has(.revista-listing) .layout-page__title { display: none; }
 .revista-listing { min-inline-size: 0; }
 .revista-listing__header { margin-block-end: var(--spacing-xl); border-block-end: 1px solid var(--color-border); padding-block: var(--spacing-md) var(--spacing-lg); }
 .revista-listing__eyebrow { margin: 0; letter-spacing: .08em; text-transform: uppercase; color: var(--color-text-secondary); font-size: var(--font-size-sm); font-weight: 600; }

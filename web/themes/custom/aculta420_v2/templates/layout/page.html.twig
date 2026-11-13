@@ -18,8 +18,8 @@
     <div class="page__showcase">
       {{ include('aculta420_v2:purpose-showcase', {
         heading: 'Ecossistema ACULTA'|t,
-        links: multidomain_network_links
-      }, with_context = false) }}
+    links: multidomain_network_links,
+      }, with_context: false) }}
     </div>
   {% endif %}
 
@@ -40,39 +40,22 @@
   {% set main_content = page.content %}
   {% if aculta_lms_lesson_route|default(false) and aculta_lms_lesson_sdc_available|default(false) %}
     {% set main_content = include('aculta420_v2:lms-lesson-page', {
-      content: page.content
-    }, with_context = false) %}
+      content: page.content,
+    }, with_context: false) %}
   {% endif %}
-  {% set layout_page_template = 'aculta420_v2:layout-page' %}
-  {% set layout_page_attributes = create_attribute() %}
-  {% if aculta_studio_account_dashboard|default(false) %}
-    {% set layout_page_attributes = layout_page_attributes.addClass('layout-page--studio-dashboard') %}
-  {% endif %}
-  {% if aculta_layout_page_sdc_available|default(false) %}
-    {{ include(layout_page_template, {
-      attributes: layout_page_attributes,
-      variant: aculta_layout_variant|default('stack'),
-      title: aculta_page_title,
-      content: main_content,
-      aside: aculta_lms_student_dashboard_route|default(false) ? [] : page.sidebar_first
-    }, with_context = false) }}
-  {% else %}
-    {# Keep a warm Drupal SDC discovery cache from breaking the page. #}
-    {% set fallback_variant = aculta_layout_variant|default('stack') %}
-    <main id="main-content" class="page__main{% if fallback_variant == 'stack' %} page__main--stack{% elseif fallback_variant == 'aside' and page.sidebar_first %} page__main--with-sidebar{% endif %}{% if aculta_studio_account_dashboard|default(false) %} layout-page--studio-dashboard{% endif %}" tabindex="-1">
-      {% if aculta_page_title %}<div class="page__title">{{ aculta_page_title }}</div>{% endif %}
-      <div class="page__content">{{ main_content }}</div>
-      {% if page.sidebar_first and not aculta_lms_student_dashboard_route|default(false) %}
-        <aside class="page__sidebar" aria-label="{{ 'Related content'|t }}">{{ page.sidebar_first }}</aside>
-      {% endif %}
-    </main>
-  {% endif %}
+  {{ include('aculta420_v2:layout-page', {
+    variant: aculta_layout_variant|default('stack'),
+    studio_dashboard: aculta_studio_account_dashboard|default(false),
+    title: aculta_page_title,
+    content: main_content,
+    aside: aculta_lms_student_dashboard_route|default(false) ? [] : page.sidebar_first,
+  }, with_context: false) }}
 
   {% if social_links_page_footer %}
     {{ include('aculta420_v2:site-footer', {
       variant: 'social-links',
-      content: social_links_page_footer
-    }, with_context = false) }}
+    content: social_links_page_footer,
+    }, with_context: false) }}
   {% elseif page.footer %}
     {# O rodapé institucional é o layout site-footer do bloco; não envolver de novo. #}
     {{ page.footer }}

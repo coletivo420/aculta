@@ -18,7 +18,6 @@
    declara largura própria: a leitura estreita fica no conteúdo. */
 html[data-site-key="account"] :is(
 .layout-page,
-.page__main,
 .page__navigation,
 .page__highlighted,
 .page__help,

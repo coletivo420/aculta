@@ -199,6 +199,12 @@ $assert(str_contains($baseCss, ':focus-visible'), 'base.css perdeu o indicador g
 $assert(!str_contains($baseCss, '.htmx-indicator') && !str_contains($baseCss, '.htmx-request'), 'O estado visual HTMX voltou ao CSS global.');
 $assert(!str_contains($baseCss, '.flex-column'), 'A utilidade flex-column do visualizador PDF voltou ao CSS global.');
 $assert(!str_contains($baseCss, '.container {') && !str_contains($baseCss, '.grid {'), 'Utilidades sem emissores voltaram ao CSS global.');
+$pageTemplate = (string) file_get_contents($theme . '/templates/layout/page.html.twig');
+$pageShellTemplate = (string) file_get_contents($theme . '/templates/layout/page--shell-v2.html.twig');
+$pageLayoutCss = (string) file_get_contents($theme . '/src/styles/layout.css');
+$assert(str_contains($pageTemplate, "include('aculta420_v2:layout-page'") && str_contains($pageShellTemplate, "include('aculta420_v2:layout-page'"), 'Os templates de página devem compor diretamente o SDC layout-page.');
+$assert(!str_contains($pageTemplate, 'aculta_layout_page_sdc_available') && !str_contains($pageShellTemplate, 'aculta_layout_page_sdc_available') && !str_contains($pageTemplate, 'page__main--') && !str_contains($pageShellTemplate, 'page__main--'), 'O fallback de markup page__main permaneceu nos templates.');
+$assert(!str_contains($pageLayoutCss, '.page__main'), 'O CSS global ainda contém apresentação do fallback page__main.');
 $pdfViewerRoot = $root . '/web/modules/custom/aculta_portal/modules/aculta_document_viewer';
 $pdfViewerLibrary = Yaml::parseFile($pdfViewerRoot . '/aculta_document_viewer.libraries.yml');
 $pdfViewerCss = (string) file_get_contents($pdfViewerRoot . '/css/pdf-viewer.css');

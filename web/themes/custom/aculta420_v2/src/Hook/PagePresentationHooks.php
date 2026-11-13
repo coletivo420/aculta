@@ -233,7 +233,6 @@ final class PagePresentationHooks {
     $variables['aculta_component_library_page'] = ComponentLibraryRoutes::isComponentLibraryRoute($this->currentRouteMatch?->getRouteName());
     $variables['aculta_lms_lesson_route'] = $this->currentRouteMatch?->getRouteName() === 'aculta_lms.lesson_view';
     $variables['aculta_lms_student_dashboard_route'] = $this->currentRouteMatch?->getRouteName() === 'aculta_lms.student_dashboard';
-    $variables['aculta_layout_page_sdc_available'] = $this->componentAvailable('layout-page');
     $variables['aculta_lms_lesson_sdc_available'] = $this->componentAvailable('lms-lesson-page');
     $variables['aculta_page_title'] = [];
     $variables['aculta_breadcrumb'] = [];
