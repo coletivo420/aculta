@@ -1,7 +1,7 @@
 $schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
 name: Menu de conta na barra institucional
 description: Gatilho de três linhas na barra institucional que abre um painel de tela cheia com navegação principal, conta e sites/legal. Visitante vê Entrar e Criar conta; usuário autenticado vê avatar e ações de conta (ADR-047).
-group: ACULTA
+group: Conta
 status: experimental
 libraryOverrides:
   dependencies:

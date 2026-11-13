@@ -2,7 +2,7 @@ $schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schema
 name: Cartão de autoria
 description: Identidade pública preparada pelo módulo aculta_user, sem leitura de entidades no tema.
 status: stable
-group: ACULTA
+group: Conteúdo
 props:
   type: object
   additionalProperties: false

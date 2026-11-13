@@ -2,7 +2,7 @@ $schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schema
 name: Banner de consentimento de métricas
 description: Apresenta a escolha opcional de métricas de uso a visitantes anônimos.
 status: stable
-group: ACULTA
+group: Shell institucional
 props:
   type: object
   additionalProperties: false

@@ -2,7 +2,7 @@ $schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schema
 name: Detalhes do perfil
 description: Apresenta biografia ou redes sociais preparadas pelo proprietário funcional.
 status: experimental
-group: ACULTA
+group: Conta
 props:
   type: object
   additionalProperties: false

@@ -2,7 +2,7 @@ $schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schema
 name: Filter chips
 status: stable
 description: Faixa rolável de filtros com links e estado atual explícito.
-group: ACULTA
+group: Elementos básicos
 props:
   type: object
   additionalProperties: false

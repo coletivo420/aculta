@@ -20,7 +20,6 @@
     queue: [],
     loadedSet: new Set(),
     errorSet: new Set(),
-    totalCount: 0,
     domElements: {
       btnText: null,
       status: null,
@@ -50,7 +49,28 @@
   }
 
   /**
+   * Botões de prévia do escopo atual: apenas os que estão visíveis,
+   * ou seja, da aba selecionada e que passam pelo filtro de busca.
+   */
+  function getScopeItems() {
+    return Array.from(document.querySelectorAll('.aculta-load-preview-btn'))
+      .filter((btn) => !btn.closest('[hidden]'))
+      .map((btn) => {
+        const url = btn.getAttribute('data-hx-get') || btn.getAttribute('href');
+        const targetSelector = btn.getAttribute('data-hx-target');
+        const selectSelector = btn.getAttribute('data-hx-select') || '#component-stories-wrapper';
+        const indicatorSelector = btn.getAttribute('data-hx-indicator');
+        const placeholder = btn.closest('.aculta-preview-placeholder');
+        const section = btn.closest('.ui_patterns_component');
+        const componentId = section ? section.id : (placeholder ? placeholder.id.replace('placeholder-', '') : null);
+        return { componentId, url, targetSelector, selectSelector, indicatorSelector };
+      })
+      .filter((item) => item.componentId && item.url && item.targetSelector);
+  }
+
+  /**
    * Atualiza a interface (rótulo do botão e texto de status acessível).
+   * Contadores consideram somente o escopo visível.
    */
   function updateUI() {
     const { status, btn } = state.domElements;
@@ -59,12 +79,14 @@
     }
 
     const btnText = getButtonTextElement(btn);
-    const total = state.totalCount;
-    const loaded = state.loadedSet.size;
-    const errors = state.errorSet.size;
+    const scopeIds = getScopeItems().map((item) => item.componentId);
+    const total = scopeIds.length;
+    const loaded = scopeIds.filter((id) => state.loadedSet.has(id)).length;
+    const errors = scopeIds.filter((id) => state.errorSet.has(id)).length;
     const completed = loaded + errors;
 
     if (state.isRunning) {
+      btn.disabled = false;
       btn.setAttribute('aria-pressed', 'true');
       btn.setAttribute('data-state', 'loading');
       if (btnText) {
@@ -82,6 +104,7 @@
     }
     else {
       btn.setAttribute('aria-pressed', 'false');
+      btn.disabled = false;
 
       if (state.isCancelled) {
         btn.setAttribute('data-state', 'cancelled');
@@ -283,39 +306,26 @@
   }
 
   /**
-   * Constrói a lista de componentes pendentes inspecionando o DOM.
+   * Constrói a fila com as prévias do escopo visível (aba selecionada).
+   * Em modo de retentativa, inclui apenas os itens com erro.
    */
   function populateQueue(onlyErrors = false) {
-    const buttons = Array.from(document.querySelectorAll('.aculta-load-preview-btn'));
-    state.totalCount = buttons.length + state.loadedSet.size;
+    state.queue = getScopeItems().filter((item) => (
+      onlyErrors
+        ? state.errorSet.has(item.componentId)
+        : !state.loadedSet.has(item.componentId)
+    ));
+  }
 
-    const newQueue = [];
-    buttons.forEach((btn) => {
-      const url = btn.getAttribute('data-hx-get') || btn.getAttribute('href');
-      const targetSelector = btn.getAttribute('data-hx-target');
-      const selectSelector = btn.getAttribute('data-hx-select') || '#component-stories-wrapper';
-      const indicatorSelector = btn.getAttribute('data-hx-indicator');
-      const placeholder = btn.closest('.aculta-preview-placeholder');
-      const section = btn.closest('.ui_patterns_component');
-      const componentId = section ? section.id : (placeholder ? placeholder.id.replace('placeholder-', '') : null);
-
-      if (!componentId || !url || !targetSelector) {
-        return;
-      }
-
-      if (onlyErrors) {
-        if (state.errorSet.has(componentId)) {
-          newQueue.push({ componentId, url, targetSelector, selectSelector, indicatorSelector });
-        }
-      }
-      else {
-        if (!state.loadedSet.has(componentId)) {
-          newQueue.push({ componentId, url, targetSelector, selectSelector, indicatorSelector });
-        }
-      }
-    });
-
-    state.queue = newQueue;
+  /**
+   * Troca de aba ou de filtro: interrompe a fila em andamento e atualiza o botão para o novo escopo.
+   */
+  function onScopeChanged() {
+    const wasRunning = state.isRunning;
+    state.isRunning = false;
+    state.isCancelled = wasRunning;
+    state.queue = [];
+    updateUI();
   }
 
   Drupal.behaviors.acultaUiLibraryBulkPreview = {
@@ -346,9 +356,8 @@
         state.domElements.btnText = getButtonTextElement(btn);
         state.domElements.status = document.getElementById('aculta-bulk-preview-status');
 
-        // Contagem inicial de componentes
-        const initialButtons = document.querySelectorAll('.aculta-load-preview-btn');
-        state.totalCount = initialButtons.length;
+        document.addEventListener('aculta:ui-library-scope-changed', onScopeChanged);
+        updateUI();
 
         btn.addEventListener('click', (e) => {
           e.preventDefault();
@@ -367,7 +376,8 @@
           state.isRunning = true;
 
           // Se estava finalizado com erros, tenta apenas os erros
-          const isRetryErrors = (btn.getAttribute('data-state') === 'finished' && state.errorSet.size > 0);
+          const isRetryErrors = (btn.getAttribute('data-state') === 'finished'
+            && getScopeItems().some((item) => state.errorSet.has(item.componentId)));
           populateQueue(isRetryErrors);
 
           updateUI();

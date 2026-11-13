@@ -2,7 +2,7 @@ $schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schema
 name: Navigation bar
 status: stable
 description: Cabeçalho de navegação responsivo e acessível por teclado.
-group: ACULTA
+group: Navegação
 libraryOverrides:
   dependencies:
     - core/drupal

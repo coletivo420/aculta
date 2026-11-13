@@ -1,7 +1,7 @@
 $schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
 name: Menu lateral do Studio Dashboard
 description: Título do painel de conta com botão de menu no desktop. O botão abre um diálogo pela esquerda, como os diálogos da barra institucional.
-group: ACULTA
+group: Studio
 status: experimental
 libraryOverrides:
   dependencies:

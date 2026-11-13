@@ -2,7 +2,7 @@ $schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schema
 name: Ícone Phosphor
 description: Ícone vetorial de interface, com variantes regular e duotone.
 status: stable
-group: ACULTA
+group: Elementos básicos
 props:
   type: object
   additionalProperties: false

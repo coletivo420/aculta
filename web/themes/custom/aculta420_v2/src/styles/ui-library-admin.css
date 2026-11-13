@@ -91,6 +91,13 @@
   font-size: var(--font-size-base);
 }
 
+/* Painel "Todos": subtítulo de cada grupo listado. */
+.aculta-component-library__panel-subtitle {
+  margin: var(--spacing-sm) 0 var(--spacing-xs);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm, .875rem);
+}
+
 .aculta-component-library__panel-list {
   display: flex;
   flex-wrap: wrap;

@@ -1,12 +1,17 @@
 /**
  * Abas da biblioteca de componentes e filtro em tempo real de componentes.
- * Clicar numa aba mostra o painel e os componentes correspondentes ao grupo.
+ * Clicar numa aba mostra o painel e os componentes correspondentes (aba "Todos" mostra todos).
  * O campo de busca filtra componentes por nome, ID ou grupo.
  */
 (function (Drupal, once) {
   'use strict';
 
   let selectedGroupId = null;
+
+  // Aba "Todos" mostra todos os grupos; as demais, só o grupo selecionado.
+  const ALL_TAB_ID = 'todos';
+  const isGroupInSelection = (group) => selectedGroupId === ALL_TAB_ID
+    || group.getAttribute('data-group-id') === selectedGroupId;
 
   Drupal.behaviors.acultaUiLibraryTabs = {
     attach(context) {
@@ -25,8 +30,10 @@
             panel.hidden = panel.id !== panelId;
           });
           groups.forEach((group) => {
-            group.hidden = group.getAttribute('data-group-id') !== groupId;
+            group.hidden = !isGroupInSelection(group);
           });
+          // Avisa o carregamento em lote de prévias para usar só o escopo visível.
+          document.dispatchEvent(new CustomEvent('aculta:ui-library-scope-changed'));
         };
 
         links.forEach((link) => {
@@ -70,8 +77,9 @@
           if (!query) {
             components.forEach((comp) => { comp.hidden = false; });
             groups.forEach((grp) => {
-              grp.hidden = grp.getAttribute('data-group-id') !== selectedGroupId;
+              grp.hidden = !isGroupInSelection(grp);
             });
+            document.dispatchEvent(new CustomEvent('aculta:ui-library-scope-changed'));
             return;
           }
 
@@ -90,6 +98,7 @@
             });
             grp.hidden = !hasVisible;
           });
+          document.dispatchEvent(new CustomEvent('aculta:ui-library-scope-changed'));
         });
       });
     },

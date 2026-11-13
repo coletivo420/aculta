@@ -2,7 +2,7 @@ $schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schema
 name: Tabela de listagem do Studio
 description: Apresenta tabelas administrativas e de conteúdo montadas pelo Studio.
 status: stable
-group: Conta
+group: Studio
 props:
   type: object
   additionalProperties: false

@@ -2,7 +2,7 @@ $schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schema
 name: Multidomain institutional bar
 status: stable
 description: Faixa institucional ACULTA fixa com logotipo e utilidades legadas.
-group: ACULTA
+group: Navegação
 libraryOverrides:
   dependencies:
     - core/drupal

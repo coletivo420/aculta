@@ -23,14 +23,29 @@
     </div>
 
     {% set tab_links %}
+      <a href="#painel-todos" aria-current="page">{{ 'Todos'|t }}</a>
       {% for group_name, components in groups %}
-        <a href="#painel-{{ aculta_group_anchors[group_name] }}"{% if loop.first %} aria-current="page"{% endif %}>{{ group_name }} ({{ components|length }})</a>
+        <a href="#painel-{{ aculta_group_anchors[group_name] }}">{{ group_name }} ({{ components|length }})</a>
       {% endfor %}
     {% endset %}
     {{ include('aculta420_v2:tabs', { label: 'Grupos de componentes'|t, items: tab_links|raw }, with_context: false) }}
 
+    {# Painel "Todos": lista todos os componentes; é o padrão ao carregar a página. #}
+    <div class="aculta-component-library__panel" id="painel-todos" data-group-id="todos">
+      <h3 class="aculta-component-library__panel-title">{{ 'Todos'|t }}</h3>
+      {% for group_name, components in groups %}
+        <h4 class="aculta-component-library__panel-subtitle">{{ group_name }}</h4>
+        <ul class="aculta-component-library__panel-list">
+          {% for component in components %}
+            {% set safe_component_id = component.id|replace({':': '--'}) %}
+            <li><a class="button button--secondary" href="#{{ safe_component_id }}">{{ component.name }}</a></li>
+          {% endfor %}
+        </ul>
+      {% endfor %}
+    </div>
+
     {% for group_name, components in groups %}
-      <div class="aculta-component-library__panel" id="painel-{{ aculta_group_anchors[group_name] }}"{% if not loop.first %} hidden{% endif %}>
+      <div class="aculta-component-library__panel" id="painel-{{ aculta_group_anchors[group_name] }}" hidden>
         <h3 class="aculta-component-library__panel-title">{{ group_name }}</h3>
         <ul class="aculta-component-library__panel-list">
           {% for component in components %}

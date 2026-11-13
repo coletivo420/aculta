@@ -2,7 +2,7 @@ $schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schema
 name: Cursos da conta
 description: Lista cursos do usuário preparada pelo presenter do Portal.
 status: stable
-group: Aprendizagem
+group: LMS
 props:
   type: object
   additionalProperties: false

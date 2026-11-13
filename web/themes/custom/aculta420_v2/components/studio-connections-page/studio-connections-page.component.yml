@@ -1,7 +1,7 @@
 $schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
 name: Página de Conexões do Studio
 description: Página com duas caixas independentes para gerenciar conexões existentes e buscar novas conexões.
-group: ACULTA
+group: Studio
 status: experimental
 props:
   type: object

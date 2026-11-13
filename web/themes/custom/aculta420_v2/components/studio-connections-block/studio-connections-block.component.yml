@@ -1,7 +1,7 @@
 $schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
 name: Bloco Conexões do Studio Dashboard
 description: Bloco de conexões para o Studio Dashboard com resumo das 3 primeiras conexões ou estado vazio.
-group: ACULTA
+group: Studio
 status: experimental
 props:
   type: object

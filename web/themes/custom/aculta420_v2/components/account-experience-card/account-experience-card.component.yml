@@ -2,7 +2,7 @@ $schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schema
 name: Cartão de experiência da Conta
 description: Apresenta uma experiência disponível na página Minha Conta.
 status: stable
-group: ACULTA
+group: Conta
 props:
   type: object
   additionalProperties: false
