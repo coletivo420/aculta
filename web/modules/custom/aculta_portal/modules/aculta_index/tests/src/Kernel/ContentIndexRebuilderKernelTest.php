@@ -768,7 +768,7 @@ final class ContentIndexRebuilderKernelTest extends KernelTestBase {
       ->condition('audit_id', 1)
       ->execute()
       ->fetchField() !== 'test_sample_content') {
-      $sourcePhase = $checker->processAuditBatch(10);
+      $checker->processAuditBatch(10);
     }
     $this->assertSame('1', (string) $database->select('aculta_index_audit', 'audit')
       ->fields('audit', ['source_entity_max_id'])

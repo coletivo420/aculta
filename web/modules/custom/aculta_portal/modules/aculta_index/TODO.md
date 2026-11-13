@@ -1,6 +1,6 @@
 # TODO — aculta_index
 
-Estado: Dev · versão 0.1.0-dev.182 (`aculta_index.info.yml`) · teste de janela da auditoria mantém a asserção de fase sem duplicar erro impossível do PHPStan baseline; lint pendente, PHPUnit não executado após reboots · status: `docs/operations/status/aculta_index.yml`.
+Estado: Dev · versão 0.1.0-dev.182 (`aculta_index.info.yml`) · janela da auditoria mantém asserção da transição e avança lotes sem variável sem leitura; lint pendente, PHPUnit não executado após reboots · status: `docs/operations/status/aculta_index.yml`.
 
 ## Próximo passo
 

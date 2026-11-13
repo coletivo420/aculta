@@ -1,12 +1,12 @@
 # GitHub — baseline PHPStan do Content Index — 2026-11-13
 
 - **Objetivo:** corrigir PHPStan no teste de janela da auditoria incremental.
-- **Estado:** removida a asserção repetida `sources` dentro do loop; preservada a asserção da transição `relations` para `sources`. CI anterior mostrou baseline count=1 e ocorrência=2.
+- **Estado:** removida a asserção repetida `sources` dentro do loop; PHPStan então identificou `$sourcePhase` sem leitura e a atribuição do loop foi removida, preservada a asserção da transição `relations` para `sources`.
 - **Decisões e alternativas descartadas:** manter o comportamento e teste do cursor; não alterar baseline nem enfraquecer a verificação de estado.
 - **Cuidados:** executar lint e esperar CI remoto; não rodar Kernel local por histórico de travamento.
 - **Commits e arquivos:** pendente; ContentIndexRebuilderKernelTest, TODO/status Index e handoff.
-- **Verificações:** PHP lint e `git diff --check` pendentes; Semgrep e CI do commit anterior ainda em execução.
-- **Pendências e bloqueios:** confirmar PHPStan, Kernel e Semgrep no SHA publicado; dívida antiga Semgrep 427 ainda sem SARIF reconciliado.
+- **Verificações:** PHP lint e `git diff --check` pendentes; PHPStan do commit anterior identificou e motivou a segunda correção; Semgrep do SHA `2a237bb5` PASS.
+- **Pendências e bloqueios:** confirmar PHPStan, lint e Kernel no próximo SHA; dívida antiga Semgrep 427 ainda sem SARIF reconciliado.
 - **Próximo passo:** validar diff leve, commit/push e acompanhar workflows.
 
 # GitHub — contrato das métricas de moderação — 2026-11-13
