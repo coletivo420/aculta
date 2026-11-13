@@ -19,6 +19,7 @@ use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\group\Entity\Group;
 use Drupal\group\Entity\GroupRole;
 use Drupal\group\Entity\GroupType;
+use Drupal\group\Entity\Storage\GroupRelationshipStorageInterface;
 use Drupal\group\Entity\Storage\GroupRelationshipTypeStorageInterface;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\node\Entity\Node;
@@ -551,9 +552,10 @@ final class LmsDiscussionContextIsolationKernelTest extends KernelTestBase {
    */
   private function assertContextAllowed(EntityInterface $topic, AccountInterface $account): void {
     $context = $this->provider->getContext($topic, $account);
-    $relationships = $this->container->get('entity_type.manager')
-      ->getStorage('group_relationship')
-      ->loadByEntity($topic, 'group_node:aculta_lms_topic');
+    $relationshipStorage = $this->container->get('entity_type.manager')
+      ->getStorage('group_relationship');
+    self::assertInstanceOf(GroupRelationshipStorageInterface::class, $relationshipStorage);
+    $relationships = $relationshipStorage->loadByEntity($topic, 'group_node:aculta_lms_topic');
     $group = count($relationships) === 1 ? reset($relationships)->getGroup() : NULL;
     $nodeAccess = $topic->access('view', $account, TRUE);
     $groupAccess = $group?->access('view', $account, TRUE);
