@@ -46,3 +46,18 @@ allowed_reactions:
     icon: folded-hands
     label: Gratidão
     enabled: true
+  -
+    id: rocket
+    icon: rocket
+    label: Foguete
+    enabled: true
+  -
+    id: bomb
+    icon: bomb
+    label: Bomba
+    enabled: true
+  -
+    id: dashing
+    icon: dashing-away
+    label: Rajada
+    enabled: true
