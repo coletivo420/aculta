@@ -6,6 +6,7 @@ namespace Drupal\Tests\aculta_forum\Kernel;
 
 use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
 use Drupal\aculta_forum\Context\Provider\LmsDiscussionContextProvider;
+use Drupal\aculta_image\FileRemover;
 use Drupal\aculta_image\ImageCatalog;
 use Drupal\aculta_image\ImageRenderer;
 use Drupal\comment\CommentingStatus;
@@ -102,6 +103,16 @@ final class LmsDiscussionContextIsolationKernelTest extends KernelTestBase {
       (new Definition(ImageRenderer::class, [
         new Reference('aculta_image.catalog'),
         new Reference('entity_type.manager'),
+      ]))->setPublic(TRUE),
+    );
+    $container->setDefinition(
+      'aculta_image.file_remover',
+      (new Definition(FileRemover::class, [
+        new Reference('file.usage'),
+        new Reference('entity_type.manager'),
+        new Reference('database'),
+        new Reference('file_system'),
+        new Reference('logger.factory'),
       ]))->setPublic(TRUE),
     );
   }
