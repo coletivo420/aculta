@@ -1,13 +1,13 @@
-# CI — Kernel publica progresso durante PHPUnit — 2026-11-13
+# CI — particiona Kernel para obter JUnit — 2026-11-13
 
-- **Objetivo:** tornar observável o gate Kernel cancelado sem relatório.
-- **Estado:** no SHA `d2a8c042`, jobs estáticos, PHP lint, PHPStan, descoberta e Unit passaram. Kernel foi cancelado após 9m54 durante `Run Kernel suite`; sem JUnit. A suíte usava `--no-progress`; removido para expor avanço no log. Mudança aguardando commit e nova execução remota.
-- **Decisões e alternativas descartadas:** manter timeout de 45 min e a suíte Kernel; não ocultar o cancelamento tornando o job verde nem rodar suíte integral local após os reboots reportados.
-- **Cuidados:** `continue-on-error` mantém o workflow agregado verde, mas o job Kernel continua falhando/cancelado e deve ser avaliado à parte.
-- **Commits e arquivos:** `d2a8c042` (deduplicação push/PR); `.github/workflows/php-quality.yml` e este handoff pendentes.
-- **Verificações:** actionlint, Semgrep local, Bats, shell, frontend, PHP lint, PHPStan, descoberta e PHPUnit Unit PASS no PR #304. Kernel cancelado sem artefato JUnit. `git diff --check` e YAML PASS; validador de token budget FAIL por sete violações preexistentes em skills fora do diff.
-- **Pendências e bloqueios:** obter execução Kernel conclusiva e corrigir falhas reais; reconciliar o inventário Semgrep histórico de 427 com os relatórios locais, que usam escopos distintos.
-- **Próximo passo:** validar diff e YAML, commitar/publicar, acompanhar o Kernel com progresso visível e inspecionar JUnit.
+- **Objetivo:** corrigir os erros Kernel reportados pelo GitHub.
+- **Estado:** `c9e971007` publicado. Kernel cancelado aos 244/1.154 (21%), após 8m26: 14 erros, 3 falhas, sem JUnit. Remover `--no-progress` mostrou avanço, sem evitar cancelamento. Seis lotes locais.
+- **Decisões e alternativas descartadas:** balancear diretórios, `max-parallel: 1`; suíte completa não roda local após os reboots.
+- **Cuidados:** `continue-on-error` pode deixar workflow verde com Kernel falhando; revisar job/JUnit.
+- **Commits e arquivos:** `c9e971007`; workflow PHP, `scripts/phpunit-suites.php` e handoff pendentes.
+- **Verificações:** no `c9e971007`, gates estáticos, PHP lint, PHPStan, descoberta e Unit PASS; Kernel parcial. Nova matriz: PHP lint, descoberta, seis lotes/250 arquivos, YAML e diff PASS; actionlint local indisponível, CI pendente. Token budget FAIL por sete limites preexistentes.
+- **Pendências e bloqueios:** CI/JUnits; corrigir falhas; reconciliar os 427 achados Semgrep e relatórios de escopos distintos.
+- **Próximo passo:** commitar/publicar e tratar os seis relatórios.
 
 # CI — atualiza Actions e fixa runner — 2026-11-13
 

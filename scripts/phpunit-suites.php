@@ -212,15 +212,104 @@ function aculta_phpunit_uncovered(array $candidates, array $directories): array 
   return $uncovered;
 }
 
+/**
+ * Splits Kernel test directories into balanced, non-overlapping shards.
+ *
+ * @param list<string> $kernelDirectories
+ * @param int $shardCount
+ * @param string $root
+ *
+ * @return array<array{directories: list<string>, test_files: int}>
+ */
+function aculta_phpunit_kernel_shards(array $kernelDirectories, int $shardCount, string $root): array {
+  if ($shardCount < 1 || $shardCount > count($kernelDirectories)) {
+    throw new InvalidArgumentException('A quantidade de shards deve caber nos diretórios Kernel.');
+  }
+
+  $weightedDirectories = [];
+  foreach ($kernelDirectories as $directory) {
+    $absoluteDirectory = $root . '/' . $directory;
+    if (!is_dir($absoluteDirectory)) {
+      throw new RuntimeException("Diretório Kernel ausente: {$directory}");
+    }
+    $iterator = new RecursiveIteratorIterator(
+      new RecursiveDirectoryIterator($absoluteDirectory, FilesystemIterator::SKIP_DOTS),
+    );
+    $testFiles = 0;
+    foreach ($iterator as $file) {
+      if ($file->isFile() && str_ends_with($file->getFilename(), 'Test.php')) {
+        $testFiles++;
+      }
+    }
+    if ($testFiles === 0) {
+      throw new RuntimeException("Diretório Kernel sem testes: {$directory}");
+    }
+    $weightedDirectories[] = ['directory' => $directory, 'test_files' => $testFiles];
+  }
+
+  usort($weightedDirectories, static function (array $left, array $right): int {
+    return ($right['test_files'] <=> $left['test_files'])
+      ?: strcmp($left['directory'], $right['directory']);
+  });
+
+  $shards = array_fill(0, $shardCount, ['directories' => [], 'test_files' => 0]);
+  foreach ($weightedDirectories as $weightedDirectory) {
+    $lightestShard = 0;
+    foreach ($shards as $index => $shard) {
+      if ($shard['test_files'] < $shards[$lightestShard]['test_files']) {
+        $lightestShard = $index;
+      }
+    }
+    $shards[$lightestShard]['directories'][] = $weightedDirectory['directory'];
+    $shards[$lightestShard]['test_files'] += $weightedDirectory['test_files'];
+  }
+
+  foreach ($shards as &$shard) {
+    sort($shard['directories']);
+  }
+  unset($shard);
+
+  return $shards;
+}
+
 $root = dirname(__DIR__);
 $mode = $argv[1] ?? '--check';
-if (!in_array($mode, ['--write', '--check'], TRUE)) {
-  fwrite(STDERR, "Uso: php scripts/phpunit-suites.php [--write|--check]\n");
+$kernelShardCount = NULL;
+if (preg_match('/^--kernel-shards=(\d+)$/', $mode, $matches) === 1) {
+  $kernelShardCount = (int) $matches[1];
+}
+elseif (!in_array($mode, ['--write', '--check'], TRUE)) {
+  fwrite(STDERR, "Uso: php scripts/phpunit-suites.php [--write|--check|--kernel-shards=N]\n");
   exit(2);
 }
 
 $candidates = aculta_phpunit_candidates($root);
 $directories = aculta_phpunit_directories($candidates);
+$kernelDirectories = $directories['kernel'] ?? [];
+if ($kernelShardCount !== NULL) {
+  try {
+    $shards = aculta_phpunit_kernel_shards($kernelDirectories, $kernelShardCount, $root);
+  }
+  catch (Throwable $exception) {
+    fwrite(STDERR, $exception->getMessage() . "\n");
+    exit(1);
+  }
+  $matrix = ['include' => []];
+  foreach ($shards as $index => $shard) {
+    $matrix['include'][] = [
+      'shard' => $index + 1,
+      'test_files' => $shard['test_files'],
+      'directories' => implode(' ', $shard['directories']),
+    ];
+  }
+  $json = json_encode($matrix, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES);
+  $githubOutput = getenv('GITHUB_OUTPUT');
+  if ($githubOutput !== FALSE) {
+    file_put_contents($githubOutput, "kernel_shards={$json}\n", FILE_APPEND | LOCK_EX);
+  }
+  fwrite(STDOUT, $json . "\n");
+  exit(0);
+}
 $defaultTypes = ['unit', 'kernel', 'integration', 'functional', 'functionaljs'];
 if (($directories['performance'] ?? []) === []) {
   fwrite(STDERR, "Suíte de performance vazia: os benchmarks opt-in desapareceram.\n");
