@@ -18,41 +18,6 @@
 
 <div id="{{ target_id }}" class="discussion-reaction-bar" data-discussion-reaction-bar data-entity-type="{{ entity_type }}" data-entity-id="{{ entity_id }}">
 {% if can_react %}
-  <div class="discussion-reaction-bar__list">
-    {% for key, item in reactions|slice(0, 2, true) %}
-      {% set emoji_icon = allowed_reactions[key] is defined ? allowed_reactions[key].icon : key %}
-      {% set emoji_label = allowed_reactions[key] is defined ? allowed_reactions[key].label : key %}
-      <form method="post" action="{{ react_url }}" data-hx-post="{{ react_url }}" data-hx-target="#{{ target_id }}" data-hx-swap="outerHTML" class="discussion-reaction-bar__form">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-        <input type="hidden" name="reaction" value="{{ key }}">
-        <button type="submit" class="discussion-reaction-bar__badge{% if item.user_reacted %} is-active{% endif %}" aria-pressed="{{ item.user_reacted ? 'true' : 'false' }}" title="{{ emoji_label }}">
-          {{ include('aculta420_v2:reaction-emoji', { name: emoji_icon, variant: 'color', size: 'sm', label: emoji_label }, with_context = false) }}
-          <span class="discussion-reaction-bar__count">{{ item.count }}</span>
-        </button>
-      </form>
-    {% endfor %}
-
-    {% if reactions|length > 2 %}
-      <button type="button" class="discussion-reaction-bar__more-toggle" popovertarget="{{ more_id }}" style="anchor-name: --{{ more_id }}" aria-label="{{ 'Mais reações'|t }}" title="{{ 'Mais reações'|t }}" aria-expanded="false">+</button>
-      <div id="{{ more_id }}" class="discussion-reaction-bar__popover" style="position-anchor: --{{ more_id }}" popover="auto" role="dialog" aria-label="{{ 'Mais reações'|t }}" data-reaction-popover>
-        <div class="discussion-reaction-bar__popover-list">
-          {% for key, item in reactions|slice(2, null, true) %}
-            {% set emoji_icon = allowed_reactions[key] is defined ? allowed_reactions[key].icon : key %}
-            {% set emoji_label = allowed_reactions[key] is defined ? allowed_reactions[key].label : key %}
-            <form method="post" action="{{ react_url }}" data-hx-post="{{ react_url }}" data-hx-target="#{{ target_id }}" data-hx-swap="outerHTML" class="discussion-reaction-bar__form">
-              <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-              <input type="hidden" name="reaction" value="{{ key }}">
-              <button type="submit" class="discussion-reaction-bar__badge{% if item.user_reacted %} is-active{% endif %}" aria-pressed="{{ item.user_reacted ? 'true' : 'false' }}" title="{{ emoji_label }}">
-                {{ include('aculta420_v2:reaction-emoji', { name: emoji_icon, variant: 'color', size: 'sm', label: emoji_label }, with_context = false) }}
-                <span class="discussion-reaction-bar__count">{{ item.count }}</span>
-              </button>
-            </form>
-          {% endfor %}
-        </div>
-      </div>
-    {% endif %}
-  </div>
-
   <div class="discussion-reaction-bar__actions">
     {# Reação rápida (padrão) #}
     {% set default_icon = allowed_reactions[default_reaction] is defined ? allowed_reactions[default_reaction].icon : default_reaction %}
@@ -82,13 +47,11 @@
           <div class="discussion-reaction-bar__popover-list">
             {% for key, reaction in allowed_reactions %}
               {% if reaction.enabled|default(true) %}
-                {% set count = reactions[key].count|default(0) %}
                 <form method="post" action="{{ react_url }}" data-hx-post="{{ react_url }}" data-hx-target="#{{ target_id }}" data-hx-swap="outerHTML" class="discussion-reaction-bar__form">
                   <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
                   <input type="hidden" name="reaction" value="{{ key }}">
                   <button type="submit" class="discussion-reaction-bar__palette-btn{% if user_reaction == key %} is-selected{% endif %}" title="{{ reaction.label }}" aria-label="{{ reaction.label }}">
                     {{ include('aculta420_v2:reaction-emoji', { name: reaction.icon, variant: 'color', size: 'sm', label: reaction.label }, with_context = false) }}
-                    {% if count > 0 %}<span class="discussion-reaction-bar__count">{{ count }}</span>{% endif %}
                   </button>
                 </form>
               {% endif %}
