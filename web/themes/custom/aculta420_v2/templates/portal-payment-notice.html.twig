@@ -1,19 +1,6 @@
-{# The surface SDC owns the card; the Portal still owns text and destination. #}
-{% set notice_content %}
-  <section data-portal-payment-notice>
-    <p>
-      {{ intro }}
-      {% if url %}
-        {{ link(link_label, url, {class: ['aculta-payment-notice__link'], target: '_blank', rel: 'noopener'}) }} ({{ 'abre em nova aba'|t }})
-      {% endif %}
-    </p>
-  </section>
-{% endset %}
-{{ include('aculta420_v2:surface', {
-  tone: 'raised',
-  radius: 'lg',
-  spacing: 'normal',
-  elevation: 'subtle',
-  border: 'subtle',
-  content: notice_content,
-}, with_context = false) }}
+{# The Portal owns copy and the validated destination; the SDC owns presentation. #}
+{{ include('aculta420_v2:payment-notice', {
+  intro: intro,
+  link_label: link_label,
+  url: url,
+}, with_context: false) }}

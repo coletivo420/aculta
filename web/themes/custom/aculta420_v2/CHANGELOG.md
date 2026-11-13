@@ -1789,4 +1789,9 @@ State: Dev. No RC, production deployment, or release tag is declared.
 - `surface-panel.css` saiu de `global-styling`: seus emissores são somente o
   template SDC `surface-panel`, que declara e anexa o asset ao renderizar. O
   gate de escopo verifica a declaração local e a ausência da folha global.
+- O link do aviso de pagamento saiu de `surface.css` e passou ao SDC
+  `payment-notice`; o adaptador do tema agora só encaminha texto e URL validada
+  pelo Portal. O asset do link carrega junto do aviso.
+- `payment-notice` tem story padrão na UI Patterns Library e teste que protege
+  o vínculo template → SDC → folha, sem deslocar a política de URL do Portal.
 

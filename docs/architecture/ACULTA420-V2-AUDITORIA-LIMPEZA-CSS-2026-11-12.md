@@ -494,3 +494,15 @@ sincronizador Runtime está bloqueado por RX e drift de configuração.
   145 folhas/413.888 bytes porque o asset segue no repositório e é anexado por
   componente. Audit, classify, verify, testes PurgeCSS, Stylelint e gates SDC/
   classes mapeadas passaram. Runtime visual ainda não homologado.
+- O seletor `.aculta-payment-notice__link` estava misturado ao CSS de `surface`,
+  embora o único emissor fosse o template legado do aviso de pagamento. O Portal
+  mantém a validação HTTPS do domínio Mercado Pago e envia a URL como string; o
+  adaptador compõe o novo SDC `payment-notice`, que declara seu CSS local e
+  mantém `target="_blank"`/`rel="noopener"`. A story padrão foi adicionada à
+  UI Patterns Library e a regra saiu de `surface.css`. Twig CS Fixer, Stylelint,
+  `css:verify`, schemas SDC (129 componentes/2.371 checks), classes mapeadas,
+  escopo (185 checks) e PHPUnit (5 testes/54 assertions) passaram. O inventário
+  atualizado tem 146 folhas/413.890 bytes; PurgeCSS retém 392.520 bytes e os
+  142 seletores rejeitados continuam todos classificados com evidência. A carga
+  global local está em 52.851 bytes (−5.919 bytes desde 61.926). Runtime visual
+  não homologado.

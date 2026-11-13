@@ -248,7 +248,7 @@ final class PortalController extends ControllerBase {
       '#theme' => 'aculta_portal_payment_notice',
       '#intro' => $this->t('Todos os nossos pagamentos são processados pelo Mercado Pago.'),
       '#link_label' => $this->t('Acesse sua conta Mercado Pago'),
-      '#url' => $paymentUrl !== NULL ? Url::fromUri($paymentUrl) : NULL,
+      '#url' => $paymentUrl,
       '#weight' => 10,
     ];
   }

@@ -1,0 +1,23 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Aviso de pagamento
+description: Aviso contextual dos pagamentos processados pelo Mercado Pago.
+status: stable
+group: Portal
+props:
+  type: object
+  additionalProperties: false
+  properties:
+    intro:
+      type: string
+      title: Texto introdutório
+    link_label:
+      type: [string, 'null']
+      title: Rótulo do link externo
+    url:
+      type: [string, 'null']
+      format: uri-reference
+      title: Destino externo validado pelo Portal
+assets:
+  css:
+    component:
+      payment-notice.css: {}
