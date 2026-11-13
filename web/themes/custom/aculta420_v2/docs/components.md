@@ -13,11 +13,7 @@ caches de descoberta para refletir alterações no Runtime. Dois SDCs ainda não
 têm story (`sales-panel` e `secret-reveal`); os demais têm exemplos catalogados.
 
 O grupo `Layouts` também alimenta os plugins de `ui_patterns_layouts`, usados
-pelo Layout Builder. Os oito layouts declarados são `event-page-layout`,
-`layout-page`, `layout-section`, `layout-two-columns`, `layout-grid`,
-`layout-narrow`, `layout-full` e `layout-site-footer` (rodapé institucional, com
-regiões `brand`, `nav`, `content` e `legal`; substitui a section antiga no bloco
-`aculta_institution`, display `footer`). O gate de Runtime cobre hoje seis layouts
+pelo Layout Builder. Os sete layouts declarados são `event-page-layout`, `layout-page`, `layout-section`, `layout-two-columns`, `layout-grid`, `layout-narrow` e `layout-full`. O rodapé institucional (`site-footer`) também é um item desta biblioteca, com regiões `brand`, `nav`, `content` e `legal`; ele está posicionado no layout de blocos do display `footer` do bloco `aculta_institution`. O gate de Runtime cobre hoje seis layouts
 compartilhados; `event-page-layout` tem regiões próprias do detalhe editorial
 de eventos e sua descoberta no seletor ainda precisa ser verificada no Runtime.
 

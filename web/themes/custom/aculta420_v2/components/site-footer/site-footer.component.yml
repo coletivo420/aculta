@@ -2,7 +2,6 @@ $schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schema
 name: Site footer
 description: Rodapé global que apresenta os blocos configurados na região footer.
 status: experimental
-noUi: true
 group: ACULTA
 props:
   type: object

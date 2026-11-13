@@ -37,13 +37,13 @@ third_party_settings:
     allow_custom: false
     sections:
       -
-        layout_id: 'ui_patterns:aculta420_v2:layout_site_footer'
+        layout_id: 'ui_patterns:aculta420_v2:site_footer'
         layout_settings:
           label: ''
           context_mapping:
             entity: layout_builder.entity
           ui_patterns:
-            component_id: 'aculta420_v2:layout-site-footer'
+            component_id: 'aculta420_v2:site-footer'
             variant_id: null
             props: {  }
             slots: {  }

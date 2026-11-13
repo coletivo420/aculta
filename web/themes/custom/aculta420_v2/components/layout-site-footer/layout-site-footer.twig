@@ -1,8 +1,0 @@
-{# Layout do rodapé: delega a apresentação ao SDC site-footer, que carrega o próprio CSS. #}
-{{ include('aculta420_v2:site-footer', {
-  variant: 'institutional',
-  brand: brand|default(''),
-  nav: nav|default(''),
-  content: content|default(''),
-  legal: legal|default(''),
-}, with_context = false) }}
