@@ -79,21 +79,6 @@ third_party_settings:
                 third_party_settings: {  }
             weight: 0
             additional: {  }
-          3e585b4d-d7fd-460a-9848-33d2b2ecf4b4:
-            uuid: 3e585b4d-d7fd-460a-9848-33d2b2ecf4b4
-            region: content
-            configuration:
-              id: 'field_block:block_content:aculta_institution:field_org_description'
-              label_display: '0'
-              context_mapping:
-                entity: layout_builder.entity
-              formatter:
-                type: basic_string
-                label: hidden
-                settings: {  }
-                third_party_settings: {  }
-            weight: 1
-            additional: {  }
           ae598612-b35d-4054-8dd8-3c2a55db25c9:
             uuid: ae598612-b35d-4054-8dd8-3c2a55db25c9
             region: legal
@@ -110,43 +95,6 @@ third_party_settings:
                   link_rel: canonical
                 third_party_settings: {  }
             weight: 2
-            additional: {  }
-          5a74fcd5-2ac8-47d4-b5d7-bd9bc29a027c:
-            uuid: 5a74fcd5-2ac8-47d4-b5d7-bd9bc29a027c
-            region: content
-            configuration:
-              id: 'field_block:block_content:aculta_institution:field_headquarters'
-              label_display: '0'
-              context_mapping:
-                entity: layout_builder.entity
-              formatter:
-                type: string
-                label: hidden
-                settings:
-                  link_to_entity: false
-                  link_rel: canonical
-                third_party_settings: {  }
-            weight: 3
-            additional: {  }
-          d20f2597-11a4-49b7-8f3c-636b38219bb4:
-            uuid: d20f2597-11a4-49b7-8f3c-636b38219bb4
-            region: content
-            configuration:
-              id: 'field_block:block_content:aculta_institution:field_site'
-              label_display: '0'
-              context_mapping:
-                entity: layout_builder.entity
-              formatter:
-                type: link
-                label: hidden
-                settings:
-                  trim_length: 80
-                  url_only: false
-                  url_plain: false
-                  rel: ''
-                  target: ''
-                third_party_settings: {  }
-            weight: 4
             additional: {  }
         third_party_settings: {  }
 id: block_content.aculta_institution.footer
