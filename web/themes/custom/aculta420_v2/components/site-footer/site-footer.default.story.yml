@@ -8,7 +8,7 @@ slots:
     markup: Associação Cultural Antiproibicionista
   nav:
     markup: |
-      <ul class="menu"><li><a href="/privacidade">Privacidade</a></li><li><a href="/termos">Termos de uso</a></li><li><a href="/acessibilidade">Acessibilidade</a></li><li><a href="/codigo-fonte">Código-fonte</a></li></ul>
+      <ul class="menu"><li><a href="/sobre/politica-de-privacidade">Privacidade</a></li><li><a href="/sobre/termos-de-uso">Termos de uso</a></li></ul>
   legal:
     markup: |
       <span>© 2026 ACULTA</span><span>Software livre · GPLv3 (código)</span>

@@ -48,6 +48,20 @@ third_party_settings:
             props: {  }
             slots: {  }
         components:
+          0a84d0a6-e36b-42ab-ac3e-a39de45f88b0:
+            uuid: 0a84d0a6-e36b-42ab-ac3e-a39de45f88b0
+            region: nav
+            configuration:
+              id: 'system_menu_block:aculta-footer-legal'
+              label: 'Rodapé legal'
+              label_display: '0'
+              provider: system
+              level: 1
+              depth: 1
+              expand_all_items: false
+              context_mapping: {  }
+            weight: 0
+            additional: {  }
           80b67eab-2f77-4fe7-9cd7-5ce2f94938d2:
             uuid: 80b67eab-2f77-4fe7-9cd7-5ce2f94938d2
             region: brand
