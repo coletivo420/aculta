@@ -191,14 +191,11 @@ final class PagePresentationHooksTest extends UnitTestCase {
    */
   public function testOtherComponentsKeepTheirExistingFallback(): void {
     $componentManager = $this->createMock(ComponentPluginManager::class);
-    $componentManager->expects(self::once())
-      ->method('hasDefinition')
-      ->with('aculta420_v2:studio-profile-editor')
-      ->willReturn(TRUE);
+    $componentManager->expects(self::never())->method('hasDefinition');
     $hooks = $this->newHooks($componentManager);
     $fallback = ['#type' => 'container', 'content' => ['#plain_text' => 'Perfil']];
     $variables = [
-      'name' => 'profile-editor',
+      'name' => 'unmapped-component',
       'props' => [],
       'slots' => [],
       'component' => $fallback,
