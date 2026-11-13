@@ -25,6 +25,9 @@
 - `.aculta-form--inline` passou para a folha já anexada pelo admin de Eventos;
   os links de conversa nova agora acompanham `NewConversationForm` pela
   biblioteca `aculta_messenger/new-conversation-presentation`.
+- Os estilos do link fiscal, cadastro e login Google saíram do global e agora
+  são anexados pelos respectivos elementos de checkout; o texto de bio da
+  conta passou à folha contextual `portal-account`.
 
 - A classificação PurgeCSS foi revisada seletor por seletor. Os 22 sem
   evidência não tinham emissores em Twig/PHP/YAML/JavaScript; removidas suas

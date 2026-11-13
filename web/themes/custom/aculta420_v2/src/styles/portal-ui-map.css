@@ -23,8 +23,6 @@
 
 /* Classes semânticas que substituíram os utilitários aculta-u-* (2026-11-12).
    Cada regra pertence a um token de PortalUiHooks::TOKENS. */
-.aculta-checkout__google { display: flex; justify-content: center; margin-block-end: 1rem; }
-.aculta-checkout__guest { margin-block-end: 1rem; }
 .aculta-hint { color: var(--color-text-secondary); font-size: .875em; }
 .aculta-hint--muted { color: var(--color-text-muted); }
 .aculta-section-title { margin-block: 1rem .5rem; font-family: var(--font-family-heading); font-size: 1.25rem; }
@@ -70,9 +68,7 @@
 .aculta-messenger-fallback-search--grid { display: grid; gap: .5rem; }
 
 /* Conta, perfil e autenticação. */
-.aculta-account-home,
-.aculta-fiscal-identity-other-data,
-.portal-account-bio__text { display: block; }
+.aculta-account-home { display: block; }
 .aculta-auth-google { display: inline-flex; align-items: center; gap: .5rem; min-block-size: 2.75rem; }
 .aculta-auth-google-status { color: var(--color-text-muted); }
 

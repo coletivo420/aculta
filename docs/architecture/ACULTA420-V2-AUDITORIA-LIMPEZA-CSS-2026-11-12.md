@@ -420,32 +420,34 @@ sincronizador Runtime está bloqueado por RX e drift de configuração.
 
 ## 17. Migração contextual de consumidores do mapa (2026-11-13)
 
-- Oito regras e dez identidades de seletor saíram de
+- Dez regras e quatorze identidades de seletor saíram de
   `src/styles/portal-ui-map.css`: hosts de calendário, DNS de superfícies,
-  filtros/fila/pager de moderação, Loja, filtro de organizações de Eventos e
-  links de nova conversa. O mapa passou de 4.187 para 3.451 bytes (-736 bytes,
-  -17,6%).
+  filtros/fila/pager de moderação, Loja, filtro de organizações de Eventos,
+  links de nova conversa, elementos do checkout e texto de bio. O mapa passou
+  de 4.187 para 3.243 bytes (-944 bytes, -22,6%).
 - As regras foram para bibliotecas de propriedade dos módulos:
   `aculta_calendar/embed-hosts`, `aculta_paths/surfaces`,
   `aculta_cgu/moderation-queue`, `aculta_user/report-queue` e
   `aculta_portal/shop-presentation`; `aculta-form--inline` foi para o asset de
   Eventos existente e os links do Mensageiro ganharam uma biblioteca anexada
-  ao formulário apenas no fluxo de grupo. As seis folhas novas somam 673 bytes;
-  todas são anexadas no render array que consome cada regra.
+  ao formulário apenas no fluxo de grupo. Os estilos de bio passaram para a
+  folha contextual `portal-account`. As sete folhas novas somam 873 bytes e
+  são anexadas nos elementos/rotas consumidores; Eventos e Conta usam folhas
+  contextuais que já existiam.
 - O gate `validate-aculta420-mapped-classes.php` agora inspeciona CSS da raiz
   de `aculta_portal/css` além dos submódulos. A migração da Loja revelou que o
   gate anterior não considerava folhas CSS da raiz do módulo.
-- Relatório recalculado após as oito regras: 144 folhas de tema, 413.273 bytes,
-  2.368 regras e 2.824 seletores. O PurgeCSS retém 391.903 bytes e identifica
+- Relatório recalculado após o corte: 144 folhas de tema, 413.111 bytes,
+  2.367 regras e 2.821 seletores. O PurgeCSS retém 391.741 bytes e identifica
   21.370 bytes / 142
   seletores removíveis; todos permanecem classificados com evidência (2
   dinâmicos, 43 no HTML Runtime, 68 por padrão Drupal e 29 por fonte). Não se
   aplicou purge destrutivo.
-- A verificação de escopo informa 61.190 bytes de CSS local em
-  `global-styling`; a remoção isolada do mapa global é 736 bytes. `css:audit`,
+- A verificação de escopo informa 60.982 bytes de CSS local em
+  `global-styling`; a remoção isolada do mapa global é 944 bytes. `css:audit`,
   `css:classify`, `css:verify`, `css:test`, `lint:css`, Stylelint das folhas
-  novas, YAML/PHP lint, PHPUnit unitário (16 testes/96 assertions em fila e
-  Messenger), `validate-aculta420-mapped-classes.php` e
+  novas, YAML/PHP lint, PHPUnit unitário (43 testes/153 assertions em
+  checkout, fila e Messenger), `validate-aculta420-mapped-classes.php` e
   `validate-aculta420-css-scope.php`: PASS. Uma depreciação preexistente do
   `private_message` foi reportada. Os Kernel tests de Calendar/CGU foram
   tentados, mas o sandbox não permitiu conexão ao socket MySQL; não são

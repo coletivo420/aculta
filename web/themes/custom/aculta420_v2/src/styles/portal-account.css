@@ -46,3 +46,4 @@ html[data-site-key="account"] :is(.layout-page > *, .aculta-account-entry) {
 html[data-site-key="account"] .aculta-account-entry {
   grid-template-columns: minmax(0, 1fr);
 }
+.portal-account-bio__text { display: block; }

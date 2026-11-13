@@ -87,6 +87,7 @@ final class FiscalIdentityPane extends CheckoutPaneBase implements CheckoutPaneI
           // Alternativa ao cadastro na própria compra: Outros Dados, com
           // retorno ao checkout deste pedido.
           $pane_form['other_data'] = [
+            '#attached' => ['library' => ['aculta_portal/checkout-presentation']],
             '#type' => 'link',
             '#title' => $this->t('Prefiro cadastrar em Outros Dados'),
             '#url' => Url::fromUri('internal:/dados/outros-dados', [

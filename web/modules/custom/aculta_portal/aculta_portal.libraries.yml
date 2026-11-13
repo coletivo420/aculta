@@ -47,6 +47,11 @@ shop-presentation:
     theme:
       css/shop-presentation.css: {}
 
+checkout-presentation:
+  css:
+    theme:
+      css/checkout-presentation.css: {}
+
 # Padrão de integrações externas: abre a autorização ou o pagamento num popup; o retorno é PopupReturnPage.
 integration-popup:
   js:

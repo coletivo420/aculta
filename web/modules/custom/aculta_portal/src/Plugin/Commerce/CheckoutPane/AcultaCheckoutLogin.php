@@ -96,6 +96,7 @@ final class AcultaCheckoutLogin extends Login {
     $pane_form['register']['#access'] = FALSE;
     $pane_form['guest']['text']['#markup'] = $this->t('Se este e-mail ainda não tiver conta, o Commerce criará uma automaticamente ao concluir o pedido e enviará um link para definir a senha.');
     $pane_form['new_customer'] = [
+      '#attached' => ['library' => ['aculta_portal/checkout-presentation']],
       '#type' => 'fieldset',
       '#title' => $this->t('Cadastro de novo cliente'),
       '#attributes' => [
@@ -250,6 +251,7 @@ final class AcultaCheckoutLogin extends Login {
     $url->setOption('query', $query);
     $link = sprintf('<a href="%s" data-portal-ui="auth-google">%s <strong>Google</strong></a>', Html::escape($url->toString()), Html::escape((string) $this->t('Continuar com')));
     return [
+      '#attached' => ['library' => ['aculta_portal/checkout-presentation']],
       '#type' => 'container',
       '#weight' => -30,
       '#attributes' => ['data-portal-ui' => 'checkout-google'],
