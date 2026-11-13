@@ -10,7 +10,7 @@ dependencies:
     - aculta420_v2
 _core:
   default_config_hash: gmxYWWHmgbe0Pnv8y48ZLSLH5mEHejOjAP6RLxUfdzU
-id: aculta420_v2_aculta_account_menu
+id: aculta420_v2_aculta_portal_menu
 theme: aculta420_v2
 region: header
 weight: -4

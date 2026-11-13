@@ -638,7 +638,7 @@ $powered = Block::load('aculta_powered');
 if ($powered) {
   $powered->disable()->save();
 }
-$account = Block::load('aculta_account_menu');
+$account = Block::load('aculta420_v2_aculta_portal_menu');
 if ($account) {
   $visibility = $account->getVisibility();
   $visibility['user_role'] = [
