@@ -1201,7 +1201,7 @@ final class ContentIndexSchemaKernelTest extends KernelTestBase {
 
     $providerIds = array_keys($registry->all());
     sort($providerIds);
-    $this->assertSame(['image'], $providerIds);
+    $this->assertSame(['file', 'image'], $providerIds);
   }
 
   /**

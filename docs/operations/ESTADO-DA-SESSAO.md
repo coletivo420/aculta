@@ -9,27 +9,16 @@
 - **Pendências e bloqueios:** falhas históricas de Fórum, Index, Messenger, Statistics e Events ainda precisam de execução Kernel completa; contagem Semgrep 427 sem SARIF de origem; Runtime Sync RX/BLOCKED.
 - **Próximo passo:** verificar CI desta fase; auditar os demais casos do JUnit histórico e corrigir defeitos atuais com evidência.
 
-# Segurança — link do Mercado Pago — 2026-11-13
+# GitHub — providers do Content Index no Kernel — 2026-11-13
 
-- **Objetivo:** fechar o sink `href` configurável do aviso de pagamento.
-- **Estado:** controller restringe esquema/host e passa `Url`; templates usam Twig `link()`. PHP lint e Semgrep focal passaram (0 achados); testes locais não executados.
-- **Decisões e alternativas descartadas:** permitir HTTPS somente em `mercadopago.com.br` e `www.mercadopago.com.br`; configuração inválida oculta o link.
-- **Cuidados:** schema `uri` isolado aceitava esquemas não web; preservar texto, classe, nova aba e `rel`.
-- **Commits e arquivos:** este commit; Portal, tema, TODO/status, relatório Semgrep, README e handoff.
-- **Verificações:** `php -l`, Semgrep, status index e diff check PASS; token budget FAIL por regras preexistentes; browser DEFERRED.
-- **Pendências e bloqueios:** CI do novo SHA pendente; origem exata dos 427 alertas ainda sem SARIF/export. Runtime Sync BLOCKED em RX; PHPUnit local suspenso após reboots.
-- **Próximo passo:** conferir CI e continuar a triagem a partir do relatório amplo disponível.
-
-# Semgrep — popups HTMX seguros — 2026-11-13
-
-- **Objetivo:** remover sinks de HTML string nos popups do Fórum e Studio.
-- **Estado:** `node --check` e Semgrep focal passaram (0 achados). Kernel remoto reexecutado e em andamento; nenhum teste local rodado.
-- **Decisões e alternativas descartadas:** clonar a região de mensagens do documento parseado com `document.importNode()` e anexar com `prepend()`.
-- **Cuidados:** preservar o markup acessível do Drupal sem reconstruí-lo como string HTML.
-- **Commits e arquivos:** este commit; popups, relatório Semgrep, TODO/status, changelogs, README e handoff.
-- **Verificações:** sintaxe JS, Semgrep, diff check e status index PASS; token budget FAIL por itens preexistentes; browser DEFERRED sem origem definida.
-- **Pendências e bloqueios:** a contagem exata de 427 não tem export correspondente; API Code Scanning informa `no analysis found`. PHPUnit local suspenso após reboots.
-- **Próximo passo:** conferir o Kernel remoto e seguir a triagem com SARIF que corresponda à contagem histórica.
+- **Objetivo:** corrigir a expectativa histórica do registry no harness Kernel do Index.
+- **Estado:** expectativa atualizada para `file` e `image`, conforme serviços nativos habilitados no container; PHPUnit não executado localmente.
+- **Decisões e alternativas descartadas:** alinhar a asserção ao registry de produção, sem remover o provider File nem desativá-lo no teste.
+- **Cuidados:** o teste é Kernel e precisa de confirmação CI; o runner recente foi instável.
+- **Commits e arquivos:** commit desta fase; ContentIndexSchemaKernelTest, TODO/status e handoff.
+- **Verificações:** PHP lint e `git diff --check` PASS; validação de orçamento DEFERRED (7 falhas preexistentes em outras skills); PHPUnit DEFERRED ao CI remoto.
+- **Pendências e bloqueios:** conferir workflows dos commits `02d6c888` e desta fase; falhas antigas do Kernel ainda não auditadas integralmente; Runtime Sync RX/BLOCKED.
+- **Próximo passo:** corrigir o próximo achado Kernel comprovado, após conferir o relatório JUnit remoto mais recente.
 
 # GitHub — Kernel de acesso em Events — 2026-11-12
 
