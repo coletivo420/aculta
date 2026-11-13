@@ -11,6 +11,12 @@
     "color-function-notation": null,
     "declaration-block-single-line-max-declarations": null,
     "number-leading-zero": "never",
+    "selector-pseudo-class-no-unknown": [
+      true,
+      {
+        "ignorePseudoClasses": ["popover-open"]
+      }
+    ],
     "unit-allowed-list": [
       "ch",
       "deg",

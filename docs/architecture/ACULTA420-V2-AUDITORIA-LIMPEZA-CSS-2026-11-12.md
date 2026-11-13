@@ -569,19 +569,31 @@ sincronizador Runtime está bloqueado por RX e drift de configuração.
   do Messenger (substituídos pelo disclosure nativo `details`/`summary`). Os
   arquivos-fonte perderam 467 bytes; o CSS global não foi alterado. O gate
   `validate-aculta420-css-scope.php` agora exige os contratos de emissão atuais.
-- No checkout atual, o inventário mede 146 folhas/414.012 bytes. PurgeCSS
-  retém 393.758 bytes e rejeita 20.254 bytes/132 seletores; 22 seletores retidos
-  são reescritos. As 250 classes dinâmicas permanecem preservadas. Esses números
-  incluem alterações locais ainda não commitadas em componentes de reações.
-- `css:verify`, classificação, testes CSS (4 suítes), Stylelint nas duas folhas
-  alteradas, CSS scope (214 checks), schema SDC (2.423 checks) e `git diff
-  --check` passaram. O Stylelint global continua falhando em arquivos locais de
-  `discussion-reaction-bar` e `reaction-emoji`, fora deste corte.
+- No checkout atual, o inventário mede 146 folhas/414.425 bytes, 2.362 regras e
+  2.807 seletores. PurgeCSS retém 394.171 bytes e rejeita 20.254 bytes/132
+  seletores; 22 seletores retidos são reescritos. As 250 classes dinâmicas
+  permanecem preservadas. Esses números incluem alterações locais ainda não
+  commitadas em componentes de reações.
+- Os dois seletores que ficaram sem evidência após a edição do componente de
+  reações foram inspecionados no Twig: a faixa antiga baseada em `<details>` foi
+  substituída por botão e Popover nativo. Removi as regras exclusivas do wrapper,
+  da faixa e dos estados/marker de `<details>`; os estilos do botão e do Popover
+  atual permanecem. A classificação voltou a zero seletores sem evidência ou
+  inconclusivos (24 referências no repositório, 45 no HTML do Runtime, 61 por
+  padrões de runtime e 2 dinâmicos).
+- `popover-open` foi adicionado à lista explícita de pseudo-classes aceitas pelo
+  Stylelint. Stylelint nas duas folhas de reação, `css:verify`, classificação e
+  testes CSS (18) passaram. A auditoria PurgeCSS completa mede 131 rejeições
+  informativas; elas não foram gravadas nas fontes porque incluem seletores com
+  emissores de Runtime, padrões Drupal/UI e referências no repositório.
 - A classificação também foi inspecionada por referência: os wrappers de
   formulário/arquivo pertencem ao Core, as estruturas de conversa ao contrib
   `private_message`, os campos de publicação à View/SDC e compartilhamentos aos
   tokens da Revista. A coleta do inventário deixou de interpretar quadros
   `from`/`to` de `@keyframes` como seletores ou classes; a falsa duplicação `.to`
   foi eliminada e coberta por teste (incluindo `@-webkit-keyframes`).
-- O Runtime permanece em RX/BLOCKED; não há origem de site configurada neste
-  ambiente. Sincronização, `drush cr` e captura Playwright não foram executados.
+- O diagnóstico atual do Runtime está em `R4/BLOCKED`, sem caminhos `RX`; o delta
+  cumulativo possui 823 arquivos (221 R0, 553 R1, 2 R2, 43 R3 e 4 R4), com
+  runbook especial para `commerce_shipping`. Worktree compartilhada/suja, drift
+  de configuração e risco estrutural impedem a sincronização. `drush cr` e captura
+  Playwright continuam pendentes.
