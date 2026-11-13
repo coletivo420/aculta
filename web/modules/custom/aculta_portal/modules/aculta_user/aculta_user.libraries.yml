@@ -19,3 +19,8 @@ ownership-claims-admin:
   css:
     theme:
       css/ownership-claims-admin.css: {}
+
+report-queue:
+  css:
+    theme:
+      css/report-queue.css: {}

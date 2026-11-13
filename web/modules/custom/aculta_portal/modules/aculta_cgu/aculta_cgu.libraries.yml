@@ -1,0 +1,4 @@
+moderation-queue:
+  css:
+    theme:
+      css/moderation-queue.css: {}

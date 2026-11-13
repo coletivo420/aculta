@@ -272,6 +272,7 @@ final class CguModerationKernelTest extends KernelTestBase {
     $request = Request::create('/painel-administrativo/moderacao/denuncias');
     $build = $controller->overview($request);
 
+    $this->assertContains('aculta_cgu/moderation-queue', $build['#attached']['library']);
     $this->assertArrayHasKey('table', $build);
     $this->assertCount(1, $build['table']['#rows']);
     $this->assertSame('Eventos', (string) $build['table']['#rows'][0]['purpose']);

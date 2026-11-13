@@ -62,7 +62,7 @@ final class SurfaceListController extends ControllerBase {
       ? $this->t('Ligada: os caminhos de diretório valem nas rotas.')
       : $this->t('Desligada nesta versão: as rotas não mudam com esta configuração.');
     return [
-      '#attached' => ['library' => ['core/drupal.dialog.ajax']],
+      '#attached' => ['library' => ['core/drupal.dialog.ajax', 'aculta_paths/surfaces']],
       'leitura' => [
         '#markup' => '<p>' . $this->t('Aplicação às rotas: @estado', ['@estado' => $leitura]) . '</p>',
       ],

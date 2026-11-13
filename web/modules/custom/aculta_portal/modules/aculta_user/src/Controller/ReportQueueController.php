@@ -111,6 +111,7 @@ final class ReportQueueController extends ControllerBase {
     }
 
     $build = [
+      '#attached' => ['library' => ['aculta_user/report-queue']],
       '#type' => 'container',
       '#attributes' => ['data-portal-ui' => 'forum-report-queue'],
       'title' => [

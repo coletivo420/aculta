@@ -203,6 +203,7 @@ final class CguModerationDashboardController extends ControllerBase {
     }
 
     return [
+      '#attached' => ['library' => ['aculta_cgu/moderation-queue']],
       'status_filters' => [
         '#theme' => 'links',
         '#links' => $statusFilterLinks,

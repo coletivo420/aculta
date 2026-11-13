@@ -40,7 +40,7 @@ final class ShopController extends ControllerBase {
    */
   public function home(): array {
     $cache = (new CacheableMetadata())->addCacheTags(['commerce_product_list']);
-    $build = [];
+    $build = ['#attached' => ['library' => ['aculta_portal/shop-presentation']]];
 
     $pagina = $this->entities->getStorage('node')->load(self::PAGINA_INICIAL_NODE);
     if ($pagina !== NULL) {

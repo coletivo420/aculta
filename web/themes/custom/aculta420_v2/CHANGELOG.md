@@ -12,6 +12,16 @@
   testa o CSS podado e executa verificação, Stylelint e auditoria antes/depois;
   falha pós-gravação restaura as fontes. Seletores com evidência bloqueiam a
   gravação automática.
+- A regra de `.aculta-calendar-embed-hosts` foi movida de `portal-ui-map.css`
+  para `aculta_calendar/embed-hosts`, anexada pela tela de hosts do próprio
+  módulo. O global deixa de carregar esse seletor em páginas sem a tela.
+- `.superficies-dns` também passou ao asset `aculta_paths/surfaces`, anexado
+  pela tela de caminhos; sua regra saiu da biblioteca global.
+- Os filtros e fila de moderação passaram a `aculta_cgu/moderation-queue`; a
+  fila e o pager de denúncias do Fórum passaram a `aculta_user/report-queue`.
+  Ambas as folhas são anexadas pelos controllers que renderizam os elementos.
+- Os estilos de cartão e grade da Loja agora são anexados pelo `ShopController`
+  via `aculta_portal/shop-presentation`, saindo do mapa global.
 
 - A classificação PurgeCSS foi revisada seletor por seletor. Os 22 sem
   evidência não tinham emissores em Twig/PHP/YAML/JavaScript; removidas suas
@@ -1748,3 +1758,4 @@ State: Dev. No RC, production deployment, or release tag is declared.
   que o Twig do SDC `account-experience-dashboard` já imprime.
 - O carrossel da Conta agora declara seu JavaScript e dependências no asset do
   SDC `account-experience-dashboard`; removida a anexação a biblioteca ausente.
+

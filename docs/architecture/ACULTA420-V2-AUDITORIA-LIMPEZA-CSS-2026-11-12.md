@@ -417,3 +417,33 @@ sincronizador Runtime está bloqueado por RX e drift de configuração.
   estado persistido registra drift em `user.role.administrator`, cache validado
   somente até `e37f3d8d` e módulos ausentes de schema. Não foram executados
   `sync-code`, `drush cr` nem Playwright contra Runtime.
+
+## 17. Migração contextual de consumidores do mapa (2026-11-13)
+
+- Seis regras e oito identidades de seletor saíram de
+  `src/styles/portal-ui-map.css`: hosts de calendário, DNS de superfícies,
+  filtros/fila/pager de moderação e Loja. O mapa passou de 4.187 para 3.642
+  bytes (-545 bytes, -13%).
+- As regras foram para bibliotecas de propriedade dos módulos:
+  `aculta_calendar/embed-hosts`, `aculta_paths/surfaces`,
+  `aculta_cgu/moderation-queue`, `aculta_user/report-queue` e
+  `aculta_portal/shop-presentation`; cada biblioteca é anexada pelo controller
+  que constrói o render array. As cinco folhas somam 574 bytes e carregam só
+  nas rotas correspondentes.
+- O gate `validate-aculta420-mapped-classes.php` agora inspeciona CSS da raiz
+  de `aculta_portal/css` além dos submódulos. A migração da Loja revelou que o
+  gate anterior não considerava folhas CSS da raiz do módulo.
+- Relatório recalculado: 144 folhas de tema, 413.464 bytes, 2.370 regras e
+  2.826 seletores. O PurgeCSS retém 392.094 bytes e identifica 21.370 bytes / 142
+  seletores removíveis; todos permanecem classificados com evidência (2
+  dinâmicos, 43 no HTML Runtime, 68 por padrão Drupal e 29 por fonte). Não se
+  aplicou purge destrutivo.
+- `css:audit`, `css:classify`, `css:verify`, `css:test`, `lint:css`, Stylelint
+  das novas folhas, YAML/PHP lint, PHPUnit unitário da fila (3 testes/14
+  assertions), `validate-aculta420-mapped-classes.php` e
+  `validate-aculta420-css-scope.php`: PASS. Os Kernel tests de Calendar/CGU
+  foram tentados, mas o sandbox não permitiu conexão ao socket MySQL; não são
+  evidência de Runtime.
+- `runtime-sync.sh doctor --format=json` não conseguiu confirmar `origin/dev`;
+  sincronização, `drush cr` e matriz visual seguem pendentes. Não declarar
+  homologação até executar essas verificações no Runtime atualizado.

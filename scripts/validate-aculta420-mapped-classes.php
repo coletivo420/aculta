@@ -79,11 +79,16 @@ foreach ($iterator as $file) {
 }
 
 // CSS de módulos ACULTA (bibliotecas anexadas por #attached) também conta como cobertura.
-$modulesRoot = $root . '/web/modules/custom/aculta_portal/modules';
-if (is_dir($modulesRoot)) {
-  $moduleIterator = new RecursiveIteratorIterator(
-    new RecursiveDirectoryIterator($modulesRoot, FilesystemIterator::SKIP_DOTS)
-  );
+// Inclui a raiz aculta_portal, além dos submódulos.
+$moduleRoots = [
+  $root . '/web/modules/custom/aculta_portal/css',
+  $root . '/web/modules/custom/aculta_portal/modules',
+];
+foreach ($moduleRoots as $modulesRoot) {
+  if (!is_dir($modulesRoot)) {
+    continue;
+  }
+  $moduleIterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($modulesRoot, FilesystemIterator::SKIP_DOTS));
   foreach ($moduleIterator as $file) {
     if ($file->isFile() && $file->getExtension() === 'css' && str_contains($file->getPathname(), '/css/')) {
       $css .= "\n" . (string) file_get_contents($file->getPathname());
