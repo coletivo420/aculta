@@ -1,9 +1,4 @@
-/*
- * Caixa de autoria em artigos (Revista, Wiki, Notícias).
- *
- * Separado de public-profile.css para que o CSS do perfil público seja
- * carregado apenas na rota do perfil (ADR-054 P7).
- */
+/* Caixa de autoria anexada somente quando há cartões editoriais. */
 .portal-article-authors {
   margin-block: 2rem 0;
   padding: 1.25rem;

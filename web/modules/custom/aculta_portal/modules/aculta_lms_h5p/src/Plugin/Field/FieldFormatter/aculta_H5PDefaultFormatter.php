@@ -275,9 +275,9 @@ class aculta_H5PDefaultFormatter extends FormatterBase {
         }
         if ($documents) {
           $element[$delta]['course_documents'] = [
-            '#type' => 'container',
-            '#attributes' => ['data-portal-ui' => 'lms-h5p-course-documents'],
-            'items' => $documents,
+            '#type' => 'component',
+            '#component' => 'aculta420_v2:layout-section',
+            '#slots' => ['content' => $documents],
           ];
           $cacheability->applyTo($element[$delta]['course_documents']);
         }

@@ -89,11 +89,9 @@ global-styling:
       src/styles/tokens.css: {}
       src/styles/base.css: {}
       src/styles/layout.css: {}
-      src/styles/messenger-drawer.css: {}
       src/styles/content.css: {}
       src/styles/search.css: {}
       src/styles/buttons.css: {}
-      src/styles/article-authors.css: {}
       components/button/button.css: {}
       components/surface/surface.css: {}
       components/surface-accent/surface-accent.css: {}

@@ -23,10 +23,11 @@ Os caminhos são relativos à raiz do repositório. Gates "Drush" rodam com `php
 | `validate-aculta420-layout-builder-batch.php` | `php scripts/validate-aculta420-layout-builder-batch.php` (delega ao Drush) | 22 displays habilitados, `allow_custom` conforme contrato, ComponentLayout UI Patterns ligado ao SDC, props/slots esperados, config ativa igual ao Sync, saída via Layout Builder ou adapter SDC Wiki e acesso às rotas de defaults | mudança de `layout_builder` em displays ou no lote |
 | `validate-ui-patterns-views-cutover.php` | `php scripts/validate-ui-patterns-views-cutover.php` | Row/style/display ligados aos SDCs, sources dos fields e partes do display, pager, filtros, ordenação e acesso nativos preservados | mudança no piloto UI Patterns Views |
 
-Última execução do gate `validate-aculta420-v2-sdc.php`: PASS, 48 componentes
+Última execução do gate `validate-aculta420-v2-sdc.php`: PASS, 50 componentes
 descobertos e renderizados isoladamente em 2026-11-12; inclui
 `courses-catalog`, `lms-course-curriculum`, `lms-course-materials`,
-`lms-h5p-course`, `lms-lesson-page` e `layout-section`.
+`lms-h5p-course`, `lms-lesson-page`, `layout-section`, `article-authors` e
+`related-content`.
 | `validate-aculta420-layouts.php` | `php scripts/validate-aculta420-layouts.php` (delega ao Drush) | descoberta dos layouts SDC pelo `ui_patterns_layouts` (mesmo registro do Layout Builder), categoria/regiões e renderização real de cada layout | criação ou alteração de layout SDC |
 | `validate-aculta420-shell-regions.php` | `php scripts/validate-aculta420-shell-regions.php` (use `--strict` antes do cutover) | cinco regiões finais no `info.yml`, ausência de bloco órfão, composição do shell v2 com ponte para as regiões antigas, opt-in `classic`/`v2` e ausência de comparação de hostname; `--strict` falha enquanto houver bloco em região antiga | mudança no shell, em `info.yml` ou na configuração de regiões |
 | `validate-aculta420-foundation.php` | `ACULTA_DRUSH_ROOT=$PWD php scripts/validate-aculta420-foundation.php` (ou via `php:script` do Drush) | fundação da V2: tema público e base-less, sem Bootstrap no Composer e no Runtime, blocos `aculta420_v2_*`, branding nos assets do V2, tokens `--color-*`, Twig, SDCs e cores e durações fora de `tokens.css` | toda mudança em tema, Config Sync ou Composer. Última execução: 410 checks PASS (2026-11-07), com Runtime sem a V1 |
@@ -286,11 +287,17 @@ alterações indevidas nos 22 displays, não aplicar o novo tom em massa.
 
 - Currículo, materiais do curso, catálogo, cartão H5P e prévia da aula agora são compostos por SDCs; a moderação de fórum usa `layout-section`. A folha de ordenação do currículo saiu do módulo e está no SDC `lms-course-curriculum`.
 - Estatísticas duplicadas foram removidas; painéis e materiais H5P usam os SDCs de superfície/layout. O mapa global perdeu seletores redundantes do catálogo, currículo, prévia, H5P e moderação de fórum.
-- `validate-aculta420-v2-sdc.php`: PASS (48 componentes); `lint:css`: PASS; `css:verify`: PASS (107 arquivos, 32 folhas declaradas em bibliotecas, 86 SDCs com CSS e 222 classes dinâmicas preservadas); classes mapeadas: PASS (453); `git diff --check`: PASS.
-- A auditoria atual aponta 452.946 bytes/2.492 regras/3.081 seletores; PurgeCSS sinaliza 44.664 bytes/260 seletores como removíveis em modo audit. Não aplicado automaticamente: classes Drupal dinâmicas ainda exigem prova por consumer.
+- `validate-aculta420-v2-sdc.php`: PASS (50 componentes); `lint:css`: PASS; `css:verify`: PASS (107 arquivos, 30 folhas declaradas em bibliotecas, 88 SDCs com CSS e 222 classes dinâmicas preservadas); classes mapeadas: PASS (450); `git diff --check`: PASS.
+- `validate-aculta420-css-scope.php`: PASS (61 checks); `global-styling` tem 14 entradas e 87.974 bytes CSS local.
+- Auditoria atual: 452.686 bytes/2.491 regras/3.079 seletores. PurgeCSS sinaliza 44.664 bytes/260 seletores como removíveis em modo audit. Não aplicado automaticamente: classes Drupal dinâmicas ainda exigem prova por consumer.
 - Teste kernel de roster: **DEFERRED**, `SIMPLETEST_DB` não configurado. Browser autenticado/Runtime e validação visual destas rotas: **DEFERRED**.
 - Discussões de atividade LMS e H5P e o wrapper do player H5P agora usam `layout-section`; removidos os tokens e três regras globais de atividade/painel H5P. O contrato unitário LMS passou (3 testes, 41 asserções); o kernel H5P segue **DEFERRED** por ausência de `SIMPLETEST_DB`.
 - Estados de publicação movidos para classes locais de `lms-course-curriculum`; removidas regras globais `.is-draft`/`.is-published`.
+- `portal-ui-map.css` sem seletores LMS. O reset da lista H5P está em `layout-section.css`; removida `aculta_lms_h5p/css/h5p_drupal_custom.css`, sem referência no código ou em bibliotecas, com dois seletores duplicando `min-height: 600px`.
+- Tokens residuais corrigidos após `validate-portal-ui-docs` apontar consumidores: documentos PDF H5P agora usam `layout-section`; `h5p-admin-header` saiu dos dois H3 administrativos. Gate de documentação: PASS (513 tokens, 432 usados, 160 atributos).
+- A caixa de autoria saiu de `global-styling`: o módulo `aculta_magazine` compõe `article-authors` e o SDC anexa a folha local somente nessa renderização; o CSS global diminuiu 677 bytes. Gate SDC passou com o novo componente; validação visual da Revista permanece **DEFERRED**.
+- `messenger-drawer.css` saiu de `global-styling` e virou asset de `messenger-trigger`; o SDC só é incluído para contas com URL de mensagens. A biblioteca global reduziu 17.214 bytes sem remover a folha do projeto; `css:verify` confirma a declaração de asset no SDC.
+- O bloco `aculta_index_related_content` compõe o SDC `related-content`; a lista nativa conserva título/itens, e seu CSS saiu de `content.css` global. Cache e entidades continuam sob responsabilidade do módulo. `validate-portal-ui-docs`: PASS (512 tokens, 431 usos, 160 atributos).
 - Próximos cortes: continuar a classificação dos candidatos PurgeCSS com evidência de runtime e consumer. Teste visual autenticado segue **DEFERRED**.
 
 - `npm run css:audit`: inventário reproduzível em `reports/css-audit/inventory/` e relatório do PurgeCSS em `reports/css-audit/audit/` (gerados, fora do Git). 106 arquivos-fonte, 451.112 bytes, 2.720 seletores de topo e 222 classes dinâmicas preservadas (86 componentes). PurgeCSS: 406.448 bytes e 2.482 seletores retidos; 44.664 bytes e 260 seletores removíveis. Os 238 rejeitados informativos podem incluir seletores mantidos por safelist.

@@ -59,14 +59,38 @@ $assert(str_contains($hook, "'aculta_studio.'"), 'O hook não restringe o CSS do
 
 $publicProfile = array_keys($libraries['public-profile']['css']['theme'] ?? []);
 $publicProfileCss = (string) file_get_contents($theme . '/src/styles/public-profile.css');
-$articleAuthorsCss = (string) file_get_contents($theme . '/src/styles/article-authors.css');
+$articleAuthorsCss = (string) file_get_contents($theme . '/components/article-authors/article-authors.css');
+$articleAuthorsComponent = (string) file_get_contents($theme . '/components/article-authors/article-authors.component.yml');
 $assert(!in_array('src/styles/public-profile.css', $global, TRUE), 'public-profile.css voltou ao global-styling.');
 $assert(in_array('src/styles/public-profile.css', $publicProfile, TRUE), 'A biblioteca public-profile não declara public-profile.css.');
-$assert(in_array('src/styles/article-authors.css', $global, TRUE), 'article-authors.css deve permanecer no global-styling (caixa de autoria em artigos).');
+$assert(!in_array('src/styles/article-authors.css', $global, TRUE), 'article-authors.css voltou ao global-styling.');
+$assert(!is_file($theme . '/src/styles/article-authors.css'), 'A folha antiga de autoria permaneceu fora do SDC.');
 $assert(!str_contains($publicProfileCss, '.portal-article-author'), 'public-profile.css ainda contém regras de autoria de artigo.');
-$assert(str_contains($articleAuthorsCss, '.portal-article-author'), 'article-authors.css perdeu as regras de autoria de artigo.');
+$assert(str_contains($articleAuthorsCss, '.portal-article-author'), 'O SDC article-authors perdeu as regras de autoria de artigo.');
+$assert(str_contains($articleAuthorsComponent, 'article-authors.css'), 'O SDC article-authors não declara seu CSS local.');
 $assert(str_contains($hook, 'aculta420_v2/public-profile'), 'O hook não anexa a biblioteca public-profile.');
 $assert(str_contains($hook, "'aculta_user.perfil_publico'"), 'O hook não restringe o CSS à rota do perfil público.');
+
+$messengerComponent = (string) file_get_contents($theme . '/components/messenger-trigger/messenger-trigger.component.yml');
+$messengerCss = (string) file_get_contents($theme . '/components/messenger-trigger/messenger-trigger.css');
+$portalExtrasCss = (string) file_get_contents($theme . '/src/styles/portal-ui-extras.css');
+$messengerBar = (string) file_get_contents($theme . '/components/multidomain-bar/multidomain-bar.twig');
+$assert(!in_array('src/styles/messenger-drawer.css', $global, TRUE), 'messenger-drawer.css voltou ao global-styling.');
+$assert(!is_file($theme . '/src/styles/messenger-drawer.css'), 'A folha antiga da gaveta permaneceu fora do SDC.');
+$assert(str_contains($messengerComponent, 'messenger-trigger.css'), 'O SDC messenger-trigger não declara o CSS da gaveta.');
+$assert(str_contains($messengerBar, "{% if messages_url %}"), 'A barra institucional inclui mensagens sem URL/integração disponível.');
+$assert(str_contains($messengerBar, "include('aculta420_v2:messenger-trigger'"), 'A barra não compõe a gaveta pelo SDC messenger-trigger.');
+$assert(str_contains($messengerCss, '.aculta-messenger-notice-origin'), 'O SDC messenger-trigger perdeu os estilos dos grupos de avisos.');
+$assert(!str_contains($portalExtrasCss, '.aculta-messenger-notice-origin'), 'Estilos de avisos do Messenger voltaram ao portal-ui-extras global.');
+
+$relatedContentCss = (string) file_get_contents($theme . '/components/related-content/related-content.css');
+$relatedContentComponent = (string) file_get_contents($theme . '/components/related-content/related-content.component.yml');
+$contentCss = (string) file_get_contents($theme . '/src/styles/content.css');
+$relatedContentBlock = (string) file_get_contents($root . '/web/modules/custom/aculta_portal/modules/aculta_index/src/Plugin/Block/RelatedContentBlock.php');
+$assert(!str_contains($contentCss, '.aculta-related-content'), 'Os seletores do bloco relacionado voltaram ao content.css global.');
+$assert(str_contains($relatedContentCss, '.aculta-related-content__item'), 'O SDC related-content perdeu o CSS dos itens.');
+$assert(str_contains($relatedContentComponent, 'related-content.css'), 'O SDC related-content não declara sua folha local.');
+$assert(str_contains($relatedContentBlock, 'aculta420_v2:related-content'), 'O bloco RelatedContent não compõe o SDC de apresentação.');
 
 $portalAccount = array_keys($libraries['portal-account']['css']['theme'] ?? []);
 $assert(!in_array('src/styles/portal-account.css', $global, TRUE), 'portal-account.css voltou ao global-styling.');

@@ -69,6 +69,7 @@ $component_ids = [
   'alerts-trigger',
   'avatar',
   'author-card',
+  'article-authors',
   'badge',
   'breadcrumb',
   'button',
@@ -103,6 +104,7 @@ $component_ids = [
   'purpose-showcase',
   'profile-details',
   'progress',
+  'related-content',
   'revista-listing',
   'revista-publication',
   'revista-teaser',
@@ -190,6 +192,13 @@ $samples = [
       'variant' => 'compact',
     ],
     '#slots' => ['image' => '', 'actions' => ''],
+  ],
+  'article-authors' => [
+    '#props' => [],
+    '#slots' => [
+      'title' => Markup::create('<h2>Autoria</h2>'),
+      'authors' => Markup::create('<article class="author-card">Pessoa autora</article>'),
+    ],
   ],
   'courses-catalog' => [
     '#props' => [],
@@ -387,6 +396,10 @@ $samples = [
   ],
   'progress' => [
     '#props' => ['id' => 'curso-progresso', 'label' => 'Progresso do curso', 'value' => 60, 'max' => 100],
+  ],
+  'related-content' => [
+    '#props' => [],
+    '#slots' => ['content' => Markup::create('<h3>Conteúdo relacionado</h3><ul><li>Local relacionado</li></ul>')],
   ],
   'site-footer' => [
     '#props' => [],

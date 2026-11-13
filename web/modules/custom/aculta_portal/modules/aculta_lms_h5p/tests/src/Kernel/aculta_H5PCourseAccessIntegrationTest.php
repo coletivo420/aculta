@@ -435,8 +435,12 @@ final class aculta_H5PCourseAccessIntegrationTest extends KernelTestBase {
       $contentIntegration['styles'][0],
     );
     self::assertSame(
+      'aculta420_v2:layout-section',
+      $studentElements[0]['course_documents']['#component'],
+    );
+    self::assertSame(
       [$pdfViewerBuild],
-      $studentElements[0]['course_documents']['items'],
+      $studentElements[0]['course_documents']['#slots']['content'],
       'Only PDF Media related to the current course is passed to the shared viewer.',
     );
 

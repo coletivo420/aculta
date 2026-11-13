@@ -14,3 +14,7 @@ props:
     href: { type: string, format: uri-reference }
     all_href: { type: string, default: '' }
     count: { type: integer, minimum: 0, default: 0 }
+assets:
+  css:
+    component:
+      messenger-trigger.css: {}

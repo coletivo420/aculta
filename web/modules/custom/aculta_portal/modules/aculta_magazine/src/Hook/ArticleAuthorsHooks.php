@@ -87,19 +87,17 @@ final class ArticleAuthorsHooks {
       return;
     }
     $build['article_authors'] = [
-      '#type' => 'container',
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:article-authors',
       '#weight' => 100,
-      '#attributes' => ['data-portal-ui' => 'article-authors'],
-      'title' => [
-        '#theme' => 'aculta_portal_element',
-        '#tag' => 'h2',
-        '#value' => $this->t('Autoria'),
-        '#element_attributes' => new Attribute(['data-portal-ui' => 'article-authors-title']),
-      ],
-      'list' => [
-        '#type' => 'container',
-        '#attributes' => ['data-portal-ui' => 'article-authors-list'],
-        'items' => $items,
+      '#slots' => [
+        'title' => [
+          '#theme' => 'aculta_portal_element',
+          '#tag' => 'h2',
+          '#value' => $this->t('Autoria'),
+          '#element_attributes' => new Attribute(['data-portal-ui' => 'article-authors-title']),
+        ],
+        'authors' => $items,
       ],
       '#cache' => [
         'tags' => $cache->getCacheTags(),

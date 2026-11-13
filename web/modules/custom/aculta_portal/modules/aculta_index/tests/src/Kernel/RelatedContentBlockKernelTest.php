@@ -244,14 +244,15 @@ final class RelatedContentBlockKernelTest extends KernelTestBase {
 
     $build = $block->build();
     $this->assertNotEmpty($build);
-    $this->assertSame('item_list', $build['#theme']);
-    $this->assertSame('Locais do Festival', (string) $build['#title']);
-    $this->assertCount(2, $build['#items']);
-    $this->assertSame('related-content-block', $build['#attributes']['data-portal-ui']);
+    $this->assertSame('component', $build['#type']);
+    $this->assertSame('aculta420_v2:related-content', $build['#component']);
+    $this->assertSame('item_list', $build['#slots']['content']['#theme']);
+    $this->assertSame('Locais do Festival', (string) $build['#slots']['content']['#title']);
+    $this->assertCount(2, $build['#slots']['content']['#items']);
     $this->assertArrayNotHasKey('#attached', $build);
 
     // Check rendered item attributes and sub-elements.
-    $firstItem = $build['#items'][0];
+    $firstItem = $build['#slots']['content']['#items'][0];
     $this->assertSame('container', $firstItem['#type']);
     $this->assertSame('related-content-item', $firstItem['#attributes']['data-portal-ui']);
     $this->assertSame('aculta_event_location', $firstItem['#attributes']['data-entity-type']);

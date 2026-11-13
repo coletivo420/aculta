@@ -98,3 +98,10 @@
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
+/* Dashboard administrativo do organizador: carregado apenas nas rotas Events. */
+.aculta-events-organizer-dashboard {
+  display: grid;
+  min-width: 0;
+  gap: var(--page-gutter);
+}
+

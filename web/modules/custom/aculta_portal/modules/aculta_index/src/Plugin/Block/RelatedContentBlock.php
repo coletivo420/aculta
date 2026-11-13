@@ -227,11 +227,14 @@ final class RelatedContentBlock extends BlockBase implements ContainerFactoryPlu
     $heading = $title !== '' ? $title : (string) $this->t('Conteúdo relacionado');
 
     $build = [
-      '#theme' => 'item_list',
-      '#title' => $heading,
-      '#items' => $items,
-      '#attributes' => [
-        'data-portal-ui' => 'related-content-block',
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:related-content',
+      '#slots' => [
+        'content' => [
+          '#theme' => 'item_list',
+          '#title' => $heading,
+          '#items' => $items,
+        ],
       ],
     ];
 

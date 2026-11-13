@@ -1,0 +1,19 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Autoria editorial
+description: Agrupa título e cartões de autor entregues pelo módulo editorial.
+status: stable
+group: Conteúdo
+props:
+  type: object
+  additionalProperties: false
+slots:
+  title:
+    title: Título
+    description: Título semântico da seção de autoria.
+  authors:
+    title: Autores
+    description: Cartões públicos de autoria já autorizados e preparados pelo módulo.
+assets:
+  css:
+    component:
+      article-authors.css: {}

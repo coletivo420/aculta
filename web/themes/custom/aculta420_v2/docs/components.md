@@ -4,6 +4,19 @@ Componentes SDC com schemas estritos (`additionalProperties: false`). Os nomes d
 
 Prefixo de uso: `aculta420_v2:<nome>`. Em Twig, use `include` com `with_context = false`, ou `embed` quando o componente tem slots.
 
+### article-authors — Autoria editorial
+
+Agrupa os slots `title` e `authors` preparados pelo módulo `aculta_magazine`.
+O SDC não consulta autor, publicação ou permissão. CSS local anexado com o
+componente; story: `article-authors.default.story.yml`.
+
+### related-content — Conteúdo relacionado
+
+Envolve o `item_list` montado pelo bloco `aculta_index`; slots estritos sem
+props. O módulo preserva descoberta, permissão e cache das entidades
+relacionadas. O CSS da lista é local e só carrega quando o bloco é renderizado.
+Story: `related-content.default.story.yml`.
+
 ### heading — Título semântico
 
 - **Papel:** renderiza H1–H6 com a escala Oswald da referência "Tipografia do Portal ACULTA420 V2", superfície semântica e destaque tricolor (H1/H2) ou barra lateral colorida (H3–H6).
@@ -222,6 +235,9 @@ já filtrados pelo módulo `aculta_lms`. O módulo mantém acesso e cache dos
 documentos; o SDC apresenta a lista. Story:
 `lms-course-materials.default.story.yml`. Sem JavaScript.
 
+O formatter H5P usa `layout-section` para envolver documentos PDF relacionados
+à atividade; os render arrays e metadados de cache do viewer são preservados.
+
 ### courses-catalog
 
 Página pública de cursos com slots `intro`, `catalog_title`, `catalog` e
@@ -241,6 +257,9 @@ As rotas de visão geral por curso e fila de comentários compõem o SDC
 `layout-section`; o módulo preserva consultas, acesso e cache. O wrapper da fila
 não adiciona título artificial. As duas rotas deixam de depender de seletores
 globais dedicados. Validação visual autenticada ainda pendente.
+
+O SDC `layout-section` também mantém o reset da lista de discussões H5P no CSS
+local, anexado junto do componente; `portal-ui-map.css` não carrega estilos LMS.
 
 ### lms-tour
 
@@ -295,7 +314,8 @@ etapas; controle de fluxo e permissões permanecem no módulo proprietário
 ### messenger-trigger — Mensagens
 - **Papel:** botão com contagem de mensagens não lidas e diálogo de conversas.
 - **Props:** `href`, `all_href`, `count`.
-- **Estado:** entregue.
+- **CSS:** `messenger-trigger.css` contém a gaveta, conversas e estados HTMX; o asset é anexado junto do SDC, que só é incluído quando a barra tem URL de mensagens.
+- **Estado:** entregue; validar visualmente em conta autenticada continua pendente.
 
 ### cart-offcanvas — Carrinho
 - **Papel:** gatilho e painel lateral do carrinho, com itens agrupados por site e link para o checkout no purpose principal.

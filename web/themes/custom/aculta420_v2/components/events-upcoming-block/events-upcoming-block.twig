@@ -1,4 +1,4 @@
-<div{{ attributes.addClass('aculta-events-upcoming-block') }} data-portal-ui="events-upcoming-block">
+<div{{ attributes.addClass('aculta-events-upcoming-block') }}>
   {% if title %}
     <div class="aculta-events-upcoming-block__header">
       <h2 class="aculta-events-upcoming-block__title">{{ title }}</h2>
@@ -11,7 +11,7 @@
     <ul class="aculta-events-upcoming-block__list">
       {% for item in items %}
         <li class="aculta-events-upcoming-block__item">
-          <a href="{{ item.url }}" class="aculta-events-upcoming-block__link" data-portal-ui="events-upcoming-link">{{ item.title }}</a>
+          <a href="{{ item.url }}" class="aculta-events-upcoming-block__link">{{ item.title }}</a>
         </li>
       {% endfor %}
     </ul>
