@@ -8,3 +8,6 @@ slots:
   nav:
     markup: |
       <ul class="menu"><li><a href="/sobre/politica-de-privacidade">Privacidade</a></li><li><a href="/sobre/termos-de-uso">Termos de uso</a></li></ul>
+  legal:
+    markup: |
+      <span>© 2026 ACULTA</span><span>Software livre · versão 248903f</span>
