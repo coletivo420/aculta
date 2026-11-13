@@ -79,7 +79,8 @@
         content: social_links_page_footer
       }, with_context = false) }}
     {% elseif page.footer %}
-      {{ include('aculta420_v2:site-footer', { content: page.footer }, with_context = false) }}
+      {# O rodapé institucional é o próprio layout-site-footer do bloco; não envolver de novo. #}
+      {{ page.footer }}
     {% endif %}
   </div>
 </div>
