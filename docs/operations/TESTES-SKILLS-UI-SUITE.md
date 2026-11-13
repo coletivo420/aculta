@@ -1,5 +1,7 @@
 # Avaliações das Skills UI Suite
 
+> Matriz de cenarios historica para UI Suite, nao catalogo completo das 23 skills atuais. O validador confere a estrutura; avaliacoes comportamentais em Claude/Codex e evidencias de runtime devem ser registradas por execucao. Em 2026-11-13, perguntas redundantes e limites de tamanho foram flexibilizados, mas os testes de seguranca e contratos permanecem obrigatorios.
+
 Este arquivo registra cenários de comportamento e o que precisa ser observado. A validação de links/frontmatter não prova que um agente carregou a Skill. Não marque avaliação como aprovada sem execução e evidência.
 
 | ID | Solicitação de avaliação | Resultado esperado |

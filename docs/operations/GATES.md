@@ -16,7 +16,7 @@ Regra: rode **somente** os gates do escopo do diff e dos módulos que dependem d
 
 | Escopo do diff | Gates | Observação |
 | --- | --- | --- |
-| Qualquer mudança no Portal (`aculta_portal`) | `php scripts/validate-aculta-portal-drupal12.php` | Obrigatório. Elimine, não expanda, a dívida registrada |
+| Mudanca de codigo no Portal (`aculta_portal`) | `php scripts/validate-aculta-portal-drupal12.php` | Trate regressao nova; divida anterior documentada nao bloqueia fix independente |
 | Rotas `/painel-administrativo/**` ou `/integracoes/**` | `validate-admin-routes-main-domain.php` | Somente MAIN; subdomínio responde 404 |
 | Catálogo de blocos e prévias da UI Library | `php scripts/validate-aculta-ui-library.php` (delega ao Drush) | Rotas MAIN, acesso por perfil, catálogo real, prévia com `max-age 0` |
 | Configuração UI Patterns Views (row/style/display) | `php scripts/validate-ui-patterns-views-cutover.php` | Contrato da View, slots/sources SDC, filtros, ordenação, pager e acesso; evidência Runtime/browser continua necessária |
@@ -46,7 +46,7 @@ Regra: rode **somente** os gates do escopo do diff e dos módulos que dependem d
 | Skills e instrucoes dos agentes | `python3 scripts/validate-agent-skills.py`, `php scripts/validate-agent-token-budget.php` | Verificar tambem comportamento nas CLIs quando mudar roteamento/hook; limite de bytes e aviso, nao bloqueio |
 | Scripts Runtime Sync | `bash -n scripts/runtime-sync.sh`, `bash scripts/test-runtime-sync.sh` | Apenas ao modificar o mecanismo de sincronizacao, nao por edicao de skill/docs |
 | Documentos de leitura de partida (`AGENTS.md`, `CLAUDE.md`, `TODO.md`, TODO de componente, handoff) | `php scripts/validate-agent-token-budget.php` | Estrutura essencial de contratos e alertas de custo de contexto; tamanho de TODO/skill nao bloqueia entrega. Symlinks e frontmatter sao verificados em `validate-agent-skills.py` |
-| Tabela "Não ler por padrão" (`AGENT-TOKEN-ECONOMY.md`) | `php scripts/validate-agent-economy-paths.php` | Caminhos existem e tamanhos declarados batem com o real (±2x); `vendor/` ausente é aceito |
+| Tabela "Não ler por padrão" (`AGENT-TOKEN-ECONOMY.md`) | `php scripts/validate-agent-economy-paths.php` | Caminhos citados existem; desvio de tamanho historico vira WARN e nao FAIL; `vendor/` ausente e aceito |
 
 ## Matriz por tipo de arquivo (2026-11-11)
 

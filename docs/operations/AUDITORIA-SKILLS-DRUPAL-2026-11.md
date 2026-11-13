@@ -1,5 +1,7 @@
 # Auditoria de Skills e ecossistema UI Suite
 
+> **Registro historico:** snapshot de 2026-11-10. Nao e inventario ativo. Em 2026-11-13, o repositorio possui 23 skills canonicas em `.agents/skills/`; o fluxo vigente e `AGENTS.md` + `docs/operations/AGENT-REVIEW-POLICY.md`. Confirme Composer, config e runtime atuais antes de executar.
+
 Data: 2026-11-10. Base: branch `dev`, snapshot `7e37cf41718045cc27d915ce1ecc94a61aa2223f`.
 
 ## Inventário de Skills

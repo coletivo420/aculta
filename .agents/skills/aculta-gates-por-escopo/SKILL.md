@@ -8,10 +8,10 @@ description: Escolhe e roda só os gates do escopo do diff do ACULTA. Use antes 
 1. Liste o diff: `git diff --stat` e `git diff --name-only`. Classifique R0-R3 em `docs/operations/AGENT-REVIEW-POLICY.md`; as classes nao sao as categorias operacionais do Runtime Sync.
 2. Leia `docs/operations/GATES.md` só na tabela de escopo. Não leia o arquivo inteiro.
 3. Rode só os gates das linhas que casam com o diff. Gate de módulo dependente também entra.
-4. Gate fora do escopo: registre como N/A com o motivo.
+4. Gate fora do escopo: N/A quando relevante ao relato; nao listar centenas de gates irrelevantes.
 5. Gate que não roda no ambiente (sem `vendor/`, sem Drush, sem extensão): registre como DEFERRED com o motivo. Nunca declare PASS sem execução.
 6. Comandos verbosos (PHPUnit, PHPStan, lint de projeto): `python3 scripts/agent-output.py --lines 60 -- COMANDO`.
-7. Cole no relatório a saída resumida e o status de cada gate.
+7. Registre resultado e evidencia dos gates efetivamente selecionados. Distinga falha anterior de regressao introduzida; nao converter skipped em PASS.
 
 ## Matriz por tipo de arquivo
 

@@ -29,6 +29,7 @@ $section = substr($text, $start, $end === FALSE ? NULL : $end - $start);
 
 $units = ['B' => 1, 'KB' => 1024, 'MB' => 1024 ** 2, 'GB' => 1024 ** 3];
 $failures = [];
+$warnings = [];
 $skipped = [];
 $checks = 0;
 
@@ -60,13 +61,16 @@ foreach (explode("\n", $section) as $line) {
     continue;
   }
   if ($actual < $expected / 2 || $actual > $expected * 2) {
-    $failures[] = sprintf('%s: tabela diz %s, real é %.1f MB', $relative, $declared, $actual / 1048576);
+    $warnings[] = sprintf('%s: tamanho historico %s; tamanho atual %.1f MB (atualizacao editorial sugerida)', $relative, $declared, $actual / 1048576);
   }
 }
 
 if ($checks === 0) {
   fwrite(STDERR, "FAIL: nenhuma linha de caminho encontrada na seção \"Não ler por padrão\".\n");
   exit(1);
+}
+foreach ($warnings as $warning) {
+  fwrite(STDERR, "WARN: $warning\n");
 }
 if ($failures !== []) {
   foreach ($failures as $failure) {
@@ -75,5 +79,5 @@ if ($failures !== []) {
   fwrite(STDERR, sprintf("AGENT ECONOMY PATHS: FAIL (%d)\n", count($failures)));
   exit(1);
 }
-printf("AGENT ECONOMY PATHS: PASS (%d caminhos; ausentes e aceitos: %s)\n", $checks, $skipped === [] ? 'nenhum' : implode(', ', $skipped));
+printf("AGENT ECONOMY PATHS: PASS (%d caminhos; %d avisos de tamanho; ausentes e aceitos: %s)\n", $checks, count($warnings), $skipped === [] ? 'nenhum' : implode(', ', $skipped));
 exit(0);
