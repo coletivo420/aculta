@@ -40,31 +40,18 @@ final class UiPatternsStoryHooks {
       return;
     }
 
-    // Ordem fixa dos cartões de post do Fórum (grupo "Comunidade"): postagem de abertura, cartão, cartão espelhado.
-    // Só essas três posições são reordenadas; os demais componentes do grupo mantêm a posição original.
-    $order = [
-      'aculta420_v2:forum-opening-post',
-      'aculta420_v2:forum-post-card',
-      'aculta420_v2:forum-reply-mirror',
-    ];
-    $group = 'Comunidade';
-    if (isset($variables['groups'][$group]) && is_array($variables['groups'][$group])) {
-      $items = $variables['groups'][$group];
-      // Cartões do Fórum ordenados, para ocupar as mesmas posições que já tinham no grupo.
-      $posts = array_intersect_key($items, array_flip($order));
-      uksort($posts, static fn(string $a, string $b): int => array_search($a, $order, TRUE) <=> array_search($b, $order, TRUE));
-      $reordered = [];
-      foreach ($items as $key => $item) {
-        if (in_array($key, $order, TRUE)) {
-          $postKey = array_key_first($posts);
-          $reordered[$postKey] = $posts[$postKey];
-          unset($posts[$postKey]);
-        }
-        else {
-          $reordered[$key] = $item;
-        }
+    // Componentes em ordem alfabética (pelo nome exibido) dentro de cada grupo/aba.
+    $collator = class_exists(\Collator::class) ? new \Collator('pt_BR') : NULL;
+    foreach ($variables['groups'] as $groupName => $items) {
+      if (!is_array($items)) {
+        continue;
       }
-      $variables['groups'][$group] = $reordered;
+      uasort($items, static function (array $a, array $b) use ($collator): int {
+        $nameA = (string) ($a['name'] ?? '');
+        $nameB = (string) ($b['name'] ?? '');
+        return $collator ? ($collator->compare($nameA, $nameB) ?: 0) : strnatcasecmp($nameA, $nameB);
+      });
+      $variables['groups'][$groupName] = $items;
     }
   }
 
