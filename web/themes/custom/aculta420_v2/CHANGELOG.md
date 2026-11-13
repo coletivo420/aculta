@@ -1,3 +1,380 @@
+## Não versionado — corte SDC-first de CSS e LMS (2026-11-13)
+
+- Catálogo da UI Patterns Library atualizado para o inventário do checkout
+  (127 manifests SDC, 188 stories), com registro das composições de eventos,
+  Conta Studio e LMS desta sessão e dos sete layouts do grupo `Layouts`.
+  `event-page-layout` ainda aguarda confirmação no seletor do Layout Builder;
+  a descoberta no Runtime depende de rebuild do cache Drupal.
+
+- O Dashboard da Conta, cartões, calendário e conexões do Studio agora são compostos diretamente como SDCs. Removidos quatro theme hooks de apresentação, o registrador de hooks e os oito templates neutros/overrides que apenas retransmitiam props e slots.
+- O Dashboard da Conta do Studio agora sinaliza seu contexto ao SDC `layout-page`; o shell reserva as colunas do menu e do calendário. Removidos os seletores `:has()` que inferiam o layout pelos descendentes e os resets correspondentes na UI Patterns Library.
+- A View `eventos_publicos:block_1` agora configura explicitamente o limite de três colunas pelo SDC `layout-grid` via UI Patterns Views; o config de instalação do módulo e o config sync estão alinhados. Removido o template unformatted redundante e o CSS baseado em `:has()`.
+- O SDC `card-cultural` agora usa exclusivamente suas classes próprias; removidos cinco tokens `data-portal-ui` e as classes bridge sem consumidores externos.
+- `/ganjalab` recebeu uma página nova composta por SDCs LMS para cursos,
+  progresso, retomada e certificados; removidos os wrappers genéricos legados.
+  O composer mantém o resumo/caches do LMS e envia apenas props/slots visuais.
+- A rota LMS não é mais envolvida pelo `AccountShellBuilder`, embora continue
+  aparecendo como link na navegação da Conta. A página não recebe o sidebar
+  antigo de agenda; usa layout full e mantém um único H1.
+- Revisão visual autenticada passou em 390/1280 px: sem rolagem horizontal,
+  sem shell da Conta ou agenda legada, H1 único e tokens corretos no modo
+  escuro. Estado matriculado validado com cursos sem aulas publicadas e estado
+  vazio com conta sem matrícula. Jornada/sala seguem sem fixture acessível.
+- Rebuild do cache corrigiu a descoberta Drupal dos SDCs após os 500 em Wiki420
+  e Growroom; as raízes dos hosts foram rechecadas sem respostas 500.
+- Removidos os aliases `--aculta-studio-fidelity-*` do `studio-shell`; tokens e
+  valores usados passaram diretamente às declarações, sem mudar a apresentação.
+- Home, jornada e sala do LMS deixaram de repetir tipografia, cor e quebra de
+  texto globais já fornecidas por `base.css`; estilos próprios dos fluxos seguem locais.
+- A UI Patterns Library perdeu declarações duplicadas de margem e de resumo de
+  detalhes; os controles e o layout administrativo seguem na biblioteca contextual.
+- O token de heading Marley foi escopado ao SDC `studio-section-header`; o
+  espaçamento da identidade da Conta ficou local a `account-experience-dashboard`.
+  Removidos o alias e o estilo sem consumidor de `studio__panel`.
+- `studio-connections-page` e `studio-connections-block` deixaram de anexar
+  bibliotecas do tema que não existiam; seus CSS são assets descobertos pelos
+  próprios SDCs. O attach do Leaflet permanece sob propriedade do módulo.
+
+- Removidos do SDC `studio-shell` o estilo e o token visual
+  `studio-saved-summary`: o provedor conserva o atributo semântico, mas sua
+  saída não é consumida por nenhum controller no estado atual. A regra tinha
+  apenas quatro declarações e não era usada pela página `/salvos`, que possui
+  seu próprio SDC. Gates após o corte: Stylelint, classes mapeadas (378), CSS
+  scope (134), schema SDC (120/2.286), render SDC (77) e CSS verify (120 SDCs):
+  PASS. Inspeção visual autenticada do Studio e LMS continua pendente.
+- Removidos dos SDCs `lms-learning-journey` e `lms-learning-room` os resets de
+  foco duplicados: `base.css` já fornece indicador global com os tokens
+  acessíveis do tema. As regras próprias de navegação, conteúdo e estados LMS
+  continuam nos respectivos componentes.
+- Inventário após os cortes: 139 arquivos/427.847 bytes/2.424 regras/2.890
+  seletores; PurgeCSS preserva as 228 classes dinâmicas em 120 componentes.
+  Stylelint, CSS audit/verify e `git diff --check`: PASS.
+- A UI Patterns Library passou a herdar o foco de `base.css` nos resumos de
+  detalhes; removidas duas regras locais duplicadas de outline. Auditoria agora:
+  139 arquivos/427.548 bytes/2.422 regras/2.888 seletores; Stylelint, CSS scope
+  (134), CSS audit/verify e `git diff --check`: PASS.
+- O SDC `studio-revista-form` deixou de repetir estilos de campos, fieldsets,
+  labels, erros e botões que já vêm do `studio-shell`; manteve sua borda
+  editorial exclusiva. A story agora compõe o formulário dentro do shell real.
+  Corte líquido: 2.790 bytes. Inventário: 139 arquivos/424.758 bytes/2.410
+  regras/2.876 seletores. Lint, schema, render SDC, CSS verify e story YAML:
+  PASS.
+- Removi seis variáveis `aculta-studio-fidelity` sem consumidor em CSS, Twig,
+  PHP ou YAML: interação, superfície muted, divisor, tamanhos S/XS e raio tiny.
+  Não alterei variáveis usadas pela Conta ou pelo shell. Redução adicional de
+  336 bytes; inventário: 139 arquivos/424.422 bytes/2.410 regras/2.876
+  seletores. Lint, CSS scope, render SDC, CSS audit/verify e diff check: PASS.
+- O `studio-shell` deixou de redefinir no Studio tipografia/cor que já herda de
+  `body`, e saiu a fonte duplicada de placeholder. Permanecem tamanhos e pesos
+  de títulos, superfície e controles. Redução: 806 bytes; inventário:
+  139 arquivos/423.616 bytes/2.408 regras/2.874 seletores. Stylelint, CSS scope,
+  render SDC, CSS audit/verify e `git diff --check`: PASS.
+- Removida a regra residual de fonte para headings no Studio: `base.css` cobre
+  elementos semânticos e não há consumidor local das classes `.h1`–`.h6`.
+  Inventário: 139 arquivos/423.502 bytes/2.407 regras/2.873 seletores; Stylelint,
+  CSS scope (134), render SDC, CSS audit/verify e diff check: PASS.
+- O layout do cabeçalho das seções Marley e os resets da lista de ações saíram
+  de `studio-shell.css` e foram para o novo SDC `studio-section-header`, envolvido
+  somente quando a saída do módulo o apresenta. O controller preserva título e
+  ações autorizadas. Schema/render: 121/78 SDCs PASS; CSS scope: 137 checks;
+  mapped classes: 378; CSS verify preserva 228 classes dinâmicas. Inventário:
+  140 arquivos/423.573 bytes/2.407 regras/2.873 seletores. Inspeção autenticada
+  de Marley segue pendente.
+- O alvo de toque dos links em `studio-profile-actions` saiu do shell e passou
+  ao CSS local de `studio-profile-editor`, seu único consumidor. Sem alteração
+  no volume: 140 arquivos/423.573 bytes/2.407 regras/2.873 seletores; Stylelint,
+  render SDC, CSS scope, mapped classes, CSS verify e diff check: PASS.
+- A skin genérica de Form API saiu de `studio-shell.css` para o SDC
+  `studio-form`; o preprocess envolve só formulários sob `studio-main`, incluindo
+  a criação de curso LMS. A edição de revista reutiliza o mesmo componente sem
+  wrapper duplicado. O módulo preserva render array, campos, handlers, cache e
+  attachments. Redução líquida: 2.447 bytes; inventário: 141 arquivos/421.126
+  bytes/2.407 regras/2.873 seletores. Schema/render: 122/79 PASS; CSS scope
+  (142), mapped classes (378), Stylelint e CSS verify PASS. Visual autenticado
+  permanece pendente.
+
+- O checkout de doações passou a compor `donation-presentation` em resumo,
+  confirmação, valor e convite. Cálculos, conteúdo e cache continuam no módulo;
+  os dois templates Twig neutros de resumo e suas definições de tema foram
+  removidos. O novo asset é carregado com o SDC.
+
+- A área de cursos de Minha Conta agora compõe `account-courses`; grade e
+  cartões deixaram `portal-account.css` e passaram para o SDC. O presenter ainda
+  prepara os cursos e o controller mantém ações, cache e estado vazio. Regras
+  antigas de título `h2` e botão genérico sem consumidor foram removidas.
+- O seletor órfão `.aculta-editorial-list` saiu de `content.css`; a View e o
+  instalador já não emitem essa classe. Regras ainda consumidas por painéis e
+  categorias foram mantidas.
+- `search.css` saiu do `global-styling` e agora é anexado apenas à rota
+  `aculta_portal.search`. O campo de prévia passou ao CSS do SDC
+  `search-preview`; a classe de popup ficou no asset `multidomain-bar`.
+- O relatório técnico do Portal passou a compor `portal-requirements`; layout
+  de seções saiu do mapa global e a referência a uma biblioteca de módulo
+  inexistente foi removida. Dados, cache e `system/admin` continuam no Portal.
+- O formatter de arquivos agora compõe `document-download`; estilos de CEP,
+  pagamento e diálogo de Galeria passaram às bibliotecas dos módulos e são
+  anexados pelos formulários proprietários. Título do Studio e link da
+  micropágina foram contextualizados; removido o token sem emissor
+  `domain-brand-image`.
+- A prévia compartilhada entre Wiki e nova conversa passou a compor o SDC
+  `search-preview`. A região acessível recebe seus atributos e conteúdo por
+  props/slot; estilo de lista, rodapé, link completo e botão saiu de
+  `search.css`/`portal-ui-map.css` e passou para o CSS do componente. Os tokens
+  de lista/rodapé/link seguem apenas como ponte para respostas AJAX renderizadas
+  pelo módulo.
+- Estado após estes cortes: 127 arquivos CSS/442.004 bytes/2.447 regras/2.975
+  seletores; `global-styling` tem 12 entradas e 65.176 bytes. Schema SDC: 107
+  componentes/2.176 checks; render isolado: 63 componentes; CSS verify: 103
+  SDCs com CSS/223 classes dinâmicas em 107 componentes; mapped classes: 391.
+  Stylelint, CSS scope (127), PHP lint, CSS verify e `git diff --check`: PASS.
+
+- Atualização após a migração de doações: 128 arquivos/442.413 bytes/2.448
+  regras/2.978 seletores; `global-styling` tem 12 entradas/64.418 bytes.
+  Schema SDC: 108 componentes/2.187 checks; render isolado: 64 componentes;
+  CSS verify: 104 componentes com CSS/228 classes dinâmicas em 108 componentes;
+  mapped classes: 381; CSS scope: 127 checks. Stylelint, gates SDC, CSS verify e
+  `git diff --check`: PASS. Validação visual autenticada do checkout pendente.
+
+- Filas de administração de avisos e reivindicações de posse passaram a anexar
+  folhas próprias do Messenger e User nas rotas que as apresentam. Removidos do
+  mapa os tokens de layout genéricos `admin-item`, `admin-list` e os estilos
+  compartilhados de filtros, avisos e tabelas. Removi também a regra residual do
+  wrapper Twig antigo de doação e acrescentei story ao SDC. Inventário: 128
+  arquivos/442.193 bytes/2.448 regras/2.970 seletores; `global-styling` 64.258 bytes; 380 classes
+  mapeadas. Stylelint, CSS audit/verify, CSS scope, PHP lint e `git diff --check`
+  passaram. Inspeção visual das rotas administrativas segue pendente.
+
+- A página `/salvos` passou a usar o SDC `saved-content-page`; a consulta,
+  autorização, cache e montagem dos render arrays seguem no controller do
+  Studio. O bloco de regras da página saiu de `studio.css` e passou ao asset do
+  SDC; o teste Kernel existente foi alinhado ao contrato do componente (não
+  executado). Estado: 129 folhas/441.470 bytes/2.448 regras/2.970 seletores;
+  schemas: 109 componentes/2.195 checks; render isolado: 65; CSS verify: 105
+  componentes com CSS/228 classes dinâmicas em 109 componentes; mapped classes:
+  380; CSS scope: 127. Stylelint, gates SDC/CSS, PHP lint e diff check PASS.
+  Validação visual autenticada em `/salvos` pendente.
+
+- Green Stash agora compõe o SDC `green-stash-page` nas rotas de visão geral,
+  produtos/envios, detalhe e criação de produto. As regras saíram de `studio.css` (que não era
+  anexado nas rotas `aculta_commerce`) e passaram ao CSS local do componente;
+  Commerce preserva conteúdo, acesso, operações e cache. Inventário: 130 folhas,
+  441.245 bytes, 2.448 regras e 2.970 seletores; schemas: 110 componentes/2.203
+  checks; render isolado: 66; CSS verify: 106 componentes com CSS/228 classes
+  dinâmicas em 110 componentes; mapped classes: 380; CSS scope: 127. Gates SDC,
+  Stylelint, CSS audit/verify, classes mapeadas, PHP lint e diff check PASS.
+  Homologação visual autenticada de Green Stash pendente.
+
+- O shell de navegação das subpáginas autenticadas da Conta agora é composto por
+  `studio-account-section-layout`; suas regras saíram de `studio.css` e passaram
+  ao asset do SDC. O preprocess preserva render array, id, cache e atributos
+  usados pelo HTMX. Inventário: 131 arquivos/440.692 bytes/2.448 regras/2.970
+  seletores; schemas: 111 componentes/2.211 checks; render isolado: 67; CSS
+  verify: 107 componentes com CSS/228 classes dinâmicas em 111 componentes;
+  mapped classes: 380; CSS scope: 127. Gates SDC, Stylelint, CSS audit/verify,
+  classes mapeadas e diff check PASS. Validação autenticada das subpáginas segue
+  pendente.
+
+- Tabelas do construtor Marley agora são envolvidas pelo SDC
+  `studio-listing-table`; as regras de tabela e rolagem saíram de `studio.css`.
+  O preprocess preserva render arrays de tabelas distintas na mesma rota.
+  Estado após a extração: 132 folhas/440.413 bytes/2.448 regras/2.970 seletores;
+  schemas: 112 componentes/2.219 checks; render isolado: 68; CSS verify: 108
+  componentes com CSS/228 classes dinâmicas em 112 componentes; mapped classes:
+  380; CSS scope: 127. Stylelint, gates SDC, CSS verify e diff check PASS.
+  Validação visual das tabelas autenticadas pendente.
+
+- O formulário de edição editorial em rotas do Studio passou a compor o SDC
+  `studio-revista-form`; estilos específicos de Marley saíram de `studio.css`
+  e acompanham o SDC. O preprocess só envolve `node_revista_form` e mantém o
+  Form API proprietário intacto. Renderização visual autenticada pendente.
+
+- O token `profile-editor` passou a ser convertido no SDC
+  `studio-profile-editor`. A grade passou ao CSS local do componente; atributos,
+  slots, attachments e metadados de cache do controller são mantidos. Captura
+  autenticada de Perfil pendente.
+
+- A criação de curso do Educador passou a compor `studio-course-authoring-page`
+  na rota `aculta_lms.course_create`; os estilos de cabeçalho e retorno saíram
+  de `studio.css` e agora carregam no fluxo LMS. O controller e o Form API do
+  Group mantêm o conteúdo, as operações e o cache.
+
+- O SDC `account-shell` agora declara o asset CSS que apresenta navegação,
+  conteúdo, foco e tabelas da Conta; esse bloco saiu de `portal-account.css`.
+  Regras de diálogos e cartões compartilhados continuam no asset contextual.
+
+- A criação de tópico já embutida em `discussion-topic-composer` deixou de
+  renderizar um wrapper de cartão duplicado. Os estilos específicos do Form API
+  foram movidos de `forum.css` para o asset do SDC; o formulário e seu submit
+  continuam fornecidos pelo Drupal.
+
+- O dashboard e o Perfil Studio agora envolvem os cartões de biografia e redes
+  em `account-profile-card`, percorrendo também `#slots` do editor. O CSS desses
+  cartões saiu de `portal-account.css`; controles de foto fora dos cartões
+  continuam na biblioteca contextual.
+
+- Inventário após estes cortes: 138 arquivos CSS/437.335 bytes/2.446 regras/
+  2.934 seletores; `studio.css` tem 15.244 bytes, `portal-account.css` 2.631
+  e `forum.css` 16.841. Schemas: 117 componentes/2.262 checks; render isolado:
+  74; CSS verify: 114 SDCs com CSS/228 classes dinâmicas em 117 componentes;
+  classes mapeadas: 379; CSS scope: 127. Stylelint,
+  schema/render SDC, CSS audit/verify, classes mapeadas, PHP lint e diff check
+  passaram. Visual autenticado do Perfil, da criação de curso, do formulário
+  Marley, dos cartões de Perfil, da Conta e da lista pública do Fórum pendente.
+
+- O construtor de currículo LMS emite classes semânticas diretamente nos
+  render arrays do SDC `lms-course-curriculum`; removidos do mapa genérico os
+  tokens exclusivos dessa composição. A prévia da aula também usa a classe
+  coberta pelo SDC `lms-lesson-page`, sem token vazio.
+- Tokens LMS vazios de dashboard, jornada e sala foram retirados de
+  `PortalUiHooks`; os SDCs contextuais já estilizam os atributos preservados.
+- CSS de carrinho, filtros de avisos e rodapé do Messenger migrou da folha do
+  multidomain bar para seus SDCs. Layout da seção de vendas pertence agora ao
+  `sales-panel` SDC.
+- Mapas do `MapRenderer` passam pela casca `map-canvas`; a rota `/mapa` envolve
+  a página da lista e, em outras páginas, a casca envolve o mapa. Attachments de
+  Leaflet e cache são preservados, enquanto apresentação sai do mapa global.
+- Inventário revisado: 122 folhas CSS/442.888 bytes/2.456 regras/3.021
+  seletores; `global-styling` tem 13 entradas e 72.294 bytes locais. CSS verify
+  cobre 98 SDCs com CSS e preserva 222 classes dinâmicas em 102 SDCs. Mapped
+  classes: 428; duplicidades entre folhas: 3.
+- Regras de catálogo, cards editoriais, apoiadores e agenda de eventos saíram de
+  `portal-ui-map.css` para `events.css`; apresentação de organização foi movida
+  para `event-organization.css`. `events.css` também é anexada a nodes
+  `aculta_event`, além das rotas proprietárias.
+- Regras de layout dos fragmentos de login/cadastro HTMX passaram de
+  `portal-ui-map.css` para o CSS local de `multidomain-bar`.
+- Estilos de sugestão de títulos, decisão/status de proposta e retorno do
+  workspace Wiki foram movidos para `wiki.css`, anexada pelo `site_key=wiki`.
+- Estilos dos tokens de redes sociais foram contextualizados nos SDCs
+  `social-links-page`/`site-footer`; o ajuste do formulário administrativo agora
+  carrega a biblioteca `linkweed-admin` apenas na rota de configuração. Classes
+  de ponte correspondentes saíram de `PortalUiHooks`.
+- Regras redundantes de itens salvos/recomendações saíram de `portal-ui-map.css`;
+  `studio.css` mantém o layout e apresentação desses cards e dos tokens de
+  resumo/autoria, carregados no escopo do Studio. Os render arrays deixaram de
+  emitir classes legadas para os itens salvos e recomendações.
+- Inventário após este corte: 122 folhas/442.799 bytes/2.456 regras/3.015
+  seletores; `global-styling` tem 13 entradas e 72.076 bytes locais. CSS verify
+  preserva 222 classes dinâmicas em 102 componentes. Mapped classes: 418;
+  duplicidades entre folhas: 3.
+- Gates desta rodada: Stylelint, CSS verify, schema SDC (102 componentes/2.129
+  checks), render isolado (59 SDCs), CSS scope (119 checks), mapped classes e
+  `git diff --check`: PASS.
+- O mapa global deixou de duplicar as regras do módulo de credenciais para
+  valores, abas e tabelas; tokens de raiz/painel sem apresentação própria
+  deixaram de emitir classes, preservando `data-portal-ui` para o JS e CSS do
+  módulo.
+- Inventário após o corte de segredos: 122 folhas/442.316 bytes/2.451 regras/
+  3.002 seletores; `global-styling` tem 13 entradas e 71.593 bytes locais.
+  Mapped classes: 416; CSS verify e os 59 SDCs renderizados continuam passando.
+- A regra de recorte do avatar de perfil público saiu do mapa global e passou
+  para `public-profile.css`, carregada somente na superfície de perfil.
+- Estado CSS: 122 folhas/442.321 bytes/2.451 regras/3.002 seletores;
+  `global-styling` em 71.506 bytes locais. CSS scope (119), Stylelint,
+  mapped classes (416), CSS verify e `git diff --check`: PASS.
+- A cor dos pedidos comerciais deixou o mapa global e passou à biblioteca
+  contextual `portal-account`; estilos Google permanecem globais enquanto forem
+  compartilhados por login e checkout.
+- Auditoria atual: 122 folhas/442.359 bytes/2.452 regras/3.002 seletores;
+  `global-styling` em 71.479 bytes locais. Stylelint, CSS scope, mapped classes
+  (416), CSS verify e `git diff --check`: PASS.
+- O indicador acessível de estado do Marley Studio agora recebe cor e tamanho
+  em `studio.css`; removida a ponte `.aculta-studio-live` do mapa global.
+- Estado atualizado: `global-styling` em 71.404 bytes locais, mapped classes
+  em 415 e inventário em 442.382 bytes/2.452 regras/3.002 seletores. Gates de
+  CSS e `git diff --check`: PASS.
+- A visão interativa do calendário agora compõe o SDC `calendar-interactive`;
+  grade, agenda, controles, `drupalSettings`, cache e biblioteca DHTMLX continuam
+  no render array do módulo. CSS de layout saiu do mapa global e os tokens
+  visuais não emitem classes de ponte.
+- Estado após a extração: 123 folhas/442.496 bytes/2.452 regras/3.002 seletores;
+  `global-styling` 71.031 bytes. CSS verify: 99 SDCs com CSS/103 componentes
+  dinâmicos; schema: 103 componentes/2.138 checks; mapped classes: 410.
+- Emissores diretos de `.messages` foram reduzidos: Events, UI Library e o aviso
+  de configuração do mapa agora usam `status-messages`; a falha dinâmica do mapa
+  usa CSS da biblioteca Maps e validações do H5P têm classe/folha anexadas apenas
+  ao editor. O estilo global ainda atende módulos contrib com emissores diretos.
+- O SDC `status-messages` recebeu slot para conteúdo rico e variante `info`.
+  Avisos restantes do Portal, Events, segredos e doação migraram para o SDC;
+  removidos tokens de ponte `notice-*`/`email-notice` e CSS órfão de e-mail.
+  `.messages--info` saiu do global; `.messages`, status, warning e error ficam
+  pela compatibilidade exigida por emissores diretos nos módulos contrib.
+- Inventário após estes cortes: 123 folhas/442.009 bytes/2.449 regras/2.998
+  seletores; `global-styling` 70.861 bytes. CSS verify preserva 223 classes
+  dinâmicas/103 componentes; SDC schema 103 componentes/2.139 checks; mapped
+  classes 404; CSS scope 119 checks. Todos os gates estáticos passaram.
+- Removidas pontes de `display:block` redundantes de wrappers `<div>` em Conta,
+  Google, cadastro e S/N; o token mantém `data-portal-ui` sem classe de estilo.
+  O display do avatar foi transferido integralmente para `public-profile.css`.
+- Inventário atualizado: 123 folhas/441.786 bytes/2.449 regras/2.989 seletores;
+  `global-styling` 70.620 bytes; mapped classes 399; três seletores repetidos.
+  CSS verify, schema SDC, CSS scope, Stylelint e `git diff --check`: PASS.
+
+- Currículo, materiais, catálogo, preview de aula, moderação de fórum e H5P
+  compõem SDCs; discussões e documentos H5P usam `layout-section`.
+- `article-authors` e `related-content` foram criados; o módulo mantém acesso,
+  consultas, cache e conteúdo, passando render arrays em slots.
+- CSS da gaveta/avisos do Messenger, autoria e metadados da Revista saiu do
+  carregamento global e passou a assets SDC. O organizer dashboard é carregado
+  pela biblioteca contextual de Events. Regras redundantes/de fallback de
+  próximos eventos saíram de `content.css`.
+- Os relatórios de produto e doações agora compõem o SDC `sales-panel`; filtros,
+  consultas, permissões, tabelas e cache contextual permanecem nos controllers e
+  builders. A folha saiu de `portal-ui-extras.css` e só carrega com o SDC.
+- A cópia global dos estilos dos links de login saiu porque `auth-dialog` e
+  `multidomain-bar` já estilizam o mesmo atributo do formulário em CSS SDC.
+- Estilos das rotas de segurança/e-mail e do modal de termos foram movidos para
+  `portal-account.css`, que só é anexado no domínio account. Seletor de barra
+  baseado em `.navbar-nav` removido; tokens de navegação agora emitem apenas
+  classes semânticas do tema.
+- Estilos da página de login migraram para `login-page.css`, anexado somente à
+  rota `user.login`; o formulário continua Form API e preserva os tokens neutros.
+- Estilos do formulário público de apoio migraram para `support-page.css`,
+  anexado à rota `aculta_portal.support_form`; removida a referência órfã à
+  biblioteca inexistente `aculta_portal/support`.
+- O relatório administrativo de imagens passou a compor `image-audit-report`;
+  aviso, tabelas, cálculo e cache continuam no controller. Seu espaçamento saiu
+  do CSS global e agora é asset do SDC.
+- O banner de consentimento agora é renderizado como `consent-banner` em
+  `page_bottom`, só para visitantes anônimos com a opção ativa. A folha passou
+  para o SDC e o JS usa `data-consent-banner`, marcador que o mapeador não apaga.
+- A saída do valor de segredos compõe `secret-reveal`; as dimensões do modal
+  Drupal passaram para uma biblioteca anexada apenas às rotas `secrets_*`.
+  Consulta, autorização e não cacheabilidade permanecem no módulo.
+- Dimensões dos diálogos de Conta/Studio saíram do global e foram para
+  `account-dialogs.css`, anexado pelo `site_key` account e nas rotas do Studio.
+- O único resíduo de `portal-ui-extras.css` (campo Número/S/N) passou a
+  `address-fields.css`, anexado pelo formulário compartilhado somente quando os
+  campos numéricos são montados. O arquivo global foi removido; `/apoio` no
+  Runtime respondeu 200, carregou a regra local e a home não carregou essa regra.
+- `/entrar` no domínio Conta respondeu 200 e carregou `login-page.css`; a home
+  pública respondeu 200 sem essa folha contextual.
+- `event-organization.css` foi reduzido em 1.537 bytes e passou a carregar em
+  apenas oito rotas de widget, perfil, tabela e modal. `/eventos` respondeu 200
+  sem a folha.
+- `studio.css` perdeu 153 linhas (5.029 bytes) de regras `/culturas` não
+  entregues pelo Runtime; as duas classes legadas de guia/filtros saíram do mapa,
+  preservando os respectivos atributos `data-portal-ui`. `/culturas` manteve
+  grid/gap de 16 px por `events.css`; `/conta` continua com a folha Studio.
+- Estilos de layout, painel, cabeçalho, categorias e diálogo da página migraram para `forum-topic.css`; ações e alternância/espelhamento dos cartões migraram para `forum-post-card.css`, consumido pelos templates reais de comentários no Fórum/LMS. `forum.css` caiu de 28.199 para 21.368 bytes (-6.831 bytes) nesta continuação.
+- O template de cartões de experiência da Conta passou a consumir o SDC `account-experience-card`; regras visuais dos cards/faixas foram extraídas de `studio.css` e são carregadas pelo asset do componente. `studio.css` perdeu 3.379 bytes; o asset SDC acrescenta 2.582 bytes sob demanda, reduzindo o inventário total em 797 bytes.
+- A regra global duplicada de `.layout-page--stack` foi removida; o SDC `layout-page` é dono do layout stack e o fallback de página sem SDC continua em `.page__main--stack`.
+- A página Minha Conta passou a compor o SDC `account-experience-dashboard`; menu, avatar, calendário, conexões, experiências e links são slots/render arrays. O CSS do dashboard e carrossel saiu de `studio.css` (−7.192 bytes) para o SDC (+7.091 bytes), saldo de −101 bytes no inventário.
+- O dashboard `/ganjalab` agora recebe a casca SDC `lms-learning-dashboard` no preprocess da rota; o render array autorizado do composer e seus componentes UI Patterns permanecem como slot. O CSS saiu de `studio.css` (−1.225 bytes) para o SDC (+1.510 bytes), +285 bytes no inventário; o asset só carrega nessa rota.
+- A jornada e a sala de atividade LMS passaram a usar os SDCs `lms-learning-journey` e `lms-learning-room`. Os composers, acesso, formulário e render arrays permanecem nos módulos; a ponte Portal neutra seleciona o SDC da jornada e o tema envolve a sala no preprocess da rota. CSS saiu de `studio.css` (−7.161 bytes) para os assets SDC (+7.469 bytes), saldo +308 bytes e folhas anexadas junto aos componentes.
+- Validação após as migrações: Stylelint, CSS verify, schema SDC (97 componentes/2.058 checks), renderização Drupal isolada (55 componentes), CSS scope (119), mapped classes (442) e `git diff --check`: PASS.
+- Validação da extração do painel: Stylelint, CSS verify, schema SDC (98 componentes/2.098 checks), renderização Drupal isolada (56 componentes), CSS scope (119), mapped classes (442) e `git diff --check`: PASS.
+- Validação da integração LMS: Stylelint, CSS verify, schema SDC (99 componentes/2.106 checks), renderização Drupal isolada (57 componentes), CSS scope (119), mapped classes (442) e `git diff --check`: PASS.
+- Validação da jornada/sala LMS: Stylelint, CSS verify, schema SDC (101 componentes/2.122 checks), renderização Drupal isolada (59 componentes), CSS scope (119), mapped classes (442) e `git diff --check`: PASS.
+- Inventário atual após os cortes LMS: 120 folhas/442.527 bytes/2.453 regras/3.028 seletores;
+  PurgeCSS audit 39.378 bytes removíveis, com as 222 classes dinâmicas
+  preservadas.
+- `global-styling`: 13 entradas, 75.717 bytes CSS local. Gates SDC (59), CSS
+  scope (119), CSS verify (120 folhas/97 SDCs com CSS), mapped classes (442),
+  Stylelint, docs tokens (508/427/160), AccountAddressForm unit (11/54),
+  PagePresentationHooksTest (9/39) e Kernel de consentimento (4/10) passaram.
+- Validação visual autenticada e testes Kernel que requerem `SIMPLETEST_DB`:
+  DEFERRED. Não versionado até concluir a homologação do lote.
 ## Não versionado — link seguro no aviso Mercado Pago
 
 - O tema usa a função Drupal `link()` com classe e atributos do tema; a URL
@@ -1261,3 +1638,92 @@ State: Dev. No RC, production deployment, or release tag is declared.
 - Stylelint `base.css`, fundações (83 pares), PHPUnit focal (27 testes), PHP
   lint, `drush cr` e `git diff --check` passaram.
 
+## Não versionado — continuação do corte CSS do Fórum e discussões (2026-11-13)
+
+- A apresentação da lista pública foi consolidada no CSS local do SDC
+  `forum-list-page`. Regras de tópicos e discussões compartilhadas saíram de
+  `forum.css`: progresso JS, foco, respostas hierárquicas e formulários agora
+  acompanham a apresentação `forum-post-card`; o contêiner editorial Wiki
+  acompanha `wiki-entry`. Isso cobre as discussões de Fórum, Revista, Wiki e
+  conteúdos LMS que usam o mesmo campo/template de comentários.
+- Na primeira medição do corte, `forum.css` caiu de 16.841 para 6.395 bytes. O
+  inventário então tinha:
+  138 arquivos, 435.634 bytes, 2.452 regras e 2.940 seletores; 228 classes
+  dinâmicas preservadas em 117 componentes. Gates de schema, render SDC,
+  Stylelint, CSS verify, CSS scope e mapped classes passaram.
+- O browser/runtime para Fórum/LMS e as páginas de Wiki/Revista ainda precisa
+  confirmar estilos carregados em telas reais.
+
+## Não versionado — Views do Fórum com CSS local nos SDCs (2026-11-13)
+
+- O layout de categoria passou ao SDC `forum-category-page`; filtros e vazio
+  da busca passaram ao `forum-search-page`, por sugestão Twig que mantém todas
+  as áreas padrão da View. Os avatares de tópico agora pertencem a
+  `forum-topic-row`.
+- Removidos `src/styles/forum.css`, a biblioteca `forum` e seu attachment em
+  `PagePresentationHooks`. Listagem, categoria e busca carregam CSS a partir
+  dos SDCs que efetivamente compõem cada View.
+- Pendentes a reconstrução de cache e a conferência browser/runtime das três
+  Views, especialmente se exposed form, pager e attachments permanecem iguais.
+
+## Não versionado — corte de seletores legados de formulários Studio (2026-11-13)
+
+- `studio.css` caiu de 15.244 para 11.263 bytes. Removidos 24 seletores (3.981
+  bytes) para classes/rotas sem correspondência: `form.studio-profile-form` não
+  é emitido pelos forms atuais e `body.path-perfil` não corresponde às rotas
+  `/meu-perfil/...` (incluindo os forms de apelido e privacidade). O formulário
+  de Revista fica sob `studio-revista-form`; estilos genéricos de
+  `.studio__main form` foram preservados.
+- Inventário geral: 139 arquivos, 428.282 bytes, 2.427 regras, 2.893 seletores;
+  228 classes dinâmicas preservadas. Stylelint, CSS audit/verify, CSS scope e
+  `git diff --check` passaram. Aceite visual autenticado do Studio permanece
+  pendente.
+
+## Não versionado — CSS do Studio sob o SDC shell (2026-11-13)
+
+- As páginas `aculta_studio.*` agora envolvem o conteúdo no SDC `studio-shell`,
+  após a composição dos componentes filhos. A folha `studio.css` virou asset
+  local do SDC, e a biblioteca de CSS `studio` e seu attachment foram removidos.
+  Render arrays internos, Forms API, cache e attachments continuam no slot.
+- Inventário CSS permanece em 139 arquivos e 428.282 bytes; 120 componentes
+  dinâmicos preservados. CSS scope (134 checks), schema (120 componentes),
+  render SDC (77), Stylelint, CSS verify/audit e `git diff --check`: PASS.
+- Inspeção visual autenticada das rotas Studio: pendente.
+
+
+- Corte complementar de legado: o wrapper `studio-listing-table` não adiciona
+  DOM redundante e o alias Bootstrap `table-responsive` saiu do token Marley.
+  `content.css` perdeu declarações de painel duplicadas e uma regra redundante;
+  a apresentação editorial e as interações existentes foram preservadas.
+- A região Drupal `footer` passou a depender exclusivamente do SDC `site-footer`;
+  regras duplicadas de grade, títulos e links saíram de `layout.css`.
+- `portal-account.css` perdeu seletores Bootstrap e regras de mídia/tamanho
+  cobertas por `base.css` e `account-shell`; os emissores de Eventos continuam
+  preservados em seus próprios contextos.
+- Removidos estilos globais órfãos `.messages*`; o template de mensagens já
+  compõe o SDC `status-messages`.
+- As mensagens padrão do Drupal deixaram de depender do CSS global `.messages*`;
+  o override de tema compõe o SDC `status-messages`.
+- Removida a declaração `display:grid` sobrescrita no pager do mapa global.
+- O estilo do cartão cultural e do estado de cancelamento agora acompanha o SDC
+  `card-cultural`; `events.css` ficou com layout de catálogo e estilos de rota.
+- A skin do formulário `/apoio` saiu da biblioteca contextual `support-page` e
+  agora é asset do SDC `support-form`, que preserva o formulário Form API no slot.
+- O perfil público passou a carregar sua folha pelo SDC `public-profile-page`;
+  removida a biblioteca CSS contextual por rota, sem alterar o render array do Portal.
+- Os estilos das ações de visão geral e de leitura/navegação do shell da Conta
+  agora acompanham o SDC `account-shell`; regras usadas fora do shell permanecem
+  no asset contextual `portal-account`.
+- O template do modal de termos agora compõe o SDC `account-terms-modal`, que
+  declara localmente o estilo da lista de documentos e mantém os atributos usados
+  pelo diálogo do Portal.
+- `lms-lesson-page` passou a herdar o indicador global de foco de `base.css`,
+  removendo seu outline local redundante.
+- O render array de recursos do construtor de curso agora é apresentado pelo slot
+  `resources` de `lms-course-curriculum`, com o CSS da seção no asset do SDC.
+- A apresentação de apoiadores e citações de eventos agora acompanha o asset
+  local `event-page-layout`; `events.css` mantém as regras de rota/catálogo.
+- O mapa de classes não duplica mais no token `studio-account-home` as classes
+  que o Twig do SDC `account-experience-dashboard` já imprime.
+- O carrossel da Conta agora declara seu JavaScript e dependências no asset do
+  SDC `account-experience-dashboard`; removida a anexação a biblioteca ausente.

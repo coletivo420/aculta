@@ -1,8 +1,32 @@
 # Catálogo de componentes do tema V2
 
-Componentes SDC com schemas estritos (`additionalProperties: false`). Os nomes de prop e slot abaixo são os do `*.component.yml`. "Estado" indica o que foi entregue e verificado. Auditoria do catálogo em 2026-11-06: os 41 diretórios de `components/` têm entrada aqui, schema e story; não há entrada sem componente.
+Componentes SDC com schemas estritos (`additionalProperties: false`). Os nomes de prop e slot abaixo são os do `*.component.yml`. "Estado" indica o que foi entregue e verificado. Auditoria do catálogo em 2026-11-13: 117 diretórios têm metadados SDC; schemas e renderização isolada são conferidos pelos gates de `docs/gates.md`. Stories exemplificam variantes quando disponíveis.
 
 Prefixo de uso: `aculta420_v2:<nome>`. Em Twig, use `include` com `with_context = false`, ou `embed` quando o componente tem slots.
+
+## UI Patterns Library e Biblioteca de Layouts
+
+A UI Patterns Library descobre os componentes diretamente dos arquivos
+`*.component.yml` e suas stories; não há uma lista paralela para manter. Neste
+checkout há 127 manifests SDC e 188 stories. O Drupal precisa reconstruir seus
+caches de descoberta para refletir alterações no Runtime. Dois SDCs ainda não
+têm story (`sales-panel` e `secret-reveal`); os demais têm exemplos catalogados.
+
+O grupo `Layouts` também alimenta os plugins de `ui_patterns_layouts`, usados
+pelo Layout Builder. Os sete layouts declarados são `event-page-layout`,
+`layout-page`, `layout-section`, `layout-two-columns`, `layout-grid`,
+`layout-narrow` e `layout-full`. O gate de Runtime cobre hoje seis layouts
+compartilhados; `event-page-layout` tem regiões próprias do detalhe editorial
+de eventos e sua descoberta no seletor ainda precisa ser verificada no Runtime.
+
+As alterações desta sessão aparecem nas stories dos SDCs existentes: catálogo
+de eventos (`layout-grid`), contexto da Conta Studio (`layout-page`),
+Dashboard/Conta Studio (`account-experience-dashboard`,
+`account-experience-card`, `studio-calendar`, `studio-connections-block` e
+`studio-menu`) e a nova composição LMS `/ganjalab` (`lms-learning-dashboard`,
+`lms-learning-course-card`, `lms-certificate-card`, `heading`, `progress`,
+`empty-state` e `button`). Os SDCs próprios já são descobertos pelo grupo
+ACULTA; os layouts compartilhados são descobertos pelo grupo Layouts.
 
 ### article-authors — Autoria editorial
 
@@ -16,6 +40,194 @@ Envolve o `item_list` montado pelo bloco `aculta_index`; slots estritos sem
 props. O módulo preserva descoberta, permissão e cache das entidades
 relacionadas. O CSS da lista é local e só carrega quando o bloco é renderizado.
 Story: `related-content.default.story.yml`.
+
+### sales-panel — Relatórios da loja
+
+Casca compartilhada dos relatórios de vendas de produto e doações. Os controllers
+entregam as seções no slot `content`; consultas, permissões, filtros, tabelas,
+paginação e cache continuam no módulo `aculta_portal`. A folha local é anexada
+somente quando um relatório compõe o SDC.
+
+### search-preview — Prévia de busca
+
+Região acessível que recebe dica ou resultados pelo slot `content` e atributos
+por `attributes`. Wiki e Messenger compõem o SDC nos campos de prévia; as
+respostas assíncronas continuam geradas pelos módulos. CSS local com story
+`search-preview.default.story.yml`.
+
+### account-courses — Cursos da Conta
+
+Lista cursos preparados por `AccountCoursePresenter`; o controller conserva
+consulta, estado vazio, cache e ações autorizadas. O CSS local do SDC assume a
+grade e os cartões, inclusive metadados. Story: `account-courses.default.story.yml`.
+
+### portal-requirements — Relatório de requisitos
+
+Envolve as seções de requisitos, estado das integrações e tabelas do controller
+`PortalRequirementsController`. Cache e conteúdo permanecem no Portal; o asset
+do SDC assume o layout anteriormente mantido no mapa global. Story:
+`portal-requirements.default.story.yml`.
+
+### document-download — Download de documento
+
+Apresenta o link e os metadados de formato/tamanho que o formatter
+`DownloadWithMetaFormatter` prepara para cada arquivo. URL, nome, rótulo
+acessível e dados do arquivo continuam no módulo. Story:
+`document-download.default.story.yml`.
+
+### donation-presentation — Apresentação de doação
+
+Casca de apresentação para resumo do checkout, confirmação, valor e convite de
+conta. O módulo `aculta_donation` mantém cálculo, conteúdo, fluxo e cache; seus
+render arrays são fornecidos pelo slot `content`. CSS fica no componente. Story:
+`donation-presentation.default.story.yml`.
+
+### saved-content-page — Página de salvos e recomendações
+
+Recebe cabeçalho, abas, lista, estado vazio e paginação no slot `content`. O
+controller do Studio mantém consultas, autorização, cache e montagem dos cartões;
+o CSS local cobre somente a página `/salvos`. Story:
+`saved-content-page.default.story.yml`.
+
+### green-stash-page — Página Green Stash
+
+Recebe a composição de navegação, busca, formulários e listagens do Commerce. O
+tema envolve as rotas Green Stash com este SDC para anexar a folha visual apenas nesse fluxo;
+consultas, operações, acesso e cache permanecem nos módulos. Story:
+`green-stash-page.default.story.yml`.
+
+### studio-account-section-layout — Layout de seção da Conta
+
+Envolve o render array que combina navegação contextual e o formulário/conteúdo
+da seção. O módulo preserva `id`, atributos HTMX, autorização, cache e conteúdo;
+o CSS local apresenta o layout. Story:
+`studio-account-section-layout.default.story.yml`.
+
+### studio-revista-form — Formulário editorial do Studio
+
+Envolve o formulário Drupal de edição de revista somente quando ele é renderizado
+em rota `aculta_studio.*`. O Form API e suas operações permanecem no módulo;
+`studio-form` apresenta seus controles e este SDC mantém só a borda superior
+editorial. Story:
+`studio-revista-form.default.story.yml`.
+
+### studio-profile-editor — Editor privado do Perfil
+
+Mapeia o componente neutro `profile-editor` para SDC e mantém seus slots de
+identidade, biografia e redes sociais preparados pelos módulos. IDs, foco,
+attachments e metadados de cache são repassados ao SDC. A grade da composição é
+local; os links de `studio-profile-actions` têm alvo de toque no CSS local. O
+contexto de formulário continua compartilhado com o Studio. Story:
+`studio-profile-editor.default.story.yml`.
+
+### studio-course-authoring-page — Criação de curso no Studio
+
+Envolve a composição da rota `aculta_lms.course_create` para carregar o CSS da
+apresentação onde o formulário de criação realmente é servido. O SDC trata o
+cabeçalho e o retorno ao painel; o controller e o Form API do Group mantêm
+conteúdo, autorização, operações e cache. Story:
+`studio-course-authoring-page.default.story.yml`.
+
+### studio-shell — Casca do Studio
+
+Envolve o render array integral de cada rota `aculta_studio.*` após a composição
+dos SDCs filhos. Seu CSS contém tipografia e layout do Studio; o Form API usa
+`studio-form`, com skin carregada somente quando há um form em `studio-main`.
+A rota, permissões e cache
+permanecem nos módulos. Story: `studio-shell.default.story.yml`.
+O antigo estilo `studio-saved-summary` não pertence mais ao shell; `/salvos`
+tem apresentação própria em `saved-content-page`.
+
+### studio-form — Skin de formulário do Studio e LMS
+
+Envolve o render array de Form API somente sob a região `studio-main` das rotas
+do Studio e da criação de curso LMS. Campos, handlers, attachments e cache do
+formulário original são preservados no slot; o CSS da skin é asset local. Story:
+`studio-form.default.story.yml`.
+
+### studio-section-header — Cabeçalho de seção do Studio
+
+Envolve o render array do título e das ações na seção Marley. O conteúdo
+autorizado permanece no controller; o asset local cuida do alinhamento e dos
+resets de lista apenas quando esse cabeçalho é renderizado. Story:
+`studio-section-header.default.story.yml`.
+
+### discussion-topic-composer — Compositor de tópico do Fórum
+
+Recebe o Form API do nó de tópico pelo slot `form`; a folha do SDC agora apresenta
+o formulário diretamente, sem a antiga casca de cartão duplicada. Controller,
+validação, submit e permissões permanecem no Fórum. Story: a implementação
+executável `DiscussionTopicComposerStory`.
+
+### forum-list-page — Lista pública do Fórum
+
+Envolve o template da View pública, mantendo seus dados, tabs, pager e rows. O
+CSS da lista, categorias e painel lateral acompanha o SDC. Story:
+`forum-list-page.default.story.yml`.
+
+### forum-category-page — Página de categoria do Fórum
+
+Envolve a View de categoria e carrega o layout responsivo da coluna de tópicos
+e do painel lateral. Header, tabs, rows, pager e regras seguem como render arrays
+e SDCs existentes. Story: `forum-category-page.default.story.yml`.
+
+### forum-search-page — Busca do Fórum
+
+Envolve a saída padrão da View de busca e carrega o CSS de filtros e estado
+vazio. A sugestão Twig preserva exposed form, resultados, attachments, pager,
+footer e feed icons; query, filtros, acesso e cache continuam com Views/Search
+API. Story: `forum-search-page.default.story.yml`.
+
+Os estilos de apresentação da navegação JS de progresso, recuo hierárquico,
+foco e resposta agora acompanham `forum-post-card`, incluído nos templates de
+comentário compartilhados por Fórum, Revista, Wiki e LMS. A caixa editorial da
+discussão Wiki acompanha o SDC `wiki-entry`. Os render arrays Drupal continuam
+preservados.
+
+Os SDCs `lms-learning-journey` e `lms-learning-room` usam o indicador global de
+foco de `base.css`; seus CSS locais ficam com os estados e layouts próprios do
+LMS.
+
+### studio-listing-table — Tabela de listagem do Studio
+
+Anexa o estilo à região responsiva e às tabelas produzidas pelo construtor de
+listagens do Studio, sem adicionar um wrapper DOM próprio. Consulta, acesso,
+campos, operações e paginação ficam no módulo proprietário; a folha local cuida
+da leitura visual da tabela. Story:
+`studio-listing-table.default.story.yml`.
+
+
+### calendar-interactive — Calendário interativo
+
+Envolve os render arrays da grade DHTMLX, dos controles acessíveis e da agenda
+alternativa. O controller mantém a expansão de ocorrências, cache, `drupalSettings`
+e attachment da biblioteca funcional; o SDC é dono do layout e seu CSS usa os
+atributos `data-portal-ui` preservados para o JavaScript.
+
+### image-audit-report — Relatório de imagens
+
+Envolve o aviso e as tabelas somente de leitura do controller administrativo
+de imagens. O módulo mantém permissões, cálculo e cache; o CSS do espaçamento é
+local e só carrega na rota que apresenta o SDC.
+
+### secret-reveal — Revelação de credencial
+
+Envolve o valor escapado e a orientação do modal de segredos. A consulta,
+registro da revelação, autorização e `max-age: 0` permanecem no módulo de
+segredos; a folha do componente só carrega quando essa saída é renderizada.
+
+### consent-banner — Preferência de métricas
+
+Banner anônimo opcional, inserido em `page_bottom` quando a configuração está
+ativa. O módulo `aculta_statistics` controla a decisão/cookie e o JavaScript;
+marcação e estilos são do SDC e só entram na página nesse caso.
+
+### revista-publication — Publicação completa
+
+A folha do SDC declara `revista-publication.css`, incluindo o layout da
+metainformação e dos links de compartilhamento que o módulo entrega no slot
+`meta`. O CSS editorial acompanha o SDC no view mode full, sem biblioteca
+global de autoria.
 
 ### heading — Título semântico
 
@@ -33,8 +245,39 @@ Story: `related-content.default.story.yml`.
 - **Props:** `title`, `section_title`, `menu_items`, `accordion_items` e `logout`.
 - **Slots:** `content`.
 - **Story:** `account-shell.default.story.yml`.
+- **CSS:** navegação responsiva, conteúdo, foco, tabelas e ações da visão geral carregam pelo asset do SDC; os estilos do formulário de foto e outros elementos fora do shell permanecem na biblioteca contextual da Conta.
 - **Regra:** o H1 "Minha conta" é entregue pelo SDC `heading` (nível 1, faixa tricolor); o tema não lê usuário nem decide acesso.
 - **Estado:** SM do H1 atualizado em 2026-11-12; validação autenticada continua pendente.
+
+### account-terms-modal — Modal de aceite dos termos
+
+- **Papel:** apresenta o formulário de aceite fornecido pelo `aculta_portal` dentro do diálogo existente.
+- **Props/slots:** `title` e slot `content` com o Form API original.
+- **Story:** `account-terms-modal.default.story.yml`.
+- **CSS:** a lista de documentos usa o asset local do SDC; o wrapper preserva `id`, `hidden` e `data-dialog-title` usados pelo JavaScript do Portal.
+- **Estado:** schema estrito e render isolado cobertos pelo gate V2; validação no diálogo em runtime pendente.
+
+### account-profile-card — Cartão privado de perfil
+
+Envolve as composições de biografia e redes da Conta por seus tokens de
+apresentação, preservando os render arrays de `aculta_user`. Os estilos desses
+cartões agora carregam com o SDC nas rotas do dashboard e do Perfil Studio.
+Story: `account-profile-card.default.story.yml`.
+
+### account-experience-card — Cartão de experiência da Conta
+
+- **Papel:** experiência disponível no painel Minha Conta, em cartão ou faixa.
+- **Props:** `id`, `kind`, `icon`, `title`, `description`, `tag`, `url` e `action_label`.
+- **Slots:** nenhum.
+- **Story:** `account-experience-card.default.story.yml`.
+- **Regra:** o módulo entrega rótulos e destinos já autorizados; o SDC só apresenta os dados e não decide acesso.
+- **Estado:** renderizado diretamente pelo controller do Studio como componente; CSS carregado junto ao SDC.
+
+### account-experience-dashboard — Painel de experiências da Conta
+
+- **Props:** `show_identity`, `identity_name`, `identity_email`, `profile_url`, `experiences_title`, `experiences_description`, `account_url` e rótulos do atalho da conta.
+- **Slots:** menu, avatar, link público, calendário, conexões e render arrays dos cartões de experiência.
+- **Estado:** o provider do Studio compõe o SDC diretamente; identidade, autorização, cache e render arrays continuam nos módulos proprietários. CSS e JS do carrossel, com `core/drupal` e `core/once`, são assets do componente.
 
 ### document-card
 
@@ -86,9 +329,10 @@ Coluna de leitura de até 68 caracteres no slot `content`. Story:
 Conteúdo em largura total no slot `content`, sem limite de largura. Story:
 `layout-full.default.story.yml`.
 
-Os cinco layouts usam `group: Layouts` e são registrados automaticamente pelo
+Os layouts usam `group: Layouts` e são registrados automaticamente pelo
 `ui_patterns_layouts` (categoria `Layouts`, regiões iguais aos slots). O gate
-`validate-aculta420-layouts.php` verifica descoberta e renderização real.
+`validate-aculta420-layouts.php` verifica descoberta e renderização real dos
+seis layouts compartilhados.
 
 ### layout-page
 
@@ -167,6 +411,12 @@ preserva a associação `for`/`id` do controle e associa os IDs
 recebe `aria-invalid="true"` quando aplicável. O componente não cria nem altera
 controles Drupal e não valida dados.
 
+### support-form — Formulário de apoio
+
+Asset local para o formulário do Form API na rota `/apoio`; o SDC imprime o slot
+sem reescrever o `<form>`, seus handlers, cache ou mensagens. Props: nenhuma.
+Slot: `content`. Story: `support-form.default.story.yml`.
+
 ### progress
 
 Indicador HTML nativo `<progress>` com rótulo acessível e percentual visível
@@ -203,6 +453,8 @@ no módulo proprietário. Usa tokens semânticos V2 e não depende de JavaScript
 Regiões semânticas para o detalhe público de evento em ordem mobile-first.
 Props: nenhuma (`additionalProperties: false`). Slots: `title`, `highlight`,
 `essentials`, `content` e `sidebar`. Story: `event-page-layout.default.story.yml`.
+O CSS local também apresenta os render arrays de apoiadores e citações
+identificados por `EventEditorialPresenter` via `data-portal-ui`.
 Sem JavaScript. O componente não consulta entidade, mídia, datas ou acesso; o
 consumidor entrega os render arrays prontos e o `aculta_events` mantém tipo,
 permissões e cache.
@@ -216,6 +468,44 @@ de acesso como prop. Story: lms-lesson-page.default.story.yml. Sem JavaScript;
 tabelas rolam dentro do bloco em telas estreitas. O template mantém fallback ao
 render original caso a descoberta Drupal ainda não conheça o SDC.
 
+### lms-learning-dashboard
+
+Página nova da rota `/ganjalab`, composta diretamente pelo
+`LearnerDashboardComposer` como SDC. Props recebem apenas rótulos localizados;
+os slots recebem os cartões `lms-learning-course-card`, o CTA do catálogo e os
+certificados. LMS continua dono das matrículas, destinos, progresso, acesso e
+cache. Não usa mais os wrappers genéricos `context-header`, `card`,
+`content-grid` nem o mapa de tokens legado da home. O template inclui os SDCs
+`heading` e `empty-state`. Story: `lms-learning-dashboard.default.story.yml`.
+
+### lms-learning-course-card
+
+Cartão LMS próprio com progresso (SDC `progress`), estado de avaliação e ações
+canônicas de jornada/retomada. Props são projeções autorizadas do curso; links
+chegam nos slots como SDC `button`. Story: `lms-learning-course-card.default.story.yml`.
+
+### lms-certificate-card
+
+Certificado da conta com estado ativo/revogado, data localizada e ação de
+verificação pública. LMS prepara os dados e URL; o SDC controla a apresentação.
+Story: `lms-certificate-card.default.story.yml`.
+
+### lms-learning-journey
+
+Casca SDC consumida pelo nome neutro `lms-learning-journey` solicitado pelo
+`CourseJourneyPresentationHooks`; o slot `content` recebe o render array do
+`CourseJourneyComposer`, com resumo, progresso e lista autorizada. Cache e dados
+continuam no módulo. CSS contextual próprio e story
+`lms-learning-journey.default.story.yml`.
+
+### lms-learning-room
+
+Casca SDC para a sala de aula e formulário Drupal, consumida pelo nome neutro
+`lms-learning-room` no preprocess da rota de envio. O layout preserva o render
+array da atividade e o formulário no slot `content`; CSS responsivo só é
+carregado quando a sala é renderizada. Story:
+`lms-learning-room.default.story.yml`.
+
 ### lms-course-curriculum
 
 Composição da tela de currículo do educador. Props vazias; slots `header`,
@@ -225,14 +515,18 @@ O módulo mantém consultas, rotas, permissões, cache e o JavaScript de ordena�
 este SDC é dono da estrutura visual e do CSS responsivo. Story:
 `lms-course-curriculum.default.story.yml`. Sem JavaScript próprio.
 Os estados de publicação recebem classes locais do SDC e tokens semânticos de
-status.
+status. As classes do currículo são emitidas diretamente nos render arrays pelo
+módulo; não passam pela tradução genérica `data-portal-ui`.
 
 ### lms-course-materials
 
 Seção de documentos privados do curso. Props vazias; slots `title`,
 `description`, `add`, `items`, `empty` e `unavailable` recebem texto/link/lista
 já filtrados pelo módulo `aculta_lms`. O módulo mantém acesso e cache dos
-documentos; o SDC apresenta a lista. Story:
+documentos; o SDC apresenta a lista. Na estrutura do curso, o hook de apresentação
+do tema encaixa o render array de recursos no slot `resources` do currículo,
+mantendo a regra de acesso/cache no módulo e a apresentação que já vinha do
+render array. Story:
 `lms-course-materials.default.story.yml`. Sem JavaScript.
 
 O formatter H5P usa `layout-section` para envolver documentos PDF relacionados
@@ -279,6 +573,7 @@ etapas; controle de fluxo e permissões permanecem no módulo proprietário
 - **Props:** `brand_home_url`, `logo_base_url`, `logo_alt`, `is_account_domain`, `show_utility_bar`, `account_authenticated`, `cart_*`, `messages_*`, `alerts_*`, `links`.
 - **Slots:** `search`, `account_menu`.
 - **JS:** `multidomain-bar.js` (login e busca por HTMX, com fragmento fornecido pelo Portal; gatilhos nativos preservados como fallback e `htmx:abort` ao fechar).
+- **CSS:** estilos de layout dos fragmentos de login e cadastro HTMX acompanham o asset do SDC, não o mapa global.
 - **Estado:** entregue. Verificada em 320, 390, 768, 959, 960 e 1440 px, claro/escuro, zoom 200%, anônimo e autenticado (gavetas e conta de teste); leitor de tela permanece pendente.
 
 ### navigation-bar — Navegação principal
@@ -314,7 +609,7 @@ etapas; controle de fluxo e permissões permanecem no módulo proprietário
 ### messenger-trigger — Mensagens
 - **Papel:** botão com contagem de mensagens não lidas e diálogo de conversas.
 - **Props:** `href`, `all_href`, `count`.
-- **CSS:** `messenger-trigger.css` contém a gaveta, conversas e estados HTMX; o asset é anexado junto do SDC, que só é incluído quando a barra tem URL de mensagens.
+- **CSS:** `messenger-trigger.css` contém gaveta, conversas, avisos agrupados e estados HTMX; o asset é anexado junto do SDC, que só é incluído quando a barra tem URL de mensagens.
 - **Estado:** entregue; validar visualmente em conta autenticada continua pendente.
 
 ### cart-offcanvas — Carrinho
@@ -360,7 +655,7 @@ autorizada.
 - **Papel:** cartão para eventos e pontos culturais.
 - **Props:** `title`, `url`, `category`, `date`, `location`, `summary`, `variant` (`default` ou `compact`), `accent` (`green`, `yellow`, `red` ou ausente), `cancelled` e `cancel_label`. Stories DRAFT de acento: `card-cultural.accent-draft.story.yml`, `card-cultural.accent-yellow-draft.story.yml` e `card-cultural.accent-red-draft.story.yml`; story de cancelamento: `card-cultural.event-cancelled.story.yml`. O tema recebe dados resolvidos pelo Portal; stories não são selecionadas pelo tema.
 - **Slots:** `image`, `actions`.
-- **Estado:** apresentação consumida pelo catálogo público de Eventos via override fino no tema; dados, ACL, filtro e cache continuam no módulo owner. Faixa de acento permanece separada e DRAFT até D1 (`domain_presentation.accent`). Render do SDC no tema ativo e browser visual aguardam cutover/runtime.
+- **Estado:** apresentação consumida pelo catálogo público de Eventos via override fino no tema; estilos de título, metadados e cancelamento são locais ao SDC. Dados, ACL, filtro e cache continuam no módulo owner. Faixa de acento permanece separada e DRAFT até D1 (`domain_presentation.accent`). Browser visual aguarda validação autenticada/runtime.
 
 ### forum-topic — Tópico do Fórum
 - **Papel:** teaser e conteúdo completo do tópico, preservando autoria, categorias, favoritos e discussão nos render arrays Drupal.
@@ -391,6 +686,14 @@ autorizada.
 - **Ponte com `aculta_maps`:** `templates/aculta-maps-popup-content.html.twig` inclui o SDC com as props do hook `aculta_maps_popup_content`; sem o tema, o módulo usa o fallback neutro. O conteúdo fica num `<template>` inerte clonado pelo Leaflet; nada de HTML ou SVG vai por `drupalSettings`.
 - **Stories:** `default` (todas as props) e `minimal` (só título).
 
+### map-canvas — Superfície de mapa
+
+Casca visual do render array do `MapRenderer`; no diretório `/mapa` envolve a
+página da lista e, em outras páginas, envolve o mapa individual. O slot
+`content` preserva os attachments de Leaflet, templates e cache. O CSS local
+cuida do mapa, atribuição, aviso de privacidade e links de rota sem anexar essas
+regras globalmente. Story: `map-canvas.default.story.yml`.
+
 ### audio-player — Player de áudio
 - **Papel:** player com controles nativos acessíveis.
 - **Props:** `src`, `title`, `artist`.
@@ -408,9 +711,9 @@ autorizada.
 
 ### status-messages — Mensagens de estado
 - **Papel:** mensagem anunciada a tecnologias assistivas, incluindo estados do carrinho.
-- **Props:** `type` (`status`, `warning` ou `error`), `messages`, `role` opcional (`status`/`alert`), `dismissible` e `close_label`.
-- **Integração:** `portal-cart-status.html.twig` converte sucesso do Portal para `status`, preserva erro/role, link e atributos consumidos pelo JS; o fallback do módulo continua sem estilos.
-- **Estado:** entregue.
+- **Props:** `type` (`status`, `info`, `warning` ou `error`), `messages` ou slot `content` para render arrays com links/ações, `role` opcional (`status`/`alert`), `dismissible` e `close_label`.
+- **Integração:** `portal-cart-status.html.twig` converte sucesso do Portal para `status`, preserva erro/role, link e atributos consumidos pelo JS.
+- **Estado:** avisos próprios de Portal, Events, Maps, segredos, doação, H5P e UI Library compõem este SDC ou assets locais de módulo. A compatibilidade `.messages` permanece para módulos contrib que ainda emitem esse contrato.
 
 ### social-links-page — Micropágina de links
 - **Papel:** apresenta título, descrição, identidade pública autorizada e links preparados pelo módulo `aculta_linkweed` (o antigo `aculta_links` foi removido em 2026-11-05).
@@ -418,6 +721,7 @@ autorizada.
 - **Slots:** `owner_identity`, `links` (render arrays do Portal).
 - **Story:** `social-links-page.default.story.yml`.
 - **Regra:** o tema só apresenta os dados do módulo; não consulta dono, entidades ou destinos. Desde 2026-11-12 o H1 é renderizado pelo SDC `heading` (nível 1, faixa tricolor), mantendo o `id` usado por `aria-labelledby`.
+- **CSS:** listas e canais usam os atributos neutros `data-portal-ui` diretamente; o estilo acompanha este SDC e o SDC `site-footer`, sem classes de ponte no mapa global.
 - **Estado:** adapter e componente implementados em C4; H1 pelo SDC em 2026-11-12; validação visual pendente.
 
 ### icon — Ícone
@@ -441,6 +745,14 @@ autorizada.
 - **Story:** `profile-details.default.story.yml`.
 - **Regra:** o tema não carrega usuário/Profile, não transforma render arrays em texto ou links e não decide autorização/visibilidade.
 - **Estado:** `profile-bio` e `profile-social` mapeados pelo preprocess de apresentação. Schema e render Drupal passaram; captura pareada autenticada em `/meu-perfil` passou 97/97 verificações (22 ignoradas, zero falhas), em claro/escuro a 320/1440 px, com títulos acessíveis, foco por teclado e zero overflow. Evidências em `$SUITE_OUT/layouts-purpose-studio-profile-details-paired-20261106/{before,after}/`.
+
+### public-profile-page — Página de perfil público
+
+Host de asset sem wrapper DOM adicional para a saída autorizada do perfil
+público. A rota `aculta_user.perfil_publico` move o render array raiz para seu
+slot; identidade, relacionamentos, cache e política de privacidade continuam no
+Portal. Props: nenhuma. Slot: `content`. Story:
+`public-profile-page.default.story.yml`.
 
 ### revista-teaser — Cartão editorial
 - **Papel:** substitui a apresentação V1 do teaser de publicação na listagem da Revista.
@@ -513,7 +825,7 @@ Cada entrada tem: papel, props, slots, JavaScript (se houver), estado e a regra 
 - **Props:** `author_name` (string, obrigatório), `timestamp`, `author_posts`, `author_reactions` (opcionais).
 - **Slots:** `avatar`, `body`, `actions`, `reactions_slot`.
 - **Story:** `forum-reply-mirror.default.story.yml`.
-- **Regra:** desktop (a partir de 48rem) inverte colunas e faixa; mobile (abaixo de 48rem) muda só a faixa de lado. Faixa de destaque vermelha (`--button-danger-bg`) e linha acima das ações verde (`--color-brand-primary`). Os comentários pares de `field_aculta_discussion` usam as mesmas regras em `src/styles/forum.css`.
+- **Regra:** desktop (a partir de 48rem) inverte colunas e faixa; mobile (abaixo de 48rem) muda só a faixa de lado. Faixa de destaque vermelha (`--button-danger-bg`) e linha acima das ações verde (`--color-brand-primary`). Os comentários pares de `field_aculta_discussion` usam as mesmas regras em `forum-post-card.css`.
 - **Estado:** novo; story, README e documentação incluídos.
 
 ### forum-opening-post — Postagem de Abertura do Tópico
@@ -605,3 +917,10 @@ os 22 displays Layout Builder com props/slots vazios. A nova story
 `layout-section.green-soft.story.yml` exemplifica a seção verde com
 `surface` raised neutra no interior. Requer aceite real da UI Library
 e do plugin de UI Styles da seção.
+# Painéis de relatório
+
+Os relatórios de vendas de produto e de doações compõem `sales-panel`, que é dono apenas da casca visual e do espaçamento. Seções, tabelas, paginação, filtros e consultas permanecem nos controllers e builders do módulo `aculta_portal`; ambos os controllers preservam a variação de cache por `url.query_args` e `max-age: 0`.
+
+
+O SDC `site-footer` é o único responsável pela apresentação da região Drupal
+`footer`; `layout.css` não replica mais a grade e a navegação dessa região.
