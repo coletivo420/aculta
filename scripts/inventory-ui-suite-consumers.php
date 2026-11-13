@@ -115,7 +115,22 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
       && ($rowPatterns['component_id'] ?? NULL) === 'aculta420_v2:revista-album-card';
     $isUpstreamVvjsExample = preg_match('/^vvj[a-z]_example$/', $viewId) === 1;
     $isWebformSubmissions = $viewId === 'webform_submissions';
-    $isNativeCoreView = in_array($viewId, ['media_library', 'group_members', 'group_nodes', 'profiles', 'comments_recent', 'commerce_user_orders', 'courses', 'aculta_forum_lms_admin_comments', 'aculta_magazine_admin_comments', 'aculta_activities', 'aculta_forum_search', 'aculta_forum_unread_topics', 'courses_catalog', 'perfis_publicos'], TRUE);
+    $isNativeCoreView = in_array($viewId, [
+      'media_library',
+      'group_members',
+      'group_nodes',
+      'profiles',
+      'comments_recent',
+      'commerce_user_orders',
+      'courses',
+      'aculta_forum_lms_admin_comments',
+      'aculta_magazine_admin_comments',
+      'aculta_activities',
+      'aculta_forum_search',
+      'aculta_forum_unread_topics',
+      'courses_catalog',
+      'perfis_publicos',
+    ], TRUE);
     $forumTopicFieldsTemplate = $theme . '/templates/views/views-view-fields--aculta-forum-public-topics.html.twig';
     $isForumTopicsSdc = $viewId === 'aculta_forum_public_topics'
       && (string) $displayId !== 'default'
@@ -477,7 +492,12 @@ foreach (glob($sync . '/block.block.*.yml') ?: [] as $path) {
     array_keys($block['visibility'] ?? []),
     array_values($block['visibility'] ?? []),
   ));
-  $isDonationSdcPlacement = in_array($pluginId, ['aculta_donation_quick', 'aculta_donation_donate', 'aculta_events_upcoming', 'aculta_institution_bar'], TRUE);
+  $isDonationSdcPlacement = in_array($pluginId, [
+    'aculta_donation_quick',
+    'aculta_donation_donate',
+    'aculta_events_upcoming',
+    'aculta_institution_bar',
+  ], TRUE);
   $isNativeBlockPlacement = str_starts_with($pluginId, 'system_')
     || str_starts_with($pluginId, 'local_')
     || str_starts_with($pluginId, 'block_content:')
@@ -577,14 +597,20 @@ foreach ($templateRoots as $owner => $templateRoot) {
     $isPortalComponentAdapter = $file->getFilename() === 'portal-component.html.twig';
     $isPortalComponentThemeAdapter = $isPortalComponentAdapter && str_starts_with($relativePath, 'web/themes/');
     $isNeutralPortalElement = $file->getFilename() === 'portal-element.html.twig';
-    $isNeutralDonationWrapper = in_array($file->getFilename(), ['aculta-donation-summary.html.twig', 'aculta-donation-summary-container.html.twig'], TRUE);
+    $isNeutralDonationWrapper = in_array($file->getFilename(), [
+      'aculta-donation-summary.html.twig',
+      'aculta-donation-summary-container.html.twig',
+    ], TRUE);
     $isTermsModalAdapter = $file->getFilename() === 'aculta-portal-account-terms-modal.html.twig';
     $isThemeDocument = $file->getFilename() === 'html.html.twig' && str_starts_with($relativePath, 'web/themes/');
     $isRegionWrapper = $file->getFilename() === 'region--footer.html.twig';
     $isUiPatternsLibraryTemplate = str_starts_with($file->getFilename(), 'ui-patterns-');
     $isMapsPopupWrapper = $file->getFilename() === 'aculta-maps-popup-template.html.twig';
     $isMailEnvelope = $file->getFilename() === 'aculta-mailer-wrap.html.twig';
-    $isFormFragment = in_array($file->getFilename(), ['aculta-portal-photo-editor.html.twig', 'portal-cart-panel.html.twig'], TRUE);
+    $isFormFragment = in_array($file->getFilename(), [
+      'aculta-portal-photo-editor.html.twig',
+      'portal-cart-panel.html.twig',
+    ], TRUE);
     $isShellFallback = $file->getFilename() === 'aculta-portal-shell.html.twig' && str_starts_with($relativePath, 'web/modules/');
     $isShippingCalculator = $file->getFilename() === 'aculta-shipping-calculator.html.twig';
     $moduleThemeAdapters = str_starts_with($relativePath, 'web/modules/')
@@ -616,6 +642,11 @@ foreach ($templateRoots as $owner => $templateRoot) {
     if ($file->getFilename() === 'aculta-event-catalogue-card.html.twig') {
       $viewConsumer = 'aculta_events:aculta_event_catalogue_card; eventos_publicos:block_1';
       $viewConfig = 'config/sync/views.view.eventos_publicos.yml; web/modules/custom/aculta_portal/modules/aculta_events/aculta_events.module';
+    }
+    $isUpcomingEventsBlock = $file->getFilename() === 'aculta-events-upcoming-block.html.twig';
+    if ($isUpcomingEventsBlock) {
+      $viewConsumer = 'aculta_events_upcoming:build; block instance aculta420_v2_aculta_events_upcoming';
+      $viewConfig = 'web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/Block/UpcomingEventsBlock.php; config/sync/block.block.aculta420_v2_aculta_events_upcoming.yml';
     }
     $templateUiPatterns = 'not_detected_in_template';
     if ($isUiPatternsLibraryTemplate) {
@@ -666,42 +697,54 @@ foreach ($templateRoots as $owner => $templateRoot) {
       'display_plugin' => 'twig-template-suggestion',
       'row_plugin' => '',
       'style_plugin' => '',
-      'ui_patterns_configured' => $components !== [] ? implode(',', $components) : $templateUiPatterns,
+      'ui_patterns_configured' => $components !== []
+        ? implode(',', $components)
+        : ($isUpcomingEventsBlock
+          ? 'sdc_candidate:aculta420_v2:events-upcoming-block'
+          : $templateUiPatterns),
       'status' => $isSdcAdapter
         ? 'UI_SUITE_NATIVE'
         : (($isPortalComponentThemeAdapter || $isUiPatternsLibraryTemplate)
           ? 'UI_SUITE_NATIVE'
           : (($isPortalComponentAdapter || $isNeutralPortalElement || $isNeutralDonationWrapper || $isTermsModalAdapter || $isThemeDocument || $isRegionWrapper || $isMapsPopupWrapper || $isMailEnvelope || $isFormFragment || $isShellFallback || $isShippingCalculator || $isNeutralPortalButtonFallback)
           ? 'FUNCTIONAL_NATIVE_EXCEPTION'
-          : ($isThemeAdaptedModuleFallback
+          : ($isUpcomingEventsBlock
+            ? 'MIGRATION_IN_PROGRESS'
+            : ($isThemeAdaptedModuleFallback
             ? 'FUNCTIONAL_NATIVE_EXCEPTION'
-            : ($isBypassedViewTemplate ? 'LEGACY_OBSOLETE' : 'MIGRATION_IN_PROGRESS')))),
+            : ($isBypassedViewTemplate ? 'LEGACY_OBSOLETE' : 'MIGRATION_IN_PROGRESS'))))),
       'replacement_or_action' => $isSdcAdapter
         ? 'Keep as thin adapter; directly composes ' . implode(', ', $components) . ' and preserves Drupal render contract'
         : ($isPortalComponentThemeAdapter
           ? 'Keep as the theme adapter; preprocess_aculta_portal_component maps the neutral name to empty-state, tabs, author-card or profile-details SDCs'
           : (($isPortalComponentAdapter || $isNeutralPortalElement || $isNeutralPortalButtonFallback)
           ? 'Keep only as the theme-independent functional fallback; presentation is owned by the ACULTA420 theme adapter'
-          : ($isThemeAdaptedModuleFallback
+            : ($isUpcomingEventsBlock
+              ? 'Migrate the Events block to the existing events-upcoming-block SDC; preserve canonical URLs, empty state and render cache metadata, then remove the module theme hook/template'
+              : ($isThemeAdaptedModuleFallback
             ? 'Keep as the theme-independent Drupal render fallback; matching ACULTA420 theme adapter owns presentation through ' . implode(', ', array_unique(array_merge(...array_column($moduleThemeAdapters, 'components')))) . ' SDC'
             : ($isBypassedViewTemplate
               ? 'Obsolete: the configured UI Patterns row renders this display through its SDC and bypasses this Views field/unformatted template; remove after authorized Runtime cutover confirms the matching Sync display'
-              : 'Map this template suggestion and its data/access/cache contract to an existing SDC plus the appropriate UI Suite integration; do not remove before replacement proof')))),
+              : 'Map this template suggestion and its data/access/cache contract to an existing SDC plus the appropriate UI Suite integration; do not remove before replacement proof'))))),
       'risk_or_evidence_gap' => $isSdcAdapter
         ? 'SDC inclusion is source-verified; Runtime output, access and cache equivalence remain unverified'
         : ($isNeutralPortalButtonFallback
           ? 'PortalButton render element and theme hook are source-verified; fallback preserves semantic link/button behavior without design classes; active-theme rendering still needs Runtime output verification'
-          : ($isThemeAdaptedModuleFallback
+          : ($isUpcomingEventsBlock
+            ? 'UpcomingEventsBlock::build() -> aculta_events_upcoming_block; block instance aculta420_v2_aculta_events_upcoming; candidate replacement aculta420_v2:events-upcoming-block is not yet called'
+            : ($isThemeAdaptedModuleFallback
             ? 'Module fallback and matching V2 theme SDC adapter are source-verified; Runtime output is not reobserved in this inventory run'
             : ($isBypassedViewTemplate
               ? 'Config Sync declares ui_patterns row and SDC component for this display; current Runtime config and rendered output are not observed'
-              : 'Template is an active custom presentation candidate; exact consumers, functional responsibilities and SDC mapping need file/API review'))),
+              : 'Template is an active custom presentation candidate; exact consumers, functional responsibilities and SDC mapping need file/API review')))),
       'rollback' => 'Restore this template from the immediately preceding commit; no entity data changes',
-      'detected_consumers' => $isNeutralPortalButtonFallback
+      'detected_consumers' => $isUpcomingEventsBlock
+        ? 'UpcomingEventsBlock::build(); aculta_events_upcoming theme hook; block.block.aculta420_v2_aculta_events_upcoming; existing SDC aculta420_v2:events-upcoming-block is not yet called'
+        : ($isNeutralPortalButtonFallback
         ? 'PortalButton render element; ' . $viewConsumer . '; web/themes/custom/aculta420_v2/templates/aculta-portal-button.html.twig -> aculta420_v2:button'
         : ($isThemeAdaptedModuleFallback
           ? 'Module theme hook; ' . implode(', ', array_column($moduleThemeAdapters, 'path')) . ' -> ' . implode(',', array_unique(array_merge(...array_column($moduleThemeAdapters, 'components'))))
-          : $viewConsumer),
+          : $viewConsumer)),
       'runtime_status' => 'not_observed',
     ];
   }
@@ -715,6 +758,7 @@ $references = array_fill_keys(array_keys($componentIds), []);
 $scanRoots = [
   $customModules,
   $theme . '/templates',
+  $theme . '/components',
   $theme . '/src',
   $sync,
 ];
@@ -731,9 +775,21 @@ foreach ($scanRoots as $scanRoot) {
     if (!is_string($contents)) {
       continue;
     }
+    $relativePath = relative_path($root, $file->getPathname());
+    // Stories document examples, tests assert behavior, and a component's own
+    // files are not production consumers of that component.
+    if (str_ends_with($relativePath, '.story.yml')
+      || str_contains($relativePath, '/tests/')
+      || str_contains($relativePath, '/test/')) {
+      continue;
+    }
     foreach ($componentIds as $componentId => $_manifest) {
+      $componentDirectory = 'web/themes/custom/aculta420_v2/components/' . $componentId . '/';
+      if (str_starts_with($relativePath, $componentDirectory)) {
+        continue;
+      }
       if (preg_match('/aculta420_v2:' . preg_quote($componentId, '/') . '\b/', $contents) === 1) {
-        $references[$componentId][] = relative_path($root, $file->getPathname());
+        $references[$componentId][] = $relativePath;
       }
     }
   }

@@ -1,5 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 version: 0.1.0-dev.2
 state: Dev
-next_phase: 'Confirmar no Runtime o redirecionamento do alias administrativo para UI Patterns Library; avaliar retirada futura do alias após compatibilidade.'
-progress_note: 'Catálogo e prévias próprias de blocos removidos. A rota ACULTA legada mantém acesso restrito no MAIN e redireciona ao overview oficial da UI Patterns Library, fonte única de SDCs e stories. Gate e teste Unit devem validar o redirecionamento; Runtime ainda não revalidado.'
+next_phase: 'Desinstalar aculta_ui_library no Runtime em janela estrutural aprovada; depois remover completamente o código, testes, rota de compatibilidade e gates específicos. Manter ui_patterns_library habilitada.'
+progress_note: 'Decisão do responsável em 2026-11-13: remover o módulo customizado por completo e manter ui_patterns_library. Config Sync já omite aculta_ui_library, mas Drush read-only confirmou em 2026-11-13 que ambos os módulos seguem habilitados no Runtime; core.extension está em drift. Runtime Sync está BLOCKED/RX: worktree suja em 141 caminhos, checkout compartilhado com Apache e três drifts (aculta420_v2.settings, core.entity_view_display.block_content.aculta_institution.footer e core.extension). Não remover arquivos nem executar uninstall/import/cache rebuild até backup/restore comprovados e preflight estrutural liberado.'
