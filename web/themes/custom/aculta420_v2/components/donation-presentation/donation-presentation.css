@@ -1,0 +1,44 @@
+.donation-presentation--summaries {
+  display: grid;
+  gap: 1rem;
+}
+
+.donation-presentation--summary,
+.donation-presentation--thanks {
+  padding: 1rem;
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-base);
+  background: var(--color-surface-raised);
+}
+
+.donation-presentation--thanks {
+  text-align: center;
+}
+
+.donation-presentation--amount {
+  margin-block: 1rem;
+}
+
+.donation-presentation__amount {
+  margin-block: 0;
+  font-size: 1.75rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.donation-presentation__donor { font-weight: 600; }
+.donation-presentation__honor { font-style: italic; }
+.donation-presentation__clause { color: var(--color-text-muted); }
+.donation-presentation__document-link { color: var(--color-brand-primary); }
+.donation-presentation__invite { margin-block-start: 1rem; }
+
+.donation-presentation__monthly {
+  display: inline-flex;
+  align-items: center;
+  padding: .125rem .5rem;
+  color: var(--color-text-primary);
+  border-radius: var(--radius-full);
+  background: var(--color-surface-highlight);
+  font-size: .875rem;
+}

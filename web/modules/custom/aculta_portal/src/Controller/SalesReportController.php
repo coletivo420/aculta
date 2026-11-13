@@ -68,11 +68,13 @@ final class SalesReportController implements ContainerInjectionInterface {
     }
 
     return [
-      '#type' => 'container',
-      '#attributes' => ['data-portal-ui' => 'sales-panel'],
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:sales-panel',
+      '#slots' => ['content' => [
       'por_variacao' => $this->secao($this->t('Vendas por variação'), $this->tabelaPorVariacao($filtros)),
       'por_periodo' => $this->secao($this->t('Vendas por período'), $this->tabelaPorPeriodo($filtros)),
       'pedidos' => $this->secao($this->t('Pedidos e pagamentos'), $this->pedidosTabela->construir($filtros, SalesReportQuery::ESCOPO_PRODUTO, $this->paginaAtual($request), 'aculta_portal.relatorio_vendas', $this->filtrosDaUrl($request))),
+      ]],
       '#cache' => ['max-age' => 0, 'contexts' => ['url.query_args']],
     ];
   }
@@ -90,7 +92,6 @@ final class SalesReportController implements ContainerInjectionInterface {
       'titulo' => [
         '#type' => 'html_tag',
         '#tag' => 'h2',
-        '#attributes' => ['data-portal-ui' => 'sales-heading'],
         '#value' => $titulo,
       ],
       'conteudo' => $conteudo,

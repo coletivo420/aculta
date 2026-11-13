@@ -1,15 +1,15 @@
 {% set classes = ['card-cultural', 'card-cultural--' ~ (variant|default('default'))] %}
 {% if accent %}{% set classes = classes|merge(['card-cultural--accent-' ~ accent]) %}{% endif %}
-{% set event_tokens = cancelled ? 'event-card event-card-cancelled' : 'event-card' %}
-<article{{ attributes.addClass(classes).setAttribute('data-portal-ui', event_tokens) }}>
+{% if cancelled %}{% set classes = classes|merge(['card-cultural--cancelled']) %}{% endif %}
+<article{{ attributes.addClass(classes) }}>
   {% if image %}<div class="card-cultural__image">{{ image }}</div>{% endif %}
   <div class="card-cultural__body">
-    {% if category %}<div class="card-cultural__category" data-portal-ui="event-card-type">{{ include('aculta420_v2:badge', { label: category, variant: 'primary' }, with_context = false) }}</div>{% endif %}
-    <h2 class="card-cultural__title" data-portal-ui="event-card-title">{% if url %}<a href="{{ url }}">{{ title }}</a>{% else %}{{ title }}{% endif %}</h2>
-    {% if date %}<p class="card-cultural__metadata card-cultural__date" data-portal-ui="event-card-meta">{{ include('aculta420_v2:icon', { name: 'calendar-blank', variant: 'duotone', size: 'sm' }, with_context = false) }}<span>{{ date }}</span></p>{% endif %}
-    {% if location %}<p class="card-cultural__metadata card-cultural__location" data-portal-ui="event-card-meta">{{ include('aculta420_v2:icon', { name: 'map-pin', variant: 'duotone', size: 'sm' }, with_context = false) }}<span>{{ location }}</span></p>{% endif %}
-    {% if summary %}<div class="card-cultural__summary" data-portal-ui="event-card-subtitle">{{ summary }}</div>{% endif %}
-    {% if cancelled %}<p role="status" data-portal-ui="event-card-cancel-status">{{ cancel_label|default('Evento cancelado'|t) }}</p>{% endif %}
+    {% if category %}<div class="card-cultural__category">{{ include('aculta420_v2:badge', { label: category, variant: 'primary' }, with_context = false) }}</div>{% endif %}
+    <h2 class="card-cultural__title">{% if url %}<a href="{{ url }}">{{ title }}</a>{% else %}{{ title }}{% endif %}</h2>
+    {% if date %}<p class="card-cultural__metadata card-cultural__date">{{ include('aculta420_v2:icon', { name: 'calendar-blank', variant: 'duotone', size: 'sm' }, with_context = false) }}<span>{{ date }}</span></p>{% endif %}
+    {% if location %}<p class="card-cultural__metadata card-cultural__location">{{ include('aculta420_v2:icon', { name: 'map-pin', variant: 'duotone', size: 'sm' }, with_context = false) }}<span>{{ location }}</span></p>{% endif %}
+    {% if summary %}<div class="card-cultural__summary">{{ summary }}</div>{% endif %}
+    {% if cancelled %}<p class="card-cultural__cancel-status" role="status">{{ cancel_label|default('Evento cancelado'|t) }}</p>{% endif %}
     {% if actions %}<div class="card-cultural__actions">{{ actions }}</div>{% endif %}
   </div>
 </article>

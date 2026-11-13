@@ -1,40 +1,20 @@
 /* ACULTA content (portado do V1 em 2026-11-05). Estado: DEFERRED (sem captura visual). */
 
-.aculta-panel__body:last-child {
-  margin-bottom: 0;
-}
-
-.aculta-panel,
-.aculta-editorial-list .views-row {
-  background-color: var(--color-surface-raised);
-}
-
-.aculta-panel,
-.aculta-editorial-list .views-row {
-  border: 1px solid var(--color-border);
-  border-top: 3px solid var(--color-brand-highlight);
-  border-radius: var(--radius-base);
-}
-
-.aculta-panel,
-.aculta-editorial-list .views-row {
+.aculta-panel {
   transition: border-color var(--motion-base) ease, box-shadow var(--motion-base) ease, transform var(--motion-base) ease;
+  border-top: 3px solid var(--color-brand-highlight);
 }
 
-.aculta-panel:is(:hover, :focus-within),
-.aculta-editorial-list .views-row:is(:hover, :focus-within) {
+.aculta-panel:is(:hover, :focus-within) {
   transform: translateY(-2px);
   border-color: var(--color-brand-highlight);
   box-shadow: var(--shadow-raised);
 }
 
 .aculta-category {
-  line-height: 1.5;
-}
-
-.aculta-category {
   color: var(--color-text-primary);
   font-weight: 600;
+  line-height: 1.5;
 }
 
 .field--name-field-editorial-category .aculta-category {

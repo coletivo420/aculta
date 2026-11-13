@@ -23,11 +23,21 @@
   color: var(--color-text-secondary);
 }
 
+.social-links-page__links .aculta-links-page__link {
+  color: var(--color-text-muted);
+}
+
 .social-links-page__links [data-portal-ui~="social-links-list"] {
   display: grid;
   margin: var(--spacing-md) 0 0;
   padding: 0;
   list-style: none;
+  gap: var(--spacing-sm);
+}
+
+.social-links-page__links [data-portal-ui~="social-links-button-list"] {
+  display: grid;
+  margin-block-start: var(--spacing-md);
   gap: var(--spacing-sm);
 }
 

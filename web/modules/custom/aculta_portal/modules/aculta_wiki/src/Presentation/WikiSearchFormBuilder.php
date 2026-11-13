@@ -58,21 +58,21 @@ final class WikiSearchFormBuilder implements WikiSearchFormBuilderInterface {
         ],
       ],
       'preview' => [
-        '#type' => 'container',
-        '#attributes' => [
+        '#type' => 'component',
+        '#component' => 'aculta420_v2:search-preview',
+        '#props' => ['attributes' => new \Drupal\Core\Template\Attribute([
           'id' => 'aculta-wiki-search-preview',
-          'data-portal-ui' => 'search-preview',
           'role' => 'region',
           'aria-label' => (string) $this->translation->translate('Prévia dos resultados da busca'),
           'aria-live' => 'polite',
           'hidden' => TRUE,
-        ],
-        'hint' => [
+        ])],
+        '#slots' => ['content' => ['hint' => [
           '#theme' => 'aculta_portal_element',
           '#tag' => 'p',
           '#element_attributes' => ['data-portal-ui' => 'hint'],
           '#value' => (string) $this->translation->translate('Digite pelo menos @n caracteres para ver resultados.', ['@n' => SearchPageController::MIN_CHARS]),
-        ],
+        ]]],
       ],
       'submit' => [
         '#type' => 'submit',

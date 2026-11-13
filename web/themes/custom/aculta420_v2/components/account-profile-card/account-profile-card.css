@@ -1,0 +1,75 @@
+.account-profile-card .portal-account-bio h3 {
+  margin-block-end: .25rem;
+}
+
+.account-profile-card .portal-account-bio .form-item {
+  margin-block: 0;
+}
+
+.account-profile-card .portal-account-bio .portal-account-bio__edit {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  margin-block-start: 0;
+  margin-inline-start: auto;
+  padding-block: 0;
+}
+
+.account-profile-card .portal-account-bio .form-textarea-wrapper {
+  margin-block-end: 0;
+}
+
+.account-profile-card .portal-account-bio__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: .5rem;
+  margin-block-start: 1rem;
+}
+
+.account-profile-card .portal-account-social {
+  margin-block-start: 1rem;
+  font-size: .875rem;
+}
+
+.account-profile-card .portal-account-social h4 {
+  margin-block-end: .25rem;
+  font-size: 1rem;
+}
+
+.account-profile-card .portal-account-social__list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+  gap: .5rem;
+}
+
+.account-profile-card .portal-account-social__item {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  padding: .5rem .75rem;
+  border: 1px solid var(--color-border);
+  border-radius: .5rem;
+  background: transparent;
+}
+
+.account-profile-card .portal-account-social__text {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-inline-size: 0;
+}
+
+.account-profile-card .portal-account-social__name {
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.account-profile-card .portal-account-social__edit {
+  margin-inline-start: auto;
+  padding: 0;
+  font-size: 0;
+}
+
+.account-profile-card .portal-account-social__edit::before {
+  font-size: 1rem;
+}

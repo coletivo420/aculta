@@ -57,10 +57,10 @@ final class EmailConfirmationNotice {
 
     $url = Url::fromRoute('aculta_portal.email_resend')->toString();
     return [
-      '#type' => 'container',
+      '#component' => 'aculta420_v2:status-messages',
       '#weight' => -100,
-      '#attributes' => ['data-portal-ui' => 'notice-warning email-notice', 'role' => 'alert'],
-      'text' => [
+      '#props' => ['type' => 'warning'],
+      '#slots' => ['content' => [
         '#type' => 'inline_template',
         '#template' => '<p>{% if title %}<strong>{{ title }}</strong> {% endif %}{{ detail }} <a href="{{ url }}">{{ label }}</a>.</p>',
         '#context' => [
@@ -69,7 +69,7 @@ final class EmailConfirmationNotice {
           'url' => $url,
           'label' => $this->translation->translate('Clique aqui para solicitar outro link'),
         ],
-      ],
+      ]],
     ];
   }
 

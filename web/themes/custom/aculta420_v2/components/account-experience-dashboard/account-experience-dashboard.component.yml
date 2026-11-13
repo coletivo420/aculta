@@ -1,0 +1,78 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Painel de experiências da Conta
+description: Reúne identidade, experiências e atalhos da página Minha Conta.
+status: stable
+group: ACULTA
+props:
+  type: object
+  additionalProperties: false
+  required: [experiences_title, experiences_description]
+  properties:
+    show_identity:
+      type: boolean
+      title: Exibe o bloco de identidade
+      default: false
+    identity_name:
+      type: [string, 'null']
+      title: Nome da pessoa
+      default: null
+    identity_email:
+      type: [string, 'null']
+      title: E-mail da pessoa
+      default: null
+    profile_url:
+      type: [string, 'null']
+      title: URL do perfil público
+      default: null
+    experiences_title:
+      type: string
+      title: Título da lista de experiências
+      minLength: 1
+    experiences_description:
+      type: string
+      title: Descrição das experiências
+    account_url:
+      type: [string, 'null']
+      title: URL da conta
+      default: null
+    account_link_label:
+      type: string
+      title: Rótulo acessível do atalho da conta
+      default: ''
+    account_link_title:
+      type: string
+      title: Título do atalho da conta
+      default: ''
+    account_link_description:
+      type: string
+      title: Descrição do atalho da conta
+      default: ''
+slots:
+  menu:
+    title: Menu do Studio
+    description: Menu de navegação da Conta.
+  avatar:
+    title: Avatar
+    description: Render array da imagem de perfil.
+  profile_link:
+    title: Link do perfil público
+    description: Link renderizado pelo módulo proprietário da conta.
+  calendar:
+    title: Calendário
+    description: Componente de calendário da Conta.
+  connections:
+    title: Conexões
+    description: Componente de conexões da Conta.
+  experiences:
+    title: Cartões de experiência
+    description: Lista de render arrays de experiências.
+libraryOverrides:
+  js:
+    ../../js/account-carousel.js: { attributes: { defer: true } }
+  dependencies:
+    - core/drupal
+    - core/once
+assets:
+  css:
+    component:
+      account-experience-dashboard.css: {}

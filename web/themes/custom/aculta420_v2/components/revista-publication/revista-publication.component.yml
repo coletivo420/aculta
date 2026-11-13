@@ -51,3 +51,7 @@ slots:
     description: Render array cacheável do módulo aculta_user.
   discussion:
     title: Discussão
+assets:
+  css:
+    component:
+      revista-publication.css: {}

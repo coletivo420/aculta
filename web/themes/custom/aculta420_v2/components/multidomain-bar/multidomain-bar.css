@@ -166,6 +166,8 @@ html body:has(.aculta-institution-bar) .toolbar .toolbar-tray-vertical {
   max-block-size: min(90dvh, 52rem);
 }
 
+.aculta-search-popup { color: var(--color-text-primary); }
+
 .aculta-login-dialog__header {
   display: flex;
   align-items: center;
@@ -550,22 +552,10 @@ html body:has(.aculta-institution-bar) .toolbar .toolbar-tray-vertical {
   background: var(--color-brand-primary);
 }
 
-.aculta-cart-offcanvas__body { display: flex; flex-direction: column; gap: var(--spacing-base); }
-.aculta-cart-offcanvas__lista { display: flex; flex-direction: column; gap: var(--spacing-sm); }
-.aculta-cart-offcanvas__separador { display: flex; align-items: baseline; justify-content: space-between; margin-block-start: var(--spacing-sm); padding-block-end: var(--spacing-xs); color: var(--color-text-primary); border-block-end: 2px solid var(--color-brand-highlight); font-family: var(--font-family-heading); }
-.aculta-cart-offcanvas__caixa { position: relative; display: flex; flex-direction: column; padding: var(--spacing-sm); gap: var(--spacing-xs); }
-.aculta-cart-offcanvas__meta { color: var(--color-text-secondary); font-size: var(--font-size-sm); }
-.aculta-cart-offcanvas__total { margin: 0; }
-.aculta-cart-offcanvas__action { margin-block: var(--spacing-sm); }
-.aculta-cart-offcanvas__action--outline { color: var(--color-brand-primary); background: transparent; }
-.aculta-cart-offcanvas__cart-link { align-self: flex-start; color: var(--color-text-primary); padding-block: var(--spacing-sm); }
-.aculta-cart-offcanvas__banner { flex: 0 0 auto; padding: var(--spacing-base); text-align: center; color: var(--color-text-primary); border-block-start: 2px solid var(--color-brand-highlight); background: var(--color-surface-institution); font-family: var(--font-family-heading); font-weight: 600; }
-.aculta-messenger-dialog__footer,
-.aculta-alerts-dialog__footer { flex: 0 0 auto; padding: var(--spacing-sm) var(--spacing-base); border-block-start: 1px solid var(--color-border); }
-.aculta-alerts-filters { display: flex; flex-wrap: wrap; gap: var(--spacing-sm); }
-.aculta-alerts-filters__group { flex: 1 1 9rem; min-inline-size: 0; }
-.aculta-alerts-filters__group > summary { padding: var(--spacing-sm); cursor: pointer; border: 1px solid var(--color-border); border-radius: var(--radius-sm); min-block-size: var(--tap-target-min); }
-.aculta-alerts-filters__group .item-list { display: flex; flex-wrap: wrap; gap: var(--spacing-xs) var(--spacing-base); padding-block: var(--spacing-sm); }
+/* HTMX login/registration fragments are presented on pages with the shared bar. */
+.aculta-login-popup { display: grid; gap: .75rem; }
+.aculta-login-popup__divider { margin: 0; border: 0; border-block-start: 1px solid var(--color-border); }
+.aculta-register-popup { display: grid; gap: 1rem; }
 
 @media (min-width: 768px) {
   .aculta-institution-bar__inner {

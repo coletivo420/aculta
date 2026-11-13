@@ -1,0 +1,31 @@
+.aculta-sales-panel {
+  display: grid;
+  gap: var(--spacing-section);
+  overflow-x: auto;
+}
+
+.aculta-sales-panel__section {
+  display: grid;
+  gap: .5rem;
+  min-inline-size: 0;
+}
+
+.aculta-sales-panel__heading {
+  margin: 0 0 .5rem;
+  color: var(--color-text-primary);
+  font-family: var(--font-family-heading);
+}
+
+.aculta-sales-panel__table {
+  min-width: 100%;
+  color: var(--color-text-primary);
+  border-color: var(--color-border);
+}
+
+.aculta-sales-panel__table :is(td, th) {
+  vertical-align: middle;
+}
+
+.aculta-sales-panel__table tbody tr:hover {
+  background: var(--color-surface-highlight);
+}

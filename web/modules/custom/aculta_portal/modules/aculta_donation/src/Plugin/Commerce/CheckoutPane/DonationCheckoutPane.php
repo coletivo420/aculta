@@ -206,22 +206,29 @@ class DonationCheckoutPane extends DonationItemPaneBase implements CheckoutPaneI
       ->onlyMainContent()
       ->applyTo($dialog);
     return [
-      '#type' => 'container',
-      '#attributes' => ['data-portal-ui' => 'donation-account-invite'],
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:donation-presentation',
+      '#props' => ['variant' => 'invite'],
       '#cache' => ['contexts' => ['user.roles:anonymous']],
+      '#slots' => ['content' => [
       'texto' => [
-        '#markup' => '<p>' . $this->t('Crie uma conta para acompanhar suas doações.') . '</p>',
-      ],
-      'link' => [
-        '#type' => 'link',
-        '#title' => $this->t('Criar conta'),
-        '#url' => $link,
-        '#attributes' => [
-          'data-portal-ui' => 'donation-account-invite-link',
-          'data-aculta-dialog-trigger' => '',
-          'aria-controls' => 'aculta-register-dialog',
-          'aria-haspopup' => 'dialog',
-          'aria-expanded' => 'false',
+        '#component' => 'aculta420_v2:status-messages',
+        '#props' => ['type' => 'info'],
+        '#slots' => ['content' => [
+          'text' => ['#markup' => '<p>' . $this->t('Crie uma conta para acompanhar suas doações.') . '</p>'],
+          'link' => [
+            '#type' => 'link',
+            '#title' => $this->t('Criar conta'),
+            '#url' => $link,
+            '#attributes' => [
+              'data-portal-ui' => 'donation-account-invite-link',
+              'data-aculta-dialog-trigger' => '',
+              'aria-controls' => 'aculta-register-dialog',
+              'aria-haspopup' => 'dialog',
+              'aria-expanded' => 'false',
+            ],
+          ],
+        ],
         ],
       ],
       'dialog' => $dialog + [
@@ -260,6 +267,7 @@ class DonationCheckoutPane extends DonationItemPaneBase implements CheckoutPaneI
           '#value' => $this->t('Carregando…'),
         ],
       ],
+      ]],
     ];
   }
 

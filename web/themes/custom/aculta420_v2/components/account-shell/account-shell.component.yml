@@ -56,3 +56,7 @@ props:
 slots:
   content:
     title: Conteúdo da seção
+assets:
+  css:
+    component:
+      account-shell.css: {}

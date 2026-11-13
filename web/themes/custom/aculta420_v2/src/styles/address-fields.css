@@ -1,0 +1,8 @@
+.portal-street-number input.form-text {
+  max-width: 5.5rem;
+}
+
+.portal-street-number > label::after {
+  content: " *";
+  color: var(--color-status-error-text);
+}

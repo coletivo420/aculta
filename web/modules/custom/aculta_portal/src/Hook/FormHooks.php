@@ -294,13 +294,13 @@ class FormHooks {
     }
     $url = Url::fromRoute('aculta_portal.security')->toString();
     $form['aculta_email_restriction'] = [
-      '#type' => 'container',
+      '#component' => 'aculta420_v2:status-messages',
       '#weight' => -100,
-      '#attributes' => ['data-portal-ui' => 'notice-error email-notice', 'role' => 'alert'],
-      'text' => [
+      '#props' => ['type' => 'error'],
+      '#slots' => ['content' => [
         '#markup' => '<p><strong>' . htmlspecialchars((string) $this->translation->translate('Você precisa confirmar seu e-mail para participar desta área.'), ENT_QUOTES) . '</strong> '
           . '<a href="' . htmlspecialchars($url, ENT_QUOTES) . '">' . htmlspecialchars((string) $this->translation->translate('Confirme o e-mail em Minha conta > Segurança'), ENT_QUOTES) . '</a>.</p>',
-      ],
+      ]],
     ];
     foreach (array_keys($form) as $key) {
       if (!str_starts_with((string) $key, '#') && $key !== 'aculta_email_restriction') {

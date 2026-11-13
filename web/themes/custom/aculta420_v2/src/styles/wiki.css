@@ -1,4 +1,11 @@
-/* Page-level presentation for Wiki listings emitted by the owning module. */
+/* Presentation for Wiki listings and module-emitted structures. */
+.aculta-wiki-title-suggestions,
+.aculta-wiki-proposal-decision,
+.aculta-wiki-proposal-link,
+.aculta-wiki-proposal-status { display: grid; gap: .5rem; }
+.aculta-wiki-title-suggestions { margin: 0; padding: 0; list-style: none; }
+.aculta-wiki-workspace__return { margin-block-end: 1rem; }
+
 .aculta-wiki-home,
 .aculta-wiki-search-results {
   color: var(--color-text-primary);

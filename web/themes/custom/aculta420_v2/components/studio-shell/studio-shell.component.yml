@@ -1,0 +1,16 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Casca do Studio
+description: Escopo tipográfico e de layout das rotas autenticadas do Studio; formulários usam o SDC studio-form.
+status: stable
+group: Studio
+props:
+  type: object
+  additionalProperties: false
+slots:
+  content:
+    title: Conteúdo do Studio
+    description: Render array da rota com componentes e formulários nativos.
+assets:
+  css:
+    component:
+      studio-shell.css: {}

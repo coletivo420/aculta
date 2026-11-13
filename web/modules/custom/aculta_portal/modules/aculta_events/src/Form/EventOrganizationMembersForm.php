@@ -89,9 +89,12 @@ final class EventOrganizationMembersForm extends FormBase {
     if ($pendingOwnerUid > 0 && $pendingOwnerUid === $currentUid) {
       $form['transfer_invite'] = [
         '#type' => 'container',
-        '#attributes' => ['data-portal-ui' => 'notice-warning'],
         'notice' => [
-          '#markup' => '<p>' . $this->t('<strong>Convite de titularidade:</strong> Você foi convidado a assumir a titularidade desta organização.') . '</p>',
+          '#component' => 'aculta420_v2:status-messages',
+          '#props' => ['type' => 'warning'],
+          '#slots' => ['content' => [
+            '#markup' => '<p>' . $this->t('<strong>Convite de titularidade:</strong> Você foi convidado a assumir a titularidade desta organização.') . '</p>',
+          ]],
         ],
         'accept_transfer' => [
           '#type' => 'submit',

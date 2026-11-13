@@ -41,8 +41,10 @@ final class AccountCoursesController implements ContainerInjectionInterface {
     $view = $this->presenter->present($this->currentAccount);
     $items = $view['items'];
     $build = [
-      '#type' => 'container',
-      '#attributes' => ['data-portal-ui' => 'account-courses'],
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:account-courses',
+      '#props' => [],
+      '#slots' => ['content' => []],
       '#cache' => [
         'contexts' => ['user', 'user.permissions'],
         'max-age' => 0,
@@ -50,12 +52,12 @@ final class AccountCoursesController implements ContainerInjectionInterface {
     ];
 
     if ($items === []) {
-      $build['empty'] = [
+      $build['#slots']['content']['empty'] = [
         '#type' => 'container',
         'message' => ['#plain_text' => $view['empty']['message']],
       ];
       if ($view['empty']['action'] !== NULL) {
-        $build['empty']['link'] = ['#type' => 'aculta_portal_button', '#props' => ['text' => (string) $view['empty']['action']['label'], 'url' => $view['empty']['action']['url']->toString(), 'variant' => 'primary']];
+        $build['#slots']['content']['empty']['link'] = ['#type' => 'aculta_portal_button', '#props' => ['text' => (string) $view['empty']['action']['label'], 'url' => $view['empty']['action']['url']->toString(), 'variant' => 'primary']];
       }
       return $build;
     }
@@ -86,7 +88,7 @@ final class AccountCoursesController implements ContainerInjectionInterface {
       if ($course['action'] !== NULL) {
         $card['action'] = ['#type' => 'aculta_portal_button', '#props' => ['text' => (string) $course['action']['label'], 'url' => $course['action']['url']->toString(), 'variant' => 'primary']];
       }
-      $build['course_' . $delta] = $card;
+      $build['#slots']['content']['course_' . $delta] = $card;
     }
 
     return $build;

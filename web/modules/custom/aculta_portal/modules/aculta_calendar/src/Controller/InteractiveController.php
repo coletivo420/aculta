@@ -50,7 +50,7 @@ final class InteractiveController extends ControllerBase {
    */
   public function page(): array {
     $agenda = $this->url('agenda');
-    return [
+    $content = [
       'aviso' => [
         '#type' => 'html_tag',
         '#tag' => 'p',
@@ -106,6 +106,11 @@ final class InteractiveController extends ControllerBase {
         'contexts' => ['route'],
         'max-age' => 900,
       ],
+    ];
+    return [
+      '#component' => 'aculta420_v2:calendar-interactive',
+      '#props' => [],
+      '#slots' => ['content' => $content],
     ];
   }
 

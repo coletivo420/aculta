@@ -44,20 +44,25 @@
     }, with_context = false) %}
   {% endif %}
   {% set layout_page_template = 'aculta420_v2:layout-page' %}
+  {% set layout_page_attributes = create_attribute() %}
+  {% if aculta_studio_account_dashboard|default(false) %}
+    {% set layout_page_attributes = layout_page_attributes.addClass('layout-page--studio-dashboard') %}
+  {% endif %}
   {% if aculta_layout_page_sdc_available|default(false) %}
     {{ include(layout_page_template, {
+      attributes: layout_page_attributes,
       variant: aculta_layout_variant|default('stack'),
       title: aculta_page_title,
       content: main_content,
-      aside: page.sidebar_first
+      aside: aculta_lms_student_dashboard_route|default(false) ? [] : page.sidebar_first
     }, with_context = false) }}
   {% else %}
     {# Keep a warm Drupal SDC discovery cache from breaking the page. #}
     {% set fallback_variant = aculta_layout_variant|default('stack') %}
-    <main id="main-content" class="page__main{% if fallback_variant == 'stack' %} page__main--stack{% elseif fallback_variant == 'aside' and page.sidebar_first %} page__main--with-sidebar{% endif %}" tabindex="-1">
+    <main id="main-content" class="page__main{% if fallback_variant == 'stack' %} page__main--stack{% elseif fallback_variant == 'aside' and page.sidebar_first %} page__main--with-sidebar{% endif %}{% if aculta_studio_account_dashboard|default(false) %} layout-page--studio-dashboard{% endif %}" tabindex="-1">
       {% if aculta_page_title %}<div class="page__title">{{ aculta_page_title }}</div>{% endif %}
       <div class="page__content">{{ main_content }}</div>
-      {% if page.sidebar_first %}
+      {% if page.sidebar_first and not aculta_lms_student_dashboard_route|default(false) %}
         <aside class="page__sidebar" aria-label="{{ 'Related content'|t }}">{{ page.sidebar_first }}</aside>
       {% endif %}
     </main>

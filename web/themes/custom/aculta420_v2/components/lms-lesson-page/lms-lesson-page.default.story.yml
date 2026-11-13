@@ -5,7 +5,7 @@ slots:
   content:
     type: inline_template
     template: |
-      <div data-aculta-lms="course-preview" data-portal-ui="aculta-course-lesson-preview">
+      <div data-aculta-lms="course-preview" class="aculta-lms-course-preview">
         <a href="/ganjalab">Curso de cultivo responsável</a>
         <p>Prévia de estudante — somente educadores do curso</p>
         <h1>Introdução ao cultivo</h1>

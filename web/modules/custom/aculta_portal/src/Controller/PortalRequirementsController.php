@@ -299,13 +299,11 @@ final class PortalRequirementsController extends ControllerBase {
         ],
         '#rows' => $rows,
         '#empty' => $this->t('Nenhum requisito foi encontrado.'),
-        '#attributes' => ['data-portal-ui' => 'requirements'],
       ],
       'php_extensions' => $this->buildPhpExtensionSection(),
       'note' => [
-        '#type' => 'container',
-        '#attributes' => ['data-portal-ui' => 'notice-warning'],
-        'text' => ['#plain_text' => $this->t('Os avisos sobre Google e Turnstile refletem o estado pré-deploy intencional. Até a versão 1.0, o gateway Mercado Pago fica habilitado com chaves de teste. A compatibilidade de versão não significa que um serviço externo foi homologado.')],
+        '#component' => 'aculta420_v2:status-messages',
+        '#props' => ['type' => 'warning', 'messages' => [$this->t('Os avisos sobre Google e Turnstile refletem o estado pré-deploy intencional. Até a versão 1.0, o gateway Mercado Pago fica habilitado com chaves de teste. A compatibilidade de versão não significa que um serviço externo foi homologado.')]],
       ],
       'indexing' => $this->buildIndexingSection(),
       'cep' => $this->buildCepSection(),
@@ -317,8 +315,12 @@ final class PortalRequirementsController extends ControllerBase {
     ];
 
     $build['#attached']['library'][] = 'system/admin';
-    $build['#attached']['library'][] = 'aculta_portal/requirements-report';
-    return $build;
+    return [
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:portal-requirements',
+      '#props' => [],
+      '#slots' => ['content' => $build],
+    ];
   }
 
   /**

@@ -34,9 +34,8 @@ final class DeployerStatusController extends ControllerBase {
     ];
     if ($data === NULL) {
       $build['missing'] = [
-        '#type' => 'container',
-        '#attributes' => ['data-portal-ui' => 'notice-warning'],
-        'text' => ['#plain_text' => $this->t('⚠ Atenção: relatório do deployer indisponível. Gere com "aculta-deployer report" na raiz do repositório e confira a leitura do arquivo var/deployer/status.json.')],
+        '#component' => 'aculta420_v2:status-messages',
+        '#props' => ['type' => 'warning', 'messages' => [$this->t('⚠ Atenção: relatório do deployer indisponível. Gere com "aculta-deployer report" na raiz do repositório e confira a leitura do arquivo var/deployer/status.json.')]],
       ];
       return $build;
     }
@@ -117,10 +116,10 @@ final class DeployerStatusController extends ControllerBase {
     $sync = $this->reader->readRuntimeSync();
     if ($sync === NULL) {
       return [
-        '#type' => 'container',
-        '#attributes' => ['data-portal-ui' => 'notice-warning'],
-        'text' => [
-          '#plain_text' => $this->t('⚠ Atenção: relatório do Runtime Sync v2 indisponível (var/runtime-sync/state.json). Execute a sincronização cotidiana ou o diagnóstico na raiz do checkout de desenvolvimento.'),
+        '#component' => 'aculta420_v2:status-messages',
+        '#props' => [
+          'type' => 'warning',
+          'messages' => [$this->t('⚠ Atenção: relatório do Runtime Sync v2 indisponível (var/runtime-sync/state.json). Execute a sincronização cotidiana ou o diagnóstico na raiz do checkout de desenvolvimento.')],
         ],
       ];
     }

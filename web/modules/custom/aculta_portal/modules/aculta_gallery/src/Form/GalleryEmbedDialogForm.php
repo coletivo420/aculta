@@ -94,6 +94,7 @@ final class GalleryEmbedDialogForm extends FormBase {
     $form['#prefix'] = '<div id="aculta-gallery-dialog-form" data-portal-ui="gallery-dialog">';
     $form['#suffix'] = '</div>';
     $form['#attached']['library'][] = 'editor/drupal.editor.dialog';
+    $form['#attached']['library'][] = 'aculta_gallery/embed-dialog';
 
     $form['title'] = [
       '#type' => 'textfield',

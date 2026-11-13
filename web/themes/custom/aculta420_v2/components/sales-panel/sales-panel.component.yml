@@ -1,0 +1,16 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Painel de vendas e doações
+description: Casca visual para relatórios preparados e autorizados pelo módulo de vendas.
+status: stable
+group: Portal
+props:
+  type: object
+  additionalProperties: false
+slots:
+  content:
+    title: Seções do relatório
+    description: Seções, tabelas, paginação e recorrências compostas pelo módulo proprietário.
+assets:
+  css:
+    component:
+      sales-panel.css: {}

@@ -1,0 +1,7 @@
+name: Seção autenticada da Conta
+description: Navegação contextual e conteúdo de uma seção de conta.
+component: aculta420_v2:studio-account-section-layout
+slots:
+  content:
+    type: inline_template
+    template: '<section class="studio studio-account-section"><details class="studio-account-section__navigation" open><summary>Seções da conta</summary><ul class="studio-account-nav-list"><li><a href="#" aria-current="page">Dados cadastrais</a></li><li><a href="#">Segurança</a></li></ul></details><div data-aculta-account-main><h2>Dados cadastrais</h2><p>Conteúdo preparado pela seção responsável.</p></div></section>'

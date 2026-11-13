@@ -87,15 +87,15 @@ final class SearchPopupForm extends FormBase implements ContainerInjectionInterf
       $form['#attached']['library'][] = 'aculta_portal/search-preview';
     }
     $form['preview'] = [
-      '#type' => 'container',
-      '#attributes' => [
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:search-preview',
+      '#props' => ['attributes' => new Attribute([
         'id' => 'aculta-search-preview',
-        'data-portal-ui' => 'search-preview',
         'role' => 'region',
         'aria-label' => $this->t('Prévia dos resultados da busca'),
         'aria-live' => 'polite',
-      ],
-      'hint' => [
+      ])],
+      '#slots' => ['content' => ['hint' => [
         '#theme' => 'aculta_portal_element',
         '#tag' => 'p',
         '#element_attributes' => new Attribute(['data-portal-ui' => 'hint']),
@@ -103,7 +103,7 @@ final class SearchPopupForm extends FormBase implements ContainerInjectionInterf
           'Digite pelo menos @n caracteres para ver resultados.',
           ['@n' => SearchPageController::MIN_CHARS],
         ),
-      ],
+      ]]],
     ];
     $form['actions'] = ['#type' => 'actions', 'submit' => ['#type' => 'submit', '#value' => $this->t('Buscar')]];
     return $form;

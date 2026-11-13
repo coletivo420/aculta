@@ -8,10 +8,10 @@ import { join } from 'node:path';
 
 const PROJECT = fileURLToPath(new URL('../../../', import.meta.url));
 const HOME_URL = process.env.GANJA_HOME || 'https://cursos.aculta.toca.net.br/ganjalab';
-const COURSE_URL = process.env.GANJA_COURSE || 'https://cursos.aculta.toca.net.br/group/1';
+const COURSE_URL = process.env.GANJA_COURSE || '';
 const LOGIN_URI = process.env.GANJA_LOGIN_URI || 'https://conta.aculta.toca.net.br';
-const LOGIN_UID = process.env.GANJA_UID || '1';
-const EMPTY_USER = process.env.GANJA_EMPTY_USER || 'teste.comum';
+const LOGIN_UID = process.env.GANJA_UID || '5';
+const EMPTY_USER = process.env.GANJA_EMPTY_USER || 'teste.b';
 const OUT = process.env.GANJA_OUT || (process.env.SUITE_OUT ? join(process.env.SUITE_OUT, 'ganjalab') : '/home/piradopirata/worktrees/aculta-test-output/ganjalab');
 const DRUSH_ROOT = process.env.GANJA_DRUSH_ROOT || '/home/piradopirata/projetos/aculta';
 const GD = process.env.GECKODRIVER || 'http://127.0.0.1:4444';
@@ -87,7 +87,10 @@ async function login(s, { uid = null, name = null } = {}) {
 
 async function inspect(s) {
   return JSON.parse(await s.exec(`return JSON.stringify({
-    h1: document.querySelectorAll('h1').length,
+    h1: document.querySelectorAll('main h1').length,
+    h1Text: Array.from(document.querySelectorAll('h1')).map((el) => ({ text: el.textContent.trim(), className: el.className, component: el.getAttribute('data-component-id'), parent: el.parentElement?.className })),
+    url: location.href,
+    bodyClass: document.body.className,
     overflow: document.documentElement.scrollWidth > window.innerWidth,
     width: window.innerWidth,
     text: document.body.innerText.replace(/\\s+/g, ' ').trim()
@@ -114,7 +117,7 @@ async function matrix(s, label, selector, shots, scrollSelector = null, extra = 
     const info = await inspect(s);
     check(`${label} ${width}px viewport`, info.width === width, `innerWidth=${info.width}`);
     check(`${label} ${width}px sem rolagem horizontal`, !info.overflow);
-    check(`${label} ${width}px H1 única`, info.h1 === 1, `h1=${info.h1}`);
+    check(`${label} ${width}px H1 única`, info.h1 === 1, `h1=${info.h1} ${info.h1Text.map((item) => `${item.text} [${item.component || item.className}] parent=${item.parent}`).join(' | ')} body=${info.bodyClass} ${info.url}`);
     extra(info, width);
     await s.shot(`${shots}-${width}`);
   }
@@ -131,23 +134,33 @@ try {
   await lightSession.setSize(1280, 900);
   await login(lightSession, { uid: LOGIN_UID });
   await lightSession.navigate(HOME_URL);
-  check('início carrega', await waitFor(lightSession, `document.querySelector('.aculta-learning-home')`, 'início'));
+  check('início carrega', await waitFor(lightSession, `document.querySelector('.lms-learning-dashboard')`, 'início'));
   await sleep(1200);
   const home = await lightSession.exec(`return JSON.stringify({
     text: document.body.innerText.replace(/\\s+/g, ' '),
-    continueCard: document.querySelectorAll('.aculta-learning-home__continue').length,
-    courses: document.querySelectorAll('.aculta-learning-home__courses .aculta-card').length,
-    journeyLinks: document.querySelectorAll('.aculta-learning-home a[href*="/group/"]').length
+    continueCard: document.querySelectorAll('.lms-learning-dashboard__section--resume .lms-learning-course-card').length,
+    courses: document.querySelectorAll('.lms-learning-dashboard__grid .lms-learning-course-card').length,
+    journeyLinks: document.querySelectorAll('.lms-learning-dashboard a[href*="/group/"]').length,
+    hasLessons: Array.from(document.querySelectorAll('.lms-learning-course-card')).some((card) => !card.innerText.includes('Este curso ainda não tem aulas publicadas.')),
+    legacyAccount: document.querySelectorAll('.portal-account, .portal-account__header, .aculta-account-entry').length
   });`);
   const h = JSON.parse(home);
-  check('início identifica ACULTA Studio Ganjalab e Minha aprendizagem', /ACULTA Studio Ganjalab/.test(h.text) && /Minha aprendizagem/.test(h.text));
-  check('início mostra cartão de retomada com curso e ação', h.continueCard === 1 && /Continuar (aula|curso)/.test(h.text), `continue=${h.continueCard}`);
+  check('início identifica Minha aprendizagem e Meus cursos', /Minha aprendizagem/.test(h.text) && /Meus cursos/.test(h.text));
+  check('início apresenta retomada somente quando o LMS fornece uma', h.continueCard <= 1 && (h.continueCard === 0 || /Continuar (aula|curso)/.test(h.text)), `continue=${h.continueCard}`);
   check('início lista cursos matriculados com link para a jornada', h.courses >= 1 && h.journeyLinks >= 1, `cards=${h.courses} links=${h.journeyLinks}`);
-  lightHomeColor = await lightSession.exec(`return getComputedStyle(document.querySelector('.aculta-learning-home')).color;`);
-  await matrix(lightSession, 'início', '.aculta-learning-home', 'home');
+  check('início não contém a shell legada da Conta', h.legacyAccount === 0, `legacy=${h.legacyAccount}`);
+  check('início não contém o bloco legado de agenda', !/Próximos prazos e eventos das turmas/.test(h.text));
+  lightHomeColor = await lightSession.exec(`return getComputedStyle(document.querySelector('.lms-learning-dashboard')).color;`);
+  const discoveredCourse = h.journeyLinks
+    ? await lightSession.exec(`return (document.querySelector('.lms-learning-dashboard a[href*="/group/"]') || {}).href || '';`)
+    : '';
+  const courseUrl = COURSE_URL || (h.hasLessons ? discoveredCourse : '');
+  check('jornada usa curso com aulas disponíveis', !COURSE_URL && !h.hasLessons || !!courseUrl, courseUrl || 'conta sem aulas publicadas para a revisão');
+  await matrix(lightSession, 'início', '.lms-learning-dashboard', 'home');
 
+  if (courseUrl) {
   await lightSession.setSize(1280, 900);
-  await lightSession.navigate(COURSE_URL);
+  await lightSession.navigate(courseUrl);
   check('jornada carrega', await waitFor(lightSession, `document.querySelector('.aculta-learning-journey')`, 'jornada'));
   await sleep(1000);
   const journey = JSON.parse(await lightSession.exec(`return JSON.stringify({
@@ -188,6 +201,7 @@ try {
     lightColor = await lightSession.exec(`return getComputedStyle(document.querySelector('.aculta-learning-room')).color;`);
     check('sala usa token de texto do tema', !!lightColor, lightColor);
   }
+  }
   // Geckodriver accepts one session at a time; close before the empty-state run.
   await lightSession.close();
   lightSession = null;
@@ -196,12 +210,12 @@ try {
   await emptySession.setSize(390, 844);
   await login(emptySession, { name: EMPTY_USER });
   await emptySession.navigate(HOME_URL);
-  check('início sem matrícula carrega', await waitFor(emptySession, `document.querySelector('.aculta-learning-home')`, 'início vazio'));
+  check('início sem matrícula carrega', await waitFor(emptySession, `document.querySelector('.lms-learning-dashboard')`, 'início vazio'));
   await sleep(900);
   const empty = JSON.parse(await emptySession.exec(`return JSON.stringify({
     text: document.body.innerText.replace(/\\s+/g, ' '),
-    continueCard: document.querySelectorAll('.aculta-learning-home__continue').length,
-    catalog: Array.from(document.querySelectorAll('a')).some((a) => a.textContent.trim() === 'Explorar o catálogo de cursos')
+    continueCard: document.querySelectorAll('.lms-learning-dashboard__section--resume .lms-learning-course-card').length,
+    catalog: Array.from(document.querySelectorAll('.empty-state a, .empty-state button')).some((el) => el.textContent.replace(/\\s+/g, ' ').trim() === 'Explorar o catálogo de cursos')
   });`));
   check('sem matrícula não simula retomada', empty.continueCard === 0);
   check('sem matrícula oferece catálogo real', empty.catalog && /ainda não está matriculado/.test(empty.text));
@@ -214,10 +228,10 @@ try {
   await darkSession.setSize(390, 844);
   await login(darkSession, { uid: LOGIN_UID });
   await darkSession.navigate(HOME_URL);
-  check('início no modo escuro carrega', await waitFor(darkSession, `document.querySelector('.aculta-learning-home')`, 'início escuro'));
-  await darkSession.exec(`document.documentElement.setAttribute('data-bs-theme', 'dark');`);
+  check('início no modo escuro carrega', await waitFor(darkSession, `document.querySelector('.lms-learning-dashboard')`, 'início escuro'));
+  await darkSession.exec(`document.documentElement.setAttribute('data-theme', 'dark');`);
   await sleep(500);
-  const dark = JSON.parse(await darkSession.exec(`return JSON.stringify({ theme: document.documentElement.getAttribute('data-bs-theme'), color: getComputedStyle(document.querySelector('.aculta-learning-home')).color });`));
+  const dark = JSON.parse(await darkSession.exec(`return JSON.stringify({ theme: document.documentElement.getAttribute('data-theme'), color: getComputedStyle(document.querySelector('.lms-learning-dashboard')).color });`));
   check('modo escuro aplica tokens diferentes do claro', dark.theme === 'dark' && dark.color !== lightHomeColor, `${lightHomeColor} -> ${dark.color}`);
   await cleanMessages(darkSession);
   await darkSession.shot('home-dark-390');

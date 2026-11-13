@@ -1,84 +1,4 @@
-/* Public event catalogue. The Events module owns data and uses neutral UI tokens. */
-.item-list:has(> ul [data-portal-ui~="event-card"]) > ul {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  gap: var(--spacing-base);
-}
-
-.item-list:has(> ul [data-portal-ui~="event-card"]) > ul > li {
-  min-inline-size: 0;
-  margin: 0;
-  padding: 0;
-}
-
-[data-portal-ui~="event-card"] {
-  min-inline-size: 0;
-  overflow-wrap: anywhere;
-}
-
-[data-portal-ui~="event-card"] > * {
-  min-inline-size: 0;
-  margin-block: 0;
-}
-
-[data-portal-ui="event-card-type"] {
-  letter-spacing: .04em;
-  text-transform: uppercase;
-  color: var(--color-text-secondary);
-  font-size: var(--font-size-sm);
-}
-
-[data-portal-ui="event-card-title"] {
-  font-family: var(--font-family-heading);
-  font-size: var(--font-size-xl);
-  overflow-wrap: anywhere;
-}
-
-[data-portal-ui="event-card-title"] a {
-  display: inline-flex;
-  align-items: center;
-  text-decoration: underline;
-  color: var(--color-brand-primary);
-  min-block-size: var(--tap-target-min);
-  max-inline-size: 100%;
-  text-underline-offset: .15em;
-}
-
-[data-portal-ui="event-card-subtitle"] {
-  color: var(--color-text-secondary);
-}
-
-[data-portal-ui="event-card-meta"] {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  color: var(--color-text-secondary);
-  font-size: var(--font-size-sm);
-}
-
-[data-portal-ui="event-card-meta"] > ul {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-[data-portal-ui~="event-card-cancelled"] .card-cultural__title {
-  text-decoration: line-through;
-  text-decoration-thickness: .08em;
-}
-
-[data-portal-ui="event-card-cancel-status"] {
-  padding: var(--spacing-xs) var(--spacing-sm);
-  color: var(--color-status-error-text);
-  border-inline-start: .25rem solid var(--color-status-error-text);
-  border-radius: var(--radius-sm);
-  background: var(--color-status-error-surface);
-  font-weight: 700;
-}
-
+/* Public catalogue layout is composed by UI Patterns Views + layout-grid. */
 [data-portal-ui="event-catalogue-actions-bar"] {
   display: flex;
   flex-wrap: wrap;
@@ -87,17 +7,6 @@
   margin-block-end: var(--spacing-base);
 }
 
-@media (min-width: 48rem) {
-  .item-list:has(> ul [data-portal-ui~="event-card"]) > ul {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-@media (min-width: 75rem) {
-  .item-list:has(> ul [data-portal-ui~="event-card"]) > ul {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}
 /* Dashboard administrativo do organizador: carregado apenas nas rotas Events. */
 .aculta-events-organizer-dashboard {
   display: grid;
@@ -105,3 +14,15 @@
   gap: var(--page-gutter);
 }
 
+/* Apresentação compartilhada de catálogo e detalhe de evento. */
+.actions-bar,
+.aculta-event-date-actions,
+.aculta-event-date-order,
+.aculta-event-date-row,
+.aculta-event-location-widget,
+.aculta-event-organization-target-id,
+.location-actions,
+.location-admin-actions,
+.location-agenda { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; }
+.media-mentions { display: grid; gap: .75rem; }
+.aculta-event-catalogue__actions { margin-block: 1rem; }

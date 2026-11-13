@@ -1,0 +1,21 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Prévia de busca
+description: Região acessível para resultados de busca assíncronos e seus controles.
+status: stable
+group: Navegação
+props:
+  type: object
+  additionalProperties: false
+  properties:
+    attributes:
+      type: Drupal\Core\Template\Attribute
+      title: Atributos HTML opcionais
+      default: null
+slots:
+  content:
+    title: Conteúdo da prévia
+    description: Render arrays para dica, lista de resultados e link para a busca completa.
+assets:
+  css:
+    component:
+      search-preview.css: {}

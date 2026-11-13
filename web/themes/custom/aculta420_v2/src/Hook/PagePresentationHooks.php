@@ -33,6 +33,20 @@ final class PagePresentationHooks {
     'aculta_statistics.area',
   ];
 
+  /**
+   * Routes that render organization profiles, widgets, or the organization table.
+   */
+  private const EVENT_ORGANIZATION_ROUTES = [
+    'aculta_events.organizer_event_add',
+    'aculta_events.organizer_event_edit',
+    'aculta_events.event_add',
+    'aculta_events.event_edit',
+    'aculta_events.organization_page',
+    'aculta_events.admin_organizations',
+    'aculta_events.organization_modal',
+    'aculta_events.organizer_organization_modal',
+  ];
+
   public function __construct(
     #[Autowire(service: 'config.factory')]
     private readonly ConfigFactoryInterface $configFactory,
@@ -53,6 +67,8 @@ final class PagePresentationHooks {
    */
   #[Hook('preprocess_page')]
   public function preprocessPage(array &$variables): void {
+    $routeName = (string) $this->currentRouteMatch?->getRouteName();
+    $variables['aculta_studio_account_dashboard'] = $routeName === 'aculta_studio.account';
     $variables['aculta_layout_variant'] = $this->getPageLayoutVariant();
     // ADR-054: shell paralelo, opt-in pela configuração do tema.
     $variables['aculta_shell_variant'] = $this->shellVariant();
@@ -63,29 +79,160 @@ final class PagePresentationHooks {
     if (in_array($this->currentRouteMatch?->getRouteName(), self::STATISTICS_ROUTES, TRUE)) {
       $variables['#attached']['library'][] = 'aculta420_v2/statistics';
     }
+    if ($this->currentRouteMatch?->getRouteName() === 'user.login') {
+      $variables['#attached']['library'][] = 'aculta420_v2/login-page';
+    }
+    if ($this->currentRouteMatch?->getRouteName() === 'aculta_portal.search') {
+      $variables['#attached']['library'][] = 'aculta420_v2/search-page';
+    }
+    if ($this->currentRouteMatch?->getRouteName() === 'aculta_portal.support_form'
+      && isset($variables['page']['content'])
+      && is_array($variables['page']['content'])
+      && $this->componentAvailable('support-form')) {
+      $this->wrapPortalUiRenderArray($variables['page']['content'], 'support-form', 'support-form');
+    }
+    if ($this->currentRouteMatch?->getRouteName() === 'aculta_linkweed.social_links_settings') {
+      $variables['#attached']['library'][] = 'aculta420_v2/linkweed-admin';
+    }
+    if (str_starts_with((string) $this->currentRouteMatch?->getRouteName(), 'aculta_portal.secrets_')) {
+      $variables['#attached']['library'][] = 'aculta420_v2/secrets-admin';
+    }
     // ADR-054 P7: CSS do Studio carregado só nas rotas do Studio/Conta.
-    $routeName = (string) $this->currentRouteMatch?->getRouteName();
+    if ($routeName === 'aculta_lms.course_structure'
+      && isset($variables['page']['content'])
+      && is_array($variables['page']['content'])
+      && ($variables['page']['content']['#component'] ?? NULL) === 'aculta420_v2:lms-course-curriculum'
+      && isset($variables['page']['content']['#slots'])
+      && is_array($variables['page']['content']['#slots'])
+      && isset($variables['page']['content']['aculta_lms_course_builder_resources'])
+      && is_array($variables['page']['content']['aculta_lms_course_builder_resources'])) {
+      $variables['page']['content']['#slots']['resources'] = $variables['page']['content']['aculta_lms_course_builder_resources'];
+      unset($variables['page']['content']['aculta_lms_course_builder_resources']);
+    }
+    if (isset($variables['page']['content']) && is_array($variables['page']['content'])) {
+      if (in_array($routeName, ['aculta_portal.dashboard', 'aculta_studio.profile'], TRUE)
+        && $this->componentAvailable('account-profile-card')) {
+        foreach (['account-bio-card', 'account-social-card'] as $accountProfileToken) {
+          while ($this->wrapPortalUiRenderArray(
+            $variables['page']['content'],
+            $accountProfileToken,
+            'account-profile-card',
+          )) {
+            // The legacy dashboard and the Studio profile both render these cards.
+          }
+        }
+      }
+      if ($routeName === 'aculta_lms.course_create'
+        && $this->componentAvailable('studio-course-authoring-page')) {
+        $this->wrapPortalUiRenderArray(
+          $variables['page']['content'],
+          'studio-course-authoring',
+          'studio-course-authoring-page',
+        );
+      }
+      if (str_starts_with($routeName, 'aculta_studio.')
+        && $this->componentAvailable('studio-revista-form')) {
+        $this->wrapStudioRevistaForm($variables['page']['content']);
+      }
+      if ((str_starts_with($routeName, 'aculta_studio.') || $routeName === 'aculta_lms.course_create')
+        && $this->componentAvailable('studio-form')) {
+        $this->wrapStudioForms($variables['page']['content']);
+      }
+      if (str_starts_with($routeName, 'aculta_studio.')
+        && $this->componentAvailable('studio-section-header')) {
+        while ($this->wrapPortalUiRenderArray(
+          $variables['page']['content'],
+          'studio-section-header',
+          'studio-section-header',
+        )) {
+          // Cada título de seção ganha seu asset sem alterar a saída do módulo.
+        }
+      }
+      if (str_starts_with($routeName, 'aculta_studio.')
+        && $this->componentAvailable('studio-listing-table')) {
+        while ($this->wrapPortalUiRenderArray(
+          $variables['page']['content'],
+          'studio-listing-wrap',
+          'studio-listing-table',
+        )) {
+          // Each table is a separate responsive region in the source output.
+        }
+      }
+      if (str_starts_with($routeName, 'aculta_studio.account')
+        && $this->componentAvailable('studio-account-section-layout')) {
+        $this->wrapPortalUiRenderArray(
+          $variables['page']['content'],
+          'studio-account-section',
+          'studio-account-section-layout',
+        );
+      }
+      if (in_array($routeName, [
+        'aculta_commerce.green_stash',
+        'aculta_commerce.green_stash_area',
+        'aculta_commerce.green_stash_product_detail',
+        'aculta_commerce.green_stash_product_create',
+      ], TRUE) && $this->componentAvailable('green-stash-page')) {
+        $greenStashPage = $variables['page']['content'];
+        $variables['page']['content'] = [
+          '#type' => 'component',
+          '#component' => 'aculta420_v2:green-stash-page',
+          '#props' => [],
+          '#slots' => ['content' => $greenStashPage],
+        ];
+      }
+      if ($routeName === 'aculta_events.map' && $this->componentAvailable('map-canvas')) {
+        $mapPage = $variables['page']['content'];
+        $variables['page']['content'] = [
+          '#type' => 'component',
+          '#component' => 'aculta420_v2:map-canvas',
+          '#props' => [],
+          '#slots' => ['content' => $mapPage],
+        ];
+      }
+      else {
+        $this->wrapPortalUiRenderArray($variables['page']['content'], 'map-wrapper', 'map-canvas');
+        $this->wrapPortalUiRenderArray($variables['page']['content'], 'map-widget', 'map-canvas');
+      }
+      if ($routeName === 'aculta_lms.answer_submission' && $this->componentAvailable('lms-learning-room')) {
+        $this->wrapPortalUiRenderArray(
+          $variables['page']['content'],
+          'aculta-learning-room',
+          'lms-learning-room',
+        );
+      }
+    }
     if (str_starts_with($routeName, 'aculta_studio.')) {
-      $variables['#attached']['library'][] = 'aculta420_v2/studio';
+      if (isset($variables['page']['content'])
+        && is_array($variables['page']['content'])
+        && $this->componentAvailable('studio-shell')) {
+        $studioPage = $variables['page']['content'];
+        $variables['page']['content'] = [
+          '#type' => 'component',
+          '#component' => 'aculta420_v2:studio-shell',
+          '#props' => [],
+          '#slots' => ['content' => $studioPage],
+        ];
+      }
+      $variables['#attached']['library'][] = 'aculta420_v2/account-dialogs';
     }
-    // ADR-054 P7: CSS do Fórum só em rotas e tópicos do Fórum/LMS.
     $wikiNode = $this->currentRouteMatch?->getParameter('node');
-    if (str_starts_with($routeName, 'aculta_forum.')
-      || str_starts_with($routeName, 'view.aculta_forum')
-      || ($wikiNode instanceof NodeInterface && in_array($wikiNode->bundle(), ['aculta_forum_topic', 'aculta_lms_topic'], TRUE))) {
-      $variables['#attached']['library'][] = 'aculta420_v2/forum';
-    }
-    // ADR-054 P7: CSS de eventos só nas rotas do aculta_events.
-    if (str_starts_with($routeName, 'aculta_events.')) {
+    // ADR-054 P7: CSS editorial de eventos só em suas rotas e nodes.
+    if (str_starts_with($routeName, 'aculta_events.')
+      || ($wikiNode instanceof NodeInterface && $wikiNode->bundle() === 'aculta_event')) {
       $variables['#attached']['library'][] = 'aculta420_v2/events';
+    }
+    if (in_array($routeName, self::EVENT_ORGANIZATION_ROUTES, TRUE)) {
       $variables['#attached']['library'][] = 'aculta420_v2/event-organization';
     }
-    // ADR-054 P7: CSS do perfil público carregado só na rota do perfil.
-    if ($this->currentRouteMatch?->getRouteName() === 'aculta_user.perfil_publico') {
-      $variables['#attached']['library'][] = 'aculta420_v2/public-profile';
+    if ($this->currentRouteMatch?->getRouteName() === 'aculta_user.perfil_publico'
+      && isset($variables['page']['content'])
+      && is_array($variables['page']['content'])
+      && $this->componentAvailable('public-profile-page')) {
+      $this->wrapPortalUiRenderArray($variables['page']['content'], 'public-profile', 'public-profile-page');
     }
     $variables['aculta_component_library_page'] = ComponentLibraryRoutes::isComponentLibraryRoute($this->currentRouteMatch?->getRouteName());
     $variables['aculta_lms_lesson_route'] = $this->currentRouteMatch?->getRouteName() === 'aculta_lms.lesson_view';
+    $variables['aculta_lms_student_dashboard_route'] = $this->currentRouteMatch?->getRouteName() === 'aculta_lms.student_dashboard';
     $variables['aculta_layout_page_sdc_available'] = $this->componentAvailable('layout-page');
     $variables['aculta_lms_lesson_sdc_available'] = $this->componentAvailable('lms-lesson-page');
     $variables['aculta_page_title'] = [];
@@ -101,6 +248,10 @@ final class PagePresentationHooks {
     }
     if ($variables['aculta_lms_lesson_route']) {
       // The LMS render array owns the lesson H1; avoid a second route-title H1.
+      $variables['aculta_page_title'] = [];
+    }
+    if ($variables['aculta_lms_student_dashboard_route']) {
+      // The dashboard SDC owns the page title and its only H1.
       $variables['aculta_page_title'] = [];
     }
     if (str_starts_with($routeName, 'view.aculta_forum_public_topics.')) {
@@ -216,8 +367,10 @@ final class PagePresentationHooks {
     $component = match ($name) {
       'empty-state' => 'empty-state',
       'context-tabs' => 'tabs',
+      'lms-learning-journey' => 'lms-learning-journey',
       'profile-identity' => 'author-card',
       'profile-bio', 'profile-social' => 'profile-details',
+      'profile-editor' => 'studio-profile-editor',
       default => NULL,
     };
     if ($component === NULL || !$this->componentAvailable($component)) {
@@ -252,16 +405,18 @@ final class PagePresentationHooks {
     }
 
     $attributes = [];
-    if ($component === 'author-card') {
-      if (!is_string($props['display_name'] ?? NULL) || trim($props['display_name']) === '') {
-        return;
-      }
+    if (in_array($component, ['author-card', 'studio-profile-editor'], TRUE)) {
       $attributes = $variables['attributes'] ?? [];
       if ($attributes instanceof Attribute) {
         $attributes = $attributes->toArray();
       }
       if (!is_array($attributes)) {
         $attributes = [];
+      }
+    }
+    if ($component === 'author-card') {
+      if (!is_string($props['display_name'] ?? NULL) || trim($props['display_name']) === '') {
+        return;
       }
       $actions = [];
       if (isset($slots['actions'])) {
@@ -293,8 +448,14 @@ final class PagePresentationHooks {
       '#props' => $props,
       '#slots' => $slots,
     ];
-    if ($component === 'author-card' && $attributes !== []) {
+    if (in_array($component, ['author-card', 'studio-profile-editor'], TRUE) && $attributes !== []) {
       $renderArray['#attributes'] = $attributes;
+    }
+    if ($component === 'studio-profile-editor' && is_array($variables['elements'] ?? NULL)) {
+      CacheableMetadata::createFromRenderArray($variables['elements'])->applyTo($renderArray);
+      if (is_array($variables['elements']['#attached'] ?? NULL)) {
+        $renderArray['#attached'] = $variables['elements']['#attached'];
+      }
     }
     $variables['component'] = $renderArray;
   }
@@ -304,6 +465,130 @@ final class PagePresentationHooks {
    */
   private function componentAvailable(string $component): bool {
     return $this->componentManager?->hasDefinition('aculta420_v2:' . $component) ?? FALSE;
+  }
+
+  /**
+   * Wraps a named Portal UI render array in its theme-owned SDC.
+   *
+   * @param array<string|int, mixed> $element
+   *   Render tree to search and update.
+   * @param string $token
+   *   Exact `data-portal-ui` token identifying the component root.
+   * @param string $component
+   *   Theme SDC machine name.
+   *
+   * @return bool
+   *   Whether a matching render array was wrapped.
+   */
+  private function wrapPortalUiRenderArray(array &$element, string $token, string $component): bool {
+    $attributes = $element['#attributes'] ?? [];
+    if ($attributes instanceof Attribute) {
+      $attributes = $attributes->toArray();
+    }
+    $tokens = $attributes['data-portal-ui'] ?? '';
+    if (is_string($tokens) && in_array($token, preg_split('/\s+/', trim($tokens)) ?: [], TRUE)) {
+      $content = $element;
+      $element = [
+        '#type' => 'component',
+        '#component' => 'aculta420_v2:' . $component,
+        '#props' => [],
+        '#slots' => ['content' => $content],
+      ];
+      return TRUE;
+    }
+
+    foreach (Element::children($element) as $key) {
+      if (is_array($element[$key]) && $this->wrapPortalUiRenderArray($element[$key], $token, $component)) {
+        return TRUE;
+      }
+    }
+    if (isset($element['#slots']) && is_array($element['#slots'])) {
+      foreach ($element['#slots'] as $key => &$slot) {
+        if (is_array($slot) && $this->wrapPortalUiRenderArray($slot, $token, $component)) {
+          unset($slot);
+          return TRUE;
+        }
+      }
+      unset($slot);
+    }
+    return FALSE;
+  }
+
+  /**
+   * Wraps the editorial node form when it is rendered in the Studio.
+   *
+   * @param array<string|int, mixed> $element
+   *   Render tree to search and update.
+   */
+  private function wrapStudioRevistaForm(array &$element): void {
+    if (($element['#form_id'] ?? NULL) === 'node_revista_form') {
+      $content = $element;
+      $element = [
+        '#type' => 'component',
+        '#component' => 'aculta420_v2:studio-revista-form',
+        '#props' => [],
+        '#slots' => ['content' => $content],
+      ];
+      return;
+    }
+
+    foreach (Element::children($element) as $key) {
+      if (is_array($element[$key])) {
+        $this->wrapStudioRevistaForm($element[$key]);
+      }
+    }
+  }
+
+  /**
+   * Wraps Form API forms below an explicitly marked Studio main region.
+   *
+   * @param array<string|int, mixed> $element
+   *   Render tree to search and update.
+   * @param bool $insideStudioMain
+   *   Whether the current render array descends from the Studio main region.
+   * @param bool $insideRevistaForm
+   *   Whether the form is already owned by the editorial form component.
+   */
+  private function wrapStudioForms(
+    array &$element,
+    bool $insideStudioMain = FALSE,
+    bool $insideRevistaForm = FALSE,
+  ): void {
+    $attributes = $element['#attributes'] ?? [];
+    if ($attributes instanceof Attribute) {
+      $attributes = $attributes->toArray();
+    }
+    $tokens = is_array($attributes) && is_string($attributes['data-portal-ui'] ?? NULL)
+      ? preg_split('/\s+/', trim($attributes['data-portal-ui'])) ?: []
+      : [];
+    $insideStudioMain = $insideStudioMain || in_array('studio-main', $tokens, TRUE);
+    $insideRevistaForm = $insideRevistaForm
+      || ($element['#component'] ?? NULL) === 'aculta420_v2:studio-revista-form';
+
+    if (($element['#type'] ?? NULL) === 'form' && $insideStudioMain && !$insideRevistaForm) {
+      $content = $element;
+      $element = [
+        '#type' => 'component',
+        '#component' => 'aculta420_v2:studio-form',
+        '#props' => [],
+        '#slots' => ['content' => $content],
+      ];
+      return;
+    }
+
+    foreach (Element::children($element) as $key) {
+      if (is_array($element[$key])) {
+        $this->wrapStudioForms($element[$key], $insideStudioMain, $insideRevistaForm);
+      }
+    }
+    if (isset($element['#slots']) && is_array($element['#slots'])) {
+      foreach ($element['#slots'] as &$slot) {
+        if (is_array($slot)) {
+          $this->wrapStudioForms($slot, $insideStudioMain, $insideRevistaForm);
+        }
+      }
+      unset($slot);
+    }
   }
 
   /**
@@ -368,10 +653,10 @@ final class PagePresentationHooks {
       'aculta_studio.account_preferences',
       'aculta_studio.we_sativa',
       'aculta_studio.we_sativa_start',
-      'aculta_lms.student_dashboard',
       'aculta_lms.educator_dashboard',
-      'aculta_lms.lesson_view',
       'aculta_events.organizer_dashboard' => 'aside',
+      'aculta_lms.student_dashboard' => 'full',
+      'aculta_lms.lesson_view' => 'aside',
       'aculta_events.catalogue', 'aculta_events.map' => 'full',
       default => 'stack',
     };

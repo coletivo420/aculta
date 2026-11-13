@@ -61,7 +61,6 @@ final class SupportForm extends FormBase {
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $form['#cache']['max-age'] = 0;
     $form['#attributes']['data-portal-ui'] = 'support-form';
-    $form['#attached']['library'][] = 'aculta_portal/support';
     $form['intro'] = [
       '#type' => 'html_tag',
       '#tag' => 'p',
@@ -76,10 +75,10 @@ final class SupportForm extends FormBase {
     // Os valores sugeridos ficam no bloco de doação rápida (aculta_donation), a única fonte da lista de valores.
     if (!$gateway_ready) {
       $form['status'] = [
-        '#type' => 'container',
-        '#attributes' => ['data-portal-ui' => 'notice-warning'],
-        'message' => [
-          '#plain_text' => $this->t('O apoio financeiro está temporariamente indisponível. Nenhuma cobrança será iniciada por esta página.'),
+        '#component' => 'aculta420_v2:status-messages',
+        '#props' => [
+          'type' => 'warning',
+          'messages' => [$this->t('O apoio financeiro está temporariamente indisponível. Nenhuma cobrança será iniciada por esta página.')],
         ],
       ];
     }

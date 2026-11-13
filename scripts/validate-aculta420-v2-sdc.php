@@ -64,7 +64,11 @@ foreach ($source_files as $source_file) {
 }
 $component_ids = [
   'accordion',
+  'account-terms-modal',
   'account-menu',
+  'account-shell',
+  'account-profile-card',
+  'account-courses',
   'audio-player',
   'alerts-trigger',
   'avatar',
@@ -76,20 +80,35 @@ $component_ids = [
   'cart-offcanvas',
   'card-cultural',
   'courses-catalog',
+  'account-experience-dashboard',
+  'account-experience-card',
+  'consent-banner',
   'discussion-comment',
   'dialog',
   'data-table',
+  'document-download',
+  'donation-presentation',
   'empty-state',
   'event-page-layout',
   'filter-chips',
   'form-field',
   'forum-category',
+  'forum-category-page',
+  'forum-list-page',
+  'forum-search-page',
   'forum-topic',
+  'green-stash-page',
   'heading',
   'hero-banner',
   'icon',
+  'image-audit-report',
   'layout-section',
   'layout-page',
+  'lms-certificate-card',
+  'lms-learning-course-card',
+  'lms-learning-dashboard',
+  'lms-learning-journey',
+  'lms-learning-room',
   'lms-course-curriculum',
   'lms-course-materials',
   'lms-h5p-course',
@@ -103,11 +122,26 @@ $component_ids = [
   'product-card',
   'purpose-showcase',
   'profile-details',
+  'portal-requirements',
   'progress',
   'related-content',
+  'search-preview',
   'revista-listing',
   'revista-publication',
   'revista-teaser',
+  'saved-content-page',
+  'sales-panel',
+  'secret-reveal',
+  'studio-account-section-layout',
+  'studio-shell',
+  'studio-form',
+  'studio-section-header',
+  'studio-listing-table',
+  'studio-revista-form',
+  'studio-profile-editor',
+  'studio-course-authoring-page',
+  'support-form',
+  'public-profile-page',
   'site-footer',
   'social-links-page',
   'status-messages',
@@ -159,9 +193,33 @@ $samples = [
     '#props' => ['title' => 'Pergunta frequente'],
     '#slots' => ['content' => '<p>Resposta disponível.</p>'],
   ],
+  'account-terms-modal' => [
+    '#props' => ['title' => 'Termos da conta'],
+    '#slots' => [
+      'content' => Markup::create('<form><div class="portal-terms-modal__documents"><a href="#uso">Termos</a></div><button>Continuar</button></form>'),
+    ],
+  ],
   'account-menu' => [
     '#props' => ['authenticated' => TRUE],
     '#slots' => ['avatar' => '', 'menu_items' => '<ul><li><a href="/conta">Minha conta</a></li></ul>'],
+  ],
+  'account-shell' => [
+    '#props' => [
+      'title' => 'Minha conta',
+      'section_title' => 'Visão geral',
+      'menu_items' => [['label' => 'Perfil', 'href' => '/conta', 'active' => TRUE]],
+      'accordion_items' => [['label' => 'Pedidos', 'href' => '/conta/pedidos', 'open' => FALSE]],
+      'logout' => ['label' => 'Sair', 'href' => '/user/logout'],
+    ],
+    '#slots' => ['content' => Markup::create('<p>Resumo da conta.</p>')],
+  ],
+  'account-profile-card' => [
+    '#props' => [],
+    '#slots' => ['content' => Markup::create('<article class="portal-account-bio"><h3>Sobre</h3><p>Biografia.</p></article>')],
+  ],
+  'account-courses' => [
+    '#props' => [],
+    '#slots' => ['content' => Markup::create('<article class="portal-account-course"><h3>Curso de exemplo</h3><div class="portal-account-course__meta">Em andamento</div></article>')],
   ],
   'audio-player' => ['#props' => ['src' => '/files/sample.mp3', 'title' => 'Sessão cultural']],
   'alerts-trigger' => ['#props' => ['href' => '/avisos/resumo', 'count' => 0]],
@@ -209,6 +267,42 @@ $samples = [
       'collaboration' => Markup::create('<p>Acesse sua conta para participar.</p>'),
     ],
   ],
+  'account-experience-card' => [
+    '#props' => [
+      'id' => 'cursos',
+      'kind' => 'card',
+      'icon' => 'books',
+      'title' => 'Meus cursos',
+      'description' => 'Continue seu percurso de aprendizagem.',
+      'url' => '/ganjalab',
+      'action_label' => 'Acessar',
+    ],
+  ],
+  'account-experience-dashboard' => [
+    '#props' => [
+      'show_identity' => TRUE,
+      'identity_name' => 'Pessoa de exemplo',
+      'identity_email' => 'pessoa@aculta.org',
+      'profile_url' => '/perfil/exemplo',
+      'experiences_title' => 'Suas experiências',
+      'experiences_description' => 'Acesse suas áreas na ACULTA.',
+      'account_url' => '/conta/preferencias',
+      'account_link_label' => 'Configurações da conta',
+      'account_link_title' => 'Minha conta',
+      'account_link_description' => 'Preferências e dados cadastrais',
+    ],
+    '#slots' => [
+      'menu' => Markup::create('<nav aria-label="Studio"><a href="/conta">Conta</a></nav>'),
+      'avatar' => Markup::create('<img src="/avatar.svg" alt="" width="96" height="96">'),
+      'profile_link' => Markup::create('<a href="/perfil/exemplo">Ver perfil</a>'),
+      'calendar' => Markup::create('<section>Calendário</section>'),
+      'connections' => Markup::create('<section>Conexões</section>'),
+      'experiences' => Markup::create('<li class="aculta-account-experience-item"><article class="aculta-xp-card">Curso</article></li>'),
+    ],
+  ],
+  'consent-banner' => [
+    '#props' => ['privacy_url' => '/sobre/politica-de-privacidade'],
+  ],
   'discussion-comment' => [
     '#props' => ['has_author' => TRUE, 'has_submitted' => TRUE],
     '#slots' => [
@@ -223,6 +317,14 @@ $samples = [
     '#slots' => [
       'table' => Markup::create('<table class="data-table__table" role="table"><caption>Conteúdos recentes</caption><thead role="rowgroup"><tr role="row"><th id="col-title" scope="col" role="columnheader">Título</th><th id="col-status" scope="col" role="columnheader">Status</th></tr></thead><tbody role="rowgroup"><tr role="row"><td role="cell" headers="col-title" data-label="Título">Revista cultural</td><td role="cell" headers="col-status" data-label="Status">Rascunho</td></tr></tbody></table>'),
     ],
+  ],
+  'document-download' => [
+    '#props' => ['format' => 'PDF', 'size' => '2,4 MB', 'format_token' => 'pdf'],
+    '#slots' => ['link' => Markup::create('<a href="/manual.pdf">Manual do curso</a>')],
+  ],
+  'donation-presentation' => [
+    '#props' => ['variant' => 'thanks'],
+    '#slots' => ['content' => Markup::create('<p class="donation-presentation__donor">Pessoa de exemplo</p>')],
   ],
   'empty-state' => [
     '#props' => ['compact' => FALSE],
@@ -277,6 +379,18 @@ $samples = [
       'count' => '12 tópicos',
     ],
   ],
+  'forum-category-page' => [
+    '#props' => [],
+    '#slots' => ['content' => Markup::create('<header class="forum-category-header"><h1>Categoria</h1></header><div class="aculta-forum-category-page__layout"><main>Tópicos</main><aside>Regras</aside></div>')],
+  ],
+  'forum-list-page' => [
+    '#props' => [],
+    '#slots' => ['content' => Markup::create('<section class="aculta-forum-list__panel" aria-label="Lista"><div class="aculta-forum-list__rows"><article>Tópico</article></div></section>')],
+  ],
+  'forum-search-page' => [
+    '#props' => [],
+    '#slots' => ['content' => Markup::create('<form id="views-exposed-form-aculta-forum-search-page-search"><div class="form-item-keys"><input name="keys"></div><div class="form-item-categoria"><select name="categoria"></select></div><div id="edit-actions"><button type="submit">Buscar</button></div></form><div class="view-aculta-forum-search"><div class="view-empty">Sem resultados</div></div>')],
+  ],
   'forum-topic' => [
     '#props' => ['variant' => 'teaser', 'has_title' => TRUE, 'has_meta' => TRUE, 'has_bookmark' => FALSE],
     '#slots' => [
@@ -302,6 +416,62 @@ $samples = [
       'aside' => '<p>Conteúdo complementar.</p>',
     ],
   ],
+  'lms-learning-dashboard' => [
+    '#props' => [
+      'title' => 'Minha aprendizagem',
+      'introduction' => 'Acompanhe seus cursos.',
+      'continue_title' => 'Continuar aprendendo',
+      'courses_title' => 'Meus cursos',
+      'empty_courses_message' => 'Ainda sem cursos.',
+      'certificates_title' => 'Meus certificados',
+    ],
+    '#slots' => [
+      'resume' => Markup::create('<article class="lms-learning-course-card">Continuar curso</article>'),
+      'courses' => Markup::create('<article class="lms-learning-course-card">Meu curso</article>'),
+      'empty_action' => Markup::create('<a href="/cursos">Explorar cursos</a>'),
+      'certificates' => Markup::create('<article class="lms-certificate-card">Certificado</article>'),
+    ],
+  ],
+  'lms-learning-course-card' => [
+    '#props' => [
+      'title' => 'Curso de exemplo',
+      'progress_id' => 'lms-course-progress-1',
+      'progress_label' => 'Progresso do curso de exemplo',
+      'progress_text' => '1 de 3 aulas concluídas',
+      'progress_value' => 33,
+      'has_lessons' => TRUE,
+      'finished' => FALSE,
+      'pending_evaluation' => FALSE,
+      'pending_text' => 'Avaliação pendente',
+      'finished_text' => 'Curso concluído',
+      'current_lesson' => 'Próxima aula: Introdução',
+    ],
+    '#slots' => [
+      'journey_action' => Markup::create('<a href="/group/1">Ver jornada</a>'),
+      'continue_action' => Markup::create('<a href="/group/1/aula/1">Continuar</a>'),
+    ],
+  ],
+  'lms-certificate-card' => [
+    '#props' => [
+      'title' => 'Curso de exemplo',
+      'status' => 'active',
+      'status_text' => 'Válido',
+      'issued_text' => 'Emitido hoje',
+    ],
+    '#slots' => ['verification_action' => Markup::create('<a href="/certificados/1">Ver certificado</a>')],
+  ],
+  'lms-learning-journey' => [
+    '#props' => [],
+    '#slots' => [
+      'content' => Markup::create('<section data-portal-ui="aculta-learning-journey"><h2 data-portal-ui="aculta-learning-journey__title">Minha jornada</h2><ol data-portal-ui="aculta-learning-journey__lessons"><li>Aula 1</li></ol></section>'),
+    ],
+  ],
+  'lms-learning-room' => [
+    '#props' => [],
+    '#slots' => [
+      'content' => Markup::create('<main data-portal-ui="aculta-learning-room"><div data-portal-ui="aculta-learning-room__layout"><article data-portal-ui="aculta-learning-room__content">Atividade</article></div></main>'),
+    ],
+  ],
   'layout-section' => [
     '#props' => [],
     '#slots' => [
@@ -324,6 +494,7 @@ $samples = [
       'lessons_heading' => Markup::create('Estrutura do curso'),
       'lessons' => Markup::create('<ol><li>Aula de exemplo</li></ol>'),
       'lesson_order_form' => '',
+      'resources' => Markup::create('<section class="aculta-lms-course-builder__resources"><h2>Materiais de apoio</h2><ul><li>Leitura complementar</li></ul></section>'),
     ],
   ],
   'lms-course-materials' => [
@@ -394,12 +565,85 @@ $samples = [
     '#props' => ['title' => 'Biografia', 'title_id' => 'studio-profile-bio-title', 'heading_level' => 2],
     '#slots' => ['bio' => Markup::create('<p>Biografia autorizada.</p>'), 'actions' => ''],
   ],
+  'portal-requirements' => [
+    '#props' => [],
+    '#slots' => ['content' => Markup::create('<section><h2>Requisitos</h2><div class="aculta-portal-requirements__legend">Estados</div></section>')],
+  ],
   'progress' => [
     '#props' => ['id' => 'curso-progresso', 'label' => 'Progresso do curso', 'value' => 60, 'max' => 100],
   ],
   'related-content' => [
     '#props' => [],
     '#slots' => ['content' => Markup::create('<h3>Conteúdo relacionado</h3><ul><li>Local relacionado</li></ul>')],
+  ],
+  'search-preview' => [
+    '#props' => [],
+    '#slots' => ['content' => Markup::create('<ul><li><a href="/busca">Resultado de exemplo</a></li></ul>')],
+  ],
+  'green-stash-page' => [
+    '#props' => [],
+    '#slots' => ['content' => Markup::create('<section class="studio aculta-green-stash"><h2>Produtos</h2><nav class="aculta-green-stash__navigation"><a class="aculta-green-stash__navigation-link" href="/green-stash" aria-current="page">Produtos</a></nav><div class="aculta-green-stash__products"><h3>Produto de exemplo</h3></div></section>')],
+  ],
+  'image-audit-report' => [
+    '#props' => [],
+    '#slots' => ['content' => Markup::create('<p>Relatório somente de leitura.</p><table><caption>Resumo</caption><tbody><tr><td>Imagens</td><td>12</td></tr></tbody></table>')],
+  ],
+  'sales-panel' => [
+    '#props' => [],
+    '#slots' => ['content' => Markup::create('<section><h2>Vendas por período</h2><table><caption>Relatório demonstrativo</caption><tbody><tr><td>2026-11</td><td>3</td></tr></tbody></table></section>')],
+  ],
+  'saved-content-page' => [
+    '#props' => [],
+    '#slots' => ['content' => Markup::create('<h1 class="page-title">Itens salvos</h1><ul class="studio-saved-tabs"><li><a href="/salvos" aria-current="page">Salvos</a></li></ul><div class="studio-saved-list-wrapper"><ul class="studio-card-compact-list"><li><article class="studio-card-compact"><a class="compact-card-title" href="/conteudo">Conteúdo salvo</a></article></li></ul></div>')],
+  ],
+  'secret-reveal' => [
+    '#props' => [],
+    '#slots' => ['content' => Markup::create('<p>Nome da credencial</p><pre>valor oculto</pre>')],
+  ],
+  'studio-account-section-layout' => [
+    '#props' => [],
+    '#slots' => ['content' => Markup::create('<section class="studio studio-account-section"><details class="studio-account-section__navigation"><summary>Seções</summary><ul class="studio-account-nav-list"><li><a href="/conta">Dados</a></li></ul></details><div data-aculta-account-main>Conteúdo</div></section>')],
+  ],
+  'studio-listing-table' => [
+    '#props' => [],
+    '#slots' => ['content' => Markup::create('<div class="studio__listing-wrap"><table class="studio__listing"><thead><tr><th>Título</th></tr></thead><tbody><tr><td>Exemplo</td></tr></tbody></table></div>')],
+  ],
+  'studio-section-header' => [
+    '#props' => [],
+    '#slots' => ['content' => Markup::create('<div class="studio__section-header"><h2 data-portal-ui="studio-heading">Perfil editorial</h2><ul class="studio__actions"><li><a href="#editar">Editar</a></li></ul></div>')],
+  ],
+  'studio-revista-form' => [
+    '#props' => [],
+    '#slots' => ['content' => Markup::create('<form class="node-revista-form"><fieldset><legend>Publicação</legend><label for="title">Título</label><input id="title" value="Exemplo"><div class="form-actions"><button class="form-submit">Salvar</button></div></fieldset></form>')],
+  ],
+  'studio-profile-editor' => [
+    '#props' => [],
+    '#slots' => [
+      'intro' => Markup::create('<p>Gerencie sua identidade.</p>'),
+      'identity' => Markup::create('<h2>Identidade</h2>'),
+      'bio' => Markup::create('<h2>Biografia</h2>'),
+      'social_links' => Markup::create('<h2>Redes sociais</h2>'),
+    ],
+  ],
+  'studio-shell' => [
+    '#props' => [],
+    '#slots' => ['content' => Markup::create('<div class="studio__layout"><nav class="studio__sidebar">Painel</nav><main class="studio__main"><h1>Marley</h1><form><label for="shell-title">Título</label><input id="shell-title"><button class="form-submit">Salvar</button></form></main></div>')],
+  ],
+  'studio-form' => [
+    '#props' => [],
+    '#slots' => ['content' => Markup::create('<form><fieldset><legend>Perfil</legend><label for="studio-form-title">Título</label><input id="studio-form-title" value="Exemplo"><div class="form-actions"><button class="form-submit">Salvar</button></div></fieldset></form>')],
+  ],
+  'studio-course-authoring-page' => [
+    '#props' => [],
+    '#slots' => ['content' => Markup::create('<section class="studio-course-authoring"><a class="studio-course-authoring__back" href="#educador">Voltar</a><form><label for="course-name">Nome</label><input id="course-name"><button class="form-submit">Criar curso</button></form></section>')],
+  ],
+  'support-form' => [
+    '#props' => [],
+    '#slots' => ['content' => Markup::create('<form class="aculta-support"><fieldset><legend>Apoio</legend><div class="form-actions"><button>Continuar</button></div></fieldset></form>')],
+  ],
+  'public-profile-page' => [
+    '#props' => [],
+    '#slots' => ['content' => Markup::create('<section class="portal-profile"><header class="portal-profile__header"><h2 class="portal-profile__name">Pessoa exemplo</h2></header><p class="portal-profile__bio">Biografia pública de exemplo.</p></section>')],
   ],
   'site-footer' => [
     '#props' => [],

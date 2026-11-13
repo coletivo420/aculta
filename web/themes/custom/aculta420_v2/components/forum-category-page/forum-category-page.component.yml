@@ -1,0 +1,16 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Página de categoria do Fórum
+description: Composição da página pública de categoria, preservando linhas, paginação e blocos renderizados pela View.
+status: stable
+group: Comunidade
+props:
+  type: object
+  additionalProperties: false
+slots:
+  content:
+    title: Conteúdo da categoria
+    description: Cabeçalho, navegação, rows, pager e painel lateral da View.
+assets:
+  css:
+    component:
+      forum-category-page.css: {}

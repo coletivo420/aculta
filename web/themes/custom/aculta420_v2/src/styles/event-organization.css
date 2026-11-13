@@ -1,14 +1,20 @@
-/* ACULTA Event Organization (portado do V1 em 2026-11-05). Estado: DEFERRED (sem captura visual). Seletores só do Bootstrap removidos. */
+/* Event organization forms and profiles. The Events module owns data and markup. */
 
 #aculta-organization-modal-form-wrapper,
 .aculta-event-org-widget,
-.aculta-events-organization-admin-overview {
+[data-portal-ui="events-organization-admin-table"] {
   min-inline-size: 0;
   max-inline-size: 100%;
 }
 
-.search-box,
-.aculta-event-organization-location-fields {
+.aculta-events-organization-admin-overview {
+  min-inline-size: 0;
+  max-inline-size: 100%;
+  overflow-wrap: anywhere;
+}
+
+#aculta-organization-modal-form-wrapper .search-box,
+#aculta-organization-modal-form-wrapper .aculta-event-organization-location-fields {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   align-items: end;
@@ -16,125 +22,115 @@
   min-inline-size: 0;
 }
 
-.search-box > *,
-.aculta-event-organization-location-fields > * {
+#aculta-organization-modal-form-wrapper .search-box > *,
+#aculta-organization-modal-form-wrapper .aculta-event-organization-location-fields > * {
   min-inline-size: 0;
 }
 
-.search-box input,
-.aculta-event-organization-location-fields input {
+#aculta-organization-modal-form-wrapper .search-box input,
+#aculta-organization-modal-form-wrapper .aculta-event-organization-location-fields input {
   inline-size: 100%;
   min-inline-size: 0;
   max-inline-size: 100%;
 }
 
-.search-box .button,
-.search-box .button--primary,
-.search-box .button--secondary {
+#aculta-organization-modal-form-wrapper .search-box .button,
+#aculta-organization-modal-form-wrapper .search-box .button--primary,
+#aculta-organization-modal-form-wrapper .search-box .button--secondary {
   inline-size: 100%;
   min-block-size: 2.75rem;
   margin: 0;
 }
 
-.org-modal-results-table {
+#aculta-organization-modal-form-wrapper .org-modal-results-table {
   display: block;
   max-inline-size: 100%;
   overflow-x: auto;
   overscroll-behavior-inline: contain;
 }
 
-.org-modal-results-table table {
+#aculta-organization-modal-form-wrapper .org-modal-results-table table {
   min-inline-size: 34rem;
 }
 
-.event-org-card,
-.event-org-empty {
+.aculta-event-org-widget .event-org-card,
+.aculta-event-org-widget .event-org-empty {
+  min-inline-size: 0;
   padding: 1rem;
   color: var(--color-text-primary);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-base);
   background: var(--color-surface-raised);
-  min-inline-size: 0;
 }
 
-.event-org-card {
+.aculta-event-org-widget .event-org-card {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   align-items: start;
   gap: .75rem;
 }
 
-.event-org-card__title {
+.aculta-event-org-widget .event-org-card__title {
   min-inline-size: 0;
   margin: 0;
   overflow-wrap: anywhere;
 }
 
-.event-org-card__badge {
+.aculta-event-org-widget .event-org-card__badge {
   justify-self: start;
 }
 
-.event-org-card__locality {
+.aculta-event-org-widget .event-org-card__locality {
   margin: 0;
   color: var(--color-text-secondary);
   overflow-wrap: anywhere;
 }
 
-.event-org-empty {
+.aculta-event-org-widget .event-org-empty {
   margin-block: .75rem;
 }
 
-.coorganizers-list {
+.aculta-event-org-widget .coorganizers-list {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   gap: .75rem;
   min-inline-size: 0;
 }
 
-.coorganizer-item {
+.aculta-event-org-widget .coorganizer-item {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
+  gap: .5rem;
+  min-inline-size: 0;
   padding: .75rem;
   color: var(--color-text-primary);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-base);
   background: var(--color-surface-raised);
-  gap: .5rem;
+  overflow-wrap: anywhere;
+}
+
+.aculta-event-org-widget .coorganizer-item__title {
   min-inline-size: 0;
   overflow-wrap: anywhere;
 }
 
-.coorganizer-item__title {
-  min-inline-size: 0;
-  overflow-wrap: anywhere;
-}
-
-.aculta-events-organization-admin-overview {
-  overflow-wrap: anywhere;
-}
-
-.aculta-events-organization-admin-overview .form--inline {
+[data-portal-ui="events-organization-admin-table"] .form--inline,
+[data-portal-ui="events-organization-admin-table"] .aculta-event-organization-admin-filter-fields {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   gap: .75rem;
 }
 
-.aculta-events-organization-admin-overview .aculta-event-organization-admin-filter-fields {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: .75rem;
+[data-portal-ui="events-organization-admin-table"] .aculta-event-organization-admin-filter-fields {
   min-inline-size: 0;
 }
 
-.aculta-events-organization-admin-overview :is(input, select) {
+[data-portal-ui="events-organization-admin-table"] :is(input, select) {
   inline-size: 100%;
   min-inline-size: 0;
   max-inline-size: 100%;
-}
-
-.aculta-related-content {
-  min-inline-size: 0;
 }
 
 .aculta-organization-profile {
@@ -145,56 +141,48 @@
   margin-inline: auto;
 }
 
-.organization-header,
-.organization-body,
-.organization-links,
-.organization-badge {
+.aculta-organization-profile .organization-header,
+.aculta-organization-profile .organization-body,
+.aculta-organization-profile .organization-links,
+.aculta-organization-profile .organization-badge {
+  min-inline-size: 0;
   padding: 1rem;
   color: var(--color-text-primary);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-base);
   background: var(--color-surface-raised);
-  min-inline-size: 0;
 }
 
-.organization-header :is(h1, h2, h3),
-.organization-links :is(h2, h3) {
+.aculta-organization-profile .organization-header :is(h1, h2, h3),
+.aculta-organization-profile .organization-links :is(h2, h3) {
   margin-block-start: 0;
   overflow-wrap: anywhere;
 }
 
-.organization-title {
+.aculta-organization-profile .organization-title {
   margin-block: 0 .75rem;
 }
 
-.organization-location {
+.aculta-organization-profile .organization-location {
   margin-block: 0;
   color: var(--color-text-secondary);
   overflow-wrap: anywhere;
 }
 
-.organization-header p,
-.organization-body,
-.organization-links {
+.aculta-organization-profile .organization-header p,
+.aculta-organization-profile .organization-body,
+.aculta-organization-profile .organization-links,
+.aculta-organization-profile .organization-event-item,
+.aculta-organization-profile .organization-admin-link {
   overflow-wrap: anywhere;
 }
 
-.organization-links a {
-  overflow-wrap: anywhere;
-}
-
-.organization-description,
-.organization-links p {
+.aculta-organization-profile .organization-description,
+.aculta-organization-profile .organization-links p {
   white-space: pre-line;
 }
 
-.organization-event-item,
-.organization-admin-link {
-  min-inline-size: 0;
-  overflow-wrap: anywhere;
-}
-
-.organization-footer-actions {
+.aculta-organization-profile .organization-footer-actions {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -202,12 +190,12 @@
   min-inline-size: 0;
 }
 
-.organization-badge--unclaimed {
+.aculta-organization-profile .organization-badge--unclaimed {
   border-inline-start: .25rem solid var(--color-warning);
   background: var(--color-status-warning-surface);
 }
 
-.organization-events ul {
+.aculta-organization-profile .organization-events ul {
   display: grid;
   gap: .5rem;
   margin: 0;
@@ -215,56 +203,53 @@
   list-style: none;
 }
 
-.organization-events li {
+.aculta-organization-profile .organization-events li {
   min-inline-size: 0;
 }
 
 @media (min-width: 36rem) {
-  .search-box {
+  #aculta-organization-modal-form-wrapper .search-box {
     grid-template-columns: minmax(0, 1fr) auto;
   }
 
-  .search-box .button,
-  .search-box .button--primary,
-  .search-box .button--secondary {
+  #aculta-organization-modal-form-wrapper .search-box .button,
+  #aculta-organization-modal-form-wrapper .search-box .button--primary,
+  #aculta-organization-modal-form-wrapper .search-box .button--secondary {
     inline-size: auto;
   }
 
-  .aculta-event-organization-location-fields {
+  #aculta-organization-modal-form-wrapper .aculta-event-organization-location-fields {
     grid-template-columns: minmax(0, 1fr) 6rem;
   }
 
-  .event-org-card {
+  .aculta-event-org-widget .event-org-card {
     grid-template-columns: minmax(0, 1fr) auto;
   }
 
-  .event-org-card__title {
+  .aculta-event-org-widget .event-org-card__title {
     grid-column: 1 / -1;
   }
 }
 
 @media (min-width: 48rem) {
-  .search-box {
+  #aculta-organization-modal-form-wrapper .search-box {
     grid-template-columns: minmax(0, 1fr) auto auto;
   }
 
-  .aculta-events-organization-admin-overview .form--inline,
-  .aculta-events-organization-admin-overview .aculta-event-organization-admin-filter-fields {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .coorganizers-list {
+  [data-portal-ui="events-organization-admin-table"] .form--inline,
+  [data-portal-ui="events-organization-admin-table"] .aculta-event-organization-admin-filter-fields,
+  .aculta-event-org-widget .coorganizers-list {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
 @media (min-width: 62rem) {
-  .aculta-events-organization-admin-overview .form--inline,
-  .aculta-events-organization-admin-overview .aculta-event-organization-admin-filter-fields {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-
-  .coorganizers-list {
+  [data-portal-ui="events-organization-admin-table"] .form--inline,
+  [data-portal-ui="events-organization-admin-table"] .aculta-event-organization-admin-filter-fields,
+  .aculta-event-org-widget .coorganizers-list {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
+.aculta-event-organization__intro { font-size: 1.125rem; line-height: 1.5; }
+.aculta-event-organization__admin-link,
+.aculta-event-organization__fallback { color: var(--color-text-muted); font-size: .875em; }

@@ -87,58 +87,8 @@
   margin-block-start: var(--spacing-sm);
 }
 
-.aculta-component-library-page .ui_patterns_component:has(.aculta-studio-topbar) .aculta-studio-menu-dialog {
+.aculta-component-library-page .aculta-studio-menu-dialog {
   position: fixed;
-}
-
-.aculta-component-library-page :is(main, .page__main):has(.aculta-studio-calendar) {
-  position: static;
-  inline-size: 100%;
-  max-inline-size: none;
-  margin-inline: 0;
-  grid-template-columns: minmax(0, 1fr);
-  padding-inline-end: 0;
-}
-
-.aculta-component-library-page .layout-page:has(.aculta-studio-calendar) {
-  position: static;
-  inline-size: 100%;
-  max-inline-size: var(--aculta-container-width, 1200px);
-  margin-inline: auto;
-  grid-template-columns: minmax(0, 1fr);
-  padding-inline-end: clamp(var(--spacing-sm), 2.5vw, var(--spacing-xxl));
-}
-
-.aculta-component-library-page :is(main, .page__main):has(.aculta-studio-sidebar) {
-  position: static;
-  inline-size: 100%;
-  max-inline-size: none;
-  margin-inline: 0;
-  padding-inline-start: 0;
-}
-
-.aculta-component-library-page .layout-page:has(.aculta-studio-sidebar) {
-  position: static;
-  inline-size: 100%;
-  max-inline-size: var(--aculta-container-width, 1200px);
-  margin-inline: auto;
-  padding-inline-start: clamp(var(--spacing-sm), 2.5vw, var(--spacing-xxl));
-}
-
-.aculta-component-library-page .layout-page:has(.aculta-studio-sidebar) .layout-page__content {
-  inline-size: 100%;
-  max-inline-size: none;
-  margin-inline: 0;
-}
-
-.aculta-component-library-page .layout-page h1:not(.aculta-studio-topbar__title) {
-  display: revert;
-}
-
-.aculta-component-library-page :is(main, .page__main, .layout-page):has(.aculta-studio-calendar) .layout-page__content {
-  inline-size: 100%;
-  max-inline-size: none;
-  margin-inline: 0;
 }
 
 /* Layout e cartões da UI Patterns Library (extraídos de layout.css). */
@@ -237,11 +187,6 @@ body.aculta-component-library-page {
   min-block-size: var(--tap-target-min);
 }
 
-.aculta-component-library-page .aculta-component-library__details > summary:focus-visible {
-  outline: 3px solid var(--button-focus-ring);
-  outline-offset: 2px;
-}
-
 .aculta-component-library-page .ui_patterns_component__title a {
   text-decoration: none;
   color: inherit;
@@ -276,25 +221,6 @@ body.aculta-component-library-page {
   max-inline-size: 80ch;
   color: var(--color-text-secondary);
   overflow-wrap: anywhere;
-}
-
-.aculta-component-library__details {
-  margin-block-start: var(--spacing-lg);
-  border-block-start: 1px solid var(--color-border);
-}
-
-.aculta-component-library__details > summary {
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  color: var(--color-link-editorial);
-  font-weight: 600;
-  min-block-size: var(--tap-target-min);
-}
-
-.aculta-component-library__details > summary:focus-visible {
-  outline: 3px solid var(--button-focus-ring);
-  outline-offset: 2px;
 }
 
 .aculta-component-library__details-content {

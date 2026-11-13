@@ -16,7 +16,8 @@
   { label: 'Sem resposta'|t, href: url('view.aculta_forum_public_topics.page_unanswered'), active: current_display == 'page_unanswered', count: null }
 ] %}
 
-<div class="aculta-forum-list">
+{% embed 'aculta420_v2:forum-list-page' %}
+{% block content %}
   {{ include('aculta420_v2:forum-category-header', {
     title: 'Growroom420'|t,
     description: 'Cultivo, ciência, cultura e antiproibicionismo. Um espaço para aprender e trocar experiências.'|t,
@@ -104,4 +105,5 @@
       }, with_context = false) }}
     </aside>
   </div>
-</div>
+{% endblock %}
+{% endembed %}

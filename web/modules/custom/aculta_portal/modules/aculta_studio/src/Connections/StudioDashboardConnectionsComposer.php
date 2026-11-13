@@ -39,14 +39,17 @@ class StudioDashboardConnectionsComposer {
     }
 
     return [
-      '#theme' => 'aculta_studio_connections',
-      '#title' => 'CONEXÕES',
-      '#connections' => $connections,
-      '#empty_message' => 'Você ainda não tem conexões',
-      '#find_connections_label' => 'Encontrar conexões',
-      '#find_connections_url' => Url::fromRoute('aculta_studio.account_connections')->toString(),
-      '#all_connections_label' => 'Ver todas',
-      '#all_connections_url' => Url::fromRoute('aculta_studio.account_connections')->toString(),
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:studio-connections-block',
+      '#props' => [
+        'title' => 'CONEXÕES',
+        'connections' => $connections,
+        'empty_message' => 'Você ainda não tem conexões',
+        'find_connections_label' => 'Encontrar conexões',
+        'find_connections_url' => Url::fromRoute('aculta_studio.account_connections')->toString(),
+        'all_connections_label' => 'Ver todas',
+        'all_connections_url' => Url::fromRoute('aculta_studio.account_connections')->toString(),
+      ],
       '#cache' => [
         'contexts' => ['user'],
         'tags' => ['aculta_friendship_list'],

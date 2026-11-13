@@ -37,7 +37,7 @@ ficam no Commerce, matrículas e progresso no LMS, mensagens no sistema de e-mai
   (`wiki.entries.read`, dimensão = nid, retenção configurável). Antiabuso: uma leitura por visitante
   e verbete a cada 30 min, até 60 por visitante por hora, com identificador pseudonimo do visitante.
 - Banner de consentimento para visitante anônimo (`consent_banner.enabled`, desligado por padrão):
-  biblioteca `aculta_statistics/consent`; o marcado visual é do tema (`consent-banner`).
+  biblioteca `aculta_statistics/consent`; o SDC `aculta420_v2:consent-banner` é renderizado em `page_bottom` só para visitantes anônimos quando habilitado.
 
 ## Documentação
 

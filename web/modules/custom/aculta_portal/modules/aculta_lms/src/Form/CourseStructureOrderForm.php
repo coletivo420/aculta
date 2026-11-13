@@ -75,7 +75,7 @@ final class CourseStructureOrderForm extends FormBase implements ContainerInject
 
     $form['#attributes'] = [
       'id' => 'aculta-course-order-' . $collection . '-' . $parent_id,
-      'data-portal-ui' => 'aculta-lms-course-sort-form',
+      'class' => ['aculta-lms-course-sort-form'],
       'data-aculta-sort-form' => $collection,
       'data-aculta-unsaved-changes' => TRUE,
     ];

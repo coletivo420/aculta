@@ -130,11 +130,12 @@ final class MapRenderer {
     }
     if ($engine === 'google' && !$googleKey) {
       $build['provider_notice'] = [
-        '#type' => 'html_tag',
-        '#tag' => 'p',
-        '#value' => 'Google Maps não está configurado; usando OpenStreetMap.',
+        '#component' => 'aculta420_v2:status-messages',
+        '#props' => [
+          'type' => 'warning',
+          'messages' => ['Google Maps não está configurado; usando OpenStreetMap.'],
+        ],
         '#access' => $this->currentUser->hasPermission('administer aculta maps'),
-        '#attributes' => ['data-portal-ui' => 'notice-warning'],
       ];
     }
     if ($provider === 'google' && $markers !== []) {

@@ -141,8 +141,9 @@ final class ImageAuditController extends ControllerBase {
     }
 
     return [
-      '#cache' => ['max-age' => 0],
-      '#attributes' => ['data-portal-ui' => 'aculta-image-audit'],
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:image-audit-report',
+      '#slots' => ['content' => [
       'aviso' => ['#markup' => '<p>' . $this->t('Relatório somente de leitura. Nada é apagado aqui: candidatas passam pela revisão e pela quarentena.') . '</p>'],
       'resumo' => ['#type' => 'table', '#header' => [$this->t('Indicador'), $this->t('Valor')], '#rows' => $linhas],
       'duplicatas' => [
@@ -177,6 +178,8 @@ final class ImageAuditController extends ControllerBase {
         ], $this->audit->arquivos()),
         '#empty' => $this->t('Nenhum arquivo de imagem gerenciado.'),
       ],
+      ]],
+      '#cache' => ['max-age' => 0],
     ];
   }
 

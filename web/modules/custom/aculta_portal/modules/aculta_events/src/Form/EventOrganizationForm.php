@@ -155,9 +155,9 @@ final class EventOrganizationForm extends ContentEntityForm {
       $isAdmin = $this->currentUser()->hasPermission('administer aculta events');
       if ($entity->isUnclaimed() && !$isAdmin) {
         $form['unclaimed_notice'] = [
-          '#type' => 'container',
-          '#attributes' => ['data-portal-ui' => 'notice-warning'],
-          '#markup' => $this->t('<strong>Organização sem titular:</strong> suas alterações serão enviadas como sugestão e só aparecerão no perfil público após aprovação administrativa.'),
+          '#component' => 'aculta420_v2:status-messages',
+          '#props' => ['type' => 'warning'],
+          '#slots' => ['content' => ['#markup' => $this->t('<strong>Organização sem titular:</strong> suas alterações serão enviadas como sugestão e só aparecerão no perfil público após aprovação administrativa.')]],
           '#weight' => -15,
         ];
         if (isset($form['actions']['submit'])) {

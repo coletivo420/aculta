@@ -110,18 +110,20 @@ final class NewConversationForm extends FormBase {
         ],
       ];
       $form['preview'] = [
-        '#type' => 'container',
+        '#type' => 'component',
+        '#component' => 'aculta420_v2:search-preview',
         '#weight' => -9,
-        '#attributes' => [
+        '#props' => ['attributes' => new \Drupal\Core\Template\Attribute([
           'id' => 'aculta-new-conversation-preview',
-          'data-portal-ui' => 'search-preview',
           'role' => 'region',
           'aria-label' => $this->t('Resultados de membros'),
           'aria-live' => 'polite',
           'hidden' => TRUE,
           'data-aculta-js-only' => '',
-        ],
-        'hint' => ['#plain_text' => $this->t('Digite pelo menos @n caracteres para ver resultados.', ['@n' => NewConversationController::MIN_CHARS])],
+        ])],
+        '#slots' => ['content' => [
+          'hint' => ['#plain_text' => $this->t('Digite pelo menos @n caracteres para ver resultados.', ['@n' => NewConversationController::MIN_CHARS])],
+        ]],
       ];
     }
     else {

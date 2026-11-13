@@ -114,6 +114,7 @@ final class SurfaceSettingsHooks implements ContainerInjectionInterface {
     }
     if ($siteKey === 'account') {
       $variables['#attached']['library'][] = 'aculta420_v2/portal-account';
+      $variables['#attached']['library'][] = 'aculta420_v2/account-dialogs';
     }
     if ($siteKey === 'wiki') {
       $variables['#attached']['library'][] = 'aculta420_v2/wiki';

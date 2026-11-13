@@ -77,7 +77,7 @@ final class CourseStructureController {
           ->execute();
         $activityActions = [
           '#type' => 'container',
-          '#attributes' => ['data-portal-ui' => 'aculta-lms-course-builder--actions'],
+          '#attributes' => ['class' => ['aculta-lms-course-builder__actions']],
           'move_up' => $activityIndex > 0 ? Link::fromTextAndUrl(
             $this->t('Mover acima'),
             Url::fromRoute('aculta_lms.activity_move', [
@@ -108,7 +108,7 @@ final class CourseStructureController {
         $activityCards[] = [
           '#type' => 'container',
           '#attributes' => [
-            'data-portal-ui' => 'aculta-lms-course-builder--activity',
+            'class' => ['aculta-lms-course-builder__activity'],
             'data-aculta-sort-item' => (string) $activity->id(),
           ],
           'sort_handle' => [
@@ -116,7 +116,7 @@ final class CourseStructureController {
             '#tag' => 'span',
             '#value' => $this->t('Arrastar para reordenar'),
             '#attributes' => [
-              'data-portal-ui' => 'aculta-lms-course-builder--sort-handle',
+              'class' => ['aculta-lms-course-builder__sort-handle'],
               'data-aculta-sort-handle' => TRUE,
               'draggable' => 'true',
               'aria-hidden' => 'true',
@@ -145,7 +145,7 @@ final class CourseStructureController {
       }
       $lessonActions = [
         '#type' => 'container',
-        '#attributes' => ['data-portal-ui' => 'aculta-lms-course-builder--actions'],
+        '#attributes' => ['class' => ['aculta-lms-course-builder__actions']],
         'add_activity' => Link::fromTextAndUrl(
           $this->t('Adicionar atividade'),
           Url::fromRoute('aculta_lms.activity_add', ['course' => $course->id(), 'lesson' => $lesson->id()]),
@@ -177,7 +177,7 @@ final class CourseStructureController {
           '#theme' => 'item_list',
           '#list_type' => 'ul',
           '#items' => $activityCards,
-          '#attributes' => ['data-portal-ui' => 'aculta-lms-course-builder--activities'],
+          '#attributes' => ['class' => ['aculta-lms-course-builder__activities']],
         ];
       if (count($activityCards) > 1 && $this->formBuilder !== NULL) {
         $activityList['#attributes']['data-aculta-sort-list'] = 'activities';
@@ -196,13 +196,13 @@ final class CourseStructureController {
       $lessonCards[] = [
         '#type' => 'container',
         '#attributes' => [
-          'data-portal-ui' => 'aculta-lms-course-builder--lesson',
+          'class' => ['aculta-lms-course-builder__lesson'],
           'data-aculta-lms-lesson' => (string) $lesson->id(),
           'data-aculta-sort-item' => (string) $lesson->id(),
         ],
         'heading' => [
           '#type' => 'container',
-          '#attributes' => ['data-portal-ui' => 'aculta-lms-course-builder--lesson-heading'],
+          '#attributes' => ['class' => ['aculta-lms-course-builder__lesson-heading']],
           'title' => Link::fromTextAndUrl(
             (string) $lesson->get('title')->value,
             Url::fromRoute('aculta_lms.lesson_edit', ['course' => $course->id(), 'lesson' => $lesson->id()]),
@@ -212,7 +212,7 @@ final class CourseStructureController {
             '#tag' => 'span',
             '#value' => $this->t('Arrastar para reordenar'),
             '#attributes' => [
-              'data-portal-ui' => 'aculta-lms-course-builder--sort-handle',
+              'class' => ['aculta-lms-course-builder__sort-handle'],
               'data-aculta-sort-handle' => TRUE,
               'draggable' => 'true',
               'aria-hidden' => 'true',
@@ -226,7 +226,7 @@ final class CourseStructureController {
             '#type' => 'html_tag',
             '#tag' => 'span',
             '#value' => $published ? $this->t('Publicada') : $this->t('Rascunho'),
-            '#attributes' => ['data-portal-ui' => 'aculta-lms-course-builder--state ' . ($published ? 'aculta-lms-course-builder--published' : 'aculta-lms-course-builder--draft')],
+            '#attributes' => ['class' => ['aculta-lms-course-builder__state', $published ? 'aculta-lms-course-builder__state--published' : 'aculta-lms-course-builder__state--draft']],
           ],
         ],
         'activities_heading' => [
@@ -243,7 +243,7 @@ final class CourseStructureController {
     $lessonList = $lessonCards === []
       ? [
         '#type' => 'container',
-        '#attributes' => ['data-portal-ui' => 'aculta-lms-course-builder--empty'],
+        '#attributes' => ['class' => ['aculta-lms-course-builder__empty']],
         'message' => ['#plain_text' => $this->t('Este curso ainda não tem aulas.')],
         'add_lesson' => Link::fromTextAndUrl(
           $this->t('Criar a primeira aula'),
@@ -254,7 +254,7 @@ final class CourseStructureController {
         '#theme' => 'item_list',
         '#list_type' => 'ol',
         '#items' => $lessonCards,
-        '#attributes' => ['data-portal-ui' => 'aculta-lms-course-builder--lessons'],
+        '#attributes' => ['class' => ['aculta-lms-course-builder__lessons']],
       ];
     $lessonOrderForm = [];
     if (count($lessonCards) > 1 && $this->formBuilder !== NULL) {
@@ -272,7 +272,7 @@ final class CourseStructureController {
     $slots = [
       'header' => [
         '#type' => 'container',
-        '#attributes' => ['data-portal-ui' => 'aculta-lms-course-builder--header'],
+        '#attributes' => ['class' => ['aculta-lms-course-builder__header']],
         'back' => Link::fromTextAndUrl(
           $this->t('Meus cursos'),
           Url::fromRoute('aculta_lms.educator_dashboard'),
@@ -283,7 +283,7 @@ final class CourseStructureController {
       'summary' => [
         '#type' => 'container',
         '#attributes' => [
-          'data-portal-ui' => 'aculta-lms-course-builder--summary',
+          'class' => ['aculta-lms-course-builder__summary'],
           'aria-label' => $this->t('Resumo da estrutura'),
         ],
         'lessons' => ['#plain_text' => $this->formatPlural(count($lessons), '1 aula', '@count aulas')],
@@ -292,7 +292,7 @@ final class CourseStructureController {
       ],
       'actions' => [
         '#type' => 'container',
-        '#attributes' => ['data-portal-ui' => 'aculta-lms-course-builder--actions'],
+        '#attributes' => ['class' => ['aculta-lms-course-builder__actions']],
         'add_lesson' => Link::fromTextAndUrl(
           $this->t('Adicionar aula'),
           Url::fromRoute('aculta_lms.lesson_add', ['course' => $course->id()]),

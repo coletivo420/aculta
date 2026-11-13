@@ -1,11 +1,13 @@
-{% set heading = type == 'error' ? 'Error'|t : (type == 'warning' ? 'Warning'|t : 'Status message'|t) %}
-{% set icon_name = type == 'error' ? 'x-circle' : (type == 'warning' ? 'warning-circle' : 'check-circle') %}
+{% set heading = type == 'error' ? 'Error'|t : (type == 'warning' ? 'Warning'|t : (type == 'info' ? 'Information'|t : 'Status message'|t)) %}
+{% set icon_name = type == 'error' ? 'x-circle' : (type == 'warning' ? 'warning-circle' : (type == 'info' ? 'info' : 'check-circle')) %}
 {% set message_role = role|default(type == 'status' ? 'status' : 'alert') %}
 <div{{ attributes.addClass('status-message', 'status-message--' ~ type) }} role="{{ message_role }}" aria-label="{{ heading }}">
   <span class="status-message__icon">{{ include('aculta420_v2:icon', { name: icon_name, variant: 'duotone', size: 'lg' }, with_context = false) }}</span>
   <div class="status-message__content">
     <h2 class="visually-hidden">{{ heading }}</h2>
-    {% if messages|length > 1 %}
+    {% if content %}
+      {{ content }}
+    {% elseif messages|length > 1 %}
       <ul>{% for message in messages %}<li>{{ message }}</li>{% endfor %}</ul>
     {% else %}
       {{ messages|first }}

@@ -1,0 +1,16 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Página da lista do Fórum
+description: Casca visual da View pública de tópicos, categorias e painel lateral.
+status: stable
+group: Comunidade
+props:
+  type: object
+  additionalProperties: false
+slots:
+  content:
+    title: Lista pública
+    description: Conteúdo e rows preparados pela View de tópicos do Fórum.
+assets:
+  css:
+    component:
+      forum-list-page.css: {}

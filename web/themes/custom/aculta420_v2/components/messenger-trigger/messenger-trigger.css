@@ -1,5 +1,7 @@
 /* ACULTA Mensagens (portado do V1 em 2026-11-05). Estado: DEFERRED (sem captura visual). */
 
+.aculta-messenger-dialog__footer { flex: 0 0 auto; padding: var(--spacing-sm) var(--spacing-base); border-block-start: 1px solid var(--color-border); }
+
 .private-message-thread-inbox.aculta-messenger-conversation {
   position: relative;
   margin-block: 0;
@@ -782,4 +784,3 @@ form[data-aculta-drawer-action] .aculta-messenger-options__status {
   padding: .5rem;
   list-style: none;
 }
-

@@ -1,0 +1,26 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Apresentação de doação
+description: Apresenta resumo, confirmação, valor e convite preparados pelo módulo de doação.
+status: stable
+group: Commerce
+props:
+  type: object
+  additionalProperties: false
+  required: [variant]
+  properties:
+    variant:
+      type: string
+      enum: [summary, summaries, thanks, amount, invite]
+      title: Composição apresentada
+    attributes:
+      type: Drupal\Core\Template\Attribute
+      title: Atributos HTML opcionais
+      default: null
+slots:
+  content:
+    title: Conteúdo preparado pelo módulo
+    description: Render arrays de resumo, confirmação, valor ou convite.
+assets:
+  css:
+    component:
+      donation-presentation.css: {}

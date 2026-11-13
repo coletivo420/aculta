@@ -55,6 +55,12 @@ final class AccountShellBuilder {
    */
   public function build(array &$variables): void {
     $route = $this->routeMatch->getRouteName();
+    // The LMS dashboard is linked from the account navigation but owns a
+    // standalone page on the Courses purpose. Do not wrap it in the legacy
+    // account shell when it is visited on that subdomain.
+    if ($route === 'aculta_lms.student_dashboard') {
+      return;
+    }
     $sections = [
       'aculta_portal.dashboard' => [
         'title' => $this->translation->translate('Visão geral'),

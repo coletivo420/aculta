@@ -81,7 +81,7 @@ final class NoticeAdminController extends ControllerBase {
       ];
     }
 
-    return [
+    $build = [
       'intro' => [
         '#type' => 'container',
         '#attributes' => ['data-portal-ui' => 'notice-admin-intro'],
@@ -106,13 +106,15 @@ final class NoticeAdminController extends ControllerBase {
         'contexts' => ['user.permissions'],
       ],
     ];
+    $build['#attached']['library'][] = 'aculta_messenger/admin-notices';
+    return $build;
   }
 
   /**
    * Presents Site Alert's native collection inside the ACULTA Avisos section.
    */
   public function temporary(): array {
-    return [
+    $build = [
       'intro' => [
         '#type' => 'container',
         '#attributes' => ['data-portal-ui' => 'notice-admin-intro'],
@@ -126,6 +128,8 @@ final class NoticeAdminController extends ControllerBase {
         'contexts' => ['user.permissions'],
       ],
     ];
+    $build['#attached']['library'][] = 'aculta_messenger/admin-notices';
+    return $build;
   }
 
   /**
@@ -205,6 +209,7 @@ final class NoticeAdminController extends ControllerBase {
       'pager' => ['#type' => 'pager'],
     ];
     $cacheability->applyTo($build);
+    $build['#attached']['library'][] = 'aculta_messenger/admin-notices';
     return $build;
   }
 

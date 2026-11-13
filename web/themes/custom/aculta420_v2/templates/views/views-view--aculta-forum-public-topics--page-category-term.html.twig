@@ -19,7 +19,8 @@
   'Colabore com respostas úteis e fundamentadas.'|t
 ] %}
 
-<div class="aculta-forum-category-page">
+{% embed 'aculta420_v2:forum-category-page' %}
+{% block content %}
   {{ include('aculta420_v2:forum-category-header', {
     title: view.getTitle()|default('Categoria'|t),
     description: null,
@@ -57,4 +58,5 @@
       }, with_context = false) }}
     </div>
   </div>
-</div>
+{% endblock %}
+{% endembed %}

@@ -1,0 +1,45 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Cartão de experiência da Conta
+description: Apresenta uma experiência disponível na página Minha Conta.
+status: stable
+group: ACULTA
+props:
+  type: object
+  additionalProperties: false
+  required: [id, kind, title, description]
+  properties:
+    id:
+      type: string
+      title: Identificador da experiência
+      minLength: 1
+    kind:
+      type: string
+      title: Variante visual
+      enum: [card, strip]
+    icon:
+      type: [string, 'null']
+      title: Ícone Phosphor
+      default: null
+    title:
+      type: string
+      title: Título da experiência
+      minLength: 1
+    description:
+      type: string
+      title: Descrição da experiência
+    tag:
+      type: [string, 'null']
+      title: Identificador curto da variante em faixa
+      default: null
+    url:
+      type: [string, 'null']
+      title: Destino autorizado da experiência
+      default: null
+    action_label:
+      type: [string, 'null']
+      title: Rótulo da ação
+      default: null
+assets:
+  css:
+    component:
+      account-experience-card.css: {}

@@ -114,12 +114,12 @@ final class SecretsController {
     ];
     if (!$this->secrets->canSaveHere()) {
       $page['storage_notice'] = [
-        '#type' => 'container',
-        '#attributes' => ['data-portal-ui' => 'notice-warning'],
-        'text' => [
-          '#plain_text' => (string) $this->t(
+        '#component' => 'aculta420_v2:status-messages',
+        '#props' => [
+          'type' => 'warning',
+          'messages' => [(string) $this->t(
             '⚠ Atenção: neste ambiente as credenciais são armazenadas no banco de dados, criptografadas. O provisionamento é feito pelo ACULTA Deployer após o deploy; o formulário não grava aqui.',
-          ),
+          )],
         ],
       ];
     }
@@ -143,33 +143,35 @@ final class SecretsController {
     }
     $this->secrets->logReveal($name, (string) $this->account->getAccountName());
     return [
-      '#type' => 'container',
-      '#attributes' => ['data-portal-ui' => 'secret-dialog'],
-      '#cache' => ['max-age' => 0, 'contexts' => ['user']],
-      'value' => [
-        '#type' => 'container',
-        'label' => [
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:secret-reveal',
+      '#slots' => ['content' => [
+        'value' => [
+          '#type' => 'container',
+          'label' => [
+            '#theme' => 'aculta_portal_element',
+            '#tag' => 'p',
+            '#value' => $this->t('Valor de @name:', ['@name' => $name]),
+          ],
+          'text' => [
+            '#theme' => 'aculta_portal_element',
+            '#tag' => 'pre',
+            '#element_attributes' => new Attribute([
+              'data-portal-ui' => 'secret-popup-value',
+            ]),
+            '#value' => Markup::create(htmlspecialchars($value, ENT_QUOTES)),
+          ],
+        ],
+        'help' => [
           '#theme' => 'aculta_portal_element',
           '#tag' => 'p',
-          '#value' => $this->t('Valor de @name:', ['@name' => $name]),
-        ],
-        'text' => [
-          '#theme' => 'aculta_portal_element',
-          '#tag' => 'pre',
           '#element_attributes' => new Attribute([
-            'data-portal-ui' => 'secret-popup-value',
+            'data-portal-ui' => 'secret-popup-hint',
           ]),
-          '#value' => Markup::create(htmlspecialchars($value, ENT_QUOTES)),
+          '#value' => $this->t('Feche este popup quando terminar.'),
         ],
-      ],
-      'help' => [
-        '#theme' => 'aculta_portal_element',
-        '#tag' => 'p',
-        '#element_attributes' => new Attribute([
-          'data-portal-ui' => 'secret-popup-hint',
-        ]),
-        '#value' => $this->t('Feche este popup quando terminar.'),
-      ],
+      ]],
+      '#cache' => ['max-age' => 0, 'contexts' => ['user']],
     ];
   }
 

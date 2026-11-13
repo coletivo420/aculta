@@ -337,8 +337,9 @@ final class SavedAndRecommendationsKernelTest extends KernelTestBase {
     $controller = $this->container->get('aculta_studio.saved_controller');
     $build = $controller->page();
 
-    $this->assertSame('container', $build['#type']);
-    $this->assertSame('studio-saved-content', $build['#attributes']['data-portal-ui']);
+    $this->assertSame('component', $build['#type']);
+    $this->assertSame('aculta420_v2:saved-content-page', $build['#component']);
+    $this->assertArrayHasKey('content', $build['#slots']);
     $this->assertContains('user', $build['#cache']['contexts']);
     $this->assertContains('url.query_args:tab', $build['#cache']['contexts']);
     $this->assertContains('flagging_list', $build['#cache']['tags']);

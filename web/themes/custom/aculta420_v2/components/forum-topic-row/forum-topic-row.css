@@ -226,3 +226,16 @@
     text-align: center;
   }
 }
+.forum-topic-row__avatar {
+  object-fit: cover;
+  border-radius: 50%;
+  inline-size: 40px;
+  block-size: 40px;
+}
+
+.forum-topic-row__avatar--icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-surface-highlight);
+}

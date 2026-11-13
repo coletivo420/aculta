@@ -21,8 +21,8 @@ use Symfony\Component\Routing\Exception\RouteNotFoundException;
  *
  * The legacy account UI remains at /conta-legada in the ACCOUNT purpose.
  *
- * This provider returns the account data contract only. The active theme
- * renders it through the `aculta_studio_account` theme hook.
+ * This provider returns the account presentation as SDC render arrays while
+ * keeping identity, links, cache, and authorization decisions in their owners.
  */
 final class AccountExperienceProvider implements StudioExperienceProviderInterface {
 
@@ -82,21 +82,37 @@ final class AccountExperienceProvider implements StudioExperienceProviderInterfa
    * {@inheritdoc}
    */
   public function build(): array {
+    $identity = $this->identity();
     return [
-      '#theme' => 'aculta_studio_account',
-      '#menu_title' => 'Studio Dashboard',
-      '#menu_items' => $this->studioMenuItems(),
-      '#identity' => $this->identity(),
-      '#profile_link' => $this->profileLink(),
-      '#calendar' => $this->calendarComposer?->compose() ?? [],
-      '#connections' => $this->connectionsComposer?->compose() ?? [],
-      '#experiences' => [],
-      '#experiences_title' => new TranslatableMarkup('Suas experiências'),
-      '#experiences_description' => new TranslatableMarkup('Acesse as experiências da ACULTA e explore conteúdos, projetos e comunidades.'),
-      '#account_url' => Url::fromRoute('aculta_studio.account')->toString(),
-      '#account_link_title' => new TranslatableMarkup('Minha conta'),
-      '#account_link_description' => new TranslatableMarkup('Dados, segurança e preferências'),
-      '#account_link_label' => new TranslatableMarkup('Minha Conta'),
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:account-experience-dashboard',
+      '#props' => [
+        'show_identity' => $identity !== [],
+        'identity_name' => (string) ($identity['name'] ?? ''),
+        'identity_email' => $identity['email'] ?? NULL,
+        'profile_url' => $identity['profile_url'] ?? NULL,
+        'experiences_title' => (string) new TranslatableMarkup('Suas experiências'),
+        'experiences_description' => (string) new TranslatableMarkup('Acesse as experiências da ACULTA e explore conteúdos, projetos e comunidades.'),
+        'account_url' => Url::fromRoute('aculta_studio.account')->toString(),
+        'account_link_title' => (string) new TranslatableMarkup('Minha conta'),
+        'account_link_description' => (string) new TranslatableMarkup('Dados, segurança e preferências'),
+        'account_link_label' => (string) new TranslatableMarkup('Minha Conta'),
+      ],
+      '#slots' => [
+        'menu' => [
+          '#type' => 'component',
+          '#component' => 'aculta420_v2:studio-menu',
+          '#props' => [
+            'title' => (string) new TranslatableMarkup('Studio Dashboard'),
+            'items' => $this->studioMenuItems(),
+          ],
+        ],
+        'avatar' => $identity['avatar'] ?? [],
+        'profile_link' => $this->profileLink(),
+        'calendar' => $this->calendarComposer?->compose() ?? [],
+        'connections' => $this->connectionsComposer?->compose() ?? [],
+        'experiences' => [],
+      ],
       '#cache' => [
         'contexts' => ['user', 'user.permissions', 'url.site'],
         'max-age' => 0,

@@ -1,3 +1,8 @@
+## Não versionado — remoção de pontes Twig do Dashboard Studio (2026-11-13)
+
+- O provider, compositores e controller agora retornam SDCs diretamente para o painel da Conta, cartões de experiência, calendário e conexões. Removidos quatro theme hooks, `StudioThemeHooks` e os templates neutros/overrides que só retransmitiam os dados.
+- Props tipadas, slots, links autorizados, metadados de cache e biblioteca HTMX do calendário permanecem nos render arrays. As asserções existentes foram ajustadas ao novo contrato; não foram executadas.
+
 ## Não versionado — transferência segura de mensagens do popup HTMX
 
 - Mensagens Drupal capturadas da resposta HTMX são clonadas do documento parseado

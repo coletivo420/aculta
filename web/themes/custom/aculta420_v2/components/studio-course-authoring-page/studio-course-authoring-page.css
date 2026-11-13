@@ -1,0 +1,20 @@
+.studio-course-authoring-page .studio-course-authoring {
+  display: grid;
+  gap: .5rem;
+  color: var(--color-text-primary);
+}
+
+.studio-course-authoring-page .studio-course-authoring__back {
+  display: inline-flex;
+  min-block-size: 2.75rem;
+  align-items: center;
+  margin-block-end: var(--spacing-lg);
+  padding: .5rem .75rem;
+  color: var(--color-link-editorial);
+  text-underline-offset: .2em;
+}
+
+.studio-course-authoring-page .studio-course-authoring__back:focus-visible {
+  outline: 3px solid var(--color-focus-ring);
+  outline-offset: 3px;
+}

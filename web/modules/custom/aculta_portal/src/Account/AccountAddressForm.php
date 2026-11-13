@@ -105,6 +105,7 @@ final class AccountAddressForm {
       $tree['#element_validate'][] = [self::class, 'validateAddressElement'];
       if ($withStreetNumber) {
         StreetNumberField::attach($tree, $number, $sn);
+        $tree['#attached']['library'][] = 'aculta420_v2/address-fields';
       }
       else {
         // External address adapters (such as OSM tag review) have their own

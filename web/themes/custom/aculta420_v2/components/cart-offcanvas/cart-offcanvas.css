@@ -1,8 +1,23 @@
 .aculta-cart-offcanvas__caixa {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: var(--spacing-sm);
+  gap: var(--spacing-xs);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
   background: var(--color-surface);
 }
+
+.aculta-cart-offcanvas__body { display: flex; flex-direction: column; gap: var(--spacing-base); }
+.aculta-cart-offcanvas__lista { display: flex; flex-direction: column; gap: var(--spacing-sm); }
+.aculta-cart-offcanvas__separador { display: flex; align-items: baseline; justify-content: space-between; margin-block-start: var(--spacing-sm); padding-block-end: var(--spacing-xs); color: var(--color-text-primary); border-block-end: 2px solid var(--color-brand-highlight); font-family: var(--font-family-heading); }
+.aculta-cart-offcanvas__meta { color: var(--color-text-secondary); font-size: var(--font-size-sm); }
+.aculta-cart-offcanvas__total { margin: 0; }
+.aculta-cart-offcanvas__action { margin-block: var(--spacing-sm); }
+.aculta-cart-offcanvas__action--outline { color: var(--color-brand-primary); background: transparent; }
+.aculta-cart-offcanvas__cart-link { align-self: flex-start; color: var(--color-text-primary); padding-block: var(--spacing-sm); }
+.aculta-cart-offcanvas__banner { flex: 0 0 auto; padding: var(--spacing-base); text-align: center; color: var(--color-text-primary); border-block-start: 2px solid var(--color-brand-highlight); background: var(--color-surface-institution); font-family: var(--font-family-heading); font-weight: 600; }
 
 .aculta-cart-offcanvas__assinatura {
   padding-block-start: var(--spacing-sm);

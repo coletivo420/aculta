@@ -15,7 +15,7 @@ use PHPUnit\Framework\Attributes\Group;
 final class DonationThemeHooksTest extends UnitTestCase {
 
   /**
-   * Os sete temas do fluxo de doação continuam registrados com as mesmas variáveis.
+   * Os templates do fluxo e os dois temas de pane do Commerce continuam registrados.
    */
   public function testThemeRegistryKeepsDonationTemplates(): void {
     $theme = (new DonationThemeHooks())->theme();
@@ -25,8 +25,6 @@ final class DonationThemeHooksTest extends UnitTestCase {
         'aculta_donation_quick',
         'aculta_donation_donate',
         'aculta_donation_back',
-        'aculta_donation_summary',
-        'aculta_donation_summary_container',
         'commerce_checkout_pane__commerce_donation_pane',
         'commerce_checkout_pane__commerce_memorial_pane',
       ],
@@ -34,7 +32,6 @@ final class DonationThemeHooksTest extends UnitTestCase {
     );
     $this->assertSame(['links' => []], $theme['aculta_donation_quick']['variables']);
     $this->assertSame(['label' => NULL, 'href' => NULL], $theme['aculta_donation_donate']['variables']);
-    $this->assertSame(['content' => NULL, 'attributes' => NULL], $theme['aculta_donation_summary_container']['variables']);
     $this->assertSame('commerce_checkout_pane', $theme['commerce_checkout_pane__commerce_donation_pane']['base hook']);
   }
 

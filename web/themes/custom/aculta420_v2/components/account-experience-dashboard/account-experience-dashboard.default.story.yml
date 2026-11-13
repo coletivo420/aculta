@@ -1,0 +1,21 @@
+name: Painel de experiências
+description: Página Minha Conta com menu, identidade, cartões e atalhos.
+component: aculta420_v2:account-experience-dashboard
+props:
+  show_identity: true
+  identity_name: Exemplo
+  identity_email: exemplo@aculta.org
+  profile_url: /perfil/exemplo
+  experiences_title: Suas experiências
+  experiences_description: Acesse suas áreas na ACULTA.
+  account_url: /conta/preferencias
+  account_link_label: Configurações da conta
+  account_link_title: Minha conta
+  account_link_description: Preferências e dados cadastrais
+slots:
+  menu: '<nav aria-label="Studio"><a href="/conta">Conta</a></nav>'
+  avatar: '<span class="avatar" aria-hidden="true"></span>'
+  profile_link: '<a href="/perfil/exemplo">Ver perfil</a>'
+  calendar: '<section aria-label="Calendário">Calendário</section>'
+  connections: '<section aria-label="Conexões">Conexões</section>'
+  experiences: '<li class="aculta-account-experience-item"><article class="aculta-xp-card">Curso</article></li>'

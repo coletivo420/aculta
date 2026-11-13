@@ -1,0 +1,103 @@
+.studio-form form {
+  margin-block: var(--spacing-lg);
+  padding: var(--spacing-lg);
+  color: var(--color-text-primary);
+  background: var(--color-canvas);
+}
+
+.studio-form form :is(.form-item, .form-actions) {
+  padding-block: 1rem;
+}
+
+.studio-form form .form-item .form-item {
+  padding-block: 0;
+}
+
+.studio-form form fieldset {
+  margin-block: var(--spacing-lg);
+  padding: var(--spacing-lg);
+  border: 2px solid transparent;
+  background: var(--color-surface);
+}
+
+.studio-form form fieldset fieldset {
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.studio-form form label {
+  display: block;
+  max-inline-size: 80ch;
+  padding: .25rem;
+  font-weight: 600;
+}
+
+.studio-form form label.option {
+  display: inline-block;
+}
+
+.studio-form form :is(input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="image"]), select, textarea) {
+  min-block-size: 2.75rem;
+  padding: .5rem 1rem;
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border);
+  border-radius: 0;
+  background-color: var(--color-surface-raised);
+  font: inherit;
+}
+
+.studio-form form :is(input, select, textarea)::placeholder {
+  color: var(--color-text-muted);
+}
+
+.studio-form form :is(input, select, textarea):is(:focus, :focus-visible) {
+  border-color: var(--color-focus-ring);
+  background-color: var(--color-surface-raised);
+}
+
+.studio-form form .error {
+  border-color: var(--color-error);
+}
+
+.studio-form form :is(button, input[type="submit"], input[type="button"], .form-submit, .button):not(.close) {
+  display: inline-block;
+  min-block-size: 2.75rem;
+  margin-block-end: 1em;
+  padding: .5em 2em;
+  cursor: pointer;
+  text-decoration: none;
+  text-transform: none;
+  color: var(--color-primary);
+  border: .125rem solid var(--color-primary);
+  border-radius: .25rem;
+  box-shadow: none;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.studio-form form :is(button, input[type="submit"], input[type="button"], .form-submit, .button):not(.close):not([disabled]):is(:hover, :focus-visible) {
+  color: var(--color-on-primary);
+  border-color: var(--color-primary);
+  background: var(--color-primary);
+}
+
+.studio-form form :is(.form-submit, .button--primary):not([data-drupal-selector="edit-reset"]):not(.close) {
+  color: var(--color-on-primary);
+  border-color: var(--color-primary);
+  background: var(--color-primary);
+}
+
+.studio-form form :is(.button--danger, .danger):not([disabled]):not(.close) {
+  color: var(--color-status-error-text);
+  border-color: var(--color-error);
+  background: var(--color-surface-raised);
+}
+
+.studio-form form :is(.button--danger, .danger):not([disabled]):not(.close):is(:hover, :focus-visible) {
+  color: var(--color-on-primary);
+  border-color: var(--color-error);
+  background: var(--color-error);
+}

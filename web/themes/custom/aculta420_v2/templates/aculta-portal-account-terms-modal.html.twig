@@ -1,9 +1,1 @@
-{#
-  Popup de aceite dos termos (aculta_portal), apresentação ACULTA420.
-
-  O JavaScript do módulo abre este conteúdo como diálogo modal do Drupal. O id,
-  o atributo hidden e data-dialog-title fazem parte do contrato de comportamento.
-#}
-<div id="aculta-account-terms" class="aculta-account-terms" data-portal-ui="account-terms" data-dialog-title="{{ title }}" hidden>
-  {{ form }}
-</div>
+{{ include('aculta420_v2:account-terms-modal', { title: title, content: form }, with_context = false) }}

@@ -7,4 +7,7 @@ Formato: uma linha por classe, começando com hífen, o nome entre crases e um
 motivo após um travessão. O gate só aceita linhas nesse formato.
 
 Use exceção apenas para classe que existe como gancho de comportamento, nunca
-para esconder falta de estilo. Estado em 2026-11-05: nenhuma exceção.
+para esconder falta de estilo.
+
+- `press-quote` — gancho do presenter em `<blockquote>`, cujo display nativo é block.
+- `sponsor-item` — gancho do presenter no `<li>` do item-list, cujo display nativo é list-item.

@@ -67,13 +67,13 @@ final class EventOrganizationRecoveryForm extends FormBase {
     }
 
     $form['intro'] = [
-      '#type' => 'container',
-      '#attributes' => ['data-portal-ui' => 'notice-warning'],
-      'info' => [
-        '#markup' => '<p>' . $this->t('A <strong>recuperação administrativa de titularidade</strong> é uma operação excepcional que transfere a titularidade direta da organização <em>%label</em> para um novo titular selecionado, atribuindo os poderes de administração e revogando a gestão anterior.', [
+      '#component' => 'aculta420_v2:status-messages',
+      '#props' => ['type' => 'warning'],
+      '#slots' => ['content' => [
+        'info' => ['#markup' => '<p>' . $this->t('A <strong>recuperação administrativa de titularidade</strong> é uma operação excepcional que transfere a titularidade direta da organização <em>%label</em> para um novo titular selecionado, atribuindo os poderes de administração e revogando a gestão anterior.', [
           '%label' => $aculta_event_organization->label(),
-        ]) . '</p>',
-      ],
+        ]) . '</p>'],
+      ]],
     ];
 
     $form['current_state'] = [

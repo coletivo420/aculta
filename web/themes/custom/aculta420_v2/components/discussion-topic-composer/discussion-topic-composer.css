@@ -40,3 +40,67 @@
   min-inline-size: 0;
   max-inline-size: 100%;
 }
+
+.discussion-topic-composer .node-aculta-forum-topic-form {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  min-inline-size: 0;
+}
+
+.discussion-topic-composer .node-aculta-forum-topic-form .form-item {
+  margin-block-end: var(--spacing-md);
+}
+
+.discussion-topic-composer .node-aculta-forum-topic-form label {
+  display: block;
+  margin-block-end: var(--spacing-xs);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+}
+
+.discussion-topic-composer .node-aculta-forum-topic-form :is(input[type="text"], select, textarea) {
+  padding: var(--spacing-sm);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-base);
+  background: var(--color-surface);
+  font-family: inherit;
+  font-size: var(--font-size-base);
+  inline-size: 100%;
+}
+
+.discussion-topic-composer .node-aculta-forum-topic-form :is(input[type="text"], select):not(textarea) {
+  min-block-size: 44px;
+}
+
+.discussion-topic-composer .node-aculta-forum-topic-form .form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-block-start: var(--spacing-lg);
+  padding-block-start: var(--spacing-md);
+  border-block-start: 1px solid var(--color-border);
+  gap: var(--spacing-sm);
+}
+
+.discussion-topic-composer .node-aculta-forum-topic-form .form-actions :is(input[type="submit"], button[type="submit"], .button) {
+  cursor: pointer;
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  min-block-size: 44px;
+  padding-inline: var(--spacing-lg);
+}
+
+.discussion-topic-composer .node-aculta-forum-topic-form .form-actions .button--primary {
+  color: var(--color-on-brand);
+  border: 1px solid transparent;
+  background: var(--color-brand-primary);
+}
+
+.discussion-topic-composer .node-aculta-forum-topic-form .form-actions .button--primary:hover {
+  background: var(--button-primary-bg-hover);
+}

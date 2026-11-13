@@ -206,7 +206,7 @@ final class aculta_H5PLibraryHooks {
         'core/once',
       ],
       'js' => [],
-      'css' => ['base' => []],
+      'css' => ['base' => ['css/h5p-editor-validation.css' => []]],
     ];
     foreach (\H5peditor::$scripts as $script) {
       $url = $this->fileUrlGenerator->generate("assets://h5p/h5p-editor/{$script}", [

@@ -287,21 +287,4 @@
     z-index: 5;
   }
 
-  /* Ajusta o container do dashboard para acomodar menu lateral na esquerda e calendário na direita no desktop */
-  :is(main, .page__main, .layout-page):has(.aculta-studio-calendar) {
-    position: relative;
-    padding-inline-end: 21rem;
-    margin-inline: auto;
-    max-inline-size: var(--aculta-container-width, 84rem);
-  }
-
-  /* O conteúdo ocupa a faixa entre o menu e o calendário: grid de uma coluna, sem a coluna lateral vazia. */
-  :is(main, .page__main, .layout-page):has(.aculta-studio-calendar) {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  :is(main, .page__main, .layout-page):has(.aculta-studio-calendar) .layout-page__content {
-    max-inline-size: none;
-    inline-size: 100%;
-  }
 }

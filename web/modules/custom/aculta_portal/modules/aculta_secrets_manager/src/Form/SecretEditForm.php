@@ -66,9 +66,8 @@ final class SecretEditForm extends FormBase implements ContainerInjectionInterfa
     $form['actions'] = ['#type' => 'actions'];
     if (!$this->secrets->canSaveHere()) {
       $form['storage_notice'] = [
-        '#type' => 'container',
-        '#attributes' => ['data-portal-ui' => 'notice-warning'],
-        'text' => ['#plain_text' => (string) $this->t('⚠ Neste ambiente as credenciais são armazenadas no banco de dados. O formulário não grava aqui.')],
+        '#component' => 'aculta420_v2:status-messages',
+        '#props' => ['type' => 'warning', 'messages' => [(string) $this->t('⚠ Neste ambiente as credenciais são armazenadas no banco de dados. O formulário não grava aqui.')]],
       ];
       $form['actions']['submit'] = ['#type' => 'submit', '#value' => $this->t('Salvar'), '#disabled' => TRUE];
     }

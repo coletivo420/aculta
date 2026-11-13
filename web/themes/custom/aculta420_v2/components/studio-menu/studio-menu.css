@@ -10,11 +10,6 @@
   margin: 0;
 }
 
-/* O título do cabeçalho da página é substituído pelo título do componente, que já traz o h1. */
-body:has(.aculta-studio-topbar) .layout-page h1:not(.aculta-studio-topbar__title) {
-  display: none;
-}
-
 .aculta-studio-topbar .aculta-studio-menu__trigger {
   display: none;
   align-items: center;
@@ -158,11 +153,4 @@ body:has(.aculta-studio-topbar) .layout-page h1:not(.aculta-studio-topbar__title
     inset-inline-start: 0;
   }
 
-  /* A página inteira (main) recua para a direita do menu lateral: migalha, aviso e conteúdo juntos. */
-  :is(main, .page__main, .layout-page):has(.aculta-studio-sidebar) {
-    position: relative;
-    padding-inline-start: 16rem;
-    margin-inline: auto;
-    max-inline-size: var(--aculta-container-width, 84rem);
-  }
 }

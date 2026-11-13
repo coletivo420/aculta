@@ -18,7 +18,7 @@ use PHPUnit\Framework\Attributes\Group;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
- * Covers the learner dashboard's theme-neutral Studio fidelity scope.
+ * Covers the LMS dashboard SDC composition and cache contract.
  */
 #[CoversClass(LearnerDashboardComposer::class)]
 #[Group('aculta_studio')]
@@ -42,7 +42,7 @@ final class LearnerDashboardComposerTest extends UnitTestCase {
   /**
    * The dashboard root carries only the semantic Studio scope token.
    */
-  public function testDashboardRootCarriesOnlyTheSemanticStudioScope(): void {
+  public function testDashboardIsComposedFromLmsSdcsWithoutLegacyWrappers(): void {
     $account = $this->createMock(AccountProxyInterface::class);
     $summary = new StudentLearningSummary([], NULL, [], new CacheableMetadata());
     $reader = $this->createMock(StudentLearningSummaryReaderInterface::class);
@@ -59,11 +59,12 @@ final class LearnerDashboardComposerTest extends UnitTestCase {
 
     $build = $composer->build();
 
-    self::assertSame('studio-fidelity-scope', $build['#attributes']['data-portal-ui']);
-    self::assertSame('true', $build['#attributes']['data-aculta-learning-home']);
-    self::assertSame('Minha aprendizagem', $build['context_header']['#props']['title']);
-    self::assertArrayHasKey('courses_section', $build);
-    self::assertArrayNotHasKey('continue_section', $build);
+    self::assertSame('aculta420_v2:lms-learning-dashboard', $build['#component']);
+    self::assertSame('Minha aprendizagem', $build['#props']['title']);
+    self::assertSame([], $build['#slots']['courses']);
+    self::assertSame([], $build['#slots']['resume']);
+    self::assertSame('aculta420_v2:button', $build['#slots']['empty_action']['#component']);
+    self::assertArrayNotHasKey('#attributes', $build);
     self::assertArrayHasKey('#cache', $build);
   }
 

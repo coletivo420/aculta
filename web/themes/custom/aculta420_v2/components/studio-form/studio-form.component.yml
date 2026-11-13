@@ -1,0 +1,16 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Formulário do Studio
+description: Apresenta o Form API dentro do conteúdo principal do Studio e do Educador LMS.
+status: stable
+group: Formulários
+props:
+  type: object
+  additionalProperties: false
+slots:
+  content:
+    title: Formulário Drupal
+    description: Render array original do Form API, sem alteração de campos ou handlers.
+assets:
+  css:
+    component:
+      studio-form.css: {}

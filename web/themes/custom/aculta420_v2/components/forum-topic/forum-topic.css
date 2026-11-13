@@ -85,3 +85,284 @@
   border-color: var(--color-brand-highlight);
   background: var(--color-brand-highlight);
 }
+
+/* Full page layout belongs to the topic component and loads with its rendered SDC. */
+.aculta-forum-topic {
+  box-sizing: border-box;
+  inline-size: min(100%, var(--page-content-max));
+  max-inline-size: var(--page-content-max);
+  margin-inline: auto;
+  padding-inline: clamp(var(--spacing-sm), 2.25vw, var(--spacing-xl));
+}
+
+.aculta-forum-topic__layout,
+.aculta-forum-topic__main {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--spacing-base);
+  min-inline-size: 0;
+}
+
+.aculta-forum-topic__main { inline-size: 100%; }
+.aculta-forum-topic__aside { inline-size: 100%; min-inline-size: 0; }
+.aculta-forum-topic__main > .aculta-forum-topic__presentation { order: 0; }
+.aculta-forum-topic__main > .aculta-forum-topic__aside { order: 1; }
+
+.aculta-forum-topic__about {
+  padding: var(--spacing-base);
+  border: 1px solid var(--color-border);
+  border-block-start: 4px solid var(--color-link-editorial);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface-raised);
+}
+
+.aculta-forum-topic__about-title {
+  margin: 0 0 var(--spacing-sm);
+  font-family: var(--font-family-heading);
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+}
+
+.aculta-forum-topic__about-list,
+.aculta-forum-topic__about-stats {
+  display: grid;
+  margin: 0;
+  gap: var(--spacing-sm);
+}
+
+.aculta-forum-topic__about-list dt,
+.aculta-forum-topic__about-stats dt { color: var(--color-text-muted); font-size: var(--font-size-sm); }
+.aculta-forum-topic__about-list dd,
+.aculta-forum-topic__about-stats dd { margin: 0; color: var(--color-text-primary); font-weight: 600; }
+
+.aculta-forum-topic__about-stats {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-block-start: var(--spacing-md);
+  padding-block-start: var(--spacing-md);
+  border-block-start: 1px solid var(--color-border);
+}
+
+.aculta-forum-topic__content > section[data-aculta-discussion-thread] {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  margin-block: 10px 0;
+  row-gap: 10px;
+}
+
+.aculta-forum-topic__content form.comment-form {
+  margin-block: var(--spacing-xl);
+  padding: var(--spacing-lg);
+  border: 1px solid var(--color-border);
+  border-block-start: 4px solid var(--color-link-editorial);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface-highlight);
+}
+
+.aculta-forum-topic__content > section {
+  grid-template-columns: minmax(0, 1fr);
+  inline-size: 100%;
+  min-inline-size: 0;
+}
+
+.aculta-forum-topic__content > section .forum-post-card { min-inline-size: 0; max-inline-size: 100%; }
+
+@media (max-width: 59.99rem) {
+  .aculta-forum-topic__content > section,
+  article.aculta-forum-topic { padding-inline: 0; }
+}
+
+/* Responder/Citar: popup do SDC dialog (centralizado, fundo esmaecido). O link de abertura
+   do SDC não é usado: o JS abre o diálogo a partir dos botões Responder e Citar. */
+.aculta-dialog__trigger[aria-controls="aculta-reply-dialog"] {
+  display: none;
+}
+
+/* No popup de confirmação de exclusão de tópico, não exibe o título "Responder à discussão" no topo do diálogo. */
+#aculta-reply-dialog:has([data-discussion-reply-composer][data-mode="excluir"]) .aculta-dialog__header .aculta-dialog__title {
+  display: none;
+}
+
+/* Sem título, o botão de fechar vai para a direita do cabeçalho. */
+#aculta-reply-dialog:has([data-discussion-reply-composer][data-mode="excluir"]) .aculta-dialog__header .aculta-dialog__close {
+  margin-inline-start: auto;
+}
+
+.aculta-reply-dialog__body {
+  min-inline-size: 0;
+}
+
+.aculta-reply-dialog__body .discussion-reply-composer,
+.aculta-reply-dialog__body .discussion-reply-target {
+  margin: 0;
+  inline-size: 100%;
+  max-inline-size: 100%;
+  min-inline-size: 0;
+}
+
+/* Dentro do diálogo de resposta, o compositor não é um cartão dentro de outro cartão: sem borda,
+   sombra, fundo, faixa nem espaçamento extra. Fica só o conteúdo, com a borda do próprio diálogo. */
+#aculta-reply-dialog .discussion-reply-composer {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+#aculta-reply-dialog .discussion-reply-composer > .forum-post-card__stripe {
+  display: none;
+}
+
+#aculta-reply-dialog .discussion-reply-composer .forum-post-card__inner,
+#aculta-reply-dialog .discussion-reply-composer .forum-post-card__body,
+#aculta-reply-dialog .discussion-reply-composer .forum-post-card__footer {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+/* Aviso "Aguarde" durante a postagem do comentário (estrutura em discussion-reply-popup.js). */
+#aculta-reply-dialog {
+  position: relative;
+}
+
+.aculta-posting-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-base);
+  background: var(--color-surface-raised);
+}
+
+.aculta-posting-overlay[hidden] {
+  display: none;
+}
+
+.aculta-posting-overlay__card {
+  display: grid;
+  justify-items: center;
+  gap: var(--spacing-sm);
+  text-align: center;
+}
+
+.aculta-posting-overlay__spinner {
+  animation: aculta-posting-spin var(--motion-spin) linear infinite;
+  border: .6rem solid var(--color-border);
+  border-block-start-color: var(--color-text-primary);
+  border-radius: 50%;
+  inline-size: 4.5rem;
+  block-size: 4.5rem;
+}
+
+.aculta-posting-overlay__title {
+  margin: 0;
+  color: var(--color-text-primary);
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+}
+
+.aculta-posting-overlay__text {
+  margin: 0;
+  color: var(--color-text-secondary);
+}
+
+@keyframes aculta-posting-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aculta-posting-overlay__spinner {
+    animation-duration: var(--motion-loop);
+  }
+}
+
+/* Avatares do fórum com as dimensões da V1. */
+.aculta-forum-topic .author-card:not(.author-card--stacked) .author-card__avatar {
+  flex-basis: 3rem;
+  inline-size: 3rem;
+  block-size: 3rem;
+}
+
+/* Categorias do tópico como pílulas, como na V1. */
+.aculta-forum-topic .field--name-field-aculta-categories {
+  display: inline-flex;
+  align-items: center;
+  margin-block-start: var(--spacing-xs);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  min-block-size: 1.75rem;
+  padding-inline: .6rem;
+}
+
+.aculta-forum-topic .field--name-field-aculta-categories .field__item a {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  color: inherit;
+  min-block-size: 1.75rem;
+}
+
+/* Categorias do tópico como pílula colada (rótulo e valor dentro da mesma pílula), como na V1.
+   O bloco do campo sai sem classe do render do Drupal; a estrutura é rótulo + valor. */
+.aculta-forum-topic__content > div:not([class]):not([data-aculta-discussion-thread]) {
+  display: inline-flex;
+  align-items: center;
+  margin-block-start: var(--spacing-xs);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  gap: .25rem;
+  min-block-size: 1.75rem;
+  padding-inline: .6rem;
+}
+
+/* Growroom420 V2 actions & full header */
+.aculta-forum-topic__full-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--spacing-sm);
+  margin-block-end: var(--spacing-md);
+}
+
+.aculta-forum-topic__header-actions {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.aculta-forum-action-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: .375rem .75rem;
+  cursor: not-allowed;
+  opacity: .75;
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  background: var(--color-surface-raised);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  min-block-size: 44px;
+  gap: var(--spacing-xs);
+}
+
+.aculta-forum-action-btn__badge {
+  display: inline-flex;
+  align-items: center;
+  padding: .1rem .4rem;
+  text-transform: uppercase;
+  color: var(--color-brand-primary);
+  border-radius: var(--radius-full);
+  background: var(--color-surface-highlight);
+  font-size: .6875rem;
+  font-weight: 700;
+}

@@ -276,9 +276,11 @@ final class UiLibraryPreviewController extends ControllerBase {
    */
   private function unavailable(array $build, mixed $message, ?\Drupal\Core\Access\AccessResultInterface $accessResult = NULL): array {
     $build['unavailable'] = [
-      '#type' => 'container',
-      '#attributes' => ['class' => ['messages', 'messages--warning']],
-      'text' => ['#markup' => (string) $message],
+      '#component' => 'aculta420_v2:status-messages',
+      '#props' => [
+        'type' => 'warning',
+        'messages' => [$message],
+      ],
     ];
     $metadata = (new CacheableMetadata())
       ->addCacheContexts(['user.roles'])

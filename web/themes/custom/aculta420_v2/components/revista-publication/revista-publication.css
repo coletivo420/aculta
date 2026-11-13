@@ -176,3 +176,32 @@
   box-shadow: none;
 }
 .revista-publication__authors .portal-article-author { padding: 0; }
+
+/* Origem V1: revista-post.css */
+.node--view-mode-full .portal-post__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .75rem 1.5rem;
+  margin-block: 0;
+  padding-block: .75rem;
+  border-block-end: 1px solid var(--color-border);
+  font-size: .9375rem;
+}
+
+.node--view-mode-full .portal-post__meta-item::before {
+  margin-inline-end: .35rem;
+}
+
+.node--view-mode-full .portal-post__share {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .5rem;
+  margin-inline-start: auto;
+}
+
+.node--view-mode-full .portal-post__share-label {
+  margin-inline-end: .25rem;
+  font-weight: 600;
+}

@@ -1,0 +1,7 @@
+name: Relatório de requisitos
+description: Seções e estado de requisitos exibidos em layout técnico simples.
+component: aculta420_v2:portal-requirements
+slots:
+  content:
+    type: inline_template
+    template: '<p>Requisitos do Portal</p><div data-portal-ui="requirements-legend">Legenda de estados</div><table data-portal-ui="requirements"><tbody><tr><td>Integração</td><td>OK</td></tr></tbody></table>'

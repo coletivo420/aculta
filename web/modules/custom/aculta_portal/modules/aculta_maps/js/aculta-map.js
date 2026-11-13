@@ -142,7 +142,7 @@
   function drawFallbackMap(element, settings, failed = false) {
     if (failed && settings.showAdminNotice && !element.dataset.acultaMapFallbackNotified) {
       const notice = document.createElement('p');
-      notice.className = 'messages messages--warning';
+      notice.className = 'aculta-map-fallback-notice';
       notice.textContent = Drupal.t('Google Maps falhou; o mapa foi substituído pelo OpenStreetMap.');
       element.insertAdjacentElement('afterend', notice);
       element.dataset.acultaMapFallbackNotified = 'true';

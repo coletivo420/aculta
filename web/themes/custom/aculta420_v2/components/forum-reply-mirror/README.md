@@ -13,4 +13,4 @@ Variante de resposta do fórum para comentários pares. Reproduz o layout de `fo
 - `avatar`, `body`, `actions`, `reactions_slot`.
 
 ## Consumidores
-- Os comentários pares de `field_aculta_discussion` usam as mesmas regras pelo seletor `:nth-of-type(even)` em `src/styles/forum.css`. Este componente é a versão isolada, para a biblioteca e para uso manual.
+- Os comentários pares de `field_aculta_discussion` usam regras de espelhamento em `forum-post-card.css`, pelo seletor `:nth-of-type(even)`. Este componente é a versão isolada, para biblioteca e uso manual.

@@ -5,3 +5,8 @@ cep-address:
     - core/drupal
     - core/drupalSettings
     - core/once
+
+cep-settings:
+  css:
+    theme:
+      css/cep-settings.css: {}

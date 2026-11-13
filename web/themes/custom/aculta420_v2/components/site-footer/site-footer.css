@@ -81,6 +81,11 @@
   justify-items: center;
 }
 
+.site-footer--social-links [data-portal-ui~="social-links-footer-inner"] {
+  display: grid;
+  gap: var(--spacing-sm);
+}
+
 .site-footer--social-links .site-footer__content [data-portal-ui~="social-links-list"] {
   display: flex;
   flex-wrap: wrap;

@@ -112,6 +112,8 @@ final class CepSettingsForm extends ConfigFormBase {
       '#attributes' => ['data-portal-ui' => 'cep-sources'],
     ] + $rows;
 
+    $form['#attached']['library'][] = 'aculta_portal_cep/cep-settings';
+
     return parent::buildForm($form, $form_state);
   }
 

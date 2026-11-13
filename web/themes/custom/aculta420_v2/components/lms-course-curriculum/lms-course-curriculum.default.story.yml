@@ -17,3 +17,6 @@ slots:
   lessons:
     type: inline_template
     template: '<ol class="aculta-lms-course-builder__lessons"><li><article class="aculta-lms-course-builder__lesson"><h3>Introdução</h3><p>Publicada</p><a href="/ganjalab/atividade">Editar atividade</a></article></li></ol>'
+  resources:
+    type: inline_template
+    template: '<section class="aculta-lms-course-builder__resources"><h2>Materiais de apoio</h2><ul><li><a href="/revista/texto">Leitura complementar</a></li></ul><a href="/ganjalab/curso/materiais">Gerenciar materiais</a></section>'

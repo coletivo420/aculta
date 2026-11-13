@@ -14,3 +14,8 @@ account-bio-form:
     - core/drupal
     - core/once
     - core/drupal.dialog
+
+ownership-claims-admin:
+  css:
+    theme:
+      css/ownership-claims-admin.css: {}

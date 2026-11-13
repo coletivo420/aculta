@@ -76,68 +76,6 @@
 .page__content,
 .page__sidebar { min-inline-size: 0; }
 
-.page__footer-region {
-  display: grid;
-  gap: var(--spacing-xl);
-  grid-template-columns: minmax(0, 1fr);
-}
-
-.page__footer-region > .block {
-  min-inline-size: 0;
-}
-
-.page__footer-region h2::after {
-  display: block;
-  margin-block-start: .4rem;
-  content: "";
-  border-block-end: 2px solid var(--color-brand-highlight);
-  inline-size: 2.25rem;
-}
-
-.page__footer-region nav ul {
-  display: flex;
-  flex-direction: column;
-  margin: 0;
-  padding-inline-start: 0;
-  list-style: none;
-  gap: var(--spacing-xs);
-}
-
-.page__footer-region nav a {
-  display: inline-flex;
-  align-items: center;
-  text-decoration: none;
-  color: var(--color-on-brand);
-  border-radius: var(--radius-sm);
-  background: var(--color-brand-primary);
-  font-family: var(--font-family-base);
-  font-size: var(--font-size-sm);
-  min-block-size: var(--tap-target-min);
-  padding-inline: var(--spacing-sm);
-}
-
-.page__footer-region nav a:is(:hover, :focus-visible) {
-  color: var(--color-on-highlight);
-  background: var(--color-brand-highlight);
-}
-
-.page__footer-region nav a[aria-current="page"] {
-  text-decoration-thickness: 2px;
-  text-underline-offset: .3em;
-}
-
-@media (min-width: 36rem) {
-  .page__footer-region {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-@media (min-width: 62rem) {
-  .page__footer-region {
-    grid-template-columns: minmax(0, 2fr) repeat(3, minmax(0, 1fr));
-  }
-}
-
 @media (min-width: 60rem) {
   /* Fallback com a mesma geometria do layout-page--aside. */
   .page__main--with-sidebar {
@@ -164,7 +102,6 @@
   }
 
   /* Páginas de leitura e conteúdo estreito */
-  .layout-page--stack,
   .page__main--stack {
     inline-size: min(100%, var(--aculta-narrow-container-width, 750px));
   }

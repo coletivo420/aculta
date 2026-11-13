@@ -1,0 +1,5 @@
+name: Sala de aprendizagem
+description: Navegação responsiva e conteúdo de atividade.
+component: aculta420_v2:lms-learning-room
+slots:
+  content: '<main data-portal-ui="aculta-learning-room"><header><h1>Aula 2</h1></header><div data-portal-ui="aculta-learning-room__layout"><details data-portal-ui="aculta-learning-room__outline" data-variant="mobile"><summary>Conteúdo do curso</summary><ol><li>Aula 1</li><li>Aula 2</li></ol></details><nav data-portal-ui="aculta-learning-room__outline" data-variant="desktop" aria-label="Conteúdo do curso"><h2 data-portal-ui="aculta-learning-room__outline-title">Conteúdo do curso</h2><ol><li>Aula 1</li><li>Aula 2</li></ol></nav><article data-portal-ui="aculta-learning-room__content"><p>Atividade da aula</p><form><label for="answer">Resposta</label><textarea id="answer"></textarea><button type="submit">Enviar</button></form></article></div></main>'

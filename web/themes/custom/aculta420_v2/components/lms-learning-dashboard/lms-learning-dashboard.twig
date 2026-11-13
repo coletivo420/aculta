@@ -1,0 +1,40 @@
+<div{{ attributes.addClass('lms-learning-dashboard') }}>
+  <header class="lms-learning-dashboard__header">
+    {{ include('aculta420_v2:heading', {
+      text: title,
+      level: 1,
+      style: 'stripe',
+      accent: 'green',
+      surface: 'none'
+    }, with_context: false) }}
+    {% if introduction %}<p class="lms-learning-dashboard__introduction">{{ introduction }}</p>{% endif %}
+  </header>
+
+  {% if resume %}
+    <section class="lms-learning-dashboard__section lms-learning-dashboard__section--resume" aria-labelledby="lms-learning-dashboard-resume-title">
+      <h2 class="lms-learning-dashboard__section-title" id="lms-learning-dashboard-resume-title">{{ continue_title }}</h2>
+      {{ resume }}
+    </section>
+  {% endif %}
+
+  <section class="lms-learning-dashboard__section" aria-labelledby="lms-learning-dashboard-courses-title">
+    <h2 class="lms-learning-dashboard__section-title" id="lms-learning-dashboard-courses-title">{{ courses_title }}</h2>
+    {% if courses %}
+      <div class="lms-learning-dashboard__grid">{{ courses }}</div>
+    {% else %}
+      {% set empty_message %}<p>{{ empty_courses_message }}</p>{% endset %}
+      {{ include('aculta420_v2:empty-state', {
+        compact: false,
+        message: empty_message,
+        actions: empty_action
+      }, with_context: false) }}
+    {% endif %}
+  </section>
+
+  {% if certificates %}
+    <section class="lms-learning-dashboard__section" aria-labelledby="lms-learning-dashboard-certificates-title">
+      <h2 class="lms-learning-dashboard__section-title" id="lms-learning-dashboard-certificates-title">{{ certificates_title }}</h2>
+      <div class="lms-learning-dashboard__grid lms-learning-dashboard__grid--certificates">{{ certificates }}</div>
+    </section>
+  {% endif %}
+</div>

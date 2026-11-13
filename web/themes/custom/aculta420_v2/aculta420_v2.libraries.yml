@@ -12,11 +12,51 @@ events:
   dependencies:
     - aculta420_v2/global-styling
 
-forum:
+login-page:
   version: 0.1.0
   css:
     theme:
-      src/styles/forum.css: {}
+      src/styles/login-page.css: {}
+  dependencies:
+    - aculta420_v2/global-styling
+
+search-page:
+  version: 0.1.0
+  css:
+    theme:
+      src/styles/search.css: {}
+  dependencies:
+    - aculta420_v2/global-styling
+
+linkweed-admin:
+  version: 0.1.0
+  css:
+    theme:
+      src/styles/linkweed-admin.css: {}
+  dependencies:
+    - aculta420_v2/global-styling
+
+secrets-admin:
+  version: 0.1.0
+  css:
+    theme:
+      src/styles/secrets-admin.css: {}
+  dependencies:
+    - aculta420_v2/global-styling
+
+address-fields:
+  version: 0.1.0
+  css:
+    theme:
+      src/styles/address-fields.css: {}
+  dependencies:
+    - aculta420_v2/global-styling
+
+account-dialogs:
+  version: 0.1.0
+  css:
+    theme:
+      src/styles/account-dialogs.css: {}
   dependencies:
     - aculta420_v2/global-styling
 
@@ -41,22 +81,6 @@ portal-account:
   css:
     theme:
       src/styles/portal-account.css: {}
-  dependencies:
-    - aculta420_v2/global-styling
-
-public-profile:
-  version: 0.1.0
-  css:
-    theme:
-      src/styles/public-profile.css: {}
-  dependencies:
-    - aculta420_v2/global-styling
-
-studio:
-  version: 0.1.0
-  css:
-    theme:
-      src/styles/studio.css: {}
   dependencies:
     - aculta420_v2/global-styling
 
@@ -90,14 +114,12 @@ global-styling:
       src/styles/base.css: {}
       src/styles/layout.css: {}
       src/styles/content.css: {}
-      src/styles/search.css: {}
       src/styles/buttons.css: {}
       components/button/button.css: {}
       components/surface/surface.css: {}
       components/surface-accent/surface-accent.css: {}
       components/surface-panel/surface-panel.css: {}
       components/heading/heading.css: {}
-      src/styles/portal-ui-extras.css: {}
       src/styles/portal-ui-map.css: {}
   dependencies:
     - system/base

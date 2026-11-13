@@ -29,8 +29,8 @@ GANJA_UID=1 node tests/browser/studio/ganjalab/learning-experience.mjs
 | `GANJA_HOME` | `https://cursos.aculta.toca.net.br/ganjalab` | Início |
 | `GANJA_COURSE` | `https://cursos.aculta.toca.net.br/group/1` | Minha jornada |
 | `GANJA_LOGIN_URI` | `https://conta.aculta.toca.net.br` | Host do link único |
-| `GANJA_UID` | `1` | Conta com matrícula e aulas |
-| `GANJA_EMPTY_USER` | `teste.comum` | Conta sem matrícula para o estado vazio |
+| `GANJA_UID` | `5` | Conta autenticada com cursos matriculados |
+| `GANJA_EMPTY_USER` | `teste.b` | Conta sem matrícula para o estado vazio |
 | `GANJA_OUT` / `SUITE_OUT` | `~/worktrees/aculta-test-output/ganjalab` | Capturas e `results.json`, fora do repositório |
 | `GANJA_WIDTHS` | `320,390,768,1024,1280,1440` | Larguras da matriz, em px; útil para um smoke curto |
 | `GANJA_HEADLESS` | (janela) | Não usar para validação |

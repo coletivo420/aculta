@@ -85,7 +85,7 @@ final class AccountController {
    *   Link render arrays from StudioExperienceManager::buildEntries().
    *
    * @return array<int, array<string, mixed>>
-   *   Card render arrays using the `aculta_studio_account_card` theme hook.
+   *   SDC render arrays for available account experiences.
    */
   private function experienceCards(array $items): array {
     $cards = [];
@@ -96,27 +96,33 @@ final class AccountController {
       if (isset(self::STRIP_META[$id])) {
         $meta = self::STRIP_META[$id];
         $cards[] = [
-          '#theme' => 'aculta_studio_account_card',
-          '#id' => $id,
-          '#kind' => 'strip',
-          '#icon' => $meta['icon'],
-          '#title' => $title,
-          '#description' => $meta['description'],
-          '#tag' => 'Acesso integrado',
+          '#type' => 'component',
+          '#component' => 'aculta420_v2:account-experience-card',
+          '#props' => [
+            'id' => $id,
+            'kind' => 'strip',
+            'icon' => $meta['icon'],
+            'title' => (string) $title,
+            'description' => $meta['description'],
+            'tag' => 'Acesso integrado',
+          ],
           '#cache' => $cache,
         ];
         continue;
       }
       $meta = self::CARD_META[$id] ?? ['icon' => 'user', 'description' => ''];
       $cards[] = [
-        '#theme' => 'aculta_studio_account_card',
-        '#id' => $id,
-        '#kind' => 'card',
-        '#icon' => $meta['icon'],
-        '#title' => $title,
-        '#description' => $meta['description'],
-        '#url' => isset($item['#url']) ? $item['#url']->toString() : NULL,
-        '#action_label' => 'Acessar',
+        '#type' => 'component',
+        '#component' => 'aculta420_v2:account-experience-card',
+        '#props' => [
+          'id' => $id,
+          'kind' => 'card',
+          'icon' => $meta['icon'],
+          'title' => (string) $title,
+          'description' => $meta['description'],
+          'url' => isset($item['#url']) ? $item['#url']->toString() : NULL,
+          'action_label' => 'Acessar',
+        ],
         '#cache' => $cache,
       ];
     }

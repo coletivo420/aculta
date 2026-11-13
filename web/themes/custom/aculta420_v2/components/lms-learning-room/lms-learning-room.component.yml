@@ -1,0 +1,16 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Sala de aprendizagem LMS
+description: Casca responsiva do conteúdo de uma aula e seu formulário Drupal.
+status: stable
+group: LMS
+props:
+  type: object
+  additionalProperties: false
+slots:
+  content:
+    title: Sala de aprendizagem
+    description: Render array com navegação, conteúdo de aula e formulário autorizado.
+assets:
+  css:
+    component:
+      lms-learning-room.css: {}

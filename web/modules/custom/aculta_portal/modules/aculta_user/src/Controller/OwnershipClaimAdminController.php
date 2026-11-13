@@ -165,7 +165,7 @@ final class OwnershipClaimAdminController extends ControllerBase {
       ];
     }
 
-    return [
+    $build = [
       'filters' => [
         '#theme' => 'links',
         '#links' => $filterLinks,
@@ -199,6 +199,8 @@ final class OwnershipClaimAdminController extends ControllerBase {
         ],
       ],
     ];
+    $build['#attached']['library'][] = 'aculta_user/ownership-claims-admin';
+    return $build;
   }
 
 }

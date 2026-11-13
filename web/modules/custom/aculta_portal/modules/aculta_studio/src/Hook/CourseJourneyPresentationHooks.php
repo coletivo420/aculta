@@ -50,8 +50,13 @@ final class CourseJourneyPresentationHooks {
       return;
     }
 
-    $build['aculta_learning_journey'] = $this->composer->build($journey);
-    $build['aculta_learning_journey']['#weight'] = -20;
+    $build['aculta_learning_journey'] = [
+      '#theme' => 'aculta_portal_component',
+      '#name' => 'lms-learning-journey',
+      '#props' => [],
+      '#slots' => ['content' => $this->composer->build($journey)],
+      '#weight' => -20,
+    ];
   }
 
   /**

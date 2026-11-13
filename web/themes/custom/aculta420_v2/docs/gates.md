@@ -23,11 +23,17 @@ Os caminhos são relativos à raiz do repositório. Gates "Drush" rodam com `php
 | `validate-aculta420-layout-builder-batch.php` | `php scripts/validate-aculta420-layout-builder-batch.php` (delega ao Drush) | 22 displays habilitados, `allow_custom` conforme contrato, ComponentLayout UI Patterns ligado ao SDC, props/slots esperados, config ativa igual ao Sync, saída via Layout Builder ou adapter SDC Wiki e acesso às rotas de defaults | mudança de `layout_builder` em displays ou no lote |
 | `validate-ui-patterns-views-cutover.php` | `php scripts/validate-ui-patterns-views-cutover.php` | Row/style/display ligados aos SDCs, sources dos fields e partes do display, pager, filtros, ordenação e acesso nativos preservados | mudança no piloto UI Patterns Views |
 
-Última execução do gate `validate-aculta420-v2-sdc.php`: PASS, 50 componentes
-descobertos e renderizados isoladamente em 2026-11-12; inclui
+Última execução do gate `validate-aculta420-v2-sdc.php`: PASS, 79 componentes
+descobertos e renderizados isoladamente em 2026-11-13; inclui
 `courses-catalog`, `lms-course-curriculum`, `lms-course-materials`,
-`lms-h5p-course`, `lms-lesson-page`, `layout-section`, `article-authors` e
-`related-content`.
+`lms-h5p-course`, `lms-lesson-page`, `layout-section`, `article-authors`,
+`related-content`, `sales-panel`, `image-audit-report`, `consent-banner`,
+`secret-reveal`, `search-preview`, `account-courses`, `portal-requirements` e
+`document-download`, `donation-presentation`, `saved-content-page` e
+`green-stash-page`, `studio-account-section-layout`, `studio-section-header`, `studio-form`, `studio-listing-table`,
+`studio-revista-form`, `studio-profile-editor` e `studio-course-authoring-page`.
+Também inclui `account-shell`, `account-profile-card`, `forum-list-page`,
+`forum-category-page` e `forum-search-page` com seus assets CSS locais.
 | `validate-aculta420-layouts.php` | `php scripts/validate-aculta420-layouts.php` (delega ao Drush) | descoberta dos layouts SDC pelo `ui_patterns_layouts` (mesmo registro do Layout Builder), categoria/regiões e renderização real de cada layout | criação ou alteração de layout SDC |
 | `validate-aculta420-shell-regions.php` | `php scripts/validate-aculta420-shell-regions.php` (use `--strict` antes do cutover) | cinco regiões finais no `info.yml`, ausência de bloco órfão, composição do shell v2 com ponte para as regiões antigas, opt-in `classic`/`v2` e ausência de comparação de hostname; `--strict` falha enquanto houver bloco em região antiga | mudança no shell, em `info.yml` ou na configuração de regiões |
 | `validate-aculta420-foundation.php` | `ACULTA_DRUSH_ROOT=$PWD php scripts/validate-aculta420-foundation.php` (ou via `php:script` do Drush) | fundação da V2: tema público e base-less, sem Bootstrap no Composer e no Runtime, blocos `aculta420_v2_*`, branding nos assets do V2, tokens `--color-*`, Twig, SDCs e cores e durações fora de `tokens.css` | toda mudança em tema, Config Sync ou Composer. Última execução: 410 checks PASS (2026-11-07), com Runtime sem a V1 |
@@ -121,13 +127,32 @@ Validação dos novos componentes SDC do Fórum (`forum-category-header`, `forum
 
 ## Fórum Growroom420 — gates desta entrega
 
-- `validate-aculta420-sdc-schemas.php`: PASS (52 componentes, 74 includes, 1062 checks).
+- `validate-aculta420-sdc-schemas.php`: PASS (96 componentes, 142 includes, 2033 checks).
 - `stylelint` em `components/forum-*/*.css` e `src/styles/forum.css`: PASS.
 - `git diff --check`: PASS.
 - `validate-aculta420-mapped-classes.php`: PASS (462 classes).
 - `validate-aculta420-design-foundations.php`: FAIL (599/1368). Exige a família `--aculta-*`; a V2 usa `--color-*`. Decisão pendente.
 - `validate-module-theme-boundary.php`: FAIL (21/7127). Falhas em módulos do Portal. Refatoração pendente.
 - Captura visual Firefox ESR (320/390/1440 px): DEFERRED. Sem `FORUM_BASE_URL` nem `SUITE_OUT` nesta sessão.
+
+## Corte CSS Fórum → SDC (2026-11-13)
+
+- `npm run lint:css`, `npm run css:audit`, `npm run css:verify`,
+  `php scripts/validate-aculta420-sdc-schemas.php`,
+  `vendor/bin/drush php:script scripts/validate-aculta420-v2-sdc.php`,
+  `php scripts/validate-aculta420-css-scope.php` (134 checks),
+  `php scripts/validate-aculta420-mapped-classes.php` e Twig CS Fixer nos
+  novos templates: PASS. Render isolado cobre 76 SDCs; schemas cobrem 119.
+- Inventário: 139 folhas/arquivos CSS, 432.263 bytes, 2.430 regras,
+  2.918 seletores; 228 classes dinâmicas em 119 componentes.
+- Browser/runtime das Views de lista, categoria e busca: pendente.
+
+### Atualização — formulários órfãos do Studio
+
+- Stylelint, `npm run css:audit`, `npm run css:verify`,
+  `php scripts/validate-aculta420-css-scope.php` (134 checks) e
+  `git diff --check`: PASS após remover os seletores sem consumidor de
+  `studio.css`. Firefox autenticado do Studio: pendente.
 
 ## ADR-054 - Gates pendentes da refatoração SDC First (2026-11-09)
 
@@ -288,8 +313,8 @@ alterações indevidas nos 22 displays, não aplicar o novo tom em massa.
 - Currículo, materiais do curso, catálogo, cartão H5P e prévia da aula agora são compostos por SDCs; a moderação de fórum usa `layout-section`. A folha de ordenação do currículo saiu do módulo e está no SDC `lms-course-curriculum`.
 - Estatísticas duplicadas foram removidas; painéis e materiais H5P usam os SDCs de superfície/layout. O mapa global perdeu seletores redundantes do catálogo, currículo, prévia, H5P e moderação de fórum.
 - `validate-aculta420-v2-sdc.php`: PASS (50 componentes); `lint:css`: PASS; `css:verify`: PASS (107 arquivos, 30 folhas declaradas em bibliotecas, 88 SDCs com CSS e 222 classes dinâmicas preservadas); classes mapeadas: PASS (450); `git diff --check`: PASS.
-- `validate-aculta420-css-scope.php`: PASS (61 checks); `global-styling` tem 14 entradas e 87.974 bytes CSS local.
-- Auditoria atual: 452.686 bytes/2.491 regras/3.079 seletores. PurgeCSS sinaliza 44.664 bytes/260 seletores como removíveis em modo audit. Não aplicado automaticamente: classes Drupal dinâmicas ainda exigem prova por consumer.
+- `validate-aculta420-css-scope.php`: PASS (67 checks); `global-styling` tem 14 entradas e 85.431 bytes CSS local.
+- Auditoria atual: 452.068 bytes/2.487 regras/3.075 seletores. PurgeCSS sinaliza 44.664 bytes/260 seletores como removíveis em modo audit. Não aplicado automaticamente: classes Drupal dinâmicas ainda exigem prova por consumer.
 - Teste kernel de roster: **DEFERRED**, `SIMPLETEST_DB` não configurado. Browser autenticado/Runtime e validação visual destas rotas: **DEFERRED**.
 - Discussões de atividade LMS e H5P e o wrapper do player H5P agora usam `layout-section`; removidos os tokens e três regras globais de atividade/painel H5P. O contrato unitário LMS passou (3 testes, 41 asserções); o kernel H5P segue **DEFERRED** por ausência de `SIMPLETEST_DB`.
 - Estados de publicação movidos para classes locais de `lms-course-curriculum`; removidas regras globais `.is-draft`/`.is-published`.
@@ -298,6 +323,9 @@ alterações indevidas nos 22 displays, não aplicar o novo tom em massa.
 - A caixa de autoria saiu de `global-styling`: o módulo `aculta_magazine` compõe `article-authors` e o SDC anexa a folha local somente nessa renderização; o CSS global diminuiu 677 bytes. Gate SDC passou com o novo componente; validação visual da Revista permanece **DEFERRED**.
 - `messenger-drawer.css` saiu de `global-styling` e virou asset de `messenger-trigger`; o SDC só é incluído para contas com URL de mensagens. A biblioteca global reduziu 17.214 bytes sem remover a folha do projeto; `css:verify` confirma a declaração de asset no SDC.
 - O bloco `aculta_index_related_content` compõe o SDC `related-content`; a lista nativa conserva título/itens, e seu CSS saiu de `content.css` global. Cache e entidades continuam sob responsabilidade do módulo. `validate-portal-ui-docs`: PASS (512 tokens, 431 usos, 160 atributos).
+- Estilos de agrupamento de avisos saíram de `portal-ui-extras.css` e foram para `messenger-trigger.css`. Estilos antigos de próximos eventos redundantes ao SDC saíram de `content.css`; o dashboard do organizador passou para `events.css`, anexado às rotas Events. Classes legadas do template fallback de eventos continuam mapeadas para os seletores equivalentes do SDC.
+- Metadados e compartilhamento da publicação foram movidos de `portal-ui-extras.css` para `revista-publication.css`, declarado no SDC; removida do template uma anexação a biblioteca inexistente. O CSS de evento e publicação agora está contextualizado pelo SDC/biblioteca consumidora.
+- `css:classify`: 252 seletores removíveis analisados nos dez hosts; 7 dinâmicos, 69 presentes no HTML, 125 cobertos por padrão de runtime, 31 com referência no código e 20 sem evidência (todos no menu autenticado do Studio). Esses 20 foram preservados até captura de sessão autenticada.
 - Próximos cortes: continuar a classificação dos candidatos PurgeCSS com evidência de runtime e consumer. Teste visual autenticado segue **DEFERRED**.
 
 - `npm run css:audit`: inventário reproduzível em `reports/css-audit/inventory/` e relatório do PurgeCSS em `reports/css-audit/audit/` (gerados, fora do Git). 106 arquivos-fonte, 451.112 bytes, 2.720 seletores de topo e 222 classes dinâmicas preservadas (86 componentes). PurgeCSS: 406.448 bytes e 2.482 seletores retidos; 44.664 bytes e 260 seletores removíveis. Os 238 rejeitados informativos podem incluir seletores mantidos por safelist.
@@ -357,3 +385,235 @@ alterações indevidas nos 22 displays, não aplicar o novo tom em massa.
 - `aculta-contraste/visual-autenticado.mjs` (frente paralela): 28/28 PASS em
   seis rotas da conta e `/marley`.
 - Leitor de tela (Orca): manual; `speech-dispatcher` inativo no ambiente.
+
+## Continuação — CSS de organizações e consentimento (2026-11-12)
+
+- `event-organization.css` caiu 1.537 bytes e passou a escopar modal/widget/perfil
+  por seus wrappers semânticos. `event-organization` deixou de carregar em todas
+  as rotas Events e agora usa allowlist de 8 rotas de perfis, widgets e
+  administração. Runtime `/eventos`: HTTP 200, sem a folha de organizações.
+- `studio.css` perdeu 153 linhas (5.029 bytes) com regras de `/culturas` não
+  entregues pelo Runtime. O mapa mantém os tokens do guia e dos filtros, mas
+  remove as classes legadas sem consumidor. Sessão de leitura confirmou
+  `/culturas` em grid/gap de 16 px e `/conta` com a folha Studio presente.
+- Inventário atualizado: 115 folhas, 445.249 bytes, 2.458 regras e 3.051
+  seletores. PurgeCSS preserva 222 classes dinâmicas; mantém-se em modo audit.
+- PASS: `npm run lint:css`, `npm run css:verify` (34 folhas em bibliotecas, 92
+  SDCs com CSS), CSS scope (119), mapped classes (442), UI docs (508/427/160),
+  render SDC (54), `PagePresentationHooksTest` (9 testes/39 asserções), Kernel
+  `ConsentBannerHooksKernelTest` (4/10) e `git diff --check`.
+- Rotas administrativas de vendas, doações e auditoria de imagens retornam 403
+  sem sessão, como esperado. A conta de teste disponível não tem essas
+  permissões; validação visual autenticada segue DEFERRED. O banner também
+  permanece desabilitado pela configuração do Runtime.
+
+## Atualização — studio-shell SDC (2026-11-13)
+
+- Schema: 120 componentes/2.286 checks PASS; render isolado: 77 componentes
+  PASS, incluindo `studio-shell`; CSS scope: 134 checks PASS, confirma asset
+  local, ausência da antiga biblioteca e wrapper nas rotas `aculta_studio.*`.
+- Stylelint, `css:audit`, `css:verify` (33 folhas de biblioteca, 117 SDCs com
+  CSS, 228 classes dinâmicas) e `git diff --check`: PASS. Aceite visual das
+  páginas autenticadas permanece pendente.
+
+## Atualização — remoção do estilo de resumo sem consumidor (2026-11-13)
+
+- `npm run lint:css`: PASS.
+- `php scripts/validate-aculta420-mapped-classes.php`: PASS (378 classes).
+- `php scripts/validate-aculta420-css-scope.php`: PASS (134 checks).
+- `php scripts/validate-aculta420-sdc-schemas.php`: PASS (120 componentes,
+  2.286 checks); render isolado: PASS (77 componentes).
+- `npm run css:audit`: 139 folhas, 428.179 bytes, 2.426 regras, 2.892
+  seletores; 228 classes dinâmicas preservadas. `npm run css:verify` e
+  `git diff --check`: PASS.
+- Visual autenticado de Studio e LMS continua pendente.
+
+## Atualização — corte de foco duplicado nos SDCs LMS (2026-11-13)
+
+- `npm run lint:css`, `npm run css:audit`, `npm run css:verify` e
+  `git diff --check`: PASS.
+- Inventário: 139 arquivos, 427.847 bytes, 2.424 regras e 2.890 seletores;
+  PurgeCSS preserva 228 classes dinâmicas em 120 componentes. CSS verify
+  confirma 33 folhas em bibliotecas e 117 SDCs com CSS.
+- Visual autenticado de Studio e LMS continua pendente.
+
+## Atualização — foco global da UI Patterns Library (2026-11-13)
+
+- Stylelint, `validate-aculta420-css-scope.php` (134 checks), `css:audit`,
+  `css:verify` e `git diff --check`: PASS.
+- Inventário: 139 arquivos, 427.548 bytes, 2.422 regras e 2.888 seletores;
+  PurgeCSS preserva 228 classes dinâmicas em 120 componentes. CSS verify
+  confirma 33 folhas em bibliotecas e 117 SDCs com CSS.
+
+## Atualização — formulário de edição de revista (2026-11-13)
+
+- Stylelint, schemas SDC (120/2.286), render isolado (77), CSS audit/verify,
+  parse da story YAML e `git diff --check`: PASS.
+- Inventário: 139 arquivos, 424.758 bytes, 2.410 regras e 2.876 seletores;
+  PurgeCSS preserva 228 classes dinâmicas em 120 componentes. CSS verify
+  confirma 33 folhas em bibliotecas e 117 SDCs com CSS.
+- Validação visual autenticada do formulário Marley permanece pendente.
+
+## Atualização — poda de variáveis órfãs do Studio (2026-11-13)
+
+- Stylelint, CSS scope (134 checks), render SDC (77), `css:audit`,
+  `css:verify` e `git diff --check`: PASS.
+- Inventário: 139 arquivos, 424.422 bytes, 2.410 regras e 2.876 seletores;
+  PurgeCSS preserva 228 classes dinâmicas em 120 componentes. CSS verify
+  confirma 33 folhas em bibliotecas e 117 SDCs com CSS.
+
+## Atualização — herança tipográfica do shell do Studio (2026-11-13)
+
+- Stylelint, CSS scope (134 checks), render SDC (77), `css:audit`,
+  `css:verify` e `git diff --check`: PASS.
+- Inventário: 139 arquivos, 423.616 bytes, 2.408 regras e 2.874 seletores;
+  PurgeCSS preserva 228 classes dinâmicas em 120 componentes. CSS verify
+  confirma 33 folhas em bibliotecas e 117 SDCs com CSS.
+- A validação visual autenticada das páginas do Studio continua pendente.
+
+## Atualização — regra de fonte redundante dos headings do Studio (2026-11-13)
+
+- Stylelint, CSS scope (134 checks), render SDC (77), `css:audit`,
+  `css:verify` e `git diff --check`: PASS.
+- Inventário: 139 arquivos, 423.502 bytes, 2.407 regras e 2.873 seletores;
+  PurgeCSS preserva 228 classes dinâmicas em 120 componentes. CSS verify
+  confirma 33 folhas em bibliotecas e 117 SDCs com CSS.
+
+## Atualização — SDC de cabeçalho de seção Marley (2026-11-13)
+
+- Schema SDC: PASS (121 componentes/2.294 checks); render isolado: PASS
+  (78 componentes). CSS scope: PASS (137 checks); mapped classes: PASS (378).
+- Stylelint, `css:audit`, `css:verify` e `git diff --check`: PASS.
+- Inventário: 140 arquivos, 423.573 bytes, 2.407 regras e 2.873 seletores;
+  PurgeCSS preserva 228 classes dinâmicas em 121 componentes; CSS verify
+  confirma 33 folhas de biblioteca e 118 SDCs com CSS.
+- Captura visual autenticada de seção Marley permanece pendente.
+- Após mover os links do perfil para o SDC proprietário: Stylelint, CSS scope
+  (137), mapped classes (378), render SDC (78), CSS audit/verify e `git diff
+  --check`: PASS. Inventário permanece em 140 arquivos/423.573 bytes/2.407
+  regras/2.873 seletores; 228 classes dinâmicas preservadas.
+
+## Atualização — skin de Form API do Studio e LMS (2026-11-13)
+
+- Stylelint: PASS; schema SDC: PASS (122 componentes/2.304 checks); render
+  isolado: PASS (79 componentes).
+- CSS scope: PASS (142 checks); classes mapeadas: PASS (378); CSS audit/verify
+  e `git diff --check`: PASS.
+- Inventário: 141 arquivos, 421.126 bytes, 2.407 regras e 2.873 seletores;
+  PurgeCSS preserva 228 classes dinâmicas em 122 componentes; CSS verify
+  confirma 33 folhas de biblioteca e 119 SDCs com CSS.
+- A validação visual autenticada de Marley, Conta e criação de curso LMS segue
+  pendente.
+
+## Atualização — remoção de wrapper e alias Bootstrap da listagem (2026-11-13)
+
+- O SDC `studio-listing-table` agora não adiciona uma `<div>` sem uso; o asset
+  continua anexado ao SDC e estiliza a região responsiva proprietária. O token
+  `studio-listing-wrap` deixou de emitir o alias Bootstrap `table-responsive`.
+- Stylelint, schema SDC (122/2.304), CSS scope (142), mapped classes (377),
+  render SDC (79), CSS audit/verify e `git diff --check`: PASS. Inventário: 141
+  arquivos/421.126 bytes/2.407 regras/2.873 seletores; 228 classes dinâmicas
+  preservadas em 122 componentes; 33 folhas em bibliotecas e 119 SDCs com CSS.
+- Inspeção visual autenticada de Marley permanece pendente.
+
+## Atualização — poda de declarações duplicadas em `content.css` (2026-11-13)
+
+- Stylelint, CSS scope (142 checks), `css:audit`, `css:verify` e
+  `git diff --check`: PASS.
+- Inventário: 141 arquivos, 420.921 bytes, 2.405 regras e 2.871 seletores;
+  228 classes dinâmicas preservadas em 122 componentes; 33 folhas de biblioteca
+  e 119 SDCs com CSS.
+- A redução foi de 205 bytes e 2 regras; sem homologação visual, a rodada segue
+  pendente para as superfícies autenticadas de Marley/Conta/LMS.
+
+## Atualização — estilos da região footer vinculados ao SDC (2026-11-13)
+
+- Os templates padrão e shell-v2 incluem a região `footer` por meio do SDC
+  `site-footer`; removida de `layout.css` a segunda implementação de grid,
+  links e títulos da mesma região.
+- Stylelint, CSS scope (142), `css:audit`, `css:verify` e `git diff --check`:
+  PASS. Inventário atual: 141 arquivos, 419.545 bytes, 2.396 regras e 2.862
+  seletores; 228 classes dinâmicas em 122 componentes.
+- Capturas do footer em 320/1440 e modos claro/escuro ainda pendentes.
+
+## Atualização — remoção de regras redundantes da Conta (2026-11-13)
+
+- Retirada de `.portal-account__body` a regra Bootstrap `.table-responsive`:
+  seus dois emissores pertencem ao módulo de Eventos e não são carregados no
+  site account. Removidas regras de dimensão de mídia cobertas por `base.css`
+  e limites repetidos pelo SDC `account-shell`; preservados scroll de `pre`,
+  quebra de conteúdo e demais estilos próprios da Conta.
+- Stylelint, CSS scope (142), `css:audit`, `css:verify` e `git diff --check`:
+  PASS. Inventário: 141 arquivos, 419.394 bytes, 2.395 regras e 2.859 seletores;
+  228 classes dinâmicas em 122 componentes.
+
+## Atualização — remoção do estilo Drupal messages legado (2026-11-13)
+
+- Removidas as regras globais `.messages`, `.messages--status`, `.messages--error`
+  e `.messages--warning`. O template do tema renderiza cada mensagem pelo SDC
+  `status-messages`; o repositório não contém emissores diretos dessas classes.
+- Stylelint, CSS scope (142), mapped classes (377), `css:audit`, `css:verify` e
+  `git diff --check`: PASS. Inventário: 141 arquivos, 418.714 bytes, 2.391 regras
+  e 2.852 seletores; 228 classes dinâmicas em 122 componentes.
+
+## Atualização — remoção de display sobrescrito no pager (2026-11-13)
+
+- `.aculta-pager` saiu do agrupamento `display:grid`: a regra seguinte já define
+  `display:flex` para a classe, anulando o primeiro valor. O gap e demais estilos
+  flex seguem mantidos.
+- Stylelint, CSS scope (142), mapped classes (377), `css:audit`, `css:verify` e
+  `git diff --check`: PASS. Inventário: 141 arquivos, 418.643 bytes, 2.391 regras
+  e 2.851 seletores.
+
+## Atualização — estilos de cartão cultural localizados no SDC (2026-11-13)
+
+- Estilos do cartão e do estado de cancelamento migrados de `events.css` para
+  `card-cultural.css`; a folha Events conserva o grid/toolbar do catálogo e
+  demais superfícies que não pertencem ao cartão.
+- Stylelint, schema SDC (122/2.304), CSS scope (142), mapped classes (377),
+  render isolado (79), CSS audit/verify e `git diff --check`: PASS.
+- Inventário: 141 arquivos, 418.361 bytes, 2.388 regras e 2.848 seletores;
+  PurgeCSS preserva 228 classes dinâmicas em 122 componentes.
+- Browser visual do catálogo aguarda validação de runtime.
+
+## Atualização — skin de apoio movida para SDC (2026-11-13)
+
+- `support-page` foi removida das bibliotecas. A rota de apoio envolve o render
+  array marcado pelo Form API uma vez em `support-form`, cujo CSS local contém a
+  skin; o template do SDC imprime o slot intacto.
+- O gate `validate-aculta420-css-scope.php` passou a verificar a ausência da
+  biblioteca antiga, a declaração do asset no SDC e a integração de rota.
+- Stylelint, schemas/includes (123/2.312), CSS scope (143), mapped classes (377),
+  render isolado (80), CSS audit/verify e `git diff --check`: PASS. Inventário:
+  141 arquivos, 418.361 bytes, 2.388 regras e 2.848 seletores.
+- Validação visual de `/apoio` em runtime pendente.
+
+## Atualização — folha do perfil público vinculada ao SDC (2026-11-13)
+
+- Removida a biblioteca de rota `public-profile`; o SDC `public-profile-page`
+  recebe o render array raiz marcado pelo token neutro da rota e declara a folha
+  CSS local. Seu Twig imprime o conteúdo diretamente, sem wrapper DOM.
+- Gate CSS scope confere a ausência da biblioteca antiga, asset no schema e
+  integração de rota. Schemas (124/2.320), CSS scope (143), mapped classes (377),
+  render isolado (81), Stylelint, CSS audit/verify e `git diff --check`: PASS.
+- Inventário: 141 arquivos, 418.361 bytes, 2.388 regras e 2.848 seletores;
+  PurgeCSS preserva 228 classes dinâmicas em 124 componentes. Browser autenticado
+  do perfil público permanece pendente.
+
+## Atualização — regras do shell da Conta localizadas no SDC (2026-11-13)
+
+- Conteúdo, leitura horizontal de `pre`, foco da navegação e ações da visão geral
+  foram movidos de `portal-account.css` para `account-shell.css`, pois os emissores
+  ficam dentro do shell. A biblioteca contextual permanece para controles de foto
+  e containers de páginas account sem o shell.
+- Stylelint, schemas (124/2.320), CSS scope (143), mapped classes (377), render
+  SDC (81), CSS audit/verify e `git diff --check`: PASS. Inventário: 141 arquivos,
+  418.334 bytes, 2.387 regras e 2.847 seletores; repetição entre folhas: 5 pares.
+- Browser autenticado da Conta pendente.
+
+## Atualização — lista do modal de termos vinculada ao SDC (2026-11-13)
+
+- O template de termos compõe `account-terms-modal`; a lista de documentos usa
+  seu asset local, e o Twig conserva o ID, `hidden` e `data-dialog-title`.
+- O gate CSS scope verifica o contrato de template, CSS e atributos; o gate SDC
+  renderiza o componente isoladamente. Resultado desta revisão ainda pendente.

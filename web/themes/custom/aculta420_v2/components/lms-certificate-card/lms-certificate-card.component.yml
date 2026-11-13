@@ -1,0 +1,30 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Certificado do estudante
+description: Certificado do curso com situação, data e link público de verificação.
+status: stable
+group: LMS
+props:
+  type: object
+  additionalProperties: false
+  required: [title, status, status_text, issued_text]
+  properties:
+    title:
+      type: string
+      minLength: 1
+    status:
+      type: string
+      enum: [active, revoked]
+    status_text:
+      type: string
+      minLength: 1
+    issued_text:
+      type: string
+      minLength: 1
+slots:
+  verification_action:
+    title: Verificar certificado
+    description: Link público de verificação emitido pelo LMS.
+assets:
+  css:
+    component:
+      lms-certificate-card.css: {}

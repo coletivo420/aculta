@@ -1,0 +1,7 @@
+name: Título e ações de seção
+description: Cabeçalho responsivo com título da seção e links de ação.
+component: aculta420_v2:studio-section-header
+slots:
+  content:
+    type: inline_template
+    template: '<div class="studio__section-header"><h2 data-portal-ui="studio-heading">Perfil editorial</h2><ul class="studio__actions"><li><a href="#editar">Editar</a></li></ul></div>'

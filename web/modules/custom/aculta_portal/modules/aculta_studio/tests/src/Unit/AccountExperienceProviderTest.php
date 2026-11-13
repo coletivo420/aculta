@@ -82,12 +82,13 @@ final class AccountExperienceProviderTest extends UnitTestCase {
   public function testDashboardLinksSeparatePrivateAccountAndPublicProfile(): void {
     $build = (new AccountExperienceProvider())->build();
 
-    self::assertSame('aculta_studio_account', $build['#theme']);
-    self::assertSame('/conta-teste', $build['#account_url']);
-    self::assertSame('Minha conta', (string) $build['#account_link_title']);
-    self::assertSame([], $build['#profile_link']);
+    self::assertSame('component', $build['#type']);
+    self::assertSame('aculta420_v2:account-experience-dashboard', $build['#component']);
+    self::assertSame('/conta-teste', $build['#props']['account_url']);
+    self::assertSame('Minha conta', $build['#props']['account_link_title']);
+    self::assertSame([], $build['#slots']['profile_link']);
     self::assertContains('user', $build['#cache']['contexts']);
-    self::assertSame('Studio Dashboard', $build['#menu_title']);
+    self::assertSame('Studio Dashboard', $build['#slots']['menu']['#props']['title']);
   }
 
   /**

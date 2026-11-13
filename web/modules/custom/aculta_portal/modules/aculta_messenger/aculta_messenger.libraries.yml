@@ -1,0 +1,4 @@
+admin-notices:
+  css:
+    theme:
+      css/admin-notices.css: {}

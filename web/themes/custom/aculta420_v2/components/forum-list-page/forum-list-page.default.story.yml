@@ -1,0 +1,7 @@
+name: Lista pública de tópicos
+description: View de tópicos com categorias, abas, paginação e regras do Fórum.
+component: aculta420_v2:forum-list-page
+slots:
+  content:
+    type: inline_template
+    template: '<header><h1>Growroom420</h1></header><div class="aculta-forum-list__layout"><aside class="aculta-forum-list__categories"><h2>Categorias</h2><ul class="aculta-forum-list__category-list"><li><a class="aculta-forum-list__category is-all" href="#">Todas as categorias</a></li></ul></aside><section class="aculta-forum-list__panel" aria-label="Lista de tópicos"><div class="aculta-forum-list__rows"><article class="forum-topic-row">Tópico de exemplo</article></div></section><aside class="aculta-forum-list__aside">Regras</aside></div>'

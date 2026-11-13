@@ -1,0 +1,27 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Download de documento
+description: Link de arquivo com formato e tamanho acessíveis.
+status: stable
+group: Conteúdo
+props:
+  type: object
+  additionalProperties: false
+  required: [format, size, format_token]
+  properties:
+    format:
+      type: string
+      minLength: 1
+    size:
+      type: string
+      minLength: 1
+    format_token:
+      type: string
+      minLength: 1
+slots:
+  link:
+    title: Link do arquivo
+    description: Link renderizado pelo formatter com nome e rótulo acessível.
+assets:
+  css:
+    component:
+      document-download.css: {}

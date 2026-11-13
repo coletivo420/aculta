@@ -30,7 +30,7 @@ final class StudioDashboardCalendarComposer {
   ) {}
 
   /**
-   * Constrói o render array do hook de apresentação aculta_studio_calendar.
+   * Compõe o SDC de calendário com os dados autorizados para o usuário atual.
    *
    * @param int|null $ano
    *   Ano (quatro dígitos). NULL para ano atual de Brasília.
@@ -42,7 +42,7 @@ final class StudioDashboardCalendarComposer {
    *   Chave Y-m-d do dia selecionado. NULL para hoje.
    *
    * @return array<string, mixed>
-   *   Render array do hook aculta_studio_calendar (dados; a apresentação é do tema).
+   *   Render array do SDC studio-calendar com dados e cache anexado.
    */
   public function compose(?int $ano = NULL, ?int $mes = NULL, ?string $filtro = NULL, ?string $diaSelecionado = NULL): array {
     $fuso = new \DateTimeZone('America/Sao_Paulo');
@@ -205,18 +205,21 @@ final class StudioDashboardCalendarComposer {
     }
 
     return [
-      '#theme' => 'aculta_studio_calendar',
-      '#title' => (string) $this->t('Calendário'),
-      '#current_month_label' => $grid['rotulo'],
-      '#previous_url' => $prevUrl,
-      '#next_url' => $nextUrl,
-      '#active_filter' => $filtroValido,
-      '#filters' => $filtrosProps,
-      '#weeks' => $weeksProps,
-      '#selected_date_label' => $selectedDateLabel,
-      '#selected_day_events' => $selectedDayEventsProps,
-      '#can_add_event' => $canAdd,
-      '#add_event_url' => $addUrl,
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:studio-calendar',
+      '#props' => [
+        'title' => (string) $this->t('Calendário'),
+        'current_month_label' => $grid['rotulo'],
+        'previous_url' => $prevUrl,
+        'next_url' => $nextUrl,
+        'active_filter' => $filtroValido,
+        'filters' => $filtrosProps,
+        'weeks' => $weeksProps,
+        'selected_date_label' => $selectedDateLabel,
+        'selected_day_events' => $selectedDayEventsProps,
+        'can_add_event' => $canAdd,
+        'add_event_url' => $addUrl,
+      ],
       '#attached' => [
         'library' => [
           'core/drupal.htmx',

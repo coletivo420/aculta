@@ -140,32 +140,38 @@ class ThankYouPane extends CheckoutPaneBase {
     }
 
     $pane_form['thanks'] = [
-      '#type' => 'container',
-      'name' => [
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:donation-presentation',
+      '#props' => ['variant' => 'thanks'],
+      '#slots' => ['content' => [
+        'name' => [
         '#type' => 'html_tag',
         '#tag' => 'p',
         '#value' => $firstName,
-        '#attributes' => ['data-portal-ui' => 'donation-donor-name'],
+        '#attributes' => ['class' => ['donation-presentation__donor']],
       ],
       'donation_clause' => [
         '#type' => 'html_tag',
         '#tag' => 'p',
         '#value' => $this->t('thank you for donating'),
-        '#attributes' => ['data-portal-ui' => 'donation-clause'],
+        '#attributes' => ['class' => ['donation-presentation__clause']],
       ],
-      '#attributes' => ['data-portal-ui' => 'donation-thanks'],
+      ]],
     ];
 
     $pane_form['amount'] = [
-      '#type' => 'container',
-      '#attributes' => ['data-portal-ui' => 'donation-amount-block'],
-      'donation_amount' => [
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:donation-presentation',
+      '#props' => ['variant' => 'amount'],
+      '#slots' => ['content' => [
+        'donation_amount' => [
         '#type' => 'html_tag',
         '#tag' => 'p',
         '#weight' => 1,
         '#value' => $donationAmount,
-        '#attributes' => ['data-portal-ui' => 'donation-amount'],
+        '#attributes' => ['class' => ['donation-presentation__amount']],
       ],
+      ]],
     ];
     $gift_type = '';
     if ($this->donationItem->hasField('field_gift_type')
@@ -175,12 +181,12 @@ class ThankYouPane extends CheckoutPaneBase {
       $gift_type = $type->value;
     }
     if ($gift_type == 'recurring') {
-      $pane_form['amount']['monthly'] = [
+      $pane_form['amount']['#slots']['content']['monthly'] = [
         '#type' => 'html_tag',
         '#weight' => 2,
         '#tag' => 'p',
         '#value' => $this->t('every month'),
-        '#attributes' => ['data-portal-ui' => 'donation-monthly'],
+        '#attributes' => ['class' => ['donation-presentation__monthly']],
       ];
     }
     if (
@@ -192,12 +198,12 @@ class ThankYouPane extends CheckoutPaneBase {
       /** @var \Drupal\Core\Field\Plugin\Field\FieldType\StringItem|null $donationToSurname */
       $donationToSurname = $this->donationItem->hasField('field_honoree_first') ? $this->donationItem->field_honoree_last->first() : NULL;
       $honoree = is_null($donationToSurname) || $donationToSurname->isEmpty() ? $donationToName->value : $donationToName->value . ' ' . $donationToSurname->value;
-      $pane_form['amount']['in_honor'] = [
+      $pane_form['amount']['#slots']['content']['in_honor'] = [
         '#type' => 'html_tag',
         '#weight' => 4,
         '#tag' => 'p',
         '#value' => $this->t('in honor of @name', ['@name' => $honoree]),
-        '#attributes' => ['data-portal-ui' => 'donation-in-honor'],
+        '#attributes' => ['class' => ['donation-presentation__honor']],
       ];
     }
     // Successfully built.  Remove the order id from the session.

@@ -56,9 +56,8 @@ final class SecretClearForm extends FormBase implements ContainerInjectionInterf
     $form['#suffix'] = '</div>';
     $form['variable'] = ['#type' => 'item', '#title' => $this->t('Variável'), '#plain_text' => $name];
     $form['warning'] = [
-      '#type' => 'container',
-      '#attributes' => ['data-portal-ui' => 'notice-warning'],
-      'text' => ['#plain_text' => (string) $this->t('Apagar o valor remove a variável do arquivo de credenciais deste ambiente. Para usar a credencial de novo, será preciso cadastrar o valor outra vez.')],
+      '#component' => 'aculta420_v2:status-messages',
+      '#props' => ['type' => 'warning', 'messages' => [(string) $this->t('Apagar o valor remove a variável do arquivo de credenciais deste ambiente. Para usar a credencial de novo, será preciso cadastrar o valor outra vez.')]],
     ];
     $form['actions'] = ['#type' => 'actions'];
     if (!$this->secrets->canSaveHere()) {

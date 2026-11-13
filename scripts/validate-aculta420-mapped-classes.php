@@ -59,6 +59,10 @@ foreach ($entries as $entry) {
   }
 }
 
+if (preg_match("/'studio-account-home'\s*=>\s*\[\s*\]/", $mapMatch[1]) !== 1) {
+  $fail('studio-account-home deve permanecer token sem classes: o SDC proprietário já declara sua apresentação.');
+}
+
 $forbiddenFound = array_values(array_intersect(array_keys($classes), $forbidden));
 if ($forbiddenFound !== []) {
   $fail('Nomes Bootstrap proibidos no mapa: ' . implode(', ', $forbiddenFound));

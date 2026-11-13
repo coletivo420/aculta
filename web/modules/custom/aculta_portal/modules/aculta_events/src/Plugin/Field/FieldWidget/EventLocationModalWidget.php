@@ -183,7 +183,11 @@ final class EventLocationModalWidget extends WidgetBase {
       }
       else {
         $element['summary'] = [
-          '#markup' => '<div class="messages messages--warning">' . $translation->translate('O local selecionado anteriormente não é acessível pela sua conta.') . '</div>',
+          '#component' => 'aculta420_v2:status-messages',
+          '#props' => [
+            'type' => 'warning',
+            'messages' => [$translation->translate('O local selecionado anteriormente não é acessível pela sua conta.')],
+          ],
         ];
         $modalUrl = Url::fromRoute($eventRouteContext->route('aculta_events.location_modal', 'aculta_events.organizer_location_modal'), [
           'field_name' => $fieldName,

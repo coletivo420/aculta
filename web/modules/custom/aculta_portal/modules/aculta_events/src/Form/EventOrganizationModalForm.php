@@ -265,10 +265,10 @@ final class EventOrganizationModalForm extends FormBase {
     }
     else {
       $form['empty_notice'] = [
-        '#type' => 'container',
-        '#attributes' => ['data-portal-ui' => 'notice-status'],
-        'message' => [
-          '#markup' => '<p>' . $this->t('Nenhuma organização encontrada. Você pode cadastrar uma nova organização imediatamente no botão acima.') . '</p>',
+        '#component' => 'aculta420_v2:status-messages',
+        '#props' => [
+          'type' => 'status',
+          'messages' => [$this->t('Nenhuma organização encontrada. Você pode cadastrar uma nova organização imediatamente no botão acima.')],
         ],
       ];
     }
@@ -317,11 +317,11 @@ final class EventOrganizationModalForm extends FormBase {
       $dups = $storage->loadMultiple($candidates);
 
       $form['duplicate_warning'] = [
-        '#type' => 'container',
-        '#attributes' => ['data-portal-ui' => 'notice-warning'],
-        'heading' => [
-          '#markup' => '<h4>' . $this->t('Atenção: Organizações com nomes semelhantes já cadastradas') . '</h4><p>' . $this->t('Para evitar duplicidade, verifique se a organização desejada já existe antes de criar uma nova:') . '</p>',
-        ],
+        '#component' => 'aculta420_v2:status-messages',
+        '#props' => ['type' => 'warning'],
+        '#slots' => ['content' => [
+          'heading' => ['#markup' => '<h4>' . $this->t('Atenção: Organizações com nomes semelhantes já cadastradas') . '</h4><p>' . $this->t('Para evitar duplicidade, verifique se a organização desejada já existe antes de criar uma nova:') . '</p>'],
+        ]],
       ];
 
       $form['duplicate_table'] = [

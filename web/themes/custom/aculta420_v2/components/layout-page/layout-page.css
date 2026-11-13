@@ -27,6 +27,35 @@
   max-inline-size: none;
 }
 
+/* O Dashboard da Conta reserva colunas para os SDCs de menu e calendário. */
+.layout-page--studio-dashboard :is(.layout-page__title, .page__title) {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (min-width: 60rem) {
+  .layout-page--studio-dashboard {
+    position: relative;
+    max-inline-size: var(--aculta-container-width, 84rem);
+    margin-inline: auto;
+    padding-inline-start: 16rem;
+    padding-inline-end: 21rem;
+  }
+
+  .layout-page--studio-dashboard .layout-page__content {
+    inline-size: 100%;
+    max-inline-size: none;
+  }
+
+}
+
 .layout-page__title,
 .layout-page__content,
 .layout-page__aside {

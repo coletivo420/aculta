@@ -24,6 +24,9 @@ slots:
   lesson_order_form:
     title: Formulário de ordenação
     description: Formulário nativo de ordenação fornecido pelo módulo LMS.
+  resources:
+    title: Materiais de apoio
+    description: Render array de recursos autorizado e cacheável do curso.
 assets:
   css:
     component:

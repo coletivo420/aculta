@@ -71,6 +71,29 @@
   line-height: 1.65;
 }
 
+.aculta-event-page-layout :is([data-portal-ui~="event-supporters"], [data-portal-ui~="event-press-quotes"], .event-supporters, .event-press-quotes, .sponsor-logos) {
+  display: grid;
+  gap: var(--spacing-sm);
+}
+
+.aculta-event-page-layout :is([data-portal-ui~="event-supporters-list"], [data-portal-ui~="event-press-quotes-list"], .sponsor-logos-list, .press-quotes-list) {
+  display: grid;
+  gap: var(--spacing-sm);
+}
+
+.aculta-event-page-layout :is([data-portal-ui~="event-supporter-name"], [data-portal-ui~="event-supporter-link"], [data-portal-ui~="event-supporter-tier"], .sponsor-link, .sponsor-name, .sponsor-cota) {
+  display: block;
+}
+
+.aculta-event-page-layout :is([data-portal-ui~="event-supporter-name"], .sponsor-name) {
+  font-weight: 600;
+}
+
+.aculta-event-page-layout :is([data-portal-ui~="event-supporter-tier"], .sponsor-cota) {
+  color: var(--color-text-muted);
+  font-size: .875rem;
+}
+
 .aculta-event-page-layout__description > :first-child { margin-block-start: 0; }
 .aculta-event-page-layout__description > :last-child { margin-block-end: 0; }
 

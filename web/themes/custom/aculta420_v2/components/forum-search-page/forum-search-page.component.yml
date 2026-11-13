@@ -1,0 +1,16 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Página de busca do Fórum
+description: Casca visual da View de busca, sem alterar filtros, acesso ou paginação.
+status: stable
+group: Comunidade
+props:
+  type: object
+  additionalProperties: false
+slots:
+  content:
+    title: Conteúdo da busca
+    description: Saída renderizada pela View e seu formulário exposto.
+assets:
+  css:
+    component:
+      forum-search-page.css: {}

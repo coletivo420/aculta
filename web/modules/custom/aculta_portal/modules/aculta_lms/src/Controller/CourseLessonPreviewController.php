@@ -68,7 +68,7 @@ final class CourseLessonPreviewController {
 
     $preview = [
       '#type' => 'container',
-      '#attributes' => ['data-aculta-lms' => 'course-preview', 'data-portal-ui' => 'aculta-course-lesson-preview'],
+      '#attributes' => ['data-aculta-lms' => 'course-preview', 'class' => ['aculta-lms-course-preview']],
       '#attached' => ['library' => ['aculta_lms/course_structure']],
       'back' => Link::fromTextAndUrl(
         $this->t('Voltar à estrutura do curso'),

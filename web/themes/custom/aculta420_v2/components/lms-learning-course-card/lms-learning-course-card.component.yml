@@ -1,0 +1,49 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Cartão de curso do estudante
+description: Curso matriculado com progresso, próximo passo e estados de avaliação.
+status: stable
+group: LMS
+props:
+  type: object
+  additionalProperties: false
+  required: [title, progress_id, progress_label, progress_text, has_lessons, finished, pending_evaluation, pending_text, finished_text]
+  properties:
+    title:
+      type: string
+      minLength: 1
+    progress_id:
+      type: string
+      pattern: '^[A-Za-z][A-Za-z0-9_-]*$'
+    progress_label:
+      type: string
+      minLength: 1
+    progress_text:
+      type: string
+    progress_value:
+      type: [number, 'null']
+      minimum: 0
+      maximum: 100
+    has_lessons:
+      type: boolean
+    finished:
+      type: boolean
+    pending_evaluation:
+      type: boolean
+    pending_text:
+      type: string
+    finished_text:
+      type: string
+    current_lesson:
+      type: string
+      default: ''
+slots:
+  journey_action:
+    title: Abrir jornada
+    description: Link canônico da jornada de curso.
+  continue_action:
+    title: Continuar curso
+    description: Link de início, retomada ou resultado, quando fornecido pelo LMS.
+assets:
+  css:
+    component:
+      lms-learning-course-card.css: {}

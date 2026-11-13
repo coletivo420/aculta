@@ -25,34 +25,16 @@
    Cada regra pertence a um token de PortalUiHooks::TOKENS. */
 .aculta-checkout__google { display: flex; justify-content: center; margin-block-end: 1rem; }
 .aculta-checkout__guest { margin-block-end: 1rem; }
-.aculta-donation__invite { margin-block-start: 1rem; }
-.aculta-donation__amount { font-size: 1.75rem; font-weight: 700; line-height: 1.2; }
-.aculta-donation__amount-block { margin-block: 1rem; }
-.aculta-donation__donor { font-weight: 600; }
-.aculta-donation__honor { font-style: italic; }
-.aculta-donation__summaries { display: grid; gap: 1rem; }
-.aculta-donation__clause { color: var(--color-text-muted); }
-.aculta-donation__document-link { color: var(--color-brand-primary); }
-.aculta-donation__monthly { display: inline-flex; align-items: center; padding: .125rem .5rem; color: var(--color-text-primary); border-radius: var(--radius-full); background: var(--color-surface-highlight); font-size: .875rem; }
-.aculta-donation__thanks { text-align: center; }
-.aculta-wiki-title-suggestions { margin: 0; padding: 0; list-style: none; }
 .aculta-hint { color: var(--color-text-secondary); font-size: .875em; }
 .aculta-hint--muted { color: var(--color-text-muted); }
 .aculta-form--inline { display: flex; flex-wrap: wrap; align-items: flex-end; gap: .5rem; }
 .aculta-section-title { margin-block: 1rem .5rem; font-family: var(--font-family-heading); font-size: 1.25rem; }
-.aculta-event-catalogue__actions { margin-block: 1rem; }
 .aculta-messenger-links { display: flex; flex-wrap: wrap; gap: .5rem; margin-block-start: .5rem; }
-.aculta-register-popup { display: grid; gap: 1rem; }
 .aculta-shop-card { display: block; padding: 1rem; text-align: start; text-decoration: none; border: 2px solid var(--color-border); border-radius: .5rem; }
 .aculta-shop-grid { display: grid; gap: 1rem; margin-block-start: 1.5rem; }
-.aculta-studio-live { color: var(--color-text-muted); font-size: .875em; }
 .aculta-we-sativa__intent,
 .aculta-we-sativa__start,
 .aculta-we-sativa__workspace { display: grid; gap: 1.5rem; }
-.aculta-wiki-workspace__return { margin-block-end: 1rem; }
-.aculta-event-organization__intro { font-size: 1.125rem; line-height: 1.5; }
-.aculta-event-organization__admin-link,
-.aculta-event-organization__fallback { color: var(--color-text-muted); font-size: .875em; }
 .aculta-payment-notice__link { color: var(--color-brand-primary); }
 
 .badge--danger,
@@ -66,75 +48,9 @@
 .badge-reason,
 .coorganizer-item__badge { color: var(--color-text-primary); background: var(--color-surface-highlight); }
 
-.messages,
-.messages--status,
-.messages--info,
-.messages--error,
-.messages--warning { padding: .75rem 1rem; border-inline-start: .25rem solid var(--color-border); border-radius: var(--radius-sm); }
-.messages--status { color: var(--color-status-ok-text); border-inline-start-color: var(--color-status-ok-text); background: var(--color-status-ok-surface); }
-.messages--info { color: var(--color-text-primary); border-inline-start-color: var(--color-brand-primary); background: var(--color-surface-highlight); }
-.messages--error { color: var(--color-status-error-text); border-inline-start-color: var(--color-status-error-text); background: var(--color-status-error-surface); }
-.messages--warning { color: var(--color-status-warning-text); border-inline-start-color: var(--color-status-warning-text); background: var(--color-status-warning-surface); }
-
 /* Botões próprios do Portal. */
 
-/* Calendário interativo. */
-.aculta-calendar-interactive { display: grid; gap: .75rem; }
-.aculta-calendar-interactive__agenda,
-.aculta-calendar-interactive__alternativa,
-.aculta-calendar-interactive__controle { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; }
-.aculta-calendar-interactive__aviso { color: var(--color-text-muted); font-size: .9375rem; }
 .aculta-calendar-embed-hosts { display: grid; gap: .25rem; }
-
-/* Mapas. */
-.aculta-map,
-.aculta-map-wrapper { display: block; inline-size: 100%; max-inline-size: 100%; }
-.aculta-map { block-size: 18rem; min-block-size: 16rem; overflow: hidden; border: 1px solid var(--color-border); border-radius: var(--radius-sm); background: var(--color-surface-highlight); }
-
-@media (min-width: 48rem) { .aculta-map { block-size: 24rem; } }
-
-@media (min-width: 64rem) { .aculta-map { block-size: 30rem; } }
-
-.aculta-map .leaflet-control-attribution { color: var(--color-text-primary); font-size: .75rem; }
-.aculta-map .leaflet-control-attribution a { color: var(--color-brand-primary); }
-.aculta-map .leaflet-bar a:focus-visible,
-.aculta-map .leaflet-marker-icon:focus-visible { outline: 3px solid var(--color-brand-primary); outline-offset: 2px; }
-.aculta-map__aviso { margin-block: .5rem 1rem; }
-.aculta-map__aviso,
-.aculta-map__geocoding-attribution { color: var(--color-text-muted); font-size: .875rem; }
-.aculta-map__location-route { display: inline-flex; gap: .5rem; }
-
-/* Eventos, locais, organização e apoiadores. */
-.actions-bar,
-.aculta-event-date-actions,
-.aculta-event-date-order,
-.aculta-event-date-row,
-.aculta-event-location-widget,
-.aculta-event-organization-target-id,
-.location-actions,
-.location-admin-actions,
-.location-agenda { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; }
-.event-card__aviso,
-.event-card__meta,
-.event-card__subtitulo,
-.event-card__tipo,
-.event-card__titulo { display: block; }
-.event-card__titulo { font-family: var(--font-family-heading); font-size: 1.125rem; }
-.event-card__subtitulo,
-.event-card__meta { color: var(--color-text-muted); font-size: .875rem; }
-.event-press-quotes,
-.event-supporters,
-.press-quotes-list,
-.sponsor-logos,
-.sponsor-logos-list { display: grid; gap: .5rem; }
-.press-quote,
-.sponsor-item,
-.sponsor-link,
-.sponsor-name,
-.sponsor-cota { display: block; }
-.sponsor-name { font-weight: 600; }
-.sponsor-cota { color: var(--color-text-muted); font-size: .875rem; }
-.media-mentions { display: grid; gap: .75rem; }
 
 /* UI Styles Entity Status: preview cue only; never used for access decisions. */
 .aculta-content-status--unpublished {
@@ -156,109 +72,23 @@
 .aculta-messenger-sender__avatar-image { overflow: hidden; border-radius: var(--radius-full); }
 .aculta-messenger-sender__name { font-weight: 600; }
 
-/* Busca de nova conversa: o token aplica esta variante depois do bloco acima,
-   que define `display: block` para a classe base. */
+/* Busca de nova conversa: a variante substitui o display da classe base. */
 .aculta-messenger-fallback-search--grid { display: grid; gap: .5rem; }
 
 /* Conta, perfil e autenticação. */
 .aculta-account-home,
-.aculta-account-terms,
 .aculta-fiscal-identity-other-data,
-.aculta-google-account,
-.aculta-auth-google,
-.aculta-auth-google-status,
-.aculta-registration-status,
-.portal-account-bio__text,
-.portal-account-photo__preview,
-.portal-account__commerce,
-.portal-profile__avatar-image,
-.portal-street-number-sn { display: block; }
+.portal-account-bio__text { display: block; }
 .aculta-auth-google { display: inline-flex; align-items: center; gap: .5rem; min-block-size: 2.75rem; }
-.aculta-auth-google-status,
-.portal-account__commerce { color: var(--color-text-muted); }
-.portal-profile__avatar-image { overflow: hidden; border-radius: var(--radius-full); }
+.aculta-auth-google-status { color: var(--color-text-muted); }
 
 /* Login e popup. */
-.aculta-login-popup { display: grid; gap: .75rem; }
-.aculta-login-popup__divider { margin: 0; border: 0; border-block-start: 1px solid var(--color-border); }
-
-/* Busca. */
-.aculta-search-preview__footer { display: flex; justify-content: center; margin-block-start: .5rem; }
-.aculta-search-preview__list { margin: 0; padding: 0; list-style: none; }
 
 /* Segredos e administração. */
-.aculta-secret-value,
-.aculta-secret-value__clear,
-.aculta-secret-value__edit,
-.aculta-secret-value__eye,
-.aculta-secret-value__text { display: inline-flex; align-items: center; gap: .25rem; }
-.secrets-table-scroll { overflow-x: auto; }
-.secrets-tabs,
-.secrets-tabs__list,
-.secrets-tabs__panel,
-.secrets-tabs__tab { display: block; }
-.secrets-tabs__list { display: flex; flex-wrap: wrap; gap: .25rem; }
-.secrets-tabs__tab { padding: .375rem .75rem; }
-.aculta-admin-filters,
 .aculta-admin-purpose-filters,
 .aculta-admin-status-filters,
-.aculta-notice-admin-intro,
-.aculta-notice-admin-list,
-.aculta-notice-admin-table,
-.aculta-forum-report-queue,
-.aculta-pager,
-.admin-item,
-.admin-list { display: grid; gap: .5rem; }
-.aculta-notice-admin-table,
+.aculta-forum-report-queue { display: grid; gap: .5rem; }
 .aculta-pager { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; }
-.aculta-portal-requirements,
-.aculta-portal-requirements__cep,
-.aculta-portal-requirements__cep-table,
-.aculta-portal-requirements__indexing,
-.aculta-portal-requirements__indexing-table,
-.aculta-portal-requirements__legend,
-.aculta-portal-requirements__php-extensions,
-.aculta-portal-secrets-section,
-.aculta-portal-secrets__environment { display: grid; gap: .5rem; }
 .superficies-dns { display: grid; gap: .25rem; }
-.aculta-sales-panel__section { display: grid; gap: .5rem; }
 
-/* Links sociais, estatísticas, Studio e Wiki. */
-.aculta-social-links__list,
-.aculta-social-links__button-list,
-.aculta-social-links__channel,
-.aculta-social-links__channel--custom,
-.aculta-social-links__channel--website,
-.aculta-social-links-footer__inner,
-.aculta-social-links-settings-button,
-.aculta-wiki-proposal-decision,
-.aculta-wiki-proposal-link,
-.aculta-wiki-proposal-status,
-.aculta-wiki-title-suggestions,
-.download-badge-format,
-.download-badge-size,
-.download-link,
-.recommendation-item,
-.recommendation-reason,
-.saved-item,
-.studio-course-authoring,
-.studio-saved-summary { display: grid; gap: .5rem; }
-.aculta-social-links__list { margin: 0; padding: 0; list-style: none; }
-.aculta-links-page__link,
-.download-link,
-.recommendation-reason { color: var(--color-text-muted); }
-.studio-course-authoring,
-.studio-saved-summary { color: var(--color-text-primary); }
-.checkout-help { color: var(--color-text-muted); font-size: .875rem; }
-.aculta-cep-sources,
-.aculta-download-meta-item { display: flex; flex-wrap: wrap; gap: .5rem; color: var(--color-text-muted); }
-.aculta-domain-brand-image { display: block; max-inline-size: 100%; block-size: auto; }
-.aculta-gallery-dialog { inline-size: min(100%, 40rem); }
-[data-portal-ui="studio-heading"] { margin: 0; font-family: var(--font-family-heading); font-size: 1.375rem; }
-
-/* Controles de zoom do mapa: superfície e texto dos tokens do modo (o fundo do Leaflet é branco fixo). */
-.aculta-map .leaflet-control-zoom a {
-  color: var(--color-text-primary);
-  border-color: var(--color-border);
-  background-color: var(--color-surface);
-}
+/* Estatísticas e Studio. */

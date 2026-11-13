@@ -1,0 +1,40 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Painel de aprendizagem LMS
+description: Página estudantil com retomada, cursos matriculados e certificados.
+status: stable
+group: LMS
+props:
+  type: object
+  additionalProperties: false
+  required: [title, introduction, continue_title, courses_title, empty_courses_message, certificates_title]
+  properties:
+    title:
+      type: string
+      minLength: 1
+    introduction:
+      type: string
+    continue_title:
+      type: string
+    courses_title:
+      type: string
+    empty_courses_message:
+      type: string
+    certificates_title:
+      type: string
+slots:
+  resume:
+    title: Curso para continuar
+    description: Cartão do curso atual, fornecido pelo composer LMS somente quando há destino válido.
+  courses:
+    title: Cursos matriculados
+    description: Cartões autorizados de cursos pertencentes à pessoa autenticada.
+  empty_action:
+    title: Catálogo de cursos
+    description: Ação para descobrir cursos quando não há matrículas.
+  certificates:
+    title: Certificados
+    description: Certificados públicos e verificáveis associados à conta.
+assets:
+  css:
+    component:
+      lms-learning-dashboard.css: {}

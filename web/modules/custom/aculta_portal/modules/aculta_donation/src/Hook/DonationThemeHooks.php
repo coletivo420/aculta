@@ -37,19 +37,6 @@ class DonationThemeHooks {
           'href' => NULL,
         ],
       ],
-      'aculta_donation_summary' => [
-        'variables' => [
-          'content' => NULL,
-          'order_item' => NULL,
-          'attributes' => NULL,
-        ],
-      ],
-      'aculta_donation_summary_container' => [
-        'variables' => [
-          'content' => NULL,
-          'attributes' => NULL,
-        ],
-      ],
       'commerce_checkout_pane__commerce_donation_pane' => [
         'base hook' => 'commerce_checkout_pane',
       ],

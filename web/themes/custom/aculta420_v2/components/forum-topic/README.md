@@ -16,6 +16,7 @@ O adapter `node--aculta-forum-topic.html.twig` consome o componente nos modos
 teaser e full. A View pública preserva seu render array pelo adapter em
 `templates/views/` e reaproveita o layout de atividade.
 
-A folha `src/styles/forum.css` porta a listagem pública, formulário de busca,
-estados vazios e controles de discussão compartilhados. A inspeção da rota e
-matriz Firefox no Runtime ainda estão pendentes.
+As Views de lista, categoria e busca carregam seus estilos nos SDCs
+`forum-list-page`, `forum-category-page` e `forum-search-page`. Os comentários
+compartilhados carregam layout e controles de discussão por `forum-post-card`.
+Inspeção das rotas e matriz Firefox no Runtime ainda estão pendentes.
