@@ -53,7 +53,7 @@ use Drupal\aculta_wiki\Service\WikiProposalSubmission;
 use Drupal\aculta_wiki\Service\WikiEditorialQueue;
 use Drupal\aculta_wiki\Service\WikiProposalDecision;
 use Drupal\aculta_wiki\Entity\WikiProposal;
-use Drupal\aculta_contributions\Entity\Contribution;
+use Drupal\aculta_cgu\Entity\Contribution;
 use Drupal\aculta_wiki\Form\WikiProposalDecisionForm;
 use Drupal\aculta_wiki\Form\WikiProposalSubmissionForm;
 use Drupal\aculta_wiki\Form\WikiProposalWithdrawalForm;
