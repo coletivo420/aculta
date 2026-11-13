@@ -101,7 +101,7 @@ def main():
                     metrics = json.loads(driver.js("""return JSON.stringify((() => {
                       const root = document.documentElement;
                       const css = getComputedStyle(root);
-                      const main = document.querySelector('main, .layout-page, .page__main');
+                      const main = document.querySelector('main, .layout-page');
                       const nav = document.querySelector('.page__navigation');
                       const footer = document.querySelector('.page__footer-inner');
 

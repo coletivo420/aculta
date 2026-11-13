@@ -16,6 +16,10 @@
   o layout vertical passou para `aculta_document_viewer/aculta_document_viewer_pdf`.
 - `.container` e `.grid` saíram de `base.css` após inspeção de todo o código,
   configuração versionada e HTML capturado sem encontrar consumidores.
+- Os dois shells compõem `layout-page` diretamente; o fallback `page__main`
+  foi removido dos templates, do CSS global, dos seletores de Conta/Fórum e do
+  preprocess. O gate exige essa composição SDC; Runtime e captura visual seguem
+  pendentes.
 
 - Auditoria PurgeCSS: `css:verify` agora exige todos os arquivos de fonte e
   staging, valida os bytes e conjuntos de seletores por folha, hashes, versões,
