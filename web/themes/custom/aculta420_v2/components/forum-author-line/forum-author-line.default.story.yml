@@ -1,0 +1,5 @@
+name: Linha de autor (padrão)
+description: Avatar gerado pelo componente aculta420_v2:avatar, nome e horário.
+props:
+  author_name: PiradoPirata
+  timestamp: Há 1 hora

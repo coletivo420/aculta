@@ -1,0 +1,21 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Linha de autor do fórum
+description: Avatar, nome e horário de quem escreveu uma mensagem do fórum. O avatar é o componente aculta420_v2:avatar, salvo quando o módulo envia uma imagem própria no slot.
+status: experimental
+group: Comunidade
+props:
+  type: object
+  additionalProperties: false
+  required: [author_name]
+  properties:
+    author_name:
+      type: string
+      title: Nome público
+    timestamp:
+      type: [string, 'null']
+      title: Horário (texto já formatado)
+      default: null
+slots:
+  avatar:
+    title: Avatar
+    description: Imagem própria do autor. Vazio usa o componente aculta420_v2:avatar com as iniciais.

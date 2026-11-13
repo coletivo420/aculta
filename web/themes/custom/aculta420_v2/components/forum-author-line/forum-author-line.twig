@@ -1,0 +1,18 @@
+{#
+/**
+ * @file
+ * Linha de autor do fórum: avatar, nome e horário.
+ * Compõe aculta420_v2:avatar; não monta avatar próprio.
+ */
+#}
+<div class="forum-author-line">
+  <span class="forum-author-line__avatar">
+    {% if avatar %}
+      <span class="aculta-avatar aculta-avatar--md"><span class="aculta-avatar__media">{{ avatar }}</span></span>
+    {% else %}
+      {{ include('aculta420_v2:avatar', { size: 'md', label: author_name }, with_context = false) }}
+    {% endif %}
+  </span>
+  <span class="forum-author-line__name">{{ author_name }}</span>
+  {% if timestamp %}<span class="forum-author-line__time">· {{ timestamp }}</span>{% endif %}
+</div>

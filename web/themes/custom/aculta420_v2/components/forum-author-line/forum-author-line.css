@@ -1,0 +1,23 @@
+.forum-author-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-xs);
+  min-inline-size: 0;
+}
+
+.forum-author-line__avatar {
+  display: inline-flex;
+  flex: 0 0 auto;
+}
+
+.forum-author-line__name {
+  color: var(--color-text-primary);
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.forum-author-line__time {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+}

@@ -12,21 +12,19 @@
     <span class="forum-reply-compact__tricolor-segment forum-reply-compact__tricolor-segment--red"></span>
   </div>
   <div class="forum-reply-compact__body">
-    <div class="forum-reply-compact__avatar">
-            {% if avatar %}
-        <span class="aculta-avatar aculta-avatar--md"><span class="aculta-avatar__media">{{ avatar|raw }}</span></span>
-      {% else %}
-        {{ include('aculta420_v2:avatar', { size: 'md', label: author_name }, with_context = false) }}
-      {% endif %}
-    </div>
     <div class="forum-reply-compact__main">
       <header class="forum-reply-compact__header">
-        <span class="forum-reply-compact__author">{{ author_name }}</span>
-        {% if timestamp %}<span class="forum-reply-compact__time">· {{ timestamp }}</span>{% endif %}
+        {{ include('aculta420_v2:forum-author-line', { author_name: author_name, timestamp: timestamp, avatar: avatar }, with_context = false) }}
         <div class="forum-reply-compact__tools">
-          <span class="forum-reply-compact__heart{% if reacted %} is-active{% endif %}" title="{{ 'Reagir'|t }}">
-            {{ include('aculta420_v2:icon', { name: 'heart', variant: 'regular', size: 'sm' }, with_context = false) }}
-          </span>
+          {{ include('aculta420_v2:button', {
+            aria_label: 'Reagir'|t,
+            variant: 'ghost',
+            size: 'small',
+            icon_before: 'heart',
+            attributes: create_attribute({
+              class: ['forum-reply-compact__heart', reacted ? 'is-active'],
+            }),
+          }, with_context = false) }}
           <span class="forum-reply-compact__more" aria-hidden="true">
             {{ include('aculta420_v2:icon', { name: 'dots-three', variant: 'regular', size: 'sm' }, with_context = false) }}
           </span>
