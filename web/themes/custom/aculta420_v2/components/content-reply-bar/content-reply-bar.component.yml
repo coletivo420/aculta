@@ -1,0 +1,33 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Barra de Respostas de Conteúdo
+description: Ações de um post do tópico (link permanente, excluir, editar, citar e responder) com ícones Phosphor coloridos. Cada ação aparece só quando sua URL é informada.
+status: stable
+group: Comunidade
+props:
+  type: object
+  additionalProperties: false
+  properties:
+    permalink_url:
+      type: [string, 'null']
+      title: Link permanente do post
+      default: null
+    delete_url:
+      type: [string, 'null']
+      title: URL para excluir o tópico ou resposta
+      default: null
+    edit_url:
+      type: [string, 'null']
+      title: URL para editar
+      default: null
+    quote_url:
+      type: [string, 'null']
+      title: URL para citar a publicação
+      default: null
+    reply_url:
+      type: [string, 'null']
+      title: URL para responder
+      default: null
+    target_id:
+      type: [string, 'null']
+      title: ID do elemento alvo para HTMX (ações que abrem o diálogo de resposta)
+      default: 'aculta-reply-dialog-body'

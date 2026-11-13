@@ -1,0 +1,35 @@
+{#
+/**
+ * @file
+ * Barra de Respostas de Conteúdo: ações do post com ícones Phosphor coloridos (cor da marca).
+ * Ações de edição, citação, resposta e exclusão abrem no diálogo de resposta via HTMX.
+ */
+#}
+{% set target = target_id|default('aculta-reply-dialog-body') %}
+<div class="content-reply-bar" role="toolbar" aria-label="{{ 'Ações da publicação'|t }}">
+  {% if permalink_url %}
+    <a href="{{ permalink_url }}" class="content-reply-bar__action content-reply-bar__action--link" rel="bookmark" aria-label="{{ 'Link permanente'|t }}" title="{{ 'Link permanente'|t }}">
+      {{ include('aculta420_v2:icon', { name: 'link', variant: 'regular', size: 'md' }, with_context = false) }}
+    </a>
+  {% endif %}
+  {% if delete_url %}
+    <a href="{{ delete_url }}" class="use-htmx content-reply-bar__action content-reply-bar__action--delete" data-action="resposta-apagar" data-hx-get="{{ delete_url }}" data-hx-target="#{{ target }}" data-hx-swap="innerHTML" aria-label="{{ 'Excluir tópico'|t }}" title="{{ 'Excluir tópico'|t }}">
+      {{ include('aculta420_v2:icon', { name: 'trash', variant: 'regular', size: 'md' }, with_context = false) }}
+    </a>
+  {% endif %}
+  {% if edit_url %}
+    <a href="{{ edit_url }}" class="use-htmx content-reply-bar__action content-reply-bar__action--edit" data-action="resposta-editar" data-hx-get="{{ edit_url }}" data-hx-target="#{{ target }}" data-hx-swap="innerHTML" aria-label="{{ 'Editar'|t }}" title="{{ 'Editar'|t }}">
+      {{ include('aculta420_v2:icon', { name: 'pencil-simple', variant: 'regular', size: 'md' }, with_context = false) }}
+    </a>
+  {% endif %}
+  {% if quote_url %}
+    <a href="{{ quote_url }}" class="use-htmx content-reply-bar__action content-reply-bar__action--quote" data-action="resposta-citar" data-hx-get="{{ quote_url }}" data-hx-target="#{{ target }}" data-hx-swap="innerHTML" aria-label="{{ 'Citar publicação'|t }}" title="{{ 'Citar publicação'|t }}">
+      {{ include('aculta420_v2:icon', { name: 'quotes', variant: 'regular', size: 'md' }, with_context = false) }}
+    </a>
+  {% endif %}
+  {% if reply_url %}
+    <a href="{{ reply_url }}" class="use-htmx content-reply-bar__action content-reply-bar__action--reply" data-action="resposta-responder" data-hx-get="{{ reply_url }}" data-hx-target="#{{ target }}" data-hx-swap="innerHTML" aria-label="{{ 'Responder à discussão'|t }}" title="{{ 'Responder à discussão'|t }}">
+      {{ include('aculta420_v2:icon', { name: 'arrow-bend-up-left', variant: 'regular', size: 'md' }, with_context = false) }}
+    </a>
+  {% endif %}
+</div>

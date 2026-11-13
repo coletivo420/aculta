@@ -1,0 +1,7 @@
+name: Barra de Respostas de Conteúdo
+props:
+  permalink_url: /forum/topico/123#post-456
+  edit_url: /discussoes/editar/comment/456
+  quote_url: /discussoes/citar/comment/456
+  reply_url: /discussoes/responder/comment/456
+  delete_url: /discussoes/apagar/comment/456
