@@ -2,3 +2,8 @@ admin-notices:
   css:
     theme:
       css/admin-notices.css: {}
+
+new-conversation-presentation:
+  css:
+    theme:
+      css/new-conversation-presentation.css: {}

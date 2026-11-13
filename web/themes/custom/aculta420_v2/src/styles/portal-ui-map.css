@@ -27,9 +27,7 @@
 .aculta-checkout__guest { margin-block-end: 1rem; }
 .aculta-hint { color: var(--color-text-secondary); font-size: .875em; }
 .aculta-hint--muted { color: var(--color-text-muted); }
-.aculta-form--inline { display: flex; flex-wrap: wrap; align-items: flex-end; gap: .5rem; }
 .aculta-section-title { margin-block: 1rem .5rem; font-family: var(--font-family-heading); font-size: 1.25rem; }
-.aculta-messenger-links { display: flex; flex-wrap: wrap; gap: .5rem; margin-block-start: .5rem; }
 .aculta-we-sativa__intent,
 .aculta-we-sativa__start,
 .aculta-we-sativa__workspace { display: grid; gap: 1.5rem; }

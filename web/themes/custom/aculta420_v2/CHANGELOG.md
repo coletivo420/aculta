@@ -22,6 +22,9 @@
   Ambas as folhas são anexadas pelos controllers que renderizam os elementos.
 - Os estilos de cartão e grade da Loja agora são anexados pelo `ShopController`
   via `aculta_portal/shop-presentation`, saindo do mapa global.
+- `.aculta-form--inline` passou para a folha já anexada pelo admin de Eventos;
+  os links de conversa nova agora acompanham `NewConversationForm` pela
+  biblioteca `aculta_messenger/new-conversation-presentation`.
 
 - A classificação PurgeCSS foi revisada seletor por seletor. Os 22 sem
   evidência não tinham emissores em Twig/PHP/YAML/JavaScript; removidas suas

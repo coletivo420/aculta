@@ -73,6 +73,7 @@ final class NewConversationForm extends FormBase {
     $limit = $this->policy->maxRecipients(ConversationPolicy::KIND_GROUP, $this->currentUser);
     $form['#attributes'] = ['data-aculta-new-conversation-form' => ''];
     if (!$fixed) {
+      $form['#attached']['library'][] = 'aculta_messenger/new-conversation-presentation';
       // The drawer reads search/chips and posts to the group route.
       $form['#action'] = Url::fromRoute('aculta_messenger.new_conversation_group')->toString();
       $form['#attributes'] += [

@@ -51,3 +51,5 @@
 
 /* Slug secundário na tabela de organizações (substitui .text-muted). */
 .aculta-events-organization-admin small { color: var(--color-text-muted); }
+
+.aculta-form--inline { display: flex; flex-wrap: wrap; align-items: flex-end; gap: .5rem; }
