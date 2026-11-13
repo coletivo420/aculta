@@ -146,7 +146,6 @@ display:
                   sources:
                     - source: {  }
                       source_id: view_rows
-              props: {  }
       display_extenders: {  }
       block_description: 'Catálogo público de Eventos'
       block_category: ACULTA
