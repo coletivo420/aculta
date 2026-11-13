@@ -79,8 +79,6 @@ final class PortalUiHooks {
     'alerts-filters-group' => ['aculta-alerts-filters__group'],
     'article-author' => ['portal-article-author'],
     'article-authors-title' => ['portal-article-authors__title'],
-    'auth-google-status' => ['aculta-auth-google-status'],
-    'auth-provider' => ['aculta-auth-provider'],
     'avatar-crop-dialog' => ['aculta-avatar-crop-dialog'],
     'button' => ['button'],
     'button-danger' => ['button', 'button--danger'],

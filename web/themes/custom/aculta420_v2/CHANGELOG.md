@@ -56,7 +56,8 @@
   regras globais correspondentes foram removidos.
 - O estilo global `aculta-auth-google` foi removido: o popup, o auth-dialog,
   checkout e Conta agora usam estilos do `multidomain-bar` e bibliotecas
-  contextuais.
+  contextuais. `auth-google-status` e `auth-provider` também deixaram de passar
+  pelo mapa `PortalUiHooks::TOKENS`; os emissores aplicam classes específicas.
 
 - Catálogo da UI Patterns Library atualizado para o inventário do checkout
   (127 manifests SDC, 188 stories), com registro das composições de eventos,

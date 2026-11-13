@@ -440,7 +440,9 @@ sincronizador Runtime está bloqueado por RX e drift de configuração.
   Studio e identidade da conta migraram para o SDC `surface-panel`; checkout
   mantém o `fieldset` semântico com estilos na biblioteca `checkout-presentation`.
   Os links Google usam CSS contextual de auth-dialog, checkout e Conta; o
-  seletor global `.aculta-auth-google` saiu do mapa.
+  seletor global `.aculta-auth-google` saiu do mapa. Os tokens
+  `auth-google-status` e `auth-provider` saíram de `PortalUiHooks::TOKENS` e
+  foram substituídos por classes explícitas nos emissores.
   As regras `.aculta-panel*` e hover saíram do `content.css` global. Wiki usa
   `aculta_wiki/contribution-workspace`;
   títulos migraram para SDCs (`layout-section`, `event-page-layout`), e outros
@@ -453,8 +455,8 @@ sincronizador Runtime está bloqueado por RX e drift de configuração.
 - A classe de alinhamento `aculta-u-block-start` foi retirada do bloco de
   breadcrumbs em `config/sync` e da folha global; o posicionamento já é
   fornecido pelo SDC Breadcrumb e pelo contêiner da região.
-- Relatório recalculado após o corte: 145 folhas de tema, 413.890 bytes,
-  2.364 regras e 2.811 seletores. O PurgeCSS retém 392.520 bytes e identifica
+- Relatório recalculado após o corte: 145 folhas de tema, 413.888 bytes,
+  2.364 regras e 2.811 seletores. O PurgeCSS retém 392.518 bytes e identifica
   21.370 bytes / 142
   seletores removíveis; todos permanecem classificados com evidência (2
   dinâmicos, 43 no HTML Runtime, 68 por padrão Drupal e 29 por fonte). Não se
@@ -471,10 +473,9 @@ sincronizador Runtime está bloqueado por RX e drift de configuração.
   `private_message` foi reportada. Os Kernel tests de Calendar/CGU foram
   tentados, mas o sandbox não permitiu conexão ao socket MySQL; não são
   evidência de Runtime.
-- As novas dicas SDC Search/Wiki passaram em 17 testes/96 assertions. Stylelint
-  das folhas desta mudança passou; `npm run lint:css` ainda aponta três erros
-  de ordem/formatagem na alteração concorrente `multidomain-bar.css`, não editada
-  nesta migração.
+- As novas dicas SDC Search/Wiki passaram em 17 testes/96 assertions. O Stylelint
+  global passou após corrigir ordem e indentação das regras da faixa tricolor
+  em `multidomain-bar.css`, sem alterar sua apresentação.
 - `runtime-sync.sh doctor --format=json` não conseguiu confirmar `origin/dev`;
   sincronização, `drush cr` e matriz visual seguem pendentes. Não declarar
   homologação até executar essas verificações no Runtime atualizado.

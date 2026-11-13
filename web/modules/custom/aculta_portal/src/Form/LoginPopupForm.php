@@ -212,7 +212,7 @@ final class LoginPopupForm extends UserLoginForm {
     return [
       '#type' => 'container',
       '#weight' => -20,
-      '#attributes' => ['data-portal-ui' => 'auth-provider'],
+      '#attributes' => ['class' => ['aculta-auth-provider']],
       'google' => ['#markup' => Markup::create($markup)],
     ];
   }

@@ -565,7 +565,7 @@ final class PortalHooks {
       ];
       $form['social_auth'] = [
         '#type' => 'container',
-        '#attributes' => ['data-portal-ui' => 'auth-provider'],
+        '#attributes' => ['class' => ['aculta-auth-provider']],
         'provider' => $this->blockManager
           ->createInstance('social_auth_login', [])
           ->build(),

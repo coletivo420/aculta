@@ -349,7 +349,7 @@ final class PortalController extends ControllerBase {
     return [
       '#type' => 'html_tag',
       '#tag' => 'div',
-      '#attributes' => ['data-portal-ui' => 'auth-google-status'],
+      '#attributes' => ['class' => ['portal-account__google-auth-status']],
       '#value' => $markup,
     ];
   }
@@ -377,7 +377,7 @@ final class PortalController extends ControllerBase {
       $provider_email = $social_auth instanceof SocialAuth
         ? ($social_auth->getAdditionalData()['provider_email'] ?? NULL)
         : NULL;
-      // Caixa "Conectado": logo e texto; a marca e o check vêm do tema (data-portal-ui="auth-google-status").
+      // Caixa "Conectado": logo e texto; a marca e o check vêm do tema.
       $items['google_status'] = $this->googleBox(NULL, (string) $this->t('Conectado'));
       if (is_string($provider_email) && filter_var($provider_email, FILTER_VALIDATE_EMAIL)) {
         $items['google_account'] = [
