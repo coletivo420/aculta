@@ -50,13 +50,13 @@ Regra: rode **somente** os gates do escopo do diff e dos módulos que dependem d
 
 ## Matriz por tipo de arquivo (2026-11-11)
 
-Critérios: PASS (executado e verde), FAIL, DEFERRED (não roda aqui; motivo), N/A (fora do escopo). Nunca declare PASS sem execução. Evidência e estado das ferramentas: `docs/operations/testing/UI-SUITE-AUDITORIA.md`.
+Critérios: PASS (executado e verde), FAIL, DEFERRED (não roda aqui; motivo), N/A (fora do escopo). Nunca declare PASS sem execução. A coluna seguinte é fotografia da auditoria de 2026-11-11, **não** indica resultados do CI atual; verificar os jobs e a evidência da revisão em questão. Histórico: `docs/operations/testing/UI-SUITE-AUDITORIA.md`.
 
-| Escopo | Gates | Estado neste ambiente |
+| Escopo | Gates | Estado histórico de 2026-11-11 (não usar como PASS atual) |
 | --- | --- | --- |
 | PHP alterado | `php -l` nos arquivos; `php scripts/phpunit-suites.php --check`; `phpstan analyse` (com `vendor/`) | `php -l` e suites: PASS. PHPStan: DEFERRED (sem `vendor/`) |
 | Twig | validadores SDC do tema; `php -l` em módulos com PHP | DEFERRED onde o validador depende de Drush |
-| CSS (tema) | `npm run lint:css` (Stylelint 13 do projeto) | PASS (0 erros) |
+| CSS (tema) | `npm run lint:css` (versão efetiva no `package.json`) | PASS histórico em 2026-11-11; verificar CI corrente, que registrou falhas posteriores |
 | JavaScript novo ou alterado | `npm run lint:js` (ESLint 9 na raiz) | Executar no ambiente da entrega; consultar o CI atual para PASS/FAIL |
 | SDC | `validate-aculta420-sdc-schemas.php`, `validate-aculta420-v2-sdc.php` | DEFERRED (depende do ambiente Drupal) |
 | UI Patterns | `validate-ui-patterns-views-cutover.php` | DEFERRED (Runtime/browser) |
@@ -72,7 +72,7 @@ Critérios: PASS (executado e verde), FAIL, DEFERRED (não roda aqui; motivo), N
 | Autenticação e sessão | `validate-session-cookie-policy.php`, `validate-turnstile-exceptions.php` | DEFERRED (Drush/Runtime) |
 | Runtime Sync | `bash -n scripts/runtime-sync.sh`; `bash scripts/test-runtime-sync.sh` | PASS (30/30, simulado; inclui `structural-complete`) |
 | Scripts shell | `shellcheck -S warning` e `shfmt -d` nos arquivos alterados; `bash -n` | ShellCheck e shfmt: executados; legado com dívida |
-| GitHub Actions | `actionlint` (gate no CI pretendido) | DEFERRED: binário não instalado neste ambiente |
+| GitHub Actions | `actionlint` no CI e opcional local | DEFERRED na estação de auditoria 2026-11-11; job de CI confirmado em 2026-11-13 |
 | Skills | `python3 scripts/validate-agent-skills.py`; `php scripts/validate-agent-token-budget.php` | Resultado deve ser obtido nesta entrega; avisos de tamanho nao sao FAIL |
 | Teste de navegador | `php scripts/validate-browser-index.php` e `npm run test:list` | `test:list`: PASS (130); índice: FAIL pré-existente |
 

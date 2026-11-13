@@ -68,4 +68,4 @@ Não declarar Alpha validado sem evidência do servidor de desenvolvimento.
 
 ## Versionamento de mudanças
 
-Antes de alterar código do Portal ou do tema, siga `web/themes/custom/aculta420_v2/CHANGELOG.md`, `web/themes/custom/aculta420_v2/docs/roadmap.md` e `docs/operations/RELEASES.md`. Portal e tema têm versões independentes; mantenha manifest e CHANGELOG correspondentes coerentes e não marque estado ainda não validado. Mudanças apenas documentais não avançam versão. Não criar tags sem pedido explícito do responsável.
+Ao entregar uma versão ou marco do Portal ou tema, consulte `web/themes/custom/aculta420_v2/CHANGELOG.md`, `web/themes/custom/aculta420_v2/docs/roadmap.md` e `docs/operations/RELEASES.md` conforme o escopo. Portal e tema têm versões independentes. Fixes intermediários não exigem atualização de versão, changelog ou roadmap sem mudança de contrato ou fase. Não marque estado não validado nem crie tags sem pedido.

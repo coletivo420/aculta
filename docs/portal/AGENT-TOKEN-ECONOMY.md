@@ -85,7 +85,7 @@ Regra complementar: em documento ativo, cite o caminho canônico, não o histór
 
 ## Orçamento de leitura por tipo de tarefa
 
-Teto de leitura inicial para o contexto de partida, antes da tarefa. Valores são **estimativas de planejamento**, não medições; revisar depois de algumas rodadas. Ultrapassar o teto exige motivo escrito no relatório.
+Leitura inicial sugerida para orientar o contexto, não um limite que bloqueie a tarefa. Valores são estimativas históricas; leia quantos documentos forem necessários para revisar corretamente o código e os contratos.
 
 | Tipo de tarefa | Leitura de partida (teto) | Além disso |
 | --- | --- | --- |
@@ -96,7 +96,7 @@ Teto de leitura inicial para o contexto de partida, antes da tarefa. Valores sã
 | Revisão final | `git diff --stat` e `git diff --check`; o diff dos arquivos alterados | nenhuma leitura ampla de árvore |
 | Gate ou teste | o script do gate e a saída via `scripts/agent-output.py` | logs completos só se a saída resumida falhar |
 
-Regra de corte: se a tarefa precisar de mais de três documentos de partida, o escopo está largo. Reduzir a subfase antes de ler mais.
+Se mais de três documentos forem úteis, refine a busca e mantenha a leitura dirigida. Não interrompa a tarefa nem exija justificativa formal apenas pela quantidade.
 
 ## Ideias externas avaliadas (2026-11-05)
 
@@ -104,12 +104,12 @@ Fontes pesquisadas: [Composio, "9 Ways to Cut Token Consumption in Claude Code"]
 
 | Ideia | Decisão | Onde está no projeto |
 | --- | --- | --- |
-| Skills com divulgação progressiva: só nome e descrição entram no início | Adotado | `docs/agent-skills/`; gate `validate-agent-token-budget.php` limita descrição (200 caracteres) e SKILL.md (4000 bytes) |
-| Poucas skills, para evitar escolha errada | Adotado | Gate limita a 10 skills (7 até 2026-11-05; subiu para 9 com `aculta-drupal-padroes` e `aculta-seguranca-estatica`, e para 10 com `aculta-grill-me`) |
+| Skills com divulgação progressiva | Adotado e atualizado em 2026-11-13 | `.agents/skills/` é canônico; `validate-agent-skills.py` verifica estrutura e `validate-agent-token-budget.php` emite avisos de tamanho, sem teto bloqueante |
+| Skills especializadas carregadas sob demanda | Atualizado em 2026-11-13 | Há 23 skills canônicas no snapshot auditado; não há teto numérico. Evitar redundâncias e testar descoberta e roteamento |
 | Filtrar a saída de comando (`grep`, `head`) | Adotado | `scripts/agent-output.py`; `AGENT-OUTPUT.md`; skill `aculta-leitura-economica` |
-| Subagente com caminhos definidos e resposta com limite | Adotado | Skill `aculta-leitura-economica`, item 6 |
-| Handoff em arquivo antes de `/clear` ou `/compact` | Adotado | Skill `aculta-handoff`; `ESTADO-DA-SESSAO.md` |
-| CLAUDE.md mínimo | Adotado | Gate limita CLAUDE.md a 3000 bytes |
+| Subagente com escopo definido | Adotado | Skill `aculta-leitura-economica`; resposta objetiva, sem limite arbitrário que esconda falhas |
+| Handoff para retomada ou transferência de trabalho | Atualizado em 2026-11-13 | Skill `aculta-handoff`; opcional para fix concluído e rastreável no commit |
+| CLAUDE.md mínimo | Adotado | Meta de concisão com aviso, sem reprovação por tamanho isolado |
 | Mapa do repositório para o agente | Já existia | `docs/operations/MAPA-PARA-AGENTES.md`; não duplicado |
 | Limitar pensamento estendido com variável de ambiente | Não adotado | Configuração da conta e da ferramenta, não do repositório. Pode ser decidido pelo responsável |
 | Modelo menor para subagentes com variável de ambiente | Não adotado | Mesma razão; o roteamento por risco já está na seção "Roteamento proporcional ao risco" |
@@ -117,10 +117,10 @@ Fontes pesquisadas: [Composio, "9 Ways to Cut Token Consumption in Claude Code"]
 | Procedimento de migração de classe para token | Adotado como skill | `docs/agent-skills/aculta-data-portal-ui/` |
 | Permissão de leitura com aprovação (`permissions.ask` com `Read(...)`) para arquivos pesados | Não adotado (2026-11-05) | Automação do projeto gera muitas leituras de `data/`, `vendor/` e `docs/history/`; a aprovação interromperia as tarefas com frequência. A economia fica com a regra de leitura por demanda desta tabela e de `aculta-leitura-economica` |
 | Filtro de saída que preserva linhas de falha fora da cauda (`--match`) | Adotado (2026-11-05) | `scripts/agent-output.py`; `AGENT-OUTPUT.md` |
-| Regras `permissions.deny` com `Read(...)` para segredos e arquivos pesados (PNG de avatares, `pdf.js`) | Adotado (2026-11-05) | `.claude/settings.json`. `deny` não pede aprovação, então não interrompe a automação. Limite documentado: a regra bloqueia as ferramentas de leitura e `cat`, `head`, `tail`, mas não `grep -r` a partir da pasta; `.claudeignore` não tem efeito no Claude Code |
+| Regras `permissions.deny` para segredos | Atualizado em 2026-11-13 | `.claude/settings.json` mantém bloqueios de leitura de segredos e settings locais. O bloqueio automático de assets volumosos foi retirado; a leitura é sob demanda. Os padrões de ferramenta não substituem proteção de filesystem e revisão de comandos |
 | Ferramenta externa de compressão de saída (binário no PATH que reescreve comandos) | Não adotado | Exige instalar binário e confiar em terceiros para reescrever comandos; o wrapper do projeto cobre o caso sem dependência |
 | Mapa do repositório gerado (repomix, aider repo map, agentmap) | Não adotado | `docs/operations/MAPA-PARA-AGENTES.md` já cumpre a função; gerar mapa automático acrescenta arquivo a ser lido e sem revisão |
-| Contexto isolado por subagente com resposta limitada | Adotado | Skill `aculta-leitura-economica` (já na tabela acima) |
-| Recuperação sob demanda e CLAUDE.md curto (princípio de "conciseness over completeness") | Adotado | Gate de tamanho de CLAUDE.md e AGENTS.md; regras de módulo em subdiretórios |
+| Contexto isolado por subagente | Adotado | Skill `aculta-leitura-economica` (escopo definido e resposta suficiente para revisão) |
+| Recuperação sob demanda e CLAUDE.md curto | Adotado | Contratos centrais concisos e regras de módulo por escopo; limites de bytes são avisos |
 
 Fontes desta rodada: [Composio, 9 ways](https://composio.dev/blog/ways-to-cut-token-consumption-in-claude-code); [Morph, context engineering](https://www.morphllm.com/context-engineering); [documentação de configurações do Claude Code](https://code.claude.com/docs/en/settings) (sintaxe de `permissions.ask`, `deny` e `allow`).
