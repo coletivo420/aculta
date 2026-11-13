@@ -39,6 +39,11 @@ da Revista. O link de referência renderizado pelo Drupal permanece no slot
 `label`; a prop `color` aceita somente `red`, `green`, `yellow` e `green-dark`.
 O CSS de contraste das quatro opções acompanha o componente.
 
+### studio-connections-page — Conexões da Conta
+
+O indicador de carregamento HTMX do filtro e da busca é estilizado dentro do
+CSS deste SDC; a regra não depende mais de `base.css` global.
+
 ### related-content — Conteúdo relacionado
 
 Envolve o `item_list` montado pelo bloco `aculta_index`; slots estritos sem

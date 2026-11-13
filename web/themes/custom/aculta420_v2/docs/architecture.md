@@ -144,6 +144,8 @@ O bloco `aculta_index_related_content` agora compõe o SDC `related-content` e p
 
 Em 2026-11-13 o formatter da categoria editorial passou a compor o SDC `editorial-category`, preservando como slot o link produzido pelo Entity Reference Formatter. As variantes de cor migraram de `content.css` para o asset local do SDC e `content.css` saiu do `global-styling`.
 
+O estado visual de `htmx-indicator` é local: a UI Library o carrega com `ui-library-admin`, e as buscas de conexão com o CSS do SDC `studio-connections-page`. `base.css` não controla mais esses estados específicos.
+
 Os metadados de publicação e os links de compartilhamento entregues pelo `aculta_magazine` usam `revista-publication.css`, declarado como asset do SDC. O template de nó não anexa uma biblioteca sem definição; o CSS acompanha o view mode full via componente.
 
 Piloto de realocação (2026-11-12): as regras de `portal-ui-map.css` cujos seletores são exclusivos de `aculta_events` foram movidas para a biblioteca `aculta_events/events-portal-ui`, anexada pelo próprio módulo via `#attached`. O gate de classes mapeadas agora lê também `aculta_portal/modules/*/css`. Estado: captura visual DEFERRED.

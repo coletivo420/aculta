@@ -9,6 +9,8 @@
   `editorial-category`, preservando o link do Drupal como slot. As quatro
   variantes fechadas foram para o CSS local do componente; `content.css` saiu
   de `global-styling` e foi removido.
+- Os indicadores HTMX saíram de `base.css`: agora são estilizados pelas folhas
+  locais do SDC `studio-connections-page` e das prévias da UI Patterns Library.
 
 - Auditoria PurgeCSS: `css:verify` agora exige todos os arquivos de fonte e
   staging, valida os bytes e conjuntos de seletores por folha, hashes, versões,

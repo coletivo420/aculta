@@ -29,19 +29,6 @@ body {
   display: none;
 }
 
-/* Indicadores HTMX são estilizados aqui porque a folha inline padrão foi desativada por CSP. */
-.htmx-indicator {
-  visibility: hidden;
-  opacity: 0;
-}
-
-.htmx-request .htmx-indicator,
-.htmx-request.htmx-indicator {
-  visibility: visible;
-  transition: opacity var(--motion-slow) ease-in;
-  opacity: 1;
-}
-
 /* Typography */
 h1,
 h2,

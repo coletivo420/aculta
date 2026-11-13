@@ -196,6 +196,11 @@ $assert(isset($libraries['studio-connections-page']) === FALSE && !str_contains(
 $lessonPageCss = (string) file_get_contents($theme . '/components/lms-lesson-page/lms-lesson-page.css');
 $baseCss = (string) file_get_contents($theme . '/src/styles/base.css');
 $assert(str_contains($baseCss, ':focus-visible'), 'base.css perdeu o indicador global de foco visível.');
+$assert(!str_contains($baseCss, '.htmx-indicator') && !str_contains($baseCss, '.htmx-request'), 'O estado visual HTMX voltou ao CSS global.');
+$connectionsCss = (string) file_get_contents($theme . '/components/studio-connections-page/studio-connections-page.css');
+$uiLibraryCss = (string) file_get_contents($theme . '/src/styles/ui-library-admin.css');
+$assert(str_contains($connectionsCss, '.aculta-studio-connections-page .htmx-indicator') && str_contains($connectionsCss, '.aculta-studio-connections-page .htmx-request'), 'O SDC studio-connections-page perdeu o estado HTMX local.');
+$assert(str_contains($uiLibraryCss, '.ui_patterns_component .htmx-indicator') && str_contains($uiLibraryCss, '.ui_patterns_component .htmx-request'), 'A UI Library perdeu o estado HTMX local das prévias.');
 $assert(!str_contains($lessonPageCss, ':focus-visible'), 'lms-lesson-page.css duplicou o indicador global de foco.');
 $curriculumComponent = (string) file_get_contents($theme . '/components/lms-course-curriculum/lms-course-curriculum.component.yml');
 $curriculumTwig = (string) file_get_contents($theme . '/components/lms-course-curriculum/lms-course-curriculum.twig');

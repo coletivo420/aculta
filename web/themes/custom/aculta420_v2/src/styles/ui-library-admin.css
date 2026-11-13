@@ -1,5 +1,17 @@
 /* Biblioteca de componentes no tema administrativo: duas colunas no desktop e uma no mobile. */
 
+.ui_patterns_component .htmx-indicator {
+  visibility: hidden;
+  opacity: 0;
+}
+
+.ui_patterns_component .htmx-request .htmx-indicator,
+.ui_patterns_component .htmx-request.htmx-indicator {
+  visibility: visible;
+  transition: opacity var(--motion-slow) ease-in;
+  opacity: 1;
+}
+
 /* O bloco "Componentes disponíveis" (atalhos) e a linha que o separa ocupam a largura toda, fora das colunas. */
 .ui_patterns_quicklinks,
 .ui_patterns_quicklinks + hr {

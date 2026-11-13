@@ -11,6 +11,18 @@
   margin-block-start: var(--spacing-md);
 }
 
+.aculta-studio-connections-page .htmx-indicator {
+  visibility: hidden;
+  opacity: 0;
+}
+
+.aculta-studio-connections-page .htmx-request .htmx-indicator,
+.aculta-studio-connections-page .htmx-request.htmx-indicator {
+  visibility: visible;
+  transition: opacity var(--motion-slow) ease-in;
+  opacity: 1;
+}
+
 @media (min-width: 60rem) {
   .aculta-studio-connections-page {
     grid-template-columns: 1fr 1fr;
