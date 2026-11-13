@@ -434,6 +434,8 @@ if [[ "$effective_base" == "UNKNOWN" ]]; then
 fi
 
 delta_json="$(python3 "$helper_py" classify --repo-root "$diff_repo" --base-sha "$effective_base" --target-sha "$remote" --state-status "$state_status")"
+delta_json_file="$tmp_dir/delta.json"
+printf '%s' "$delta_json" >"$delta_json_file"
 delta_risk="$(printf '%s' "$delta_json" | python3 -c 'import json,sys; print(json.load(sys.stdin)["risk"])')"
 delta_allow_sync="$(printf '%s' "$delta_json" | python3 -c 'import json,sys; print("1" if json.load(sys.stdin)["allow_sync_code"] else "0")')"
 delta_req_cache="$(printf '%s' "$delta_json" | python3 -c 'import json,sys; print("1" if json.load(sys.stdin)["requires_cache_rebuild"] else "0")')"
@@ -445,9 +447,9 @@ if [[ "$last_cache_success_sha" != "$remote" || "$last_validated_sha" != "$remot
 fi
 
 show_diff_summary() {
-  python3 - "$delta_json" "$current" "$remote" "$last_validated_sha" "$cache_pending" >&2 <<'PY'
+  python3 - "$delta_json_file" "$current" "$remote" "$last_validated_sha" "$cache_pending" >&2 <<'PY'
 import json, sys
-d = json.loads(sys.argv[1])
+d = json.loads(open(sys.argv[1], encoding="utf-8").read())
 cur, rem, last_val, cache_pend = sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5] == "1"
 files = d.get("files", [])
 print(f"Classificacao de risco cumulativo ({d['base_sha'][:12] if len(d['base_sha'])==40 else d['base_sha']} -> {rem[:12]}): {d['risk']}")
@@ -566,7 +568,7 @@ if [[ "$mode" == "plan" ]]; then
     if ! git --git-dir="${diff_repo}/.git" cat-file -e "$remote^{commit}" 2>/dev/null && ! git --git-dir="$diff_repo" cat-file -e "$remote^{commit}" 2>/dev/null; then
       notice 'Commit remoto ausente do objeto Git local: diff detalhado depende de plan --refresh ou fetch.'
       plan_outcome="INDETERMINATE"
-    elif ! python3 -c "import json,sys; sys.exit(0 if json.loads(sys.argv[1])['is_fast_forward'] else 1)" "$delta_json"; then
+    elif ! python3 -c 'import json,sys; sys.exit(0 if json.load(open(sys.argv[1], encoding="utf-8"))["is_fast_forward"] else 1)' "$delta_json_file"; then
       notice 'Heads divergentes: sincronizacao automatica sera bloqueada.'
       plan_outcome="BLOCKED"
     else
@@ -593,10 +595,10 @@ if [[ "$mode" == "plan" ]]; then
   notice 'PLAN: nenhuma alteracao de codigo, banco, configuracao ou cache.'
 
   if [[ "$FORMAT_JSON" -eq 1 ]]; then
-    python3 - "$run_id" "$run_timestamp" "$plan_outcome" "$remote" "$current" "$last_validated_sha" "$last_cache_success_sha" "$worktree_is_clean" "$cache_pending" "$refresh_writes_note" "$delta_json" <<'PY'
+    python3 - "$run_id" "$run_timestamp" "$plan_outcome" "$remote" "$current" "$last_validated_sha" "$last_cache_success_sha" "$worktree_is_clean" "$cache_pending" "$refresh_writes_note" "$delta_json_file" <<'PY'
 import json, sys
-run_id, ts, outcome, rem, cur, last_val, last_cache, clean, cache_pend, writes_note, delta_raw = sys.argv[1:12]
-delta = json.loads(delta_raw)
+run_id, ts, outcome, rem, cur, last_val, last_cache, clean, cache_pend, writes_note, delta_file = sys.argv[1:12]
+delta = json.loads(open(delta_file, encoding="utf-8").read())
 gates = [
     {"id": "git-branch-dev", "result": "PASS", "reason": "Branch ativa e dev"},
     {"id": "worktree-clean", "result": "PASS" if clean == "1" else "FAIL", "reason": "Worktree limpo" if clean == "1" else "Modificacoes ou untracked presentes"},
@@ -863,10 +865,10 @@ if [[ "$mode" == "doctor" ]]; then
   printf '%s' "$DRUSH_SUMMARY_JSON" >"$tmp_dir/doctor-drush.json"
   [[ -s "$tmp_dir/doctor-drush.json" ]] || printf '{}' >"$tmp_dir/doctor-drush.json"
   doctor_json="$(
-    python3 - "$run_id" "$run_timestamp" "$remote" "$current" "$last_validated_sha" "$last_cache_success_sha" "$worktree_is_clean" "$lock_busy" "$drush_gate" "$drush_reason" "$delta_json" "$tmp_dir/doctor-drush.json" <<'PY'
+    python3 - "$run_id" "$run_timestamp" "$remote" "$current" "$last_validated_sha" "$last_cache_success_sha" "$worktree_is_clean" "$lock_busy" "$drush_gate" "$drush_reason" "$delta_json_file" "$tmp_dir/doctor-drush.json" <<'PY'
 import json, sys
-run_id, ts, rem, cur, last_val, last_cache, clean, lock_busy, d_gate, d_reason, delta_raw, drush_file = sys.argv[1:13]
-delta = json.loads(delta_raw)
+run_id, ts, rem, cur, last_val, last_cache, clean, lock_busy, d_gate, d_reason, delta_file, drush_file = sys.argv[1:13]
+delta = json.loads(open(delta_file, encoding="utf-8").read())
 try:
     drush = json.loads(open(drush_file, encoding="utf-8").read())
 except Exception:

@@ -64,5 +64,5 @@ Regras declaradas em `scripts/runtime-sync/risk-rules.yml` e avaliadas por `scri
 
 ## 6. Suite automatizada e avaliacao das skills (F1-F6)
 
-- `bash scripts/test-runtime-sync.sh` executa 24 assercoes cobrindo os cenarios T01 a T14 com repositorios Git ficticios, remoto bare e Drush simulado.
+- `bash scripts/test-runtime-sync.sh` executa 34 assercoes cobrindo os cenarios T01 a T16 com repositorios Git ficticios, remoto bare e Drush simulado. T15 verifica que `doctor` e `plan` processam um delta de 1.400 caminhos sem `E2BIG`, lendo a classificação de arquivo temporário; T16 verifica a regra R0 explícita para `.gitignore` e `.stylelintrc.json`.
 - `docs/operations/TESTES-SKILLS-RUNTIME-SYNC.md` registra a avaliacao completa dos 12 cenarios RS-01 a RS-12 confrontada com os comandos v2 implementados.

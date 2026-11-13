@@ -380,6 +380,7 @@ def classify_single_path(path: str) -> tuple[str, str]:
         or path.startswith(".claude/")
         or path.startswith(".codex/")
         or path in ("README.md", "TODO.md", "AGENTS.md", "CLAUDE.md", "phpunit.xml", "phpunit.performance.xml", "phpstan-baseline.neon")
+        or path in (".gitignore", ".stylelintrc.json")
         or path.startswith("tests/")
         or "/tests/" in path
         or "/docs/" in path
@@ -388,7 +389,7 @@ def classify_single_path(path: str) -> tuple[str, str]:
         or path.endswith("/CHANGELOG.md")
         or path.endswith("/AGENTS.md")
     ):
-        return "R0", "documentacao, skills ou testes offline"
+        return "R0", "documentacao, testes ou configuracao de ferramenta local sem efeito no Runtime"
 
     # R1: codigo de aplicacao, templates, CSS, JS, SDC, services/routing comuns e scripts
     if (

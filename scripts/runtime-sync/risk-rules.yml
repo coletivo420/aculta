@@ -20,6 +20,8 @@ levels:
       - '^TODO\.md$'
       - '^AGENTS\.md$'
       - '^CLAUDE\.md$'
+      - '^\.gitignore$'
+      - '^\.stylelintrc\.json$'
       - '^tests/'
       - '.*/tests/'
       - '.*/README\.md$'

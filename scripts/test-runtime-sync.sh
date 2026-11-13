@@ -418,5 +418,46 @@ assert_ok "T14e: structural-complete reconstroi o cache uma vez" "$([[ "$(cat "$
 plan14_after="$(run_sync "$fix14" plan --format=json)"
 assert_ok "T14f: apos fechar a janela, o delta cumulativo deixa de ser R3" "$([[ "$(printf "%s" "$plan14_after" | python3 -c "import json,sys; print(json.load(sys.stdin)[\"risk\"])")" != "R3" ]] && printf PASS || printf FAIL)"
 
+# ==============================================================================
+# Caso 15: deltas grandes não são passados como argumento de processo (E2BIG)
+# ==============================================================================
+setup_fixture "c15_large_delta"
+fix15="$WORK_BASE/c15_large_delta"
+ACULTA_SYNC_ADOPT_BASELINE=1 run_sync "$fix15" sync-code --adopt-baseline >/dev/null 2>&1
+base15="$(git -C "$fix15/runtime" rev-parse HEAD)"
+mkdir -p "$fix15/runtime/docs/bulk"
+for n in $(seq 1 1400); do
+  printf 'fixture %s\n' "$n" >"$fix15/runtime/docs/bulk/item-$n.md"
+done
+git -C "$fix15/runtime" add docs/bulk
+git -C "$fix15/runtime" commit -q -m "Fixture de delta grande"
+git -C "$fix15/runtime" push -q origin dev
+target15="$(git -C "$fix15/runtime" rev-parse HEAD)"
+delta_bytes15="$(python3 "$HELPER_PY" classify --repo-root "$fix15/runtime" --base-sha "$base15" --target-sha "$target15" --state-status OK | wc -c)"
+assert_ok "T15a: fixture cobre JSON de classificação maior que ARG_MAX de um argumento (>131072; atual=$delta_bytes15 bytes)" "$([[ "$delta_bytes15" -gt 131072 ]] && printf PASS || printf FAIL)"
+doctor15="$(run_sync "$fix15" doctor --format=json 2>/dev/null)"
+doctor15_parsed="$(printf '%s' "$doctor15" | python3 -c 'import json,sys; d=json.load(sys.stdin); print(d["mode"],d["checkout_sha"],d["remote_sha"],d["risk"])')"
+assert_ok "T15b: doctor analisa delta grande sem E2BIG ($doctor15_parsed)" "$([[ "$doctor15_parsed" == "doctor $target15 $target15 R0" ]] && printf PASS || printf FAIL)"
+plan15="$(run_sync "$fix15" plan --format=json 2>/dev/null)"
+plan15_parsed="$(printf '%s' "$plan15" | python3 -c 'import json,sys; d=json.load(sys.stdin); print(d["mode"],d["checkout_sha"],d["remote_sha"],d["risk"],d["delta"]["file_count"])')"
+assert_ok "T15c: plan JSON conserva o delta grande sem E2BIG ($plan15_parsed)" "$([[ "$plan15_parsed" == "plan $target15 $target15 R0 1400" ]] && printf PASS || printf FAIL)"
+
+# ==============================================================================
+# Caso 16: allowlist R0 explícita para metadados de ferramentas locais
+# ==============================================================================
+setup_fixture "c16_tooling_metadata"
+fix16="$WORK_BASE/c16_tooling_metadata"
+ACULTA_SYNC_ADOPT_BASELINE=1 run_sync "$fix16" sync-code --adopt-baseline >/dev/null 2>&1
+printf '\n/reports/css-audit/\n' >>"$fix16/runtime/.gitignore"
+cat >"$fix16/runtime/.stylelintrc.json" <<'EOF'
+{"extends": ["stylelint-config-drupal"]}
+EOF
+git -C "$fix16/runtime" add .gitignore .stylelintrc.json
+git -C "$fix16/runtime" commit -q -m "Configura ferramentas CSS locais"
+git -C "$fix16/runtime" push -q origin dev
+plan16="$(run_sync "$fix16" plan --format=json 2>/dev/null)"
+plan16_parsed="$(printf '%s' "$plan16" | python3 -c 'import json,sys; d=json.load(sys.stdin); print(d["risk"],d["delta"]["counts_by_risk"]["R0"],d["delta"]["file_count"])')"
+assert_ok "T16: .gitignore e .stylelintrc.json são R0 por regra explícita ($plan16_parsed)" "$([[ "$plan16_parsed" == "R0 2 2" ]] && printf PASS || printf FAIL)"
+
 printf '\nResumo da suite Runtime Sync v2: %d PASS, %d FAIL\n' "$PASS_COUNT" "$FAIL_COUNT"
 [[ "$FAIL_COUNT" -eq 0 ]]
