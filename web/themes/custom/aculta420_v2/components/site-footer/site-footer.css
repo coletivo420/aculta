@@ -44,6 +44,22 @@
   overflow-wrap: anywhere;
 }
 
+/* CNPJ sob a marca: segundo bloco da região, com a fonte que tinha na linha legal.
+   Os campos saem sem classes de tema; o rótulo e o número são as duas divs do bloco. */
+.site-footer__brand > div:last-child {
+  margin-block-start: var(--spacing-xs);
+  font: 400 var(--font-size-sm)/1.4 var(--font-family-base);
+}
+
+.site-footer__brand > div:last-child > div,
+.site-footer__brand > div:last-child > div > div {
+  display: inline;
+}
+
+.site-footer__brand > div:last-child > div > div:first-child::after {
+  content: ":";
+}
+
 .site-footer__nav ul,
 .site-footer__nav .menu {
   display: flex;

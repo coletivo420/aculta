@@ -3,10 +3,8 @@ description: Rodapé institucional montado pelo layout da Biblioteca de Layouts,
 component: aculta420_v2:layout-site-footer
 slots:
   brand:
-    markup: Associação Cultural Antiproibicionista
+    markup: |
+      Associação Cultural Antiproibicionista<div class="field--name-field-cnpj"><span class="field__label">CNPJ:</span> 68.238.467/0001-08</div>
   nav:
     markup: |
       <ul class="menu"><li><a href="/sobre/politica-de-privacidade">Privacidade</a></li><li><a href="/sobre/termos-de-uso">Termos de uso</a></li></ul>
-  legal:
-    markup: |
-      <span>© 2026 ACULTA</span><span>Software livre · GPLv3 (código)</span>

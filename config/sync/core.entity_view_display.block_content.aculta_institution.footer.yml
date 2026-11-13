@@ -81,7 +81,7 @@ third_party_settings:
             additional: {  }
           ae598612-b35d-4054-8dd8-3c2a55db25c9:
             uuid: ae598612-b35d-4054-8dd8-3c2a55db25c9
-            region: legal
+            region: brand
             configuration:
               id: 'field_block:block_content:aculta_institution:field_cnpj'
               label_display: '0'
@@ -89,12 +89,12 @@ third_party_settings:
                 entity: layout_builder.entity
               formatter:
                 type: string
-                label: hidden
+                label: inline
                 settings:
                   link_to_entity: false
                   link_rel: canonical
                 third_party_settings: {  }
-            weight: 2
+            weight: 1
             additional: {  }
         third_party_settings: {  }
 id: block_content.aculta_institution.footer
