@@ -1,3 +1,14 @@
+# Semgrep — popups HTMX seguros — 2026-11-13
+
+- **Objetivo:** remover sinks de HTML string nos popups do Fórum e Studio.
+- **Estado:** `node --check` e Semgrep focal passaram (0 achados). Kernel remoto reexecutado e em andamento; nenhum teste local rodado.
+- **Decisões e alternativas descartadas:** clonar a região de mensagens do documento parseado com `document.importNode()` e anexar com `prepend()`.
+- **Cuidados:** preservar o markup acessível do Drupal sem reconstruí-lo como string HTML.
+- **Commits e arquivos:** este commit; popups, relatório Semgrep, TODO/status, changelogs, README e handoff.
+- **Verificações:** sintaxe JS, Semgrep, diff check e status index PASS; token budget FAIL por itens preexistentes; browser DEFERRED sem origem definida.
+- **Pendências e bloqueios:** a contagem exata de 427 não tem export correspondente; API Code Scanning informa `no analysis found`. PHPUnit local suspenso após reboots.
+- **Próximo passo:** conferir o Kernel remoto e seguir a triagem com SARIF que corresponda à contagem histórica.
+
 # GitHub — Kernel de acesso em Events — 2026-11-12
 
 - **Objetivo:** corrigir falhas Kernel causadas pela ausência do serviço externo de acesso à organização nos containers isolados.
@@ -20,13 +31,3 @@
 - **Pendências e bloqueios:** DT-O11 resolvida — não era o `ConfigImporter`; os YAMLs omitiam defaults de entity displays e a ordem canônica do CKEditor 5. YAMLs canônicos no commit `f52598397`, com import comprovado nos dois sentidos e drift 0. Aceite autenticado e visual da configuração importada ainda pendente.
 - **Próximo passo:** validar as telas de moderação do fórum e o formulário de página com Layout Builder.
 
-# PHPStan — rodada atual, microfase 24b — 2026-11-11
-
-- **Objetivo:** reduzir diagnósticos PHPStan no fluxo de listagens do Studio e consolidar as microfases acumuladas.
-- **Estado:** `MarleyListingBuilder` ficou sem erros brutos (30 → 0); total bruto global registrado em 2.223. Relatório e baseline atualizados.
-- **Decisões e alternativas descartadas:** shapes explícitos para os seis formatos de listagem e narrowing de resultados de storage; sem suppressions.
-- **Cuidados:** não incluir alterações paralelas de `composer.json`, browser e `web/tmp`; código de Eventos já está em `origin/dev`.
-- **Commits e arquivos:** commit desta entrega inclui relatório/baseline, correções e fixtures PHPStan de Messenger, User e Studio, ajustes restantes de testes Eventos e este handoff.
-- **Verificações:** PHPStan estrito `[OK]`; focal Studio e PHPUnit focais PASS; Unit global 3286/17661 PASS; descoberta 674, Portal Drupal 12 (1234), lint e diff check PASS. Token budget FAIL por 5 limites preexistentes em css/htmx/sdc/ui-patterns.
-- **Pendências e bloqueios:** Runtime/cache DEFERRED; worktree compartilhado contém alterações não relacionadas não incluídas.
-- **Próximo passo:** retomar a dívida PHPStan em rodada posterior.

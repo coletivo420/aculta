@@ -4,7 +4,7 @@ Estado: Dev · versão 0.2.0-dev.4 (`aculta_forum.info.yml`) · JUnit histórico
 
 ## Próximo passo
 
-- Aguardar CI remoto da correção das dependências de configuração do Fórum; depois continuar a dívida Kernel global por grupo de erro, sem suíte integral local após os reboots. Retomar a refatoração das chamadas estáticas restantes em classes dos módulos, com gates focais do Portal.
+- Mensagens de erro do popup HTMX são movidas do DOM parseado, sem reinserção como HTML string; validar no CI remoto. Depois continuar a dívida Kernel global por grupo de erro, sem suíte integral local após os reboots; retomar chamadas estáticas em classes com gates focais.
 - **ADR-054/055 Views:** SDC `forum-category` substitui os dois field overrides e os wrappers específicos de página/bloco; Views padrão conserva suas regiões. Sync/install preservam filtros, agrupamento e acesso. Importação parcial foi autorizada; o Runtime segue em `fields` e aguarda post-update Portal autorizado antes do cutover.
 - **FST (implementado e homologado em parte):** escopo, ledger, reconciliação e métricas entregues; update 9008 aplicado e browser 44/44. Faltam Functional isolado, dark mode/zoom e leitor de tela. [Plano canônico](../aculta_statistics/docs/FORUM-ANALYTICS-PLANO-FST-00-11.md).
 

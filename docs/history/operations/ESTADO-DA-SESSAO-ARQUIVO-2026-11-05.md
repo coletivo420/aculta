@@ -1853,3 +1853,14 @@ Não inclua credenciais, tokens ou outros dados sensíveis. Atualize este handof
 - **Verificações:** PHPStan 0, unit 3287, Portal 1234, boundary 7888, browser index 151, admin routes, aliases, root policy e status index PASS; smoke Firefox 70/70 pós-import.
 - **Pendências e bloqueios:** Kernel focal do domínio PASS com SQLite isolado; suíte Kernel completa DEFERRED por dependências de ambiente (`aculta_file_uploader`, `aculta_lms_resources`, schema do Commerce), sessão autenticada (DT-S01), cache-hit e aceite humano.
 - **Próximo passo:** importar a configuração autorizada, rodar Kernel/Functional e concluir RN-05.
+
+# PHPStan — rodada atual, microfase 24b — 2026-11-11
+
+- **Objetivo:** reduzir diagnósticos PHPStan no fluxo de listagens do Studio e consolidar as microfases acumuladas.
+- **Estado:** `MarleyListingBuilder` ficou sem erros brutos (30 → 0); total bruto global registrado em 2.223. Relatório e baseline atualizados.
+- **Decisões e alternativas descartadas:** shapes explícitos para os seis formatos de listagem e narrowing de resultados de storage; sem suppressions.
+- **Cuidados:** não incluir alterações paralelas de `composer.json`, browser e `web/tmp`; código de Eventos já está em `origin/dev`.
+- **Commits e arquivos:** commit desta entrega inclui relatório/baseline, correções e fixtures PHPStan de Messenger, User e Studio, ajustes restantes de testes Eventos e este handoff.
+- **Verificações:** PHPStan estrito `[OK]`; focal Studio e PHPUnit focais PASS; Unit global 3286/17661 PASS; descoberta 674, Portal Drupal 12 (1234), lint e diff check PASS. Token budget FAIL por 5 limites preexistentes em css/htmx/sdc/ui-patterns.
+- **Pendências e bloqueios:** Runtime/cache DEFERRED; worktree compartilhado contém alterações não relacionadas não incluídas.
+- **Próximo passo:** retomar a dívida PHPStan em rodada posterior.

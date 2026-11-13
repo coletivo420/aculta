@@ -1,3 +1,8 @@
+## Não versionado — transferência segura de mensagens do popup HTMX
+
+- Mensagens Drupal capturadas da resposta HTMX são clonadas do documento parseado
+  e anexadas como nós DOM, sem converter o conteúdo em string HTML.
+
 ## Não versionado — migração SDC da View de categorias (2026-11-10)
 
 - A página pública e o bloco de categorias passam a mapear campos da View ao

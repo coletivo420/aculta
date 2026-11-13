@@ -1,3 +1,8 @@
+## Não versionado — transferência segura de mensagens do popup HTMX
+
+- Mensagens Drupal capturadas da resposta HTMX são clonadas do documento parseado
+  e anexadas como nós DOM, sem converter o conteúdo em string HTML.
+
 ## Não versionado — StudioProfileController preparado para HTMX (ADR-050 F2 item 2)
 
 - `StudioProfileController` adiciona identificador de raiz estável
