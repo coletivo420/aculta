@@ -131,6 +131,7 @@ final class LmsDiscussionContextIsolationKernelTest extends KernelTestBase {
     $this->installEntitySchema('user');
     $this->installEntitySchema('node');
     $this->installEntitySchema('comment');
+    $this->installEntitySchema('path_alias');
     $this->installEntitySchema('group');
     $this->installEntitySchema('group_relationship');
     $this->installEntitySchema('group_config_wrapper');
@@ -152,7 +153,7 @@ final class LmsDiscussionContextIsolationKernelTest extends KernelTestBase {
         ->setData($data)
         ->save();
     }
-    $this->installConfig(['system', 'user', 'node', 'comment', 'image', 'media', 'media_library', 'photoswipe', 'media_gallery']);
+    $this->installConfig(['system', 'user', 'node', 'comment', 'image', 'media', 'media_library', 'photoswipe', 'media_gallery', 'path_alias']);
     CommentType::create([
       'id' => 'aculta_discussion_post',
       'label' => 'Discussion post',
