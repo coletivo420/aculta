@@ -1,8 +1,10 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.138
+version: 0.1.0-dev.139
 state: Dev
 progress_note: >-
-  Kernel histórico: WikiLeadImageLifecycleKernelTest agora instala schema `group_relationship`, exigido pelo acesso a Groups; lint PASS, sem PHPUnit local após reboots.
+  Dez supressões PHPStan obsoletas foram removidas após a migração do teste
+  WikiLeadImageLifecycleKernelTest para aculta_cgu; revalidação aguarda CI remoto.
+  PHPUnit local não executado, conforme cuidado após reboots.
   Rodada PHPStan 17: aculta_wiki/src 36 -> 0; Unit 94/455 PASS; baseline global
   3564 -> 3451 (redução concentrada na Wiki).
   Dev.136: Kernel instala schema de crop, remove escrita de nickname_required e

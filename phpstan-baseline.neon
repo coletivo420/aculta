@@ -7782,48 +7782,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_wiki/tests/src/Kernel/WikiLeadImageLifecycleKernelTest.php
 
 		-
-			rawMessage: 'Call to method get() on an unknown class Drupal\aculta_contributions\Entity\Contribution.'
-			identifier: class.notFound
-			count: 6
-			path: web/modules/custom/aculta_portal/modules/aculta_wiki/tests/src/Kernel/WikiLeadImageLifecycleKernelTest.php
-
-		-
-			rawMessage: 'Call to method getPayload() on an unknown class Drupal\aculta_contributions\Entity\Contribution.'
-			identifier: class.notFound
-			count: 3
-			path: web/modules/custom/aculta_portal/modules/aculta_wiki/tests/src/Kernel/WikiLeadImageLifecycleKernelTest.php
-
-		-
-			rawMessage: 'Call to method getRevisionCreationTime() on an unknown class Drupal\aculta_contributions\Entity\Contribution.'
-			identifier: class.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_wiki/tests/src/Kernel/WikiLeadImageLifecycleKernelTest.php
-
-		-
-			rawMessage: 'Call to method getRevisionId() on an unknown class Drupal\aculta_contributions\Entity\Contribution.'
-			identifier: class.notFound
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_wiki/tests/src/Kernel/WikiLeadImageLifecycleKernelTest.php
-
-		-
-			rawMessage: 'Call to method getRevisionLogMessage() on an unknown class Drupal\aculta_contributions\Entity\Contribution.'
-			identifier: class.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_wiki/tests/src/Kernel/WikiLeadImageLifecycleKernelTest.php
-
-		-
-			rawMessage: 'Call to method getSourceData() on an unknown class Drupal\aculta_contributions\Entity\Contribution.'
-			identifier: class.notFound
-			count: 4
-			path: web/modules/custom/aculta_portal/modules/aculta_wiki/tests/src/Kernel/WikiLeadImageLifecycleKernelTest.php
-
-		-
-			rawMessage: 'Call to method uuid() on an unknown class Drupal\aculta_contributions\Entity\Contribution.'
-			identifier: class.notFound
-			count: 3
-			path: web/modules/custom/aculta_portal/modules/aculta_wiki/tests/src/Kernel/WikiLeadImageLifecycleKernelTest.php
-
-		-
 			rawMessage: 'Call to static method PHPUnit\Framework\Assert::assertArrayHasKey() with ''check_similar_titles'' and array{submit: array{''#type'': ''submit''}} will always evaluate to false.'
 			identifier: staticMethod.impossibleType
 			count: 1
@@ -7878,18 +7836,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_wiki/tests/src/Kernel/WikiLeadImageLifecycleKernelTest.php
 
 		-
-			rawMessage: 'Call to static method create() on an unknown class Drupal\aculta_contributions\Entity\Contribution.'
-			identifier: class.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_wiki/tests/src/Kernel/WikiLeadImageLifecycleKernelTest.php
-
-		-
-			rawMessage: Class Drupal\aculta_contributions\Entity\Contribution not found.
-			identifier: class.notFound
-			count: 6
-			path: web/modules/custom/aculta_portal/modules/aculta_wiki/tests/src/Kernel/WikiLeadImageLifecycleKernelTest.php
-
-		-
 			rawMessage: Dead catch - Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException is never thrown in the try block.
 			identifier: catch.neverThrown
 			count: 2
@@ -7915,12 +7861,6 @@ parameters:
 
 		-
 			rawMessage: 'Parameter #3 $info of static method Drupal\Core\Database\Database::addConnectionInfo() expects array{driver: string, autoload?: string, namespace?: string, database: string, username?: string, password?: string, host?: string, port?: int|string, ...}, array given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_wiki/tests/src/Kernel/WikiLeadImageLifecycleKernelTest.php
-
-		-
-			rawMessage: 'Parameter #3 $proposal of method Drupal\aculta_wiki\Form\WikiProposalDecisionForm::buildForm() expects Drupal\aculta_cgu\Entity\Contribution|Drupal\aculta_wiki\Entity\WikiProposal|null, Drupal\aculta_contributions\Entity\Contribution given.'
 			identifier: argument.type
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_wiki/tests/src/Kernel/WikiLeadImageLifecycleKernelTest.php

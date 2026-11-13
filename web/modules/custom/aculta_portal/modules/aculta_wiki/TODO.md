@@ -1,12 +1,10 @@
 # TODO — aculta_wiki
 
-Kernel histórico: WikiLeadImageLifecycleKernelTest instala agora o schema `group_relationship` necessário ao acesso via Groups; lint PASS, PHPUnit não executado após reboots.
-
-Estado: Dev · versão 0.1.0-dev.138 (`aculta_wiki.info.yml`) · status: `docs/operations/status/aculta_wiki.yml`.
+Estado: Dev · versão 0.1.0-dev.139 (`aculta_wiki.info.yml`) · status: `docs/operations/status/aculta_wiki.yml`.
 
 ## Estado atual
 
-PHPStan `src`: zero erros; Unit: 94 testes/455 assertions PASS.
+PHPStan CI apontou dez supressões obsoletas após o teste migrar de `aculta_contributions` para `aculta_cgu`; as entradas correspondentes foram removidas do baseline. A revalidação aguarda o próximo CI remoto. Unit: última evidência registrada, 94 testes/455 assertions PASS.
 
 ## Próximo passo
 
