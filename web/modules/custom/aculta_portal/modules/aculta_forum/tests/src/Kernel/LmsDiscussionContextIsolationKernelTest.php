@@ -313,14 +313,14 @@ final class LmsDiscussionContextIsolationKernelTest extends KernelTestBase {
       'uid' => $owner->id(),
     ]);
     $course->save();
-    $course->addMember($member);
+    $course->addMember($member, ['group_roles' => ['lms_course-member']]);
     $secondCourse = Group::create([
       'type' => 'lms_course',
       'label' => 'Second isolation course',
       'uid' => $owner->id(),
     ]);
     $secondCourse->save();
-    $secondCourse->addMember($member);
+    $secondCourse->addMember($member, ['group_roles' => ['lms_course-member']]);
 
     $topic = $this->createTopic($owner, 'Ungrouped topic');
 
@@ -380,7 +380,7 @@ final class LmsDiscussionContextIsolationKernelTest extends KernelTestBase {
       'uid' => $owner->id(),
     ]);
     $class->save();
-    $class->addMember($member);
+    $class->addMember($member, ['group_roles' => ['lms_class-member']]);
 
     $topic = $this->createTopic($owner, 'Topic in orphan class');
     $class->addRelationship($topic, 'group_node:aculta_lms_topic')->save();
@@ -426,7 +426,7 @@ final class LmsDiscussionContextIsolationKernelTest extends KernelTestBase {
       'uid' => $owner->id(),
     ]);
     $course->save();
-    $course->addMember($member);
+    $course->addMember($member, ['group_roles' => ['lms_course-member']]);
 
     $topic = $this->createTopic($owner, 'Open course topic');
     $course->addRelationship($topic, 'group_node:aculta_lms_topic')->save();
@@ -488,7 +488,7 @@ final class LmsDiscussionContextIsolationKernelTest extends KernelTestBase {
     ]);
     $secondClass->save();
     $course->addRelationship($secondClass, 'lms_classes')->save();
-    $firstClass->addMember($member);
+    $firstClass->addMember($member, ['group_roles' => ['lms_class-member']]);
 
     $firstTopic = $this->createTopic($owner, 'First class topic');
     $firstClass->addRelationship($firstTopic, 'group_node:aculta_lms_topic')->save();
