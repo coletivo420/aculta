@@ -12,6 +12,7 @@ third_party_settings:
     allowed_icon_pack:
       - aculta_phosphor_regular
       - aculta_phosphor_duotone
+      - aculta_brocolis
 _core:
   default_config_hash: Q2Ra3jfoIVk0f3SjxJX61byRQFVBAbpzYDQOiY-kno8
 id: main

@@ -258,6 +258,7 @@ Com JavaScript desligado, os links dos gatilhos continuam válidos: o login e a 
 
 - Drupal `^11.5 || ^12`. O desenvolvimento roda no 11.5 do servidor de desenvolvimento. Compatibilidade com 12 é meta, sem validação ainda (ADR-045).
 - Ícones Phosphor (MIT, Core 2.1.1) estão vendorizados em `assets/icons/phosphor/` e são injetados inline pelo componente `icon`.
+- O ícone original `aculta-brocolis` vive em `assets/icons/aculta-brocolis/`, nos seis pesos, como pack `aculta_brocolis` de UI Icons; o mesmo SDC `icon` resolve esse nome sem alterar o comportamento dos demais ícones Phosphor.
 - Não há UI Styles nem CTools no tema hoje. UI Styles entra na Fase 4; CTools fica no Portal, conforme ADR-044.
 
 

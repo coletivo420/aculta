@@ -1,0 +1,6 @@
+name: ACULTA Brócolis - Thin
+description: Desenho original ACULTA Brócolis na variante thin.
+props:
+  name: aculta-brocolis
+  variant: thin
+  size: xl

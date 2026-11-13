@@ -1,6 +1,6 @@
 $schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
-name: Ícone Phosphor
-description: Ícone vetorial de interface, com variantes regular e duotone.
+name: Ícone Phosphor / ACULTA
+description: Ícone vetorial Phosphor (regular e duotone) ou ACULTA Brócolis (seis pesos).
 status: stable
 group: Elementos básicos
 props:
@@ -15,7 +15,7 @@ props:
     variant:
       type: string
       title: Peso visual
-      enum: [duotone, regular]
+      enum: [thin, light, regular, bold, fill, duotone]
       default: duotone
     size:
       type: string

@@ -33,3 +33,8 @@
 @media (prefers-reduced-motion: reduce) {
   .aculta-icon--duotone svg path:first-child { transition: none; }
 }
+
+/* Os contornos do Brócolis duotone não são preenchidos como o Phosphor. */
+.aculta-icon--brocolis.aculta-icon--duotone svg > path:last-child {
+  fill: none;
+}

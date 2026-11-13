@@ -57,6 +57,21 @@ As cores semânticas de marca permanecem nos tokens do tema, reconciliados com
 a paleta institucional existente. O seletor explícito de modo claro/escuro
 permanece o mecanismo de preferência.
 
+## ACULTA Brócolis
+
+`icons/aculta-brocolis/` contém seis SVGs originais do projeto ACULTA,
+inspirados na grade visual de 256×256 do Phosphor, mas **não integrantes do
+acervo oficial Phosphor**. O nome canônico, sem acentos, é `aculta-brocolis`.
+Os pesos são `thin` (8), `light` (12), `regular` (16),
+`bold` (24), `fill` e `duotone` (contorno 16, camada 20%).
+O desenho usa `currentColor` e acompanha o tema claro/escuro sem cores fixas.
+
+O pacote `aculta_brocolis` é registrado em `aculta420_v2.icons.yml` para
+UI Icons, UI Icons Picker, UI Patterns e os menus que o permitem. Para usar o
+SDC `aculta420_v2:icon`, informe `name: aculta-brocolis` e `variant` igual
+ao peso pretendido. Não é necessária biblioteca JavaScript nem CDN.
+Licença do desenho original: MIT (`icons/aculta-brocolis/LICENSE`).
+
 ## Fluent Emoji (Microsoft)
 
 `icons/fluent-emoji/flat/` e `icons/fluent-emoji/color/` contêm o pacote curado

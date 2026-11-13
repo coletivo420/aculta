@@ -728,10 +728,13 @@ regras globalmente. Story: `map-canvas.default.story.yml`.
 - **Estado:** adapter e componente implementados em C4; H1 pelo SDC em 2026-11-12; validação visual pendente.
 
 ### icon — Ícone
-- **Papel:** ícone Phosphor vetorial, injetado inline e oculto para leitores de tela (`aria-hidden`).
-- **Props:** `name`, `variant` (`duotone` ou `regular`), `size` (`sm`, `md`, `lg`, `xl` ou `bar`), `color`.
+- **Papel:** ícone SVG decorativo, injetado inline e oculto para leitores de tela (`aria-hidden`).
+- **Props:** `name`, `variant` (`thin`, `light`, `regular`, `bold`, `fill`, `duotone`), `size` (`sm`, `md`, `lg`, `xl` ou `bar`), `color`.
+- **Famílias:** ícones Phosphor oficiais continuam disponíveis em `regular` e `duotone`. O nome `aculta-brocolis` seleciona o desenho original ACULTA Brócolis nas seis variações. Para Phosphor, outros pesos solicitados são normalizados para `regular`.
+- **UI Icons:** pacote `aculta_brocolis` com `aculta-brocolis` (regular), `aculta-brocolis-thin`, `aculta-brocolis-light`, `aculta-brocolis-bold`, `aculta-brocolis-fill` e `aculta-brocolis-duotone`; habilitado também nos seletores dos menus `main` e `account`.
+- **Stories:** `icon.brocolis-*.story.yml` mostram os seis pesos na biblioteca visual.
 - **Estado:** `bar` mede 30px para os controles da barra institucional (ADR-047, item 10).
-- **Estado:** entregue. Ícones ausentes do vendor são ignorados (`ignore_missing`).
+- **Estado:** entregue. Ícones ausentes do acervo são ignorados (`ignore_missing`).
 
 ### author-card — Cartão de autoria
 - **Papel:** apresenta identidade pública e contextual preparada pelo `aculta_user`, inclusive autoria editorial.
