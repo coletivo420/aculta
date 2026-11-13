@@ -197,11 +197,18 @@
 @media (max-width: 35.99rem) {
   .site-footer__header {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
+    text-align: center;
   }
 
   .site-footer__brand {
+    text-align: center;
     font-size: var(--font-size-base);
+    inline-size: 100%;
+  }
+
+  .site-footer__brand > div {
+    text-align: center;
   }
 
   .site-footer .site-footer__nav {
