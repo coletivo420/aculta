@@ -110,7 +110,15 @@
    centralizada. O rodapé já é contido no próprio .site-footer__inner.
    Exceções são declaradas no seletor :not(...) abaixo. */
 @media (min-width: 60rem) {
-  :is(.page__institution, .page__header, .page__navigation, .page__showcase, .page__highlighted, .page__help, .page__breadcrumb, .page-shell-v2__contextual, .layout-page, .page__main):not(.layout-page--studio-dashboard) {
+  /* Regiões filhas diretas do grid: precisam de largura explícita. Com
+     max-inline-size, o item encolhe ao conteúdo e sai da coluna do rodapé. */
+  :is(.page__institution, .page__header, .page__navigation, .page__showcase, .page__highlighted, .page__help, .page__breadcrumb, .page-shell-v2__contextual):not(.layout-page--studio-dashboard) {
+    inline-size: min(100%, var(--page-content-max));
+    margin-inline: auto;
+  }
+
+  /* Conteúdo principal mantém a variante (stack, aside, full); só limita o teto. */
+  :is(.layout-page, .page__main):not(.layout-page--studio-dashboard) {
     max-inline-size: var(--page-content-max);
     margin-inline: auto;
   }
@@ -126,4 +134,3 @@
     max-inline-size: 100% !important;
   }
 }
-
