@@ -11,6 +11,8 @@ dependencies:
   - aculta_portal:aculta_user
   - aculta_portal:aculta_gallery
   - aculta_portal:aculta_document_viewer
+  - aculta_portal:aculta_editor
+  - ui_patterns:ui_patterns_views
   - drupal:media
   - drupal:ckeditor5
   - drupal:editor

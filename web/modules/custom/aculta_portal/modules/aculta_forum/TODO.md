@@ -1,10 +1,10 @@
 # TODO — aculta_forum
 
-Estado: Dev · versão 0.2.0-dev.4 (`aculta_forum.info.yml`) · `LmsDiscussionContextIsolationKernelTest` fornece `aculta_image.render` via `ImageCatalog`/`ImageRenderer` reais para completar o harness isolado; lint e PHPCS PASS, PHPUnit não executado após os reboots · status: docs/operations/status/aculta_forum.yml.
+Estado: Dev · versão 0.2.0-dev.4 (`aculta_forum.info.yml`) · JUnit histórico identificou que a configuração do Fórum depende de `aculta_editor` e `ui_patterns_views`, ausentes dos metadados do módulo; dependências declaradas, aguardando validação no CI remoto. PHPUnit local permanece suspenso após os reboots · status: docs/operations/status/aculta_forum.yml.
 
 ## Próximo passo
 
-- Aguardar CI do harness `LmsDiscussionContextIsolationKernelTest`; depois continuar a dívida Kernel global por grupo de erro, sem suíte integral local após os reboots. Retomar a refatoração das chamadas estáticas restantes em classes dos módulos, com gates focais do Portal.
+- Aguardar CI remoto da correção das dependências de configuração do Fórum; depois continuar a dívida Kernel global por grupo de erro, sem suíte integral local após os reboots. Retomar a refatoração das chamadas estáticas restantes em classes dos módulos, com gates focais do Portal.
 - **ADR-054/055 Views:** SDC `forum-category` substitui os dois field overrides e os wrappers específicos de página/bloco; Views padrão conserva suas regiões. Sync/install preservam filtros, agrupamento e acesso. Importação parcial foi autorizada; o Runtime segue em `fields` e aguarda post-update Portal autorizado antes do cutover.
 - **FST (implementado e homologado em parte):** escopo, ledger, reconciliação e métricas entregues; update 9008 aplicado e browser 44/44. Faltam Functional isolado, dark mode/zoom e leitor de tela. [Plano canônico](../aculta_statistics/docs/FORUM-ANALYTICS-PLANO-FST-00-11.md).
 
