@@ -109,6 +109,44 @@
           }
         });
 
+        // Popovers nativos (+ e seletor): posicionamento por âncora CSS. Este JS só corrige navegadores sem anchor-name.
+        const hasAnchor = window.CSS && CSS.supports && CSS.supports('anchor-name', '--a');
+        const placePopover = (trigger) => {
+          if (hasAnchor) {
+            return;
+          }
+          const scope = trigger.closest('.discussion-reaction-bar__list, .discussion-reaction-bar__picker-wrapper');
+          const pop = scope ? scope.querySelector('[data-reaction-popover]') : null;
+          if (!pop || pop.id !== trigger.getAttribute('popovertarget')) {
+            return;
+          }
+          const r = trigger.getBoundingClientRect();
+          const gap = 6;
+          const width = pop.offsetWidth || 220;
+          const fitsBelow = r.bottom + gap + (pop.offsetHeight || 80) <= window.innerHeight;
+          pop.style.position = 'fixed';
+          pop.style.margin = '0';
+          pop.style.top = `${fitsBelow ? r.bottom + gap : Math.max(8, r.top - gap - (pop.offsetHeight || 80))}px`;
+          pop.style.left = `${Math.max(8, Math.min(r.left, window.innerWidth - width - 8))}px`;
+        };
+        document.addEventListener('click', (event) => {
+          const trigger = event.target && event.target.closest ? event.target.closest('[popovertarget]') : null;
+          if (trigger && trigger.closest('.discussion-reaction-bar')) {
+            placePopover(trigger);
+          }
+        }, true);
+        document.addEventListener('toggle', (event) => {
+          const pop = event.target;
+          if (!pop || !pop.matches || !pop.matches('[data-reaction-popover]')) {
+            return;
+          }
+          const scope = pop.closest('.discussion-reaction-bar__list, .discussion-reaction-bar__picker-wrapper');
+          const trigger = scope ? scope.querySelector(`[popovertarget="${CSS.escape(pop.id)}"]`) : null;
+          if (trigger) {
+            trigger.setAttribute('aria-expanded', pop.matches(':popover-open') ? 'true' : 'false');
+          }
+        }, true);
+
         // Set focus on search input when HTMX populates container:
         document.addEventListener('htmx:afterSwap', (event) => {
           if (event.target && event.target.classList && event.target.classList.contains('discussion-reaction-bar__picker-container')) {

@@ -1,6 +1,16 @@
+{#
+/**
+ * @file
+ * Emoji de reação do pack aculta_reacoes (Microsoft Fluent, MIT). Nomes fora do pack usam 🥦.
+ */
+#}
 {% set variant = variant|default('flat') %}
 {% set size = size|default('sm') %}
-{% set emoji_file = '@aculta420_v2/assets/icons/fluent-emoji/' ~ variant ~ '/' ~ name ~ '.svg' %}
+{% set reaction_names = ['broccoli', 'heart', 'thumbs-up', 'seedling', 'herb', 'fire', 'clapping-hands', 'grinning-squinting-face', 'folded-hands', 'rocket', 'bomb', 'dashing-away'] %}
 <span class="reaction-emoji reaction-emoji--{{ variant }} reaction-emoji--{{ size }}" aria-hidden="{{ label ? 'false' : 'true' }}"{% if label %} role="img" aria-label="{{ label }}"{% endif %}>
-  {{ source(emoji_file, ignore_missing = true) }}
+  {% if name in reaction_names %}
+    <img class="reaction-emoji__img" src="/themes/custom/aculta420_v2/assets/icons/reacoes/{{ name }}.svg" alt="" width="20" height="20" loading="lazy">
+  {% else %}
+    🥦
+  {% endif %}
 </span>

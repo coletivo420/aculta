@@ -1,0 +1,22 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Barra de Reações Recebidas
+description: Reações recebidas por uma publicação, somente leitura, com contador. Até duas aparecem na barra; as demais ficam num popover aberto pelo "+".
+status: stable
+group: Comunidade
+props:
+  type: object
+  additionalProperties: false
+  required: [target_id, reactions]
+  properties:
+    target_id:
+      type: string
+      title: ID do elemento
+      minLength: 1
+    reactions:
+      type: object
+      title: Mapa de reações recebidas com contagem
+      default: {}
+    allowed_reactions:
+      type: object
+      title: Catálogo de reações permitidas (rótulo e ícone)
+      default: {}

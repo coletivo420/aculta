@@ -1,0 +1,38 @@
+{#
+/**
+ * @file
+ * Barra de reações recebidas: somente leitura. Até duas reações com contador; o "+" abre um popover com as demais.
+ * Popover nativo (atributo popover), posicionado por âncora CSS junto ao botão.
+ */
+#}
+{% set uid = random(100000000) %}
+{% set more_id = 'received-more-' ~ uid %}
+
+<div id="{{ target_id }}-received" class="discussion-reactions-received" data-discussion-reactions-received>
+  <div class="discussion-reactions-received__list">
+    {% for key, item in reactions|slice(0, 2, true) %}
+      {% set emoji_icon = allowed_reactions[key] is defined ? allowed_reactions[key].icon : key %}
+      {% set emoji_label = allowed_reactions[key] is defined ? allowed_reactions[key].label : key %}
+      <span class="discussion-reactions-received__badge" title="{{ emoji_label }}">
+        {{ include('aculta420_v2:reaction-emoji', { name: emoji_icon, variant: 'color', size: 'sm', label: emoji_label }, with_context = false) }}
+        <span class="discussion-reactions-received__count">{{ item.count }}</span>
+      </span>
+    {% endfor %}
+
+    {% if reactions|length > 2 %}
+      <button type="button" class="discussion-reactions-received__more" popovertarget="{{ more_id }}" style="anchor-name: --{{ more_id }}" aria-label="{{ 'Mais reações'|t }}" title="{{ 'Mais reações'|t }}" aria-expanded="false">+</button>
+      <div id="{{ more_id }}" class="discussion-reactions-received__popover" style="position-anchor: --{{ more_id }}" popover="auto" role="dialog" aria-label="{{ 'Mais reações'|t }}" data-reaction-popover>
+        <div class="discussion-reactions-received__popover-list">
+          {% for key, item in reactions|slice(2, null, true) %}
+            {% set emoji_icon = allowed_reactions[key] is defined ? allowed_reactions[key].icon : key %}
+            {% set emoji_label = allowed_reactions[key] is defined ? allowed_reactions[key].label : key %}
+            <span class="discussion-reactions-received__badge" title="{{ emoji_label }}">
+              {{ include('aculta420_v2:reaction-emoji', { name: emoji_icon, variant: 'color', size: 'sm', label: emoji_label }, with_context = false) }}
+              <span class="discussion-reactions-received__count">{{ item.count }}</span>
+            </span>
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+  </div>
+</div>

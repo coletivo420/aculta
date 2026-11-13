@@ -208,6 +208,7 @@ module:
   ui_icons_menu: 0
   ui_icons_patterns: 0
   ui_icons_picker: 0
+  ui_icons_popover: 0
   ui_patterns: 0
   ui_patterns_blocks: 0
   ui_patterns_field: 0
