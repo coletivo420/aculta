@@ -28,7 +28,7 @@
         <a href="#painel-{{ aculta_group_anchors[group_name] }}">{{ group_name }} ({{ components|length }})</a>
       {% endfor %}
     {% endset %}
-    {{ include('aculta420_v2:tabs', { label: 'Grupos de componentes'|t, items: tab_links|raw }, with_context: false) }}
+    {{ include('aculta420_v2:tabs', {label: 'Grupos de componentes'|t, items: tab_links|raw}, with_context: false) }}
 
     {# Painel "Todos": lista todos os componentes; é o padrão ao carregar a página. #}
     <div class="aculta-component-library__panel" id="painel-todos" data-group-id="todos">
@@ -57,20 +57,22 @@
     {% endfor %}
   </div>
 
+  {% set bulk_preview_attributes = create_attribute({
+    id: 'aculta-btn-bulk-preview',
+    class: ['aculta-btn-bulk-preview'],
+    type: 'button',
+    'aria-controls': 'aculta-components-container',
+    'aria-describedby': 'aculta-bulk-preview-status',
+    'data-state': 'idle',
+  }) %}
+
   <div class="aculta-component-library__bulk-bar" data-portal-ui="surface-raised">
     <div class="aculta-component-library__bulk-bar-action">
       {{ include('aculta420_v2:button', {
         text: 'Exibir todas as prévias'|t,
         variant: 'secondary',
         icon_before: 'eye',
-        attributes: create_attribute({
-          'id': 'aculta-btn-bulk-preview',
-          'class': ['aculta-btn-bulk-preview'],
-          'type': 'button',
-          'aria-controls': 'aculta-components-container',
-          'aria-describedby': 'aculta-bulk-preview-status',
-          'data-state': 'idle'
-        })
+        attributes: bulk_preview_attributes,
       }, with_context: false) }}
     </div>
     <div id="aculta-bulk-preview-status" class="aculta-bulk-preview-status" aria-live="polite" role="status"></div>
