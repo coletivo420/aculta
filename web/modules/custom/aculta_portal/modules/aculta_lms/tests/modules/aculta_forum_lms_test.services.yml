@@ -6,4 +6,5 @@ services:
   aculta_lms_h5p.course_access:
     class: Drupal\aculta_forum_lms_test\UnusedService
   aculta_forum.discussion_context_resolver:
-    class: Drupal\aculta_forum_lms_test\UnusedService
+    class: Drupal\aculta_forum\Context\DiscussionContextResolver
+    arguments: [[]]
