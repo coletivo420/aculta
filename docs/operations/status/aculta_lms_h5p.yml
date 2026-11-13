@@ -1,5 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.4.0-rc.1
+version: 0.4.0-rc.2
 state: RC
-progress_note: "RC.1: modulo pronto para homologacao Alpha. CI atual identificou assercao desatualizada no teste do resolver de discussoes H5P; teste ajustado para consultar o slot content do render array, aguardando confirmacao remota."
-next_phase: 'Confirmar no CI a correcao da assercao Unit; depois acompanhar a homologacao com as turmas e conteudos reais em *.aculta.toca.net.br.'
+progress_note: "RC.2: IDs ignorados em getNumContent passam por validacao e a consulta usa a Query API do Drupal; confirmacao remota aguarda CI."
+next_phase: 'Confirmar no CI a consulta parametrizada de IDs H5P e acompanhar a homologacao com turmas e conteudos reais em *.aculta.toca.net.br.'

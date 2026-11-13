@@ -1,10 +1,14 @@
 # TODO — aculta_lms_h5p
 
-Estado: RC · versão 0.4.0-rc.1 (`aculta_lms_h5p.info.yml`) · status: `docs/operations/status/aculta_lms_h5p.yml`.
+Estado: RC · versão 0.4.0-rc.2 (`aculta_lms_h5p.info.yml`) · status: `docs/operations/status/aculta_lms_h5p.yml`.
+
+## Estado atual
+
+`getNumContent()` valida os IDs de exclusão e consulta pela Query API do Drupal, sem concatenar valores ao SQL. A confirmação remota da mudança está pendente.
 
 ## Próximo passo
 
-Confirmar no CI a asserção da lista de discussões no slot `content` do render array; após o CI, acompanhar a homologação com as turmas e conteúdos reais em `*.aculta.toca.net.br`.
+Confirmar no CI a consulta parametrizada de IDs H5P e acompanhar a homologação com as turmas e conteúdos reais em `*.aculta.toca.net.br`.
 
 ## Leitura
 
