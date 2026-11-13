@@ -766,9 +766,6 @@ foreach ($component_ids as $component_id) {
       throw new RuntimeException('Phosphor SVG must be rendered inline by the icon SDC.');
     }
   }
-  if ($component_id === 'event-page-layout' && !is_file($theme_root . '/templates/aculta-event-page.html.twig')) {
-    throw new RuntimeException('Event page adapter is missing.');
-  }
   if ($component_id === 'navigation-bar' && !in_array('core/once', $definition['library']['dependencies'] ?? [], TRUE)) {
     throw new RuntimeException('Navigation behavior must depend on core/once.');
   }
