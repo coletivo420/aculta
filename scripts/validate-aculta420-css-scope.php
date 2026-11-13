@@ -42,7 +42,8 @@ $assert(str_contains($paymentNoticeComponent, 'payment-notice.css') && str_conta
 $portalExtrasPath = $theme . '/src/styles/portal-ui-extras.css';
 $portalExtrasCss = is_file($portalExtrasPath) ? (string) file_get_contents($portalExtrasPath) : '';
 $addressFieldsCss = (string) file_get_contents($theme . '/src/styles/address-fields.css');
-$portalUiMapCss = (string) file_get_contents($theme . '/src/styles/portal-ui-map.css');
+$portalUiMapPath = $theme . '/src/styles/portal-ui-map.css';
+$portalUiMapCss = is_file($portalUiMapPath) ? (string) file_get_contents($portalUiMapPath) : '';
 $portalRequirementsCss = (string) file_get_contents($theme . '/components/portal-requirements/portal-requirements.css');
 $portalRequirementsController = (string) file_get_contents($root . '/web/modules/custom/aculta_portal/src/Controller/PortalRequirementsController.php');
 $addressFields = array_keys($libraries['address-fields']['css']['theme'] ?? []);
@@ -77,6 +78,10 @@ $assert(($libraries['search-page']['dependencies'] ?? []) === ['aculta420_v2/glo
 $assert(str_contains($presentationHooks, "=== 'aculta_portal.search'"), 'A biblioteca search-page não está restrita à rota de busca.');
 $assert(str_contains($searchPageCss, '.aculta-search__results'), 'search.css perdeu estilos da página central de busca.');
 $assert(!str_contains($portalUiMapCss, '.aculta-portal-requirements'), 'Layout do relatório de requisitos permaneceu no mapa global.');
+$assert(!is_file($portalUiMapPath), 'portal-ui-map.css permaneceu após migrar seus últimos consumidores.');
+$assert(!in_array('src/styles/portal-ui-map.css', $global, TRUE), 'portal-ui-map.css voltou ao global-styling.');
+$assert(isset($libraries['unpublished-preview']['css']['theme']['src/styles/unpublished-preview.css']), 'A prévia editorial não declara biblioteca própria.');
+$assert(str_contains((string) file_get_contents($theme . '/src/Hook/UnpublishedPreviewHooks.php'), "'aculta420_v2/unpublished-preview'"), 'A prévia editorial não anexa sua biblioteca contextual.');
 $assert(str_contains($portalRequirementsCss, '.portal-requirements .aculta-portal-requirements__cep'), 'O SDC portal-requirements perdeu estilos de seção.');
 $assert(str_contains($portalRequirementsController, "'aculta420_v2:portal-requirements'"), 'O relatório de requisitos não compõe seu SDC.');
 $statistics = array_keys($libraries['statistics']['css']['theme'] ?? []);
@@ -106,8 +111,10 @@ $assert(isset($studioSectionHeaderMetadata['assets']['css']['component']['studio
 $assert(is_file($theme . '/components/studio-section-header/studio-section-header.css'), 'O CSS do SDC studio-section-header não existe.');
 
 $statisticsCss = (string) file_get_contents($theme . '/src/styles/statistics.css');
-$portalMapCss = (string) file_get_contents($theme . '/src/styles/portal-ui-map.css');
+$portalMapPath = $theme . '/src/styles/portal-ui-map.css';
+$portalMapCss = is_file($portalMapPath) ? (string) file_get_contents($portalMapPath) : '';
 $assert(str_contains($statisticsCss, '.aculta-statistics__controls'), 'statistics.css perdeu os seletores movidos do mapa.');
+$assert(!is_file($portalMapPath), 'portal-ui-map.css permaneceu após migrar seus últimos consumidores.');
 $assert(!str_contains($portalMapCss, 'aculta-statistics'), 'portal-ui-map.css ainda contém seletores de estatísticas; o CSS continua global.');
 
 $hook = (string) file_get_contents($theme . '/src/Hook/PagePresentationHooks.php');

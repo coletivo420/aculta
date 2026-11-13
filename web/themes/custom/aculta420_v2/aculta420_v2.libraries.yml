@@ -4,6 +4,12 @@ topic-dialog:
     component:
       components/dialog/dialog.css: {}
 
+unpublished-preview:
+  version: 0.1.0
+  css:
+    theme:
+      src/styles/unpublished-preview.css: {}
+
 events:
   version: 0.1.0
   css:
@@ -119,7 +125,6 @@ global-styling:
       components/surface/surface.css: {}
       components/surface-accent/surface-accent.css: {}
       components/heading/heading.css: {}
-      src/styles/portal-ui-map.css: {}
   dependencies:
     - system/base
 

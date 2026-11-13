@@ -1,5 +1,11 @@
 ## Não versionado — corte SDC-first de CSS e LMS (2026-11-13)
 
+- `portal-ui-map.css` foi eliminado após mover o marcador de prévia de conteúdo
+  não publicado para `unpublished-preview.css`, anexado apenas às entidades
+  não publicadas quando UI Styles seleciona o marcador ACULTA. `.container-inline`
+  voltou ao estilo nativo fornecido por `system/base`; o tema deixou de impor
+  flex e espaçamento a formulários do Core e contrib.
+
 - Auditoria PurgeCSS: `css:verify` agora exige todos os arquivos de fonte e
   staging, valida os bytes e conjuntos de seletores por folha, hashes, versões,
   fontes de conteúdo e classes dinâmicas atuais. O relatório distingue
@@ -1798,4 +1804,3 @@ State: Dev. No RC, production deployment, or release tag is declared.
   do Studio e o resumo de Localização agora compõem `surface-panel`; o wrapper
   de cadastro do checkout já não existe. Os tokens funcionais mantidos sem mapa
   foram documentados por família após inspeção dos emissores e seletores.
-

@@ -1,0 +1,9 @@
+/* UI Styles Entity Status: editor cue only; never used for access decisions. */
+.aculta-content-status--unpublished {
+  outline: .125rem dashed var(--color-status-warning-text);
+  outline-offset: .125rem;
+}
+
+.aculta-content-status--unpublished .aculta-content-status--unpublished {
+  outline: none;
+}
