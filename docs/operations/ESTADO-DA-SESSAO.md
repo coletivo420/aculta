@@ -1,3 +1,14 @@
+# CI — Kernel publica progresso durante PHPUnit — 2026-11-13
+
+- **Objetivo:** tornar observável o gate Kernel cancelado sem relatório.
+- **Estado:** no SHA `d2a8c042`, jobs estáticos, PHP lint, PHPStan, descoberta e Unit passaram. Kernel foi cancelado após 9m54 durante `Run Kernel suite`; sem JUnit. A suíte usava `--no-progress`; removido para expor avanço no log. Mudança aguardando commit e nova execução remota.
+- **Decisões e alternativas descartadas:** manter timeout de 45 min e a suíte Kernel; não ocultar o cancelamento tornando o job verde nem rodar suíte integral local após os reboots reportados.
+- **Cuidados:** `continue-on-error` mantém o workflow agregado verde, mas o job Kernel continua falhando/cancelado e deve ser avaliado à parte.
+- **Commits e arquivos:** `d2a8c042` (deduplicação push/PR); `.github/workflows/php-quality.yml` e este handoff pendentes.
+- **Verificações:** actionlint, Semgrep local, Bats, shell, frontend, PHP lint, PHPStan, descoberta e PHPUnit Unit PASS no PR #304. Kernel cancelado sem artefato JUnit. `git diff --check` e YAML PASS; validador de token budget FAIL por sete violações preexistentes em skills fora do diff.
+- **Pendências e bloqueios:** obter execução Kernel conclusiva e corrigir falhas reais; reconciliar o inventário Semgrep histórico de 427 com os relatórios locais, que usam escopos distintos.
+- **Próximo passo:** validar diff e YAML, commitar/publicar, acompanhar o Kernel com progresso visível e inspecionar JUnit.
+
 # CI — atualiza Actions e fixa runner — 2026-11-13
 
 - **Objetivo:** remover avisos do GitHub sobre Node 20 e migração de `ubuntu-latest`.
@@ -19,13 +30,3 @@
 - **Verificações:** `git diff --check` pendente; actionlint local DEFERRED (binário ausente), validado no CI após push.
 - **Pendências e bloqueios:** confirmar um único scan por SHA, incluindo Semgrep; Kernel global segue pendente por shutdown sem JUnit.
 - **Próximo passo:** commit/push, acompanhar actionlint e verificar execução única.
-# CI — evita duplicar a suíte PHP por SHA — 2026-11-13
-
-- **Objetivo:** impedir dois workflows PHP completos em paralelo quando o mesmo SHA dispara `push` e `pull_request`.
-- **Estado:** workflow ganhou grupo de concorrência por head SHA; no SHA `f91edb04`, actionlint passou e o run PHP de push foi cancelado enquanto o run do PR permaneceu.
-- **Decisões e alternativas descartadas:** usar head SHA para preservar uma execução por conteúdo; não remover os gatilhos de push ou PR.
-- **Cuidados:** Kernel continua informativo com dívida histórica; não executar suíte local após reboots.
-- **Commits e arquivos:** pendente; `.github/workflows/php-quality.yml` e este handoff.
-- **Verificações:** actionlint, lint, descoberta, PHPStan e Unit PASS; Kernel do PR segue ativo. actionlint local DEFERRED (binário ausente).
-- **Pendências e bloqueios:** Kernel de SHAs anteriores terminou por shutdown sem JUnit; confirmar execução única no SHA atual.
-- **Próximo passo:** validar diff, commit/push e conferir actionlint/concorrência no GitHub.

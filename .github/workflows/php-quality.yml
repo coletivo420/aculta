@@ -199,7 +199,7 @@ jobs:
         SIMPLETEST_DB: mysql://root:root@127.0.0.1:3306/aculta_simpletest
       run: |
         mkdir -p artifacts
-        vendor/bin/phpunit --testsuite kernel --no-progress \
+        vendor/bin/phpunit --testsuite kernel \
           --log-junit artifacts/kernel-junit.xml
 
     - name: Upload Kernel report

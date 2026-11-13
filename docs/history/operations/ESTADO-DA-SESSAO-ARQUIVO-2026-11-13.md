@@ -78,3 +78,15 @@
 - **Verificações:** PHP lint, PHPStan, descoberta, Unit, Semgrep, `git diff --check`, status index e Drupal 12 (1234 checks) PASS; token budget FAIL em 7 limites preexistentes de skills. Kernel de `a35cb0b2` foi encerrado pelo runner sem JUnit; JUnit histórico apontou lista lida vazia.
 - **Pendências e bloqueios:** aguardar uma execução Kernel conclusiva após reduzir duplicatas.
 - **Próximo passo:** validar diff leve, commit/push, acompanhar CI e seguir os demais casos Kernel com evidência.
+
+
+# CI — evita duplicar a suíte PHP por SHA — 2026-11-13
+
+- **Objetivo:** impedir dois workflows PHP completos em paralelo quando o mesmo SHA dispara `push` e `pull_request`.
+- **Estado:** workflow ganhou grupo de concorrência por head SHA; no SHA `f91edb04`, actionlint passou e o run PHP de push foi cancelado enquanto o run do PR permaneceu.
+- **Decisões e alternativas descartadas:** usar head SHA para preservar uma execução por conteúdo; não remover os gatilhos de push ou PR.
+- **Cuidados:** Kernel continua informativo com dívida histórica; não executar suíte local após reboots.
+- **Commits e arquivos:** pendente; `.github/workflows/php-quality.yml` e este handoff.
+- **Verificações:** actionlint, lint, descoberta, PHPStan e Unit PASS; Kernel do PR segue ativo. actionlint local DEFERRED (binário ausente).
+- **Pendências e bloqueios:** Kernel de SHAs anteriores terminou por shutdown sem JUnit; confirmar execução única no SHA atual.
+- **Próximo passo:** validar diff, commit/push e conferir actionlint/concorrência no GitHub.
