@@ -1,11 +1,19 @@
-/* Ported from ACULTA420's Institution Bar, with V2 semantic tokens. */
+/* Ported from ACULTA420's Institution Bar, with V2 semantic tokens.
+   Cores da barra são variáveis do próprio componente (modelo "Barra institucional · ACULTA420 V2",
+   13 nov 2026), para não alterar --color-surface-institution nos demais consumidores. */
 .aculta-institution-bar {
+  --institution-bar-surface: #e7eedc;
+  --institution-bar-text: #0c3c29;
+  --institution-bar-border: rgb(12 60 41 / .16);
+  --institution-bar-badge-surface: #f2ca36;
+  --institution-bar-badge-text: #0c3c29;
+
   position: fixed;
   /* The shell occupies the page column; Gin keeps its own left navigation rail. */
   z-index: 2000;
-  color: var(--color-text-primary);
-  border-block-end: 1px solid var(--color-alpha-text-primary-16);
-  background: var(--color-surface-institution);
+  color: var(--institution-bar-text);
+  border-block-end: 1px solid var(--institution-bar-border);
+  background: var(--institution-bar-surface);
   font: 500 var(--font-size-sm)/1.4 var(--font-family-base);
   inset-block-start: var(--aculta-institution-bar-offset, 0);
   inset-inline: var(--aculta-admin-sidebar-inline-size, 0) 0;
@@ -569,3 +577,30 @@ html body:has(.aculta-institution-bar) .toolbar .toolbar-tray-vertical {
   }
 }
 .aculta-account-home { display: block; }
+
+/* Modo escuro da barra institucional (modelo: carvão-marrom e texto claro; ícones em verde da marca). */
+:root[data-theme="dark"] .aculta-institution-bar,
+[data-theme="dark"] .aculta-institution-bar {
+  --institution-bar-surface: #2b2723;
+  --institution-bar-text: #f4efe8;
+  --institution-bar-border: rgb(244 239 232 / .16);
+  --institution-bar-icon: #9ac15a;
+  --institution-bar-badge-surface: #f2ca36;
+  --institution-bar-badge-text: #171513;
+}
+
+/* Ícones da barra: verde da marca no escuro, texto primário no claro. */
+.aculta-institution-bar {
+  --institution-bar-icon: var(--institution-bar-text);
+}
+
+.aculta-institution-bar .aculta-utility-trigger__icon .aculta-icon,
+.aculta-institution-bar .aculta-utility-dialog__close .aculta-icon {
+  color: var(--institution-bar-icon);
+}
+
+/* Contadores dos gatilhos da barra: amarelo da marca no lugar do vermelho de erro. */
+.aculta-institution-bar .aculta-unread-count {
+  background: var(--institution-bar-badge-surface);
+  color: var(--institution-bar-badge-text);
+}
