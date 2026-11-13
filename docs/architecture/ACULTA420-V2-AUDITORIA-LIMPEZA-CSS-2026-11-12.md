@@ -420,33 +420,44 @@ sincronizador Runtime está bloqueado por RX e drift de configuração.
 
 ## 17. Migração contextual de consumidores do mapa (2026-11-13)
 
-- Dez regras e quatorze identidades de seletor saíram de
+- Vinte e quatro regras e 39 identidades de seletor saíram de
   `src/styles/portal-ui-map.css`: hosts de calendário, DNS de superfícies,
-  filtros/fila/pager de moderação, Loja, filtro de organizações de Eventos,
-  links de nova conversa, elementos do checkout e texto de bio. O mapa passou
-  de 4.187 para 3.243 bytes (-944 bytes, -22,6%).
+  filtros/fila/pager de moderação, Loja, filtros/badges de Eventos, Mensageiro,
+  workspace da Wiki, checkout, bio, Conta, status Google, aviso de pagamento,
+  badges de recomendações e títulos de seção. O mapa passou da base de 31
+  regras/46 seletores e 4.187 bytes para 7/7 e 1.400 bytes (-2.787 bytes,
+  -66,6%).
 - As regras foram para bibliotecas de propriedade dos módulos:
   `aculta_calendar/embed-hosts`, `aculta_paths/surfaces`,
   `aculta_cgu/moderation-queue`, `aculta_user/report-queue` e
   `aculta_portal/shop-presentation`; `aculta-form--inline` foi para o asset de
   Eventos existente e os links do Mensageiro ganharam uma biblioteca anexada
   ao formulário apenas no fluxo de grupo. Os estilos de bio passaram para a
-  folha contextual `portal-account`. As sete folhas novas somam 873 bytes e
-  são anexadas nos elementos/rotas consumidores; Eventos e Conta usam folhas
-  contextuais que já existiam.
+  folha contextual `portal-account`. Os painéis de bio, localização de evento,
+  Studio e identidade da conta migraram para o SDC `surface-panel`; checkout
+  mantém o `fieldset` semântico com estilos na biblioteca `checkout-presentation`.
+  As regras `.aculta-panel*` e hover saíram do `content.css` global. Wiki usa
+  `aculta_wiki/contribution-workspace`;
+  títulos migraram para SDCs (`layout-section`, `event-page-layout`), e outros
+  consumidores para `surface`, `saved-content-page`, `multidomain-bar` e
+  `portal-account`. As oito folhas de módulo somam 987 bytes. Os assets SDC e
+  de rota são anexados nos consumidores.
 - O gate `validate-aculta420-mapped-classes.php` agora inspeciona CSS da raiz
   de `aculta_portal/css` além dos submódulos. A migração da Loja revelou que o
   gate anterior não considerava folhas CSS da raiz do módulo.
-- Relatório recalculado após o corte: 144 folhas de tema, 413.111 bytes,
-  2.367 regras e 2.821 seletores. O PurgeCSS retém 391.741 bytes e identifica
-  21.370 bytes / 142
+- Relatório recalculado após o corte: 144 folhas de tema, 412.286 bytes,
+  2.362 regras e 2.807 seletores. O PurgeCSS retém 390.916 bytes e identifica
+  21.371 bytes / 142
   seletores removíveis; todos permanecem classificados com evidência (2
   dinâmicos, 43 no HTML Runtime, 68 por padrão Drupal e 29 por fonte). Não se
   aplicou purge destrutivo.
-- A verificação de escopo informa 60.982 bytes de CSS local em
-  `global-styling`; a remoção isolada do mapa global é 944 bytes. `css:audit`,
+- A verificação de escopo informa 58.853 bytes de CSS local em
+  `global-styling` (-3.073 bytes contra a base 61.926). A remoção do arquivo
+  mapa é 2.787 bytes; as regras de painel saíram do CSS global e os componentes
+  passaram a compor `surface-panel`. Folhas SDC seguem globais quando
+  serve também UI Styles. `css:audit`,
   `css:classify`, `css:verify`, `css:test`, `lint:css`, Stylelint das folhas
-  novas, YAML/PHP lint, PHPUnit unitário (43 testes/153 assertions em
+  novas, YAML/PHP lint, PHPUnit unitário (56 testes/227 assertions em
   checkout, fila e Messenger), `validate-aculta420-mapped-classes.php` e
   `validate-aculta420-css-scope.php`: PASS. Uma depreciação preexistente do
   `private_message` foi reportada. Os Kernel tests de Calendar/CGU foram

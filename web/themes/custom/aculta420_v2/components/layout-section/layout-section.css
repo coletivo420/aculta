@@ -4,6 +4,8 @@
   min-inline-size: 0;
 }
 
+.layout-section .aculta-section-title { margin-block: 1rem .5rem; font-family: var(--font-family-heading); font-size: 1.25rem; }
+
 .layout-section--raised {
   padding: var(--spacing-lg);
   border-radius: var(--radius-control-card);

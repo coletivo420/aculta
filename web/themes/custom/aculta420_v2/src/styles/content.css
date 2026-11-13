@@ -1,16 +1,5 @@
 /* ACULTA content (portado do V1 em 2026-11-05). Estado: DEFERRED (sem captura visual). */
 
-.aculta-panel {
-  transition: border-color var(--motion-base) ease, box-shadow var(--motion-base) ease, transform var(--motion-base) ease;
-  border-top: 3px solid var(--color-brand-highlight);
-}
-
-.aculta-panel:is(:hover, :focus-within) {
-  transform: translateY(-2px);
-  border-color: var(--color-brand-highlight);
-  box-shadow: var(--shadow-raised);
-}
-
 .aculta-category {
   color: var(--color-text-primary);
   font-weight: 600;

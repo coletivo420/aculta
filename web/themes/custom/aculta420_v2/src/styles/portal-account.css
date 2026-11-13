@@ -47,3 +47,4 @@ html[data-site-key="account"] .aculta-account-entry {
   grid-template-columns: minmax(0, 1fr);
 }
 .portal-account-bio__text { display: block; }
+.aculta-auth-google-status { color: var(--color-text-muted); }

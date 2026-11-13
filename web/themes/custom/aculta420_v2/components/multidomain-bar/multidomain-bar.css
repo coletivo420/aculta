@@ -568,3 +568,4 @@ html body:has(.aculta-institution-bar) .toolbar .toolbar-tray-vertical {
     margin-inline-start: auto;
   }
 }
+.aculta-account-home { display: block; }

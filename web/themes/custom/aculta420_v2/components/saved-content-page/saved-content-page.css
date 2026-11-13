@@ -162,3 +162,4 @@
   color: var(--color-text-primary);
   font-size: .875rem;
 }
+.badge-reason { display: inline-flex; align-items: center; padding: .125rem .5rem; color: var(--color-text-primary); border-radius: var(--radius-full); background: var(--color-surface-highlight); font-size: .875rem; }

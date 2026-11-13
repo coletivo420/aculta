@@ -8,39 +8,10 @@
 .inline { display: inline; }
 .container-inline { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; }
 
-/* Painel mapeado para tokens de superfície (ex.: account-bio-card, checkout,
-   discussões do LMS). Veio de utilities.css, removido em 2026-11-12. */
-.aculta-panel {
-  color: var(--color-text-primary);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-base);
-  background: var(--color-surface-raised);
-}
-
-.aculta-panel__body {
-  padding: 1rem;
-}
-
 /* Classes semânticas que substituíram os utilitários aculta-u-* (2026-11-12).
    Cada regra pertence a um token de PortalUiHooks::TOKENS. */
 .aculta-hint { color: var(--color-text-secondary); font-size: .875em; }
 .aculta-hint--muted { color: var(--color-text-muted); }
-.aculta-section-title { margin-block: 1rem .5rem; font-family: var(--font-family-heading); font-size: 1.25rem; }
-.aculta-we-sativa__intent,
-.aculta-we-sativa__start,
-.aculta-we-sativa__workspace { display: grid; gap: 1.5rem; }
-.aculta-payment-notice__link { color: var(--color-brand-primary); }
-
-.badge--danger,
-.badge--info,
-.badge--success,
-.badge--warning,
-.badge-location-type,
-.badge-reason,
-.coorganizer-item__badge { display: inline-flex; align-items: center; padding: .125rem .5rem; border-radius: var(--radius-full); font-size: .875rem; }
-.badge-location-type,
-.badge-reason,
-.coorganizer-item__badge { color: var(--color-text-primary); background: var(--color-surface-highlight); }
 
 /* Botões próprios do Portal. */
 
@@ -51,26 +22,8 @@
 }
 .aculta-content-status--unpublished .aculta-content-status--unpublished { outline: none; }
 
-/* Mensagens e conversas. */
-.aculta-messenger-conversation,
-.aculta-messenger-fallback-search,
-.aculta-messenger-new-conversation,
-.aculta-messenger-sender__avatar-image,
-.aculta-messenger-sender__name,
-.aculta-messenger-state,
-.aculta-messenger-state--empty,
-.aculta-new-conversation-add { display: block; }
-.aculta-messenger-state--empty { color: var(--color-text-muted); }
-.aculta-messenger-sender__avatar-image { overflow: hidden; border-radius: var(--radius-full); }
-.aculta-messenger-sender__name { font-weight: 600; }
-
-/* Busca de nova conversa: a variante substitui o display da classe base. */
-.aculta-messenger-fallback-search--grid { display: grid; gap: .5rem; }
-
 /* Conta, perfil e autenticação. */
-.aculta-account-home { display: block; }
 .aculta-auth-google { display: inline-flex; align-items: center; gap: .5rem; min-block-size: 2.75rem; }
-.aculta-auth-google-status { color: var(--color-text-muted); }
 
 /* Login e popup. */
 

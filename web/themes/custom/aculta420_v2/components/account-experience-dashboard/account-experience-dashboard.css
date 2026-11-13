@@ -13,7 +13,8 @@
   background-color: transparent;
 }
 
-.studio-account-identity {
+.studio-account-identity,
+.studio-account-identity .aculta-surface-panel__content {
   display: grid;
   gap: var(--spacing-lg);
 }
@@ -32,7 +33,7 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .studio-account-identity:has(.studio-account-identity__avatar) {
+  .studio-account-identity .aculta-surface-panel__content:has(.studio-account-identity__avatar) {
     grid-template-columns: minmax(5rem, 7rem) minmax(0, 1fr);
     align-items: center;
     column-gap: var(--spacing-lg);
@@ -49,7 +50,7 @@
     aspect-ratio: 1;
   }
 
-  .studio-account-identity > :not(.studio-account-identity__avatar) {
+  .studio-account-identity .aculta-surface-panel__content > :not(.studio-account-identity__avatar) {
     grid-column: 2;
   }
 }
@@ -75,18 +76,6 @@
   background: var(--color-surface);
   box-shadow: var(--shadow-raised);
   gap: var(--spacing-md);
-}
-
-.aculta-account-entry .aculta-xp-hero [data-portal-ui~="studio-account-identity"] {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--spacing-md);
-}
-
-.aculta-account-entry .aculta-xp-hero [data-portal-ui~="studio-account-home"] {
-  padding: 0;
-  border-block-start: 0;
 }
 
 .aculta-account-entry .aculta-xp-hero [data-portal-ui~="studio-account-avatar"] {

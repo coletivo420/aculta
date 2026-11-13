@@ -784,3 +784,16 @@ form[data-aculta-drawer-action] .aculta-messenger-options__status {
   padding: .5rem;
   list-style: none;
 }
+.aculta-messenger-conversation,
+.aculta-messenger-fallback-search,
+.aculta-messenger-new-conversation,
+.aculta-messenger-sender__avatar-image,
+.aculta-messenger-sender__name,
+.aculta-messenger-state,
+.aculta-messenger-state--empty,
+.aculta-new-conversation-add { display: block; }
+
+.aculta-messenger-state--empty { color: var(--color-text-muted); }
+.aculta-messenger-sender__avatar-image { overflow: hidden; border-radius: var(--radius-full); }
+.aculta-messenger-sender__name { font-weight: 600; }
+.aculta-messenger-fallback-search--grid { display: grid; gap: .5rem; }

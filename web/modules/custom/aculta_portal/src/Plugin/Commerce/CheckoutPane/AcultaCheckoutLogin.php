@@ -102,7 +102,7 @@ final class AcultaCheckoutLogin extends Login {
       '#attributes' => [
         'id' => 'aculta-checkout-new-customer',
         'hidden' => $known_account,
-        'data-portal-ui' => 'checkout-guest-registration',
+        'class' => ['aculta-checkout__guest'],
       ],
       'email' => ['#plain_text' => $mail],
       'description' => ['#markup' => $this->t('Ao concluir o pedido, uma conta será criada em segundo plano e enviaremos um link para você definir sua senha.')],

@@ -125,8 +125,11 @@ final class EventLocationModalWidget extends WidgetBase {
         $statusLabel = $isPublic ? $translation->translate('Publicado') : $translation->translate('Rascunho');
 
         $element['summary'] = [
-          '#type' => 'container',
-          '#attributes' => ['data-portal-ui' => 'event-location-summary-card'],
+          '#type' => 'component',
+          '#component' => 'aculta420_v2:surface-panel',
+          '#props' => ['tone' => 'raised', 'radius' => 'md', 'spacing' => 'compact', 'elevation' => 'none'],
+          '#attributes' => ['class' => ['aculta-location-summary-card']],
+          '#slots' => ['content' => [
           'title' => [
             '#type' => 'html_tag',
             '#tag' => 'h4',
@@ -145,6 +148,7 @@ final class EventLocationModalWidget extends WidgetBase {
             '#value' => (string) $statusLabel,
             '#attributes' => ['data-portal-ui' => 'event-location-badge ' . ($isPublic ? 'event-location-badge-public' : 'event-location-badge-draft')],
           ],
+          ]],
         ];
 
         $modalUrl = Url::fromRoute($eventRouteContext->route('aculta_events.location_modal', 'aculta_events.organizer_location_modal'), [

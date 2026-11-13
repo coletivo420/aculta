@@ -92,6 +92,7 @@ final class WikiContributionIntentController extends ControllerBase {
     $cacheability = $result['cacheability'];
     $backUrl = $this->siteManagers->routeUrl(SiteKey::Wiki, 'entity.node.canonical', ['node' => $target->id()]);
     $build = [
+      '#attached' => ['library' => ['aculta_wiki/contribution-workspace']],
       '#type' => 'container',
       '#attributes' => ['data-portal-ui' => 'we-sativa-intent'],
       'header' => [

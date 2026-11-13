@@ -2,8 +2,7 @@
   {{ menu }}
   <div class="aculta-xp-hero">
     {% if show_identity %}
-      <div class="aculta-panel aculta-panel__body studio-account-identity"
-        data-portal-ui="studio-account-home studio-account-identity">
+      {% set identity_content %}
         <p>{{ identity_name }}</p>
         {% if identity_email %}
           <p class="aculta-xp-hero__mail">{{ identity_email }}</p>
@@ -14,6 +13,15 @@
         {% if profile_url %}
           <a class="studio__action" data-portal-ui="studio-profile-public-link" href="{{ profile_url }}">{{ 'Ver perfil público'|t }}</a>
         {% endif %}
+      {% endset %}
+      <div class="studio-account-identity">
+        {{ include('aculta420_v2:surface-panel', {
+          content: identity_content,
+          tone: 'raised',
+          radius: 'md',
+          spacing: 'compact',
+          elevation: 'none'
+        }, with_context = false) }}
       </div>
     {% endif %}
     {% if profile_link %}

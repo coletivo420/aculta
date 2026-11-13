@@ -88,9 +88,11 @@ final class AccountBioCard {
       ->applyTo($dialog);
 
     return [
-      '#type' => 'container',
-      // Id estável para a substituição AJAX: o tema troca data-portal-ui por classes ao renderizar.
-      '#attributes' => ['id' => 'aculta-account-bio-card', 'data-portal-ui' => 'account-bio-card'],
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:surface-panel',
+      '#props' => ['tone' => 'raised', 'radius' => 'md', 'spacing' => 'compact', 'elevation' => 'none'],
+      '#attributes' => ['id' => 'aculta-account-bio-card'],
+      '#slots' => ['content' => [
       'title' => ['#theme' => 'aculta_portal_element', '#tag' => 'h3', '#value' => $this->t('Bio')],
       // Caixa de formulário bloqueada: leitura da bio, ou o aviso como placeholder quando vazia.
       'text' => [
@@ -122,6 +124,7 @@ final class AccountBioCard {
         ],
       ),
       'dialog' => $dialog,
+      ]],
       '#cache' => [
         'tags' => $profile ? $profile->getCacheTags() : [],
       ],

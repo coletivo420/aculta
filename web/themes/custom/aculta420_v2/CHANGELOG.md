@@ -28,14 +28,25 @@
 - Os estilos do link fiscal, cadastro e login Google saíram do global e agora
   são anexados pelos respectivos elementos de checkout; o texto de bio da
   conta passou à folha contextual `portal-account`.
+- As três regras do workspace editorial da Wiki agora pertencem à biblioteca
+  `aculta_wiki/contribution-workspace`, anexada nos construtores das páginas.
+- Badges de status, locais e coorganizadores saíram do global e passaram ao
+  asset `aculta_events/events-portal-ui`; o badge de motivo do Studio passou
+  ao SDC `saved-content-page`.
+- Títulos de seção, aviso de pagamento, badge de recomendação, item inicial da
+  Conta e status do Google foram movidos para os SDCs ou biblioteca de rota
+  que os renderizam.
+- Os estilos do drawer, resultados de busca, remetentes e estados vazios de
+  Mensagens agora acompanham o SDC `messenger-trigger`.
 
-- A classificação PurgeCSS foi revisada seletor por seletor. Os 22 sem
-  evidência não tinham emissores em Twig/PHP/YAML/JavaScript; removidas suas
-  24 regras (3.295 bytes, contando espaço em branco associado). Os outros 144
-  seletores rejeitados foram mantidos: 2 dinâmicos, 46 vistos no HTML Runtime,
-  68 cobertos por padrões Drupal/UI, e 28 com referência no repositório.
-  CSS audit, verify, testes e Stylelint passaram; aceite visual no Runtime segue
-  pendente.
+- A classificação PurgeCSS foi reavaliada para os 142 seletores rejeitados:
+  todos têm evidência (2 dinâmicos, 43 no HTML Runtime, 68 cobertos por padrões
+  Drupal/UI e 29 com referência no repositório). Não houve cortes por falta de
+  evidência nem purge destrutivo. Os cortes seguintes foram migrações de
+  consumidores: 24 regras/39 seletores saíram do mapa, incluindo a troca dos
+  wrappers `aculta-panel` por composição SDC `surface-panel`; as regras V1 de
+  painel também saíram de `content.css` global. Auditoria, classificação, verify,
+  testes e Stylelint passaram; aceite visual no Runtime segue pendente.
 
 - Catálogo da UI Patterns Library atualizado para o inventário do checkout
   (127 manifests SDC, 188 stories), com registro das composições de eventos,

@@ -137,6 +137,7 @@ final class WikiContributorWorkspace {
       ])
       ->addCacheTags(['node_list:wiki_entry', 'aculta_wiki_proposal_list', 'aculta_contribution_list']);
     $build = [
+      '#attached' => ['library' => ['aculta_wiki/contribution-workspace']],
       '#type' => 'container',
       '#attributes' => ['data-portal-ui' => 'we-sativa-workspace'],
       'header' => [
@@ -341,6 +342,7 @@ final class WikiContributorWorkspace {
       ->addCacheContexts(['user', 'user.permissions', 'domain'])
       ->addCacheTags(['node_list:wiki_entry', 'aculta_wiki_proposal_list']);
     $build = [
+      '#attached' => ['library' => ['aculta_wiki/contribution-workspace']],
       '#type' => 'container',
       '#attributes' => ['data-portal-ui' => 'we-sativa-start'],
       'header' => [

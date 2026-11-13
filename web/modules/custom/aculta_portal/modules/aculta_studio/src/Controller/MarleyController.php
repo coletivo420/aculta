@@ -218,17 +218,15 @@ final class MarleyController {
       $build['layout']['main']['listing'] = $this->listings->build($tab['listing'], $this->account);
     }
     $build['layout']['main']['panel'] = [
-      '#type' => 'container',
-      '#attributes' => [
-        'data-portal-ui' => 'studio-panel',
-        'data-aculta-studio' => 'panel',
-        'data-aculta-studio-tab' => $sub,
-      ],
-      'actions' => [
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:surface-panel',
+      '#props' => ['tone' => 'raised', 'radius' => 'md', 'spacing' => 'compact', 'elevation' => 'none'],
+      '#attributes' => ['data-aculta-studio' => 'panel', 'data-aculta-studio-tab' => $sub],
+      '#slots' => ['content' => ['actions' => [
         '#theme' => 'item_list',
         '#items' => $actions,
         '#attributes' => ['data-portal-ui' => 'studio-actions', 'data-aculta-studio' => 'actions'],
-      ],
+      ]]],
     ];
     return $build;
   }
