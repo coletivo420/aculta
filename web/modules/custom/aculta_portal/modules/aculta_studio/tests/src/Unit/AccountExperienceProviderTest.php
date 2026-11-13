@@ -100,7 +100,7 @@ final class AccountExperienceProviderTest extends UnitTestCase {
 
     // The provider alone has no authority to enumerate suites. The dashboard
     // controller adds only manager-resolved links after access checks.
-    self::assertSame([], $build['#experiences']);
+    self::assertSame([], $build['#slots']['experiences']);
   }
 
 }

@@ -18,28 +18,28 @@ use PHPUnit\Framework\Attributes\Group;
 final class PortalUiHooksTest extends UnitTestCase {
 
   /**
-   * Applies the mapped Studio layout classes after Core builds container attrs.
+   * Preserves the Studio token after Core builds container attrs.
    */
-  public function testContainerPreprocessPreservesMappedAttributeTokens(): void {
+  public function testContainerPreprocessPreservesUnmappedAttributeTokens(): void {
     $variables = ['attributes' => ['data-portal-ui' => 'studio-profile-editor']];
 
     (new PortalUiHooks())->preprocessContainer($variables);
 
     self::assertInstanceOf(Attribute::class, $variables['attributes']);
     self::assertSame('studio-profile-editor', (string) $variables['attributes']['data-portal-ui']->value());
-    self::assertTrue($variables['attributes']->hasClass('aculta-profile-editor'));
+    self::assertFalse($variables['attributes']->hasClass('aculta-profile-editor'));
   }
 
   /**
-   * Maps array attributes in generic preprocess variables as well.
+   * Keeps unmapped tokens when generic preprocess converts attribute arrays.
    */
-  public function testGenericPreprocessConvertsAndMapsAttributeArrays(): void {
+  public function testGenericPreprocessKeepsUnmappedAttributeArrays(): void {
     $variables = ['wrapper_attributes' => ['data-portal-ui' => 'studio-profile-editor']];
 
     PortalUiHooks::preprocessVariables($variables);
 
     self::assertInstanceOf(Attribute::class, $variables['wrapper_attributes']);
-    self::assertTrue($variables['wrapper_attributes']->hasClass('aculta-profile-editor'));
+    self::assertFalse($variables['wrapper_attributes']->hasClass('aculta-profile-editor'));
   }
 
 }

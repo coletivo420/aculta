@@ -503,7 +503,7 @@ final class PagePresentationHooks {
       }
     }
     if (isset($element['#slots']) && is_array($element['#slots'])) {
-      foreach ($element['#slots'] as $key => &$slot) {
+      foreach ($element['#slots'] as &$slot) {
         if (is_array($slot) && $this->wrapPortalUiRenderArray($slot, $token, $component)) {
           unset($slot);
           return TRUE;

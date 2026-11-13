@@ -55,9 +55,7 @@ final class LearnerDashboardComposer {
     $summary = $this->summaries->getStudentLearningSummary($this->currentUser);
     $courses = [];
     foreach ($summary->courses as $course) {
-      if ($course instanceof StudentLearningCourse) {
-        $courses['course_' . preg_replace('/[^a-zA-Z0-9_-]/', '_', $course->id)] = $this->buildCourseCard($course);
-      }
+      $courses['course_' . preg_replace('/[^a-zA-Z0-9_-]/', '_', $course->id)] = $this->buildCourseCard($course);
     }
 
     $certificates = [];

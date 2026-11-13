@@ -87,9 +87,10 @@ final class SecretsRevealTest extends UnitTestCase {
     $build = $controller->show('BREVO_API_KEY');
     $this->assertSame(['max-age' => 0, 'contexts' => ['user']], $build['#cache']);
     $html = (string) Markup::create(htmlspecialchars(self::FAKE, ENT_QUOTES));
-    $this->assertSame($html, (string) $build['value']['text']['#value']);
-    $this->assertStringContainsString('&lt;ficticio&gt;', (string) $build['value']['text']['#value']);
-    $this->assertStringNotContainsString('<ficticio>', (string) $build['value']['text']['#value']);
+    $value = $build['#slots']['content']['value']['text']['#value'];
+    $this->assertSame($html, (string) $value);
+    $this->assertStringContainsString('&lt;ficticio&gt;', (string) $value);
+    $this->assertStringNotContainsString('<ficticio>', (string) $value);
   }
 
 }

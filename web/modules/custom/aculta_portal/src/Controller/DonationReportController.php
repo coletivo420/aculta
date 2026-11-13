@@ -117,7 +117,7 @@ final class DonationReportController implements ContainerInjectionInterface {
     ];
     $recorrentes = $this->recorrentes->construir();
     if ($recorrentes !== []) {
-      $saida['recorrentes'] = [
+      $conteudo['recorrentes'] = [
         '#type' => 'container',
         '#attributes' => ['data-portal-ui' => 'sales-section'],
         'titulo' => [
