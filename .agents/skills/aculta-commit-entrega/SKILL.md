@@ -1,17 +1,13 @@
 ---
 name: aculta-commit-entrega
-description: Faz commit atômico e publica em origin/dev, no padrão do ACULTA (português, trailer Claude-Session, sem coautoria). Use ao concluir uma entrega.
+description: Revisa, testa e publica uma entrega atomica em origin/dev; sincroniza Runtime apenas quando o codigo servido e o ambiente exigirem.
 ---
 
-# Commit e publicação de uma entrega
+# Commit e entrega
 
-1. Confira `git status --short`. Preserve trabalho alheio.
-2. Adicione só os arquivos da entrega, por caminho explícito. Nunca `git add -A`.
-3. `git diff --cached --check` deve passar.
-4. Mensagem em português, com o trailer `Claude-Session`. Nunca `Co-Authored-By`.
-5. Commit atômico. Se a tarefa virou entregas independentes, faça um commit por entrega.
-6. Publique: `git push origin dev`. Confirme com `git ls-remote origin dev`.
-7. Nunca force push, nem reescreva commit já publicado. Se um commit saiu misturado, corrija em commit novo e informe no relatório.
-8. Após confirmar o push, carregue `aculta-runtime-sync` (`plan` -> `sync-code` -> `verify`) para atualizar código/cache no Runtime quando o checkout estiver limpo e o delta for R0/R1. Se houver R2-R4 ou RX, rode `structural-plan`, carregue `aculta-runtime-migracoes` e registre o bloqueio sem executar updates/config por inferência.
-9. O `runtime-sync.sh` v2 distingue `checkout_sha`, `last_cache_success_sha` e `last_validated_sha`: se `HEAD == origin/dev` mas o cache da revisão ainda não foi validado, `sync-code` reconstrói o cache; se o checkout estiver sujo por outros agentes, reporte `BLOCKED`/`DEFERRED` com evidência.
-10. Não diga que publicou sem confirmar o push.
+1. Confirme `git status --short`, branch/remoto e o diff. Preservar trabalho alheio; staged apenas por caminho explicito, nunca `git add -A` indiscriminado.
+2. Classifique a revisao R0-R3 conforme `docs/operations/AGENT-REVIEW-POLICY.md`. Autorrevisao e gates de escopo em toda entrega; R2/R3 exigem segunda revisao antes de publicar; R3 exige autorizacao por operacao.
+3. Execute `git diff --cached --check` e revise o staged. Commit atomico em portugues, sem coautoria ficticia. Trailer de CLI e opcional e identifica apenas a sessao real.
+4. Push fast-forward em `origin/dev` e confirmacao do SHA remoto. Se o remoto avancou, integre sem sobrescrever arquivo de outro agente e refaca os testes afetados. Nunca force push, reset destrutivo ou reescrita de historico.
+5. Codigo servido: consulte `aculta-runtime-sync` no ambiente comprovado para diagnosticar e sincronizar quando R0/R1 do sincronizador e o preflight for seguro. Apenas docs: nao reconstruir cache. R2-R4/RX: estrutural-plan e aprovacao especifica, nao executar migracoes por inferencia.
+6. Relate hash confirmado, arquivos, classe, testes executados, falhas (inclusive CI skipped), pendencias e situacao do Runtime. TODO e handoff so se mudanca alterar fase ou exigir transferencia.

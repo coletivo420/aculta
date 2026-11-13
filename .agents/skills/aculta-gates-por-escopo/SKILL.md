@@ -5,7 +5,7 @@ description: Escolhe e roda só os gates do escopo do diff do ACULTA. Use antes 
 
 # Gates por escopo
 
-1. Liste o diff: `git diff --stat` e `git diff --name-only`.
+1. Liste o diff: `git diff --stat` e `git diff --name-only`. Classifique R0-R3 em `docs/operations/AGENT-REVIEW-POLICY.md`; as classes nao sao as categorias operacionais do Runtime Sync.
 2. Leia `docs/operations/GATES.md` só na tabela de escopo. Não leia o arquivo inteiro.
 3. Rode só os gates das linhas que casam com o diff. Gate de módulo dependente também entra.
 4. Gate fora do escopo: registre como N/A com o motivo.
@@ -33,6 +33,6 @@ Escolha pelo arquivo alterado e pelas integrações realmente presentes no Compo
 | stories/previews, modos e reflow | browser script existente em `tests/browser/`; não invente uma frente nem relaxe assertions |
 | UI Icons ou `.icons.yml` | teste focal de pack existente, análise dos assets/paths e gate do tema pertinente; não há gate específico de UI Icons no inventário auditado |
 
-**Runtime Sync e skills:** ao modificar `.agents/skills`, aliases, `AGENTS.md`, `scripts/runtime-sync.sh`, `scripts/runtime-sync/**` ou seus runbooks, execute `python3 scripts/validate-agent-skills.py`, `php scripts/validate-agent-token-budget.php`, `bash -n scripts/runtime-sync.sh` e `bash scripts/test-runtime-sync.sh`. Se alterar a integração de leitura com o Deployer, rode `php web/modules/custom/aculta_portal/modules/aculta_deployer/tests/run.php` e `DeployerStatusReaderTest`. Runtime real bloqueado ou sem acesso é DEFERRED/BLOCKED, não PASS.
+**Governanca dos agentes:** alteracoes em `AGENTS.md`, `CLAUDE.md`, `.agents/skills`, `.claude/settings.json`, `.codex/hooks.json` e runbooks pedem `python3 scripts/validate-agent-skills.py`, `php scripts/validate-agent-token-budget.php` e revisao dos contratos. **Runtime Sync:** so se alterar `scripts/runtime-sync.sh`, `scripts/runtime-sync/**` ou classificador operacional, execute tambem `bash -n scripts/runtime-sync.sh` e `bash scripts/test-runtime-sync.sh`. Se alterar a integração de leitura com o Deployer, rode `php web/modules/custom/aculta_portal/modules/aculta_deployer/tests/run.php` e `DeployerStatusReaderTest`. Runtime real bloqueado ou sem acesso é DEFERRED/BLOCKED, não PASS.
 
 Não existe gate de acessibilidade automatizada universal nem gate dedicado para cada integração Views/Layout Builder. Use teste existente da frente ou registre N/A/DEFERRED com motivo.

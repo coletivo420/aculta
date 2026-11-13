@@ -5,7 +5,7 @@ description: Use após push em origin/dev, ao inspecionar SHA, cache, divergênc
 
 # ACULTA - sincronização cotidiana do Runtime
 
-**Gatilho:** depois de cada push de agente, ao diagnosticar Runtime desatualizado ou quando a tarefa envolver Git, cache, Drush ou coordenação de checkouts. Combine com `aculta-commit-entrega` e `aculta-gates-por-escopo`.
+**Gatilho:** apos push que altera codigo servido, quando houver acesso real ao Runtime, ou a pedido para diagnosticar cache, Drush ou sincronizacao. Push apenas de docs, skills e instrucoes nao exige rebuild. Nao executar comandos de Runtime por ritual fora do ambiente comprovado. Combine com `aculta-commit-entrega` e `aculta-gates-por-escopo`.
 
 **Fonte operacional:** `docs/operations/RUNTIME-SYNC.md`. **Arquitetura v2:** `docs/operations/RUNTIME-SYNC-PLANO-V2.md`. Leia apenas a seção relevante. Use a [matriz de risco e testes](references/CLASSIFICACAO-E-TESTES.md) se o diff não for trivial.
 

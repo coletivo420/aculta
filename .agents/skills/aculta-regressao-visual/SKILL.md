@@ -9,8 +9,8 @@ Use junto com `aculta-navegador-testes`, `css`, `sdc`, `ui-styles`, `ui-patterns
 
 ## Estado real (leia antes de afirmar cobertura)
 
-- **Ainda não existe suíte de snapshots versionada.** Esta skill define o contrato e a regra de execução. Nenhum PNG de referência foi criado nesta entrega.
-- O estado é **DEFERRED** até existirem: (a) imagens de referência revisadas por pessoa, (b) ambiente fixado (versão do browser e fontes), (c) execução em um ambiente descartável ou na origem de desenvolvimento autorizada.
+- **Cobertura parcial:** existem referencias versionadas da navegacao, mas nao uma suite ampla para todas as frentes. Conferir arquivo e baseline da rota afetada; ausencia de referencia nesta frente e DEFERRED, nao PASS.
+- Uma frente sem (a) baseline aprovado, (b) browser/fontes fixados e (c) execucao autorizada permanece **DEFERRED**. Outras frentes com evidencias podem ter resultado proprio.
 - Não diga "regressão visual PASS" sem essas três condições.
 
 ## Regras de determinismo
@@ -38,7 +38,7 @@ Para cada tela, o teste deve afirmar além do pixel: ausência de overflow horiz
 
 ## Comandos
 
-- Listagem: `cd tests/browser && npm run test:list` (quando a suíte existir).
+- Listagem: `cd tests/browser && npm run test:list` (confirme a configuracao e a frente antes da execucao).
 - Execução: `ACULTA_SITE_ORIGIN=<origem> SUITE_OUT=<fora-do-repo> npx playwright test --config playwright.config.mjs playwright.visual.spec.mjs`.
 - Nunca use `--update-snapshots` para "fazer passar".
 

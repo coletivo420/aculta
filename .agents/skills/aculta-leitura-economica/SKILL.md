@@ -1,15 +1,13 @@
 ---
 name: aculta-leitura-economica
-description: Limita a leitura e a saída de um agente ao necessário para a tarefa. Use no início de qualquer tarefa, antes de ler documentos longos ou delegar a subagente.
+description: Economiza contexto por leitura progressiva, sem impedir consulta necessaria a Core, contrib, logs ou documentos completos.
 ---
 
-# Leitura econômica
+# Leitura progressiva
 
-1. Leitura de partida: `AGENTS.md`, `TODO.md` raiz e o `TODO.md` do componente. Só isso.
-2. Escolha a linha do tipo de tarefa no orçamento de `docs/portal/AGENT-TOKEN-ECONOMY.md`. Mais de três documentos de partida indica escopo largo: reduza a subfase.
-3. Procure antes de ler: `rg -n "termo" caminho` e leia só o trecho. Para rota ou token, use `python3 scripts/lookup.py rota|token TERMO`. Para uma seção de Markdown longo, use `python3 scripts/doc-section.py ARQUIVO "Título" --max BYTES` (`--list` mostra as seções).
-4. Não leia `data/`, `references/`, `vendor/`, `docs/history/`, `web/core/`, `web/modules/contrib/` nem logs sem motivo escrito na tarefa.
-5. Saída de comando verbosa: `python3 scripts/agent-output.py --lines 60 -- COMANDO`. Para revisão, `git diff --stat` antes do diff completo.
-6. Subagente: passe só os caminhos-alvo, peça resposta com limite (ex.: "até 15 linhas") e use só a conclusão. Se a tarefa cabe em duas leituras, não delegue.
-7. Antes de `/clear` ou de encerrar, registre o handoff com a skill `aculta-handoff` e retome a sessão só por ele.
-8. Economia nunca substitui gate, teste ou revisão (item 8 de `AGENT-TOKEN-ECONOMY.md`).
+1. Consulte as instrucoes do escopo, HEAD e arquivos-alvo. Leia TODO e handoff quando forem uteis a fase, sem ritual de tres arquivos obrigatorios.
+2. Prefira `rg -n`, `git diff --stat`, `scripts/lookup.py` e `scripts/doc-section.py` quando a pergunta for focal. Leia documento inteiro se for necessario para concluir corretamente.
+3. `vendor/`, `web/core/`, `web/modules/contrib/`, `data/`, `references/` e `docs/history/` sao fontes sob demanda, nao proibicoes de leitura. Inspecione apenas arquivos relevantes e jamais exponha segredos.
+4. Saidas verbosas: `python3 scripts/agent-output.py --lines 60 -- COMANDO`; preserve erro e status original. Em falha, consulte o log de forma direcionada.
+5. Delegue subagente somente quando ampliar cobertura ou qualidade. Nao imponha limites de linhas que escondam riscos e nao faca handoff de rotina para fix concluido.
+6. Economia de tokens nunca reduz os gates pertinentes, a verificacao de acesso ou a honestidade dos resultados.
