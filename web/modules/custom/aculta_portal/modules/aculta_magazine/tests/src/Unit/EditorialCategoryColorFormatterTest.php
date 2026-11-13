@@ -19,34 +19,31 @@ final class EditorialCategoryColorFormatterTest extends UnitTestCase {
    * Accepts the four tokens approved for category labels.
    */
   public function testOnlyApprovedColorTokensProduceClasses(): void {
-    self::assertSame('aculta-category--red', EditorialCategoryColorFormatter::classForColor('red'));
-    self::assertSame('aculta-category--green', EditorialCategoryColorFormatter::classForColor('green'));
-    self::assertSame('aculta-category--yellow', EditorialCategoryColorFormatter::classForColor('yellow'));
-    self::assertSame('aculta-category--green-dark', EditorialCategoryColorFormatter::classForColor('green-dark'));
-    self::assertNull(EditorialCategoryColorFormatter::classForColor('blue'));
-    self::assertNull(EditorialCategoryColorFormatter::classForColor(''));
-    self::assertNull(EditorialCategoryColorFormatter::classForColor(NULL));
+    self::assertSame('red', EditorialCategoryColorFormatter::colorForToken('red'));
+    self::assertSame('green', EditorialCategoryColorFormatter::colorForToken('green'));
+    self::assertSame('yellow', EditorialCategoryColorFormatter::colorForToken('yellow'));
+    self::assertSame('green-dark', EditorialCategoryColorFormatter::colorForToken('green-dark'));
+    self::assertNull(EditorialCategoryColorFormatter::colorForToken('blue'));
+    self::assertNull(EditorialCategoryColorFormatter::colorForToken(''));
+    self::assertNull(EditorialCategoryColorFormatter::colorForToken(NULL));
   }
 
   /**
-   * Preserves existing link classes when adding a color.
+   * Preserves the rendered Drupal link as the SDC label slot.
    */
-  public function testColorIsAddedToCategoryLinkWithoutDroppingExistingClasses(): void {
+  public function testCategoryLinkIsComposedByEditorialCategorySdc(): void {
     $element = [
       '#type' => 'link',
       '#options' => ['attributes' => ['class' => ['field-name']]],
     ];
 
-    $result = EditorialCategoryColorFormatter::applyColorClass($element, 'green-dark');
-    $expectedTokens = [
-      'field-name',
-      'aculta-category',
-      EditorialCategoryColorFormatter::classForColor('green-dark'),
-    ];
+    $result = EditorialCategoryColorFormatter::buildComponent($element, 'green-dark');
 
-    self::assertSame('link', $result['#type']);
-    self::assertSame($expectedTokens, $result['#options']['attributes']['class']);
-    self::assertSame($element, EditorialCategoryColorFormatter::applyColorClass($element, 'invalid'));
+    self::assertSame('component', $result['#type']);
+    self::assertSame('aculta420_v2:editorial-category', $result['#component']);
+    self::assertSame(['color' => 'green-dark'], $result['#props']);
+    self::assertSame(['label' => $element], $result['#slots']);
+    self::assertNull(EditorialCategoryColorFormatter::buildComponent($element, 'invalid'));
   }
 
   /**

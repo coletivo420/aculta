@@ -241,12 +241,20 @@ $assert(str_contains($donationController, "'aculta420_v2:sales-panel'"), 'O rela
 
 $relatedContentCss = (string) file_get_contents($theme . '/components/related-content/related-content.css');
 $relatedContentComponent = (string) file_get_contents($theme . '/components/related-content/related-content.component.yml');
-$contentCss = (string) file_get_contents($theme . '/src/styles/content.css');
+$contentCssPath = $theme . '/src/styles/content.css';
+$contentCss = is_file($contentCssPath) ? (string) file_get_contents($contentCssPath) : '';
 $relatedContentBlock = (string) file_get_contents($root . '/web/modules/custom/aculta_portal/modules/aculta_index/src/Plugin/Block/RelatedContentBlock.php');
 $assert(!str_contains($contentCss, '.aculta-related-content'), 'Os seletores do bloco relacionado voltaram ao content.css global.');
+$assert(!is_file($contentCssPath), 'content.css permaneceu após migrar seus consumidores.');
 $assert(str_contains($relatedContentCss, '.aculta-related-content__item'), 'O SDC related-content perdeu o CSS dos itens.');
 $assert(str_contains($relatedContentComponent, 'related-content.css'), 'O SDC related-content não declara sua folha local.');
 $assert(str_contains($relatedContentBlock, 'aculta420_v2:related-content'), 'O bloco RelatedContent não compõe o SDC de apresentação.');
+$editorialCategoryComponent = (string) file_get_contents($theme . '/components/editorial-category/editorial-category.component.yml');
+$editorialCategoryCss = (string) file_get_contents($theme . '/components/editorial-category/editorial-category.css');
+$editorialCategoryFormatter = (string) file_get_contents($root . '/web/modules/custom/aculta_portal/modules/aculta_magazine/src/Plugin/Field/FieldFormatter/EditorialCategoryColorFormatter.php');
+$assert(str_contains($editorialCategoryComponent, 'editorial-category.css') && str_contains($editorialCategoryComponent, 'slots:'), 'O SDC editorial-category não declara seu CSS e slot de conteúdo.');
+$assert(str_contains($editorialCategoryCss, '.editorial-category--green a') && !str_contains($editorialCategoryCss, '.aculta-category'), 'O SDC editorial-category não possui os estilos migrados.');
+$assert(str_contains($editorialCategoryFormatter, 'aculta420_v2:editorial-category'), 'O formatter da Revista não compõe o SDC editorial-category.');
 
 $imageAuditCss = (string) file_get_contents($theme . '/components/image-audit-report/image-audit-report.css');
 $imageAuditComponent = (string) file_get_contents($theme . '/components/image-audit-report/image-audit-report.component.yml');

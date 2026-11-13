@@ -32,6 +32,13 @@ Agrupa os slots `title` e `authors` preparados pelo módulo `aculta_magazine`.
 O SDC não consulta autor, publicação ou permissão. CSS local anexado com o
 componente; story: `article-authors.default.story.yml`.
 
+### editorial-category — Categoria editorial
+
+O formatter `aculta_editorial_category_color` compõe este SDC para a categoria
+da Revista. O link de referência renderizado pelo Drupal permanece no slot
+`label`; a prop `color` aceita somente `red`, `green`, `yellow` e `green-dark`.
+O CSS de contraste das quatro opções acompanha o componente.
+
 ### related-content — Conteúdo relacionado
 
 Envolve o `item_list` montado pelo bloco `aculta_index`; slots estritos sem

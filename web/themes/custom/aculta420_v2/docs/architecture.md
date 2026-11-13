@@ -142,6 +142,8 @@ Atualização P7 (2026-11-12): a gaveta, estilos de conversa e agrupamento de av
 
 O bloco `aculta_index_related_content` agora compõe o SDC `related-content` e passa a `item_list` como slot. O CSS dos itens saiu de `content.css` global para o CSS do SDC; consulta, título, entidades autorizadas e cache continuam no módulo. Story e gate de render isolado verificam a composição.
 
+Em 2026-11-13 o formatter da categoria editorial passou a compor o SDC `editorial-category`, preservando como slot o link produzido pelo Entity Reference Formatter. As variantes de cor migraram de `content.css` para o asset local do SDC e `content.css` saiu do `global-styling`.
+
 Os metadados de publicação e os links de compartilhamento entregues pelo `aculta_magazine` usam `revista-publication.css`, declarado como asset do SDC. O template de nó não anexa uma biblioteca sem definição; o CSS acompanha o view mode full via componente.
 
 Piloto de realocação (2026-11-12): as regras de `portal-ui-map.css` cujos seletores são exclusivos de `aculta_events` foram movidas para a biblioteca `aculta_events/events-portal-ui`, anexada pelo próprio módulo via `#attached`. O gate de classes mapeadas agora lê também `aculta_portal/modules/*/css`. Estado: captura visual DEFERRED.

@@ -5,6 +5,10 @@
   não publicadas quando UI Styles seleciona o marcador ACULTA. `.container-inline`
   voltou ao estilo nativo fornecido por `system/base`; o tema deixou de impor
   flex e espaçamento a formulários do Core e contrib.
+- O formatter de categoria editorial da Revista agora compõe o SDC
+  `editorial-category`, preservando o link do Drupal como slot. As quatro
+  variantes fechadas foram para o CSS local do componente; `content.css` saiu
+  de `global-styling` e foi removido.
 
 - Auditoria PurgeCSS: `css:verify` agora exige todos os arquivos de fonte e
   staging, valida os bytes e conjuntos de seletores por folha, hashes, versões,

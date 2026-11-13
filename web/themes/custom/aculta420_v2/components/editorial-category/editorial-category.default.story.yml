@@ -1,0 +1,6 @@
+name: Revista — categoria
+description: Link de categoria editorial renderizado pelo formatter da Revista.
+props:
+  color: green
+slots:
+  label: <a href="/revista">Revista</a>

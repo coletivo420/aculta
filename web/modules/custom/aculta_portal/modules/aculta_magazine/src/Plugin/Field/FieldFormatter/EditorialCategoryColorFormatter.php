@@ -42,44 +42,43 @@ final class EditorialCategoryColorFormatter extends EntityReferenceLabelFormatte
       if (!is_array($element) || ($element['#type'] ?? NULL) !== 'link') {
         continue;
       }
-      $elements[$delta] = self::applyColorClass($element, $term->get('field_section_color')->value);
+      $component = self::buildComponent($element, $term->get('field_section_color')->value);
+      if ($component !== NULL) {
+        $elements[$delta] = $component;
+      }
     }
     return $elements;
   }
 
   /**
-   * Returns a CSS class for approved tokens or NULL for empty/invalid data.
+   * Returns an approved color token or NULL for empty/invalid data.
    */
-  public static function classForColor(mixed $value): ?string {
-    return is_string($value) && in_array($value, self::COLOR_TOKENS, TRUE)
-      ? 'aculta-category--' . $value
-      : NULL;
+  public static function colorForToken(mixed $value): ?string {
+    return is_string($value) && in_array($value, self::COLOR_TOKENS, TRUE) ? $value : NULL;
   }
 
   /**
-   * Applies a palette class to a reference link while preserving its classes.
+   * Composes a Drupal reference link inside the editorial-category SDC.
    *
    * @param array<string, mixed> $element
    *   Render array for a category reference.
    * @param mixed $value
    *   Stored color token.
    *
-   * @return array<string, mixed>
-   *   Updated render array.
+   * @return array<string, mixed>|null
+   *   SDC render array, or NULL when the token or element is unsupported.
    */
-  public static function applyColorClass(array $element, mixed $value): array {
-    $class = self::classForColor($value);
-    if ($class === NULL || ($element['#type'] ?? NULL) !== 'link') {
-      return $element;
+  public static function buildComponent(array $element, mixed $value): ?array {
+    $color = self::colorForToken($value);
+    if ($color === NULL || ($element['#type'] ?? NULL) !== 'link') {
+      return NULL;
     }
-    $classes = $element['#options']['attributes']['class'] ?? [];
-    $classes = is_array($classes) ? $classes : [$classes];
-    $element['#options']['attributes']['class'] = array_values(array_unique([
-      ...$classes,
-      'aculta-category',
-      $class,
-    ]));
-    return $element;
+    return [
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:editorial-category',
+      '#props' => ['color' => $color],
+      '#slots' => ['label' => $element],
+    ];
   }
 
 }
