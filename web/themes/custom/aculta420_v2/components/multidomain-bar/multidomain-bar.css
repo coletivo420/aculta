@@ -601,7 +601,8 @@ html body:has(.aculta-institution-bar) .toolbar .toolbar-tray-vertical {
 }
 
 .aculta-institution-bar .aculta-utility-trigger__icon .aculta-icon,
-.aculta-institution-bar .aculta-utility-dialog__close .aculta-icon {
+.aculta-institution-bar .aculta-utility-dialog__close .aculta-icon,
+.aculta-institution-bar .aculta-account-menu__icon {
   color: var(--institution-bar-icon);
 }
 
