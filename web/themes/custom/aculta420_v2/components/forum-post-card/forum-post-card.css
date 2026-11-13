@@ -602,3 +602,24 @@
   max-inline-size: 26rem;
   margin-inline: auto;
 }
+
+/* Autoria lateral (author_position: side): corpo à esquerda, autoria em coluna à direita, rodapé na largura toda.
+   Só no desktop; no celular o cartão empilha como antes. */
+@media (min-width: 48rem) {
+  .forum-post-card--author-side > .forum-post-card__inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(12rem, 16rem);
+    grid-template-areas: "body header" "footer footer";
+    column-gap: var(--spacing-lg);
+  }
+  .forum-post-card--author-side > .forum-post-card__inner > .forum-post-card__header {
+    grid-area: header;
+    flex-direction: column;
+    align-items: stretch;
+    padding: var(--spacing-md);
+    border-radius: var(--border-radius-md, .5rem);
+    background: var(--color-surface-subtle);
+  }
+  .forum-post-card--author-side .forum-post-card__body { grid-area: body; }
+  .forum-post-card--author-side .forum-post-card__footer { grid-area: footer; }
+}

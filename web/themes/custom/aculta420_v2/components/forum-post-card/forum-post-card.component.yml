@@ -8,6 +8,18 @@ props:
   additionalProperties: false
   required: [author_name]
   properties:
+    theme:
+      type: string
+      title: Tema
+      enum: [light, dark]
+      default: light
+      description: "dark aplica os tokens de modo escuro somente a este cartão."
+    author_position:
+      type: string
+      title: Posição da autoria
+      enum: [top, side]
+      default: top
+      description: "top: autoria no topo. side: autoria em coluna à direita, ao lado do corpo."
     density:
       type: string
       title: Densidade do cartão

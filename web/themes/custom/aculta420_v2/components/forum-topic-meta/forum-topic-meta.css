@@ -116,3 +116,7 @@
   color: var(--color-text);
   font-size: var(--font-size-base);
 }
+
+/* Densidade compacta (celular): estatísticas em grade de duas colunas, título um degrau menor. */
+.forum-topic-meta--density-compact .forum-topic-meta__stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.forum-topic-meta--density-compact .forum-topic-meta__title { font-size: var(--font-size-base); }

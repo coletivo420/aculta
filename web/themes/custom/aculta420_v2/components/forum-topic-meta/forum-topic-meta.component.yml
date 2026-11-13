@@ -8,6 +8,18 @@ props:
   additionalProperties: false
   required: [title]
   properties:
+    theme:
+      type: string
+      title: Tema
+      enum: [light, dark]
+      default: light
+      description: "dark aplica os tokens de modo escuro somente a este cartão."
+    density:
+      type: string
+      title: Densidade
+      enum: [default, compact]
+      default: default
+      description: "compact: versão para celular (menos espaçamento, estatísticas em grade)."
     title:
       type: string
       title: Título do tópico

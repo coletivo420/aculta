@@ -1,0 +1,9 @@
+name: Meta do tópico (modo escuro)
+props:
+  theme: dark
+  title: Tópico do fórum (exemplo)
+  status: open
+  posts: 18
+  participants: 6
+  views: 342
+  last_activity: 07 nov 2026

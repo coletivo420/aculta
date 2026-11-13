@@ -1,0 +1,43 @@
+name: Cartão de Post do Fórum espelhado (autoria lateral)
+props:
+  author_position: side
+  accent_side: end
+  stripe: brand
+  author_name: PiradoPirata
+  author_posts: 342
+  author_reactions: 19
+  timestamp: Há 3 horas
+slots:
+  body:
+    '#markup': <p>Excelente tutorial! Para solos orgânicos vivos (no-till), recomendo também monitorar a umidade com tensiômetro nas primeiras semanas para evitar compactação.</p>
+  actions:
+    '#type': component
+    '#component': aculta420_v2:content-reply-bar
+    '#props':
+      permalink_url: /forum/topico/123#post-456
+      edit_url: /discussoes/editar/comment/456
+      quote_url: /discussoes/citar/comment/456
+      reply_url: /discussoes/responder/comment/456
+      delete_url: /discussoes/apagar/comment/456
+      target_id: aculta-reply-dialog-body
+  reactions_slot:
+    '#type': component
+    '#component': aculta420_v2:discussion-reaction-bar
+    '#props':
+      target_id: discussion-reactions-comment-story
+      entity_type: comment
+      entity_id: '1'
+      total_count: 19
+      user_reaction: thumbs_up
+      default_reaction: heart
+      can_react: true
+      react_url: '#'
+      csrf_token: story-token
+      reactions:
+        thumbs_up:
+          id: thumbs_up
+          count: 12
+          user_reacted: true
+        seedling:
+          id: seedling
+          count: 7

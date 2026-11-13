@@ -92,3 +92,14 @@
   color: var(--color-text);
   line-height: 1.5;
 }
+
+/* Variante espelhada: a faixa de acento vai para o lado direito, em vermelho. */
+.forum-reply-compact--side-end::before {
+  inset-inline-start: auto;
+  inset-inline-end: 0;
+  background: var(--accent-red-stripe);
+}
+
+/* Densidade compacta (celular): cabeçalho quebra linha e texto um degrau menor. */
+.forum-reply-compact--density-compact .forum-reply-compact__header { flex-wrap: wrap; }
+.forum-reply-compact--density-compact .forum-reply-compact__text { font-size: var(--font-size-sm); }

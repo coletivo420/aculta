@@ -76,3 +76,20 @@
   align-items: center;
   gap: var(--spacing-xs);
 }
+
+/* Variante espelhada: inverte as faixas (vermelha à esquerda, verde à direita). */
+.forum-quote--side-end::before {
+  inset-inline-start: auto;
+  inset-inline-end: 0;
+  background: var(--accent-red-stripe);
+}
+
+.forum-quote--side-end::after {
+  inset-inline-end: auto;
+  inset-inline-start: 0;
+  background: var(--accent-green-stripe);
+}
+
+/* Densidade compacta (celular): menos respiro ao redor do texto citado. */
+.forum-quote--density-compact .forum-quote__body { padding: var(--spacing-sm); }
+.forum-quote--density-compact .forum-quote__text { font-size: var(--font-size-sm); }

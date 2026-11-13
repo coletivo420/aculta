@@ -7,6 +7,24 @@ props:
   type: object
   additionalProperties: false
   properties:
+    theme:
+      type: string
+      title: Tema
+      enum: [light, dark]
+      default: light
+      description: "dark aplica os tokens de modo escuro somente a este cartão."
+    density:
+      type: string
+      title: Densidade
+      enum: [default, compact]
+      default: default
+      description: "compact: versão para celular (menos espaçamento, estatísticas em grade)."
+    accent_side:
+      type: string
+      title: Lado da faixa de acento
+      enum: [start, end]
+      default: start
+      description: "start: padrão, faixa à esquerda. end: espelhado, faixa do lado oposto."
     author_name:
       type: [string, 'null']
       title: Autor citado

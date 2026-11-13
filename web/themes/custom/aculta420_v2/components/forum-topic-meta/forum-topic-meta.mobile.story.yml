@@ -1,0 +1,9 @@
+name: Meta do tópico (mobile)
+props:
+  density: compact
+  title: Tópico do fórum (exemplo)
+  status: open
+  posts: 18
+  participants: 6
+  views: 342
+  last_activity: 07 nov 2026

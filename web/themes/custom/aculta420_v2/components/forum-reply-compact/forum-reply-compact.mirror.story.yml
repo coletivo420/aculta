@@ -1,0 +1,11 @@
+name: Reply compacto espelhado
+description: Mesmo cartão de resposta, com a faixa de acento do lado oposto.
+props:
+  author_name: PiradoPirata
+  timestamp: Há 1 hora
+  reacted: true
+  reaction_count: 3
+  accent_side: end
+slots:
+  content:
+    '#markup': '<p class="forum-reply-compact__line">Boa dica! Para o solo, também vale checar a drenagem antes do plantio.</p>'
