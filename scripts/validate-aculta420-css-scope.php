@@ -163,7 +163,10 @@ $assert(str_contains($lmsBaseCss, 'font-family: var(--font-family-base)') && str
 $assert(!str_contains($lmsDashboardCss, '[data-aculta-learning-home] {'), 'Tipografia herdada da home LMS permaneceu duplicada no SDC.');
 $assert(!str_contains($lmsJourneyCss, 'font-family: var(--font-family-base)'), 'Tipografia base permaneceu duplicada na jornada LMS.');
 $assert(!str_contains($lmsRoomCss, 'font-family: var(--font-family-base)'), 'Tipografia base permaneceu duplicada na sala LMS.');
-$accountDashboardTemplate = (string) file_get_contents($theme . '/templates/aculta-studio-account.html.twig');
+$accountDashboardTemplatePath = $theme . '/templates/aculta-studio-account.html.twig';
+$accountDashboardTemplate = is_file($accountDashboardTemplatePath)
+    ? (string) file_get_contents($accountDashboardTemplatePath)
+    : '';
 $assert(isset($accountDashboardComponent['libraryOverrides']['js']['../../js/account-carousel.js']), 'O SDC account-experience-dashboard não declara o JS local do carrossel.');
 $assert(($accountDashboardComponent['libraryOverrides']['dependencies'] ?? []) === ['core/drupal', 'core/once'], 'O carrossel do dashboard não declara dependências de behavior.');
 $assert(!str_contains($accountDashboardTemplate, "attach_library('aculta420_v2/account-carousel')"), 'O template legado ainda anexa a biblioteca account-carousel inexistente.');
