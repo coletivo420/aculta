@@ -14,5 +14,7 @@ props:
   finished_text: Curso concluído
   current_lesson: Próxima aula — Preparação do ambiente
 slots:
-  journey_action: '<a class="button button--outline" href="#jornada">Ver jornada</a>'
-  continue_action: '<a class="button button--primary" href="#aula">Continuar aula</a>'
+  journey_action:
+    '#markup': <a class="button button--outline" href="#jornada">Ver jornada</a>
+  continue_action:
+    '#markup': <a class="button button--primary" href="#aula">Continuar aula</a>

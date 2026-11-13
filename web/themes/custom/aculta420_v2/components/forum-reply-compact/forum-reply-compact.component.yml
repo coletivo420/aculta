@@ -1,0 +1,30 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: "Reply compacto: resposta"
+description: "Resposta compacta do fórum: autor, horário, texto e ações (reação e menu), com faixa tricolor no topo e faixa verde à esquerda."
+status: stable
+group: Comunidade
+props:
+  type: object
+  additionalProperties: false
+  required: [author_name]
+  properties:
+    author_name:
+      type: string
+      title: Nome do autor
+      minLength: 1
+    avatar:
+      type: [string, 'null']
+      title: Mídia do avatar do autor (markup da imagem)
+      default: null
+    timestamp:
+      type: [string, 'null']
+      title: Horário da resposta
+      default: null
+    reacted:
+      type: boolean
+      title: Usuário atual reagiu
+      default: false
+    reaction_count:
+      type: [integer, 'null']
+      title: Contagem de reações
+      default: null

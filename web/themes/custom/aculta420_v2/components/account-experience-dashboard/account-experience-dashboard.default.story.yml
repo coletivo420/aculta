@@ -13,9 +13,15 @@ props:
   account_link_title: Minha conta
   account_link_description: Preferências e dados cadastrais
 slots:
-  menu: '<nav aria-label="Studio"><a href="/conta">Conta</a></nav>'
-  avatar: '<span class="avatar" aria-hidden="true"></span>'
-  profile_link: '<a href="/perfil/exemplo">Ver perfil</a>'
-  calendar: '<section aria-label="Calendário">Calendário</section>'
-  connections: '<section aria-label="Conexões">Conexões</section>'
-  experiences: '<li class="aculta-account-experience-item"><article class="aculta-xp-card">Curso</article></li>'
+  menu:
+    '#markup': <nav aria-label="Studio"><a href="/conta">Conta</a></nav>
+  avatar:
+    '#markup': <span class="avatar" aria-hidden="true"></span>
+  profile_link:
+    '#markup': <a href="/perfil/exemplo">Ver perfil</a>
+  calendar:
+    '#markup': <section aria-label="Calendário">Calendário</section>
+  connections:
+    '#markup': <section aria-label="Conexões">Conexões</section>
+  experiences:
+    '#markup': <li class="aculta-account-experience-item"><article class="aculta-xp-card">Curso</article></li>

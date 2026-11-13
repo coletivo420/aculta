@@ -9,7 +9,11 @@ props:
   empty_courses_message: Você ainda não está matriculado em nenhum curso.
   certificates_title: Meus certificados
 slots:
-  resume: '<article class="lms-learning-course-card"><h3 class="lms-learning-course-card__title">Cultivo responsável</h3><p>Próxima aula: Preparação do ambiente</p><a class="button button--primary" href="#aula">Continuar aula</a></article>'
-  courses: '<article class="lms-learning-course-card"><h3 class="lms-learning-course-card__title">Cultivo responsável</h3><p>3 de 8 aulas concluídas</p><a class="button button--outline" href="#jornada">Ver jornada</a></article>'
-  empty_action: '<a class="button button--primary" href="#cursos">Explorar o catálogo de cursos</a>'
-  certificates: '<article class="lms-certificate-card"><h3 class="lms-certificate-card__title">Cultivo responsável</h3><p>Válido</p></article>'
+  resume:
+    '#markup': '<article class="lms-learning-course-card"><h3 class="lms-learning-course-card__title">Cultivo responsável</h3><p>Próxima aula: Preparação do ambiente</p><a class="button button--primary" href="#aula">Continuar aula</a></article>'
+  courses:
+    '#markup': <article class="lms-learning-course-card"><h3 class="lms-learning-course-card__title">Cultivo responsável</h3><p>3 de 8 aulas concluídas</p><a class="button button--outline" href="#jornada">Ver jornada</a></article>
+  empty_action:
+    '#markup': <a class="button button--primary" href="#cursos">Explorar o catálogo de cursos</a>
+  certificates:
+    '#markup': <article class="lms-certificate-card"><h3 class="lms-certificate-card__title">Cultivo responsável</h3><p>Válido</p></article>

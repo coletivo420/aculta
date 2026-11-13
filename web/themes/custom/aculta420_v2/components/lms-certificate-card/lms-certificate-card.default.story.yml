@@ -7,4 +7,5 @@ props:
   status_text: Válido
   issued_text: Emitido em 13 nov. 2026
 slots:
-  verification_action: '<a class="button button--secondary" href="#verificar">Ver certificado</a>'
+  verification_action:
+    '#markup': <a class="button button--secondary" href="#verificar">Ver certificado</a>

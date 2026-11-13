@@ -5,4 +5,5 @@ props:
   title: Como posso participar?
   expanded: false
 slots:
-  content: '<p>Consulte as atividades abertas e fale com a equipe responsável.</p>'
+  content:
+    '#markup': <p>Consulte as atividades abertas e fale com a equipe responsável.</p>

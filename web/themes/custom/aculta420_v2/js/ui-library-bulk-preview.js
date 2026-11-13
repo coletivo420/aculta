@@ -231,7 +231,8 @@
 
     // Procura o botão HTMX nativo para disparo padrão ou usa fetch sob fallback
     const singleBtn = targetEl.querySelector('.aculta-load-preview-btn');
-    if (singleBtn && window.htmx && window.htmx.trigger) {
+    // Sempre pelo fetch: clicar no link pode navegar a página inteira quando o htmx não processa o botão.
+    if (false && singleBtn && window.htmx && window.htmx.trigger) {
       // Escuta o término do ciclo HTMX especificamente neste target
       const onAfterSwap = (evt) => {
         const swapTarget = evt.detail ? evt.detail.target : evt.target;
@@ -327,6 +328,23 @@
     state.queue = [];
     updateUI();
   }
+
+  // Enquanto o lote roda, links e formulários dentro da grade não navegam a página inteira.
+  // Os botões "Carregar prévia" continuam funcionando normalmente.
+  document.addEventListener('click', (event) => {
+    if (!state.isRunning) {
+      return;
+    }
+    const link = event.target && event.target.closest ? event.target.closest('a') : null;
+    if (link && link.closest('#aculta-components-container') && !link.classList.contains('aculta-load-preview-btn')) {
+      event.preventDefault();
+    }
+  }, true);
+  document.addEventListener('submit', (event) => {
+    if (state.isRunning && event.target && event.target.closest && event.target.closest('#aculta-components-container')) {
+      event.preventDefault();
+    }
+  }, true);
 
   Drupal.behaviors.acultaUiLibraryBulkPreview = {
     attach(context) {

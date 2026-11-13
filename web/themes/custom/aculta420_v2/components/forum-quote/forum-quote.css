@@ -1,0 +1,78 @@
+.forum-quote {
+  position: relative;
+  margin: 0;
+  padding: var(--spacing-md) var(--spacing-lg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-lg);
+  background: var(--color-surface);
+  overflow: hidden;
+}
+
+.forum-quote::before {
+  content: "";
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0;
+  inline-size: 4px;
+  background: var(--accent-green-stripe);
+}
+
+.forum-quote::after {
+  content: "";
+  position: absolute;
+  inset-block: 0;
+  inset-inline-end: 0;
+  inline-size: 4px;
+  background: var(--accent-red-stripe);
+}
+
+.forum-quote__body {
+  display: flex;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm);
+  border-radius: var(--border-radius-md, 0.5rem);
+  background: var(--color-surface-subtle, var(--color-surface));
+  border-inline-start: 3px solid var(--accent-yellow-stripe);
+}
+
+.forum-quote__mark {
+  flex: 0 0 auto;
+  color: var(--color-brand-primary);
+}
+
+.forum-quote__text {
+  display: grid;
+  gap: var(--spacing-xs);
+  min-inline-size: 0;
+  color: var(--color-text);
+}
+
+.forum-quote__author {
+  font-style: normal;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+
+.forum-quote__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--spacing-sm);
+  margin-block-start: var(--spacing-sm);
+}
+
+.forum-quote__action {
+  display: inline-flex;
+  color: var(--color-brand-primary);
+  text-decoration: none;
+}
+
+.forum-quote__action:focus-visible {
+  outline: 2px solid var(--color-brand-primary);
+  outline-offset: 2px;
+}
+
+.forum-quote__author-row {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}

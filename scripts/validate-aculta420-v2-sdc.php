@@ -138,7 +138,7 @@ $component_ids = [
   'studio-section-header',
   'studio-listing-table',
   'studio-revista-form',
-  'studio-profile-editor',
+  'profile-editor-dialog',
   'studio-course-authoring-page',
   'support-form',
   'public-profile-page',
@@ -616,7 +616,7 @@ $samples = [
     '#props' => [],
     '#slots' => ['content' => Markup::create('<form class="node-revista-form"><fieldset><legend>Publicação</legend><label for="title">Título</label><input id="title" value="Exemplo"><div class="form-actions"><button class="form-submit">Salvar</button></div></fieldset></form>')],
   ],
-  'studio-profile-editor' => [
+  'profile-editor-dialog' => [
     '#props' => [],
     '#slots' => [
       'intro' => Markup::create('<p>Gerencie sua identidade.</p>'),

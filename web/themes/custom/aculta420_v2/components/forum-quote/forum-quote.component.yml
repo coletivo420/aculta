@@ -1,0 +1,25 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Citação (quote)
+description: Citação de uma publicação do fórum, com aspas em destaque, faixa verde à esquerda e vermelha à direita, e ações (link, reação e responder).
+status: stable
+group: Comunidade
+props:
+  type: object
+  additionalProperties: false
+  properties:
+    author_name:
+      type: [string, 'null']
+      title: Autor citado
+      default: null
+    avatar:
+      type: [string, 'null']
+      title: Mídia do avatar do autor citado (markup da imagem)
+      default: null
+    permalink_url:
+      type: [string, 'null']
+      title: Link para a publicação citada
+      default: null
+    reply_url:
+      type: [string, 'null']
+      title: URL para responder
+      default: null

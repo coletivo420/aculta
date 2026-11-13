@@ -6,13 +6,14 @@ props:
   summary_label: Abrir menu de conta
   account_name: Conta Exemplo
   sites:
-    - purpose: main
-      title: ACULTA
-      url: https://main.example.invalid/
-      current: false
-    - purpose: account
-      title: Minha conta
-      url: https://account.example.invalid/
-      current: true
+  - purpose: main
+    title: ACULTA
+    url: https://main.example.invalid/
+    current: false
+  - purpose: account
+    title: Minha conta
+    url: https://account.example.invalid/
+    current: true
 slots:
-  menu_items: '<ul class="menu"><li><a href="/conta">Minha conta</a></li><li><a href="/sair">Sair</a></li></ul>'
+  menu_items:
+    '#markup': <ul class="menu"><li><a href="/conta">Minha conta</a></li><li><a href="/sair">Sair</a></li></ul>

@@ -1,0 +1,47 @@
+.profile-editor-dialog {
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-lg);
+  background: var(--color-surface);
+  box-shadow: 0 12px 32px rgb(0 0 0 / .14);
+  overflow: hidden;
+}
+
+.profile-editor-dialog__header {
+  position: relative;
+  padding: var(--spacing-md) var(--spacing-lg) var(--spacing-sm);
+}
+
+.profile-editor-dialog__stripes {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline: 0;
+  display: flex;
+  block-size: 4px;
+}
+
+.profile-editor-dialog__stripe { flex: 1 1 0; }
+.profile-editor-dialog__stripe--green { background: var(--accent-green-stripe); }
+.profile-editor-dialog__stripe--yellow { background: var(--accent-yellow-stripe); }
+.profile-editor-dialog__stripe--red { background: var(--accent-red-stripe); }
+
+.profile-editor-dialog__title {
+  margin: 0;
+  font-size: var(--font-size-lg);
+  color: var(--color-text);
+}
+
+.profile-editor-dialog__subtitle {
+  margin: var(--spacing-xs) 0 0;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+.profile-editor-dialog__body {
+  display: grid;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md) var(--spacing-lg) var(--spacing-lg);
+  border-block-start: 1px solid var(--color-border);
+}
+
+.profile-editor-dialog__section { min-inline-size: 0; }
+.profile-editor-dialog__intro { color: var(--color-text-secondary); }

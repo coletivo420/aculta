@@ -1,0 +1,94 @@
+.forum-reply-compact {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-lg);
+  background: var(--color-surface);
+  box-shadow: 0 1px 2px rgb(0 0 0 / .06);
+}
+
+.forum-reply-compact::before {
+  content: "";
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0;
+  inline-size: 4px;
+  background: var(--accent-green-stripe);
+}
+
+.forum-reply-compact__tricolor {
+  display: flex;
+  block-size: 4px;
+}
+
+.forum-reply-compact__tricolor-segment {
+  flex: 1 1 0;
+}
+
+.forum-reply-compact__tricolor-segment--green { background: var(--accent-green-stripe); }
+.forum-reply-compact__tricolor-segment--yellow { background: var(--accent-yellow-stripe); }
+.forum-reply-compact__tricolor-segment--red { background: var(--accent-red-stripe); }
+
+.forum-reply-compact__body {
+  display: flex;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm) var(--spacing-md) var(--spacing-md) var(--spacing-md);
+}
+
+.forum-reply-compact__avatar {
+  flex: 0 0 auto;
+  color: var(--color-text-secondary);
+}
+
+.forum-reply-compact__main {
+  display: grid;
+  gap: var(--spacing-xs);
+  min-inline-size: 0;
+  flex: 1 1 auto;
+}
+
+.forum-reply-compact__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-xs);
+  font-size: var(--font-size-sm);
+}
+
+.forum-reply-compact__author {
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.forum-reply-compact__time {
+  color: var(--color-text-secondary);
+}
+
+.forum-reply-compact__tools {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  margin-inline-start: auto;
+}
+
+.forum-reply-compact__heart,
+.forum-reply-compact__more {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 2rem;
+  block-size: 2rem;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  color: var(--color-text-secondary);
+}
+
+.forum-reply-compact__heart.is-active {
+  border-color: var(--accent-red-stripe);
+  color: var(--accent-red-stripe);
+}
+
+.forum-reply-compact__text {
+  color: var(--color-text);
+  line-height: 1.5;
+}

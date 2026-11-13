@@ -3,8 +3,4 @@ description: Formulário Drupal de edição dentro do contexto editorial do Stud
 component: aculta420_v2:studio-revista-form
 slots:
   content:
-    type: inline_template
-    template: |
-      {{ include('aculta420_v2:studio-shell', {
-        content: '<div class="studio"><div class="studio__layout"><nav class="studio__sidebar" aria-label="Studio"><a class="studio__link" href="#revista">Revista</a></nav><main class="studio__main" id="revista"><form class="node-revista-form"><fieldset><legend>Publicação</legend><label for="title">Título</label><input id="title" value="Revista de exemplo"><div class="form-actions"><button class="form-submit">Salvar</button></div></fieldset></form></main></div></div>'
-      }, with_context = false) }}
+    '#markup': '<div class="studio"><div class="studio__layout"><nav class="studio__sidebar" aria-label="Studio"><a class="studio__link" href="#revista">Revista</a></nav><main class="studio__main" id="revista"><form class="node-revista-form"><fieldset><legend>Publicação</legend><label for="title">Título</label><input id="title" value="Revista de exemplo"><div class="form-actions"><button class="form-submit">Salvar</button></div></fieldset></form></main></div></div>'

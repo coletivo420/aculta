@@ -1,0 +1,41 @@
+{#
+/**
+ * @file
+ * Citação / quote do fórum: aspas em destaque, faixa verde à esquerda, vermelha à direita, e ações.
+ */
+#}
+<blockquote class="forum-quote">
+  <div class="forum-quote__body">
+    <span class="forum-quote__mark" aria-hidden="true">
+      {{ include('aculta420_v2:icon', { name: 'quotes', variant: 'regular', size: 'lg' }, with_context = false) }}
+    </span>
+    <div class="forum-quote__text">
+      {% if author_name %}
+        <div class="forum-quote__author-row">
+                    {% if avatar %}
+            <span class="aculta-avatar aculta-avatar--sm"><span class="aculta-avatar__media">{{ avatar|raw }}</span></span>
+          {% else %}
+            {{ include('aculta420_v2:avatar', { size: 'sm', label: author_name }, with_context = false) }}
+          {% endif %}
+          <cite class="forum-quote__author">{{ author_name }}</cite>
+        </div>
+      {% endif %}
+      {{ content }}
+    </div>
+  </div>
+  <footer class="forum-quote__actions">
+    {% if permalink_url %}
+      <a href="{{ permalink_url }}" class="forum-quote__action" aria-label="{{ 'Link permanente'|t }}" title="{{ 'Link permanente'|t }}">
+        {{ include('aculta420_v2:icon', { name: 'link', variant: 'regular', size: 'md' }, with_context = false) }}
+      </a>
+    {% endif %}
+    <span class="forum-quote__action" aria-hidden="true">
+      {{ include('aculta420_v2:icon', { name: 'heart', variant: 'regular', size: 'md' }, with_context = false) }}
+    </span>
+    {% if reply_url %}
+      <a href="{{ reply_url }}" class="forum-quote__action" aria-label="{{ 'Responder'|t }}" title="{{ 'Responder'|t }}">
+        {{ include('aculta420_v2:icon', { name: 'arrow-bend-up-left', variant: 'regular', size: 'md' }, with_context = false) }}
+      </a>
+    {% endif %}
+  </footer>
+</blockquote>

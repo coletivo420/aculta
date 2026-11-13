@@ -1,0 +1,35 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Bloco de interação (meta do tópico)
+description: Cabeçalho do tópico com título, status e indicadores (posts, participantes, visualizações e última atividade), com faixa tricolor e faixa verde à esquerda.
+status: stable
+group: Comunidade
+props:
+  type: object
+  additionalProperties: false
+  required: [title]
+  properties:
+    title:
+      type: string
+      title: Título do tópico
+      minLength: 1
+    status:
+      type: string
+      title: Status do tópico
+      enum: [open, closed]
+      default: open
+    posts:
+      type: [integer, 'null']
+      title: Quantidade de posts
+      default: null
+    participants:
+      type: [integer, 'null']
+      title: Quantidade de participantes
+      default: null
+    views:
+      type: [integer, 'null']
+      title: Visualizações
+      default: null
+    last_activity:
+      type: [string, 'null']
+      title: Última atividade
+      default: null

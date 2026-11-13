@@ -5,13 +5,14 @@ props:
   authenticated: false
   summary_label: Abrir menu de conta
   sites:
-    - purpose: main
-      title: ACULTA
-      url: https://main.example.invalid/
-      current: true
-    - purpose: wiki
-      title: Wiki420
-      url: https://wiki.example.invalid/
-      current: false
+  - purpose: main
+    title: ACULTA
+    url: https://main.example.invalid/
+    current: true
+  - purpose: wiki
+    title: Wiki420
+    url: https://wiki.example.invalid/
+    current: false
 slots:
-  menu_items: '<ul class="menu"><li><a href="/entrar/janela">Entrar</a></li></ul>'
+  menu_items:
+    '#markup': <ul class="menu"><li><a href="/entrar/janela">Entrar</a></li></ul>

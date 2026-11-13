@@ -369,7 +369,7 @@ final class PagePresentationHooks {
       'lms-learning-journey' => 'lms-learning-journey',
       'profile-identity' => 'author-card',
       'profile-bio', 'profile-social' => 'profile-details',
-      'profile-editor' => 'studio-profile-editor',
+      'profile-editor' => 'profile-editor-dialog',
       default => NULL,
     };
     if ($component === NULL || !$this->componentAvailable($component)) {
@@ -404,7 +404,7 @@ final class PagePresentationHooks {
     }
 
     $attributes = [];
-    if (in_array($component, ['author-card', 'studio-profile-editor'], TRUE)) {
+    if (in_array($component, ['author-card', 'profile-editor-dialog'], TRUE)) {
       $attributes = $variables['attributes'] ?? [];
       if ($attributes instanceof Attribute) {
         $attributes = $attributes->toArray();
@@ -447,10 +447,10 @@ final class PagePresentationHooks {
       '#props' => $props,
       '#slots' => $slots,
     ];
-    if (in_array($component, ['author-card', 'studio-profile-editor'], TRUE) && $attributes !== []) {
+    if (in_array($component, ['author-card', 'profile-editor-dialog'], TRUE) && $attributes !== []) {
       $renderArray['#attributes'] = $attributes;
     }
-    if ($component === 'studio-profile-editor' && is_array($variables['elements'] ?? NULL)) {
+    if ($component === 'profile-editor-dialog' && is_array($variables['elements'] ?? NULL)) {
       CacheableMetadata::createFromRenderArray($variables['elements'])->applyTo($renderArray);
       if (is_array($variables['elements']['#attached'] ?? NULL)) {
         $renderArray['#attached'] = $variables['elements']['#attached'];
