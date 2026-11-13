@@ -59,6 +59,7 @@ final class LmsDiscussionContextIsolationKernelTest extends KernelTestBase {
     'comment',
     'views',
     'node',
+    'media',
     'options',
     'flexible_permissions',
     'group',
@@ -147,7 +148,7 @@ final class LmsDiscussionContextIsolationKernelTest extends KernelTestBase {
         ->setData($data)
         ->save();
     }
-    $this->installConfig(['system', 'user', 'node', 'comment', 'aculta_lms']);
+    $this->installConfig(['system', 'user', 'node', 'comment', 'media', 'aculta_lms']);
     $this->container->get('entity_field.manager')->clearCachedFieldDefinitions();
     $this->container->get('group_relation_type.manager')->clearCachedPluginMaps();
 
