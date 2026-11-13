@@ -174,19 +174,9 @@
     align-items: flex-start;
   }
 
-  .site-footer__nav ul,
-  .site-footer__nav .menu {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .site-footer__nav :is(ul, .menu) > li + li > a,
-  .site-footer__nav :is(ul, .menu) > li + li > .menu-link {
-    border-inline-start: 0;
-  }
-
-  .site-footer__nav a:is(:link, :visited) {
-    padding-inline-start: 0;
+  /* Celular: como no modelo, só marca, divisor e linha legal; a navegação fica oculta. */
+  .site-footer__nav {
+    display: none;
   }
 
   .site-footer__legal {
