@@ -221,7 +221,7 @@ final class WikiEditorialQueue {
           $viewAccess = $revision->access('view', $this->currentUser, TRUE);
           $revisionAccess = $revision->access('view revision', $this->currentUser, TRUE);
           $updateAccess = $revision->access('update', $this->currentUser, TRUE);
-          $transitions = $transitionValidation->getValidTransitions($revision, $this->currentUser);
+          $transitions = $this->transitionValidation->getValidTransitions($revision, $this->currentUser);
           $cacheability->addCacheableDependency($revision)
             ->addCacheableDependency($viewAccess)
             ->addCacheableDependency($revisionAccess)

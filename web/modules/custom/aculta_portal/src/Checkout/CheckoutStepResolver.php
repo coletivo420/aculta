@@ -46,7 +46,7 @@ final class CheckoutStepResolver {
   /**
    * Resolves the flow, accounting for the resolver's documented NULL result.
    */
-  private function resolveCheckoutFlow(OrderInterface $order): ?CheckoutFlowInterface {
+  private function resolveCheckoutFlow(OrderInterface $order): mixed {
     return $this->checkoutFlowResolver->resolve($order);
   }
 
