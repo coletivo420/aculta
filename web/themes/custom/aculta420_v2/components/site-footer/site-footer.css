@@ -1,9 +1,24 @@
+/* Rodapé institucional: listra tricolor, linha de marca e navegação, divisor e linha legal.
+   Cores vêm de tokens semânticos; o modo escuro troca a superfície pelos próprios tokens. */
+
 .site-footer {
+  position: relative;
   grid-area: footer;
   color: var(--color-footer-text);
   background: var(--color-footer-surface);
   min-inline-size: 0;
-  padding-block: var(--spacing-section);
+  padding-block: 0 var(--spacing-section);
+}
+
+.site-footer__stripe {
+  block-size: 6px;
+  background:
+    linear-gradient(
+      to right,
+      var(--color-footer-surface) 0 68%,
+      var(--color-brand-highlight) 68% 84%,
+      var(--palette-red) 84% 100%
+    );
 }
 
 .site-footer__inner {
@@ -11,15 +26,75 @@
   margin-inline: auto;
   min-inline-size: 0;
   padding-inline: var(--page-gutter);
+  padding-block-start: var(--spacing-lg);
 }
 
-.site-footer__content,
-.site-footer__content :is(.region-footer, .page__footer-region),
-.site-footer__content .block {
+.site-footer__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-md) var(--spacing-xl);
+}
+
+.site-footer__brand {
+  color: var(--color-footer-text);
+  font: 600 var(--font-size-xl)/1.3 var(--font-family-heading);
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
+}
+
+.site-footer__nav ul,
+.site-footer__nav .menu {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.site-footer__nav :is(ul, .menu) > li + li > a,
+.site-footer__nav :is(ul, .menu) > li + li > .menu-link {
+  border-inline-start: 1px solid var(--color-footer-text);
+}
+
+.site-footer__nav a:is(:link, :visited) {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--spacing-xs) var(--spacing-md);
+  text-decoration: none;
+  color: var(--color-footer-text);
+  font: 500 var(--font-size-base)/1.4 var(--font-family-base);
+  min-block-size: var(--tap-target-min);
+}
+
+.site-footer__nav a:is(:hover, [aria-current="page"], .is-active, .active) {
+  text-decoration: underline;
+  text-underline-offset: .25em;
+  text-decoration-thickness: 2px;
+}
+
+.site-footer__divider {
+  opacity: .35;
+  background: var(--color-footer-text);
+  margin-block: var(--spacing-lg) var(--spacing-md);
+  block-size: 1px;
+}
+
+.site-footer__content {
   min-inline-size: 0;
 }
 
-.site-footer__content :is(.region-footer, .page__footer-region) {
+.site-footer__content:empty {
+  display: none;
+}
+
+.site-footer__content .block,
+.site-footer__content .region-footer {
+  min-inline-size: 0;
+}
+
+.site-footer__content .region-footer {
   display: grid;
   gap: var(--spacing-xl);
   grid-template-columns: minmax(0, 1fr);
@@ -30,12 +105,12 @@
   font-family: var(--font-family-heading);
 }
 
-.site-footer :is(.region-footer, .page__footer-region) h2 {
+.site-footer__content .region-footer h2 {
   font-size: var(--font-size-xl);
   margin-block: 0 var(--spacing-base);
 }
 
-.site-footer :is(.region-footer, .page__footer-region) h2::after {
+.site-footer__content .region-footer h2::after {
   display: block;
   margin-block-start: var(--spacing-sm);
   content: "";
@@ -46,12 +121,6 @@
 .site-footer :is(p, dd, .aculta-footer-description, .aculta-footer-cnpj, .aculta-institution-details, .field--name-field-headquarters) {
   color: var(--color-footer-text);
   overflow-wrap: anywhere;
-}
-
-.site-footer .aculta-footer-brand {
-  color: var(--color-footer-text);
-  font: 600 var(--font-size-xxl)/1.3 var(--font-family-heading);
-  max-inline-size: 26ch;
 }
 
 .site-footer .aculta-footer-description {
@@ -67,6 +136,78 @@
   text-underline-offset: .25em;
 }
 
+.site-footer .aculta-institution-details {
+  font-size: var(--font-size-sm);
+}
+
+.site-footer .aculta-institution-details > div {
+  display: block;
+}
+
+.site-footer .aculta-institution-details dt {
+  margin-block-end: var(--spacing-xs);
+}
+
+.site-footer__legal {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  padding-block-start: var(--spacing-md);
+  color: var(--color-footer-text);
+  font-size: var(--font-size-sm);
+  gap: var(--spacing-sm) var(--spacing-xl);
+}
+
+.site-footer__legal a:is(:link, :visited) {
+  color: var(--color-footer-text);
+}
+
+.site-footer :is(a, button):focus-visible {
+  outline: var(--focus-ring-width) solid var(--color-footer-focus-ring);
+  outline-offset: var(--focus-ring-offset);
+}
+
+@media (max-width: 35.99rem) {
+  .site-footer__header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .site-footer__nav ul,
+  .site-footer__nav .menu {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .site-footer__nav :is(ul, .menu) > li + li > a,
+  .site-footer__nav :is(ul, .menu) > li + li > .menu-link {
+    border-inline-start: 0;
+  }
+
+  .site-footer__nav a:is(:link, :visited) {
+    padding-inline-start: 0;
+  }
+
+  .site-footer__legal {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (min-width: 36rem) {
+  .site-footer__content .region-footer {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 62rem) {
+  .site-footer__content .region-footer {
+    grid-template-columns: minmax(0, 2fr) repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* Canais sociais: rodapé neutro, sem listra nem linha de marca. */
 .site-footer--social-links {
   text-align: center;
   color: var(--color-text-secondary);
@@ -75,10 +216,15 @@
   padding-block: var(--spacing-md);
 }
 
+.site-footer--social-links .site-footer__stripe {
+  display: none;
+}
+
 .site-footer--social-links .site-footer__inner {
   display: grid;
-  gap: var(--spacing-sm);
   justify-items: center;
+  padding-block-start: 0;
+  gap: var(--spacing-sm);
 }
 
 .site-footer--social-links [data-portal-ui~="social-links-footer-inner"] {
@@ -115,77 +261,10 @@
   text-underline-offset: .2em;
 }
 
-.site-footer .aculta-institution-details {
-  font-size: var(--font-size-sm);
-}
-
-.site-footer .aculta-institution-details > div {
-  display: block;
-}
-
-.site-footer .aculta-institution-details dt {
-  margin-block-end: var(--spacing-xs);
-}
-
-.site-footer :is(.region-footer, .page__footer-region) :is(nav ul, .menu) {
-  display: flex;
-  flex-direction: column;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  gap: var(--spacing-xs);
-  min-inline-size: 0;
-}
-
-.site-footer :is(.region-footer, .page__footer-region) :is(nav a, .menu a) {
-  display: inline-flex;
-  align-items: center;
-  box-sizing: border-box;
-  padding: var(--spacing-sm) var(--spacing-md);
-  text-decoration: none;
-  color: var(--color-footer-link-text);
-  border: 1px solid var(--color-footer-link-text);
-  border-radius: var(--radius-sm);
-  background: var(--color-footer-link-surface);
-  font: 500 var(--font-size-base)/1.4 var(--font-family-base);
-  inline-size: fit-content;
-  max-inline-size: 100%;
-  min-block-size: var(--tap-target-min);
-  overflow-wrap: anywhere;
-}
-
-.site-footer :is(.region-footer, .page__footer-region) :is(nav a, .menu a):is(:hover, :focus-visible, .is-active, .active, [aria-current="page"]) {
-  text-decoration: underline;
-  color: var(--color-on-highlight);
-  border-color: var(--color-brand-highlight);
-  background: var(--color-brand-highlight);
-  text-decoration-thickness: 2px;
-  text-underline-offset: .2em;
-}
-
-.site-footer :is(a, button):focus-visible {
-  outline: var(--focus-ring-width) solid var(--color-footer-focus-ring);
-  outline-offset: var(--focus-ring-offset);
-}
-
-@media (min-width: 36rem) {
-  .site-footer__content :is(.region-footer, .page__footer-region) {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-@media (min-width: 62rem) {
-  .site-footer__content :is(.region-footer, .page__footer-region) {
-    grid-template-columns: minmax(0, 2fr) repeat(3, minmax(0, 1fr));
-  }
-}
-
-/* Canais sociais: texto de link sobre a superfície de link do rodapé (modo claro e escuro). */
-.site-footer--social-links a {
+.site-footer--social-links a:is(:link, :visited) {
   color: var(--color-footer-link-text);
 }
 
-/* Variante neutra de canais sociais: textos internos usam o texto secundário, não o token do rodapé verde. */
 .site-footer--social-links :is(p, dd, .aculta-footer-description, .aculta-footer-cnpj, .aculta-institution-details, .field--name-field-headquarters) {
   color: var(--color-text-secondary);
 }

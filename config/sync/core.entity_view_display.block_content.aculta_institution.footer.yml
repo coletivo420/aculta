@@ -37,20 +37,20 @@ third_party_settings:
     allow_custom: false
     sections:
       -
-        layout_id: 'ui_patterns:aculta420_v2:layout_section'
+        layout_id: 'ui_patterns:aculta420_v2:layout_site_footer'
         layout_settings:
           label: ''
           context_mapping:
             entity: layout_builder.entity
           ui_patterns:
-            component_id: 'aculta420_v2:layout-section'
+            component_id: 'aculta420_v2:layout-site-footer'
             variant_id: null
             props: {  }
             slots: {  }
         components:
           80b67eab-2f77-4fe7-9cd7-5ce2f94938d2:
             uuid: 80b67eab-2f77-4fe7-9cd7-5ce2f94938d2
-            region: content
+            region: brand
             configuration:
               id: 'field_block:block_content:aculta_institution:field_org_name'
               label_display: '0'
@@ -82,7 +82,7 @@ third_party_settings:
             additional: {  }
           ae598612-b35d-4054-8dd8-3c2a55db25c9:
             uuid: ae598612-b35d-4054-8dd8-3c2a55db25c9
-            region: content
+            region: legal
             configuration:
               id: 'field_block:block_content:aculta_institution:field_cnpj'
               label_display: '0'

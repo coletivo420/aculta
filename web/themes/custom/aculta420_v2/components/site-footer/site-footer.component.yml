@@ -17,3 +17,12 @@ slots:
   content:
     title: Conteúdo do rodapé
     description: Render array da região footer, preservando acesso e cacheabilidade Drupal.
+  brand:
+    title: Identidade
+    description: Nome da associação exibido na linha superior. Opcional.
+  nav:
+    title: Navegação
+    description: Links institucionais separados por divisores na linha superior. Opcional.
+  legal:
+    title: Linha legal
+    description: Cópia, licença e demais avisos da linha inferior. Opcional.

@@ -1,6 +1,23 @@
 {% set variant = variant|default('institutional')|clean_class %}
+{% set brand = brand|default('') %}
+{% set nav = nav|default('') %}
+{% set legal = legal|default('') %}
+{% set content = content|default('') %}
 <footer{{ attributes.addClass('site-footer', 'site-footer--' ~ variant) }}>
+  <div class="site-footer__stripe" aria-hidden="true"></div>
   <div class="site-footer__inner">
-    <div class="site-footer__content">{{ content }}</div>
+    {% if brand or nav %}
+      <div class="site-footer__header">
+        {% if brand %}<div class="site-footer__brand">{{ brand }}</div>{% endif %}
+        {% if nav %}<nav class="site-footer__nav" aria-label="{{ 'Links do rodapé'|t }}">{{ nav }}</nav>{% endif %}
+      </div>
+      <div class="site-footer__divider" aria-hidden="true"></div>
+    {% endif %}
+    {% if content %}
+      <div class="site-footer__content">{{ content }}</div>
+    {% endif %}
+    {% if legal %}
+      <div class="site-footer__legal">{{ legal }}</div>
+    {% endif %}
   </div>
 </footer>

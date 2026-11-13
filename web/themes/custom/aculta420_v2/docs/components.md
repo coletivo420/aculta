@@ -13,9 +13,11 @@ caches de descoberta para refletir alterações no Runtime. Dois SDCs ainda não
 têm story (`sales-panel` e `secret-reveal`); os demais têm exemplos catalogados.
 
 O grupo `Layouts` também alimenta os plugins de `ui_patterns_layouts`, usados
-pelo Layout Builder. Os sete layouts declarados são `event-page-layout`,
+pelo Layout Builder. Os oito layouts declarados são `event-page-layout`,
 `layout-page`, `layout-section`, `layout-two-columns`, `layout-grid`,
-`layout-narrow` e `layout-full`. O gate de Runtime cobre hoje seis layouts
+`layout-narrow`, `layout-full` e `layout-site-footer` (rodapé institucional, com
+regiões `brand`, `nav`, `content` e `legal`; substitui a section antiga no bloco
+`aculta_institution`, display `footer`). O gate de Runtime cobre hoje seis layouts
 compartilhados; `event-page-layout` tem regiões próprias do detalhe editorial
 de eventos e sua descoberta no seletor ainda precisa ser verificada no Runtime.
 
@@ -597,9 +599,9 @@ etapas; controle de fluxo e permissões permanecem no módulo proprietário
 ### site-footer — Rodapé
 - **Papel:** apresenta os blocos da região Drupal `footer` ou os canais sociais preparados pelo Portal.
 - **Props:** `variant` (`institutional` ou `social-links`).
-- **Slot:** `content` (render array Drupal, com acesso e cache preservados).
+- **Slots:** `content` (render array Drupal, com acesso e cache preservados); `brand`, `nav` e `legal` (opcionais) montam a estrutura da referência: listra tricolor, linha de marca e navegação, divisor e linha legal.
 - **Stories:** `site-footer.default.story.yml`, `site-footer.social-links.story.yml`.
-- **Estado:** variação social integrada por C4; validação visual pendente.
+- **Estado:** estrutura da referência e variação social em CSS; o `region--footer` legado foi removido. Os slots `brand`, `nav` e `legal` ainda não são preenchidos pelas páginas: a região continua entregando só `content`. Validação visual nos modos claro e escuro pendente.
 
 ### alerts-trigger — Avisos
 - **Papel:** botão com contagem e diálogo de avisos carregado sob demanda.
