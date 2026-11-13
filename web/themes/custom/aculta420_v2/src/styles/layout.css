@@ -18,7 +18,6 @@
   min-block-size: 100dvh;
   min-inline-size: 0;
 }
-
 .page__institution { grid-area: institution; min-inline-size: 0; }
 .page__header { grid-area: header; min-inline-size: 0; }
 .page__navigation { grid-area: navigation; min-inline-size: 0; }
@@ -107,6 +106,16 @@
   }
 }
 
+/* Desktop: nenhuma região do site passa de --page-content-max (1200 px),
+   centralizada. O rodapé já é contido no próprio .site-footer__inner.
+   Exceções são declaradas no seletor :not(...) abaixo. */
+@media (min-width: 60rem) {
+  :is(.page__institution, .page__header, .page__navigation, .page__showcase, .page__highlighted, .page__help, .page__breadcrumb, .page-shell-v2__contextual, .layout-page, .page__main):not(.layout-page--studio-dashboard) {
+    max-inline-size: var(--page-content-max);
+    margin-inline: auto;
+  }
+}
+
 /* Celular (abaixo de 60 rem): largura sempre 100%, ignorando sliders.
    Exceção justificada: os containers podem receber inline-size de CSS SDC
    (component) e de módulos; o !important garante ausência de overflow
@@ -118,11 +127,3 @@
   }
 }
 
-/* UI Styles de bloco: alinhado à borda inicial do conteúdo. Antes vivia em
-   utilities.css; a classe é configurada em block.block.*, não pelo mapa de
-   tokens, e por isso permanece com o nome `aculta-u-*`. */
-.aculta-u-block-start {
-  inline-size: 100%;
-  justify-self: start;
-  text-align: start;
-}
