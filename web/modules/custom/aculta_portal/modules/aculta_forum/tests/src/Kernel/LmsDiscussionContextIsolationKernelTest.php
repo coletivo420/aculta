@@ -23,6 +23,7 @@ use Drupal\group\Entity\Storage\GroupRelationshipTypeStorageInterface;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\node\Entity\Node;
 use Drupal\node\Entity\NodeType;
+use Drupal\profile\Entity\ProfileType;
 use Drupal\user\Entity\Role;
 use Drupal\user\Entity\User;
 use PHPUnit\Framework\Attributes\Group as TestGroup;
@@ -70,6 +71,8 @@ final class LmsDiscussionContextIsolationKernelTest extends KernelTestBase {
     'gnode',
     'migrate',
     'path_alias',
+    'entity',
+    'profile',
     'aculta_user',
     'aculta_forum',
     'aculta_lms',
@@ -132,11 +135,14 @@ final class LmsDiscussionContextIsolationKernelTest extends KernelTestBase {
     $this->installEntitySchema('node');
     $this->installEntitySchema('comment');
     $this->installEntitySchema('path_alias');
+    $this->installEntitySchema('profile');
     $this->installEntitySchema('group');
     $this->installEntitySchema('group_relationship');
     $this->installEntitySchema('group_config_wrapper');
     $this->installSchema('node', ['node_access']);
     $this->installSchema('comment', ['comment_entity_statistics']);
+    $this->installSchema('user', ['users_data']);
+    $this->installSchema('aculta_user', ['aculta_user_nickname']);
     foreach ([
       'group.type.lms_course',
       'group.type.lms_class',
@@ -153,7 +159,11 @@ final class LmsDiscussionContextIsolationKernelTest extends KernelTestBase {
         ->setData($data)
         ->save();
     }
-    $this->installConfig(['system', 'user', 'node', 'comment', 'image', 'media', 'media_library', 'photoswipe', 'media_gallery', 'path_alias']);
+    $this->installConfig(['system', 'user', 'node', 'comment', 'image', 'media', 'media_library', 'photoswipe', 'media_gallery', 'path_alias', 'profile']);
+    $configDir = dirname(__DIR__, 9) . '/config/sync/';
+    ProfileType::create(Yaml::parseFile($configDir . 'profile.type.authenticated.yml'))->save();
+    FieldStorageConfig::create(Yaml::parseFile($configDir . 'field.storage.profile.field_nickname.yml'))->save();
+    FieldConfig::create(Yaml::parseFile($configDir . 'field.field.profile.authenticated.field_nickname.yml'))->save();
     CommentType::create([
       'id' => 'aculta_discussion_post',
       'label' => 'Discussion post',
