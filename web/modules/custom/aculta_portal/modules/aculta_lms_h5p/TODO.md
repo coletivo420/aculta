@@ -4,7 +4,7 @@ Estado: RC · versão 0.4.0-rc.1 (`aculta_lms_h5p.info.yml`) · status: `docs/op
 
 ## Próximo passo
 
-Candidato RC pronto para deploy e validação no servidor de desenvolvimento (Alpha) após autorização explícita do responsável. Acompanhar a homologação com as turmas e conteúdos reais em `*.aculta.toca.net.br`.
+Confirmar no CI a asserção da lista de discussões no slot `content` do render array; após o CI, acompanhar a homologação com as turmas e conteúdos reais em `*.aculta.toca.net.br`.
 
 ## Leitura
 

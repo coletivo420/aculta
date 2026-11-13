@@ -96,8 +96,8 @@ final class Lmsaculta_H5PDiscussionResolverTest extends UnitTestCase {
     );
     $build = $resolver->build(34, $course, $student);
 
-    self::assertCount(1, $build['links']['#items']);
-    self::assertSame('Conversa da atividade', $build['links']['#items'][0]['#title']);
+    self::assertCount(1, $build['#slots']['content']['#items']);
+    self::assertSame('Conversa da atividade', $build['#slots']['content']['#items'][0]['#title']);
     self::assertContains('user.group_permissions', $build['#cache']['contexts']);
   }
 

@@ -52,7 +52,8 @@ function aculta_cgu_post_update_migrate_report_entity_type(): string {
 
   $copied = 0;
   $newCount = (int) $db->select($new)->countQuery()->execute()->fetchField();
-  $rows = $db->select($old, 'o')->fields('o')->execute()->fetchAll(\PDO::FETCH_ASSOC);
+  $rows = $db->select($old, 'o')->fields('o')->execute()
+    ->fetchAll(\Drupal\Core\Database\Statement\FetchAs::Associative);
   if ($newCount > 0 && $rows !== []) {
     return "A tabela aculta_cgu_report já tem {$newCount} linhas e aculta_ugc_report ainda tem " . count($rows) . ' linhas. Nada foi apagado; revise a duplicidade antes de migrar.';
   }

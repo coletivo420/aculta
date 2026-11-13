@@ -6,6 +6,6 @@ progress_note: >-
   (CGU). Unifica o ciclo de vida privado e revisionável de submissões comunitárias
   (anteriormente em aculta_contributions) e a infraestrutura comum de moderação
   transversal, denúncias e regras de destinatários por propósito (anteriormente
-  em aculta_ugc). Kernel `CguModerationKernelTest` passa com 5 testes e 98
-  assertions após registrar a dependência de Events no harness parcial.
+  em aculta_ugc). Migração de relatórios usa `FetchAs::Associative`, conforme a
+  API de banco do Core; PHPStan remoto ainda precisa confirmar a correção.
 next_phase: 'Aplicar e homologar o post-update de ownership de configuração; depois concluir a homologação dos fluxos unificados e continuar a correção da suíte Kernel global.'

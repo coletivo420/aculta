@@ -1,5 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 version: 0.4.0-rc.1
 state: RC
-progress_note: "RC.1: Fechadas todas as pendencias tecnicas de aculta_lms_h5p. PHPCS Drupal e DrupalPractice integral 0 erros/avisos em todo o modulo. Suíte Unit 35/35 (147 assercoes) e Kernel focal (3/128 access, 1/23 discovery, 14/329 installer/limits) 100% PASS no MariaDB aculta_simpletest. Fronteira modulo-tema validate-module-theme-boundary PASS (4271 verificacoes). Endpoint AJAX alinhado com purpose courses/same-origin. Protecao contra ZIP bombs ativada e validada. Candidato pronto para homologacao Alpha no servidor de desenvolvimento sem deploy automatico."
-next_phase: 'Candidato RC pronto para deploy e validacao no servidor de desenvolvimento (Alpha) apos autorizacao explicita do responsavel. Acompanhar a homologacao com as turmas e conteudos reais em *.aculta.toca.net.br.'
+progress_note: "RC.1: modulo pronto para homologacao Alpha. CI atual identificou assercao desatualizada no teste do resolver de discussoes H5P; teste ajustado para consultar o slot content do render array, aguardando confirmacao remota."
+next_phase: 'Confirmar no CI a correcao da assercao Unit; depois acompanhar a homologacao com as turmas e conteudos reais em *.aculta.toca.net.br.'
