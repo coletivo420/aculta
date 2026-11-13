@@ -5,7 +5,7 @@
 .card-cultural--accent-red { border-inline-start-color: var(--accent-red-stripe); }
 .card-cultural__image img { display: block; width: 100%; height: auto; object-fit: cover; }
 .card-cultural__body { display: grid; gap: var(--spacing-sm); min-width: 0; padding: var(--spacing-base); }
-.card-cultural__category { margin: 0; color: var(--color-text-secondary); letter-spacing: .04em; font-size: var(--font-size-sm); text-transform: uppercase; font-weight: 700; }
+.card-cultural__category { margin: 0; letter-spacing: .04em; color: var(--color-text-secondary); text-transform: uppercase; font-size: var(--font-size-sm); font-weight: 700; }
 .card-cultural__category,
 .card-cultural__title,
 .card-cultural__metadata,
