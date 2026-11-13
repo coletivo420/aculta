@@ -203,7 +203,7 @@
 
   .site-footer__brand {
     text-align: center;
-    font-size: var(--font-size-base);
+    font-size: var(--font-size-xl);
     inline-size: 100%;
   }
 
