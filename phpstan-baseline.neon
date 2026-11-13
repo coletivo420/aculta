@@ -5122,12 +5122,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_lms_h5p/src/aculta_H5PDrupal/aculta_H5PDrupal.php
 
 		-
-			rawMessage: 'Part $skip (non-empty-array) of encapsed string cannot be cast to string.'
-			identifier: encapsedStringPart.nonString
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms_h5p/src/aculta_H5PDrupal/aculta_H5PDrupal.php
-
-		-
 			rawMessage: 'Return type (string|null) of method Drupal\aculta_lms_h5p\aculta_H5PDrupal\aculta_H5PDrupal::getContentHubMetadataCache() should be compatible with return type (JsonSerializable) of method H5PFrameworkInterface::getContentHubMetadataCache()'
 			identifier: method.childReturnType
 			count: 1

@@ -1,10 +1,10 @@
 # TODO — aculta_lms_h5p
 
-Estado: RC · versão 0.4.0-rc.2 (`aculta_lms_h5p.info.yml`) · status: `docs/operations/status/aculta_lms_h5p.yml`.
+Estado: RC · versão 0.4.0-rc.3 (`aculta_lms_h5p.info.yml`) · status: `docs/operations/status/aculta_lms_h5p.yml`.
 
 ## Estado atual
 
-`getNumContent()` valida os IDs de exclusão e consulta pela Query API do Drupal, sem concatenar valores ao SQL. A confirmação remota da mudança está pendente.
+`getNumContent()` valida os IDs do contrato H5P e consulta pela Query API do Drupal, sem concatenar valores ao SQL. A revalidação PHPStan e CI aguarda o próximo run.
 
 ## Próximo passo
 

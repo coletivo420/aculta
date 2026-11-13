@@ -1,5 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.4.0-rc.2
+version: 0.4.0-rc.3
 state: RC
-progress_note: "RC.2: IDs ignorados em getNumContent passam por validacao e a consulta usa a Query API do Drupal; confirmacao remota aguarda CI."
+progress_note: "RC.3: getNumContent valida os IDs do contrato H5P e consulta pela Query API Drupal; PHPStan e CI aguardam revalidacao."
 next_phase: 'Confirmar no CI a consulta parametrizada de IDs H5P e acompanhar a homologacao com turmas e conteudos reais em *.aculta.toca.net.br.'

@@ -1523,37 +1523,14 @@ class aculta_H5PDrupal implements \H5PFrameworkInterface {
   /**
    * Implements getNumContent.
    *
-   * @param int[]|string|int|null $skip
+   * @param int[]|null $skip
    *   Content IDs to exclude. A comma-separated list is accepted for legacy callers.
    *
    * @return int
    *   Number of content entities using the requested library.
    */
   public function getNumContent($library_id, $skip = NULL) {
-    $skip_ids = [];
-    if (!empty($skip)) {
-      if (is_string($skip)) {
-        $skip = trim($skip);
-        if (preg_match('/\A\d+(?:\s*,\s*\d+)*\z/D', $skip) !== 1) {
-          throw new \InvalidArgumentException('A lista de IDs H5P precisa conter somente números inteiros.');
-        }
-        $skip = preg_split('/\s*,\s*/', $skip) ?: [];
-      }
-      elseif (is_int($skip)) {
-        $skip = [$skip];
-      }
-      elseif (!is_array($skip)) {
-        throw new \InvalidArgumentException('A lista de IDs H5P tem formato inválido.');
-      }
-
-      foreach ($skip as $id) {
-        if ((!is_int($id) && !(is_string($id) && ctype_digit($id))) || (int) $id < 1) {
-          throw new \InvalidArgumentException('A lista de IDs H5P precisa conter somente IDs positivos.');
-        }
-        $skip_ids[] = (int) $id;
-      }
-      $skip_ids = array_values(array_unique($skip_ids));
-    }
+    $skip_ids = $this->normalizeContentIds($skip);
 
     $query = $this->database->select('h5p_content', 'h5p');
     $query->addExpression('COUNT(h5p.id)');
@@ -1563,6 +1540,51 @@ class aculta_H5PDrupal implements \H5PFrameworkInterface {
     }
 
     return (int) $query->execute()->fetchField();
+  }
+
+  /**
+   * Normalizes and validates IDs excluded from the H5P content count.
+   *
+   * @param mixed $skip
+   *   H5P content IDs. A comma-separated list is accepted for legacy callers.
+   *
+   * @return int[]
+   *   Positive, unique content IDs.
+   */
+  private function normalizeContentIds(mixed $skip): array {
+    if (empty($skip)) {
+      return [];
+    }
+
+    if (is_string($skip)) {
+      $skip = trim($skip);
+      if ($skip === '') {
+        return [];
+      }
+      if (preg_match('/\A\d+(?:\s*,\s*\d+)*\z/D', $skip) !== 1) {
+        throw new \InvalidArgumentException('A lista de IDs H5P precisa conter somente números inteiros.');
+      }
+      $skip = preg_split('/\s*,\s*/', $skip) ?: [];
+    }
+    elseif (is_int($skip)) {
+      $skip = [$skip];
+    }
+    elseif (!is_array($skip)) {
+      throw new \InvalidArgumentException('A lista de IDs H5P tem formato inválido.');
+    }
+
+    $ids = [];
+    foreach ($skip as $id) {
+      if (is_string($id) && ctype_digit($id)) {
+        $id = (int) $id;
+      }
+      if (!is_int($id) || $id < 1) {
+        throw new \InvalidArgumentException('A lista de IDs H5P precisa conter somente IDs positivos.');
+      }
+      $ids[] = $id;
+    }
+
+    return array_values(array_unique($ids));
   }
 
   /**
