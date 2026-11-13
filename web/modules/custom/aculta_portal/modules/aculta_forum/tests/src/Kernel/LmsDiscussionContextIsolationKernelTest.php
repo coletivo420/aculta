@@ -6,13 +6,13 @@ namespace Drupal\Tests\aculta_forum\Kernel;
 
 use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
 use Drupal\aculta_forum\Context\Provider\LmsDiscussionContextProvider;
-use Drupal\aculta_image\FileRemover;
 use Drupal\aculta_image\ImageCatalog;
 use Drupal\aculta_image\ImageRenderer;
 use Drupal\comment\CommentingStatus;
 use Drupal\comment\Entity\CommentType;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\entity_usage\EntityUsage;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\group\Entity\Group;
@@ -71,7 +71,6 @@ final class LmsDiscussionContextIsolationKernelTest extends KernelTestBase {
     'file',
     'domain',
     'aculta_file_uploader',
-    'entity_usage',
     'aculta_forum_lms_test',
   ];
 
@@ -86,6 +85,10 @@ final class LmsDiscussionContextIsolationKernelTest extends KernelTestBase {
   public function register(ContainerBuilder $container): void {
     parent::register($container);
     $this->registerLmsDependencyServices($container);
+    $container->setDefinition(
+      'entity_usage.usage',
+      (new Definition(EntityUsage::class, ['entity_usage']))->setPublic(TRUE),
+    );
     $container->register('aculta_portal.email_confirmation_policy', EmailConfirmationPolicy::class)
       ->addArgument(new Reference('user.data'))
       ->addArgument(new Reference('entity_type.manager'))
@@ -99,16 +102,6 @@ final class LmsDiscussionContextIsolationKernelTest extends KernelTestBase {
       (new Definition(ImageRenderer::class, [
         new Reference('aculta_image.catalog'),
         new Reference('entity_type.manager'),
-      ]))->setPublic(TRUE),
-    );
-    $container->setDefinition(
-      'aculta_image.file_remover',
-      (new Definition(FileRemover::class, [
-        new Reference('file.usage'),
-        new Reference('entity_type.manager'),
-        new Reference('database'),
-        new Reference('file_system'),
-        new Reference('logger.factory'),
       ]))->setPublic(TRUE),
     );
   }
