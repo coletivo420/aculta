@@ -1,6 +1,6 @@
 // Regressão visual determinística (ver skill aculta-regressao-visual).
 // Reaproveita as rotas públicas dos routes.json. Para cada rota:
-//   - viewports 320, 390, 768, 1024 e 1440 CSS px;
+//   - viewports 320, 375, 768, 1024 e 1440 CSS px;
 //   - temas claro e escuro (atributo data-theme em <html>, afirmado antes do screenshot);
 //   - sem overflow horizontal;
 //   - screenshot comparado com referência em SUITE_OUT. Snapshot faltante FALHA (updateSnapshots "none").
@@ -15,7 +15,7 @@ const only = (process.env.ACULTA_BROWSER_FRONTS || '').split(',').map((v) => v.t
 const timeout = Number(process.env.ACULTA_BROWSER_TIMEOUT_MS || 20_000);
 const VIEWPORTS = [
   { name: '320', width: 320, height: 800 },
-  { name: '390', width: 390, height: 844 },
+  { name: '375', width: 375, height: 812 },
   { name: '768', width: 768, height: 1024 },
   { name: '1024', width: 1024, height: 768 },
   { name: '1440', width: 1440, height: 900 },
