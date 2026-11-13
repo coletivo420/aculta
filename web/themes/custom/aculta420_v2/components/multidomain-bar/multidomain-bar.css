@@ -3,6 +3,8 @@
    13 nov 2026), para não alterar --color-surface-institution nos demais consumidores. */
 .aculta-institution-bar {
   --institution-bar-surface: #e7eedc;
+  /* Cor dos ícones utilitários (ex.: menu da conta, que é um SDC próprio). */
+  --utility-icon-color: var(--institution-bar-icon);
   --institution-bar-text: #0c3c29;
   --institution-bar-border: rgb(12 60 41 / .16);
   --institution-bar-badge-surface: #f2ca36;
@@ -601,8 +603,7 @@ html body:has(.aculta-institution-bar) .toolbar .toolbar-tray-vertical {
 }
 
 .aculta-institution-bar .aculta-utility-trigger__icon .aculta-icon,
-.aculta-institution-bar .aculta-utility-dialog__close .aculta-icon,
-.aculta-institution-bar .aculta-account-menu__icon {
+.aculta-institution-bar .aculta-utility-dialog__close .aculta-icon {
   color: var(--institution-bar-icon);
 }
 
