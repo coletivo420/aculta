@@ -22,7 +22,6 @@ use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\aculta_portal\Domain\DomainSiteManagerInterface;
 use Drupal\aculta_portal\Domain\DomainRoutePolicy;
 use Drupal\Core\Session\AnonymousUserSession;
-use Drupal\Core\Url;
 use Drupal\domain\DomainNegotiatorInterface;
 use Drupal\KernelTests\KernelTestBase;
 use PHPUnit\Framework\Attributes\Group;
@@ -420,7 +419,7 @@ final class EventDomainBoundaryKernelTest extends KernelTestBase {
     $build = $this->block()->build();
 
     self::assertCount(1, $build['#items']);
-    self::assertStringContainsString('Evento público', (string) $build['#items'][0]['#title']);
+    self::assertStringContainsString('Evento público', (string) $build['#items'][0]['title']);
     self::assertContains('aculta_event_list', $build['#cache']['tags']);
     self::assertContains('user', $build['#cache']['contexts']);
     self::assertContains('url.site', $build['#cache']['contexts']);
@@ -435,7 +434,7 @@ final class EventDomainBoundaryKernelTest extends KernelTestBase {
     $this->date($event, '2026-12-03T19:00:00');
 
     $build = $this->block()->build();
-    $links = $this->collectLinks($build);
+    $links = array_column($build['#items'], 'url');
 
     $forbiddenRoutes = [
       'aculta_events.event_edit',
@@ -447,8 +446,7 @@ final class EventDomainBoundaryKernelTest extends KernelTestBase {
     foreach ($forbiddenRoutes as $forbidden) {
       self::assertNotContains($forbidden, $links, 'O bloco não deve oferecer ' . $forbidden);
     }
-    $hasEventLink = in_array('aculta_events.page', $links, TRUE)
-      || array_filter($links, static fn (string $link): bool => str_contains($link, '/eventos/')) !== [];
+    $hasEventLink = array_filter($links, static fn (string $link): bool => str_contains($link, '/eventos/')) !== [];
     self::assertTrue($hasEventLink, 'O bloco deve apontar para a página pública do Evento.');
   }
 
@@ -493,27 +491,6 @@ final class EventDomainBoundaryKernelTest extends KernelTestBase {
       'field_evento' => $event->id(),
       'field_quando' => ['value' => $start, 'end_value' => $end],
     ])->save();
-  }
-
-  /**
-   * Recursively collects route names or URIs used by links.
-   *
-   * @return string[]
-   *   Route names (for route URLs) or absolute URIs (for external URLs).
-   */
-  private function collectLinks(array $element): array {
-    $links = [];
-    if (isset($element['#url']) && $element['#url'] instanceof Url) {
-      $links[] = $element['#url']->isExternal()
-        ? (string) $element['#url']->getUri()
-        : (string) $element['#url']->getRouteName();
-    }
-    foreach ($element as $child) {
-      if (is_array($child)) {
-        $links = array_merge($links, $this->collectLinks($child));
-      }
-    }
-    return $links;
   }
 
 }

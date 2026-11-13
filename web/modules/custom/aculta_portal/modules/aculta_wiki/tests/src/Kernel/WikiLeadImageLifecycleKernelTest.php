@@ -102,6 +102,9 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     static::$modules = $this->resolveModuleDependencyClosure([
       'text_with_summary',
       'ui_patterns_library',
+      'ui_patterns_views',
+      'ui_styles',
+      'ui_skins',
       'aculta_calendar',
       'aculta_lms',
       'aculta_studio',
@@ -1902,7 +1905,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     self::assertArrayHasKey('title', $contextualForm);
     self::assertArrayHasKey('body', $contextualForm);
     self::assertArrayHasKey('wiki_workspace_return', $contextualForm);
-    self::assertSame('aculta_studio.we_sativa', $contextualForm['wiki_workspace_return']['#url']->getRouteName());
+    self::assertStringContainsString('/we-sativa', $contextualForm['wiki_workspace_return']['#props']['url']);
     self::assertSame($nodeCountBefore, $nodeStorage->getQuery()->accessCheck(FALSE)->count()->execute());
 
     $node = Node::create(['type' => 'wiki_entry', 'uid' => $author->id()]);
@@ -1913,8 +1916,8 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $formBuilder = $this->container->get('form_builder');
     $form = $formBuilder->buildForm($formObject, $formState);
     self::assertSame('link', $form['wiki_workspace_return']['#type']);
-    self::assertSame('aculta_studio.we_sativa', $form['wiki_workspace_return']['#url']->getRouteName());
-    self::assertSame('wiki420_aculta_org', $form['wiki_workspace_return']['#url']->getOption('domain')->id());
+    self::assertStringContainsString('/we-sativa', $form['wiki_workspace_return']['#props']['url']);
+    self::assertStringContainsString('wiki.example.invalid', $form['wiki_workspace_return']['#props']['url']);
     self::assertArrayHasKey('title', $form);
     self::assertArrayHasKey('body', $form);
     self::assertArrayHasKey('actions', $form);
@@ -3084,7 +3087,10 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $proposalBuild = [];
     $linkHooks->entityView($proposalBuild, $target, $display, 'full');
     self::assertArrayHasKey('wiki_proposal_link', $proposalBuild);
-    self::assertSame('aculta_wiki.contribution_intent', $proposalBuild['wiki_proposal_link']['link']['#url']->getRouteName());
+    self::assertStringContainsString(
+      '/verbetes/' . $target->id() . '/contribuir/como',
+      $proposalBuild['wiki_proposal_link']['link']['#props']['url'],
+    );
     self::assertContains('user.permissions', $proposalBuild['#cache']['contexts']);
     $intentPage = WikiContributionIntentController::create($this->container)->page($target);
     self::assertSame('Como você quer contribuir?', $intentPage['header']['#props']['title']);

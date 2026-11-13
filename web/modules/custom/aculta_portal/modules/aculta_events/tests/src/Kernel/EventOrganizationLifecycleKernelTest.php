@@ -170,7 +170,7 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
     $this->installEntitySchema('aculta_event_organization');
     $this->installEntitySchema('aculta_event_org_suggestion');
     $this->installEntitySchema('aculta_contribution');
-    $this->installConfig(['system', 'user', 'taxonomy', 'domain', 'aculta_cgu']);
+    $this->installConfig(['system', 'user', 'taxonomy', 'domain', 'aculta_cgu', 'aculta_events']);
 
     FieldStorageConfig::create([
       'entity_type' => 'profile',

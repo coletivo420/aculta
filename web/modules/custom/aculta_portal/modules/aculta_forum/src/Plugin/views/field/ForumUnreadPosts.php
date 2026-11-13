@@ -67,7 +67,9 @@ final class ForumUnreadPosts extends FieldPluginBase implements ContainerFactory
    */
   public function preRender(&$values): void {
     // The displayed count depends on each visitor's History records.
-    $this->view->element['#cache']['contexts'][] = 'user';
+    if ($this->view !== NULL) {
+      $this->view->element['#cache']['contexts'][] = 'user';
+    }
     $topicIds = [];
     foreach ($values as $row) {
       $topicIds[] = (int) $this->getValue($row, 'nid');

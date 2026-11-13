@@ -69,6 +69,9 @@ final class LmsRolePermissionsConfigSyncKernelTest extends KernelTestBase {
     'file',
     'image',
     'media',
+    'media_gallery',
+    'media_library',
+    'photoswipe',
     'aculta_image',
     'aculta_document_viewer',
     'aculta_file_uploader',
@@ -116,6 +119,7 @@ final class LmsRolePermissionsConfigSyncKernelTest extends KernelTestBase {
       'cardinality' => 1,
       'translatable' => TRUE,
     ])->save();
+    $this->prepareAcultaLmsPartialConfigDependencies();
     $this->container->get('config.installer')
       ->installDefaultConfig('module', 'aculta_lms');
     self::assertInstanceOf(NodeType::class, NodeType::load('aculta_lms_topic'));

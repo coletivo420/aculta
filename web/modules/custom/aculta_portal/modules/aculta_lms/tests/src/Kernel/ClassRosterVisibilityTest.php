@@ -33,7 +33,8 @@ final class ClassRosterVisibilityTest extends KernelTestBase {
    */
   protected static $modules = [
     'key',
-    'system', 'domain', 'user', 'file', 'image', 'media', 'entity_usage', 'aculta_image', 'aculta_file_uploader',
+    'system', 'domain', 'user', 'file', 'image', 'media', 'node', 'comment', 'gnode', 'entity_usage', 'aculta_image', 'aculta_file_uploader',
+    'media_gallery', 'media_library', 'photoswipe',
     'field', 'filter', 'flexible_permissions', 'group', 'views', 'options',
     'text',
     'editor',
@@ -54,6 +55,8 @@ final class ClassRosterVisibilityTest extends KernelTestBase {
   protected function setUp(): void {
     parent::setUp();
     $this->prepareAcultaLmsGroupTypes();
+    $this->installEntitySchema('node');
+    $this->prepareAcultaLmsPartialConfigDependencies();
     $this->container->get('module_installer')->install(['aculta_lms'], FALSE);
     $this->prepareAcultaLmsClassRelationship();
     $this->installEntitySchema('user');

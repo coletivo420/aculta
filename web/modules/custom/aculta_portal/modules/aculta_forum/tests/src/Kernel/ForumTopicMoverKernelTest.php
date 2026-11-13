@@ -54,6 +54,7 @@ final class ForumTopicMoverKernelTest extends KernelTestBase {
     'path_alias',
     'options',
     'domain',
+    'aculta_forum_test_routes',
   ];
 
   /**

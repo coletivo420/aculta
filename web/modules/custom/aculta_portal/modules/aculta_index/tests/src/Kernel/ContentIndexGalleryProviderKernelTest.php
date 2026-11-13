@@ -317,17 +317,23 @@ final class ContentIndexGalleryProviderKernelTest extends KernelTestBase {
    */
   private function processProviderWork(string $providerId): void {
     $database = $this->container->get('database');
-    $workIds = $database->select('aculta_index_work', 'work')
-      ->fields('work', ['work_id'])
-      ->condition('provider_id', $providerId)
-      ->condition('status', 'queued')
-      ->execute()
-      ->fetchCol();
     $worker = $this->container->get('plugin.manager.queue_worker')
       ->createInstance(ContentIndexWorkManager::QUEUE_ID);
-    foreach ($workIds as $workId) {
-      $worker->processItem(['work_id' => (int) $workId]);
+    for ($pass = 0; $pass < 20; $pass++) {
+      $workIds = $database->select('aculta_index_work', 'work')
+        ->fields('work', ['work_id'])
+        ->condition('provider_id', $providerId)
+        ->condition('status', 'queued')
+        ->execute()
+        ->fetchCol();
+      if ($workIds === []) {
+        return;
+      }
+      foreach ($workIds as $workId) {
+        $worker->processItem(['work_id' => (int) $workId]);
+      }
     }
+    self::fail(sprintf('Index work for provider %s did not drain after 20 passes.', $providerId));
   }
 
   /**

@@ -1,0 +1,5 @@
+name: 'ACULTA Forum test routes'
+type: module
+description: 'Provides the Forum admin route contract to focused Kernel tests.'
+package: ACULTA Portal
+core_version_requirement: ^11 || ^12

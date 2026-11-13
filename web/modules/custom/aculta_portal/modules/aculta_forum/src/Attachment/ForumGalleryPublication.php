@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Drupal\aculta_forum\Attachment;
 
 use Drupal\comment\CommentInterface;
-use Drupal\Core\Entity\EntityPublishedInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\media\MediaInterface;
 use Drupal\media_gallery\MediaGalleryInterface;
@@ -194,7 +193,7 @@ final class ForumGalleryPublication {
         continue;
       }
       // Recheck publication and comments immediately before deleting.
-      if (($gallery instanceof EntityPublishedInterface && $gallery->isPublished())
+      if ($gallery->isPublished()
         || $this->hasContentReference($gallery)) {
         continue;
       }
@@ -214,7 +213,7 @@ final class ForumGalleryPublication {
     ?ForumPost $current_post = NULL,
     ?int $excluded_post_id = NULL,
   ): void {
-    if (!$this->isForumGallery($gallery) || !$gallery instanceof EntityPublishedInterface) {
+    if (!$this->isForumGallery($gallery)) {
       return;
     }
     $is_public = FALSE;

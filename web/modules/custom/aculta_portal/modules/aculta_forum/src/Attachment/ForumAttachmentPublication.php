@@ -7,7 +7,6 @@ namespace Drupal\aculta_forum\Attachment;
 use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\comment\CommentInterface;
 use Drupal\Component\Utility\Html;
-use Drupal\Core\Entity\EntityPublishedInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\RevisionableStorageInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -542,7 +541,7 @@ final class ForumAttachmentPublication {
     ?AccountInterface $account = NULL,
     bool $check_access = TRUE,
   ): bool {
-    if (!$gallery instanceof EntityPublishedInterface || !$gallery->isPublished()
+    if (!$gallery->isPublished()
       || !$gallery->hasField('field_gallery_purpose')
       || $gallery->get('field_gallery_purpose')->value !== 'forum') {
       return FALSE;

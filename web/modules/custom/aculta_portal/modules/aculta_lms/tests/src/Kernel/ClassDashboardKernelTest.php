@@ -43,11 +43,12 @@ final class ClassDashboardKernelTest extends KernelTestBase {
    * {@inheritdoc} */
   protected static $modules = [
     'key',
-    'system', 'domain',
+    'system', 'domain', 'node', 'comment', 'gnode',
     'user',
     'file',
     'image',
     'media',
+    'media_gallery', 'media_library', 'photoswipe',
     'entity_usage',
     'aculta_image', 'aculta_file_uploader',
     'field',
@@ -81,6 +82,8 @@ final class ClassDashboardKernelTest extends KernelTestBase {
     $this->classLoader->addPsr4('Drupal\\aculta_lms\\', $lms_root . '/src');
     $this->classLoader->addPsr4('Drupal\\aculta_studio\\', $portal_root . '/modules/aculta_studio/src');
     $this->prepareAcultaLmsGroupTypes();
+    $this->installEntitySchema('node');
+    $this->prepareAcultaLmsPartialConfigDependencies();
     $this->container->get('module_installer')->install(['aculta_lms'], FALSE);
     $this->prepareAcultaLmsClassRelationship();
     $this->installEntitySchema('user');

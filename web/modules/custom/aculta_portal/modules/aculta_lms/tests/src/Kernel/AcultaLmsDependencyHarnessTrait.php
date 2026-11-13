@@ -34,8 +34,11 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Logger\LoggerChannel;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
+use Drupal\comment\Entity\CommentType;
 use Drupal\group\Entity\GroupRelationshipType;
 use Drupal\group\Entity\GroupType;
+use Drupal\media\Entity\MediaType;
+use Drupal\node\Entity\NodeType;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
@@ -113,6 +116,59 @@ trait AcultaLmsDependencyHarnessTrait {
 
     $this->container->get('entity_field.manager')->clearCachedFieldDefinitions();
     $this->container->get('group_relation_type.manager')->clearCachedPluginMaps();
+  }
+
+  /**
+   * Prepares config dependencies required by partial LMS Kernel installs.
+   *
+   * These tests load the real LMS default config without enabling its full
+   * Portal dependency graph. Seed the entity types and fields that the real
+   * config depends on before the module installer imports it.
+   */
+  protected function prepareAcultaLmsPartialConfigDependencies(): void {
+    $this->installConfig(['node', 'media', 'comment']);
+
+    if (!NodeType::load('wiki_entry')) {
+      NodeType::create(['type' => 'wiki_entry', 'name' => 'Wiki entry'])->save();
+    }
+    if (!MediaType::load('remote_video')) {
+      MediaType::create([
+        'id' => 'remote_video',
+        'label' => 'Remote video',
+        'source' => 'oembed:video',
+        'source_configuration' => ['source_field' => 'field_media_oembed_video'],
+      ])->save();
+    }
+    if (!CommentType::load('aculta_discussion_post')) {
+      CommentType::create([
+        'id' => 'aculta_discussion_post',
+        'label' => 'Forum discussion post',
+        'target_entity_type_id' => 'node',
+      ])->save();
+    }
+    if (!FieldStorageConfig::load('node.field_aculta_discussion')) {
+      FieldStorageConfig::create([
+        'entity_type' => 'node',
+        'field_name' => 'field_aculta_discussion',
+        'type' => 'comment',
+        'settings' => ['comment_type' => 'aculta_discussion_post'],
+      ])->save();
+    }
+    if (!FieldStorageConfig::load('comment.field_aculta_rejected')) {
+      FieldStorageConfig::create([
+        'entity_type' => 'comment',
+        'field_name' => 'field_aculta_rejected',
+        'type' => 'boolean',
+      ])->save();
+    }
+    if (!FieldConfig::load('comment.aculta_discussion_post.field_aculta_rejected')) {
+      FieldConfig::create([
+        'entity_type' => 'comment',
+        'bundle' => 'aculta_discussion_post',
+        'field_name' => 'field_aculta_rejected',
+        'label' => 'Rejected',
+      ])->save();
+    }
   }
 
   /**

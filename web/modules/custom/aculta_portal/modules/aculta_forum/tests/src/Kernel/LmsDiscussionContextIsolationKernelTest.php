@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_forum\Kernel;
 
+use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
 use Drupal\aculta_forum\Context\Provider\LmsDiscussionContextProvider;
 use Drupal\aculta_image\ImageCatalog;
 use Drupal\aculta_image\ImageRenderer;
@@ -83,6 +84,10 @@ final class LmsDiscussionContextIsolationKernelTest extends KernelTestBase {
   public function register(ContainerBuilder $container): void {
     parent::register($container);
     $this->registerLmsDependencyServices($container);
+    $container->register('aculta_portal.email_confirmation_policy', EmailConfirmationPolicy::class)
+      ->addArgument(new Reference('user.data'))
+      ->addArgument(new Reference('entity_type.manager'))
+      ->addArgument(new Reference('module_handler'));
     $container->setDefinition(
       'aculta_image.catalog',
       (new Definition(ImageCatalog::class))->setPublic(TRUE),

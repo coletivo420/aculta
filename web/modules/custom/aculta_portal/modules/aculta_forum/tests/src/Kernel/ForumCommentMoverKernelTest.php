@@ -72,6 +72,7 @@ final class ForumCommentMoverKernelTest extends KernelTestBase {
     'search_api',
     'search_api_test',
     'options',
+    'aculta_forum_test_routes',
     'aculta_forum_comment_move_test',
   ];
 

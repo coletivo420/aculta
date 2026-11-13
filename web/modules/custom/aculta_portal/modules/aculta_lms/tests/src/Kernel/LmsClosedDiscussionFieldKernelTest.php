@@ -62,6 +62,10 @@ final class LmsClosedDiscussionFieldKernelTest extends KernelTestBase {
     'aculta_lms',
     'key',
     'file',
+    'media',
+    'media_gallery',
+    'media_library',
+    'photoswipe',
     'domain',
     'aculta_file_uploader',
     'aculta_forum_lms_test',
@@ -125,6 +129,7 @@ final class LmsClosedDiscussionFieldKernelTest extends KernelTestBase {
       'label' => 'Rejected',
     ])->save();
 
+    $this->prepareAcultaLmsPartialConfigDependencies();
     $this->container->get('config.installer')
       ->installDefaultConfig('module', 'aculta_lms');
     self::assertInstanceOf(NodeType::class, NodeType::load('aculta_lms_topic'));

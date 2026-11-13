@@ -1,0 +1,7 @@
+aculta_forum.admin:
+  path: '/painel-administrativo/forum'
+  defaults:
+    _controller: '\Drupal\system\Controller\SystemController::systemAdminMenuBlockPage'
+    _title: 'Forum administration'
+  requirements:
+    _access: 'TRUE'

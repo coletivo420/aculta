@@ -10,7 +10,6 @@ use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\Core\Entity\EntityPublishedInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\media\MediaInterface;
@@ -48,7 +47,7 @@ final class ForumAttachmentAccessHooks {
     }
 
     // Unpublished galleries stay governed by the Gallery owner/moderator.
-    if ($entity instanceof EntityPublishedInterface && !$entity->isPublished()) {
+    if (!$entity->isPublished()) {
       return AccessResult::neutral()
         ->addCacheableDependency($entity)
         ->addCacheContexts(['user.permissions'])

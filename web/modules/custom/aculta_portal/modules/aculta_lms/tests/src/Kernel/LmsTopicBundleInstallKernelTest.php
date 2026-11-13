@@ -49,6 +49,10 @@ final class LmsTopicBundleInstallKernelTest extends KernelTestBase {
     'aculta_lms',
     'key',
     'file',
+    'media',
+    'media_gallery',
+    'media_library',
+    'photoswipe',
     'domain',
     'aculta_file_uploader',
     'aculta_forum_lms_test',
@@ -100,6 +104,7 @@ final class LmsTopicBundleInstallKernelTest extends KernelTestBase {
 
     // The test fixture module registers the adapter settings schema, because
     // the adapter itself cannot be enabled without its full dependency chain.
+    $this->prepareAcultaLmsPartialConfigDependencies();
     $this->container->get('config.installer')
       ->installDefaultConfig('module', 'aculta_lms');
   }

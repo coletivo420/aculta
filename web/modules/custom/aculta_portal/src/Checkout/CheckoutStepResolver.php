@@ -30,6 +30,9 @@ final class CheckoutStepResolver {
       // rendering only needs a URL and must remain read-only.
       $checkout_flow = $this->checkoutFlowResolver->resolve($order);
     }
+    if (!$checkout_flow instanceof CheckoutFlowInterface) {
+      return 'login';
+    }
     $flow = $checkout_flow->getPlugin()->setOrder($order);
     $visible_steps = $flow->getVisibleSteps();
     $stored_step = $order->get('checkout_step')->value;

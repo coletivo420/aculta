@@ -317,7 +317,11 @@ final class ContentIndexRebuilderKernelTest extends KernelTestBase {
   public function testActivationRejectsProviderInventoryDriftAfterValidation(): void {
     $rebuilder = $this->container->get('aculta_index.rebuilder');
     $generationId = $rebuilder->start();
-    $rebuilder->processNextBatch($generationId);
+    $complete = FALSE;
+    for ($batch = 0; $batch < 20 && !$complete; $batch++) {
+      $complete = $rebuilder->processNextBatch($generationId, 50)['complete'];
+    }
+    self::assertTrue($complete, 'The generation must finish before validation.');
     $rebuilder->validate($generationId);
     $this->container->get('database')->update('aculta_index_generation')
       ->fields(['provider_fingerprint' => str_repeat('0', 64)])

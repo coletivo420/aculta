@@ -68,7 +68,9 @@ final class ForumCategoryTopicCount extends FieldPluginBase implements Container
    * {@inheritdoc}
    */
   public function preRender(&$values): void {
-    $this->view->element['#cache']['contexts'][] = 'user.node_grants:view';
+    if ($this->view !== NULL) {
+      $this->view->element['#cache']['contexts'][] = 'user.node_grants:view';
+    }
     $term_ids = [];
     foreach ($values as $row) {
       $term_ids[] = (int) $this->getValue($row, 'tid');

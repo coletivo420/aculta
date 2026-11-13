@@ -199,7 +199,13 @@ final class WikiEditorialQueue {
         }
 
         $queryRows = $query->execute();
-        $revisionIds = array_map('strval', array_values($queryRows));
+        $revisionIds = [];
+        foreach ($queryRows as $queryRow) {
+          $revisionId = is_array($queryRow) ? ($queryRow['content_entity_revision_id'] ?? NULL) : NULL;
+          if (is_int($revisionId) || is_string($revisionId)) {
+            $revisionIds[] = (string) $revisionId;
+          }
+        }
         if ($revisionIds === []) {
           $hasMoreCandidates = FALSE;
           break;

@@ -58,6 +58,10 @@ final class LmsClassEducatorPermissionKernelTest extends KernelTestBase {
     'key',
     'user',
     'file',
+    'media',
+    'media_gallery',
+    'media_library',
+    'photoswipe',
     'field',
     'filter',
     'text',
@@ -113,6 +117,7 @@ final class LmsClassEducatorPermissionKernelTest extends KernelTestBase {
       'cardinality' => 1,
       'translatable' => TRUE,
     ])->save();
+    $this->prepareAcultaLmsPartialConfigDependencies();
     $this->container->get('config.installer')
       ->installDefaultConfig('module', 'aculta_lms');
     self::assertInstanceOf(NodeType::class, NodeType::load('aculta_lms_topic'));
