@@ -102,6 +102,86 @@ foreach ($iterator as $file) {
   $components[$name]['declared'] = array_merge(array_keys($props), array_keys(is_array($slots) ? $slots : []));
 }
 
+$extractIncludeArguments = static function (string $source, int $openBraceOffset): ?array {
+  $depth = 0;
+  $quote = NULL;
+  $escaped = FALSE;
+  $length = strlen($source);
+  for ($index = $openBraceOffset; $index < $length; $index++) {
+    $char = $source[$index];
+    if ($quote !== NULL) {
+      if ($escaped) {
+        $escaped = FALSE;
+      }
+      elseif ($char === '\\') {
+        $escaped = TRUE;
+      }
+      elseif ($char === $quote) {
+        $quote = NULL;
+      }
+      continue;
+    }
+    if ($char === "'" || $char === '"') {
+      $quote = $char;
+      continue;
+    }
+    if ($char === '{') {
+      $depth++;
+    }
+    elseif ($char === '}') {
+      $depth--;
+      if ($depth === 0) {
+        return [substr($source, $openBraceOffset + 1, $index - $openBraceOffset - 1), $index];
+      }
+    }
+  }
+  return NULL;
+};
+
+$extractObjectKeys = static function (string $source): array {
+  $keys = [];
+  $parts = [];
+  $start = 0;
+  $depth = 0;
+  $quote = NULL;
+  $escaped = FALSE;
+  $length = strlen($source);
+  for ($index = 0; $index <= $length; $index++) {
+    $char = $source[$index] ?? ',';
+    if ($quote !== NULL) {
+      if ($escaped) {
+        $escaped = FALSE;
+      }
+      elseif ($char === '\\') {
+        $escaped = TRUE;
+      }
+      elseif ($char === $quote) {
+        $quote = NULL;
+      }
+      continue;
+    }
+    if ($char === "'" || $char === '"') {
+      $quote = $char;
+    }
+    elseif (in_array($char, ['{', '[', '('], TRUE)) {
+      $depth++;
+    }
+    elseif (in_array($char, ['}', ']', ')'], TRUE)) {
+      $depth--;
+    }
+    elseif ($char === ',' && $depth === 0) {
+      $parts[] = substr($source, $start, $index - $start);
+      $start = $index + 1;
+    }
+  }
+  foreach ($parts as $part) {
+    if (preg_match('/^\s*([a-z_][a-z0-9_]*)\s*:/i', $part, $match)) {
+      $keys[] = strtolower($match[1]);
+    }
+  }
+  return array_values(array_unique($keys));
+};
+
 $calls = [];
 foreach (['templates', 'components'] as $dir) {
   $walker = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($root . '/' . $dir, FilesystemIterator::SKIP_DOTS));
@@ -110,11 +190,17 @@ foreach (['templates', 'components'] as $dir) {
       continue;
     }
     $source = file_get_contents($file->getPathname());
-    preg_match_all("/include\\(\\s*'aculta420(?:_v2)?:([a-z0-9-]+)'\\s*,\\s*\\{(.*?)\\}\\s*,/s", $source, $matches, PREG_SET_ORDER);
-    foreach ($matches as $match) {
+    preg_match_all("/include\\(\\s*'aculta420(?:_v2)?:([a-z0-9-]+)'\\s*,\\s*\\{/", $source, $matches, PREG_OFFSET_CAPTURE);
+    foreach ($matches[0] ?? [] as $index => $match) {
+      $openBraceOffset = strpos($match[0], '{') + $match[1];
+      $arguments = $extractIncludeArguments($source, $openBraceOffset);
+      if ($arguments === NULL) {
+        $failures[] = str_replace($root . '/', '', $file->getPathname()) . ': unclosed SDC include props object.';
+        continue;
+      }
       $calls[] = [
-        'component' => $match[1],
-        'keys' => $match[2],
+        'component' => $matches[1][$index][0],
+        'keys' => $arguments[0],
         'file' => str_replace($root . '/', '', $file->getPathname()),
       ];
     }
@@ -127,11 +213,7 @@ foreach ($calls as $call) {
   if (!isset($components[$call['component']])) {
     continue;
   }
-  // Ternary branches (`? value :`) are values, not keys. Drop them before
-  // matching keys.
-  $objectKeys = preg_replace('/\?\s*[^,?]*?\s*:/', '?', $call['keys']);
-  preg_match_all('/([a-z_][a-z0-9_]*)\s*:/', $objectKeys, $keys);
-  foreach (array_unique($keys[1]) as $key) {
+  foreach ($extractObjectKeys($call['keys']) as $key) {
     $assert(in_array($key, $components[$call['component']]['declared'], TRUE), "$label: variable '$key' is not declared by the component.");
   }
 }

@@ -197,6 +197,15 @@ $lessonPageCss = (string) file_get_contents($theme . '/components/lms-lesson-pag
 $baseCss = (string) file_get_contents($theme . '/src/styles/base.css');
 $assert(str_contains($baseCss, ':focus-visible'), 'base.css perdeu o indicador global de foco visível.');
 $assert(!str_contains($baseCss, '.htmx-indicator') && !str_contains($baseCss, '.htmx-request'), 'O estado visual HTMX voltou ao CSS global.');
+$assert(!str_contains($baseCss, '.flex-column'), 'A utilidade flex-column do visualizador PDF voltou ao CSS global.');
+$assert(!str_contains($baseCss, '.container {') && !str_contains($baseCss, '.grid {'), 'Utilidades sem emissores voltaram ao CSS global.');
+$pdfViewerRoot = $root . '/web/modules/custom/aculta_portal/modules/aculta_document_viewer';
+$pdfViewerLibrary = Yaml::parseFile($pdfViewerRoot . '/aculta_document_viewer.libraries.yml');
+$pdfViewerCss = (string) file_get_contents($pdfViewerRoot . '/css/pdf-viewer.css');
+$pdfViewerJs = (string) file_get_contents($pdfViewerRoot . '/js/pdf-viewer.mjs');
+$assert(isset($pdfViewerLibrary['aculta_document_viewer_pdf']['css']['component']['css/pdf-viewer.css']), 'A biblioteca PDF não declara seu CSS contextual.');
+$assert(str_contains($pdfViewerJs, 'button button--outline aculta-pdf-viewer__thumbnail-button') && !str_contains($pdfViewerJs, 'flex-column'), 'O visualizador PDF ainda emite utilitários de layout legados.');
+$assert(str_contains($pdfViewerCss, '.aculta-pdf-viewer__thumbnail-button') && str_contains($pdfViewerCss, 'flex-direction: column'), 'O CSS local PDF perdeu o layout vertical das miniaturas.');
 $connectionsCss = (string) file_get_contents($theme . '/components/studio-connections-page/studio-connections-page.css');
 $uiLibraryCss = (string) file_get_contents($theme . '/src/styles/ui-library-admin.css');
 $assert(str_contains($connectionsCss, '.aculta-studio-connections-page .htmx-indicator') && str_contains($connectionsCss, '.aculta-studio-connections-page .htmx-request'), 'O SDC studio-connections-page perdeu o estado HTMX local.');

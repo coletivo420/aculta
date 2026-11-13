@@ -11,6 +11,11 @@
   de `global-styling` e foi removido.
 - Os indicadores HTMX saíram de `base.css`: agora são estilizados pelas folhas
   locais do SDC `studio-connections-page` e das prévias da UI Patterns Library.
+- As miniaturas do PDF viewer substituíram `btn`, `btn-outline-secondary`,
+  `d-inline-flex`, `flex-column` e `align-items-center` por classes semânticas;
+  o layout vertical passou para `aculta_document_viewer/aculta_document_viewer_pdf`.
+- `.container` e `.grid` saíram de `base.css` após inspeção de todo o código,
+  configuração versionada e HTML capturado sem encontrar consumidores.
 
 - Auditoria PurgeCSS: `css:verify` agora exige todos os arquivos de fonte e
   staging, valida os bytes e conjuntos de seletores por folha, hashes, versões,

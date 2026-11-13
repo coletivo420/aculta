@@ -102,6 +102,13 @@ test('collectDynamicClasses resolve concatenação, interpolação, alias e UI S
   assert.ok(set.has('author-card--stacked'));
   assert.ok(set.has('author-card--inline'));
 
+  // Props opcionais do cartão de Fórum interpoladas no Twig.
+  assert.ok(set.has('forum-post-card--side-start'));
+  assert.ok(set.has('forum-post-card--side-end'));
+  assert.ok(set.has('forum-post-card--accent-green'));
+  assert.ok(set.has('forum-post-card--accent-yellow'));
+  assert.ok(set.has('forum-post-card--accent-red'));
+
   // Opções literais de UI Styles.
   assert.ok(set.has('aculta-heading--accent-green'));
 

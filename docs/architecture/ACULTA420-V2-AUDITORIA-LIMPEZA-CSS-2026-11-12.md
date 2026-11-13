@@ -525,3 +525,38 @@ sincronizador Runtime está bloqueado por RX e drift de configuração.
   mantém os mesmos 142 rejeitados classificados com evidência. `css:verify`,
   `css:test` (3), Stylelint e `git diff --check`: PASS. A edição concorrente foi
   preservada e não entrou no commit desta remoção.
+
+### Atualização de ownership e CSS global (2026-11-13)
+
+- `portal-ui-map.css` foi removido: o marcador de prévia editorial agora vive em
+  biblioteca contextual UI Styles; `.container-inline` usa apenas `system/base`.
+- O formatter da Revista compõe o SDC `editorial-category`; suas quatro cores
+  saíram de `content.css`, que foi removido de `global-styling` e do repositório.
+- Indicadores HTMX saíram de `base.css` e passaram às folhas da UI Library e do
+  SDC `studio-connections-page`. Miniaturas PDF substituíram utilitários
+  Bootstrap por `button button--outline aculta-pdf-viewer__thumbnail-button`;
+  `flex-column` foi removido do global e o layout local acompanha a biblioteca
+  `aculta_document_viewer_pdf`.
+- `.container` e `.grid` saíram de `base.css` após busca em todo o código,
+  configuração exportada e HTML capturado: não há classes emissoras; “grid” em
+  `AccountShellBuilder` é apenas o nome do ícone. O gate agora impede o retorno.
+- `global-styling` caiu de 52.851 para 50.376 bytes locais nestes cortes
+  (−2.475 bytes; 9 entradas CSS). PurgeCSS recalculado: 146 folhas, 414.570 bytes
+  de origem, 2.494 seletores antes, 392.950 bytes retidos, 21.620 bytes e 137
+  seletores removidos, 22 seletores reescritos. O classificador separa 2 dinâmicos,
+  43 presentes no Runtime, 63 cobertos por padrão e 29 referenciados no repositório;
+  137/137 removíveis classificados, sem itens sem evidência. A inspeção dos dois
+  casos de Fórum levou à declaração das props enum `accent_side`/`accent_color` e
+  do slot `badge` no SDC, preservando os arquivos Twig/CSS concorrentes. O coletor
+  reconhece as cinco classes como dinâmicas; 250 classes em 130 SDCs foram preservadas.
+- O gate SDC agora percorre objetos Twig com balanceamento de delimitadores e
+  verifica somente as chaves de primeiro nível; nested `include()` não é mais
+  confundido com props do componente externo. PASS: 130 componentes, 146 includes,
+  2.400 checks.
+- `css:verify`, `css:test`, Stylelint, PHPUnit do formatter da Revista (3/16) e
+  do PDF viewer (3/55), schema SDC (130 componentes/2.381 checks), CSS scope
+  (204 checks) e documentação UI passaram.
+- Runtime ainda não sincronizado; `drush cr`, validação de bibliotecas servidas
+  e homologação visual permanecem pendentes. As capturas arquivadas não provam
+  os viewports declarados: resultados anteriores registram viewport efetivo de
+  1024 px para todos. Não declarar homologação visual.

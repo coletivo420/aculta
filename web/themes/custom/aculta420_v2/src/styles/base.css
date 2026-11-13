@@ -110,25 +110,6 @@ fieldset {
   outline-offset: var(--focus-ring-offset);
 }
 
-/* Layout */
-.container {
-  inline-size: 100%;
-  max-inline-size: var(--page-content-max);
-  margin-inline: auto;
-  padding-inline: var(--page-gutter);
-}
-
-/* Grid system */
-.grid {
-  display: grid;
-  gap: var(--spacing-base);
-}
-
-/* Flexbox utilities. `flex-column` é emitida pelo visualizador de PDF. */
-.flex-column {
-  flex-direction: column;
-}
-
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
