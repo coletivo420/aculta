@@ -100,7 +100,12 @@ function aculta_cgu_post_update_migrate_moderator_role(): string {
   $roleStorage = \Drupal::entityTypeManager()->getStorage('user_role');
   $permissionsMoved = 0;
   foreach ($roleStorage->loadMultiple() as $role) {
-    if ($role->hasPermission($oldPermission)) {
+    // Papéis de administrador têm hasPermission() verdadeiro para tudo; só
+    // alteramos os que guardam a permissão antiga de fato.
+    if ($role->isAdmin()) {
+      continue;
+    }
+    if (in_array($oldPermission, $role->getPermissions(), TRUE)) {
       $role->revokePermission($oldPermission)->grantPermission($newPermission)->save();
       $permissionsMoved++;
     }
