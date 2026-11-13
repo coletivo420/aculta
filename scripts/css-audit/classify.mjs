@@ -56,16 +56,22 @@ const runtimeFiles = [];
 for (const file of readdirSync(htmlDir).filter((name) => name.endsWith('.html'))) {
   const source = readFileSync(join(htmlDir, file), 'utf8');
   runtimeFiles.push(file);
-  for (const attr of source.matchAll(/class="([^"]*)"/g)) {
-    for (const token of attr[1].split(/\s+/)) {
-      if (token) {
-        runtimeClasses.add(token);
+  // HTML usa tokens completos de class; o extractor genérico também gerava
+  // substrings de seletores/atributos (ex.: `site-footer` de
+  // `site-footer--social-links`), produzindo falsos positivos.
+  for (const attr of source.matchAll(/\bclass\s*=\s*(?:"([^"]*)"|'([^']*)')/g)) {
+    for (const token of (attr[1] ?? attr[2] ?? '').split(/\s+/)) {
+      if (token) runtimeClasses.add(token);
+    }
+  }
+  for (const token of source.matchAll(/\bdata-[\w-]+\s*=\s*(?:"([^"]*)"|'([^']*)')/g)) {
+    for (const value of [token[1] ?? token[2] ?? '']) {
+      for (const item of value.split(/\s+/)) {
+        if (/^[\w-]+$/.test(item)) runtimeClasses.add(item);
       }
     }
   }
-  for (const token of defaultExtractor(source)) {
-    runtimeClasses.add(token);
-  }
+  // Preserve Drupal selector tokens but only as discrete class-like tokens.
 }
 
 const isRuntimePattern = (className) =>
@@ -73,10 +79,11 @@ const isRuntimePattern = (className) =>
 
 const classification = {
   generatedAt: new Date().toISOString(),
+  sourceHash: report.sourceHash,
   runtimeFiles,
   runtimeClassCount: runtimeClasses.size,
   dynamicClassCount: dynamic.size,
-  totals: { selectors: 0, dynamic: 0, runtime: 0, runtimePattern: 0, sourceReference: 0, unreferenced: 0 },
+  totals: { selectors: 0, dynamic: 0, runtime: 0, runtimePattern: 0, sourceReference: 0, unreferenced: 0, unclassified: 0 },
   files: [],
 };
 
@@ -84,12 +91,11 @@ for (const file of report.files) {
   const items = [];
   for (const selector of file.selectorsRemoved) {
     const classes = [...new Set([...selector.matchAll(/\.(-?[_a-zA-Z][\w-]*)/g)].map((m) => m[1]))];
-    if (classes.length === 0) {
-      continue;
-    }
-    let category = 'unreferenced';
+    let category = classes.length === 0 ? 'unclassified' : 'unreferenced';
     const evidence = [];
-    if (classes.some((c) => dynamic.has(c))) {
+    if (classes.length === 0) {
+      evidence.push('seletor sem token de classe; requer inspeção manual');
+    } else if (classes.some((c) => dynamic.has(c))) {
       category = 'dynamic';
       evidence.push(...classes.filter((c) => dynamic.has(c)).map((c) => `dynamic:${c}`));
     } else if (classes.some((c) => runtimeClasses.has(c))) {
@@ -124,6 +130,7 @@ console.log(`  presentes no Runtime: ${t.runtime}`);
 console.log(`  padrão de runtime: ${t.runtimePattern}`);
 console.log(`  referência no repositório: ${t.sourceReference}`);
 console.log(`  sem evidência: ${t.unreferenced}`);
+console.log(`  não classificáveis automaticamente: ${t.unclassified}`);
 console.log(`  HTML analisado: ${runtimeFiles.length} hosts (${runtimeClasses.size} tokens)`);
 const unreferenced = classification.files.flatMap((file) =>
   file.items.filter((item) => item.category === 'unreferenced').map((item) => `${relative(ROOT, file.file)} :: ${item.selector}`),

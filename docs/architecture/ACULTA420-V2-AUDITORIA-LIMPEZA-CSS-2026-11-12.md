@@ -391,3 +391,29 @@ Drupal/UI e 28 com referências no repositório.
 `npm run lint:css` e `git diff --check`: PASS. A busca por consumidores é
 estática; o aceite visual depois do corte continua pendente, pois o
 sincronizador Runtime está bloqueado por RX e drift de configuração.
+
+## 16. Integridade do relatório e escrita controlada (2026-11-13)
+
+- UI Styles agora é lido com `js-yaml`; o coletor compartilha a expansão de
+  enums SDC e de classes PHP construídas por allowlists `safeValue()`.
+- `css:verify` compara versões instaladas, conteúdo/globs, safelist, classes
+  dinâmicas e hash CSS com o relatório. Exige a lista completa de fontes e de
+  CSS podado, valida sintaxe, bytes, seletores removidos/reescritos e totais
+  por arquivo contra o conteúdo real em staging.
+- Métricas de seletores obedecem `originais + reescritos − removidos = retidos`;
+  bytes retidos/removidos são medidos no CSS efetivo após normalização Stylelint.
+- `css:purge --mode=apply` só cria staging. `--write` exige confirmação e hash
+  de revisão sobre CSS, ferramentas, safelist e classificação completa;
+  safelist dinâmica preservada e todos os seletores removidos classificados
+  como sem evidência. Neste estado, nenhum dos seletores restantes ficou sem
+  evidência, então a tentativa com hash válido foi recusada antes de gravar.
+  Backups e gates pré/pós-gravação ficam obrigatórios quando houver corte
+  elegível; folhas que ficariam vazias são preservadas.
+- `npm run css:audit`, `css:verify`, `css:classify`, `css:test`, Stylelint no
+  staging e no tema e `git diff --check`: PASS.
+- **Runtime e navegador:** DEFERRED. O OpenSSH recusa a configuração de proxy
+  por proprietário `nobody`; sem essa configuração, DNS de `github.com` falha.
+  Os hosts ACULTA resolvem para loopback, mas a conexão HTTPS é recusada. O
+  estado persistido registra drift em `user.role.administrator`, cache validado
+  somente até `e37f3d8d` e módulos ausentes de schema. Não foram executados
+  `sync-code`, `drush cr` nem Playwright contra Runtime.

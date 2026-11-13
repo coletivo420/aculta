@@ -19,7 +19,7 @@ import { join, relative, extname } from 'node:path';
 import postcss from 'postcss';
 import yaml from 'js-yaml';
 import { defaultExtractor, yamlExtractor } from './extractors/index.mjs';
-import { parseComponentEnums } from './collect-dynamic-classes.mjs';
+import { collectDynamicClasses, parseComponentEnums } from './collect-dynamic-classes.mjs';
 
 const ROOT = process.cwd();
 const THEME_PREFIX = 'web/themes/custom/aculta420_v2/';
@@ -309,10 +309,10 @@ function main() {
     inventory.purge = {
       generatedAt: purge.generatedAt,
       totals: purge.totals,
-      dynamicClasses: purge.dynamicClasses.length,
+      dynamicClasses: collectDynamicClasses({ root: ROOT }).classes.length,
       rejected: purge.files
-        .filter((file) => file.rejectedSelectors > 0)
-        .map((file) => ({ file: file.file, rejected: file.rejectedSelectors, selectors: file.rejected })),
+        .filter((file) => file.purgecssRejectedSelectors > 0)
+        .map((file) => ({ file: file.file, rejected: file.purgecssRejectedSelectors, selectors: file.purgecssRejected })),
     };
   } catch {
     inventory.purge = null;
@@ -326,7 +326,7 @@ function main() {
   console.log(`  !important: ${t.important}; :has ${t.has}; :is ${t.is}; :where ${t.where}; media ${t.mediaQueries}`);
   console.log(`  seletores repetidos entre arquivos: ${t.selectorsInMultipleFiles}`);
   console.log(`  classes sem referência textual: ${inventory.classesWithoutTextualReference.length}`);
-  console.log(`  classes dinâmicas (SDC/UI Styles): ${inventory.purge?.dynamicClasses ?? 'n/d'}`);
+  console.log(`  classes dinâmicas (Twig/PHP/SDC/UI Styles): ${inventory.purge?.dynamicClasses ?? 'n/d'}`);
   console.log(`  saída: ${relative(ROOT, OUT_DIR)}`);
 }
 

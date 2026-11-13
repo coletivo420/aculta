@@ -1,5 +1,18 @@
 ## Não versionado — corte SDC-first de CSS e LMS (2026-11-13)
 
+- Auditoria PurgeCSS: `css:verify` agora exige todos os arquivos de fonte e
+  staging, valida os bytes e conjuntos de seletores por folha, hashes, versões,
+  fontes de conteúdo e classes dinâmicas atuais. O relatório distingue
+  seletores removidos de seletores reescritos pelo PurgeCSS.
+- O coletor de classes dinâmicas agora lê UI Styles como YAML estruturado e
+  expande allowlists PHP de `safeValue()`; a auditoria e os testes compartilham
+  o mesmo coletor.
+- `css:purge --mode=apply` é somente staging. `--write` exige o hash do plano
+  após revisão humana, incluindo o hash da classificação completa, cria backup,
+  testa o CSS podado e executa verificação, Stylelint e auditoria antes/depois;
+  falha pós-gravação restaura as fontes. Seletores com evidência bloqueiam a
+  gravação automática.
+
 - A classificação PurgeCSS foi revisada seletor por seletor. Os 22 sem
   evidência não tinham emissores em Twig/PHP/YAML/JavaScript; removidas suas
   24 regras (3.295 bytes, contando espaço em branco associado). Os outros 144

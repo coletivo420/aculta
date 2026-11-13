@@ -117,7 +117,7 @@ function expandTwigClasses(twigSource, enums, add) {
 }
 
 /** Expande concatenações em PHP/serviços do tema. */
-function expandPhpClasses(phpSource, enumsByComponent, add) {
+export function expandPhpClasses(phpSource, enumsByComponent = {}, add = () => {}) {
   // 'prefixo-' . $variavel  ou  "prefixo-$variavel"
   const phpConcat = /(['"])([a-zA-Z][\w-]*[-_]{1,2})\1\s*\.\s*\$([a-zA-Z_][\w]*)/g;
   let match;
@@ -133,21 +133,84 @@ function expandPhpClasses(phpSource, enumsByComponent, add) {
       add(`${prefix}${value}`);
     }
   }
+
+  // Prefixos concatenados aos allowlists de safeValue() em PHP.
+  // Ex.: 'aculta-radius--button-' . $this->safeValue($value, ['base', 'lg'], 'lg')
+  const safeValuePrefix = /(['"])([a-zA-Z][\w-]*[-_]{1,2})\1\s*\.\s*\$this->safeValue\s*\(/g;
+  while ((match = safeValuePrefix.exec(phpSource)) !== null) {
+    const [, , prefix] = match;
+    const argsStart = safeValuePrefix.lastIndex;
+    let depth = 1;
+    let quote = null;
+    let escaped = false;
+    let argsEnd = argsStart;
+    for (; argsEnd < phpSource.length && depth > 0; argsEnd += 1) {
+      const char = phpSource[argsEnd];
+      if (quote) {
+        if (escaped) escaped = false;
+        else if (char === '\\') escaped = true;
+        else if (char === quote) quote = null;
+        continue;
+      }
+      if (char === "'" || char === '"') quote = char;
+      else if (char === '(') depth += 1;
+      else if (char === ')') depth -= 1;
+    }
+    if (depth !== 0) continue;
+    const args = phpSource.slice(argsStart, argsEnd - 1);
+    const parts = [];
+    let partStart = 0;
+    let parens = 0;
+    let brackets = 0;
+    quote = null;
+    escaped = false;
+    for (let index = 0; index < args.length; index += 1) {
+      const char = args[index];
+      if (quote) {
+        if (escaped) escaped = false;
+        else if (char === '\\') escaped = true;
+        else if (char === quote) quote = null;
+        continue;
+      }
+      if (char === "'" || char === '"') quote = char;
+      else if (char === '(') parens += 1;
+      else if (char === ')') parens -= 1;
+      else if (char === '[') brackets += 1;
+      else if (char === ']') brackets -= 1;
+      else if (char === ',' && parens === 0 && brackets === 0) {
+        parts.push(args.slice(partStart, index));
+        partStart = index + 1;
+      }
+    }
+    parts.push(args.slice(partStart));
+    const allowed = parts[1]?.match(/^\s*\[([\s\S]*)\]\s*$/);
+    if (!allowed) continue;
+    for (const value of allowed[1].matchAll(/(['"])([a-zA-Z][\w-]*)\1/g)) {
+      add(`${prefix}${value[2]}`);
+    }
+    safeValuePrefix.lastIndex = argsEnd;
+  }
 }
 
-/** Extrai classes literais declaradas nas opções do UI Styles. */
-function collectUiStyles(source, add) {
-  for (const line of source.split(/\r?\n/)) {
-    const option = line.match(/^\s{4}([^:#]+):\s*"/);
-    if (!option) {
-      continue;
-    }
-    for (const token of option[1].trim().split(/\s+/)) {
-      if (/^[a-zA-Z][\w-]*$/.test(token)) {
-        add(token);
+/** Extrai classes das chaves de opção do YAML de UI Styles. */
+export function parseUiStylesClasses(source) {
+  let metadata;
+  try {
+    metadata = yaml.load(source);
+  } catch (error) {
+    throw new Error(`Configuração UI Styles inválida: ${error.message}`);
+  }
+  const classes = new Set();
+  for (const definition of Object.values(metadata ?? {})) {
+    for (const option of Object.keys(definition?.options ?? {})) {
+      for (const token of option.trim().split(/\s+/)) {
+        if (/^[a-zA-Z][\w-]*$/.test(token)) {
+          classes.add(token);
+        }
       }
     }
   }
+  return [...classes].sort();
 }
 
 /** Coleta todas as classes dinâmicas resolvíveis. */
@@ -182,7 +245,9 @@ export function collectDynamicClasses({ root = '.' } = {}) {
   }
 
   if (statSync(UI_STYLES_FILE).isFile()) {
-    collectUiStyles(readFileSync(UI_STYLES_FILE, 'utf8'), (cls) => classes.add(cls));
+    for (const cls of parseUiStylesClasses(readFileSync(UI_STYLES_FILE, 'utf8'))) {
+      classes.add(cls);
+    }
   }
 
   return {

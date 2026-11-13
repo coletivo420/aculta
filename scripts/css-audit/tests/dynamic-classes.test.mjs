@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { collectDynamicClasses, parseComponentEnums } from '../collect-dynamic-classes.mjs';
+import { collectDynamicClasses, expandPhpClasses, parseComponentEnums, parseUiStylesClasses } from '../collect-dynamic-classes.mjs';
 import { SAFELIST_PATTERNS, STATIC_SAFELIST, buildSafelist } from '../safelist.mjs';
 import { sourceHash } from '../lib/theme-css.mjs';
 
@@ -37,6 +37,42 @@ test('parseComponentEnums recusa YAML inválido', () => {
   assert.throws(() => parseComponentEnums('props: [\n  bad'), /Metadata SDC inválido/);
 });
 
+test('PHP safeValue expande classes montadas a partir de allowlists', () => {
+  const classes = new Set();
+  const php = `
+    $classes = [
+      'aculta-radius--button-' . $this->safeValue($button, ['base', 'lg', 'full'], 'lg'),
+      'aculta-accent--' . $this->safeValue($accent, ['mapping', 'green', 'yellow', 'red'], 'mapping'),
+    ];
+  `;
+  expandPhpClasses(php, {}, (className) => classes.add(className));
+  assert.deepEqual([...classes].sort(), [
+    'aculta-accent--green',
+    'aculta-accent--mapping',
+    'aculta-accent--red',
+    'aculta-accent--yellow',
+    'aculta-radius--button-base',
+    'aculta-radius--button-full',
+    'aculta-radius--button-lg',
+  ]);
+});
+
+test('UI Styles usa YAML estruturado e rejeita documento inválido', () => {
+  const source = `
+styles:
+  label: "Testes"
+  options:
+    "aculta-surface aculta-surface--tone-canvas": "Canvas"
+    aculta-heading--accent-green: "Verde"
+`;
+  assert.deepEqual(parseUiStylesClasses(source), [
+    'aculta-heading--accent-green',
+    'aculta-surface',
+    'aculta-surface--tone-canvas',
+  ]);
+  assert.throws(() => parseUiStylesClasses('styles: [\n bad'), /Configuração UI Styles inválida/);
+});
+
 test('collectDynamicClasses resolve concatenação, interpolação, alias e UI Styles', () => {
   const { classes, components } = collectDynamicClasses({ root: process.cwd() });
   const set = new Set(classes);
@@ -56,6 +92,11 @@ test('collectDynamicClasses resolve concatenação, interpolação, alias e UI S
   // Concatenação com filtro/default.
   assert.ok(set.has('aculta-auth-dialog--neutral'));
   assert.ok(set.has('aculta-auth-dialog--institutional'));
+
+  // Classes montadas por safeValue() nas configurações PHP do tema.
+  assert.ok(set.has('aculta-radius--button-full'));
+  assert.ok(set.has('aculta-radius--field-sm'));
+  assert.ok(set.has('aculta-accent--red'));
 
   // Ternário literal em `set`.
   assert.ok(set.has('author-card--stacked'));

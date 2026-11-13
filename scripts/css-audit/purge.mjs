@@ -5,13 +5,12 @@
  * Uso:
  *   node scripts/css-audit/purge.mjs --mode=audit
  *   node scripts/css-audit/purge.mjs --mode=apply
- *   node scripts/css-audit/purge.mjs --mode=apply --write --confirm-write
+ *   node scripts/css-audit/purge.mjs --mode=apply --write --confirm-write --review-hash=<sha256>
  *
  * - audit: gera relatório, CSS podado e CSS rejeitado sem tocar na fonte.
  * - apply: calcula o CSS podado e grava em staging.
- * - `--write`: substitui os arquivos-fonte. Exige `--confirm-write`, cria
- *   backup em `reports/css-audit/backup/` e recusa qualquer arquivo podado
- *   que não faça parse como CSS.
+ * - `--write`: só após revisar o staging e seu hash. Exige `--confirm-write`
+ *   e `--review-hash`, cria backup e executa gates antes/depois da gravação.
  *
  * O relatório inclui `sourceHash` de todas as folhas de origem. O gate
  * `css:verify` compara o hash e falha se o relatório estiver ausente,
@@ -20,29 +19,20 @@
 
 import { readFileSync, writeFileSync, mkdirSync, rmSync, copyFileSync } from 'node:fs';
 import { join, relative, dirname } from 'node:path';
+import { spawnSync } from 'node:child_process';
 import { PurgeCSS } from 'purgecss';
 import postcss from 'postcss';
 import { collectDynamicClasses } from './collect-dynamic-classes.mjs';
 import { buildSafelist, describeSafelist } from './safelist.mjs';
 import { EXTRACTORS } from './extractors/index.mjs';
-import { THEME_PREFIX, readThemeCss, sourceHash } from './lib/theme-css.mjs';
+import { readThemeCss, sourceHash } from './lib/theme-css.mjs';
+import { createWriteReviewHash, validatePurgeRemovalClassification } from './lib/write-review.mjs';
+import { CONTENT_GLOBS } from './lib/content-globs.mjs';
 
 const ROOT = process.cwd();
 
-/** Fontes que emitem classes consumidas pelo tema. */
-const CONTENT_GLOBS = [
-  `${THEME_PREFIX}components/**/*.{twig,php,yml,js,html}`,
-  `${THEME_PREFIX}templates/**/*.{twig,php,yml,js,html}`,
-  `${THEME_PREFIX}src/**/*.{php,yml,html}`,
-  `${THEME_PREFIX}js/**/*.{js,mjs}`,
-  `${THEME_PREFIX}config/**/*.{yml,php}`,
-  `${THEME_PREFIX}*.yml`,
-  'web/modules/custom/**/*.{twig,php,module,theme,install,yml,js,mjs}',
-  'config/sync/*.yml',
-];
-
 function parseArgs(argv) {
-  const args = { mode: 'audit', write: false, confirmWrite: false, out: 'reports/css-audit' };
+  const args = { mode: 'audit', write: false, confirmWrite: false, reviewHash: '', out: 'reports/css-audit' };
   for (const arg of argv.slice(2)) {
     if (arg.startsWith('--mode=')) {
       args.mode = arg.slice('--mode='.length);
@@ -50,10 +40,12 @@ function parseArgs(argv) {
       args.write = true;
     } else if (arg === '--confirm-write') {
       args.confirmWrite = true;
+    } else if (arg.startsWith('--review-hash=')) {
+      args.reviewHash = arg.slice('--review-hash='.length);
     } else if (arg.startsWith('--out=')) {
       args.out = arg.slice('--out='.length);
     } else if (arg === '--help') {
-      console.log('Uso: node scripts/css-audit/purge.mjs [--mode=audit|apply] [--write --confirm-write] [--out=DIR]');
+      console.log('Uso: node scripts/css-audit/purge.mjs [--mode=audit|apply] [--write --confirm-write --review-hash=<sha256>] [--out=DIR]');
       process.exit(0);
     }
   }
@@ -107,8 +99,8 @@ async function main() {
     console.error(`Modo inválido: ${args.mode}. Use audit ou apply.`);
     process.exit(2);
   }
-  if (args.write && (!args.confirmWrite || args.mode !== 'apply')) {
-    console.error('--write exige --mode=apply e --confirm-write. Nada foi alterado.');
+  if (args.write && (!args.confirmWrite || args.mode !== 'apply' || !/^[a-f0-9]{64}$/.test(args.reviewHash))) {
+    console.error('--write exige --mode=apply, --confirm-write e --review-hash=<sha256>. Nada foi alterado.');
     process.exit(2);
   }
 
@@ -130,18 +122,70 @@ async function main() {
     fontFace: false,
   });
 
+  // O PurgeCSS pode deixar a folha vazia ou preservar espaçamento interno de
+  // pseudo-classes após podar argumentos. Mantemos folhas sem regras intactas
+  // e normalizamos o staging com o mesmo Stylelint usado no gate do tema.
   const outDir = join(ROOT, args.out, args.mode);
   rmSync(outDir, { recursive: true, force: true });
   mkdirSync(outDir, { recursive: true });
+  for (const result of results) {
+    const source = css.find((item) => item.name === result.file);
+    let candidate = result.css;
+    if (postcss.parse(candidate).nodes.length === 0) {
+      candidate = source?.raw ?? candidate;
+    }
+    result.css = candidate;
+    const staged = join(outDir, 'staged', result.file);
+    mkdirSync(dirname(staged), { recursive: true });
+    writeFileSync(staged, candidate);
+  }
+  const stagedFiles = results.map((result) => join(outDir, 'staged', result.file));
+  const normalizeStaging = spawnSync(join(ROOT, 'node_modules/.bin/stylelint'), ['--fix', ...stagedFiles], { cwd: ROOT, encoding: 'utf8' });
+  process.stdout.write(normalizeStaging.stdout ?? '');
+  process.stderr.write(normalizeStaging.stderr ?? '');
+  if (normalizeStaging.status !== 0) {
+    throw new Error('Stylelint não conseguiu normalizar o CSS podado; fontes preservadas.');
+  }
+  for (const result of results) {
+    result.css = readFileSync(join(outDir, 'staged', result.file), 'utf8');
+  }
+
+  const toolVersions = {
+    purgecss: packageVersion('purgecss'),
+    postcss: packageVersion('postcss'),
+    stylelint: packageVersion('stylelint'),
+  };
+  const safelistDescription = describeSafelist(dynamic.classes);
+  const classificationPath = join(ROOT, 'reports/css-audit/audit/classification.json');
+  let classificationForReview = null;
+  try {
+    classificationForReview = JSON.parse(readFileSync(classificationPath, 'utf8'));
+  } catch {
+    // A ausência é relatada no gate de gravação; o staging continua disponível.
+  }
+  const writeReviewHash = createWriteReviewHash({
+    sourceHash: hash,
+    toolVersions,
+    contentGlobs: CONTENT_GLOBS,
+    dynamicClasses: dynamic.classes,
+    safelist: safelistDescription,
+    classification: classificationForReview,
+    files: results.map((result) => ({ file: result.file, css: result.css })),
+  });
+  if (args.write && args.reviewHash !== writeReviewHash) {
+    console.error(`Hash de revisão divergente. Nada foi escrito. Reveja o staging e use: --review-hash=${writeReviewHash}`);
+    process.exit(2);
+  }
 
   const report = {
     generatedAt: new Date().toISOString(),
     mode: args.mode,
     sourceHash: hash,
-    toolVersions: { purgecss: packageVersion('purgecss'), postcss: packageVersion('postcss') },
+    toolVersions,
     contentGlobs: CONTENT_GLOBS,
     dynamicClasses: dynamic.classes,
-    safelist: describeSafelist(dynamic.classes),
+    safelist: safelistDescription,
+    writeReviewHash,
     totals: {
       files: results.length,
       originalBytes: 0,
@@ -150,6 +194,7 @@ async function main() {
       originalSelectors: 0,
       retainedSelectors: 0,
       removedSelectors: 0,
+      addedSelectors: 0,
       purgecssRejectedSelectors: 0,
     },
     files: [],
@@ -168,13 +213,20 @@ async function main() {
 
     // Seletores realmente removidos: diferença entre o CSS de origem e o podado.
     let removedSelectors = [];
+    let addedSelectors = [];
+    let originalSelectors = 0;
+    let retainedSelectors = 0;
     try {
       const before = selectorSet(source.raw);
       const after = selectorSet(result.css);
       removedSelectors = [...before].filter((selector) => !after.has(selector)).sort();
-      report.totals.originalSelectors += before.size;
-      report.totals.retainedSelectors += after.size;
+      addedSelectors = [...after].filter((selector) => !before.has(selector)).sort();
+      originalSelectors = before.size;
+      retainedSelectors = after.size;
+      report.totals.originalSelectors += originalSelectors;
+      report.totals.retainedSelectors += retainedSelectors;
       report.totals.removedSelectors += removedSelectors.length;
+      report.totals.addedSelectors += addedSelectors.length;
     } catch (error) {
       invalid.push(`${result.file}: ${error.message}`);
     }
@@ -188,7 +240,11 @@ async function main() {
       originalBytes: original,
       retainedBytes: retained,
       removedBytes: removed,
+      originalSelectors,
+      retainedSelectors,
       removedSelectors: removedSelectors.length,
+      addedSelectors: addedSelectors.length,
+      selectorsAdded: addedSelectors,
       purgecssRejectedSelectors: rejected.length,
       selectorsRemoved: removedSelectors,
       purgecssRejected: rejected,
@@ -198,15 +254,8 @@ async function main() {
       rejectedChunks.push(`/* ${result.file} */\n${result.rejectedCss.trim()}\n`);
     }
 
-    const staged = join(outDir, 'staged', result.file);
-    mkdirSync(dirname(staged), { recursive: true });
-    writeFileSync(staged, result.css);
-
     if (args.write) {
       postcss.parse(result.css, { from: result.file });
-      const backupFile = join(backupDir, result.file);
-      mkdirSync(dirname(backupFile), { recursive: true });
-      copyFileSync(join(ROOT, result.file), backupFile);
     }
   }
 
@@ -216,9 +265,87 @@ async function main() {
     process.exit(1);
   }
 
+  if (args.mode === 'apply') {
+    console.log(`hash de revisão do staging: ${writeReviewHash}`);
+    console.log(`revise os arquivos em ${relative(ROOT, join(outDir, 'staged'))} e as listas em report.json antes de qualquer --write.`);
+  }
+
   if (args.write) {
+    const dynamicLost = [];
     for (const result of results) {
-      writeFileSync(join(ROOT, result.file), result.css);
+      const source = css.find((item) => item.name === result.file)?.raw ?? '';
+      for (const className of dynamic.classes) {
+        const selector = new RegExp(`\\.${className}(?![\\w-])`);
+        if (selector.test(source) && !selector.test(result.css)) {
+          dynamicLost.push(`${result.file}: ${className}`);
+        }
+      }
+    }
+    if (dynamicLost.length > 0) {
+      throw new Error(`Gate de classes dinâmicas falhou; nada foi escrito: ${dynamicLost.slice(0, 10).join('; ')}`);
+    }
+
+    let currentClassification;
+    try {
+      currentClassification = JSON.parse(readFileSync(classificationPath, 'utf8'));
+    } catch {
+      throw new Error('Gate de classificação falhou: rode `npm run css:classify`; nada foi escrito.');
+    }
+    if (JSON.stringify(currentClassification) !== JSON.stringify(classificationForReview)) {
+      throw new Error('Classificação mudou desde a preparação do hash de revisão; gere e revise um staging novo. Nada foi escrito.');
+    }
+    const classificationProblems = validatePurgeRemovalClassification({ classification: currentClassification, report, sourceHash: hash });
+    if (classificationProblems.length > 0) {
+      throw new Error(`Gate de classificação falhou: ${classificationProblems.join(' ')} Nada foi escrito.`);
+    }
+
+    const verifyBefore = spawnSync(process.execPath, [join(ROOT, 'scripts/css-audit/verify.mjs')], { cwd: ROOT, encoding: 'utf8' });
+    process.stdout.write(verifyBefore.stdout ?? '');
+    process.stderr.write(verifyBefore.stderr ?? '');
+    if (verifyBefore.status !== 0) {
+      throw new Error('Gate css:verify do estado-fonte falhou; nada foi escrito.');
+    }
+    const stagedFiles = results.map((result) => join(outDir, 'staged', result.file));
+    const lintStaged = spawnSync(join(ROOT, 'node_modules/.bin/stylelint'), stagedFiles, { cwd: ROOT, encoding: 'utf8' });
+    process.stdout.write(lintStaged.stdout ?? '');
+    process.stderr.write(lintStaged.stderr ?? '');
+    if (lintStaged.status !== 0) {
+      throw new Error('Gate Stylelint do staging falhou; nada foi escrito.');
+    }
+
+    for (const result of results) {
+      const backupFile = join(backupDir, result.file);
+      mkdirSync(dirname(backupFile), { recursive: true });
+      copyFileSync(join(ROOT, result.file), backupFile);
+    }
+
+    try {
+      for (const result of results) {
+        writeFileSync(join(ROOT, result.file), result.css);
+      }
+      let gateFailed = false;
+      const postWriteCommands = [
+        ['npm', ['run', 'css:audit']],
+        [process.execPath, [join(ROOT, 'scripts/css-audit/verify.mjs')]],
+        [join(ROOT, 'node_modules/.bin/stylelint'), results.map((result) => join(ROOT, result.file))],
+      ];
+      for (const [command, commandArgs] of postWriteCommands) {
+        const gate = spawnSync(command, commandArgs, { cwd: ROOT, encoding: 'utf8' });
+        process.stdout.write(gate.stdout ?? '');
+        process.stderr.write(gate.stderr ?? '');
+        if (gate.status !== 0) gateFailed = true;
+      }
+      if (gateFailed) {
+        throw new Error('Um ou mais gates pós-gravação falharam.');
+      }
+    } catch (error) {
+      for (const result of results) {
+        copyFileSync(join(backupDir, result.file), join(ROOT, result.file));
+      }
+      const restoreAudit = spawnSync('npm', ['run', 'css:audit'], { cwd: ROOT, encoding: 'utf8' });
+      process.stdout.write(restoreAudit.stdout ?? '');
+      process.stderr.write(restoreAudit.stderr ?? '');
+      throw new Error(`${error.message}; fontes restauradas do backup ${relative(ROOT, backupDir)}.`);
     }
   }
 
@@ -239,9 +366,11 @@ async function main() {
   console.log(`  original:  ${totals.originalBytes} bytes / ${totals.originalSelectors} seletores`);
   console.log(`  retido:    ${totals.retainedBytes} bytes / ${totals.retainedSelectors} seletores`);
   console.log(`  removido:  ${totals.removedBytes} bytes / ${totals.removedSelectors} seletores`);
+  console.log(`  reescrito: ${totals.addedSelectors} seletores retidos com forma alterada`);
   console.log(`  rejeitado pelo PurgeCSS (informativo): ${totals.purgecssRejectedSelectors}`);
   console.log(`  classes dinâmicas preservadas: ${dynamic.classes.length} (${dynamic.components} componentes)`);
   console.log(`  sourceHash: ${hash.slice(0, 16)}…`);
+  if (args.mode === 'apply') console.log(`  reviewHash: ${writeReviewHash}`);
   console.log(`  relatório: ${relative(ROOT, join(outDir, 'report.json'))}`);
   if (args.write) {
     console.log(`  ATENÇÃO: arquivos-fonte reescritos. Backup em ${relative(ROOT, backupDir)}`);

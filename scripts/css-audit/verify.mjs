@@ -18,13 +18,23 @@ import { readFileSync, existsSync, readdirSync, statSync } from 'node:fs';
 import { join, relative, dirname } from 'node:path';
 import yaml from 'js-yaml';
 import { collectDynamicClasses } from './collect-dynamic-classes.mjs';
-import { SAFELIST_PATTERNS } from './safelist.mjs';
+import { SAFELIST_PATTERNS, describeSafelist } from './safelist.mjs';
 import { readThemeCss, sourceHash } from './lib/theme-css.mjs';
+import { validateAuditArtifacts } from './lib/report-integrity.mjs';
+import { CONTENT_GLOBS } from './lib/content-globs.mjs';
 
 const ROOT = process.cwd();
 const THEME_PREFIX = 'web/themes/custom/aculta420_v2/';
 const THEME_ROOT = join(ROOT, THEME_PREFIX);
 const LIBRARIES = join(THEME_ROOT, 'aculta420_v2.libraries.yml');
+
+function packageVersion(name) {
+  try {
+    return JSON.parse(readFileSync(join(ROOT, 'node_modules', name, 'package.json'), 'utf8')).version;
+  } catch {
+    return null;
+  }
+}
 
 const errors = [];
 const checks = [];
@@ -57,28 +67,47 @@ function walk(dir, acc = []) {
 // 0. Relatório do PurgeCSS presente, completo e atualizado.
 const currentCss = readThemeCss(ROOT);
 const currentHash = sourceHash(currentCss);
+const dynamic = collectDynamicClasses({ root: ROOT });
 const auditDir = join(ROOT, 'reports/css-audit/audit');
 const manifestPath = join(auditDir, 'manifest.json');
 const reportPath = join(auditDir, 'report.json');
+const stagedRoot = join(auditDir, 'staged');
+const stagedCssByName = new Map();
+for (const item of currentCss) {
+  const stagedPath = join(stagedRoot, item.name);
+  if (existsSync(stagedPath)) {
+    stagedCssByName.set(item.name, readFileSync(stagedPath, 'utf8'));
+  }
+}
 if (!existsSync(manifestPath) || !existsSync(reportPath)) {
   fail('Relatório do PurgeCSS presente', 'Rode `npm run css:audit` antes de `css:verify`.');
 } else {
-  const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'));
-  const report = JSON.parse(readFileSync(reportPath, 'utf8'));
-  const problems = [];
-  if (manifest.sourceHash !== currentHash || report.sourceHash !== currentHash) {
-    problems.push('sourceHash diverge do CSS atual (relatório desatualizado).');
+  try {
+    const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'));
+    const report = JSON.parse(readFileSync(reportPath, 'utf8'));
+    const problems = validateAuditArtifacts({
+      manifest,
+      report,
+      currentCss,
+      currentHash,
+      expectedDynamicClasses: dynamic.classes,
+      expectedContentGlobs: CONTENT_GLOBS,
+      expectedSafelist: describeSafelist(dynamic.classes),
+      expectedToolVersions: {
+        purgecss: packageVersion('purgecss'),
+        postcss: packageVersion('postcss'),
+        stylelint: packageVersion('stylelint'),
+      },
+      stagedCssByName,
+    });
+    if (problems.length > 0) {
+      fail('Relatório do PurgeCSS atualizado e completo', problems.join(' '));
+    } else {
+      pass('Relatório do PurgeCSS atualizado e completo', `${manifest.files.length} arquivos, hash ${currentHash.slice(0, 12)}…`);
+    }
   }
-  if (!Array.isArray(manifest.files) || manifest.files.length !== currentCss.length) {
-    problems.push(`manifesto lista ${manifest.files?.length ?? 0} arquivos; tema tem ${currentCss.length}.`);
-  }
-  if (report.totals?.removedBytes !== report.totals?.originalBytes - report.totals?.retainedBytes) {
-    problems.push('totais de bytes inconsistentes (removido ≠ original − retido).');
-  }
-  if (problems.length > 0) {
-    fail('Relatório do PurgeCSS atualizado', problems.join(' '));
-  } else {
-    pass('Relatório do PurgeCSS atualizado', `${manifest.files.length} arquivos, hash ${currentHash.slice(0, 12)}…`);
+  catch (error) {
+    fail('Relatório do PurgeCSS atualizado e completo', `JSON inválido ou estrutura incompleta: ${error.message}`);
   }
 }
 
@@ -224,32 +253,19 @@ if (forbiddenPattern) {
 // 7. PurgeCSS não pode remover regras de classes dinâmicas válidas.
 // Compara o CSS-fonte com o CSS podado gravado pelo modo audit: uma classe
 // dinâmica que tinha regra e sumiu do resultado é uma remoção indevida.
-const dynamic = collectDynamicClasses({ root: ROOT });
 const dynamicSet = new Set(dynamic.classes);
-const purgedDir = join(ROOT, 'reports/css-audit/audit/staged', THEME_PREFIX);
-let auditAvailable = false;
 const lost = [];
-if (existsSync(purgedDir)) {
-  auditAvailable = true;
-  for (const original of walk(THEME_ROOT).filter((file) => file.endsWith('.css'))) {
-    const rel = relative(THEME_ROOT, original);
-    const purgedPath = join(purgedDir, rel);
-    if (!existsSync(purgedPath)) {
-      continue;
-    }
-    const before = readFileSync(original, 'utf8');
-    const after = readFileSync(purgedPath, 'utf8');
-    for (const className of dynamicSet) {
-      const selector = `.${className}`;
-      if (before.includes(selector) && !after.includes(selector) && new RegExp(`\\${selector}(?![\\w-])`).test(before)) {
-        lost.push(`${rel}: ${className}`);
-      }
+for (const original of currentCss) {
+  const after = stagedCssByName.get(original.name);
+  if (after === undefined) continue;
+  for (const className of dynamicSet) {
+    const selector = `.${className}`;
+    if (original.raw.includes(selector) && !after.includes(selector) && new RegExp(`\\${selector}(?![\\w-])`).test(original.raw)) {
+      lost.push(`${relative(ROOT, original.name)}: ${className}`);
     }
   }
 }
-if (!auditAvailable) {
-  console.warn('! Auditoria do PurgeCSS ausente; rode `npm run css:audit` para a checagem de classes dinâmicas.');
-} else if (lost.length > 0) {
+if (lost.length > 0) {
   fail('PurgeCSS preserva classes dinâmicas', `${lost.length} removidas: ${lost.slice(0, 15).join('; ')}`);
 } else {
   pass('PurgeCSS preserva classes dinâmicas', `${dynamic.classes.length} classes em ${dynamic.components} componentes.`);
