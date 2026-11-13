@@ -67,3 +67,14 @@
 - **Verificações:** PHPStan, lint, descoberta, Unit e Semgrep PASS em `f5dcfd832`; Kernel sem resultado pois o runner foi encerrado por shutdown no run anterior.
 - **Pendências e bloqueios:** Kernel global continua sem JUnit; dívida antiga Semgrep 427 ainda sem SARIF reconciliado.
 - **Próximo passo:** validar diff leve, commit/push e acompanhar workflows.
+
+# GitHub — interface de leitura dos avisos — 2026-11-13
+
+- **Objetivo:** corrigir o filtro de avisos lidos apontado pelo JUnit Kernel histórico.
+- **Estado:** `Aviso` implementa `EntityChangedInterface`, que `marcarLido()` exige antes de zerar `contador_site`; sem a interface, todas as entidades eram ignoradas. README raiz regenerado para sincronizar a tabela de status.
+- **Decisões e alternativas descartadas:** implementar o contrato na entidade que já usa `EntityChangedTrait`; não remover a guarda nem alterar o filtro.
+- **Cuidados:** validação Kernel local suspensa após reboots; CI remoto atual ainda sem JUnit.
+- **Commits e arquivos:** pendente; entidade Aviso, TODO/status de `aculta_messenger`, índice README e handoff.
+- **Verificações:** PHP lint, PHPStan, descoberta, Unit, Semgrep, `git diff --check`, status index e Drupal 12 (1234 checks) PASS; token budget FAIL em 7 limites preexistentes de skills. Kernel de `a35cb0b2` foi encerrado pelo runner sem JUnit; JUnit histórico apontou lista lida vazia.
+- **Pendências e bloqueios:** aguardar uma execução Kernel conclusiva após reduzir duplicatas.
+- **Próximo passo:** validar diff leve, commit/push, acompanhar CI e seguir os demais casos Kernel com evidência.
