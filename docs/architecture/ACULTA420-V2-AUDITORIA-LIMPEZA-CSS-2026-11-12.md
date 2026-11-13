@@ -573,9 +573,15 @@ sincronizador Runtime está bloqueado por RX e drift de configuração.
   retém 393.758 bytes e rejeita 20.254 bytes/132 seletores; 22 seletores retidos
   são reescritos. As 250 classes dinâmicas permanecem preservadas. Esses números
   incluem alterações locais ainda não commitadas em componentes de reações.
-- `css:verify`, classificação, testes CSS (3 suítes), Stylelint nas duas folhas
-  alteradas, CSS scope (212 checks), schema SDC (2.423 checks) e `git diff
+- `css:verify`, classificação, testes CSS (4 suítes), Stylelint nas duas folhas
+  alteradas, CSS scope (214 checks), schema SDC (2.423 checks) e `git diff
   --check` passaram. O Stylelint global continua falhando em arquivos locais de
   `discussion-reaction-bar` e `reaction-emoji`, fora deste corte.
+- A classificação também foi inspecionada por referência: os wrappers de
+  formulário/arquivo pertencem ao Core, as estruturas de conversa ao contrib
+  `private_message`, os campos de publicação à View/SDC e compartilhamentos aos
+  tokens da Revista. A coleta do inventário deixou de interpretar quadros
+  `from`/`to` de `@keyframes` como seletores ou classes; a falsa duplicação `.to`
+  foi eliminada e coberta por teste (incluindo `@-webkit-keyframes`).
 - O Runtime permanece em RX/BLOCKED; não há origem de site configurada neste
   ambiente. Sincronização, `drush cr` e captura Playwright não foram executados.

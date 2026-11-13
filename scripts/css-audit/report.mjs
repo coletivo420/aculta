@@ -20,6 +20,7 @@ import postcss from 'postcss';
 import yaml from 'js-yaml';
 import { defaultExtractor, yamlExtractor } from './extractors/index.mjs';
 import { collectDynamicClasses, parseComponentEnums } from './collect-dynamic-classes.mjs';
+import { isKeyframeStep } from './lib/postcss-utils.mjs';
 
 const ROOT = process.cwd();
 const THEME_PREFIX = 'web/themes/custom/aculta420_v2/';
@@ -194,9 +195,12 @@ function main() {
       rules += 1;
       const parts = splitSelectors(rule.selector);
       selectors += parts.length;
-      for (const part of parts) {
-        for (const match of part.matchAll(/\.(-?[_a-zA-Z][\w-]*)/g)) {
-          allClasses.add(match[1]);
+      const keyframeStep = isKeyframeStep(rule);
+      if (!keyframeStep) {
+        for (const part of parts) {
+          for (const match of part.matchAll(/\.(-?[_a-zA-Z][\w-]*)/g)) {
+            allClasses.add(match[1]);
+          }
         }
       }
       has += countMatches(rule.selector, /:has\(/g);
@@ -220,11 +224,13 @@ function main() {
           duplicateDeclarations += 1;
         }
       });
-      for (const part of parts) {
-        if (!selectorToFiles.has(part)) {
-          selectorToFiles.set(part, new Set());
+      if (!keyframeStep) {
+        for (const part of parts) {
+          if (!selectorToFiles.has(part)) {
+            selectorToFiles.set(part, new Set());
+          }
+          selectorToFiles.get(part).add(rel);
         }
-        selectorToFiles.get(part).add(rel);
       }
     });
 

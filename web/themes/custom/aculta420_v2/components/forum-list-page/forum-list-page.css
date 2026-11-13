@@ -50,8 +50,6 @@
 .aculta-forum-list__category.is-all { background: var(--color-surface-highlight); }
 .aculta-forum-list__category.is-all { font-weight: 700; }
 .aculta-forum-list__category-count { color: var(--color-text-muted); font-size: var(--font-size-sm); }
-.forum-topic-row__avatar { object-fit: cover; border-radius: 50%; inline-size: 40px; block-size: 40px; }
-.forum-topic-row__avatar--icon { display: inline-flex; align-items: center; justify-content: center; background: var(--color-surface-highlight); }
 .aculta-forum-list__search { padding: var(--spacing-sm) var(--spacing-base); border-block-end: 1px solid var(--color-border); }
 .aculta-forum-list__search-input { color: var(--color-text-muted); border: 1px solid var(--color-border); border-radius: var(--radius-base); background: var(--color-surface-muted, var(--color-surface-raised)); inline-size: 100%; min-block-size: 44px; padding-inline: var(--spacing-sm); }
 .aculta-forum-list__soon { display: flex; flex-wrap: wrap; margin: 0; padding: var(--spacing-xs) var(--spacing-base); list-style: none; color: var(--color-text-muted); font-size: var(--font-size-sm); gap: var(--spacing-sm); }

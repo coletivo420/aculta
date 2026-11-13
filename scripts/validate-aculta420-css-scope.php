@@ -213,6 +213,11 @@ $messengerCss = (string) file_get_contents($theme . '/components/messenger-trigg
 $messengerOptions = (string) file_get_contents($root . '/web/modules/custom/aculta_portal/modules/aculta_messenger/src/Support/OptionsDisclosure.php');
 $assert(!str_contains($messengerCss, '.accordion'), 'Os seletores Bootstrap antigos voltaram ao disclosure de opções do Messenger.');
 $assert(str_contains($messengerOptions, "'#type' => 'details'") && str_contains($messengerOptions, "'#summary_attributes'"), 'O disclosure de opções do Messenger deve manter o contrato nativo details/summary.');
+$forumListCss = (string) file_get_contents($theme . '/components/forum-list-page/forum-list-page.css');
+$forumTopicView = (string) file_get_contents($theme . '/templates/views/views-view-fields--aculta-forum-public-topics.html.twig');
+$forumTopicRowCss = (string) file_get_contents($theme . '/components/forum-topic-row/forum-topic-row.css');
+$assert(!str_contains($forumListCss, '.forum-topic-row__avatar') && str_contains($forumTopicRowCss, '.forum-topic-row__avatar'), 'O CSS duplicado de avatar do Fórum voltou para a página listagem ou saiu do SDC dono.');
+$assert(str_contains($forumTopicView, "include('aculta420_v2:forum-topic-row'"), 'A View pública deve continuar compondo o SDC que possui o estilo compartilhado do avatar.');
 $pdfViewerRoot = $root . '/web/modules/custom/aculta_portal/modules/aculta_document_viewer';
 $pdfViewerLibrary = Yaml::parseFile($pdfViewerRoot . '/aculta_document_viewer.libraries.yml');
 $pdfViewerCss = (string) file_get_contents($pdfViewerRoot . '/css/pdf-viewer.css');

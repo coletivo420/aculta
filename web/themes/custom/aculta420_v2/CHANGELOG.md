@@ -24,6 +24,10 @@
   seletor de citação por `?quote=` (o módulo emite `data-action`) e os estilos
   Bootstrap `.accordion*` do Messenger (o módulo usa `details`/`summary`):
   −467 bytes e 6 seletores. Gate de escopo liga os CSSs aos emissores atuais.
+- Os estilos repetidos de avatar/ícone da listagem foram removidos de
+  `forum-list-page.css`; o SDC `forum-topic-row` é o dono único desses estilos.
+  O inventário agora exclui quadros `@keyframes` da coleta de classes e da
+  contagem de seletores duplicados; teste cobre regras normais e prefixadas.
 
 - Auditoria PurgeCSS: `css:verify` agora exige todos os arquivos de fonte e
   staging, valida os bytes e conjuntos de seletores por folha, hashes, versões,
