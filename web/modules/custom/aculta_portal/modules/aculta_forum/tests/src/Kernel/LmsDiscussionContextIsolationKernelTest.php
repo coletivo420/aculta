@@ -313,14 +313,14 @@ final class LmsDiscussionContextIsolationKernelTest extends KernelTestBase {
       'uid' => $owner->id(),
     ]);
     $course->save();
-    $course->addMember($member, ['group_roles' => ['lms_course-member']]);
+    $course->addMember($member);
     $secondCourse = Group::create([
       'type' => 'lms_course',
       'label' => 'Second isolation course',
       'uid' => $owner->id(),
     ]);
     $secondCourse->save();
-    $secondCourse->addMember($member, ['group_roles' => ['lms_course-member']]);
+    $secondCourse->addMember($member);
 
     $topic = $this->createTopic($owner, 'Ungrouped topic');
 
@@ -380,7 +380,7 @@ final class LmsDiscussionContextIsolationKernelTest extends KernelTestBase {
       'uid' => $owner->id(),
     ]);
     $class->save();
-    $class->addMember($member, ['group_roles' => ['lms_class-member']]);
+    $class->addMember($member);
 
     $topic = $this->createTopic($owner, 'Topic in orphan class');
     $class->addRelationship($topic, 'group_node:aculta_lms_topic')->save();
@@ -426,7 +426,7 @@ final class LmsDiscussionContextIsolationKernelTest extends KernelTestBase {
       'uid' => $owner->id(),
     ]);
     $course->save();
-    $course->addMember($member, ['group_roles' => ['lms_course-member']]);
+    $course->addMember($member);
 
     $topic = $this->createTopic($owner, 'Open course topic');
     $course->addRelationship($topic, 'group_node:aculta_lms_topic')->save();
@@ -488,7 +488,7 @@ final class LmsDiscussionContextIsolationKernelTest extends KernelTestBase {
     ]);
     $secondClass->save();
     $course->addRelationship($secondClass, 'lms_classes')->save();
-    $firstClass->addMember($member, ['group_roles' => ['lms_class-member']]);
+    $firstClass->addMember($member);
 
     $firstTopic = $this->createTopic($owner, 'First class topic');
     $firstClass->addRelationship($firstTopic, 'group_node:aculta_lms_topic')->save();
@@ -551,7 +551,21 @@ final class LmsDiscussionContextIsolationKernelTest extends KernelTestBase {
    */
   private function assertContextAllowed(EntityInterface $topic, AccountInterface $account): void {
     $context = $this->provider->getContext($topic, $account);
-    self::assertTrue($context->getReadAccess()->isAllowed(), 'Read access is allowed.');
+    $relationships = $this->container->get('entity_type.manager')
+      ->getStorage('group_relationship')
+      ->loadByEntity($topic, 'group_node:aculta_lms_topic');
+    $group = count($relationships) === 1 ? reset($relationships)->getGroup() : NULL;
+    $nodeAccess = $topic->access('view', $account, TRUE);
+    $groupAccess = $group?->access('view', $account, TRUE);
+    $accessState = sprintf(
+      'node=%s, group=%s, member=%s, group_view_permission=%s, course_permission=%s',
+      $nodeAccess->isAllowed() ? 'allowed' : ($nodeAccess->isForbidden() ? 'forbidden' : 'neutral'),
+      $groupAccess === NULL ? 'missing' : ($groupAccess->isAllowed() ? 'allowed' : ($groupAccess->isForbidden() ? 'forbidden' : 'neutral')),
+      $group !== NULL && $group->getMember($account) !== FALSE ? 'yes' : 'no',
+      $group?->hasPermission('view group', $account) ? 'yes' : 'no',
+      $group?->hasPermission('take course', $account) ? 'yes' : 'no',
+    );
+    self::assertTrue($context->getReadAccess()->isAllowed(), 'Read access is allowed (' . $accessState . ').');
     self::assertTrue($context->getWriteAccess()->isAllowed(), 'Write access is allowed.');
     self::assertTrue($context->getModerationAccess()->isForbidden(), 'Moderation access stays forbidden.');
   }
