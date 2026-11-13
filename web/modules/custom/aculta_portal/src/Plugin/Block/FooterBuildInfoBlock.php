@@ -31,7 +31,7 @@ final class FooterBuildInfoBlock extends BlockBase {
 
     return [
       '#markup' => sprintf(
-        '<span>© %s ACULTA</span><span>Software livre · GPLv3 (código) · versão %s</span>',
+        '<span>© %s ACULTA</span><span>Software livre · versão %s</span>',
         $year,
         $version,
       ),
