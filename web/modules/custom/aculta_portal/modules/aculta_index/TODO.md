@@ -1,10 +1,10 @@
 # TODO — aculta_index
 
-Estado: Dev · versão 0.1.0-dev.182 (`aculta_index.info.yml`) · expectativa do registry Kernel agora inclui providers nativos `file` e `image`; lint PASS, PHPUnit não executado após reboots · status: `docs/operations/status/aculta_index.yml`.
+Estado: Dev · versão 0.1.0-dev.182 (`aculta_index.info.yml`) · testes de rebuild/auditoria avançam pelos providers até `complete`; lint PASS, PHPUnit não executado após reboots · status: `docs/operations/status/aculta_index.yml`.
 
 ## Próximo passo
 
-Verificar em CI o registry de providers e o schema `group_relationship` do ContentIndexWikiAccessKernelTest; concluir grants/Domain dos providers owners, avaliar catálogo representativo e homologação operacional; manter Dev e não fazer rebuild no Runtime nesta integração. Incluir o incremento LOC/IDX-LOC conforme [plano](docs/architecture/PLANO-LOCAIS-ACULTA-EVENTS-INDEX.md), sem substituir os gates anteriores. A suíte Kernel global ainda requer correções independentes de Commerce, LMS e Groups.
+Verificar em CI os testes de ciclo de rebuild/auditoria e o schema `group_relationship` do ContentIndexWikiAccessKernelTest; concluir grants/Domain dos providers owners, avaliar catálogo representativo e homologação operacional; manter Dev e não fazer rebuild no Runtime nesta integração. Incluir o incremento LOC/IDX-LOC conforme [plano](docs/architecture/PLANO-LOCAIS-ACULTA-EVENTS-INDEX.md), sem substituir os gates anteriores. A suíte Kernel global ainda requer correções independentes de Commerce, LMS e Groups.
 
 ## Leitura
 

@@ -540,7 +540,9 @@ final class ContentIndexSchemaKernelTest extends KernelTestBase {
   public function testRebuilderStartsEmptyGenerationWhenNoSourceEntitiesExist(): void {
     $rebuilder = $this->container->get('aculta_index.rebuilder');
     $generationId = $rebuilder->start();
-    $result = $rebuilder->processNextBatch($generationId);
+    do {
+      $result = $rebuilder->processNextBatch($generationId);
+    } while (!$result['complete']);
 
     $this->assertSame($generationId, $result['generation_id']);
     $this->assertTrue($result['complete']);

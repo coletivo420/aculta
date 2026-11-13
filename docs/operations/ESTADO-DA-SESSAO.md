@@ -12,12 +12,12 @@
 # GitHub — providers do Content Index no Kernel — 2026-11-13
 
 - **Objetivo:** corrigir a expectativa histórica do registry no harness Kernel do Index.
-- **Estado:** expectativa atualizada para `file` e `image`, conforme serviços nativos habilitados no container; PHPUnit não executado localmente.
-- **Decisões e alternativas descartadas:** alinhar a asserção ao registry de produção, sem remover o provider File nem desativá-lo no teste.
+- **Estado:** testes de registry, backfill vazio e auditoria percorrem os providers até a conclusão; asserções de projeção e teto por fixture foram preservadas. PHPUnit não executado localmente.
+- **Decisões e alternativas descartadas:** alinhar os testes aos lotes por provider, sem remover nem desativar providers no harness.
 - **Cuidados:** o teste é Kernel e precisa de confirmação CI; o runner recente foi instável.
-- **Commits e arquivos:** commit desta fase; ContentIndexSchemaKernelTest, TODO/status e handoff.
+- **Commits e arquivos:** commit desta fase; ContentIndexSchemaKernelTest, ContentIndexRebuilderKernelTest, TODO/status e handoff.
 - **Verificações:** PHP lint e `git diff --check` PASS; validação de orçamento DEFERRED (7 falhas preexistentes em outras skills); PHPUnit DEFERRED ao CI remoto.
-- **Pendências e bloqueios:** conferir workflows dos commits `02d6c888` e desta fase; falhas antigas do Kernel ainda não auditadas integralmente; Runtime Sync RX/BLOCKED.
+- **Pendências e bloqueios:** conferir workflows do novo SHA; falhas antigas do Kernel ainda não auditadas integralmente; Runtime Sync RX/BLOCKED.
 - **Próximo passo:** corrigir o próximo achado Kernel comprovado, após conferir o relatório JUnit remoto mais recente.
 
 # GitHub — Kernel de acesso em Events — 2026-11-12
