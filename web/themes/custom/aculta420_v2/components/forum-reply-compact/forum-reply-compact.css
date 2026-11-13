@@ -57,7 +57,7 @@
 
 .forum-reply-compact__author {
   font-weight: 600;
-  color: var(--color-text);
+  color: var(--color-text-primary);
 }
 
 .forum-reply-compact__time {
@@ -89,7 +89,7 @@
 }
 
 .forum-reply-compact__text {
-  color: var(--color-text);
+  color: var(--color-text-primary);
   line-height: 1.5;
 }
 

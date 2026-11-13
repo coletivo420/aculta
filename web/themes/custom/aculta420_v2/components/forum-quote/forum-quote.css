@@ -44,7 +44,7 @@
   display: grid;
   gap: var(--spacing-xs);
   min-inline-size: 0;
-  color: var(--color-text);
+  color: var(--color-text-primary);
 }
 
 .forum-quote__author {
