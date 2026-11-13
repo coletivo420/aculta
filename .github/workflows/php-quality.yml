@@ -68,6 +68,7 @@ jobs:
       run: |
         php scripts/validate-agent-token-budget.php
         python3 scripts/validate-agent-skills.py
+        php scripts/validate-aculta420-sdc-library-contract.php
 
     - name: Install dependencies
       run: |

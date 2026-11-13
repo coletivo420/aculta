@@ -1,18 +1,23 @@
 # Verbete da Wiki
 
-O SDC apresenta os view modes completos e teaser de `wiki_entry`. Os templates
-Drupal mantêm a entidade, render arrays de campo e links com os access checks do
-owner. O componente só organiza os slots e a hierarquia editorial da V1.
+O SDC apresenta os view modes completo e teaser de `wiki_entry`. No view mode
+`full`, o próprio SDC também é o layout UI Patterns do Layout Builder: regiões
+semânticas recebem os blocos de campo Drupal e mantêm access checks, cache e
+render arrays. Título e URL canônica vêm do contexto da entidade. O teaser segue
+composição de slot em Views.
 
-- Props: `variant`, `url`, `has_summary`, `has_image`, `has_categories`,
-  `has_related`, `has_references`, `has_discussion`.
+- Props: `variant`, `url`, `entity_title`, `title_level`, `has_summary`,
+  `has_image`, `has_categories` (flags aplicados ao teaser; o artigo decide pelos
+  slots renderizados e acessíveis).
 - Slots: `title`, `summary`, `image`, `categories`, `body`, `related`,
   `references`, `discussion`, `actions`.
 - Stories: `wiki-entry.default.story.yml` e `wiki-entry.teaser.story.yml`.
 - JavaScript: nenhum.
-- O artigo fornece um H1; o título genérico da página é escondido apenas quando
-  o adapter de artigo está presente. O Domain Header não é modificado.
+- O artigo usa H2 porque o título da rota fornece o H1. O Domain Header não é
+  modificado.
 - Estilos: tokens semânticos do tema; artigo em uma coluna na base mobile-first,
   com coluna de informações a partir de `48rem`.
 
-Runtime e visual aguardam validação em Firefox ESR nas páginas Wiki reais.
+A UI Patterns Library descobre este SDC e suas stories automaticamente.
+`aculta_ui_library` mantém apenas um redirecionamento legado para esse catálogo.
+A validação visual em páginas Wiki reais ainda depende do Runtime.

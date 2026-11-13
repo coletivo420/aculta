@@ -1,11 +1,43 @@
 # ADR-054 - ACULTA420 V2 SDC First e Layout Builder multidominio
 
-Status: aprovado em 2026-11-09; corte P9 do shell executado no desenvolvimento, homologacao final residual pendente. Complemento 2026-11-10: finalizar em conjunto com a ADR-055 e a substituicao integral do visual legado por UI Suite/UI Skins.
+Status: substituída parcialmente em 2026-11-13 pela decisão de corte radical abaixo; execução por domínios pendente. A decisão vigente autoriza substituir diretamente a apresentação do tema. A homologação de paridade visual deixa de ser pré-condição para remover a apresentação antiga.
 Substitui parcialmente ADR-046 (restricao jQuery), ADR-048 (Layout Builder excluido) e o painel Layout de container.
 Preserva ADR-047, ADR-050, ADR-053, seguranca, mobile-first, tokens e contratos do Portal.
 Plano original: docs/architecture/ACULTA420-V2-REFATORACAO-SDC-LAYOUT-BUILDER.md.
 Plano complementar vinculante: docs/architecture/ACULTA-UI-SUITE-MIGRACAO-LEGADO-SKINS.md.
 Renomeação dos contratos internos do Portal: docs/architecture/ACULTA-PORTAL-PURPOSE-PARA-SITE-KEY.md (RN-00 a RN-05).
+
+## Decisão vigente — corte radical da apresentação legada (2026-11-13)
+
+O responsável substitui as decisões anteriores de migração paralela, preservação temporária e homologação visual antes do corte. O objetivo é deixar `aculta420_v2` como tema de fundação e composição com UI Suite, eliminando a implementação artesanal de páginas e domínios que dificulta a montagem editorial. Se o resultado visual se perder durante a conversão, ele poderá ser reconstruído no UI Suite; paridade com o tema atual não é requisito de aceite.
+
+### Regras de implementação
+
+1. **UI Suite é o caminho principal de composição.** Usar UI Patterns para SDCs, Views, layouts, blocos e formatters onde o plugin correspondente existir. Layout Builder compõe displays compatíveis. SDC é a unidade visual implementada pelo tema; UI Patterns é a integração e catálogo editorial.
+2. **Converter e retirar diretamente.** Para cada página, View, display ou bloco, migrar o consumidor para UI Suite/SDC e remover na mesma entrega o template, CSS, JS e hook de apresentação que ficaram sem função. Não criar uma segunda arquitetura paralela, feature flag ou fallback visual para preservar a aparência anterior.
+3. **Reaproveitar primeiro; criar só o componente ausente.** Compor SDCs existentes por slots. Quando a saída necessária não existir, criar um SDC com schema e story; publicá-lo na UI Patterns Library e conectá-lo ao plugin UI Suite adequado. Não manter templates exclusivos por domínio quando a composição editorial puder expressar a página.
+4. **Cobrir todas as dez `site_key`:** `main`, `account`, `support`, `magazine`, `wiki`, `shop`, `courses`, `forum`, `links` e `eventos`. Layouts e componentes podem ser compartilhados; cada landing continua composta para a necessidade do respectivo domínio. Links não é mais um piloto bloqueante.
+5. **Manter apenas a fundação necessária do tema:** shell e cinco regiões (`institution`, `header`, `content`, `sidebar_first`, `footer`), tokens, estilos base, identidade via UI Skins, navegação institucional e integrações indispensáveis ao render Drupal. Remover os templates de domínio, adapters redundantes, estilos globais, stories PHP/hooks auxiliares e SDCs sem consumidor real. A UI Patterns Library continua catalogando os SDCs mantidos.
+6. **Separar as bibliotecas:** UI Patterns Library apresenta SDCs e stories; `aculta_ui_library` apresenta prévias de blocos Drupal reais para administradores. Nenhuma delas substitui a configuração do site ou autoriza inventar conteúdo para preview.
+
+**Revisão vigente pela ADR-056 (2026-11-13):** catálogo e prévias próprios do `aculta_ui_library` foram removidos. A UI Patterns Library é a fonte única do catálogo de SDCs/stories; o módulo preserva apenas redirecionamento legado protegido para o overview oficial.
+7. **Módulos continuam donos de dados e comportamento.** O corte pode perder markup, layout, estilo, ordenação editorial e apresentação atuais. Não pode apagar conteúdo, mídia, usuários, pedidos, pagamentos, campos, regras de acesso, handlers de formulários, rotas, regras de domínio ou contratos de cache. Preservar render arrays, traduções, revisões, attachments, acesso e cache metadata ao mover apresentação.
+8. **Não habilitar tecnologia opcional nem migrar Runtime por inferência.** Usar somente integrações instaladas e habilitadas. Mudanças de Composer, ativação/desinstalação de módulo, import de configuração, `updatedb` e operações de Runtime seguem autorização e plano operacional próprios. A autorização do responsável para refazer a apresentação não autoriza apagar dados ou executar essas operações automaticamente.
+
+### Sequência de corte
+
+1. Por `site_key`, identificar rotas, Views, displays, blocos e templates que entregam apresentação; identificar o módulo owner e os SDCs reusáveis.
+2. Compor as landing pages e displays diretamente com Layout Builder/UI Patterns e SDCs. Onde faltar peça visual, criar e publicar o SDC necessário.
+3. Retirar os templates específicos de página/domínio, hooks de apresentação e bibliotecas CSS/JS que deixarem de ter consumidor. Não esperar por paridade visual nem por um piloto separado.
+4. Repetir a conversão nos dez domínios e revisar seções vazias, duplicações de shell/título e recursos essenciais.
+5. Validar funcionalidade estrutural: rotas e respostas, render de conteúdo, formulários, acesso, cache, links/ações, erros de Drupal e Config Sync. A aparência pode divergir e ser reconstruída depois.
+6. Atualizar o inventário de consumidores e declarar cada item removido, convertido ou mantido por contrato funcional. Só então encerrar a ADR.
+
+### Aceite e riscos aceitos
+
+É aceitável que páginas fiquem visualmente simples, incompletas ou diferentes durante a reconstrução; é aceitável descartar o CSS e o markup atuais quando substituídos ou sem consumidor. Não é aceitável perder conteúdo, quebrar acesso, expor dados privados, remover funcionalidade de módulo ou deixar falha de render/rota sem identificação. Testes visuais medem o novo trabalho quando solicitado, mas não bloqueiam o corte pela falta de paridade com a apresentação antiga.
+
+Os planos anteriores que exigem rollout paralelo, aprovação visual antes do corte ou preservação de fallback são históricos e subordinados a esta seção. Seus detalhes de segurança, ownership, acesso, cache e integridade permanecem válidos.
 
 ## Cutover UI Suite e estado do piloto — 2026-11-10
 

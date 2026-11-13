@@ -19,11 +19,11 @@ Este arquivo registra cenários de comportamento e o que precisa ser observado. 
 | G5 | Aplicar UI Styles no Layout Builder | Reconhecer integração exportada e validar runtime, classes já definidas e permissões. |
 | G6 | Preservar CSS por componente | Manter bibliotecas SDC condicionais; não mover CSS para carga global sem evidência. |
 | G7 | Usar pack de ícones | Reusar Phosphor/Fluent e SDC `icon`; não criar picker/emoji paralelo. |
-| G8 | Comparar stories, examples e previews | Distinguir UI Patterns Library, UI Examples e previews reais ACULTA. |
+| G8 | Comparar stories e examples | Distinguir UI Patterns Library de UI Examples; não manter previews próprios ACULTA. |
 | G9 | Recomendar Display Builder/UI Skins | Reconhecer não instalados e opcionais; sem instalação/migração automática; analisar ADR-054/tokens. |
-| G10 | Auditar acesso/cache de preview real | Verificar `isAllowed()` antes de `build()`, cache metadata, domínio MAIN e marcar teste/runtime ausente como DEFERRED. |
+| G10 | Validar alias de UI Patterns | Verificar o redirecionamento ao overview oficial, guarda administrativa no MAIN e ausência de rota de preview própria. |
 | G11 | Conteúdo multidomínio/purposes | Preservar host MAIN para rotas administrativas, purposes e `data-theme`; não expor config em host de conteúdo indevido. |
-| G12 | Prevenir sobreposição de biblioteca | UI Patterns Library mantém todos os SDCs; ACULTA UI Library cataloga blocos reais; não ocultar componentes para performance. |
+| G12 | Prevenir sobreposição de biblioteca | UI Patterns Library mantém todos os SDCs; `aculta_ui_library` não cria catálogo nem previews paralelos; não ocultar componentes para performance. |
 
 ## Execução local
 

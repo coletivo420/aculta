@@ -6,6 +6,7 @@ arquitetura indicado como fonte canônica; changelogs e arquivos em
 
 ## ADRs
 
+- [ADR-056 — UI Patterns 2 como contrato de apresentação e corte orientado por evidência](ADR-056-ui-patterns-2-recomendacoes-e-corte-documentacao.md) — aceita; primeira fase é reconciliar documentação e roadmaps com o código.
 - [ADR-052 — Modo escuro do envelope de e-mail é exceção ao token-only](ADR-052-modo-escuro-email.md) — aceita; exceção restrita a dois arquivos do e-mail.
 - [ADR-053 — Barra institucional como bloco UI Patterns/SDC](ADR-053-barra-institucional-bloco-ui-patterns.md) — aceita; substitui partes de ADR-046 e ADR-048 sobre a barra.
 - [ADR-051 — CAPTCHA e anti-bot pertencem ao módulo aculta_portal](ADR-051-captcha-no-modulo-aculta-portal.md) — aceita; o tema não carrega CSS nem biblioteca de CAPTCHA.

@@ -1,5 +1,12 @@
 ## Não versionado — corte SDC-first de CSS e LMS (2026-11-13)
 
+- ADR-056: removidos o catálogo e as prévias próprias de blocos de `aculta_ui_library`; a rota administrativa legada agora redireciona para UI Patterns Library, fonte única de SDCs/stories.
+- ADR-056 registrada: UI Patterns 2 é o contrato de apresentação; a revisão dos
+  roadmaps parte do código e Config Sync. A primeira passada conferiu 136 SDCs,
+  212 stories, três componentes sem story e classificou preliminarmente os 19
+  templates Twig. O mapa integral de consumidores e a validação Runtime seguem
+  pendentes.
+
 - `portal-ui-map.css` foi eliminado após mover o marcador de prévia de conteúdo
   não publicado para `unpublished-preview.css`, anexado apenas às entidades
   não publicadas quando UI Styles seleciona o marcador ACULTA. `.container-inline`

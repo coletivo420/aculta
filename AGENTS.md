@@ -40,3 +40,4 @@ Regra compartilhada de Claude, Codex e demais agentes. Politica de revisao: `doc
 - Saida verbosa: `python3 scripts/agent-output.py --lines 60 -- COMANDO`, preservando diagnosticos.
 
 Indice por area: `docs/operations/AGENT-POLICY-INDEX.md`. Skills canonicas: `.agents/skills/`. Procedimentos de Runtime: `docs/operations/RUNTIME-SYNC.md`.
+Padrao de implementacao Drupal 11+ e compatibilidade Drupal 12: `docs/portal/DRUPAL-12-STANDARDS.md`.

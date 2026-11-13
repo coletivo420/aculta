@@ -1,5 +1,5 @@
 name: 'ACULTA UI Library'
-description: 'Catálogo administrativo de blocos reais do tema ACULTA420 V2, com prévia condicionada a acesso.'
+description: 'Compatibilidade de rota administrativa ACULTA para encaminhar à UI Patterns Library.'
 type: module
 package: ACULTA
 version: 0.1.0-dev.2

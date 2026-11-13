@@ -2,7 +2,7 @@
 
 Tema Drupal da ACULTA em **Single Directory Components (SDC)**, nativo, sem Bootstrap, sem Vite e sem Node. É o tema padrão e exclusivo do portal, desenvolvido com base no design system autônomo e mobile-first. A versão legada V1 foi purgada.
 
-Planejamento normativo: `docs/architecture/ACULTA420-V2-REFATORACAO-SDC-LAYOUT-BUILDER.md` (ADR-054), acrescido de `docs/architecture/ACULTA420-V2-UI-SUITE-INTEGRACAO-VISUAL-PLANO.md` (ADR-055, US-00 a US-14; migração visual em `docs/architecture/ACULTA-UI-SUITE-MIGRACAO-LEGADO-SKINS.md`; nomenclatura funcional no Portal RN-00 a RN-05 em `docs/architecture/ACULTA-PORTAL-PURPOSE-PARA-SITE-KEY.md`). O motor visual por purpose foi removido em favor de UI Skins; `DomainPurposeManager` mantém apenas as funções funcionais até a trilha RN.
+Decisões normativas: [ADR-054](../../../../docs/decisions/ADR-054-refatoracao-aculta420-v2-sdc-layout-builder.md) define SDC/Layout Builder; [ADR-055](../../../../docs/decisions/ADR-055-integracao-ui-icons-ui-styles-page-e-sistema-unificado-de-emojis.md) cobre UI Suite; [ADR-056](../../../../docs/decisions/ADR-056-ui-patterns-2-recomendacoes-e-corte-documentacao.md) determina reconciliação documental e corte de apresentação orientado pelos consumidores do código. Planos detalhados anteriores ficam em `docs/architecture/` na raiz do repositório e devem ser lidos como planos/status históricos até revisão contra o código atual.
 
 Para quem vai mexer no tema, leia nesta ordem:
 
@@ -23,10 +23,11 @@ Decisões que governam o tema estão em `docs/decisions/` na raiz do repositóri
 | ADR-047 | Menu de conta fixo na barra institucional |
 | ADR-054 | Arquitetura SDC First, Layout Builder, dez purposes e retirada da administração de container |
 | ADR-055 | UI Suite integral: UI Skins assume o visual; Portal renomeia `purpose` para `site_key` (RN-00 a RN-05), migração site-wide, Field Group dev; UI Patterns CKEditor 5 excluído |
+| ADR-056 | Recomendações UI Patterns 2, documentação reconciliada com o código e corte por consumidores comprovados |
 
 ## Estado em uma frase
 
-Fundações, shell SDC, UI Skins, UI Patterns Views/Layouts e UI Styles Block estão ativos. Álbuns usa row/style/display; as galerias editorial, Fórum e Commerce usam `layout-grid` com PhotoSwipe/Media; Fórum sem conteúdo publicado e produto aguardando aceite visual; Notícias usa `revista-listing` sobre quatro teasers nativos; a Home usa `layout-grid` no lugar do style VVJB e mantém os três destaques via Layout Builder; Documentos aplica superfície e espaçamento oficiais. As ADRs 054/055 seguem abertas: faltam migração site-wide e aceites de acessibilidade/cache, além da trilha RN-00 a RN-05.
+O código e o Config Sync contêm SDCs, UI Patterns e UI Styles; o uso efetivo por consumidor ainda precisa ser cruzado com displays e Runtime. O shell tem cinco regiões e um template. ADR-056 inicia pela revisão documental: contagem atual de 136 SDCs/212 stories, três SDCs sem story e 19 templates Twig que precisam de classificação por consumidor. A descoberta no Runtime, cobertura visual/autenticada, igualdade de Config Sync e lacunas de migração continuam pendentes quando não há evidência atual.
 
 ## Estrutura
 
@@ -49,13 +50,13 @@ aculta420_v2/
 
 ## Como adicionar ou alterar um componente
 
-1. Confirme que a necessidade não é atendida por um componente existente (veja [docs/components.md](docs/components.md)).
-2. Crie `components/<nome>/<nome>.component.yml` com `props` em schema estrito (`additionalProperties: false`) e `slots` documentados.
-3. Crie `<nome>.twig`. Use tokens semânticos, não valores de paleta. Não leia entidade, usuário ou configuração dentro do componente.
-4. Adicione `<nome>.css` (aplicado automaticamente pelo SDC) e, só se houver interação, `<nome>.js` com `Drupal.behaviors` e `core/once`.
-5. Crie ao menos uma story (`<nome>.default.story.yml`).
-6. Rode os gates da seção [docs/gates.md](docs/gates.md) e registre a evidência visual.
-7. Documente no mesmo commit, conforme a tabela da seção 6 do [AGENTS.md](AGENTS.md): `docs/components.md`, e também `docs/architecture.md`, `docs/gates.md`, `docs/ui-styles.md` quando forem afetados. Atualize `CHANGELOG.md` e, se for entrega de fase, `docs/roadmap.md`.
+1. Confirme que a necessidade não é atendida por um SDC existente (veja [docs/components.md](docs/components.md)); leia a [skill SDC](../../../../.agents/skills/sdc/SKILL.md) e, para integração editorial, a [skill UI Patterns](../../../../.agents/skills/ui-patterns/SKILL.md).
+2. Crie `components/<nome>/<nome>.component.yml` com `props` em schema estrito (`additionalProperties: false`) e `slots` documentados; crie `<nome>.twig` e assets locais apenas quando necessários.
+3. Crie pelo menos uma story `<nome>.<variante>.story.yml` na mesma entrega (use `default` quando existir um estado padrão real). A story é a documentação/exemplo do componente na UI Patterns Library; não crie catálogo ou registro paralelo.
+4. Use tokens semânticos, não valores de paleta. Não leia entidade, usuário ou configuração dentro do componente. Props recebem valores simples tipados; slots recebem conteúdo renderizável.
+5. Para expor ou compor o SDC, selecione a integração UI Patterns compatível e já instalada/habilitada. Preserve acesso, render arrays e metadados de cache nos módulos e plugins owner.
+6. Rode `php scripts/validate-aculta420-sdc-library-contract.php`, verifique descoberta do SDC/story na UI Patterns Library e rode os demais gates de [docs/gates.md](docs/gates.md); registre como `DEFERRED` a validação Runtime que não executar.
+7. Documente no mesmo commit, conforme a seção 6 do [AGENTS.md](AGENTS.md), `docs/components.md` e outros contratos afetados. Atualize `CHANGELOG.md` e roadmap/TODO/status quando a fase ou marco mudar.
 
 Vale o mesmo para estilos de UI Styles, bibliotecas, hooks e variáveis do Portal.
 

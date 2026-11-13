@@ -1,5 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 version: 0.1.0-dev.2
 state: Dev
-next_phase: 'Monitorar navegação administrativa e prévias reais sob perfil de administrador.'
-progress_note: 'Controle de acesso estrito com UiLibraryAccessCheck exigindo papel administrator e administer blocks no MAIN. Navegação integrada com UI Patterns Library e UI Suite Overview. Gate validate-aculta-ui-library.php PASS (23 checks) e suíte unitária de acesso PASS (6/6).'
+next_phase: 'Confirmar no Runtime o redirecionamento do alias administrativo para UI Patterns Library; avaliar retirada futura do alias após compatibilidade.'
+progress_note: 'Catálogo e prévias próprias de blocos removidos. A rota ACULTA legada mantém acesso restrito no MAIN e redireciona ao overview oficial da UI Patterns Library, fonte única de SDCs e stories. Gate e teste Unit devem validar o redirecionamento; Runtime ainda não revalidado.'

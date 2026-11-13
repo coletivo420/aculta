@@ -14,13 +14,13 @@ Use quando uma mudança cruza mais de uma integração de apresentação Drupal,
 - Opções de classe reutilizáveis: `ui-styles`.
 - Pack/seleção/renderização de ícone: `ui-icons`.
 - Tokens, purpose e tema: `css` e `aculta-data-portal-ui`.
-- Preview real de blocos ACULTA, rotas/permissões e SEC-01: consulte matriz do ecossistema e gates de `aculta-gates-por-escopo`.
+- Aliases administrativos para UI Patterns e rotas/permissões: consulte gates de `aculta-gates-por-escopo`.
 
 ## Governança
 
 Antes de recomendar API, separe `composer.json`, lock, filesystem, `core.extension.yml` e runtime. Este checkout pode não conter `web/core`, `web/modules/contrib` ou `vendor`. Confirme machine names, classes e versões na instalação alvo. Não instale, habilite, migre displays nem altere Composer/configuração/runtime por inferência.
 
-Preserve Layout Builder, Views, os layouts existentes, ADR-054, as cinco regiões do tema e o roteamento multidomínio/purposes. Avalie permissões, cache contexts/tags/max-age, traduções, revisões, prévias e carregamento condicional de assets. Não duplique funcionalidade entre SDC, UI Patterns Library e ACULTA UI Library.
+Preserve Layout Builder, Views, os layouts existentes, ADR-054, as cinco regiões do tema e o roteamento multidomínio/purposes. Avalie permissões, cache contexts/tags/max-age, traduções, revisões e carregamento condicional de assets. A UI Patterns Library é o catálogo único de SDCs/stories; não recrie catálogos ou previews próprios em módulos ACULTA.
 
 ## Tecnologias opcionais
 
@@ -34,9 +34,7 @@ Preserve Layout Builder, Views, os layouts existentes, ADR-054, as cinco regiõe
 
 ## Bibliotecas e segurança
 
-UI Patterns Library cataloga todos os SDCs e stories, inclusive internos e editoriais. Não ocultar componentes para resolver performance. ACULTA UI Library (`aculta_ui_library`) cataloga blocos reais e suas prévias administrativas, em domínio MAIN, com rotas/permissões próprias. Preview sintético não equivale a execução real do bloco.
-
-SEC-01: o controller observado usa `AccessResultInterface::isAllowed()` antes de `build()` e o teste-fonte cobre allowed/forbidden/neutral. O status de sessão mais recente registra o PHPUnit 9/9 PASS; esta auditoria não o repetiu. O README do módulo ainda afirma incorretamente que a falha está pendente. A correção funcional aparenta presente; reconcilie essa documentação e valide novamente em execução antes de declarar nova homologação. Não alterar a implementação funcional nesta tarefa.
+UI Patterns Library cataloga todos os SDCs e stories, inclusive internos e editoriais. Não ocultar componentes para resolver performance. `aculta_ui_library` agora mantém somente um redirecionamento administrativo legado para UI Patterns Library; catálogo e previews de blocos próprios foram removidos. SEC-01 das prévias deixa de se aplicar porque o módulo não renderiza plugins de bloco.
 
 ## Referência
 

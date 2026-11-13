@@ -2,23 +2,20 @@
 
 /**
  * @file
- * Gate ADR-054 P6: catálogo de blocos e prévias reais com acesso restrito.
+ * Gate for the ACULTA compatibility redirect to UI Patterns Library.
  *
- * Verifica, com bootstrap Drupal somente leitura:
- * 1. As rotas existem somente no domínio principal e são administrativas.
- * 2. Visitante e usuário autenticado sem permissão são negados.
- * 3. Administrador é autorizado.
- * 4. O catálogo lista os blocos reais do tema e não é cacheável.
- * 5. A prévia de um bloco real renderiza conteúdo, com max-age 0.
+ * Verifies that the legacy entry point stays MAIN/admin-only, points to the
+ * canonical SDC catalog, and does not expose a second block catalog/preview.
  *
- * Uso: `php scripts/validate-aculta-ui-library.php` (delega ao Drush) ou via
- * Drush `php:script`.
+ * Usage: `php scripts/validate-aculta-ui-library.php` (delegates to Drush) or
+ * via Drush `php:script`.
  */
 
 declare(strict_types=1);
 
 use Drupal\Core\Session\AnonymousUserSession;
-use Drupal\aculta_ui_library\Controller\UiLibraryPreviewController;
+use Drupal\aculta_ui_library\Controller\UiPatternsLibraryRedirectController;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 if (!class_exists(\Drupal::class) || !\Drupal::hasContainer()) {
   $root = dirname(__DIR__);
@@ -43,85 +40,82 @@ $assert = static function (bool $condition, string $message) use (&$failures, &$
   }
 };
 
-// 1. Rotas administrativas e restritas ao MAIN.
 $provider = \Drupal::service('router.route_provider');
-foreach (['aculta_ui_library.blocks', 'aculta_ui_library.block_preview'] as $name) {
-  try {
-    $route = $provider->getRouteByName($name);
-  }
-  catch (\Throwable $e) {
-    $failures[] = "Rota ausente: $name";
-    $checks++;
-    continue;
-  }
-  $assert(str_starts_with($route->getPath(), '/painel-administrativo/'), "$name não está sob /painel-administrativo.");
-  $assert($route->getOption('_aculta_site_key') === 'main', "$name não declara _aculta_site_key=main.");
-  $assert($route->getOption('_admin_route') === TRUE, "$name não é marcada como rota administrativa.");
-  $assert($route->getRequirement('_permission') === 'administer blocks', "$name não exige administer blocks.");
+try {
+  $route = $provider->getRouteByName('aculta_ui_library.blocks');
+  $checks++;
+}
+catch (\Throwable) {
+  $failures[] = 'Rota de compatibilidade aculta_ui_library.blocks ausente.';
+  $checks++;
+  $route = NULL;
 }
 
-// 2 e 3. Acesso por perfil.
+if ($route !== NULL) {
+  $assert($route->getPath() === '/painel-administrativo/aculta/ui-library/blocos', 'A rota legada mudou de caminho sem plano de compatibilidade.');
+  $assert($route->getOption('_aculta_site_key') === 'main', 'A rota não declara _aculta_site_key=main.');
+  $assert($route->getOption('_admin_route') === TRUE, 'A rota de compatibilidade não é administrativa.');
+  $assert($route->getRequirement('_permission') === 'administer blocks', 'A rota não exige administer blocks.');
+}
+
+try {
+  $provider->getRouteByName('ui_patterns_library.overview');
+  $checks++;
+}
+catch (\Throwable) {
+  $failures[] = 'A rota canônica ui_patterns_library.overview não está disponível.';
+  $checks++;
+}
+
 $access = \Drupal::service('access_manager');
-$storage = \Drupal::entityTypeManager()->getStorage('user');
 $anonymous = new AnonymousUserSession();
-$admin = $storage->load(1);
+$admin = \Drupal::entityTypeManager()->getStorage('user')->load(1);
 $nonAdmin = NULL;
 foreach ([5, 15, 33, 34, 80] as $uid) {
-  $candidate = $storage->load($uid);
+  $candidate = \Drupal::entityTypeManager()->getStorage('user')->load($uid);
   if ($candidate && !$candidate->hasPermission('administer blocks')) {
     $nonAdmin = $candidate;
     break;
   }
 }
-$assert($nonAdmin !== NULL, 'Nenhum usuário não administrador disponível para o teste negativo.');
+$assert($nonAdmin !== NULL, 'Nenhum usuário sem administer blocks está disponível para o teste negativo.');
 
-$params = ['block' => 'aculta420_v2_aculta_site_branding'];
-foreach (['aculta_ui_library.blocks', 'aculta_ui_library.block_preview'] as $name) {
-  $routeParams = $name === 'aculta_ui_library.block_preview' ? $params : [];
-  $assert($access->checkNamedRoute($name, $routeParams, $anonymous, TRUE)->isAllowed() === FALSE, "$name permitiu visitante.");
+if ($route !== NULL) {
+  $assert(!$access->checkNamedRoute('aculta_ui_library.blocks', [], $anonymous, TRUE)->isAllowed(), 'A rota permitiu visitante.');
   if ($nonAdmin !== NULL) {
-    $assert($access->checkNamedRoute($name, $routeParams, $nonAdmin, TRUE)->isAllowed() === FALSE, "$name permitiu usuário sem administer blocks.");
+    $assert(!$access->checkNamedRoute('aculta_ui_library.blocks', [], $nonAdmin, TRUE)->isAllowed(), 'A rota permitiu usuário sem administer blocks.');
   }
   if ($admin !== NULL) {
-    $assert($access->checkNamedRoute($name, $routeParams, $admin, TRUE)->isAllowed() === TRUE, "$name negou o administrador.");
+    $assert($access->checkNamedRoute('aculta_ui_library.blocks', [], $admin, TRUE)->isAllowed(), 'A rota negou o administrador.');
   }
 }
 
-// 4 e 5. Catálogo e prévia.
 $switcher = \Drupal::service('account_switcher');
 $switcher->switchTo($admin);
 try {
-  $controller = new UiLibraryPreviewController(
-    \Drupal::service('context.repository'),
-    \Drupal::service('router.route_provider'),
-  );
-  $renderer = \Drupal::service('renderer');
-
-  $catalog = $controller->listBlocks();
-  $catalogHtml = (string) $renderer->renderInIsolation($catalog);
-  $assert(($catalog['#cache']['max-age'] ?? NULL) === 0, 'O catálogo não declara max-age 0.');
-  $assert(substr_count($catalogHtml, 'Abrir prévia real') > 0, 'O catálogo não lista blocos com link de prévia.');
-
-  $block = \Drupal::entityTypeManager()->getStorage('block')->load('aculta420_v2_aculta_site_branding');
-  $assert($block !== NULL, 'Bloco de teste aculta420_v2_aculta_site_branding ausente.');
-  if ($block !== NULL) {
-    $preview = $controller->preview($block);
-    $previewHtml = (string) $renderer->renderInIsolation($preview);
-    $assert(($preview['#cache']['max-age'] ?? NULL) === 0, 'A prévia não declara max-age 0.');
-    $assert(isset($preview['content']), 'A prévia de um bloco acessível não renderizou conteúdo.');
-    $assert(trim(strip_tags($previewHtml)) !== '', 'A prévia renderizou vazio.');
-  }
+  $controller = UiPatternsLibraryRedirectController::create(\Drupal::getContainer());
+  $response = $controller->redirectToLibrary();
+  $expected = \Drupal::service('url_generator')->generate('ui_patterns_library.overview', [], UrlGeneratorInterface::ABSOLUTE_PATH);
+  $assert($response->getTargetUrl() === $expected, 'A rota antiga não redirecionou à UI Patterns Library.');
+  $assert($response->getStatusCode() === 302, 'O redirecionamento não retornou HTTP 302.');
 }
 finally {
   $switcher->switchBack();
 }
 
-// 6. Estática: sem \Drupal::, com max-age 0 e verificação de isAllowed().
-$source = (string) file_get_contents($module . '/src/Controller/UiLibraryPreviewController.php');
-$assert(!preg_match('/\\\\Drupal::/', $source), 'O controlador usa \\Drupal:: (viola a injeção de dependência do projeto).');
-$assert(substr_count($source, 'setCacheMaxAge(0)') >= 3, 'O controlador não marca max-age 0 em catálogo, prévia e estado indisponível.');
-$assert(str_contains($source, 'isAllowed()'), 'O controlador não verifica explicitamente isAllowed() na decisão de acesso do plugin (vulnerabilidade SEC-01).');
-$assert(!preg_match('/!\s*\$plugin->access\(/', $source), 'O controlador ainda nega diretamente o retorno de $plugin->access() sem checar isAllowed().');
+try {
+  $provider->getRouteByName('aculta_ui_library.block_preview');
+  $failures[] = 'A rota própria de prévia de bloco ainda está registrada.';
+  $checks++;
+}
+catch (\Throwable) {
+  $checks++;
+}
+
+$source = (string) file_get_contents($module . '/src/Controller/UiPatternsLibraryRedirectController.php');
+$assert(str_contains($source, 'ui_patterns_library.overview'), 'O controlador não aponta para UI Patterns Library.');
+$assert(!str_contains($source, 'getStorage(\'block\')'), 'O controlador ainda consulta blocos configurados.');
+$assert(!str_contains($source, '->build()'), 'O controlador ainda renderiza prévias de bloco.');
 
 if ($failures !== []) {
   fwrite(STDERR, "FAIL — validate-aculta-ui-library\n");

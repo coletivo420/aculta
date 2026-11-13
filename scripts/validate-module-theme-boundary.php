@@ -61,8 +61,6 @@ $allowedThemeReferences = [
   // Config contract test checks that the editorial format uses the theme's
   // UI Styles class catalog; production module code remains theme independent.
   'modules/aculta_editor/tests/src/Kernel/AcultaEditorFormatsKernelTest.php',
-  // Catálogo UI Library: prévia de blocos no tema padrão.
-  'modules/aculta_ui_library/src/Controller/UiLibraryPreviewController.php',
   // Integrações com diálogos modais do tema padrão.
   'modules/aculta_forum/aculta_forum.libraries.yml',
   'modules/aculta_studio/aculta_studio.libraries.yml',

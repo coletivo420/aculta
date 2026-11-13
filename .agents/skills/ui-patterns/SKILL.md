@@ -16,7 +16,7 @@ Use quando um SDC existente precisa ser selecionável em construção editorial,
 - Use props para valores configuráveis tipados e slots para conteúdo renderizado/composição. Use sources quando o valor precisa vir de contexto/dados Drupal e o plugin estiver disponível. Não passe entidades inteiras nem dados pessoais/sensíveis indiscriminadamente às props; mapeie apenas os campos mínimos.
 - Preserve render arrays, `#cache`, cache contexts, tags e max-age, além de acesso e traduções. Evite converter render arrays em strings ou dados de entidade em arrays sem metadados.
 - Para aninhamento, reutilize componentes filhos por slots/prop compatível. Evite árvores recursivas sem limite ou construções que removam metadados de cache.
-- A UI Patterns Library é o catálogo de SDCs/stories. O módulo ACULTA `aculta_ui_library` é outro recurso: catálogo de blocos reais com acesso e previews. Não os trate como substitutos.
+- A UI Patterns Library é o catálogo único de SDCs/stories. O módulo ACULTA `aculta_ui_library` conserva apenas uma rota de redirecionamento legado e não deve implementar catálogo ou previews paralelos.
 
 ## Fluxo
 
@@ -29,7 +29,7 @@ Use quando um SDC existente precisa ser selecionável em construção editorial,
 7. Views: confira row/style/display plugin e mapeie resultados, exposed form, empty, pager, header e footer apenas onde suportado. Preserve cache, acesso, filtros e componentes de listagem atuais.
 8. Mantenha todos os SDCs na UI Patterns Library, inclusive internos, reutilizáveis e editoriais. Trate performance com assets condicionais e previews sob demanda, nunca escondendo componentes.
 9. UI Patterns Field Group consta como pacote, mas não como módulo habilitado no export. Não habilite: confirme compatibilidade no código instalado e considere que o projeto declara não estar coberto pela política de avisos de segurança Drupal.
-10. UI Patterns Library (catálogo SDC/stories) e `aculta_ui_library` (catálogo administrativo de blocos reais) têm responsabilidades diferentes. Para a segunda, revise a regra individual de acesso e `AccessResultInterface::isAllowed()` antes de `build()`. O controller e os testes-fonte atuais cobrem `allowed`, `forbidden` e `neutral`; esta auditoria não repetiu o PHPUnit. O README do módulo ainda descreve SEC-01 como pendente e precisa ser reconciliado com o código/teste.
+10. UI Patterns Library é o catálogo único de SDC/stories. `aculta_ui_library` é somente uma rota de compatibilidade protegida que redireciona para esse catálogo; não reintroduzir preview/lista própria de blocos.
 11. Use `ui-styles` para estilos administrativos independentes e tokens do tema para cor/superfície.
 12. Teste Library, preview, formulário, permissões e saída renderizada nos fluxos presentes. Use browser script existente e gates de `aculta-gates-por-escopo`.
 

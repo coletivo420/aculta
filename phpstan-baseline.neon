@@ -7502,30 +7502,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_studio/tests/src/Unit/StudioProfileAccessTest.php
 
 		-
-			rawMessage: 'Call to function is_array() with array will always evaluate to true.'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_ui_library/src/Controller/UiLibraryPreviewController.php
-
-		-
-			rawMessage: Instanceof between Drupal\Core\Block\BlockPluginInterface and Drupal\Core\Block\BlockPluginInterface will always evaluate to true.
-			identifier: instanceof.alwaysTrue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_ui_library/src/Controller/UiLibraryPreviewController.php
-
-		-
-			rawMessage: Instanceof between Drupal\Core\Plugin\Context\ContextInterface and Drupal\Core\Plugin\Context\ContextInterface will always evaluate to true.
-			identifier: instanceof.alwaysTrue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_ui_library/src/Controller/UiLibraryPreviewController.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_ui_library\Controller\UiLibraryPreviewController::missingRequiredContexts() has an unused parameter $account.'
-			identifier: method.unusedParameter
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_ui_library/src/Controller/UiLibraryPreviewController.php
-
-		-
 			rawMessage: '''
 				Call to deprecated method isCurrentUserBannedByUser() of interface Drupal\private_message\Service\PrivateMessageBanManagerInterface:
 				in private_message:4.0.0 and is removed from

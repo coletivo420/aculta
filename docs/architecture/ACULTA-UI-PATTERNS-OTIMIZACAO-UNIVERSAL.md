@@ -4,7 +4,8 @@
 **Data:** 2026-11-10.
 **Branch de trabalho:** `dev`.
 **Corte de auditoria estática:** `c599f9363dbb36ca0586c0a6ead9c39f4c4d79dd` (revalidado e entregue no HEAD do dev).
-**Owners:** apresentação e SDCs em `aculta420_v2`; catálogo de blocos reais em `aculta_ui_library`; integrações contrib em UI Patterns/UI Styles; regras de negócio nos módulos proprietários.
+**Owners:** apresentação e SDCs em `aculta420_v2`; catálogo único de SDCs/stories na UI Patterns Library; integrações contrib em UI Patterns/UI Styles; regras de negócio nos módulos proprietários.
+**Revisão posterior (ADR-056, 2026-11-13):** o plano abaixo preserva evidências históricas, mas a decisão de manter catálogo próprio de blocos em `aculta_ui_library` foi revogada. O módulo agora apenas redireciona a rota administrativa legada para UI Patterns Library; catálogo e previews próprios foram removidos.
 **Relacionamento:** ADR-050 (HTMX), ADR-054 (SDC First, Layout Builder e purposes), ADR-055 (UI Icons/UI Styles Page/emojis) e [plano P7 da ADR-054](ACULTA420-V2-REFATORACAO-SDC-LAYOUT-BUILDER.md).
 
 ## 1. Decisão vinculante: UI Patterns universal
@@ -12,7 +13,7 @@
 1. **100% dos SDCs internos, reutilizáveis e editoriais permanecem registrados no UI Patterns**, pesquisáveis, documentados e acessíveis nas integrações tecnicamente compatíveis.
 2. Não remover, ocultar por categoria, desregistrar, desabilitar descoberta, converter em componente privado ou aplicar `status: deprecated` para forçar a redução do catálogo. Categorias/tags/famílias/purpose são metadados de navegação, **não ACL nem filtro excludente**.
    **Adendo ADR-055 (2026-11-10):** isso proíbe usar depreciação como artifício para esconder SDCs. A classificação `LEGACY_DEPRECATED` e `LEGACY_OBSOLETE` agora é obrigatória para apresentações legadas fora da UI Suite. `status: deprecated` em SDC só é cabível quando for um SDC efetivamente substituído e ainda descobrível; nenhum componente pode sumir da biblioteca por essa classificação. Ver `docs/architecture/ACULTA-UI-SUITE-MIGRACAO-LEGADO-SKINS.md`.
-3. UI Patterns Library permanece catálogo de SDCs/stories; `aculta_ui_library` permanece catálogo de **blocos configurados reais** e prévias administrativas. Não criar catálogo concorrente.
+3. UI Patterns Library é o catálogo único de SDCs/stories. `aculta_ui_library` não mantém catálogo nem prévias próprias; não criar catálogo concorrente.
 4. UI Styles, UI Icons (Phosphor e Fluent Emoji), UI Styles Page, UI Patterns Blocks, Field, Field Formatters, Layouts, Views e Layout Builder mantêm seus contratos. Não apagar fontes ou opções existentes para melhorar benchmark.
 5. Otimização atua em **trabalho desnecessário**, cache válido, resolução de fontes, apresentação paginada, pesquisa e **prévia sob demanda**. A página pode exibir todos os metadados sem materializar todas as stories.
 6. Respeitar a fronteira Portal -> contrato de apresentação neutro -> tema/SDCs. HTMX antes de novo Drupal AJAX, sem carregar jQuery globalmente, sem dependência de hostname no tema.
@@ -35,15 +36,17 @@
 
 ## 3. Achados classificados e intervenções
 
-### SEC-01 - P0: resultado de acesso do bloco não é interrogado
+### SEC-01 - P0: resultado de acesso do bloco não é interrogado (corrigido e depois removido)
 
-**Arquivo:** `web/modules/custom/aculta_portal/modules/aculta_ui_library/src/Controller/UiLibraryPreviewController.php`.
+**Implementação legada:** controller de prévias de blocos, removido pela ADR-056 em 2026-11-13.
 
 No método `preview()` há a condição `if (!$plugin->access($account, TRUE))`. No Drupal, `access($account, TRUE)` retorna um `AccessResultInterface`, inclusive quando o resultado é `forbidden` ou `neutral`. Negar o objeto não testa `isAllowed()`; o gate atual do catálogo não prova essa condição. A rota já exige `administer blocks` e verificação MAIN, mas **isso não substitui o acesso específico do plugin**.
 
 **Intervenção:** verificar explicitamente `->isAllowed()`, negar `forbidden` e `neutral`, resolver corretamente contextos necessários antes do `build()`, preservar os metadados de cache da decisão de acesso e revisar todo o caminho de prévia real. Não executar `build()` de plugin negado. Cobrir negação em teste Unit/Kernel/Functional com usuários e contextos variados. Manter `no_cache` e `max-age: 0` nas prévias reais até haver auditoria formal de cache individual.
 
 **Gate:** três resultados `allowed/forbidden/neutral`; plugin negado nunca executa `build()`; em host não-MAIN, 404; usuários sem permissão, 403; conteúdos privados não vazam. Esta correção de segurança antecede a expansão dos endpoints de prévias.
+
+**Estado posterior (ADR-056, 2026-11-13):** o endpoint e o render de plugins de bloco foram removidos. A checagem `isAllowed()`/`build()` deixa de fazer parte do escopo; a rota legada restante só redireciona para UI Patterns Library, com guarda administrativa MAIN.
 
 ### PERF-01 - P0: invalidar a descoberta em todo preprocess de catálogo
 
@@ -91,9 +94,9 @@ Há três icon packs declarados pelo tema e nove grupos UI Styles. Grande númer
 
 **Gate:** todos os packs e opções existentes acessíveis; sem regressão de pesquisa/seleção; redução de custo demonstrada, se houver mudança.
 
-### PERF-06 - P3: catálogo de blocos reais
+### PERF-06 - P3: catálogo de blocos reais (retirado pela ADR-056)
 
-O `aculta_ui_library::listBlocks()` carrega blocos configurados do tema por `loadByProperties(['theme' => 'aculta420_v2'])` e monta tabela. Não há benchmark que justifique reescrita imediata. Manter proteção de acesso e prévia somente no domínio MAIN; adicionar paginação ou cache do índice apenas se o volume e as medições justificarem. Não cachear indiscriminadamente prévias reais.
+O catálogo e as prévias de blocos do `aculta_ui_library` foram removidos. A rota antiga é um alias protegido para UI Patterns Library. Não reimplementar esse índice ou preview dentro do módulo.
 
 ## 4. Desenho-alvo sem exclusão de componentes
 
@@ -102,7 +105,7 @@ O `aculta_ui_library::listBlocks()` carrega blocos configurados do tema por `loa
 - **Prévia:** endpoint por componente/story/variante, com validação estrita dos parâmetros e acesso apropriado; não reconstruir o catálogo completo para renderizar uma story. Usar a API do UI Patterns, não reimplementar Twig, SDC ou execução de plugin.
 - **Cache:** índice de metadados cacheável quando seguro, com tags/invalidação coerentes; saída personalizada/formulário permanece privada ou sem cache; contextos de domínio/purpose, idioma e usuário quando afetarem o resultado. Medir e revisar cacheability bubbling.
 - **Experiência:** todas as opções acessíveis por teclado, busca e navegação; links e recarregamento sem JS preservados; HTMX progressive enhancement; foco e aria-busy/estado de carregamento; não renderizar duplicadamente o mesmo componente.
-- **Limites de ownership:** hooks e templates de apresentação no V2; endpoints, política de acesso e integrações de catálogo em módulo apropriado, preferencialmente extensão mínima de `aculta_ui_library` se mantido seu escopo de blocos, ou submódulo técnico específico justificado. Preservar separação dos catálogos da UI Suite.
+- **Limites de ownership:** hooks e templates de apresentação no V2; UI Patterns Library fornece catálogo e previews de SDC. Não estender `aculta_ui_library` com catálogo alternativo.
 - **Sem alteração de layout público:** não mexer nas regiões finais, shell, landing Links, nem na administração de `Layout de container` removida pela ADR-054.
 
 ## 5. Microfases executáveis
@@ -124,7 +127,7 @@ Executar mudanças em commits pequenos e exclusivos do escopo, direto em `dev`, 
 
 Capturar pelo menos 5 execuções por cenário para cache frio e cache quente, reportando mediana, p95 quando houver amostras adequadas, mínimo/máximo, memória PHP, queries, tamanho HTML, número de stories efetivamente executadas, peso CSS/JS e solicitações HTTP. Separar métricas de PHP/Drupal, rede e navegador; não atribuir causalidade sem comparação.
 
-**Cenários obrigatórios:** (a) overview UI Patterns; (b) página individual simples; (c) página com muitas variantes; (d) `auth-dialog` com formulário real; (e) administração de bloco UI Patterns no Layout Builder; (f) formatter UI Patterns em Manage Display; (g) integração de UI Patterns com Views; (h) catálogo de blocos reais; (i) UI Styles/Styles Page; (j) UI Icons Picker, se ativo no Runtime. Verificar 320/390/1440 CSS px e modos claro/escuro.
+**Cenários obrigatórios:** (a) overview UI Patterns; (b) página individual simples; (c) página com muitas variantes; (d) `auth-dialog` com formulário real; (e) administração de bloco UI Patterns no Layout Builder; (f) formatter UI Patterns em Manage Display; (g) integração de UI Patterns com Views; (h) UI Styles/Styles Page; (i) UI Icons Picker, se ativo no Runtime. Verificar 320/390/1440 CSS px e modos claro/escuro.
 
 Indicadores de comparação: TTFB, tempo até a página utilizável, memória pico, `component_story()` executados no overview, consultas, bytes HTML, LCP/CLS/INP quando apropriado. **Não definir ganho percentual como PASS antes da linha de base**; a meta final deverá ser proposta com base nos resultados e aprovada na homologação. Regressão funcional ou de acesso reprova a fase mesmo com melhora de tempo.
 
@@ -175,7 +178,7 @@ Para permitir ao administrador visualizar todas as histórias de forma controlad
 - `web/themes/custom/aculta420_v2/templates/ui-patterns-stories-full.html.twig`
 - `web/themes/custom/aculta420_v2/js/ui-library-tabs.js`
 - `web/themes/custom/aculta420_v2/src/Story/AuthDialogStory.php`
-- `web/modules/custom/aculta_portal/modules/aculta_ui_library/src/Controller/UiLibraryPreviewController.php`
+- `web/modules/custom/aculta_portal/modules/aculta_ui_library/src/Controller/UiPatternsLibraryRedirectController.php`
 - `web/modules/custom/aculta_portal/modules/aculta_ui_library/aculta_ui_library.routing.yml`
 - `web/themes/custom/aculta420_v2/aculta420_v2.ui_styles.yml` e `aculta420_v2.icons.yml`
 - `config/sync/core.extension.yml`, `composer.json`, `composer.lock`

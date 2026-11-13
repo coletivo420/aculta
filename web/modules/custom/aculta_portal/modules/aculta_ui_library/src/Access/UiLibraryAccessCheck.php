@@ -10,14 +10,14 @@ use Drupal\Core\Routing\Access\AccessInterface;
 use Drupal\Core\Session\AccountInterface;
 
 /**
- * Controle de acesso estrito para as rotas da UI Library.
+ * Controle de acesso estrito para o alias legado da UI Library.
  *
  * Exige simultaneamente:
  * 1. Permissão 'administer blocks'.
  * 2. Papel de administrador ('administrator') ou UID 1.
  *
  * Nenhum usuário comum ou editor com permissão concedida acidentalmente pode
- * acessar as prévias reais de blocos administrativos.
+ * usar o alias administrativo ACULTA para abrir a UI Patterns Library.
  */
 final class UiLibraryAccessCheck implements AccessInterface {
 

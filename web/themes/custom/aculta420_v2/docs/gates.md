@@ -9,6 +9,7 @@ Os caminhos são relativos à raiz do repositório. Gates "Drush" rodam com `php
 | Gate | Como rodar | O que verifica | Quando |
 | --- | --- | --- | --- |
 | `validate-aculta420-sdc-schemas.php` | `php scripts/validate-aculta420-sdc-schemas.php` | schemas dos componentes SDC | toda mudança em `components/` |
+| `validate-aculta420-sdc-library-contract.php` | `php scripts/validate-aculta420-sdc-library-contract.php` | cada SDC tem Twig e story; lista explicitamente apenas a dívida storyless atual; impede rota/catalogação/prévia paralela em `aculta_ui_library` | criação, remoção ou alteração de SDC, story, ou da ponte UI Patterns |
 | `validate-aculta420-design-foundations.php` | `php scripts/validate-aculta420-design-foundations.php` | fundações de design do tema | mudança em tokens, base ou layout |
 | `validate-browser-validators.php` | `php scripts/validate-browser-validators.php` | validadores de navegador | mudança em JavaScript ou em formulários |
 | `validate-aculta420-v2-foundations.php` | `php scripts/validate-aculta420-v2-foundations.php` | tokens e pares de contraste da V2 em claro/escuro, incluindo texto do cabeçalho `surface-panel` (mínimo 4,5:1), foco e bordas (mínimo 3:1) | mudança em tokens ou cores |
@@ -37,11 +38,17 @@ descobertos e renderizados isoladamente em 2026-11-13; inclui
 Também inclui `account-shell`, `account-profile-card`, `forum-list-page`,
 `forum-category-page` e `forum-search-page` com seus assets CSS locais.
 | `validate-aculta420-layouts.php` | `php scripts/validate-aculta420-layouts.php` (delega ao Drush) | descoberta dos layouts SDC pelo `ui_patterns_layouts` (mesmo registro do Layout Builder), categoria/regiões e renderização real de cada layout | criação ou alteração de layout SDC |
-| `validate-aculta420-shell-regions.php` | `php scripts/validate-aculta420-shell-regions.php` (use `--strict` antes do cutover) | cinco regiões finais no `info.yml`, ausência de bloco órfão, composição do shell v2 com ponte para as regiões antigas, opt-in `classic`/`v2` e ausência de comparação de hostname; `--strict` falha enquanto houver bloco em região antiga | mudança no shell, em `info.yml` ou na configuração de regiões |
+| `validate-aculta420-shell-regions.php` | `php scripts/validate-aculta420-shell-regions.php` | cinco regiões atuais no `info.yml`, ausência de bloco órfão e composição do shell único; conferir consumidores em regiões legadas antes de qualquer mudança de configuração | mudança no shell, em `info.yml` ou na configuração de regiões |
 | `validate-aculta420-foundation.php` | `ACULTA_DRUSH_ROOT=$PWD php scripts/validate-aculta420-foundation.php` (ou via `php:script` do Drush) | fundação da V2: tema público e base-less, sem Bootstrap no Composer e no Runtime, blocos `aculta420_v2_*`, branding nos assets do V2, tokens `--color-*`, Twig, SDCs e cores e durações fora de `tokens.css` | toda mudança em tema, Config Sync ou Composer. Última execução: 410 checks PASS (2026-11-07), com Runtime sem a V1 |
 | `validate-aculta420-studio-identity.php` | ver o cabeçalho do script | identidade do estúdio | não está na lista de gates do ADR-046; confirme o escopo antes de usar |
 
 Os scripts `audit-aculta420-*.php` e `audit-aculta420-responsive-inventory.py` fazem inventário (consumidores de biblioteca, SDC assets, responsividade). Não são gates: a saída informa, não aprova.
+
+As execuções datadas abaixo são evidência histórica do estado no momento da
+rodada. Em particular, resultados que citam `classic`/`shell v2` descrevem o
+rollback anterior; o contrato atual é um único shell, conforme ADR-056 e o
+primeiro status do `roadmap.md`. Rode o gate novamente para afirmar estado
+atual do Runtime ou da configuração ativa.
 
 ## Gates do Portal que tocam o tema
 

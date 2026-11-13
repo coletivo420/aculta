@@ -1,25 +1,26 @@
 {
-    "generated_at": "2026-11-10T18:36:55+00:00",
+    "generated_at": "2026-11-13T21:41:21+00:00",
     "generator": "scripts/audit-custom-tests.php",
-    "total_files": 926,
+    "total_files": 947,
     "by_type": {
-        "unit": 667,
-        "kernel": 248,
+        "unit": 686,
+        "kernel": 250,
         "functional": 3,
         "performance": 4,
         "unknown": 3,
         "functionaljs": 1
     },
     "by_extension": {
-        "src": 922,
+        "src": 943,
         "processor": 1,
         "fixtures": 3
     },
     "flag_counts": {
+        "doc_comment_metadata": 4,
         "environment_skip": 16,
-        "mock_isolated": 442,
+        "mock_isolated": 456,
         "review_by_name": 24,
-        "static_config_contract": 37
+        "static_config_contract": 42
     },
     "files": [
         {
@@ -245,8 +246,8 @@
                 "aculta_calendar"
             ],
             "test_methods": 2,
-            "assertions": 6,
-            "assertions_per_test": 3,
+            "assertions": 7,
+            "assertions_per_test": 3.5,
             "first_import": "Drupal\\Core\\Routing\\RouteMatch",
             "fixture": false,
             "flags": []
@@ -466,6 +467,51 @@
             "flags": []
         },
         {
+            "path": "web/modules/custom/aculta_portal/modules/aculta_cgu/tests/src/Kernel/CguModerationKernelTest.php",
+            "extension": "src",
+            "type": "kernel",
+            "base_class": "KernelTestBase",
+            "groups": [
+                "aculta_cgu"
+            ],
+            "test_methods": 5,
+            "assertions": 40,
+            "assertions_per_test": 8,
+            "first_import": "Drupal\\Core\\Form\\FormState",
+            "fixture": false,
+            "flags": []
+        },
+        {
+            "path": "web/modules/custom/aculta_portal/modules/aculta_cgu/tests/src/Kernel/CguNotifierAndQueueKernelTest.php",
+            "extension": "src",
+            "type": "kernel",
+            "base_class": "KernelTestBase",
+            "groups": [
+                "aculta_cgu"
+            ],
+            "test_methods": 6,
+            "assertions": 36,
+            "assertions_per_test": 6,
+            "first_import": "Drupal\\Core\\DependencyInjection\\ContainerBuilder",
+            "fixture": false,
+            "flags": []
+        },
+        {
+            "path": "web/modules/custom/aculta_portal/modules/aculta_cgu/tests/src/Kernel/CguReportPolicyKernelTest.php",
+            "extension": "src",
+            "type": "kernel",
+            "base_class": "KernelTestBase",
+            "groups": [
+                "aculta_cgu"
+            ],
+            "test_methods": 12,
+            "assertions": 57,
+            "assertions_per_test": 4.75,
+            "first_import": "Drupal\\Core\\DependencyInjection\\ContainerBuilder",
+            "fixture": false,
+            "flags": []
+        },
+        {
             "path": "web/modules/custom/aculta_portal/modules/aculta_cgu/tests/src/Kernel/ContributionEntityKernelTest.php",
             "extension": "src",
             "type": "kernel",
@@ -510,17 +556,17 @@
             "flags": []
         },
         {
-            "path": "web/modules/custom/aculta_portal/modules/aculta_cgu/tests/src/Kernel/ForumModerationMetricsProviderKernelTest.php",
+            "path": "web/modules/custom/aculta_portal/modules/aculta_cgu/tests/src/Kernel/ContributionSettingsPostUpdateKernelTest.php",
             "extension": "src",
             "type": "kernel",
             "base_class": "KernelTestBase",
             "groups": [
                 "aculta_cgu"
             ],
-            "test_methods": 2,
+            "test_methods": 1,
             "assertions": 3,
-            "assertions_per_test": 1.5,
-            "first_import": "Drupal\\aculta_cgu\\Entity\\CguReport",
+            "assertions_per_test": 3,
+            "first_import": "Drupal\\KernelTests\\KernelTestBase",
             "fixture": false,
             "flags": []
         },
@@ -540,47 +586,17 @@
             "flags": []
         },
         {
-            "path": "web/modules/custom/aculta_portal/modules/aculta_cgu/tests/src/Kernel/CguModerationKernelTest.php",
+            "path": "web/modules/custom/aculta_portal/modules/aculta_cgu/tests/src/Kernel/ForumModerationMetricsProviderKernelTest.php",
             "extension": "src",
             "type": "kernel",
             "base_class": "KernelTestBase",
             "groups": [
                 "aculta_cgu"
             ],
-            "test_methods": 5,
-            "assertions": 39,
-            "assertions_per_test": 7.8,
-            "first_import": "Drupal\\Core\\Form\\FormState",
-            "fixture": false,
-            "flags": []
-        },
-        {
-            "path": "web/modules/custom/aculta_portal/modules/aculta_cgu/tests/src/Kernel/CguNotifierAndQueueKernelTest.php",
-            "extension": "src",
-            "type": "kernel",
-            "base_class": "KernelTestBase",
-            "groups": [
-                "aculta_cgu"
-            ],
-            "test_methods": 6,
-            "assertions": 36,
-            "assertions_per_test": 6,
-            "first_import": "Drupal\\Core\\DependencyInjection\\ContainerBuilder",
-            "fixture": false,
-            "flags": []
-        },
-        {
-            "path": "web/modules/custom/aculta_portal/modules/aculta_cgu/tests/src/Kernel/CguReportPolicyKernelTest.php",
-            "extension": "src",
-            "type": "kernel",
-            "base_class": "KernelTestBase",
-            "groups": [
-                "aculta_cgu"
-            ],
-            "test_methods": 12,
-            "assertions": 57,
-            "assertions_per_test": 4.75,
-            "first_import": "Drupal\\Core\\DependencyInjection\\ContainerBuilder",
+            "test_methods": 2,
+            "assertions": 3,
+            "assertions_per_test": 1.5,
+            "first_import": "Drupal\\aculta_cgu\\Entity\\CguReport",
             "fixture": false,
             "flags": []
         },
@@ -674,6 +690,23 @@
             "assertions": 18,
             "assertions_per_test": 2.57,
             "first_import": "Drupal\\aculta_commerce_melhorenvio\\Quote\\QuoteOption",
+            "fixture": false,
+            "flags": [
+                "mock_isolated"
+            ]
+        },
+        {
+            "path": "web/modules/custom/aculta_portal/modules/aculta_commerce/modules/aculta_commerce_melhorenvio/tests/src/Unit/Hook/ShippingCalculatorThemeHooksTest.php",
+            "extension": "src",
+            "type": "unit",
+            "base_class": "UnitTestCase",
+            "groups": [
+                "aculta_commerce_melhorenvio"
+            ],
+            "test_methods": 1,
+            "assertions": 2,
+            "assertions_per_test": 2,
+            "first_import": "Drupal\\aculta_commerce_melhorenvio\\Hook\\ShippingCalculatorThemeHooks",
             "fixture": false,
             "flags": [
                 "mock_isolated"
@@ -1204,6 +1237,23 @@
             ]
         },
         {
+            "path": "web/modules/custom/aculta_portal/modules/aculta_commerce/tests/src/Unit/ShipmentHooksTest.php",
+            "extension": "src",
+            "type": "unit",
+            "base_class": "UnitTestCase",
+            "groups": [
+                "aculta_commerce"
+            ],
+            "test_methods": 2,
+            "assertions": 6,
+            "assertions_per_test": 3,
+            "first_import": "Drupal\\aculta_commerce\\Entity\\Shipment",
+            "fixture": false,
+            "flags": [
+                "mock_isolated"
+            ]
+        },
+        {
             "path": "web/modules/custom/aculta_portal/modules/aculta_commerce/tests/src/Unit/Shipping/FlatRatePluginTest.php",
             "extension": "src",
             "type": "unit",
@@ -1229,9 +1279,9 @@
             "groups": [
                 "aculta_commerce"
             ],
-            "test_methods": 2,
-            "assertions": 8,
-            "assertions_per_test": 4,
+            "test_methods": 3,
+            "assertions": 9,
+            "assertions_per_test": 3,
             "first_import": "Drupal\\aculta_commerce\\Shipping\\PackageTypeManager",
             "fixture": false,
             "flags": []
@@ -1611,6 +1661,23 @@
             "flags": []
         },
         {
+            "path": "web/modules/custom/aculta_portal/modules/aculta_domain_config/tests/src/Unit/BlockDomainConfigFormHooksTest.php",
+            "extension": "src",
+            "type": "unit",
+            "base_class": "UnitTestCase",
+            "groups": [
+                "aculta_domain_config"
+            ],
+            "test_methods": 2,
+            "assertions": 5,
+            "assertions_per_test": 2.5,
+            "first_import": "Drupal\\aculta_domain_config\\Hook\\BlockDomainConfigFormHooks",
+            "fixture": false,
+            "flags": [
+                "mock_isolated"
+            ]
+        },
+        {
             "path": "web/modules/custom/aculta_portal/modules/aculta_domain_config/tests/src/Unit/DomainConfigEditingSubscriberTest.php",
             "extension": "src",
             "type": "unit",
@@ -1721,8 +1788,8 @@
                 "aculta_donation"
             ],
             "test_methods": 1,
-            "assertions": 5,
-            "assertions_per_test": 5,
+            "assertions": 4,
+            "assertions_per_test": 4,
             "first_import": "Drupal\\aculta_donation\\Hook\\DonationThemeHooks",
             "fixture": false,
             "flags": []
@@ -1752,9 +1819,9 @@
             "groups": [
                 "aculta_editor"
             ],
-            "test_methods": 8,
-            "assertions": 24,
-            "assertions_per_test": 3,
+            "test_methods": 9,
+            "assertions": 38,
+            "assertions_per_test": 4.22,
             "first_import": "Drupal\\Core\\Entity\\Entity\\EntityViewDisplay",
             "fixture": false,
             "flags": []
@@ -1800,6 +1867,23 @@
             "test_methods": 4,
             "assertions": 19,
             "assertions_per_test": 4.75,
+            "first_import": "Drupal\\aculta_editor\\FluentEmojiCatalog",
+            "fixture": false,
+            "flags": [
+                "mock_isolated"
+            ]
+        },
+        {
+            "path": "web/modules/custom/aculta_portal/modules/aculta_editor/tests/src/Unit/FluentEmojiPluginTest.php",
+            "extension": "src",
+            "type": "unit",
+            "base_class": "UnitTestCase",
+            "groups": [
+                "aculta_editor"
+            ],
+            "test_methods": 1,
+            "assertions": 3,
+            "assertions_per_test": 3,
             "first_import": "Drupal\\aculta_editor\\FluentEmojiCatalog",
             "fixture": false,
             "flags": [
@@ -1894,8 +1978,8 @@
                 "aculta_events"
             ],
             "test_methods": 6,
-            "assertions": 32,
-            "assertions_per_test": 5.33,
+            "assertions": 31,
+            "assertions_per_test": 5.17,
             "first_import": "Drupal\\aculta_calendar\\Item\\CalendarItem",
             "fixture": false,
             "flags": []
@@ -1924,8 +2008,8 @@
                 "aculta_events"
             ],
             "test_methods": 7,
-            "assertions": 76,
-            "assertions_per_test": 10.86,
+            "assertions": 75,
+            "assertions_per_test": 10.71,
             "first_import": "Drupal\\aculta_events\\Entity\\Event",
             "fixture": false,
             "flags": []
@@ -2029,8 +2113,8 @@
                 "aculta_events"
             ],
             "test_methods": 3,
-            "assertions": 24,
-            "assertions_per_test": 8,
+            "assertions": 25,
+            "assertions_per_test": 8.33,
             "first_import": "Drupal\\aculta_events\\Entity\\Event",
             "fixture": false,
             "flags": []
@@ -2059,8 +2143,8 @@
                 "aculta_events"
             ],
             "test_methods": 9,
-            "assertions": 69,
-            "assertions_per_test": 7.67,
+            "assertions": 71,
+            "assertions_per_test": 7.89,
             "first_import": "Drupal\\aculta_events\\Entity\\Event",
             "fixture": false,
             "flags": []
@@ -2119,8 +2203,8 @@
                 "aculta_events"
             ],
             "test_methods": 8,
-            "assertions": 66,
-            "assertions_per_test": 8.25,
+            "assertions": 68,
+            "assertions_per_test": 8.5,
             "first_import": "Drupal\\aculta_cgu\\Service\\ContributionStateMachine",
             "fixture": false,
             "flags": []
@@ -2134,8 +2218,8 @@
                 "aculta_events"
             ],
             "test_methods": 31,
-            "assertions": 260,
-            "assertions_per_test": 8.39,
+            "assertions": 245,
+            "assertions_per_test": 7.9,
             "first_import": "Drupal\\aculta_events\\Controller\\EventLocationContributionAdminController",
             "fixture": false,
             "flags": []
@@ -2149,9 +2233,9 @@
                 "aculta_events"
             ],
             "test_methods": 1,
-            "assertions": 4,
-            "assertions_per_test": 4,
-            "first_import": "Drupal\\aculta_events\\Entity\\Event",
+            "assertions": 5,
+            "assertions_per_test": 5,
+            "first_import": "Drupal\\aculta_cgu\\Entity\\Contribution",
             "fixture": false,
             "flags": []
         },
@@ -2246,7 +2330,7 @@
             "flags": []
         },
         {
-            "path": "web/modules/custom/aculta_portal/modules/aculta_events/tests/src/Kernel/LocationPurposeAccessKernelTest.php",
+            "path": "web/modules/custom/aculta_portal/modules/aculta_events/tests/src/Kernel/LocationSiteKeyAccessKernelTest.php",
             "extension": "src",
             "type": "kernel",
             "base_class": "KernelTestBase",
@@ -2256,7 +2340,7 @@
             "test_methods": 2,
             "assertions": 4,
             "assertions_per_test": 2,
-            "first_import": "Drupal\\Core\\Config\\ConfigFactoryInterface",
+            "first_import": "Drupal\\Core\\Routing\\RouteProviderInterface",
             "fixture": false,
             "flags": []
         },
@@ -2299,8 +2383,8 @@
                 "aculta_events"
             ],
             "test_methods": 8,
-            "assertions": 24,
-            "assertions_per_test": 3,
+            "assertions": 26,
+            "assertions_per_test": 3.25,
             "first_import": "Drupal\\aculta_calendar\\Recurrence\\RecurrenceExpander",
             "fixture": false,
             "flags": []
@@ -2367,7 +2451,9 @@
             "assertions_per_test": 1,
             "first_import": "Drupal\\aculta_events\\Controller\\EventLocationWidgetController",
             "fixture": false,
-            "flags": []
+            "flags": [
+                "mock_isolated"
+            ]
         },
         {
             "path": "web/modules/custom/aculta_portal/modules/aculta_events/tests/src/Unit/EventSlugGeneratorTest.php",
@@ -2437,6 +2523,53 @@
             "assertions": 3,
             "assertions_per_test": 1,
             "first_import": "Drupal\\aculta_events\\Event\\OrganizationContributionOutcomeRecordedEvent",
+            "fixture": false,
+            "flags": []
+        },
+        {
+            "path": "web/modules/custom/aculta_portal/modules/aculta_events/tests/src/Unit/Plugin/Field/FieldWidget/EventModalWidgetsDependencyInjectionTest.php",
+            "extension": "src",
+            "type": "unit",
+            "base_class": "UnitTestCase",
+            "groups": [],
+            "test_methods": 3,
+            "assertions": 5,
+            "assertions_per_test": 1.67,
+            "first_import": "Drupal\\aculta_events\\Plugin\\Field\\FieldWidget\\EventLocationModalWidget",
+            "fixture": false,
+            "flags": [
+                "mock_isolated"
+            ]
+        },
+        {
+            "path": "web/modules/custom/aculta_portal/modules/aculta_events/tests/src/Unit/Route/EventRouteContextTest.php",
+            "extension": "src",
+            "type": "unit",
+            "base_class": "UnitTestCase",
+            "groups": [
+                "aculta_events"
+            ],
+            "test_methods": 2,
+            "assertions": 2,
+            "assertions_per_test": 1,
+            "first_import": "Drupal\\aculta_events\\Route\\EventRouteContext",
+            "fixture": false,
+            "flags": [
+                "mock_isolated"
+            ]
+        },
+        {
+            "path": "web/modules/custom/aculta_portal/modules/aculta_events/tests/src/Unit/Service/WebsiteUrlTest.php",
+            "extension": "src",
+            "type": "unit",
+            "base_class": "UnitTestCase",
+            "groups": [
+                "aculta_events"
+            ],
+            "test_methods": 2,
+            "assertions": 7,
+            "assertions_per_test": 3.5,
+            "first_import": "Drupal\\aculta_events\\Service\\WebsiteUrl",
             "fixture": false,
             "flags": []
         },
@@ -3007,8 +3140,8 @@
                 "aculta_forum"
             ],
             "test_methods": 7,
-            "assertions": 18,
-            "assertions_per_test": 2.57,
+            "assertions": 17,
+            "assertions_per_test": 2.43,
             "first_import": "Drupal\\aculta_forum\\Entity\\ForumPost",
             "fixture": false,
             "flags": []
@@ -3095,9 +3228,9 @@
             "base_class": "KernelTestBase",
             "groups": [],
             "test_methods": 6,
-            "assertions": 55,
-            "assertions_per_test": 9.17,
-            "first_import": "Drupal\\aculta_forum\\Context\\Provider\\LmsDiscussionContextProvider",
+            "assertions": 56,
+            "assertions_per_test": 9.33,
+            "first_import": "Drupal\\aculta_portal\\Account\\EmailConfirmationPolicy",
             "fixture": false,
             "flags": []
         },
@@ -3371,6 +3504,23 @@
             "assertions": 3,
             "assertions_per_test": 1,
             "first_import": "Drupal\\aculta_forum\\Context\\DiscussionContextInterface",
+            "fixture": false,
+            "flags": [
+                "mock_isolated"
+            ]
+        },
+        {
+            "path": "web/modules/custom/aculta_portal/modules/aculta_forum/tests/src/Unit/DiscussionReplyFormHooksTest.php",
+            "extension": "src",
+            "type": "unit",
+            "base_class": "UnitTestCase",
+            "groups": [
+                "aculta_forum"
+            ],
+            "test_methods": 1,
+            "assertions": 2,
+            "assertions_per_test": 2,
+            "first_import": "Drupal\\Core\\DependencyInjection\\ClassResolverInterface",
             "fixture": false,
             "flags": [
                 "mock_isolated"
@@ -3683,8 +3833,8 @@
                 "aculta_forum"
             ],
             "test_methods": 1,
-            "assertions": 4,
-            "assertions_per_test": 4,
+            "assertions": 2,
+            "assertions_per_test": 2,
             "first_import": "Drupal\\aculta_forum\\Hook\\ForumThemeHooks",
             "fixture": false,
             "flags": []
@@ -3698,8 +3848,8 @@
                 "aculta_forum"
             ],
             "test_methods": 20,
-            "assertions": 262,
-            "assertions_per_test": 13.1,
+            "assertions": 273,
+            "assertions_per_test": 13.65,
             "first_import": "Drupal\\aculta_forum\\Plugin\\Action\\MoveForumTopicsAction",
             "fixture": false,
             "flags": [
@@ -4161,6 +4311,23 @@
             "assertions": 3,
             "assertions_per_test": 3,
             "first_import": "Drupal\\aculta_forum\\RestrictedForum\\RestrictedForumGroupResolver",
+            "fixture": false,
+            "flags": [
+                "mock_isolated"
+            ]
+        },
+        {
+            "path": "web/modules/custom/aculta_portal/modules/aculta_forum/tests/src/Unit/TopicComposerFormHooksTest.php",
+            "extension": "src",
+            "type": "unit",
+            "base_class": "UnitTestCase",
+            "groups": [
+                "aculta_forum"
+            ],
+            "test_methods": 1,
+            "assertions": 2,
+            "assertions_per_test": 2,
+            "first_import": "Drupal\\Core\\DependencyInjection\\ClassResolverInterface",
             "fixture": false,
             "flags": [
                 "mock_isolated"
@@ -4642,7 +4809,7 @@
             "test_methods": 1,
             "assertions": 12,
             "assertions_per_test": 12,
-            "first_import": "Drupal\\aculta_portal\\Domain\\DomainPurposeManager",
+            "first_import": "Drupal\\aculta_portal\\Domain\\DomainSiteManager",
             "fixture": false,
             "flags": []
         },
@@ -4687,8 +4854,8 @@
                 "aculta_index"
             ],
             "test_methods": 2,
-            "assertions": 27,
-            "assertions_per_test": 13.5,
+            "assertions": 26,
+            "assertions_per_test": 13,
             "first_import": "Drupal\\Core\\DependencyInjection\\ContainerBuilder",
             "fixture": false,
             "flags": []
@@ -4704,7 +4871,7 @@
             "test_methods": 2,
             "assertions": 16,
             "assertions_per_test": 8,
-            "first_import": "Drupal\\aculta_portal\\Domain\\DomainPurposeManager",
+            "first_import": "Drupal\\aculta_portal\\Domain\\DomainSiteManager",
             "fixture": false,
             "flags": []
         },
@@ -4775,8 +4942,8 @@
                 "aculta_index"
             ],
             "test_methods": 22,
-            "assertions": 147,
-            "assertions_per_test": 6.68,
+            "assertions": 149,
+            "assertions_per_test": 6.77,
             "first_import": "Drupal\\aculta_index\\Drush\\Commands\\ContentIndexQueueCommand",
             "fixture": false,
             "flags": []
@@ -4895,8 +5062,8 @@
                 "aculta_index"
             ],
             "test_methods": 7,
-            "assertions": 49,
-            "assertions_per_test": 7,
+            "assertions": 50,
+            "assertions_per_test": 7.14,
             "first_import": "Drupal\\aculta_events\\Entity\\Event",
             "fixture": false,
             "flags": []
@@ -4913,7 +5080,7 @@
             "test_methods": 1,
             "assertions": 7,
             "assertions_per_test": 7,
-            "first_import": "Drupal\\aculta_portal\\Domain\\DomainPurposeManager",
+            "first_import": "Drupal\\aculta_portal\\Domain\\DomainSiteManager",
             "fixture": false,
             "flags": [
                 "environment_skip"
@@ -5195,7 +5362,7 @@
             "test_methods": 1,
             "assertions": 9,
             "assertions_per_test": 9,
-            "first_import": "Drupal\\aculta_portal\\Domain\\DomainPurposeManager",
+            "first_import": "Drupal\\aculta_portal\\Domain\\DomainSiteManager",
             "fixture": false,
             "flags": [
                 "mock_isolated"
@@ -6118,8 +6285,8 @@
             "base_class": "UnitTestCase",
             "groups": [],
             "test_methods": 1,
-            "assertions": 29,
-            "assertions_per_test": 29,
+            "assertions": 31,
+            "assertions_per_test": 31,
             "first_import": "Drupal\\aculta_lms\\Controller\\CourseStructureController",
             "fixture": false,
             "flags": [
@@ -6425,8 +6592,8 @@
                 "aculta_lms"
             ],
             "test_methods": 3,
-            "assertions": 10,
-            "assertions_per_test": 3.33,
+            "assertions": 11,
+            "assertions_per_test": 3.67,
             "first_import": "Drupal\\Core\\StringTranslation\\TranslatableMarkup",
             "fixture": false,
             "flags": [
@@ -6580,7 +6747,7 @@
             "type": "unit",
             "base_class": "UnitTestCase",
             "groups": [
-                "aculta_lms_resources"
+                "aculta_lms"
             ],
             "test_methods": 5,
             "assertions": 12,
@@ -6634,8 +6801,8 @@
                 "aculta_lms"
             ],
             "test_methods": 2,
-            "assertions": 19,
-            "assertions_per_test": 9.5,
+            "assertions": 20,
+            "assertions_per_test": 10,
             "first_import": "Drupal\\aculta_lms\\Access\\CourseAuthoringAccessCheck",
             "fixture": false,
             "flags": [
@@ -6665,7 +6832,7 @@
             "type": "unit",
             "base_class": "UnitTestCase",
             "groups": [
-                "aculta_lms_resources"
+                "aculta_lms"
             ],
             "test_methods": 2,
             "assertions": 2,
@@ -6913,8 +7080,8 @@
             "base_class": "KernelTestBase",
             "groups": [],
             "test_methods": 1,
-            "assertions": 14,
-            "assertions_per_test": 14,
+            "assertions": 15,
+            "assertions_per_test": 15,
             "first_import": "Drupal\\aculta_lms_h5p\\Context\\Lmsaculta_H5PDiscussionResolver",
             "fixture": false,
             "flags": []
@@ -6926,8 +7093,8 @@
             "base_class": "KernelTestBase",
             "groups": [],
             "test_methods": 3,
-            "assertions": 52,
-            "assertions_per_test": 17.33,
+            "assertions": 53,
+            "assertions_per_test": 17.67,
             "first_import": "Drupal\\aculta_lms_h5p\\Controller\\aculta_H5PAJAX",
             "fixture": false,
             "flags": []
@@ -7157,8 +7324,8 @@
                 "aculta_magazine"
             ],
             "test_methods": 3,
-            "assertions": 14,
-            "assertions_per_test": 4.67,
+            "assertions": 16,
+            "assertions_per_test": 5.33,
             "first_import": "Drupal\\aculta_magazine\\Plugin\\Field\\FieldFormatter\\EditorialCategoryColorFormatter",
             "fixture": false,
             "flags": [
@@ -7300,8 +7467,8 @@
             "type": "unit",
             "base_class": "UnitTestCase",
             "groups": [],
-            "test_methods": 2,
-            "assertions": 4,
+            "test_methods": 3,
+            "assertions": 6,
             "assertions_per_test": 2,
             "first_import": "Drupal\\aculta_file_uploader\\ConsumerUploadPolicy",
             "fixture": false,
@@ -7370,6 +7537,21 @@
             "flags": []
         },
         {
+            "path": "web/modules/custom/aculta_portal/modules/aculta_mail_confirmer/tests/src/Kernel/UserSettingsPostUpdateKernelTest.php",
+            "extension": "src",
+            "type": "kernel",
+            "base_class": "KernelTestBase",
+            "groups": [
+                "aculta_mail_confirmer"
+            ],
+            "test_methods": 1,
+            "assertions": 6,
+            "assertions_per_test": 6,
+            "first_import": "Drupal\\KernelTests\\KernelTestBase",
+            "fixture": false,
+            "flags": []
+        },
+        {
             "path": "web/modules/custom/aculta_portal/modules/aculta_mailer/tests/src/Kernel/AcultaMailerKernelTest.php",
             "extension": "src",
             "type": "kernel",
@@ -7408,8 +7590,8 @@
                 "aculta_mailer"
             ],
             "test_methods": 6,
-            "assertions": 25,
-            "assertions_per_test": 4.17,
+            "assertions": 27,
+            "assertions_per_test": 4.5,
             "first_import": "Drupal\\aculta_mailer\\Api\\AcultaMailerInterface",
             "fixture": false,
             "flags": []
@@ -7438,8 +7620,8 @@
                 "aculta_mailer"
             ],
             "test_methods": 3,
-            "assertions": 10,
-            "assertions_per_test": 3.33,
+            "assertions": 11,
+            "assertions_per_test": 3.67,
             "first_import": "Drupal\\aculta_mailer\\Message\\MailMessage",
             "fixture": false,
             "flags": []
@@ -7468,8 +7650,8 @@
                 "aculta_mailer"
             ],
             "test_methods": 5,
-            "assertions": 18,
-            "assertions_per_test": 3.6,
+            "assertions": 19,
+            "assertions_per_test": 3.8,
             "first_import": "Drupal\\aculta_mailer\\Message\\MailMessage",
             "fixture": false,
             "flags": []
@@ -7545,8 +7727,8 @@
                 "aculta_mailer"
             ],
             "test_methods": 5,
-            "assertions": 11,
-            "assertions_per_test": 2.2,
+            "assertions": 12,
+            "assertions_per_test": 2.4,
             "first_import": "Drupal\\aculta_mailer\\Controller\\MailWebhookController",
             "fixture": false,
             "flags": []
@@ -7751,7 +7933,7 @@
             "test_methods": 7,
             "assertions": 19,
             "assertions_per_test": 2.71,
-            "first_import": "Drupal\\aculta_file_uploader\\IngestionLimits",
+            "first_import": "Drupal\\aculta_mailer\\Alert\\MailAlerts",
             "fixture": false,
             "flags": [
                 "mock_isolated"
@@ -7828,8 +8010,8 @@
                 "aculta_mailer"
             ],
             "test_methods": 5,
-            "assertions": 7,
-            "assertions_per_test": 1.4,
+            "assertions": 5,
+            "assertions_per_test": 1,
             "first_import": "Drupal\\aculta_mailer\\Entity\\MailTransport",
             "fixture": false,
             "flags": [
@@ -7923,10 +8105,10 @@
             "groups": [
                 "aculta_mailer"
             ],
-            "test_methods": 8,
-            "assertions": 20,
-            "assertions_per_test": 2.5,
-            "first_import": "Drupal\\aculta_file_uploader\\IngestionLimits",
+            "test_methods": 7,
+            "assertions": 18,
+            "assertions_per_test": 2.57,
+            "first_import": "Drupal\\aculta_mailer\\Monitor\\BounceParser",
             "fixture": false,
             "flags": [
                 "static_config_contract"
@@ -8017,9 +8199,9 @@
             "groups": [
                 "aculta_mailer"
             ],
-            "test_methods": 4,
-            "assertions": 11,
-            "assertions_per_test": 2.75,
+            "test_methods": 3,
+            "assertions": 10,
+            "assertions_per_test": 3.33,
             "first_import": "Drupal\\aculta_mailer\\Log\\SingleUseLinkMail",
             "fixture": false,
             "flags": []
@@ -8189,8 +8371,8 @@
                 "aculta_messenger"
             ],
             "test_methods": 4,
-            "assertions": 22,
-            "assertions_per_test": 5.5,
+            "assertions": 28,
+            "assertions_per_test": 7,
             "first_import": "Drupal\\aculta_messenger\\Integration\\Commerce\\CommerceOrderNoticeManager",
             "fixture": false,
             "flags": []
@@ -8458,7 +8640,7 @@
             "test_methods": 10,
             "assertions": 33,
             "assertions_per_test": 3.3,
-            "first_import": "Drupal\\aculta_messenger\\Aviso\\AvisoPreferencias",
+            "first_import": "Drupal\\aculta_portal\\Domain\\SiteKey",
             "fixture": false,
             "flags": []
         },
@@ -8503,8 +8685,8 @@
                 "aculta_messenger"
             ],
             "test_methods": 8,
-            "assertions": 42,
-            "assertions_per_test": 5.25,
+            "assertions": 52,
+            "assertions_per_test": 6.5,
             "first_import": "Drupal\\aculta_mailer\\Api\\AcultaMailerInterface",
             "fixture": false,
             "flags": []
@@ -9151,8 +9333,8 @@
                 "aculta_messenger"
             ],
             "test_methods": 12,
-            "assertions": 59,
-            "assertions_per_test": 4.92,
+            "assertions": 58,
+            "assertions_per_test": 4.83,
             "first_import": "Drupal\\aculta_messenger\\Friendship\\FriendshipNoticeSubscriber",
             "fixture": false,
             "flags": [
@@ -10468,6 +10650,21 @@
             "flags": []
         },
         {
+            "path": "web/modules/custom/aculta_portal/modules/aculta_patcher/tests/src/Unit/AcultaPatchDependencyInjectionTest.php",
+            "extension": "src",
+            "type": "unit",
+            "base_class": "UnitTestCase",
+            "groups": [],
+            "test_methods": 2,
+            "assertions": 3,
+            "assertions_per_test": 1.5,
+            "first_import": "Drupal\\aculta_patcher\\Entity\\AcultaPatchListBuilder",
+            "fixture": false,
+            "flags": [
+                "mock_isolated"
+            ]
+        },
+        {
             "path": "web/modules/custom/aculta_portal/modules/aculta_patcher/tests/src/Unit/PatchAuditMessageTest.php",
             "extension": "src",
             "type": "unit",
@@ -10619,7 +10816,7 @@
             "test_methods": 4,
             "assertions": 11,
             "assertions_per_test": 2.75,
-            "first_import": "Drupal\\aculta_portal_sitemap\\Plugin\\simple_sitemap\\UrlGenerator\\PurposeNodeUrlGenerator",
+            "first_import": "Drupal\\aculta_portal\\Domain\\SiteKey",
             "fixture": false,
             "flags": []
         },
@@ -10901,9 +11098,9 @@
             "groups": [
                 "aculta_statistics"
             ],
-            "test_methods": 2,
-            "assertions": 6,
-            "assertions_per_test": 3,
+            "test_methods": 4,
+            "assertions": 10,
+            "assertions_per_test": 2.5,
             "first_import": "Drupal\\aculta_statistics\\Hook\\ConsentBannerHooks",
             "fixture": false,
             "flags": []
@@ -10948,8 +11145,8 @@
                 "aculta_statistics"
             ],
             "test_methods": 7,
-            "assertions": 41,
-            "assertions_per_test": 5.86,
+            "assertions": 40,
+            "assertions_per_test": 5.71,
             "first_import": "Drupal\\aculta_forum\\Analytics\\ForumActivityLedger",
             "fixture": false,
             "flags": []
@@ -11117,7 +11314,7 @@
             "test_methods": 4,
             "assertions": 4,
             "assertions_per_test": 1,
-            "first_import": "Drupal\\aculta_statistics\\Domain\\PurposeResolverInterface",
+            "first_import": "Drupal\\aculta_statistics\\Domain\\SiteKeyResolverInterface",
             "fixture": false,
             "flags": [
                 "mock_isolated"
@@ -11607,8 +11804,8 @@
                 "aculta_studio"
             ],
             "test_methods": 8,
-            "assertions": 41,
-            "assertions_per_test": 5.13,
+            "assertions": 42,
+            "assertions_per_test": 5.25,
             "first_import": "Drupal\\Core\\Cache\\Cache",
             "fixture": false,
             "flags": []
@@ -11624,7 +11821,7 @@
             "test_methods": 2,
             "assertions": 13,
             "assertions_per_test": 6.5,
-            "first_import": "Drupal\\aculta_portal\\Domain\\DomainPurposeManager",
+            "first_import": "Drupal\\aculta_portal\\Domain\\DomainSiteManager",
             "fixture": false,
             "flags": []
         },
@@ -11667,8 +11864,8 @@
                 "aculta_studio"
             ],
             "test_methods": 4,
-            "assertions": 18,
-            "assertions_per_test": 4.5,
+            "assertions": 19,
+            "assertions_per_test": 4.75,
             "first_import": "Drupal\\aculta_studio\\Experience\\AccountExperienceProvider",
             "fixture": false,
             "flags": [
@@ -11767,8 +11964,8 @@
                 "aculta_studio"
             ],
             "test_methods": 2,
-            "assertions": 9,
-            "assertions_per_test": 4.5,
+            "assertions": 10,
+            "assertions_per_test": 5,
             "first_import": "Drupal\\aculta_lms\\Learning\\StudentLearningSummary",
             "fixture": false,
             "flags": [
@@ -11905,7 +12102,7 @@
             "test_methods": 4,
             "assertions": 26,
             "assertions_per_test": 6.5,
-            "first_import": "Drupal\\aculta_portal\\Domain\\DomainPurposeManager",
+            "first_import": "Drupal\\aculta_portal\\Domain\\DomainSiteManager",
             "fixture": false,
             "flags": [
                 "mock_isolated"
@@ -12061,18 +12258,21 @@
             ]
         },
         {
-            "path": "web/modules/custom/aculta_portal/modules/aculta_ui_library/tests/src/Unit/UiLibraryPreviewControllerTest.php",
+            "path": "web/modules/custom/aculta_portal/modules/aculta_ui_library/tests/src/Unit/UiPatternsLibraryRedirectControllerTest.php",
             "extension": "src",
             "type": "unit",
             "base_class": "UnitTestCase",
-            "groups": [],
-            "test_methods": 3,
-            "assertions": 15,
-            "assertions_per_test": 5,
-            "first_import": "Drupal\\aculta_ui_library\\Controller\\UiLibraryPreviewController",
+            "groups": [
+                "aculta_ui_library"
+            ],
+            "test_methods": 1,
+            "assertions": 4,
+            "assertions_per_test": 4,
+            "first_import": "Drupal\\aculta_ui_library\\Controller\\UiPatternsLibraryRedirectController",
             "fixture": false,
             "flags": [
-                "mock_isolated"
+                "mock_isolated",
+                "doc_comment_metadata"
             ]
         },
         {
@@ -12086,7 +12286,7 @@
             "test_methods": 1,
             "assertions": 5,
             "assertions_per_test": 5,
-            "first_import": "Drupal\\aculta_portal\\Domain\\DomainPurposeManager",
+            "first_import": "Drupal\\aculta_portal\\Domain\\DomainSiteManager",
             "fixture": false,
             "flags": []
         },
@@ -12298,6 +12498,23 @@
             ]
         },
         {
+            "path": "web/modules/custom/aculta_portal/modules/aculta_user/tests/src/Unit/Bio/AccountBioCardTest.php",
+            "extension": "src",
+            "type": "unit",
+            "base_class": "UnitTestCase",
+            "groups": [
+                "aculta_user"
+            ],
+            "test_methods": 1,
+            "assertions": 7,
+            "assertions_per_test": 7,
+            "first_import": "Drupal\\aculta_user\\Bio\\AccountBioCard",
+            "fixture": false,
+            "flags": [
+                "mock_isolated"
+            ]
+        },
+        {
             "path": "web/modules/custom/aculta_portal/modules/aculta_user/tests/src/Unit/Controller/ReportQueueControllerTest.php",
             "extension": "src",
             "type": "unit",
@@ -12306,8 +12523,8 @@
                 "aculta_user"
             ],
             "test_methods": 3,
-            "assertions": 13,
-            "assertions_per_test": 4.33,
+            "assertions": 14,
+            "assertions_per_test": 4.67,
             "first_import": "Drupal\\Core\\Cache\\Cache",
             "fixture": false,
             "flags": [
@@ -12749,7 +12966,7 @@
             "test_methods": 32,
             "assertions": 637,
             "assertions_per_test": 19.91,
-            "first_import": "Drupal\\Core\\Entity\\EntityFormInterface",
+            "first_import": "Drupal\\aculta_portal\\Domain\\SiteKey",
             "fixture": false,
             "flags": [
                 "environment_skip",
@@ -12814,9 +13031,9 @@
                 "aculta_wiki"
             ],
             "test_methods": 13,
-            "assertions": 46,
-            "assertions_per_test": 3.54,
-            "first_import": "Drupal\\aculta_portal\\Domain\\DomainPurposeManager",
+            "assertions": 48,
+            "assertions_per_test": 3.69,
+            "first_import": "Drupal\\aculta_portal\\Domain\\DomainSiteManager",
             "fixture": false,
             "flags": [
                 "mock_isolated"
@@ -12899,7 +13116,7 @@
             "test_methods": 7,
             "assertions": 26,
             "assertions_per_test": 3.71,
-            "first_import": "Drupal\\aculta_portal\\Domain\\DomainPurposeManager",
+            "first_import": "Drupal\\aculta_portal\\Domain\\DomainSiteManager",
             "fixture": false,
             "flags": [
                 "mock_isolated"
@@ -13080,8 +13297,8 @@
                 "aculta_wiki"
             ],
             "test_methods": 4,
-            "assertions": 19,
-            "assertions_per_test": 4.75,
+            "assertions": 20,
+            "assertions_per_test": 5,
             "first_import": "Drupal\\aculta_portal\\Search\\SearchPageController",
             "fixture": false,
             "flags": [
@@ -13223,7 +13440,7 @@
             "test_methods": 1,
             "assertions": 4,
             "assertions_per_test": 4,
-            "first_import": "Drupal\\aculta_portal\\Domain\\DomainPurposeManager",
+            "first_import": "Drupal\\aculta_portal\\Domain\\DomainSiteManager",
             "fixture": false,
             "flags": []
         },
@@ -13298,22 +13515,7 @@
             "test_methods": 3,
             "assertions": 24,
             "assertions_per_test": 8,
-            "first_import": "Drupal\\aculta_portal\\Domain\\DomainPurposeManager",
-            "fixture": false,
-            "flags": []
-        },
-        {
-            "path": "web/modules/custom/aculta_portal/tests/src/Kernel/DomainPurposeManagerKernelTest.php",
-            "extension": "src",
-            "type": "kernel",
-            "base_class": "KernelTestBase",
-            "groups": [
-                "aculta_portal"
-            ],
-            "test_methods": 8,
-            "assertions": 16,
-            "assertions_per_test": 2,
-            "first_import": "Drupal\\aculta_portal\\Domain\\DomainPurposeManager",
+            "first_import": "Drupal\\aculta_portal\\Domain\\DomainSiteManager",
             "fixture": false,
             "flags": []
         },
@@ -13329,6 +13531,21 @@
             "assertions": 8,
             "assertions_per_test": 2.67,
             "first_import": "Drupal\\aculta_portal\\Domain\\DomainSiteManager",
+            "fixture": false,
+            "flags": []
+        },
+        {
+            "path": "web/modules/custom/aculta_portal/tests/src/Kernel/DomainSiteManagerMappingKernelTest.php",
+            "extension": "src",
+            "type": "kernel",
+            "base_class": "KernelTestBase",
+            "groups": [
+                "aculta_portal"
+            ],
+            "test_methods": 8,
+            "assertions": 17,
+            "assertions_per_test": 2.13,
+            "first_import": "Drupal\\aculta_portal\\Domain\\SiteKey",
             "fixture": false,
             "flags": []
         },
@@ -13475,9 +13692,9 @@
             "groups": [
                 "aculta_portal"
             ],
-            "test_methods": 10,
-            "assertions": 39,
-            "assertions_per_test": 3.9,
+            "test_methods": 11,
+            "assertions": 42,
+            "assertions_per_test": 3.82,
             "first_import": "Drupal\\aculta_portal\\Account\\AccountAddressForm",
             "fixture": false,
             "flags": [
@@ -13516,6 +13733,23 @@
             "fixture": false,
             "flags": [
                 "mock_isolated"
+            ]
+        },
+        {
+            "path": "web/modules/custom/aculta_portal/tests/src/Unit/AppearanceHooksTest.php",
+            "extension": "src",
+            "type": "unit",
+            "base_class": "UnitTestCase",
+            "groups": [
+                "aculta_portal"
+            ],
+            "test_methods": 1,
+            "assertions": 1,
+            "assertions_per_test": 1,
+            "first_import": "Drupal\\aculta_portal\\Hook\\AppearanceHooks",
+            "fixture": false,
+            "flags": [
+                "doc_comment_metadata"
             ]
         },
         {
@@ -13855,8 +14089,8 @@
                 "aculta_portal"
             ],
             "test_methods": 2,
-            "assertions": 6,
-            "assertions_per_test": 3,
+            "assertions": 7,
+            "assertions_per_test": 3.5,
             "first_import": "Drupal\\aculta_portal\\Controller\\DonationReportController",
             "fixture": false,
             "flags": [
@@ -13884,9 +14118,9 @@
             "type": "unit",
             "base_class": "UnitTestCase",
             "groups": [],
-            "test_methods": 2,
-            "assertions": 4,
-            "assertions_per_test": 2,
+            "test_methods": 3,
+            "assertions": 10,
+            "assertions_per_test": 3.33,
             "first_import": "Drupal\\aculta_portal\\Deployer\\DeployerStatusReader",
             "fixture": false,
             "flags": []
@@ -13899,9 +14133,9 @@
             "groups": [
                 "aculta_portal"
             ],
-            "test_methods": 7,
-            "assertions": 15,
-            "assertions_per_test": 2.14,
+            "test_methods": 9,
+            "assertions": 17,
+            "assertions_per_test": 1.89,
             "first_import": "Drupal\\aculta_portal\\Domain\\DomainSiteManager",
             "fixture": false,
             "flags": [
@@ -14059,6 +14293,40 @@
             "assertions": 6,
             "assertions_per_test": 6,
             "first_import": "Drupal\\aculta_portal\\EventSubscriber\\DomainRouteSubscriber",
+            "fixture": false,
+            "flags": [
+                "mock_isolated"
+            ]
+        },
+        {
+            "path": "web/modules/custom/aculta_portal/tests/src/Unit/DomainSiteRequestSubscriberTest.php",
+            "extension": "src",
+            "type": "unit",
+            "base_class": "UnitTestCase",
+            "groups": [
+                "aculta_portal"
+            ],
+            "test_methods": 3,
+            "assertions": 7,
+            "assertions_per_test": 2.33,
+            "first_import": "Drupal\\aculta_portal\\Domain\\ContentSiteKeyResolver",
+            "fixture": false,
+            "flags": [
+                "mock_isolated"
+            ]
+        },
+        {
+            "path": "web/modules/custom/aculta_portal/tests/src/Unit/DomainSkinResolverTest.php",
+            "extension": "src",
+            "type": "unit",
+            "base_class": "UnitTestCase",
+            "groups": [
+                "aculta_portal"
+            ],
+            "test_methods": 2,
+            "assertions": 4,
+            "assertions_per_test": 2,
+            "first_import": "Drupal\\aculta_portal\\Appearance\\DomainSkinResolver",
             "fixture": false,
             "flags": [
                 "mock_isolated"
@@ -14288,7 +14556,7 @@
             "test_methods": 3,
             "assertions": 11,
             "assertions_per_test": 3.67,
-            "first_import": "Drupal\\aculta_portal\\Domain\\DomainPurposeManager",
+            "first_import": "Drupal\\aculta_portal\\Domain\\DomainSiteManager",
             "fixture": false,
             "flags": [
                 "mock_isolated"
@@ -14487,21 +14755,6 @@
             "flags": []
         },
         {
-            "path": "web/modules/custom/aculta_portal/tests/src/Unit/PurposeFrontPathProcessorTest.php",
-            "extension": "src",
-            "type": "unit",
-            "base_class": "UnitTestCase",
-            "groups": [
-                "aculta_portal"
-            ],
-            "test_methods": 3,
-            "assertions": 10,
-            "assertions_per_test": 3.33,
-            "first_import": "Drupal\\aculta_portal\\EventSubscriber\\DomainPurposeRequestSubscriber",
-            "fixture": false,
-            "flags": []
-        },
-        {
             "path": "web/modules/custom/aculta_portal/tests/src/Unit/Role/RoleHierarchyTest.php",
             "extension": "src",
             "type": "unit",
@@ -14564,6 +14817,21 @@
             ]
         },
         {
+            "path": "web/modules/custom/aculta_portal/tests/src/Unit/SiteFrontPathProcessorTest.php",
+            "extension": "src",
+            "type": "unit",
+            "base_class": "UnitTestCase",
+            "groups": [
+                "aculta_portal"
+            ],
+            "test_methods": 3,
+            "assertions": 10,
+            "assertions_per_test": 3.33,
+            "first_import": "Drupal\\aculta_portal\\EventSubscriber\\DomainSiteRequestSubscriber",
+            "fixture": false,
+            "flags": []
+        },
+        {
             "path": "web/modules/custom/aculta_portal/tests/src/Unit/Status/PhpExtensionRequirementsTest.php",
             "extension": "src",
             "type": "unit",
@@ -14609,6 +14877,39 @@
             "flags": []
         },
         {
+            "path": "web/themes/custom/aculta420_v2/tests/src/Unit/DocumentCardComponentTest.php",
+            "extension": "src",
+            "type": "unit",
+            "base_class": "UnitTestCase",
+            "groups": [
+                "aculta420_v2"
+            ],
+            "test_methods": 3,
+            "assertions": 19,
+            "assertions_per_test": 6.33,
+            "first_import": "Drupal\\Tests\\UnitTestCase",
+            "fixture": false,
+            "flags": [
+                "static_config_contract",
+                "doc_comment_metadata"
+            ]
+        },
+        {
+            "path": "web/themes/custom/aculta420_v2/tests/src/Unit/LayoutSectionComponentTest.php",
+            "extension": "src",
+            "type": "unit",
+            "base_class": "UnitTestCase",
+            "groups": [],
+            "test_methods": 2,
+            "assertions": 15,
+            "assertions_per_test": 7.5,
+            "first_import": "Drupal\\Tests\\UnitTestCase",
+            "fixture": false,
+            "flags": [
+                "static_config_contract"
+            ]
+        },
+        {
             "path": "web/themes/custom/aculta420_v2/tests/src/Unit/PagePresentationHooksTest.php",
             "extension": "src",
             "type": "unit",
@@ -14623,6 +14924,21 @@
             "fixture": false,
             "flags": [
                 "mock_isolated"
+            ]
+        },
+        {
+            "path": "web/themes/custom/aculta420_v2/tests/src/Unit/PortalThemeAdaptersTest.php",
+            "extension": "src",
+            "type": "unit",
+            "base_class": "UnitTestCase",
+            "groups": [],
+            "test_methods": 1,
+            "assertions": 8,
+            "assertions_per_test": 8,
+            "first_import": "Drupal\\Tests\\UnitTestCase",
+            "fixture": false,
+            "flags": [
+                "static_config_contract"
             ]
         },
         {
@@ -14641,19 +14957,37 @@
             "flags": []
         },
         {
-            "path": "web/themes/custom/aculta420_v2/tests/src/Unit/PurposePaletteResolutionUnitTest.php",
+            "path": "web/themes/custom/aculta420_v2/tests/src/Unit/ProductCardComponentTest.php",
             "extension": "src",
             "type": "unit",
             "base_class": "UnitTestCase",
             "groups": [
                 "aculta420_v2"
             ],
-            "test_methods": 2,
-            "assertions": 13,
-            "assertions_per_test": 6.5,
-            "first_import": "Drupal\\Core\\Template\\Attribute",
+            "test_methods": 3,
+            "assertions": 16,
+            "assertions_per_test": 5.33,
+            "first_import": "Drupal\\Tests\\UnitTestCase",
             "fixture": false,
-            "flags": []
+            "flags": [
+                "static_config_contract",
+                "doc_comment_metadata"
+            ]
+        },
+        {
+            "path": "web/themes/custom/aculta420_v2/tests/src/Unit/StatusMessagesComponentTest.php",
+            "extension": "src",
+            "type": "unit",
+            "base_class": "UnitTestCase",
+            "groups": [],
+            "test_methods": 1,
+            "assertions": 9,
+            "assertions_per_test": 9,
+            "first_import": "Drupal\\Tests\\UnitTestCase",
+            "fixture": false,
+            "flags": [
+                "static_config_contract"
+            ]
         },
         {
             "path": "web/themes/custom/aculta420_v2/tests/src/Unit/SurfaceSdcComponentsTest.php",
@@ -14676,13 +15010,30 @@
             "type": "unit",
             "base_class": "UnitTestCase",
             "groups": [],
-            "test_methods": 1,
-            "assertions": 16,
-            "assertions_per_test": 16,
+            "test_methods": 2,
+            "assertions": 27,
+            "assertions_per_test": 13.5,
             "first_import": "Drupal\\Tests\\UnitTestCase",
             "fixture": false,
             "flags": [
                 "static_config_contract"
+            ]
+        },
+        {
+            "path": "web/themes/custom/aculta420_v2/tests/src/Unit/UnpublishedPreviewHooksTest.php",
+            "extension": "src",
+            "type": "unit",
+            "base_class": "UnitTestCase",
+            "groups": [
+                "aculta420_v2"
+            ],
+            "test_methods": 3,
+            "assertions": 5,
+            "assertions_per_test": 1.67,
+            "first_import": "Drupal\\Core\\Entity\\Display\\EntityViewDisplayInterface",
+            "fixture": false,
+            "flags": [
+                "mock_isolated"
             ]
         }
     ]
