@@ -5,6 +5,5 @@
 }
 
 .forum-opening-post .forum-post-card {
-  border-inline-start: 4px solid var(--color-brand-primary);
   background: var(--color-surface-highlight);
 }

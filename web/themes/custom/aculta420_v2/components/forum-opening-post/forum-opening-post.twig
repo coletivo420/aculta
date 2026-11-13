@@ -9,6 +9,7 @@
       target_id: 'aculta-reply-dialog-body',
     }, with_context = false) }}
   {% endset %}
+  {% set card %}
   {{ include('aculta420_v2:forum-post-card', {
     stripe: 'brand',
     density: density|default('default'),
@@ -28,4 +29,6 @@
     reactions_slot: reactions_slot|default(null),
     reply: null,
   }, with_context = false) }}
+  {% endset %}
+  {{ include('aculta420_v2:layout-grid', { min_item_width: '20rem', max_columns: 1, content: card }, with_context = false) }}
 </div>
