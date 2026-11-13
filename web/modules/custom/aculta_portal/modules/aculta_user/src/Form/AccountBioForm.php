@@ -68,7 +68,9 @@ final class AccountBioForm extends FormBase {
     // Studio has a full-page Form API fallback. Existing Minha Conta modals
     // retain their owner AJAX/JSON behavior and unchanged submission route.
     $form['#action'] = $actionUrl->toString();
-    $form['#attributes']['data-portal-ui'] = $studio ? 'studio-bio-form' : 'account-bio-dialog';
+    if ($studio) {
+      $form['#attributes']['data-portal-ui'] = 'studio-bio-form';
+    }
     if ($this->isHtmxRequest()) {
       (new Htmx())
         ->post($actionUrl)

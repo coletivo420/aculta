@@ -22,38 +22,6 @@
   padding: 0;
 }
 
-.discussion-reaction-bar__badge,
-.discussion-reaction-bar__summary {
-  display: inline-flex;
-  align-items: center;
-  padding: .25rem .625rem;
-  color: var(--color-text-secondary);
-  border: 1px solid var(--color-border);
-  border-radius: var(--border-radius-full, 9999px);
-  background-color: var(--color-surface-subtle);
-  font-size: var(--font-size-xs, .8125rem);
-  font-weight: var(--font-weight-medium, 500);
-  line-height: 1;
-  gap: .35rem;
-}
-
-.discussion-reaction-bar__badge {
-  cursor: pointer;
-  transition: background-color var(--motion-fast) ease-in-out, border-color var(--motion-fast) ease-in-out;
-}
-
-.discussion-reaction-bar__badge:hover {
-  border-color: var(--color-brand-primary);
-  background-color: var(--color-surface-raised);
-}
-
-.discussion-reaction-bar__badge.is-active {
-  color: var(--color-brand-primary);
-  border-color: var(--color-brand-primary);
-  background-color: var(--color-surface-subtle);
-  font-weight: var(--font-weight-semibold, 600);
-}
-
 .discussion-reaction-bar__actions {
   position: relative;
   display: inline-flex;
@@ -221,22 +189,6 @@
 .discussion-reaction-bar__palette-btn.is-disabled {
   cursor: not-allowed;
   opacity: .65;
-}
-
-.discussion-reaction-bar__more-toggle {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  list-style: none;
-  cursor: pointer;
-  color: var(--color-text-secondary);
-  border: 1px solid var(--color-border);
-  border-radius: 999px;
-  background: transparent;
-  font-weight: 600;
-  min-inline-size: 1.75rem;
-  block-size: 1.75rem;
-  padding-inline: var(--spacing-xs);
 }
 
 /* Popovers nativos da barra: "+" (reações extras) e seletor (paleta). Ficam sobre a página e não deslocam nada. */

@@ -569,23 +569,32 @@ sincronizador Runtime está bloqueado por RX e drift de configuração.
   do Messenger (substituídos pelo disclosure nativo `details`/`summary`). Os
   arquivos-fonte perderam 467 bytes; o CSS global não foi alterado. O gate
   `validate-aculta420-css-scope.php` agora exige os contratos de emissão atuais.
-- No checkout atual, o inventário mede 146 folhas/414.425 bytes, 2.362 regras e
-  2.807 seletores. PurgeCSS retém 394.171 bytes e rejeita 20.254 bytes/132
+- No checkout atual, o inventário mede 147 folhas/414.012 bytes, 2.359 regras e
+  2.803 seletores. PurgeCSS retém 393.851 bytes e rejeita 20.161 bytes/131
   seletores; 22 seletores retidos são reescritos. As 250 classes dinâmicas
-  permanecem preservadas. Esses números incluem alterações locais ainda não
-  commitadas em componentes de reações.
-- Os dois seletores que ficaram sem evidência após a edição do componente de
-  reações foram inspecionados no Twig: a faixa antiga baseada em `<details>` foi
-  substituída por botão e Popover nativo. Removi as regras exclusivas do wrapper,
-  da faixa e dos estados/marker de `<details>`; os estilos do botão e do Popover
-  atual permanecem. A classificação voltou a zero seletores sem evidência ou
-  inconclusivos (24 referências no repositório, 45 no HTML do Runtime, 61 por
-  padrões de runtime e 2 dinâmicos).
+  permanecem preservadas em 131 componentes. Esses números incluem alterações
+  locais ainda não commitadas nos componentes de reações.
+- Os seletores sem evidência das folhas de reação foram inspecionados contra os
+  Twig e SDCs atuais. A faixa antiga baseada em `<details>` foi substituída por
+  botão e Popover nativo; depois, o Twig passou a delegar a leitura ao SDC
+  `discussion-reactions-received` e removeu as badges e o botão “+” da versão
+  interativa. Removi as regras órfãs de faixa, `<details>`, badge, estados e
+  botão; os estilos de Popover e dos elementos ainda emitidos permanecem. A
+  classificação atual tem zero seletores sem evidência ou inconclusivos (23
+  referências no repositório, 45 no HTML do Runtime, 61 por padrões de runtime e
+  2 dinâmicos).
+- `AccountBioCard` deixou de montar seu `<dialog>` manualmente e agora compõe o
+  SDC `dialog`, preservando a URL de fallback e a carga HTMX no slot. Removi sete
+  tokens exclusivos da Bio de `PortalUiHooks::TOKENS`, o token de apresentação
+  do formulário da conta e as regras CSS da Bio sem wrapper emissor. O formulário
+  Studio continua com seu token próprio. Teste unitário do render array: 1 teste,
+  8 assertions.
 - `popover-open` foi adicionado à lista explícita de pseudo-classes aceitas pelo
-  Stylelint. Stylelint nas duas folhas de reação, `css:verify`, classificação e
-  testes CSS (18) passaram. A auditoria PurgeCSS completa mede 131 rejeições
-  informativas; elas não foram gravadas nas fontes porque incluem seletores com
-  emissores de Runtime, padrões Drupal/UI e referências no repositório.
+  Stylelint. Stylelint nas folhas de reação e CSS Bio alterados, `css:verify`,
+  classificação, testes CSS (18), PHP syntax/PHPCS do código Bio, schema SDC
+  (131 componentes/2.419 checks) e CSS scope (214 checks) passaram. A auditoria
+  mede 130 rejeições informativas; não foram gravadas nas fontes porque incluem
+  seletores com emissores de Runtime, padrões Drupal/UI e referências no repo.
 - A classificação também foi inspecionada por referência: os wrappers de
   formulário/arquivo pertencem ao Core, as estruturas de conversa ao contrib
   `private_message`, os campos de publicação à View/SDC e compartilhamentos aos
