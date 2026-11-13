@@ -81,7 +81,7 @@ final class ClassDashboardKernelTest extends KernelTestBase {
     $portal_root = dirname($lms_root, 2);
     $this->classLoader->addPsr4('Drupal\\aculta_lms\\', $lms_root . '/src');
     $this->classLoader->addPsr4('Drupal\\aculta_studio\\', $portal_root . '/modules/aculta_studio/src');
-    $this->prepareAcultaLmsGroupTypes();
+    $this->prepareAcultaLmsGroupTypes(deferTypesToModuleInstall: TRUE);
     $this->installEntitySchema('node');
     $this->prepareAcultaLmsPartialConfigDependencies();
     $this->container->get('module_installer')->install(['aculta_lms'], FALSE);

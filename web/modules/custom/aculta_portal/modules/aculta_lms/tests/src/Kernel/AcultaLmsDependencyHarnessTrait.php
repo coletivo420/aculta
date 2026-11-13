@@ -56,8 +56,11 @@ trait AcultaLmsDependencyHarnessTrait {
    *
    * The schemas are installed here because the membership role field is a
    * Group relationship field and Drupal 12 requires its entity schema first.
+   *
+   * @param bool $deferTypesToModuleInstall
+   *   Whether the tested module will install the LMS Group types itself.
    */
-  protected function prepareAcultaLmsGroupTypes(): void {
+  protected function prepareAcultaLmsGroupTypes(bool $deferTypesToModuleInstall = FALSE): void {
     // LMS admin Views require system.menu.admin for their menu displays.
     // Some partial Kernels install the module before their test method installs
     // module configuration; prepare it before enabling aculta_lms.
@@ -77,6 +80,10 @@ trait AcultaLmsDependencyHarnessTrait {
     $this->installConfig(['group']);
     foreach (['user', 'group', 'group_config_wrapper'] as $entityType) {
       $this->installEntitySchema($entityType);
+    }
+
+    if ($deferTypesToModuleInstall) {
+      return;
     }
 
     foreach (['lms_course' => 'Curso', 'lms_class' => 'Turma'] as $id => $label) {

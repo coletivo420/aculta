@@ -54,7 +54,7 @@ final class ClassRosterVisibilityTest extends KernelTestBase {
    */
   protected function setUp(): void {
     parent::setUp();
-    $this->prepareAcultaLmsGroupTypes();
+    $this->prepareAcultaLmsGroupTypes(deferTypesToModuleInstall: TRUE);
     $this->installEntitySchema('node');
     $this->prepareAcultaLmsPartialConfigDependencies();
     $this->container->get('module_installer')->install(['aculta_lms'], FALSE);

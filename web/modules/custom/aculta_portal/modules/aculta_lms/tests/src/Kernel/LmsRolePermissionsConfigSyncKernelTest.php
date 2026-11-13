@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_lms\Kernel;
 
 use Drupal\comment\Entity\CommentType;
-use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\group\Entity\Group;
 use Drupal\group\Entity\GroupRole;
@@ -125,18 +124,6 @@ final class LmsRolePermissionsConfigSyncKernelTest extends KernelTestBase {
     $this->container->get('config.installer')
       ->installDefaultConfig('module', 'aculta_lms');
     self::assertInstanceOf(NodeType::class, NodeType::load('aculta_lms_topic'));
-
-    FieldStorageConfig::create([
-      'entity_type' => 'comment',
-      'field_name' => 'field_aculta_rejected',
-      'type' => 'boolean',
-    ])->save();
-    FieldConfig::create([
-      'entity_type' => 'comment',
-      'bundle' => 'aculta_discussion_post',
-      'field_name' => 'field_aculta_rejected',
-      'label' => 'Rejected',
-    ])->save();
 
     $courseType = GroupType::load('lms_course');
     $classType = GroupType::load('lms_class');

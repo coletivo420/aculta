@@ -135,6 +135,7 @@ display:
               variant_id: null
               props:
                 min_item_width:
+                  source_id: select
                   source:
                     value: 16rem
                 max_columns:

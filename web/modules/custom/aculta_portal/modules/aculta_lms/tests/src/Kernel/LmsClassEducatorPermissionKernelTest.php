@@ -67,6 +67,8 @@ final class LmsClassEducatorPermissionKernelTest extends KernelTestBase {
     'filter',
     'text',
     'text_with_summary',
+    'editor',
+    'ckeditor5',
     'comment',
     'views',
     'node',
