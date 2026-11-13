@@ -19,7 +19,7 @@
         const links = Array.from(box.querySelectorAll('nav.aculta-tabs a'));
         const panels = Array.from(box.querySelectorAll('.aculta-component-library__panel'));
         const components = document.getElementById('aculta-components-container');
-        const groups = components ? Array.from(components.querySelectorAll('.aculta-component-library__group-wrapper')) : [];
+        const groups = components ? Array.from(components.querySelectorAll('.aculta-component-library__group-wrapper, .aculta-component-library__full')) : [];
         const select = (link) => {
           const panelId = link.getAttribute('href').slice(1);
           const groupId = panelId.replace(/^painel-/, '');
@@ -70,7 +70,7 @@
       // Busca e filtragem em tempo real de componentes (UP-06)
       once('aculta-ui-library-search', '#aculta-ui-search', context).forEach((searchInput) => {
         const components = Array.from(document.querySelectorAll('.ui_patterns_component'));
-        const groups = Array.from(document.querySelectorAll('.aculta-component-library__group-wrapper'));
+        const groups = Array.from(document.querySelectorAll('.aculta-component-library__group-wrapper, .aculta-component-library__full'));
 
         searchInput.addEventListener('input', () => {
           const query = searchInput.value.trim().toLowerCase();

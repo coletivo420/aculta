@@ -552,3 +552,53 @@
   flex: 1 1 auto;
   min-inline-size: 0;
 }
+
+/* Densidade compacta (modelo mobile): menos espaçamento, cabeçalho e rodapé empilhados, ações menores. */
+.forum-post-card--density-compact .forum-post-card__inner {
+  padding: var(--spacing-sm);
+  gap: var(--spacing-xs);
+}
+
+.forum-post-card--density-compact .forum-post-card__header,
+.forum-post-card--density-compact .forum-post-card__footer {
+  flex-wrap: wrap;
+  gap: var(--spacing-xs);
+}
+
+.forum-post-card--density-compact .forum-post-card__avatar,
+.forum-post-card--density-compact .forum-post-card__avatar-fallback {
+  inline-size: 2rem;
+  block-size: 2rem;
+}
+
+.forum-post-card--density-compact .forum-post-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-xs);
+}
+
+/* Em telas pequenas, o cartão usa o modelo compacto automaticamente. */
+@media (max-width: 36rem) {
+  .forum-post-card__inner {
+    padding: var(--spacing-sm);
+    gap: var(--spacing-xs);
+  }
+
+  .forum-post-card__header,
+  .forum-post-card__footer {
+    flex-wrap: wrap;
+    gap: var(--spacing-xs);
+  }
+
+  .forum-post-card__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-xs);
+  }
+}
+
+/* Versão mobile: largura de celular, em uma coluna só (não ocupa a largura da biblioteca). */
+.forum-post-card--density-compact {
+  max-inline-size: 26rem;
+  margin-inline: auto;
+}

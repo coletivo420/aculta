@@ -8,6 +8,12 @@ props:
   additionalProperties: false
   required: [author_name]
   properties:
+    density:
+      type: string
+      title: Densidade do cartão
+      description: "default ou compact (mobile: menos espaçamento e ações em linha)."
+      enum: [default, compact]
+      default: default
     stripe:
       type: string
       title: Variante da faixa colorida no topo

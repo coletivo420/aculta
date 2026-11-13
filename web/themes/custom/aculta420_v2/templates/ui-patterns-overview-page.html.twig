@@ -10,6 +10,46 @@
  * - Preserves functional noscript fallback linking to the single component view.
  */
 #}
+{% macro component_section(component, group_name, full_width) %}
+{% set safe_component_id = component.id|replace({':': '--'}) %}
+{% set single_url = url('ui_patterns_library.single', {provider: component.provider, machineName: component.machineName}) %}
+<section class="ui_patterns_component{% if full_width %} aculta-component-library__full{% endif %}" id="{{ safe_component_id }}" data-component-id="{{ component.id }}" data-component-name="{{ component.name|lower }}" data-group-name="{{ group_name|lower }}" data-group-id="grupo-{{ group_name|clean_class }}">
+  <div class="ui_patterns_component__header">
+    <h2 class="ui_patterns_component__title">
+      <a href="{{ single_url }}" class="component__link">{{ component.name }}</a>
+    </h2>
+    <span class="ui_patterns_component__badge badge">{{ component.provider }}</span>
+  </div>
+
+  {% if component.stories %}
+    <div class="ui_patterns_component__stories-container" id="preview-container-{{ safe_component_id }}">
+      <div class="aculta-preview-placeholder" id="placeholder-{{ safe_component_id }}">
+        <a href="{{ single_url }}"
+           class="button button--secondary aculta-load-preview-btn use-htmx"
+           data-hx-get="{{ single_url }}"
+           data-hx-target="#placeholder-{{ safe_component_id }}"
+           data-hx-swap="outerHTML"
+           data-hx-select="#component-stories-wrapper"
+           data-hx-indicator="#indicator-{{ safe_component_id }}">
+          {{ 'Carregar prévia sob demanda'|t }} ({{ component.stories|length }} {{ 'histórias'|t }})
+        </a>
+        <span id="indicator-{{ safe_component_id }}" class="htmx-indicator" aria-hidden="true">{{ 'Carregando prévia...'|t }}</span>
+        <noscript>
+          <p><a href="{{ single_url }}">{{ 'Visualizar prévia na página dedicada'|t }}</a></p>
+        </noscript>
+      </div>
+    </div>
+  {% endif %}
+
+  <details class="aculta-component-library__details">
+    <summary>{{ 'Descrição, propriedades e slots'|t }}</summary>
+    <div class="aculta-component-library__details-content">
+      {{ include('ui-patterns-component-metadata.html.twig', {component: component}, with_context: false) }}
+      {{ include('ui-patterns-component-table.html.twig', {component: component}, with_context: false) }}
+    </div>
+  </details>
+</section>
+{% endmacro %}
 {% if groups is not empty %}
   <div class="ui_patterns_quicklinks">
     <div class="aculta-component-library__toolbar">
@@ -79,54 +119,29 @@
   </div>
   <hr>
 
+  {% set full_ids = ['aculta420_v2:forum-post-card', 'aculta420_v2:forum-reply-mirror', 'aculta420_v2:forum-opening-post'] %}
   <div id="aculta-components-container">
+    {# Grade em duas colunas: sem os cards de largura total, que ficam no fim. #}
     {% for group_name, components in groups %}
-      <div class="aculta-component-library__group-wrapper" data-group-name="{{ group_name }}" data-group-id="grupo-{{ group_name|clean_class }}">
-        {% if groups|length > 1 %}
-          <h2 class="aculta-component-library__group-title" id="{{ aculta_group_anchors[group_name] }}">{{ group_name }}</h2>
-        {% endif %}
-
-        {% for component in components %}
-          {% set safe_component_id = component.id|replace({':': '--'}) %}
-          {% set single_url = url('ui_patterns_library.single', {provider: component.provider, machineName: component.machineName}) %}
-          <section class="ui_patterns_component" id="{{ safe_component_id }}" data-component-id="{{ component.id }}" data-component-name="{{ component.name|lower }}" data-group-name="{{ group_name|lower }}">
-            <div class="ui_patterns_component__header">
-              <h2 class="ui_patterns_component__title">
-                <a href="{{ single_url }}" class="component__link">{{ component.name }}</a>
-              </h2>
-              <span class="ui_patterns_component__badge badge">{{ component.provider }}</span>
-            </div>
-
-            {% if component.stories %}
-              <div class="ui_patterns_component__stories-container" id="preview-container-{{ safe_component_id }}">
-                <div class="aculta-preview-placeholder" id="placeholder-{{ safe_component_id }}">
-                  <a href="{{ single_url }}"
-                     class="button button--secondary aculta-load-preview-btn use-htmx"
-                     data-hx-get="{{ single_url }}"
-                     data-hx-target="#placeholder-{{ safe_component_id }}"
-                     data-hx-swap="outerHTML"
-                     data-hx-select="#component-stories-wrapper"
-                     data-hx-indicator="#indicator-{{ safe_component_id }}">
-                    {{ 'Carregar prévia sob demanda'|t }} ({{ component.stories|length }} {{ 'histórias'|t }})
-                  </a>
-                  <span id="indicator-{{ safe_component_id }}" class="htmx-indicator" aria-hidden="true">{{ 'Carregando prévia...'|t }}</span>
-                  <noscript>
-                    <p><a href="{{ single_url }}">{{ 'Visualizar prévia na página dedicada'|t }}</a></p>
-                  </noscript>
-                </div>
-              </div>
-            {% endif %}
-
-            <details class="aculta-component-library__details">
-              <summary>{{ 'Descrição, propriedades e slots'|t }}</summary>
-              <div class="aculta-component-library__details-content">
-                {{ include('ui-patterns-component-metadata.html.twig', {component: component}, with_context: false) }}
-                {{ include('ui-patterns-component-table.html.twig', {component: component}, with_context: false) }}
-              </div>
-            </details>
-          </section>
-        {% endfor %}
-      </div>
+      {% if components|filter(c => c.id not in full_ids)|length %}
+        <div class="aculta-component-library__group-wrapper" data-group-name="{{ group_name }}" data-group-id="grupo-{{ group_name|clean_class }}">
+          {% if groups|length > 1 %}
+            <h2 class="aculta-component-library__group-title" id="{{ aculta_group_anchors[group_name] }}">{{ group_name }}</h2>
+          {% endif %}
+          {% for component in components|filter(c => c.id not in full_ids) %}
+            {{ _self.component_section(component, group_name, false) }}
+          {% endfor %}
+        </div>
+      {% endif %}
     {% endfor %}
+
+    {# Cards do Fórum (versão desktop e mobile), em duas colunas, no fim da lista. #}
+    <div class="aculta-component-library__full-grid">
+    {% for group_name, components in groups %}
+      {% for component in components|filter(c => c.id in full_ids) %}
+        {{ _self.component_section(component, group_name, true) }}
+      {% endfor %}
+    {% endfor %}
+    </div>
   </div>
 {% endif %}

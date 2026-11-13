@@ -1,23 +1,17 @@
 <div class="forum-opening-post">
   {% set actions_markup %}
-    {% if permalink_url %}
-      <a href="{{ permalink_url }}" class="permalink aculta-resposta-acao aculta-resposta-acao--link" rel="bookmark" aria-label="{{ 'Link permanente'|t }}" title="{{ 'Link permanente'|t }}">{{ link_icon|raw }}</a>
-    {% endif %}
-    {% if delete_url %}
-      <a href="{{ delete_url }}" class="use-htmx aculta-resposta-acao aculta-resposta-acao--apagar" data-action="resposta-apagar" data-hx-get="{{ delete_url }}" data-hx-target="#aculta-reply-dialog-body" data-hx-swap="innerHTML" aria-label="{{ 'Excluir tópico'|t }}" title="{{ 'Excluir tópico'|t }}">{{ delete_icon|raw }}</a>
-    {% endif %}
-    {% if edit_url %}
-      <a href="{{ edit_url }}" class="use-htmx aculta-resposta-acao aculta-resposta-acao--editar" data-action="resposta-editar" data-hx-get="{{ edit_url }}" data-hx-target="#aculta-reply-dialog-body" data-hx-swap="innerHTML" aria-label="{{ 'Editar'|t }}" title="{{ 'Editar'|t }}">{{ edit_icon|raw }}</a>
-    {% endif %}
-    {% if quote_url %}
-      <a href="{{ quote_url }}" class="use-htmx aculta-resposta-acao aculta-resposta-acao--citar" data-action="resposta-citar" data-hx-get="{{ quote_url }}" data-hx-target="#aculta-reply-dialog-body" data-hx-swap="innerHTML" aria-label="{{ 'Citar publicação'|t }}" title="{{ 'Citar publicação'|t }}">{{ quote_icon|raw }}</a>
-    {% endif %}
-    {% if reply_url %}
-      <a href="{{ reply_url }}" class="use-htmx aculta-resposta-acao aculta-resposta-acao--responder" data-action="resposta-responder" data-hx-get="{{ reply_url }}" data-hx-target="#aculta-reply-dialog-body" data-hx-swap="innerHTML" aria-label="{{ 'Responder à discussão'|t }}" title="{{ 'Responder à discussão'|t }}">{{ reply_icon|raw }}</a>
-    {% endif %}
+    {{ include('aculta420_v2:content-reply-bar', {
+      permalink_url: permalink_url|default(null),
+      delete_url: delete_url|default(null),
+      edit_url: edit_url|default(null),
+      quote_url: quote_url|default(null),
+      reply_url: reply_url|default(null),
+      target_id: 'aculta-reply-dialog-body',
+    }, with_context = false) }}
   {% endset %}
   {{ include('aculta420_v2:forum-post-card', {
     stripe: 'brand',
+    density: density|default('default'),
     accent_side: 'start',
     accent_color: 'green',
     badge: include('aculta420_v2:badge', { label: 'Abertura do tópico'|t, variant: 'highlight' }, with_context = false),

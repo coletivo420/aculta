@@ -3,36 +3,38 @@ props:
   author_name: PiradoPirata
   author_posts: 342
   author_reactions: 19
-  timestamp: 'Há 3 horas'
+  timestamp: Há 3 horas
 slots:
   body:
-    '#markup': '<p>Substrato leve com húmus de minhoca e fibra de coco funciona bem em espaço pequeno.</p>'
+    '#markup': <p>Substrato leve com húmus de minhoca e fibra de coco funciona bem em espaço pequeno.</p>
   actions:
-    '#type': inline_template
-    '#template': |-
-      <a href="#" class="permalink aculta-resposta-acao aculta-resposta-acao--link" aria-label="Link permanente" title="Link permanente"><span class="aculta-resposta-acao__icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M240,88.23a54.43,54.43,0,0,1-16,37L189.25,160a54.27,54.27,0,0,1-38.63,16h-.05A54.63,54.63,0,0,1,96,119.84a8,8,0,0,1,16,.45A38.62,38.62,0,0,0,150.58,160h0a38.39,38.39,0,0,0,27.31-11.31l34.75-34.75a38.63,38.63,0,0,0-54.63-54.63l-11,11A8,8,0,0,1,135.7,59l11-11A54.65,54.65,0,0,1,224,48,54.86,54.86,0,0,1,240,88.23ZM109,185.66l-11,11A38.41,38.41,0,0,1,70.6,208h0a38.63,38.63,0,0,1-27.29-65.94L78,107.31A38.63,38.63,0,0,1,144,135.71a8,8,0,0,0,16,.45A54.86,54.86,0,0,0,144,96a54.65,54.65,0,0,0-77.27,0L32,130.75A54.62,54.62,0,0,0,70.56,224h0a54.28,54.28,0,0,0,38.64-16l11-11A8,8,0,0,0,109,185.66Z"/></svg></span></a>
-      <a href="#" class="aculta-resposta-acao aculta-resposta-acao--apagar" aria-label="Apagar" title="Apagar"><span class="aculta-resposta-acao__icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M216,48H40a8,8,0,0,0,0,16h8V208a16,16,0,0,0,16,16H192a16,16,0,0,0,16-16V64h8a8,8,0,0,0,0-16ZM192,208H64V64H192ZM80,24a8,8,0,0,1,8-8h80a8,8,0,0,1,0,16H88A8,8,0,0,1,80,24Z"/></svg></span></a>
-      <a href="#" class="aculta-resposta-acao aculta-resposta-acao--editar" aria-label="Editar" title="Editar"><span class="aculta-resposta-acao__icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M227.31,73.37,182.63,28.68a16,16,0,0,0-22.63,0L36.69,152A15.86,15.86,0,0,0,32,163.31V208a16,16,0,0,0,16,16H92.69A15.86,15.86,0,0,0,104,219.31L227.31,96a16,16,0,0,0,0-22.63ZM92.69,208H48V163.31l88-88L180.69,120ZM192,108.68,147.31,64l24-24L216,84.68Z"/></svg></span></a>
-      <a href="#" class="aculta-resposta-acao aculta-resposta-acao--citar" aria-label="Citar" title="Citar"><span class="aculta-resposta-acao__icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M100,56H40A16,16,0,0,0,24,72v64a16,16,0,0,0,16,16h60v8a32,32,0,0,1-32,32,8,8,0,0,0,0,16,48.05,48.05,0,0,0,48-48V72A16,16,0,0,0,100,56Zm0,80H40V72h60ZM216,56H156a16,16,0,0,0-16,16v64a16,16,0,0,0,16,16h60v8a32,32,0,0,1-32,32,8,8,0,0,0,0,16,48.05,48.05,0,0,0,48-48V72A16,16,0,0,0,216,56Zm0,80H156V72h60Z"/></svg></span></a>
-      <a href="#" class="aculta-resposta-acao aculta-resposta-acao--responder" aria-label="Responder ao comentário" title="Responder ao comentário"><span class="aculta-resposta-acao__icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M232,200a8,8,0,0,1-16,0,88.1,88.1,0,0,0-88-88H51.31l34.35,34.34a8,8,0,0,1-11.32,11.32l-48-48a8,8,0,0,1,0-11.32l48-48A8,8,0,0,1,85.66,61.66L51.31,96H128A104.11,104.11,0,0,1,232,200Z"/></svg></span></a>
+    '#type': component
+    '#component': aculta420_v2:content-reply-bar
+    '#props':
+      permalink_url: /forum/topico/123#post-456
+      edit_url: /discussoes/editar/comment/456
+      quote_url: /discussoes/citar/comment/456
+      reply_url: /discussoes/responder/comment/456
+      delete_url: /discussoes/apagar/comment/456
+      target_id: aculta-reply-dialog-body
   reactions_slot:
     '#type': component
-    '#component': 'aculta420_v2:discussion-reaction-bar'
+    '#component': aculta420_v2:discussion-reaction-bar
     '#props':
-      target_id: 'discussion-reactions-comment-story'
-      entity_type: 'comment'
+      target_id: discussion-reactions-comment-story
+      entity_type: comment
       entity_id: '1'
       total_count: 19
-      user_reaction: 'thumbs_up'
-      default_reaction: 'heart'
+      user_reaction: thumbs_up
+      default_reaction: heart
       can_react: true
       react_url: '#'
-      csrf_token: 'story-token'
+      csrf_token: story-token
       reactions:
         thumbs_up:
-          id: 'thumbs_up'
+          id: thumbs_up
           count: 12
           user_reacted: true
         seedling:
-          id: 'seedling'
+          id: seedling
           count: 7
