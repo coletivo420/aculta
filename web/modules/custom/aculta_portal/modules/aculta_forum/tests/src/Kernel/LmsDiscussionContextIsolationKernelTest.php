@@ -70,6 +70,7 @@ final class LmsDiscussionContextIsolationKernelTest extends KernelTestBase {
     'file',
     'domain',
     'aculta_file_uploader',
+    'entity_usage',
     'aculta_forum_lms_test',
   ];
 

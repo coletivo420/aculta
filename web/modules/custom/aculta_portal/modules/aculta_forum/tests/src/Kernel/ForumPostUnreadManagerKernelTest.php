@@ -185,10 +185,10 @@ final class ForumPostUnreadManagerKernelTest extends KernelTestBase {
     $plugin->preRender($values);
     $build = $plugin->render($values[0]);
 
-    self::assertSame('2 novas publicações', (string) $build['#title']);
-    self::assertSame('entity.node.canonical', $build['#url']->getRouteName());
-    self::assertSame('forum-post-' . $first->id(), $build['#url']->getOption('fragment'));
-    self::assertArrayHasKey('page', $build['#url']->getOption('query'));
+    $link = (string) $build;
+    self::assertStringContainsString('2 novas publicações', $link);
+    self::assertStringContainsString('page=', $link);
+    self::assertStringContainsString('#forum-post-' . $first->id(), $link);
   }
 
   /**

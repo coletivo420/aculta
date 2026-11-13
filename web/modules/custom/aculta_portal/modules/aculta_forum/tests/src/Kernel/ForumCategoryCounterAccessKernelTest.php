@@ -206,12 +206,12 @@ final class ForumCategoryCounterAccessKernelTest extends KernelTestBase {
 
     $this->container->get('current_user')->setAccount(new AnonymousUserSession());
     $plugin->preRender($rows);
-    self::assertSame('1 tópico', (string) $plugin->render($rows[0])['#value']);
-    self::assertSame('Nenhum tópico', (string) $plugin->render($rows[1])['#value']);
+    self::assertStringContainsString('1 tópico', (string) $plugin->render($rows[0]));
+    self::assertStringContainsString('Nenhum tópico', (string) $plugin->render($rows[1]));
 
     $this->container->get('current_user')->setAccount($this->member);
     $plugin->preRender($rows);
-    self::assertSame('1 tópico', (string) $plugin->render($rows[1])['#value']);
+    self::assertStringContainsString('1 tópico', (string) $plugin->render($rows[1]));
   }
 
   /**

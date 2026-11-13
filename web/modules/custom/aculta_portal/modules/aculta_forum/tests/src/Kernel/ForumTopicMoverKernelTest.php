@@ -344,7 +344,10 @@ final class ForumTopicMoverKernelTest extends KernelTestBase {
     self::assertSame('Destino', $build['destination']['#options'][$destination->id()]);
     self::assertSame('checkbox', $build['confirm_move']['#type']);
     self::assertTrue($build['confirm_move']['#required']);
-    self::assertSame('aculta_forum.admin', $build['actions']['cancel']['#url']->getRouteName());
+    self::assertSame(
+      \Drupal\Core\Url::fromRoute('aculta_forum.admin')->toString(),
+      $build['actions']['cancel']['#props']['url'],
+    );
     self::assertSame('Mover tópico', (string) $build['actions']['submit']['#value']);
 
     // The move requires both a numeric destination and explicit consent.
