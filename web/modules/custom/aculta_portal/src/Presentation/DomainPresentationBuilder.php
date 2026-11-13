@@ -137,8 +137,8 @@ final class DomainPresentationBuilder {
         'institution_bar_account' => $siteKey === 'account',
         'show_utility_bar' => $siteKey !== 'links',
         'links_page' => $siteKey === 'links',
-        // Domain Header (navigation-bar) só existe no purpose principal e na Wiki.
-        // O tema apenas renderiza estes flags e não resolve o purpose.
+        // Domain Header (navigation-bar) só existe no site principal e na Wiki.
+        // O tema apenas renderiza estes flags e não resolve o site key.
         'show_site_header' => in_array($siteKey, ['main', 'wiki'], TRUE),
         // Menu do purpose principal: só aparece no próprio cabeçalho principal.
         'show_site_menu' => $siteKey === 'main',
@@ -178,14 +178,14 @@ final class DomainPresentationBuilder {
   }
 
   /**
-   * Vitrine da home MAIN, com um link por purpose que tenha Domain ativo.
+   * Vitrine da home MAIN, com um link por site key que tenha Domain ativo.
    *
    * Cada subdomínio responde somente no próprio host; a vitrine apenas aponta
    * para ele. DomainSiteManager resolve URLs no ambiente atual.
-   * Purposes sem Domain ativo são omitidos.
+   * Site keys sem Domain ativo são omitidos.
    *
    * @return list<array{
-   *   purpose: string,
+   *   site_key: string,
    *   title: string,
    *   url: string
    *   }>

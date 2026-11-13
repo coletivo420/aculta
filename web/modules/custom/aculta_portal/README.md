@@ -87,13 +87,13 @@ como opções de combobox.
 
 ## Contrato de apresentação para a navegação de sites
 
-`DomainPresentationBuilder` fornece `domain_presentation.identity.purpose` como
+`DomainPresentationBuilder` fornece `domain_presentation.identity.site_key` como
 chave neutra estável e `domain_presentation.domain_sites` como lista dos Domains
-ativos: `purpose`, `title`, `url` absoluta resolvida por `DomainPurposeManager`
+ativos: `site_key`, `title`, `url` absoluta resolvida por `DomainSiteManager`
 e `current`. `PortalHooks::preprocessPage()` também expõe a lista como
 `aculta_domain_sites`. A lista herda cache tags dos Domains e os contexts do
 contrato de apresentação; o tema apenas apresenta os links, sem descobrir hosts
-ou purposes. O contrato não carrega dados de conta.
+ou site keys. O contrato não carrega dados de conta.
 
 ## Fronteira
 

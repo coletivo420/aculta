@@ -102,24 +102,24 @@ final class DomainPresentationBuilderKernelTest extends KernelTestBase {
         $presentation->getCacheTags(),
         "A apresentação de $purpose deve variar com a configuração de seu Domain.",
       );
-      $this->assertSame($purpose, $data['identity']['purpose']);
-      $this->assertSame($domainId, self::DOMAINS[$data['identity']['purpose']]);
+      $this->assertSame($purpose, $data['identity']['site_key']);
+      $this->assertSame($domainId, self::DOMAINS[$data['identity']['site_key']]);
       $sites = $data['domain_sites'];
       $this->assertCount(count(self::DOMAINS), $sites);
-      $this->assertSame($purpose, $sites[array_search(TRUE, array_column($sites, 'current'), TRUE)]['purpose']);
+      $this->assertSame($purpose, $sites[array_search(TRUE, array_column($sites, 'current'), TRUE)]['site_key']);
       $this->assertSame(
         array_keys(self::DOMAINS),
-        array_column($sites, 'purpose'),
+        array_column($sites, 'site_key'),
         'Sites devem permanecer na ordem neutra e estável do mapa de purposes.',
       );
       foreach ($sites as $site) {
-        $this->assertSame($site['purpose'] === $purpose, $site['current']);
+        $this->assertSame($site['site_key'] === $purpose, $site['current']);
         $this->assertSame(
-          'https://' . $site['purpose'] . '.example.invalid/',
+          'https://' . $site['site_key'] . '.example.invalid/',
           $site['url'],
         );
         $this->assertContains(
-          'config:domain.record.' . self::DOMAINS[$site['purpose']],
+          'config:domain.record.' . self::DOMAINS[$site['site_key']],
           $presentation->getCacheTags(),
         );
       }
@@ -170,23 +170,23 @@ final class DomainPresentationBuilderKernelTest extends KernelTestBase {
     $this->assertNotNull($presentation);
     $data = $presentation->toThemeArray();
     $showcase = $data['regions']['showcase'];
-    $expectedPurposes = array_values(array_diff(array_keys(self::DOMAINS), ['main']));
-    $this->assertSame($expectedPurposes, array_column($showcase, 'purpose'));
+    $expectedSiteKeys = array_values(array_diff(array_keys(self::DOMAINS), ['main']));
+    $this->assertSame($expectedSiteKeys, array_column($showcase, 'site_key'));
 
     foreach ($showcase as $item) {
       $this->assertSame(
-        'https://' . $item['purpose'] . '.example.invalid/',
+        'https://' . $item['site_key'] . '.example.invalid/',
         $item['url'],
-        "O link de {$item['purpose']} deve usar o Domain configurado para este ambiente.",
+        "O link de {$item['site_key']} deve usar o Domain configurado para este ambiente.",
       );
       $this->assertContains(
-        'config:domain.record.' . self::DOMAINS[$item['purpose']],
+        'config:domain.record.' . self::DOMAINS[$item['site_key']],
         $presentation->getCacheTags(),
-        "A vitrine deve invalidar quando o Domain de {$item['purpose']} mudar.",
+        "A vitrine deve invalidar quando o Domain de {$item['site_key']} mudar.",
       );
     }
 
-    $magazine = array_values(array_filter($showcase, static fn (array $item): bool => $item['purpose'] === 'magazine'));
+    $magazine = array_values(array_filter($showcase, static fn (array $item): bool => $item['site_key'] === 'magazine'));
     $this->assertCount(1, $magazine);
     $this->assertSame('Revista 420', $magazine[0]['title']);
   }

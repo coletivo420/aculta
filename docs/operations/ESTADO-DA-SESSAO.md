@@ -1,3 +1,14 @@
+# GitHub — contrato site_key na apresentação do Portal — 2026-11-13
+
+- **Objetivo:** corrigir falhas Kernel históricas causadas pelo uso de `purpose` após RN-04.
+- **Estado:** DomainPresentationBuilder, teste de apresentação e README alinhados a `site_key`/DomainSiteManager; Kernel não executado localmente.
+- **Decisões e alternativas descartadas:** preservar o contrato RN-04, sem alias de `purpose` nem mudança de autorização.
+- **Cuidados:** CI Kernel em `afb62d168` encerrou após SIGTERM/código 143 sem JUnit; causa do runner não identificada.
+- **Commits e arquivos:** commit desta fase; builder, teste Kernel, README, TODO/status e handoff.
+- **Verificações:** `php -l` nos dois PHP e `git diff --check` PASS; token budget FAIL em 7 skills preexistentes; PHPUnit DEFERRED para CI remoto após reboots locais.
+- **Pendências e bloqueios:** falhas históricas de Fórum, Index, Messenger, Statistics e Events ainda precisam de execução Kernel completa; contagem Semgrep 427 sem SARIF de origem; Runtime Sync RX/BLOCKED.
+- **Próximo passo:** verificar CI desta fase; auditar os demais casos do JUnit histórico e corrigir defeitos atuais com evidência.
+
 # Segurança — link do Mercado Pago — 2026-11-13
 
 - **Objetivo:** fechar o sink `href` configurável do aviso de pagamento.
