@@ -12,15 +12,51 @@ on:
 
 permissions:
   contents: read
+  pull-requests: read
 
 concurrency:
-  # A push and its pull request share one static scan for the same head SHA.
-  group: quality-static-${{ github.event.pull_request.head.sha || github.sha }}
+  # Push and PR are separate groups; the push guard skips SHAs already scanned by a PR.
+  group: quality-static-${{ github.event.pull_request.head.ref || github.ref_name }}-${{ github.event_name }}
   cancel-in-progress: true
 
 jobs:
+  workflow-guard:
+    name: Evita checks duplicados entre push e PR
+    runs-on: ubuntu-24.04
+    outputs:
+      should_run: ${{ steps.guard.outputs.should_run }}
+    steps:
+    - name: Decide whether this event needs static checks
+      id: guard
+      env:
+        GH_TOKEN: ${{ github.token }}
+        API_URL: ${{ github.api_url }}
+        REPOSITORY: ${{ github.repository }}
+        COMMIT_SHA: ${{ github.sha }}
+        EVENT_NAME: ${{ github.event_name }}
+      run: |
+        if [ "$EVENT_NAME" != "push" ]; then
+          echo "should_run=true" >> "$GITHUB_OUTPUT"
+          exit 0
+        fi
+        prs="$(curl --fail --silent --show-error \
+          -H "Authorization: Bearer $GH_TOKEN" \
+          -H "Accept: application/vnd.github+json" \
+          "$API_URL/repos/$REPOSITORY/commits/$COMMIT_SHA/pulls?per_page=100")"
+        open_prs="$(jq --arg sha "$COMMIT_SHA" \
+          '[.[] | select(.state == "open" and .head.sha == $sha and (.base.ref == "main" or .base.ref == "dev"))] | length' \
+          <<< "$prs")"
+        if [ "$open_prs" -gt 0 ]; then
+          echo "Este SHA já é validado pelo workflow do PR; pulando os checks estáticos duplicados."
+          echo "should_run=false" >> "$GITHUB_OUTPUT"
+        else
+          echo "should_run=true" >> "$GITHUB_OUTPUT"
+        fi
+
   shell-quality:
     name: Shell quality (ShellCheck, shfmt, bash -n)
+    needs: workflow-guard
+    if: needs.workflow-guard.outputs.should_run == 'true'
     runs-on: ubuntu-24.04
     steps:
     - name: Checkout code
@@ -59,6 +95,8 @@ jobs:
 
   workflow-lint:
     name: actionlint (versão fixada)
+    needs: workflow-guard
+    if: needs.workflow-guard.outputs.should_run == 'true'
     runs-on: ubuntu-24.04
     steps:
     - name: Checkout code
@@ -77,6 +115,8 @@ jobs:
 
   bats-runtime-sync:
     name: Bats (isolamento do Runtime Sync, sem Runtime)
+    needs: workflow-guard
+    if: needs.workflow-guard.outputs.should_run == 'true'
     runs-on: ubuntu-24.04
     steps:
     - name: Checkout code
@@ -92,6 +132,8 @@ jobs:
 
   frontend-quality:
     name: Frontend quality (Stylelint, ESLint do tema)
+    needs: workflow-guard
+    if: needs.workflow-guard.outputs.should_run == 'true'
     runs-on: ubuntu-24.04
     steps:
     - name: Checkout code
@@ -115,6 +157,8 @@ jobs:
 
   security-static:
     name: Security static (Semgrep local rules, fixtures, composer audit)
+    needs: workflow-guard
+    if: needs.workflow-guard.outputs.should_run == 'true'
     runs-on: ubuntu-24.04
     steps:
     - name: Checkout code
@@ -195,9 +239,10 @@ jobs:
 
   browser-discovery:
     name: Browser suites discovery (sem execução contra ambiente)
+    needs: workflow-guard
     # Execução de acessibilidade e regressão visual exige ACULTA_SITE_ORIGIN de
     # ambiente descartável ou autorizado. Sem isso, o job só valida a descoberta.
-    if: github.event_name == 'workflow_dispatch'
+    if: needs.workflow-guard.outputs.should_run == 'true' && github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-24.04
     steps:
     - name: Checkout code

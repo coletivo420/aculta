@@ -6,14 +6,52 @@ on:
   pull_request:
     branches: [ main, dev ]
 
+permissions:
+  contents: read
+  pull-requests: read
+
 concurrency:
-  # The same branch commit can trigger both push and pull_request events.
-  # Keep one full PHP suite per head SHA so Kernel does not run twice in parallel.
-  group: php-quality-${{ github.event.pull_request.head.sha || github.sha }}
+  # Push and PR are separate groups; the push guard skips SHAs already checked by a PR.
+  group: php-quality-${{ github.event.pull_request.head.ref || github.ref_name }}-${{ github.event_name }}
   cancel-in-progress: true
 
 jobs:
+  workflow-guard:
+    name: Evita checks duplicados entre push e PR
+    runs-on: ubuntu-24.04
+    outputs:
+      should_run: ${{ steps.guard.outputs.should_run }}
+    steps:
+    - name: Decide whether this event needs the PHP suite
+      id: guard
+      env:
+        GH_TOKEN: ${{ github.token }}
+        API_URL: ${{ github.api_url }}
+        REPOSITORY: ${{ github.repository }}
+        COMMIT_SHA: ${{ github.sha }}
+        EVENT_NAME: ${{ github.event_name }}
+      run: |
+        if [ "$EVENT_NAME" != "push" ]; then
+          echo "should_run=true" >> "$GITHUB_OUTPUT"
+          exit 0
+        fi
+        prs="$(curl --fail --silent --show-error \
+          -H "Authorization: Bearer $GH_TOKEN" \
+          -H "Accept: application/vnd.github+json" \
+          "$API_URL/repos/$REPOSITORY/commits/$COMMIT_SHA/pulls?per_page=100")"
+        open_prs="$(jq --arg sha "$COMMIT_SHA" \
+          '[.[] | select(.state == "open" and .head.sha == $sha and (.base.ref == "main" or .base.ref == "dev"))] | length' \
+          <<< "$prs")"
+        if [ "$open_prs" -gt 0 ]; then
+          echo "Este SHA já é validado pelo workflow do PR; pulando a suíte PHP duplicada."
+          echo "should_run=false" >> "$GITHUB_OUTPUT"
+        else
+          echo "should_run=true" >> "$GITHUB_OUTPUT"
+        fi
+
   php-lint:
+    needs: workflow-guard
+    if: needs.workflow-guard.outputs.should_run == 'true'
     runs-on: ubuntu-24.04
 
     steps:
@@ -53,6 +91,8 @@ jobs:
         fi
 
   test-discovery:
+    needs: workflow-guard
+    if: needs.workflow-guard.outputs.should_run == 'true'
     runs-on: ubuntu-24.04
 
     steps:
@@ -76,8 +116,9 @@ jobs:
         php scripts/phpunit-suites.php --check
 
   phpunit-unit:
+    needs: [ workflow-guard, test-discovery ]
+    if: needs.workflow-guard.outputs.should_run == 'true'
     runs-on: ubuntu-24.04
-    needs: test-discovery
 
     steps:
     - name: Checkout code
@@ -113,6 +154,8 @@ jobs:
         retention-days: 14
 
   phpunit-kernel:
+    needs: workflow-guard
+    if: needs.workflow-guard.outputs.should_run == 'true'
     runs-on: ubuntu-24.04
     # Limite explícito: sem ele, uma suíte travada fica in_progress por horas e não gera log.
     timeout-minutes: 45
@@ -168,6 +211,8 @@ jobs:
         retention-days: 14
 
   phpstan:
+    needs: workflow-guard
+    if: needs.workflow-guard.outputs.should_run == 'true'
     runs-on: ubuntu-24.04
 
     steps:
