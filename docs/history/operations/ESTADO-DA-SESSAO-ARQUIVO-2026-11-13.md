@@ -56,3 +56,14 @@
 - **Verificações:** Semgrep, PHP lint, descoberta, Unit e PHPStan PASS em SHAs seguintes; Kernel continua sem relatório. O log do PHPStan documentou e motivou a correção separada do Index.
 - **Pendências e bloqueios:** obter conclusão Kernel; Semgrep antigo reportado como 427 não corresponde diretamente aos SARIF arquivados; Runtime Sync RX/BLOCKED.
 - **Próximo passo:** validar diff/gates leves, commitar e publicar; seguir o CI remoto e corrigir o próximo achado comprovado.
+
+# GitHub — baseline PHPStan do Content Index — 2026-11-13
+
+- **Objetivo:** corrigir PHPStan no teste de janela da auditoria incremental.
+- **Estado:** removida a asserção repetida `sources` dentro do loop; PHPStan identificou `$sourcePhase` sem leitura e a atribuição do loop foi removida. PHPStan, lint, descoberta e Unit passaram em `f5dcfd832`.
+- **Decisões e alternativas descartadas:** manter o comportamento e teste do cursor; não alterar baseline nem enfraquecer a verificação de estado.
+- **Cuidados:** executar lint e esperar CI remoto; não rodar Kernel local por histórico de travamento.
+- **Commits e arquivos:** pendente; ContentIndexRebuilderKernelTest, TODO/status Index e handoff.
+- **Verificações:** PHPStan, lint, descoberta, Unit e Semgrep PASS em `f5dcfd832`; Kernel sem resultado pois o runner foi encerrado por shutdown no run anterior.
+- **Pendências e bloqueios:** Kernel global continua sem JUnit; dívida antiga Semgrep 427 ainda sem SARIF reconciliado.
+- **Próximo passo:** validar diff leve, commit/push e acompanhar workflows.

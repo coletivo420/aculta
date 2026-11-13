@@ -1,12 +1,23 @@
+# CI — evita duplicar varredura estática por SHA — 2026-11-13
+
+- **Objetivo:** evitar dois scans estáticos quando o mesmo commit dispara `push` e `pull_request`.
+- **Estado:** concorrência do workflow estático agora compartilha grupo pelo head SHA, mantendo um scan por conteúdo.
+- **Decisões e alternativas descartadas:** manter push, PR e workflow_dispatch; não cancelar checks de commits diferentes.
+- **Cuidados:** ação usa o SHA do head no PR e o SHA do commit no push; confirmar coalescência no GitHub.
+- **Commits e arquivos:** pendente; `.github/workflows/quality-static.yml` e este handoff.
+- **Verificações:** `git diff --check` pendente; actionlint local DEFERRED (binário ausente), validado no CI após push.
+- **Pendências e bloqueios:** confirmar um único scan por SHA, incluindo Semgrep; Kernel global segue pendente por shutdown sem JUnit.
+- **Próximo passo:** commit/push, acompanhar actionlint e verificar execução única.
+
 # CI — evita duplicar a suíte PHP por SHA — 2026-11-13
 
 - **Objetivo:** impedir dois workflows PHP completos em paralelo quando o mesmo SHA dispara `push` e `pull_request`.
-- **Estado:** workflow ganhou grupo de concorrência por head SHA, cancelando a execução duplicada mais antiga.
+- **Estado:** workflow ganhou grupo de concorrência por head SHA; no SHA `f91edb04`, actionlint passou e o run PHP de push foi cancelado enquanto o run do PR permaneceu.
 - **Decisões e alternativas descartadas:** usar head SHA para preservar uma execução por conteúdo; não remover os gatilhos de push ou PR.
 - **Cuidados:** Kernel continua informativo com dívida histórica; não executar suíte local após reboots.
 - **Commits e arquivos:** pendente; `.github/workflows/php-quality.yml` e este handoff.
-- **Verificações:** diff check pendente; actionlint local DEFERRED (binário ausente); workflow estático do GitHub valida o arquivo após push.
-- **Pendências e bloqueios:** kernels de SHAs anteriores foram encerrados por shutdown sem JUnit; verificar que o novo grupo deixa apenas um run ativo no SHA.
+- **Verificações:** actionlint, lint, descoberta, PHPStan e Unit PASS; Kernel do PR segue ativo. actionlint local DEFERRED (binário ausente).
+- **Pendências e bloqueios:** Kernel de SHAs anteriores terminou por shutdown sem JUnit; confirmar execução única no SHA atual.
 - **Próximo passo:** validar diff, commit/push e conferir actionlint/concorrência no GitHub.
 
 # GitHub — interface de leitura dos avisos — 2026-11-13
@@ -19,15 +30,4 @@
 - **Verificações:** PHP lint, PHPStan, descoberta, Unit, Semgrep, `git diff --check`, status index e Drupal 12 (1234 checks) PASS; token budget FAIL em 7 limites preexistentes de skills. Kernel de `a35cb0b2` foi encerrado pelo runner sem JUnit; JUnit histórico apontou lista lida vazia.
 - **Pendências e bloqueios:** aguardar uma execução Kernel conclusiva após reduzir duplicatas.
 - **Próximo passo:** validar diff leve, commit/push, acompanhar CI e seguir os demais casos Kernel com evidência.
-
-# GitHub — baseline PHPStan do Content Index — 2026-11-13
-
-- **Objetivo:** corrigir PHPStan no teste de janela da auditoria incremental.
-- **Estado:** removida a asserção repetida `sources` dentro do loop; PHPStan identificou `$sourcePhase` sem leitura e a atribuição do loop foi removida. PHPStan, lint, descoberta e Unit passaram em `f5dcfd832`.
-- **Decisões e alternativas descartadas:** manter o comportamento e teste do cursor; não alterar baseline nem enfraquecer a verificação de estado.
-- **Cuidados:** executar lint e esperar CI remoto; não rodar Kernel local por histórico de travamento.
-- **Commits e arquivos:** pendente; ContentIndexRebuilderKernelTest, TODO/status Index e handoff.
-- **Verificações:** PHPStan, lint, descoberta, Unit e Semgrep PASS em `f5dcfd832`; Kernel sem resultado pois o runner foi encerrado por shutdown no run anterior.
-- **Pendências e bloqueios:** Kernel global continua sem JUnit; dívida antiga Semgrep 427 ainda sem SARIF reconciliado.
-- **Próximo passo:** validar diff leve, commit/push e acompanhar workflows.
 
