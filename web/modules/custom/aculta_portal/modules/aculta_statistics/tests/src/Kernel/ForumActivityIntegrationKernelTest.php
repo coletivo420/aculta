@@ -463,33 +463,15 @@ final class ForumActivityIntegrationKernelTest extends KernelTestBase {
   }
 
   /**
-   * Denúncias abertas deduplicam por conteúdo e posts pendentes são contados.
+   * Posts pendentes são contados pelo provedor do Fórum.
    */
-  public function testModerationMetricsCountDistinctPublicContent(): void {
+  public function testModerationMetricsCountPendingPosts(): void {
     $author = User::create(['name' => 'autora-denuncia', 'status' => 1]);
     $author->save();
-    $reporter = User::create(['name' => 'denunciante', 'status' => 1]);
-    $reporter->save();
     $topic = $this->topicAt((int) $author->id(), time());
-    $database = $this->container->get('database');
-    foreach ([$author->id(), $reporter->id()] as $uid) {
-      $database->insert('flagging')
-        ->fields([
-          'uuid' => $this->container->get('uuid')->generate(),
-          'flag_id' => 'sinalizar_topico',
-          'entity_type' => 'node',
-          'entity_id' => (string) $topic->id(),
-          'global' => 0,
-          'uid' => $uid,
-          'session_id' => '',
-          'created' => time(),
-        ])
-        ->execute();
-    }
 
     $provider = $this->container->get('aculta_forum.metrics_provider');
     $day = $this->storage->currentDay();
-    self::assertSame(1, $provider->value('forum.moderation.reports_open', $day));
 
     ForumPost::create([
       'uid' => (int) $author->id(),

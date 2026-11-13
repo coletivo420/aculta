@@ -4,6 +4,7 @@ Estado: Dev · versão 0.9.0-dev.12 (`aculta_statistics.info.yml`) · status: `d
 
 ## Próximo passo
 
+- **Auditoria GitHub:** teste Kernel do provedor do Fórum alinhado ao contrato atual: cobre `posts_pending`; denúncias abertas são responsabilidade de `aculta_cgu`. Aguardar CI remoto para confirmar Kernel.
 - **FST (implementado e homologado em parte):** FST-00 a FST-10 implementadas; update 9008 aplicado, 13 retratos coletados, reconciliação 13/13 e Firefox ESR 44/44. Faltam Functional em origem isolada, dark mode/zoom e leitor de tela. [Plano e estado](docs/FORUM-ANALYTICS-PLANO-FST-00-11.md).
 
 Sincronizar a entrega no Runtime de desenvolvimento e seguir auditoria visual/acessível, Functional e integrações GA4/Search Console somente em ambiente autorizado. RC continua bloqueado por itens funcionais/visuais pendentes e pelo gate global módulo–tema (falhas em Events, Calendar e Maps, fora deste módulo). Ver [auditoria](web/modules/custom/aculta_portal/modules/aculta_statistics/docs/AUDITORIA-1.0.md) e [roadmap](web/modules/custom/aculta_portal/modules/aculta_statistics/docs/ROADMAP.md).
