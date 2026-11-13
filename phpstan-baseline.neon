@@ -5494,12 +5494,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_magazine/src/Controller/EditorialWorkspaceController.php
 
 		-
-			rawMessage: 'Parameter #2 $discussionContexts of class Drupal\aculta_magazine\Form\EditorialCommentModerationForm constructor expects Drupal\aculta_forum\Context\DiscussionContextResolver, Drupal\aculta_forum_lms_test\UnusedService given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_magazine/src/Form/EditorialCommentModerationForm.php
-
-		-
 			rawMessage: Negated boolean expression is always false.
 			identifier: booleanNot.alwaysFalse
 			count: 1
