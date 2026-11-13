@@ -227,13 +227,14 @@ final class LearningDashboardController {
       $options[] = $link;
     }
     return [
-      '#type' => 'container',
-      '#attributes' => ['data-portal-ui' => 'aculta-lms-class-status-history--period'],
-      'label' => ['#plain_text' => $this->t('Período:')],
-      'options' => [
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:tabs',
+      '#props' => ['label' => (string) $this->t('Período da atividade')],
+      '#slots' => [
+        'items' => [
         '#theme' => 'item_list',
         '#items' => $options,
-        '#attributes' => ['data-portal-ui' => 'lms-dashboard-links-inline'],
+      ],
       ],
     ];
   }

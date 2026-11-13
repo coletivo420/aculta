@@ -88,14 +88,20 @@ final class Lmsaculta_H5PDiscussionResolver {
       return $this->emptyBuild($cache);
     }
     $build = [
-      '#type' => 'container',
-      '#attributes' => ['data-portal-ui' => 'lms-h5p-discussions'],
-      'title' => [
-        '#type' => 'html_tag',
-        '#tag' => 'h2',
-        '#value' => $this->stringTranslation->translate('Discussões desta atividade'),
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:layout-section',
+      '#slots' => [
+        'header' => [
+          '#type' => 'html_tag',
+          '#tag' => 'h2',
+          '#value' => $this->stringTranslation->translate('Discussões desta atividade'),
+        ],
+        'content' => [
+          '#theme' => 'item_list',
+          '#items' => $links,
+          '#attributes' => ['class' => ['aculta-lms-discussion-list']],
+        ],
       ],
-      'links' => ['#theme' => 'item_list', '#items' => $links],
     ];
     $cache->applyTo($build);
     return $build;

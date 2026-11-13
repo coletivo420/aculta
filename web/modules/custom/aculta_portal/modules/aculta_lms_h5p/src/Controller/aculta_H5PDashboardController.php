@@ -107,21 +107,24 @@ final class aculta_H5PDashboardController implements ContainerInjectionInterface
       }
 
       $courseBuild = [
-        '#type' => 'container',
-        '#attributes' => ['data-portal-ui' => 'h5p-dashboard-course'],
-        'title' => [
+        '#type' => 'component',
+        '#component' => 'aculta420_v2:lms-h5p-course',
+        '#props' => [],
+        '#slots' => [
+          'title' => [
           '#type' => 'html_tag',
           '#tag' => 'h2',
           '#value' => (string) $entity->label(),
         ],
-        'course_link' => Link::fromTextAndUrl(
+          'course_link' => Link::fromTextAndUrl(
           $educator ? $this->translation->translate('Abrir sala do curso') : $this->translation->translate('Acessar curso'),
           $courseUrl,
         )->toRenderable(),
+        ],
       ];
 
       if (!$educator) {
-        $courseBuild['activities'] = $entity->get('field_h5p_activities')->view(['label' => 'hidden']);
+        $courseBuild['#slots']['activities'] = $entity->get('field_h5p_activities')->view(['label' => 'hidden']);
       }
 
       $items[] = $courseBuild;

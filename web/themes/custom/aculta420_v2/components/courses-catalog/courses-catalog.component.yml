@@ -1,0 +1,22 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Catálogo de cursos
+description: Página pública de formação com View de cursos, mantendo acesso, pager e cache no Drupal.
+status: experimental
+group: LMS
+props:
+  type: object
+  additionalProperties: false
+slots:
+  intro:
+    title: Apresentação
+  catalog_title:
+    title: Título do catálogo
+  catalog:
+    title: View do catálogo
+    description: View nativa com verificações de acesso e cache próprias.
+  collaboration:
+    title: Orientação para participação
+assets:
+  css:
+    component:
+      courses-catalog.css: {}

@@ -1,0 +1,25 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Materiais do curso
+description: Lista documentos privados autorizados e as ações de edição do educador.
+status: experimental
+group: LMS
+props:
+  type: object
+  additionalProperties: false
+slots:
+  title:
+    title: Título da seção
+  description:
+    title: Orientação sobre os documentos
+  add:
+    title: Ação de inclusão
+  items:
+    title: Lista de documentos autorizados
+  empty:
+    title: Estado sem documentos
+  unavailable:
+    title: Estado indisponível
+assets:
+  css:
+    component:
+      lms-course-materials.css: {}

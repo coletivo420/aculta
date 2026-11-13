@@ -99,14 +99,16 @@ final class CourseStructureControllerTest extends UnitTestCase {
     $formBuilder->method('getForm')->willReturn(['#type' => 'form']);
     $build = (new CourseStructureController($manager, $this->getStringTranslationStub(), $formBuilder))->structure($course);
 
-    self::assertSame('course-structure', $build['#attributes']['data-aculta-lms']);
+    self::assertSame('component', $build['#type']);
+    self::assertSame('aculta420_v2:lms-course-curriculum', $build['#component']);
     self::assertSame(['aculta_lms/course_structure'], $build['#attached']['library']);
-    self::assertSame('Curso de exemplo', $build['header']['title']['#value']);
-    self::assertSame('Estrutura do curso', (string) $build['lessons_heading']['#value']);
-    self::assertCount(2, $build['lessons']['#items']);
-    self::assertSame('lessons', $build['lessons']['#attributes']['data-aculta-sort-list']);
-    $firstLesson = $build['lessons']['#items'][0];
-    $secondLesson = $build['lessons']['#items'][1];
+    self::assertSame('user', $build['#cache']['contexts'][0]);
+    self::assertSame('Curso de exemplo', $build['#slots']['header']['title']['#value']);
+    self::assertSame('Estrutura do curso', (string) $build['#slots']['lessons_heading']['#value']);
+    self::assertCount(2, $build['#slots']['lessons']['#items']);
+    self::assertSame('lessons', $build['#slots']['lessons']['#attributes']['data-aculta-sort-list']);
+    $firstLesson = $build['#slots']['lessons']['#items'][0];
+    $secondLesson = $build['#slots']['lessons']['#items'][1];
     self::assertSame('11', $firstLesson['#attributes']['data-aculta-sort-item']);
     self::assertTrue($firstLesson['heading']['sort_handle']['#attributes']['data-aculta-sort-handle']);
     self::assertSame('true', $firstLesson['heading']['sort_handle']['#attributes']['aria-hidden']);
@@ -129,7 +131,7 @@ final class CourseStructureControllerTest extends UnitTestCase {
     self::assertSame('aculta_lms.activity_move', $firstLesson['activities']['#items'][0]['actions']['move_down']['#url']->getRouteName());
     self::assertSame('abaixo', $firstLesson['activities']['#items'][0]['actions']['move_down']['#url']->getRouteParameters()['direcao']);
     self::assertSame('aculta_lms.activity_move', $firstLesson['activities']['#items'][1]['actions']['move_up']['#url']->getRouteName());
-    self::assertSame('2 aulas', (string) $build['summary']['lessons']['#plain_text']);
+    self::assertSame('2 aulas', (string) $build['#slots']['summary']['lessons']['#plain_text']);
   }
 
   /**

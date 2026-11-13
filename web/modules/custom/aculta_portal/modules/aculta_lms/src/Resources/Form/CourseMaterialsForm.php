@@ -187,16 +187,19 @@ final class CourseMaterialsForm extends FormBase implements ContainerInjectionIn
    */
   private function buildCourseDocuments(GroupInterface $course): array {
     $build = [
-      '#type' => 'container',
-      '#attributes' => ['data-portal-ui' => 'aculta-lms-course-materials--documents'],
-      'title' => ['#type' => 'html_tag', '#tag' => 'h2', '#value' => $this->t('Documentos PDF privados do curso')],
-      'description' => [
-        '#plain_text' => $this->t('Estes arquivos são privados e usam a relação Group e o visualizador do módulo de documentos.'),
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:lms-course-materials',
+      '#props' => [],
+      '#slots' => [
+        'title' => ['#type' => 'html_tag', '#tag' => 'h2', '#value' => $this->t('Documentos PDF privados do curso')],
+        'description' => [
+          '#plain_text' => $this->t('Estes arquivos são privados e usam a relação Group e o visualizador do módulo de documentos.'),
+        ],
       ],
     ];
     $pluginId = $this->documentAccess->relationPluginId($course);
     if ($pluginId === NULL) {
-      $build['unavailable'] = ['#plain_text' => $this->t('O visualizador de documentos privados não está disponível.')];
+      $build['#slots']['unavailable'] = ['#plain_text' => $this->t('O visualizador de documentos privados não está disponível.')];
       return $build;
     }
 
@@ -207,11 +210,11 @@ final class CourseMaterialsForm extends FormBase implements ContainerInjectionIn
       'max-age' => $createAccess->getCacheMaxAge(),
     ];
     if ($createAccess->isAllowed()) {
-      $build['add'] = Link::fromTextAndUrl(
+      $build['#slots']['add'] = Link::fromTextAndUrl(
         $this->t('Adicionar documento PDF'),
         Url::fromRoute('aculta_lms.course_document_add', ['course' => $course->id()]),
       )->toRenderable();
-      $build['add']['#access'] = $createAccess;
+      $build['#slots']['add']['#access'] = $createAccess;
     }
 
     $items = [];
@@ -226,7 +229,6 @@ final class CourseMaterialsForm extends FormBase implements ContainerInjectionIn
       $viewMetadata = CacheableMetadata::createFromObject($viewAccess);
       $row = [
         '#type' => 'container',
-        '#attributes' => ['data-portal-ui' => 'aculta-lms-course-materials--document'],
         'label' => ['#plain_text' => (string) $document->label()],
       ];
       $updateAccess = $this->documentAccess->updateAccess($course, $document);
@@ -251,14 +253,14 @@ final class CourseMaterialsForm extends FormBase implements ContainerInjectionIn
       $items[] = $row;
     }
     if ($items !== []) {
-      $build['items'] = [
+      $build['#slots']['items'] = [
         '#theme' => 'item_list',
         '#list_type' => 'ul',
         '#items' => $items,
       ];
     }
     elseif (!$createAccess->isAllowed()) {
-      $build['empty'] = ['#plain_text' => $this->t('Não há documentos disponíveis para edição neste curso.')];
+      $build['#slots']['empty'] = ['#plain_text' => $this->t('Não há documentos disponíveis para edição neste curso.')];
     }
     return $build;
   }

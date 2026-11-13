@@ -54,15 +54,19 @@ final class Lmsaculta_H5PDiscussionHooks {
         ->addCacheableDependency($educator)
         ->addCacheableDependency($course)
         ->addCacheableDependency(CacheableMetadata::createFromRenderArray($discussion));
-      if (!$access->isAllowed() || empty($discussion['links']['#items'])) {
+      if (!$access->isAllowed() || empty($discussion['#slots']['content']['#items'])) {
         $cache->applyTo($elements[$delta]);
         continue;
       }
       $wrapped = [
-        '#type' => 'container',
-        '#attributes' => ['data-portal-ui' => 'lms-h5p-activity'],
-        'player' => $elements[$delta],
-        'discussions' => $discussion,
+        '#type' => 'component',
+        '#component' => 'aculta420_v2:layout-section',
+        '#slots' => [
+          'content' => [
+            'player' => $elements[$delta],
+            'discussions' => $discussion,
+          ],
+        ],
       ];
       $cache->applyTo($wrapped);
       $elements[$delta] = $wrapped;

@@ -3,6 +3,8 @@ name: Saúde das respostas
 description: Resumo analítico em lista de definição, sem dados pessoais.
 status: experimental
 group: Estatísticas
+assets:
+  css: {}
 props:
   type: object
   additionalProperties: false

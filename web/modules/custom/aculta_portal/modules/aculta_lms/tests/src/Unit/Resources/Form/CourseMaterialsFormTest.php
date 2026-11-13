@@ -141,11 +141,12 @@ final class CourseMaterialsFormTest extends UnitTestCase {
     $form->setMessenger($this->createMock(MessengerInterface::class));
 
     $build = $form->buildForm([], new FormState());
-    self::assertSame('aculta_lms.course_document_add', $build['course_documents']['add']['#url']->getRouteName());
-    self::assertSame('Guia privado', $build['course_documents']['items']['#items'][0]['label']['#plain_text']);
-    self::assertSame('aculta_lms.course_document_edit', $build['course_documents']['items']['#items'][0]['edit']['#url']->getRouteName());
-    self::assertSame(['course' => '12', 'media' => '55'], $build['course_documents']['items']['#items'][0]['edit']['#url']->getRouteParameters());
-    self::assertArrayNotHasKey('edit', $build['course_documents']['items']['#items'][1]);
+    self::assertSame('aculta420_v2:lms-course-materials', $build['course_documents']['#component']);
+    self::assertSame('aculta_lms.course_document_add', $build['course_documents']['#slots']['add']['#url']->getRouteName());
+    self::assertSame('Guia privado', $build['course_documents']['#slots']['items']['#items'][0]['label']['#plain_text']);
+    self::assertSame('aculta_lms.course_document_edit', $build['course_documents']['#slots']['items']['#items'][0]['edit']['#url']->getRouteName());
+    self::assertSame(['course' => '12', 'media' => '55'], $build['course_documents']['#slots']['items']['#items'][0]['edit']['#url']->getRouteParameters());
+    self::assertArrayNotHasKey('edit', $build['course_documents']['#slots']['items']['#items'][1]);
     self::assertFalse($build['actions']['submit']['#disabled']);
   }
 

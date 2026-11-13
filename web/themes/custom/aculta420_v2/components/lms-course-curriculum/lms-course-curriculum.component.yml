@@ -1,0 +1,30 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Currículo do curso
+description: Página de organização do currículo de um curso, com listas e ações renderizadas pelo módulo LMS.
+status: experimental
+group: LMS
+props:
+  type: object
+  additionalProperties: false
+slots:
+  header:
+    title: Cabeçalho do curso
+    description: Link de retorno, título e instrução do currículo.
+  summary:
+    title: Resumo
+    description: Totais de aulas, atividades e aulas publicadas.
+  actions:
+    title: Ações do curso
+    description: Ações autorizadas para o educador.
+  lessons_heading:
+    title: Título da lista de aulas
+  lessons:
+    title: Aulas e atividades
+    description: Lista ordenável com formulários e ações autorizadas do LMS.
+  lesson_order_form:
+    title: Formulário de ordenação
+    description: Formulário nativo de ordenação fornecido pelo módulo LMS.
+assets:
+  css:
+    component:
+      lms-course-curriculum.css: {}

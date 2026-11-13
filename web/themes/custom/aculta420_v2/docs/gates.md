@@ -13,7 +13,7 @@ Os caminhos são relativos à raiz do repositório. Gates "Drush" rodam com `php
 | `validate-browser-validators.php` | `php scripts/validate-browser-validators.php` | validadores de navegador | mudança em JavaScript ou em formulários |
 | `validate-aculta420-v2-foundations.php` | `php scripts/validate-aculta420-v2-foundations.php` | tokens e pares de contraste da V2 em claro/escuro, incluindo texto do cabeçalho `surface-panel` (mínimo 4,5:1), foco e bordas (mínimo 3:1) | mudança em tokens ou cores |
 | Stylelint do CSS V2 | `npm run lint:css` | convenções CSS Drupal e exceções compatíveis com os recursos usados pelo tema | toda mudança de CSS |
-| `validate-aculta420-v2-sdc.php` | `php vendor/drush/drush/drush.php php:script scripts/validate-aculta420-v2-sdc.php` | descoberta, assets e renderização isolada dos componentes V2; usa descoberta com backend nulo para incluir SDCs novos sem limpar cache persistente | toda mudança em componente |
+| `validate-aculta420-v2-sdc.php` | `php vendor/drush/drush.php php:script scripts/validate-aculta420-v2-sdc.php` | descoberta, schema estrito, assets e renderização isolada dos componentes V2, incluindo catálogo, currículo, materiais, dashboard H5P e página de aula LMS; usa descoberta com backend nulo para incluir SDCs novos sem limpar cache persistente | toda mudança em componente |
 | Configurações de superfície | `php vendor/drush/drush/drush.php config:status` e verificação da disponibilidade de `ThemeSettingsProvider` | consistência do Config Sync e serviço usado por `SurfaceSettingsHooks` | alteração das opções administrativas do tema |
 | `validate-aculta420-mapped-classes.php` | `php scripts/validate-aculta420-mapped-classes.php` | toda classe de `PortalUiHooks::TOKENS` tem CSS ou exceção em `docs/classes-sem-css-excecoes.md`; nomes Bootstrap proibidos no mapa | mudança no mapa de tokens ou nos estilos |
 | `validate-aculta420-theme-settings.php` | `php scripts/validate-aculta420-theme-settings.php` | painel antigo ausente; superfícies e UI Styles presentes; paleta de purpose/schema removidos; plugin UI Skins declarado | mudança em `theme-settings.php`, schema ou CSS variables |
@@ -22,6 +22,11 @@ Os caminhos são relativos à raiz do repositório. Gates "Drush" rodam com `php
 | `css:verify` | `npm run css:verify` | integridade do CSS: arquivos de biblioteca existem, nenhuma referência a CSS inexistente, nenhum CSS gerado anexado, sem dependência V1/Bootstrap, CSS dos SDCs descobrível, safelist sem padrão `^aculta-` e nenhuma classe dinâmica removida pelo PurgeCSS | toda mudança de CSS, SDC ou biblioteca. Rodar `npm run css:audit` antes para gerar o relatório comparável |
 | `validate-aculta420-layout-builder-batch.php` | `php scripts/validate-aculta420-layout-builder-batch.php` (delega ao Drush) | 22 displays habilitados, `allow_custom` conforme contrato, ComponentLayout UI Patterns ligado ao SDC, props/slots esperados, config ativa igual ao Sync, saída via Layout Builder ou adapter SDC Wiki e acesso às rotas de defaults | mudança de `layout_builder` em displays ou no lote |
 | `validate-ui-patterns-views-cutover.php` | `php scripts/validate-ui-patterns-views-cutover.php` | Row/style/display ligados aos SDCs, sources dos fields e partes do display, pager, filtros, ordenação e acesso nativos preservados | mudança no piloto UI Patterns Views |
+
+Última execução do gate `validate-aculta420-v2-sdc.php`: PASS, 48 componentes
+descobertos e renderizados isoladamente em 2026-11-12; inclui
+`courses-catalog`, `lms-course-curriculum`, `lms-course-materials`,
+`lms-h5p-course`, `lms-lesson-page` e `layout-section`.
 | `validate-aculta420-layouts.php` | `php scripts/validate-aculta420-layouts.php` (delega ao Drush) | descoberta dos layouts SDC pelo `ui_patterns_layouts` (mesmo registro do Layout Builder), categoria/regiões e renderização real de cada layout | criação ou alteração de layout SDC |
 | `validate-aculta420-shell-regions.php` | `php scripts/validate-aculta420-shell-regions.php` (use `--strict` antes do cutover) | cinco regiões finais no `info.yml`, ausência de bloco órfão, composição do shell v2 com ponte para as regiões antigas, opt-in `classic`/`v2` e ausência de comparação de hostname; `--strict` falha enquanto houver bloco em região antiga | mudança no shell, em `info.yml` ou na configuração de regiões |
 | `validate-aculta420-foundation.php` | `ACULTA_DRUSH_ROOT=$PWD php scripts/validate-aculta420-foundation.php` (ou via `php:script` do Drush) | fundação da V2: tema público e base-less, sem Bootstrap no Composer e no Runtime, blocos `aculta420_v2_*`, branding nos assets do V2, tokens `--color-*`, Twig, SDCs e cores e durações fora de `tokens.css` | toda mudança em tema, Config Sync ou Composer. Última execução: 410 checks PASS (2026-11-07), com Runtime sem a V1 |
@@ -276,6 +281,17 @@ as variantes de superfície das seções. Executar também
 alterações indevidas nos 22 displays, não aplicar o novo tom em massa.
 
 ## Execução Recente — auditoria, PurgeCSS e limpeza de CSS (2026-11-12)
+
+### Continuação: migração SDC-first do LMS (2026-11-12; lote de discussões)
+
+- Currículo, materiais do curso, catálogo, cartão H5P e prévia da aula agora são compostos por SDCs; a moderação de fórum usa `layout-section`. A folha de ordenação do currículo saiu do módulo e está no SDC `lms-course-curriculum`.
+- Estatísticas duplicadas foram removidas; painéis e materiais H5P usam os SDCs de superfície/layout. O mapa global perdeu seletores redundantes do catálogo, currículo, prévia, H5P e moderação de fórum.
+- `validate-aculta420-v2-sdc.php`: PASS (48 componentes); `lint:css`: PASS; `css:verify`: PASS (107 arquivos, 32 folhas declaradas em bibliotecas, 86 SDCs com CSS e 222 classes dinâmicas preservadas); classes mapeadas: PASS (453); `git diff --check`: PASS.
+- A auditoria atual aponta 452.946 bytes/2.492 regras/3.081 seletores; PurgeCSS sinaliza 44.664 bytes/260 seletores como removíveis em modo audit. Não aplicado automaticamente: classes Drupal dinâmicas ainda exigem prova por consumer.
+- Teste kernel de roster: **DEFERRED**, `SIMPLETEST_DB` não configurado. Browser autenticado/Runtime e validação visual destas rotas: **DEFERRED**.
+- Discussões de atividade LMS e H5P e o wrapper do player H5P agora usam `layout-section`; removidos os tokens e três regras globais de atividade/painel H5P. O contrato unitário LMS passou (3 testes, 41 asserções); o kernel H5P segue **DEFERRED** por ausência de `SIMPLETEST_DB`.
+- Estados de publicação movidos para classes locais de `lms-course-curriculum`; removidas regras globais `.is-draft`/`.is-published`.
+- Próximos cortes: continuar a classificação dos candidatos PurgeCSS com evidência de runtime e consumer. Teste visual autenticado segue **DEFERRED**.
 
 - `npm run css:audit`: inventário reproduzível em `reports/css-audit/inventory/` e relatório do PurgeCSS em `reports/css-audit/audit/` (gerados, fora do Git). 106 arquivos-fonte, 451.112 bytes, 2.720 seletores de topo e 222 classes dinâmicas preservadas (86 componentes). PurgeCSS: 406.448 bytes e 2.482 seletores retidos; 44.664 bytes e 260 seletores removíveis. Os 238 rejeitados informativos podem incluir seletores mantidos por safelist.
 - `npm run css:classify`: classificação dos 252 seletores removíveis com HTML do Runtime de dez hosts — 7 dinâmicos, 69 presentes no Runtime, 125 por padrão de runtime, 31 com referência no repositório e 20 sem evidência (todos do SDC `studio-connections-page`, mantido no catálogo). O Runtime é fonte complementar, não prova de obsolescência.

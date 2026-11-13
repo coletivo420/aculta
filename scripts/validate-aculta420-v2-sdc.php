@@ -74,6 +74,7 @@ $component_ids = [
   'button',
   'cart-offcanvas',
   'card-cultural',
+  'courses-catalog',
   'discussion-comment',
   'dialog',
   'data-table',
@@ -86,7 +87,11 @@ $component_ids = [
   'heading',
   'hero-banner',
   'icon',
+  'layout-section',
   'layout-page',
+  'lms-course-curriculum',
+  'lms-course-materials',
+  'lms-h5p-course',
   'lms-lesson-page',
   'lms-tour',
   'map-popup',
@@ -186,6 +191,15 @@ $samples = [
     ],
     '#slots' => ['image' => '', 'actions' => ''],
   ],
+  'courses-catalog' => [
+    '#props' => [],
+    '#slots' => [
+      'intro' => Markup::create('<p>Formação para ampliar conhecimento e fortalecer direitos.</p>'),
+      'catalog_title' => Markup::create('<h2>Cursos disponíveis</h2>'),
+      'catalog' => Markup::create('<ul><li>Curso de exemplo</li></ul>'),
+      'collaboration' => Markup::create('<p>Acesse sua conta para participar.</p>'),
+    ],
+  ],
   'discussion-comment' => [
     '#props' => ['has_author' => TRUE, 'has_submitted' => TRUE],
     '#slots' => [
@@ -279,10 +293,47 @@ $samples = [
       'aside' => '<p>Conteúdo complementar.</p>',
     ],
   ],
+  'layout-section' => [
+    '#props' => [],
+    '#slots' => [
+      'header' => Markup::create('<h2>Participantes</h2>'),
+      'content' => Markup::create('<div>Cartões de participantes.</div>'),
+    ],
+  ],
   'lms-lesson-page' => [
     '#props' => [],
     '#slots' => [
-      'content' => '<div data-portal-ui="aculta-learning-room__lesson"><h1>Aula</h1><p>Conteúdo.</p></div>',
+      'content' => '<div data-aculta-lms="course-preview" data-portal-ui="aculta-course-lesson-preview"><h1>Aula</h1><p>Conteúdo.</p></div>',
+    ],
+  ],
+  'lms-course-curriculum' => [
+    '#props' => [],
+    '#slots' => [
+      'header' => Markup::create('<h1>Curso de exemplo</h1>'),
+      'summary' => Markup::create('<p>1 aula</p>'),
+      'actions' => Markup::create('<a href="/curso/aula/adicionar">Adicionar aula</a>'),
+      'lessons_heading' => Markup::create('Estrutura do curso'),
+      'lessons' => Markup::create('<ol><li>Aula de exemplo</li></ol>'),
+      'lesson_order_form' => '',
+    ],
+  ],
+  'lms-course-materials' => [
+    '#props' => [],
+    '#slots' => [
+      'title' => Markup::create('<h2>Documentos privados do curso</h2>'),
+      'description' => Markup::create('<p>Arquivos vinculados ao curso.</p>'),
+      'add' => Markup::create('<a href="/curso/documentos/adicionar">Adicionar documento</a>'),
+      'items' => Markup::create('<ul><li>Material de estudo.pdf</li></ul>'),
+      'empty' => '',
+      'unavailable' => '',
+    ],
+  ],
+  'lms-h5p-course' => [
+    '#props' => [],
+    '#slots' => [
+      'title' => Markup::create('<h2>Curso de exemplo</h2>'),
+      'course_link' => Markup::create('<a href="/ganjalab/curso">Acessar curso</a>'),
+      'activities' => Markup::create('<div>Atividade H5P</div>'),
     ],
   ],
   'map-popup' => [

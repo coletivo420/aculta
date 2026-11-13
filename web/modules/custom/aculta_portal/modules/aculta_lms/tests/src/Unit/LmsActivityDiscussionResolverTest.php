@@ -100,9 +100,10 @@ final class LmsActivityDiscussionResolverTest extends UnitTestCase {
 
     $build = $resolver->build($activity, $course, $account);
 
-    self::assertSame('lms-activity-discussions', $build['#attributes']['data-portal-ui']);
-    self::assertCount(1, $build['links']['#items']);
-    self::assertSame('Perguntas da atividade', $build['links']['#items'][0]['#title']);
+    self::assertSame('component', $build['#type']);
+    self::assertSame('aculta420_v2:layout-section', $build['#component']);
+    self::assertCount(1, $build['#slots']['content']['#items']);
+    self::assertSame('Perguntas da atividade', $build['#slots']['content']['#items'][0]['#title']);
     self::assertContains('user.group_permissions', $build['#cache']['contexts']);
     self::assertContains('group_relationship_list:plugin:group_node:aculta_lms_topic', $build['#cache']['tags']);
   }
@@ -196,8 +197,8 @@ final class LmsActivityDiscussionResolverTest extends UnitTestCase {
 
     $build = $resolver->build($activity, $course, $account);
 
-    self::assertCount(1, $build['links']['#items']);
-    self::assertSame('Perguntas da turma', $build['links']['#items'][0]['#title']);
+    self::assertCount(1, $build['#slots']['content']['#items']);
+    self::assertSame('Perguntas da turma', $build['#slots']['content']['#items'][0]['#title']);
     self::assertContains('group_relationship_list:plugin:lms_classes:entity:7', $build['#cache']['tags']);
   }
 

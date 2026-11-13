@@ -1,0 +1,19 @@
+name: Currículo do curso
+description: Currículo com aulas, atividades e controles de reordenação do educador.
+component: aculta420_v2:lms-course-curriculum
+slots:
+  header:
+    type: inline_template
+    template: '<a href="/ganjalab">Meus cursos</a><h1>Curso de demonstração</h1><p>Organize as aulas e atividades do curso.</p>'
+  summary:
+    type: inline_template
+    template: '<span>2 aulas</span><span>3 atividades</span><span>1 aula publicada</span>'
+  actions:
+    type: inline_template
+    template: '<a href="/ganjalab/curso/aula/adicionar">Adicionar aula</a>'
+  lessons_heading:
+    type: inline_template
+    template: 'Estrutura do curso'
+  lessons:
+    type: inline_template
+    template: '<ol class="aculta-lms-course-builder__lessons"><li><article class="aculta-lms-course-builder__lesson"><h3>Introdução</h3><p>Publicada</p><a href="/ganjalab/atividade">Editar atividade</a></article></li></ol>'

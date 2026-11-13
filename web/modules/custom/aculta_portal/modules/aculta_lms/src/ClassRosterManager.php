@@ -101,14 +101,13 @@ class ClassRosterManager {
     }
 
     $build = $classLists === [] ? [] : [
-      '#type' => 'container',
-      '#attributes' => ['data-portal-ui' => 'lms-class-roster'],
-      'title' => [
-        '#type' => 'html_tag',
-        '#tag' => 'h2',
-        '#value' => $this->t('Participantes'),
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:layout-section',
+      '#props' => [],
+      '#slots' => [
+        'header' => ['#type' => 'html_tag', '#tag' => 'h2', '#value' => $this->t('Participantes')],
+        'content' => $classLists,
       ],
-      'classes' => $classLists,
     ];
     $cacheability->applyTo($build);
     return $build;

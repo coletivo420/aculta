@@ -1,0 +1,16 @@
+name: Materiais privados do curso
+description: Documentos PDF privados com ações que dependem do acesso do educador.
+component: aculta420_v2:lms-course-materials
+slots:
+  title:
+    type: inline_template
+    template: '<h2>Documentos PDF privados do curso</h2>'
+  description:
+    type: inline_template
+    template: '<p>Estes arquivos usam a relação do curso e o visualizador privado.</p>'
+  add:
+    type: inline_template
+    template: '<a href="/curso/documentos/adicionar">Adicionar documento PDF</a>'
+  items:
+    type: inline_template
+    template: '<ul><li>Material de estudo.pdf <a href="/curso/documentos/editar">Editar documento</a></li></ul>'

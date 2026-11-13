@@ -1,12 +1,12 @@
 {
   "method": "Playwright Firefox headless",
   "engine": "firefox",
-  "commit": "ca4246fb6a06e5d32eb138dd1414e6d4e8461ee6",
+  "commit": "08a43975de63400d169b0415bc7e158cdb3fda20",
   "origin": "https://aculta.toca.net.br/",
-  "generated_at": "2026-11-11T15:21:35.938Z",
+  "generated_at": "2026-11-12T21:12:27.518Z",
   "total": 774,
-  "passed": 774,
-  "failed": 0,
+  "passed": 683,
+  "failed": 91,
   "results": [
     {
       "name": "home 320px light",
@@ -17,8 +17,8 @@
     {
       "name": "home 320px light",
       "check": "canvas",
-      "passed": true,
-      "detail": "{\"r\":242,\"g\":247,\"b\":240,\"a\":1}"
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
     },
     {
       "name": "home 320px light",
@@ -77,8 +77,8 @@
     {
       "name": "home 390px light",
       "check": "canvas",
-      "passed": true,
-      "detail": "{\"r\":242,\"g\":247,\"b\":240,\"a\":1}"
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
     },
     {
       "name": "home 390px light",
@@ -137,8 +137,8 @@
     {
       "name": "home 768px light",
       "check": "canvas",
-      "passed": true,
-      "detail": "{\"r\":242,\"g\":247,\"b\":240,\"a\":1}"
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
     },
     {
       "name": "home 768px light",
@@ -197,8 +197,8 @@
     {
       "name": "home 959px light",
       "check": "canvas",
-      "passed": true,
-      "detail": "{\"r\":242,\"g\":247,\"b\":240,\"a\":1}"
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
     },
     {
       "name": "home 959px light",
@@ -257,8 +257,8 @@
     {
       "name": "home 960px light",
       "check": "canvas",
-      "passed": true,
-      "detail": "{\"r\":242,\"g\":247,\"b\":240,\"a\":1}"
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
     },
     {
       "name": "home 960px light",
@@ -317,8 +317,8 @@
     {
       "name": "home 1024px light",
       "check": "canvas",
-      "passed": true,
-      "detail": "{\"r\":242,\"g\":247,\"b\":240,\"a\":1}"
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
     },
     {
       "name": "home 1024px light",
@@ -377,8 +377,8 @@
     {
       "name": "home 1440px light",
       "check": "canvas",
-      "passed": true,
-      "detail": "{\"r\":242,\"g\":247,\"b\":240,\"a\":1}"
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
     },
     {
       "name": "home 1440px light",
@@ -437,8 +437,8 @@
     {
       "name": "forum 320px light",
       "check": "canvas",
-      "passed": true,
-      "detail": "{\"r\":242,\"g\":247,\"b\":240,\"a\":1}"
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
     },
     {
       "name": "forum 320px light",
@@ -497,8 +497,8 @@
     {
       "name": "forum 390px light",
       "check": "canvas",
-      "passed": true,
-      "detail": "{\"r\":242,\"g\":247,\"b\":240,\"a\":1}"
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
     },
     {
       "name": "forum 390px light",
@@ -557,8 +557,8 @@
     {
       "name": "forum 768px light",
       "check": "canvas",
-      "passed": true,
-      "detail": "{\"r\":242,\"g\":247,\"b\":240,\"a\":1}"
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
     },
     {
       "name": "forum 768px light",
@@ -617,8 +617,8 @@
     {
       "name": "forum 959px light",
       "check": "canvas",
-      "passed": true,
-      "detail": "{\"r\":242,\"g\":247,\"b\":240,\"a\":1}"
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
     },
     {
       "name": "forum 959px light",
@@ -677,8 +677,8 @@
     {
       "name": "forum 960px light",
       "check": "canvas",
-      "passed": true,
-      "detail": "{\"r\":242,\"g\":247,\"b\":240,\"a\":1}"
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
     },
     {
       "name": "forum 960px light",
@@ -737,8 +737,8 @@
     {
       "name": "forum 1024px light",
       "check": "canvas",
-      "passed": true,
-      "detail": "{\"r\":242,\"g\":247,\"b\":240,\"a\":1}"
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
     },
     {
       "name": "forum 1024px light",
@@ -797,8 +797,8 @@
     {
       "name": "forum 1440px light",
       "check": "canvas",
-      "passed": true,
-      "detail": "{\"r\":242,\"g\":247,\"b\":240,\"a\":1}"
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
     },
     {
       "name": "forum 1440px light",
@@ -857,8 +857,8 @@
     {
       "name": "links 320px light",
       "check": "canvas",
-      "passed": true,
-      "detail": "{\"r\":242,\"g\":247,\"b\":240,\"a\":1}"
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
     },
     {
       "name": "links 320px light",
@@ -917,8 +917,8 @@
     {
       "name": "links 390px light",
       "check": "canvas",
-      "passed": true,
-      "detail": "{\"r\":242,\"g\":247,\"b\":240,\"a\":1}"
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
     },
     {
       "name": "links 390px light",
@@ -977,8 +977,8 @@
     {
       "name": "links 768px light",
       "check": "canvas",
-      "passed": true,
-      "detail": "{\"r\":242,\"g\":247,\"b\":240,\"a\":1}"
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
     },
     {
       "name": "links 768px light",
@@ -1037,8 +1037,8 @@
     {
       "name": "links 959px light",
       "check": "canvas",
-      "passed": true,
-      "detail": "{\"r\":242,\"g\":247,\"b\":240,\"a\":1}"
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
     },
     {
       "name": "links 959px light",
@@ -1097,8 +1097,8 @@
     {
       "name": "links 960px light",
       "check": "canvas",
-      "passed": true,
-      "detail": "{\"r\":242,\"g\":247,\"b\":240,\"a\":1}"
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
     },
     {
       "name": "links 960px light",
@@ -1157,8 +1157,8 @@
     {
       "name": "links 1024px light",
       "check": "canvas",
-      "passed": true,
-      "detail": "{\"r\":242,\"g\":247,\"b\":240,\"a\":1}"
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
     },
     {
       "name": "links 1024px light",
@@ -1217,8 +1217,8 @@
     {
       "name": "links 1440px light",
       "check": "canvas",
-      "passed": true,
-      "detail": "{\"r\":242,\"g\":247,\"b\":240,\"a\":1}"
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
     },
     {
       "name": "links 1440px light",
@@ -1277,8 +1277,8 @@
     {
       "name": "wiki 320px light",
       "check": "canvas",
-      "passed": true,
-      "detail": "{\"r\":242,\"g\":247,\"b\":240,\"a\":1}"
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
     },
     {
       "name": "wiki 320px light",
@@ -1337,8 +1337,8 @@
     {
       "name": "wiki 390px light",
       "check": "canvas",
-      "passed": true,
-      "detail": "{\"r\":242,\"g\":247,\"b\":240,\"a\":1}"
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
     },
     {
       "name": "wiki 390px light",
@@ -1397,8 +1397,8 @@
     {
       "name": "wiki 768px light",
       "check": "canvas",
-      "passed": true,
-      "detail": "{\"r\":242,\"g\":247,\"b\":240,\"a\":1}"
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
     },
     {
       "name": "wiki 768px light",
@@ -1457,8 +1457,8 @@
     {
       "name": "wiki 959px light",
       "check": "canvas",
-      "passed": true,
-      "detail": "{\"r\":242,\"g\":247,\"b\":240,\"a\":1}"
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
     },
     {
       "name": "wiki 959px light",
@@ -1517,8 +1517,8 @@
     {
       "name": "wiki 960px light",
       "check": "canvas",
-      "passed": true,
-      "detail": "{\"r\":242,\"g\":247,\"b\":240,\"a\":1}"
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
     },
     {
       "name": "wiki 960px light",
@@ -1577,8 +1577,8 @@
     {
       "name": "wiki 1024px light",
       "check": "canvas",
-      "passed": true,
-      "detail": "{\"r\":242,\"g\":247,\"b\":240,\"a\":1}"
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
     },
     {
       "name": "wiki 1024px light",
@@ -1637,8 +1637,8 @@
     {
       "name": "wiki 1440px light",
       "check": "canvas",
-      "passed": true,
-      "detail": "{\"r\":242,\"g\":247,\"b\":240,\"a\":1}"
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
     },
     {
       "name": "wiki 1440px light",
@@ -1697,8 +1697,8 @@
     {
       "name": "revista 320px light",
       "check": "canvas",
-      "passed": true,
-      "detail": "{\"r\":242,\"g\":247,\"b\":240,\"a\":1}"
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
     },
     {
       "name": "revista 320px light",
@@ -1757,8 +1757,8 @@
     {
       "name": "revista 390px light",
       "check": "canvas",
-      "passed": true,
-      "detail": "{\"r\":242,\"g\":247,\"b\":240,\"a\":1}"
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
     },
     {
       "name": "revista 390px light",
@@ -1817,8 +1817,8 @@
     {
       "name": "revista 768px light",
       "check": "canvas",
-      "passed": true,
-      "detail": "{\"r\":242,\"g\":247,\"b\":240,\"a\":1}"
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
     },
     {
       "name": "revista 768px light",
@@ -1877,8 +1877,8 @@
     {
       "name": "revista 959px light",
       "check": "canvas",
-      "passed": true,
-      "detail": "{\"r\":242,\"g\":247,\"b\":240,\"a\":1}"
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
     },
     {
       "name": "revista 959px light",
@@ -1937,8 +1937,8 @@
     {
       "name": "revista 960px light",
       "check": "canvas",
-      "passed": true,
-      "detail": "{\"r\":242,\"g\":247,\"b\":240,\"a\":1}"
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
     },
     {
       "name": "revista 960px light",
@@ -1997,8 +1997,8 @@
     {
       "name": "revista 1024px light",
       "check": "canvas",
-      "passed": true,
-      "detail": "{\"r\":242,\"g\":247,\"b\":240,\"a\":1}"
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
     },
     {
       "name": "revista 1024px light",
@@ -2057,8 +2057,8 @@
     {
       "name": "revista 1440px light",
       "check": "canvas",
-      "passed": true,
-      "detail": "{\"r\":242,\"g\":247,\"b\":240,\"a\":1}"
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
     },
     {
       "name": "revista 1440px light",
@@ -2117,8 +2117,8 @@
     {
       "name": "eventos 320px light",
       "check": "canvas",
-      "passed": true,
-      "detail": "{\"r\":242,\"g\":247,\"b\":240,\"a\":1}"
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
     },
     {
       "name": "eventos 320px light",
@@ -2177,8 +2177,8 @@
     {
       "name": "eventos 390px light",
       "check": "canvas",
-      "passed": true,
-      "detail": "{\"r\":242,\"g\":247,\"b\":240,\"a\":1}"
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
     },
     {
       "name": "eventos 390px light",
@@ -2237,8 +2237,8 @@
     {
       "name": "eventos 768px light",
       "check": "canvas",
-      "passed": true,
-      "detail": "{\"r\":242,\"g\":247,\"b\":240,\"a\":1}"
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
     },
     {
       "name": "eventos 768px light",
@@ -2297,8 +2297,8 @@
     {
       "name": "eventos 959px light",
       "check": "canvas",
-      "passed": true,
-      "detail": "{\"r\":242,\"g\":247,\"b\":240,\"a\":1}"
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
     },
     {
       "name": "eventos 959px light",
@@ -2357,8 +2357,8 @@
     {
       "name": "eventos 960px light",
       "check": "canvas",
-      "passed": true,
-      "detail": "{\"r\":242,\"g\":247,\"b\":240,\"a\":1}"
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
     },
     {
       "name": "eventos 960px light",
@@ -2417,8 +2417,8 @@
     {
       "name": "eventos 1024px light",
       "check": "canvas",
-      "passed": true,
-      "detail": "{\"r\":242,\"g\":247,\"b\":240,\"a\":1}"
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
     },
     {
       "name": "eventos 1024px light",
@@ -2477,8 +2477,8 @@
     {
       "name": "eventos 1440px light",
       "check": "canvas",
-      "passed": true,
-      "detail": "{\"r\":242,\"g\":247,\"b\":240,\"a\":1}"
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
     },
     {
       "name": "eventos 1440px light",
@@ -2537,8 +2537,8 @@
     {
       "name": "loja 320px light",
       "check": "canvas",
-      "passed": true,
-      "detail": "{\"r\":242,\"g\":247,\"b\":240,\"a\":1}"
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
     },
     {
       "name": "loja 320px light",
@@ -2597,8 +2597,8 @@
     {
       "name": "loja 390px light",
       "check": "canvas",
-      "passed": true,
-      "detail": "{\"r\":242,\"g\":247,\"b\":240,\"a\":1}"
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
     },
     {
       "name": "loja 390px light",
@@ -2657,8 +2657,8 @@
     {
       "name": "loja 768px light",
       "check": "canvas",
-      "passed": true,
-      "detail": "{\"r\":242,\"g\":247,\"b\":240,\"a\":1}"
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
     },
     {
       "name": "loja 768px light",
@@ -2717,8 +2717,8 @@
     {
       "name": "loja 959px light",
       "check": "canvas",
-      "passed": true,
-      "detail": "{\"r\":242,\"g\":247,\"b\":240,\"a\":1}"
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
     },
     {
       "name": "loja 959px light",
@@ -2777,8 +2777,8 @@
     {
       "name": "loja 960px light",
       "check": "canvas",
-      "passed": true,
-      "detail": "{\"r\":242,\"g\":247,\"b\":240,\"a\":1}"
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
     },
     {
       "name": "loja 960px light",
@@ -2837,8 +2837,8 @@
     {
       "name": "loja 1024px light",
       "check": "canvas",
-      "passed": true,
-      "detail": "{\"r\":242,\"g\":247,\"b\":240,\"a\":1}"
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
     },
     {
       "name": "loja 1024px light",
@@ -2897,8 +2897,8 @@
     {
       "name": "loja 1440px light",
       "check": "canvas",
-      "passed": true,
-      "detail": "{\"r\":242,\"g\":247,\"b\":240,\"a\":1}"
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
     },
     {
       "name": "loja 1440px light",
@@ -2957,8 +2957,8 @@
     {
       "name": "apoio 320px light",
       "check": "canvas",
-      "passed": true,
-      "detail": "{\"r\":242,\"g\":247,\"b\":240,\"a\":1}"
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
     },
     {
       "name": "apoio 320px light",
@@ -3017,8 +3017,8 @@
     {
       "name": "apoio 390px light",
       "check": "canvas",
-      "passed": true,
-      "detail": "{\"r\":242,\"g\":247,\"b\":240,\"a\":1}"
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
     },
     {
       "name": "apoio 390px light",
@@ -3077,8 +3077,8 @@
     {
       "name": "apoio 768px light",
       "check": "canvas",
-      "passed": true,
-      "detail": "{\"r\":242,\"g\":247,\"b\":240,\"a\":1}"
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
     },
     {
       "name": "apoio 768px light",
@@ -3137,8 +3137,8 @@
     {
       "name": "apoio 959px light",
       "check": "canvas",
-      "passed": true,
-      "detail": "{\"r\":242,\"g\":247,\"b\":240,\"a\":1}"
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
     },
     {
       "name": "apoio 959px light",
@@ -3197,8 +3197,8 @@
     {
       "name": "apoio 960px light",
       "check": "canvas",
-      "passed": true,
-      "detail": "{\"r\":242,\"g\":247,\"b\":240,\"a\":1}"
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
     },
     {
       "name": "apoio 960px light",
@@ -3257,8 +3257,8 @@
     {
       "name": "apoio 1024px light",
       "check": "canvas",
-      "passed": true,
-      "detail": "{\"r\":242,\"g\":247,\"b\":240,\"a\":1}"
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
     },
     {
       "name": "apoio 1024px light",
@@ -3317,8 +3317,8 @@
     {
       "name": "apoio 1440px light",
       "check": "canvas",
-      "passed": true,
-      "detail": "{\"r\":242,\"g\":247,\"b\":240,\"a\":1}"
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
     },
     {
       "name": "apoio 1440px light",
@@ -3377,8 +3377,8 @@
     {
       "name": "cursos 320px light",
       "check": "canvas",
-      "passed": true,
-      "detail": "{\"r\":242,\"g\":247,\"b\":240,\"a\":1}"
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
     },
     {
       "name": "cursos 320px light",
@@ -3437,8 +3437,8 @@
     {
       "name": "cursos 390px light",
       "check": "canvas",
-      "passed": true,
-      "detail": "{\"r\":242,\"g\":247,\"b\":240,\"a\":1}"
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
     },
     {
       "name": "cursos 390px light",
@@ -3497,8 +3497,8 @@
     {
       "name": "cursos 768px light",
       "check": "canvas",
-      "passed": true,
-      "detail": "{\"r\":242,\"g\":247,\"b\":240,\"a\":1}"
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
     },
     {
       "name": "cursos 768px light",
@@ -3557,8 +3557,8 @@
     {
       "name": "cursos 959px light",
       "check": "canvas",
-      "passed": true,
-      "detail": "{\"r\":242,\"g\":247,\"b\":240,\"a\":1}"
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
     },
     {
       "name": "cursos 959px light",
@@ -3617,8 +3617,8 @@
     {
       "name": "cursos 960px light",
       "check": "canvas",
-      "passed": true,
-      "detail": "{\"r\":242,\"g\":247,\"b\":240,\"a\":1}"
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
     },
     {
       "name": "cursos 960px light",
@@ -3677,8 +3677,8 @@
     {
       "name": "cursos 1024px light",
       "check": "canvas",
-      "passed": true,
-      "detail": "{\"r\":242,\"g\":247,\"b\":240,\"a\":1}"
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
     },
     {
       "name": "cursos 1024px light",
@@ -3737,8 +3737,8 @@
     {
       "name": "cursos 1440px light",
       "check": "canvas",
-      "passed": true,
-      "detail": "{\"r\":242,\"g\":247,\"b\":240,\"a\":1}"
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
     },
     {
       "name": "cursos 1440px light",
@@ -3797,8 +3797,8 @@
     {
       "name": "conta 320px light",
       "check": "canvas",
-      "passed": true,
-      "detail": "{\"r\":242,\"g\":247,\"b\":240,\"a\":1}"
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
     },
     {
       "name": "conta 320px light",
@@ -3857,8 +3857,8 @@
     {
       "name": "conta 390px light",
       "check": "canvas",
-      "passed": true,
-      "detail": "{\"r\":242,\"g\":247,\"b\":240,\"a\":1}"
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
     },
     {
       "name": "conta 390px light",
@@ -3917,8 +3917,8 @@
     {
       "name": "conta 768px light",
       "check": "canvas",
-      "passed": true,
-      "detail": "{\"r\":242,\"g\":247,\"b\":240,\"a\":1}"
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
     },
     {
       "name": "conta 768px light",
@@ -3977,8 +3977,8 @@
     {
       "name": "conta 959px light",
       "check": "canvas",
-      "passed": true,
-      "detail": "{\"r\":242,\"g\":247,\"b\":240,\"a\":1}"
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
     },
     {
       "name": "conta 959px light",
@@ -4037,8 +4037,8 @@
     {
       "name": "conta 960px light",
       "check": "canvas",
-      "passed": true,
-      "detail": "{\"r\":242,\"g\":247,\"b\":240,\"a\":1}"
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
     },
     {
       "name": "conta 960px light",
@@ -4097,8 +4097,8 @@
     {
       "name": "conta 1024px light",
       "check": "canvas",
-      "passed": true,
-      "detail": "{\"r\":242,\"g\":247,\"b\":240,\"a\":1}"
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
     },
     {
       "name": "conta 1024px light",
@@ -4157,8 +4157,8 @@
     {
       "name": "conta 1440px light",
       "check": "canvas",
-      "passed": true,
-      "detail": "{\"r\":242,\"g\":247,\"b\":240,\"a\":1}"
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
     },
     {
       "name": "conta 1440px light",
@@ -4217,8 +4217,8 @@
     {
       "name": "conta-auth 320px light",
       "check": "canvas",
-      "passed": true,
-      "detail": "{\"r\":242,\"g\":247,\"b\":240,\"a\":1}"
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
     },
     {
       "name": "conta-auth 320px light",
@@ -4229,8 +4229,8 @@
     {
       "name": "conta-auth 320px light",
       "check": "h1-max-one",
-      "passed": true,
-      "detail": "1"
+      "passed": false,
+      "detail": "2"
     },
     {
       "name": "conta-auth 320px dark",
@@ -4253,8 +4253,8 @@
     {
       "name": "conta-auth 320px dark",
       "check": "h1-max-one",
-      "passed": true,
-      "detail": "1"
+      "passed": false,
+      "detail": "2"
     },
     {
       "name": "conta-auth 390px light",
@@ -4265,8 +4265,8 @@
     {
       "name": "conta-auth 390px light",
       "check": "canvas",
-      "passed": true,
-      "detail": "{\"r\":242,\"g\":247,\"b\":240,\"a\":1}"
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
     },
     {
       "name": "conta-auth 390px light",
@@ -4277,8 +4277,8 @@
     {
       "name": "conta-auth 390px light",
       "check": "h1-max-one",
-      "passed": true,
-      "detail": "1"
+      "passed": false,
+      "detail": "2"
     },
     {
       "name": "conta-auth 390px dark",
@@ -4301,8 +4301,8 @@
     {
       "name": "conta-auth 390px dark",
       "check": "h1-max-one",
-      "passed": true,
-      "detail": "1"
+      "passed": false,
+      "detail": "2"
     },
     {
       "name": "conta-auth 768px light",
@@ -4313,8 +4313,8 @@
     {
       "name": "conta-auth 768px light",
       "check": "canvas",
-      "passed": true,
-      "detail": "{\"r\":242,\"g\":247,\"b\":240,\"a\":1}"
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
     },
     {
       "name": "conta-auth 768px light",
@@ -4325,8 +4325,8 @@
     {
       "name": "conta-auth 768px light",
       "check": "h1-max-one",
-      "passed": true,
-      "detail": "1"
+      "passed": false,
+      "detail": "2"
     },
     {
       "name": "conta-auth 768px dark",
@@ -4349,8 +4349,8 @@
     {
       "name": "conta-auth 768px dark",
       "check": "h1-max-one",
-      "passed": true,
-      "detail": "1"
+      "passed": false,
+      "detail": "2"
     },
     {
       "name": "conta-auth 959px light",
@@ -4361,8 +4361,8 @@
     {
       "name": "conta-auth 959px light",
       "check": "canvas",
-      "passed": true,
-      "detail": "{\"r\":242,\"g\":247,\"b\":240,\"a\":1}"
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
     },
     {
       "name": "conta-auth 959px light",
@@ -4373,8 +4373,8 @@
     {
       "name": "conta-auth 959px light",
       "check": "h1-max-one",
-      "passed": true,
-      "detail": "1"
+      "passed": false,
+      "detail": "2"
     },
     {
       "name": "conta-auth 959px dark",
@@ -4397,8 +4397,8 @@
     {
       "name": "conta-auth 959px dark",
       "check": "h1-max-one",
-      "passed": true,
-      "detail": "1"
+      "passed": false,
+      "detail": "2"
     },
     {
       "name": "conta-auth 960px light",
@@ -4409,8 +4409,8 @@
     {
       "name": "conta-auth 960px light",
       "check": "canvas",
-      "passed": true,
-      "detail": "{\"r\":242,\"g\":247,\"b\":240,\"a\":1}"
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
     },
     {
       "name": "conta-auth 960px light",
@@ -4421,8 +4421,8 @@
     {
       "name": "conta-auth 960px light",
       "check": "h1-max-one",
-      "passed": true,
-      "detail": "1"
+      "passed": false,
+      "detail": "2"
     },
     {
       "name": "conta-auth 960px dark",
@@ -4445,8 +4445,8 @@
     {
       "name": "conta-auth 960px dark",
       "check": "h1-max-one",
-      "passed": true,
-      "detail": "1"
+      "passed": false,
+      "detail": "2"
     },
     {
       "name": "conta-auth 1024px light",
@@ -4457,8 +4457,8 @@
     {
       "name": "conta-auth 1024px light",
       "check": "canvas",
-      "passed": true,
-      "detail": "{\"r\":242,\"g\":247,\"b\":240,\"a\":1}"
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
     },
     {
       "name": "conta-auth 1024px light",
@@ -4469,8 +4469,8 @@
     {
       "name": "conta-auth 1024px light",
       "check": "h1-max-one",
-      "passed": true,
-      "detail": "1"
+      "passed": false,
+      "detail": "2"
     },
     {
       "name": "conta-auth 1024px dark",
@@ -4493,8 +4493,8 @@
     {
       "name": "conta-auth 1024px dark",
       "check": "h1-max-one",
-      "passed": true,
-      "detail": "1"
+      "passed": false,
+      "detail": "2"
     },
     {
       "name": "conta-auth 1440px light",
@@ -4505,8 +4505,8 @@
     {
       "name": "conta-auth 1440px light",
       "check": "canvas",
-      "passed": true,
-      "detail": "{\"r\":242,\"g\":247,\"b\":240,\"a\":1}"
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
     },
     {
       "name": "conta-auth 1440px light",
@@ -4517,8 +4517,8 @@
     {
       "name": "conta-auth 1440px light",
       "check": "h1-max-one",
-      "passed": true,
-      "detail": "1"
+      "passed": false,
+      "detail": "2"
     },
     {
       "name": "conta-auth 1440px dark",
@@ -4541,8 +4541,8 @@
     {
       "name": "conta-auth 1440px dark",
       "check": "h1-max-one",
-      "passed": true,
-      "detail": "1"
+      "passed": false,
+      "detail": "2"
     },
     {
       "name": "ui-library 960px light",

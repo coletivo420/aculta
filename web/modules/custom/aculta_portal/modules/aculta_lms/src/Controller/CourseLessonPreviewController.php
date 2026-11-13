@@ -66,7 +66,7 @@ final class CourseLessonPreviewController {
       ];
     }
 
-    $build = [
+    $preview = [
       '#type' => 'container',
       '#attributes' => ['data-aculta-lms' => 'course-preview', 'data-portal-ui' => 'aculta-course-lesson-preview'],
       '#attached' => ['library' => ['aculta_lms/course_structure']],
@@ -94,6 +94,12 @@ final class CourseLessonPreviewController {
         : ['#theme' => 'item_list', '#items' => $items],
       'note' => ['#plain_text' => $this->t('A prévia não carrega respostas, notas ou dados de estudantes, nem permite enviar respostas.')],
       '#cache' => [],
+    ];
+    $build = [
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:lms-lesson-page',
+      '#props' => [],
+      '#slots' => ['content' => $preview],
     ];
     $cache->applyTo($build);
     return $build;

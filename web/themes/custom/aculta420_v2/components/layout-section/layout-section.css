@@ -24,3 +24,5 @@
   min-inline-size: 0;
   overflow-wrap: anywhere;
 }
+
+.layout-section .aculta-lms-discussion-list { margin-block: 0; }

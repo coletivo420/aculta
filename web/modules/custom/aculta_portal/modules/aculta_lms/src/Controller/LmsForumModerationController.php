@@ -86,13 +86,15 @@ final class LmsForumModerationController {
     }
 
     $build = [
-      '#type' => 'container',
-      '#attributes' => ['data-portal-ui' => 'lms-forum-moderation-overview'],
-      'contexts' => [
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:layout-section',
+      '#slots' => [
+        'header' => ['#plain_text' => $this->t('Fóruns por curso')],
+        'content' => [
         '#theme' => 'item_list',
-        '#title' => $this->t('Fóruns por curso'),
         '#items' => $items,
         '#empty' => $this->t('Você não tem cursos ou turmas com moderação de discussões.'),
+        ],
       ],
     ];
     $cacheability->applyTo($build);
@@ -121,13 +123,15 @@ final class LmsForumModerationController {
     }
 
     $build = [
-      '#type' => 'container',
-      '#attributes' => ['data-portal-ui' => 'lms-forum-moderation-queue'],
-      'view' => [
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:layout-section',
+      '#slots' => [
+        'content' => [
         '#type' => 'view',
         '#name' => self::VIEW_ID,
         '#display_id' => $display,
         '#arguments' => [(string) $group->id()],
+        ],
       ],
     ];
     CacheableMetadata::createFromObject($group)->addCacheableDependency($course)->applyTo($build);

@@ -98,16 +98,19 @@ final class LmsActivityDiscussionResolver {
     }
 
     $build = [
-      '#type' => 'container',
-      '#attributes' => ['data-portal-ui' => 'lms-activity-discussions'],
-      'title' => [
-        '#type' => 'html_tag',
-        '#tag' => 'h2',
-        '#value' => $this->stringTranslation->translate('Discussões desta atividade'),
-      ],
-      'links' => [
-        '#theme' => 'item_list',
-        '#items' => $items,
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:layout-section',
+      '#slots' => [
+        'header' => [
+          '#type' => 'html_tag',
+          '#tag' => 'h2',
+          '#value' => $this->stringTranslation->translate('Discussões desta atividade'),
+        ],
+        'content' => [
+          '#theme' => 'item_list',
+          '#items' => $items,
+          '#attributes' => ['class' => ['aculta-lms-discussion-list']],
+        ],
       ],
     ];
     // Keep access and relationship cache metadata attached to the render array.

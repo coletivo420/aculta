@@ -22,6 +22,10 @@ const secretsDir = resolveSecretsDir();
 export const ACCOUNTS = {
   teste_comum: { file: 'teste_comum.env', user: 'TESTE_COMUM_USER', pass: 'TESTE_COMUM_PASSWORD' },
   teste_administrativo: { file: 'teste_administrativo.env', user: 'username', pass: 'password' },
+  // Contas de papel, criadas em 2026-11-12 para cobrir /we-sativa (contribuidor
+  // Wiki) e /ganjalab (educador LMS). Ver docs/operations/TESTE-PAPEIS.md.
+  teste_wiki: { file: 'teste_wiki.env', user: 'TESTE_WIKI_USER', pass: 'TESTE_WIKI_PASSWORD' },
+  teste_educador: { file: 'teste_educador.env', user: 'TESTE_EDUCADOR_USER', pass: 'TESTE_EDUCADOR_PASSWORD' },
 };
 
 export function loadAccount(name) {
@@ -50,9 +54,18 @@ export async function login(page, host, accountName) {
   await page.goto(new URL('/entrar/janela', host).toString(), { waitUntil: 'domcontentloaded' });
   await page.fill('input[name="name"]', user);
   await page.fill('input[name="pass"]', pass);
+  // Escopa o envio ao formulário do campo de usuário: hosts com busca no
+  // cabeçalho têm outro submit antes do login e o clique global acertava a
+  // busca (ex.: wiki420 redirecionava para /busca-wiki).
+  const botao = page
+    .locator('input[name="name"]')
+    .first()
+    .locator('xpath=ancestor::form')
+    .locator('input[type="submit"], button[type="submit"]')
+    .first();
   await Promise.all([
     page.waitForLoadState('networkidle'),
-    page.locator('input[type="submit"], button[type="submit"]').first().click(),
+    botao.click(),
   ]);
   const errors = await page.locator('[role="alert"], .messages--error, .form-item--error-message').count();
   expect(errors, `envio do login de ${accountName} mostrou erro visível`).toBe(0);

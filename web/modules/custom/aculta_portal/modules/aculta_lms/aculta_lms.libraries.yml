@@ -3,9 +3,6 @@ admin_toolbar_icon:
     theme:
       css/admin-toolbar-icon.css: {}
 course_structure:
-  css:
-    theme:
-      css/course-structure.css: {}
   js:
     js/course-structure-sort.js: {}
   dependencies:

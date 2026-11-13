@@ -269,11 +269,7 @@ final class CourseStructureController {
       );
     }
 
-    return [
-      '#type' => 'container',
-      '#attributes' => ['data-aculta-lms' => 'course-structure'],
-      '#attached' => ['library' => ['aculta_lms/course_structure']],
-      '#cache' => ['contexts' => ['user', 'user.permissions', 'user.group_permissions'], 'max-age' => 0],
+    $slots = [
       'header' => [
         '#type' => 'container',
         '#attributes' => ['data-portal-ui' => 'aculta-lms-course-builder--header'],
@@ -305,6 +301,14 @@ final class CourseStructureController {
       'lessons_heading' => ['#type' => 'html_tag', '#tag' => 'h2', '#value' => $this->t('Estrutura do curso')],
       'lessons' => $lessonList,
       'lesson_order_form' => $lessonOrderForm,
+    ];
+    return [
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:lms-course-curriculum',
+      '#props' => [],
+      '#slots' => $slots,
+      '#attached' => ['library' => ['aculta_lms/course_structure']],
+      '#cache' => ['contexts' => ['user', 'user.permissions', 'user.group_permissions'], 'max-age' => 0],
     ];
   }
 

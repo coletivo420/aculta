@@ -41,9 +41,6 @@
 .aculta-form--inline { display: flex; flex-wrap: wrap; align-items: flex-end; gap: .5rem; }
 .aculta-section-title { margin-block: 1rem .5rem; font-family: var(--font-family-heading); font-size: 1.25rem; }
 .aculta-event-catalogue__actions { margin-block: 1rem; }
-.aculta-lms-panel { margin-block-start: 1rem; }
-.aculta-lms-h5p__activity { display: grid; gap: 1rem; }
-.aculta-lms-h5p__documents { margin-block-start: 1rem; }
 .aculta-messenger-links { display: flex; flex-wrap: wrap; gap: .5rem; margin-block-start: .5rem; }
 .aculta-register-popup { display: grid; gap: 1rem; }
 .aculta-shop-card { display: block; padding: 1rem; text-align: start; text-decoration: none; border: 2px solid var(--color-border); border-radius: .5rem; }
@@ -138,37 +135,6 @@
 .sponsor-name { font-weight: 600; }
 .sponsor-cota { color: var(--color-text-muted); font-size: .875rem; }
 .media-mentions { display: grid; gap: .75rem; }
-
-/* LMS: construtor de curso, materiais, moderação e H5P. */
-.aculta-lms-course-builder__header,
-.aculta-lms-course-builder__summary,
-.aculta-lms-course-builder__lessons,
-.aculta-lms-course-builder__activities,
-.aculta-lms-course-builder__activity,
-.aculta-lms-course-builder__lesson,
-.aculta-lms-course-builder__actions,
-.aculta-lms-course-builder__state,
-.aculta-lms-course-builder__empty { display: grid; gap: .5rem; }
-.aculta-lms-course-builder__lesson-heading { margin: 0; font-family: var(--font-family-heading); font-size: 1.125rem; }
-.aculta-lms-course-builder__sort-handle { cursor: grab; }
-.aculta-lms-course-materials__documents { display: grid; gap: .5rem; }
-.aculta-lms-course-materials__document { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; }
-.aculta-lms-class-roster,
-.aculta-lms-class-status-history__period,
-.aculta-lms-course-sort-form,
-.aculta-lms-forum-moderation__overview,
-.aculta-lms-forum-moderation__queue,
-.aculta-lms-h5p-course,
-.aculta-lms-lesson-preview__activity,
-.courses-home,
-.courses-home__collaboration,
-.courses-home__intro { display: grid; gap: .75rem; }
-.h5p-admin-header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .5rem; }
-.h5p-content-unavailable { color: var(--color-text-muted); }
-.is-draft,
-.is-published { display: inline-flex; padding: .125rem .5rem; border-radius: var(--radius-full); font-size: .875rem; }
-.is-draft { color: var(--color-status-warning-text); background: var(--color-status-warning-surface); }
-.is-published { color: var(--color-status-ok-text); background: var(--color-status-ok-surface); }
 
 /* UI Styles Entity Status: preview cue only; never used for access decisions. */
 .aculta-content-status--unpublished {

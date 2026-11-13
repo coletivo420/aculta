@@ -1,13 +1,11 @@
 .lms-lesson-page {
   color: var(--color-text-primary);
-  inline-size: min(100%, 68ch);
-  margin-inline: auto;
   min-inline-size: 0;
   overflow-wrap: anywhere;
   padding-block: var(--spacing-md);
 }
 
-.lms-lesson-page [data-portal-ui~="aculta-learning-room__lesson"] {
+.lms-lesson-page [data-aculta-lms="course-preview"] {
   display: grid;
   gap: var(--spacing-lg);
   min-inline-size: 0;
@@ -22,4 +20,13 @@
 .lms-lesson-page :focus-visible {
   outline: 3px solid var(--color-brand-highlight);
   outline-offset: 2px;
+}
+
+.aculta-lms-lesson-preview__activity {
+  display: grid;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-base);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-raised);
 }

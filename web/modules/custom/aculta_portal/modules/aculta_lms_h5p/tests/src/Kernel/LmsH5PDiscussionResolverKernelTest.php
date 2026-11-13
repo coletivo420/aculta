@@ -238,10 +238,11 @@ final class LmsH5PDiscussionResolverKernelTest extends KernelTestBase {
 
     $elements = [0 => ['#markup' => '<div class="h5p-content">Atividade</div>']];
     $hook->formatterAlter($elements, $course->get('field_h5p_activities'));
-    self::assertArrayHasKey('player', $elements[0]);
-    self::assertSame('lms-h5p-activity', $elements[0]['#attributes']['data-portal-ui']);
-    self::assertSame('lms-h5p-discussions', $elements[0]['discussions']['#attributes']['data-portal-ui']);
-    self::assertSame('Discussão desta atividade', $elements[0]['discussions']['links']['#items'][0]['#title']);
+    self::assertSame('component', $elements[0]['#type']);
+    self::assertSame('aculta420_v2:layout-section', $elements[0]['#component']);
+    self::assertArrayHasKey('player', $elements[0]['#slots']['content']);
+    self::assertSame('aculta420_v2:layout-section', $elements[0]['#slots']['content']['discussions']['#component']);
+    self::assertSame('Discussão desta atividade', $elements[0]['#slots']['content']['discussions']['#slots']['content']['#items'][0]['#title']);
   }
 
   /**

@@ -1,0 +1,13 @@
+name: Curso com conteúdo H5P
+description: Cartão de curso com link autorizado e atividades interativas.
+component: aculta420_v2:lms-h5p-course
+slots:
+  title:
+    type: inline_template
+    template: '<h2>Curso de demonstração</h2>'
+  course_link:
+    type: inline_template
+    template: '<a href="/ganjalab/curso">Acessar curso</a>'
+  activities:
+    type: inline_template
+    template: '<div>Atividade interativa de demonstração</div>'

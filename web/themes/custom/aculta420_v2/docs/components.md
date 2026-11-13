@@ -196,11 +196,51 @@ permissões e cache.
 
 ### lms-lesson-page
 
-Contêiner visual para o render array entregue pelo controlador do LMS na rota
-de aula. Não recebe entidade, aluno ou dados de acesso como prop. Slot único:
-content. Story: lms-lesson-page.default.story.yml. Sem JavaScript; tabela rola
-dentro do próprio bloco em telas estreitas. O template usa fallback ao render
-original caso a descoberta Drupal ainda não conheça o SDC.
+Contêiner visual para o render array autorizado entregue pelo módulo LMS na rota
+de prévia da aula. O controlador compõe `aculta420_v2:lms-lesson-page` e passa
+todo o conteúdo no slot `content`; o SDC não recebe entidade, estudante ou dados
+de acesso como prop. Story: lms-lesson-page.default.story.yml. Sem JavaScript;
+tabelas rolam dentro do bloco em telas estreitas. O template mantém fallback ao
+render original caso a descoberta Drupal ainda não conheça o SDC.
+
+### lms-course-curriculum
+
+Composição da tela de currículo do educador. Props vazias; slots `header`,
+`summary`, `actions`, `lessons_heading`, `lessons` e `lesson_order_form` recebem
+subárvores de renderização montadas e autorizadas pelo módulo `aculta_lms`.
+O módulo mantém consultas, rotas, permissões, cache e o JavaScript de ordenação;
+este SDC é dono da estrutura visual e do CSS responsivo. Story:
+`lms-course-curriculum.default.story.yml`. Sem JavaScript próprio.
+Os estados de publicação recebem classes locais do SDC e tokens semânticos de
+status.
+
+### lms-course-materials
+
+Seção de documentos privados do curso. Props vazias; slots `title`,
+`description`, `add`, `items`, `empty` e `unavailable` recebem texto/link/lista
+já filtrados pelo módulo `aculta_lms`. O módulo mantém acesso e cache dos
+documentos; o SDC apresenta a lista. Story:
+`lms-course-materials.default.story.yml`. Sem JavaScript.
+
+### courses-catalog
+
+Página pública de cursos com slots `intro`, `catalog_title`, `catalog` e
+`collaboration`. O slot `catalog` recebe a View nativa; acesso, pager, consulta
+e cache permanecem no Drupal. Story: `courses-catalog.default.story.yml`.
+Sem JavaScript.
+
+### lms-h5p-course
+
+Cartão de curso com slots `title`, `course_link` e `activities`. A composição
+usa `surface-panel`; o módulo H5P mantém acesso ao Group, URL e renderização do
+campo de atividades. Story: `lms-h5p-course.default.story.yml`. Sem JavaScript.
+
+### Moderação de fórum LMS
+
+As rotas de visão geral por curso e fila de comentários compõem o SDC
+`layout-section`; o módulo preserva consultas, acesso e cache. O wrapper da fila
+não adiciona título artificial. As duas rotas deixam de depender de seletores
+globais dedicados. Validação visual autenticada ainda pendente.
 
 ### lms-tour
 
@@ -523,6 +563,11 @@ Componentes neutros de apresentação consumidos por `aculta_statistics`; não c
 - `statistics-empty-state`: props `message`, `hint`. Story: `statistics-empty-state.default.story.yml`.
 
 Estado: implementados para a FST-08; schema validado. Renderização no Runtime e captura visual: pendente.
+
+Os estilos compartilhados das três listas ficam em `statistics-activity-summary.css`.
+`statistics-response-health` e `statistics-moderation-summary` não declaram CSS
+próprio; ambos reutilizam as mesmas classes e a biblioteca `statistics` mantém
+uma única folha para esse contrato visual.
 
 ## Atualização de superfícies - 2026-11-12
 
