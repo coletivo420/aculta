@@ -1,7 +1,7 @@
 $schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
 name: Cartão de Post do Fórum
 status: stable
-description: Card de postagem do tópico com faixa colorida no topo, cabeçalho de autoria, corpo e reações.
+description: "Card de postagem do tópico com faixa lateral de acento (verde, à esquerda por padrão), cabeçalho de autoria, distintivo opcional, corpo e reações."
 group: Comunidade
 props:
   type: object
@@ -13,6 +13,17 @@ props:
       title: Variante da faixa colorida no topo
       enum: [brand, highlight, member]
       default: brand
+    accent_side:
+      type: string
+      title: Lado da faixa lateral de acento
+      description: "Faixa verde lateral no início (esquerda) ou no fim (direita). Padrão: início."
+      enum: [start, end]
+      default: start
+    accent_color:
+      type: string
+      title: Cor da faixa lateral
+      enum: [green, yellow, red]
+      default: green
     author_name:
       type: string
       title: Nome do autor
@@ -68,3 +79,6 @@ slots:
   reply:
     title: Botão ou link de resposta
     description: Elemento alternativo para responder.
+  badge:
+    title: Distintivo do post
+    description: Distintivo renderizado por um componente SDC.

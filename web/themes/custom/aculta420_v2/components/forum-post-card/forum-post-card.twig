@@ -1,5 +1,9 @@
-<article class="forum-post-card forum-post-card--stripe-{{ stripe|default('brand') }}">
+{% set accent_side = accent_side is defined ? accent_side : 'start' %}
+<article class="forum-post-card forum-post-card--stripe-{{ stripe|default('brand') }}{% if accent_side %} forum-post-card--side-{{ accent_side }} forum-post-card--accent-{{ accent_color|default('green') }}{% endif %}">
   <div class="forum-post-card__stripe"></div>
+  {% if accent_side %}
+    <div class="forum-post-card__side-stripe" aria-hidden="true"></div>
+  {% endif %}
   <div class="forum-post-card__inner">
     <header class="forum-post-card__header">
       <div class="forum-post-card__author">
@@ -38,6 +42,11 @@
           </div>
         </div>
       </div>
+      {% if badge %}
+        <div class="forum-post-card__badge">
+          {{ badge }}
+        </div>
+      {% endif %}
       {% if reply or reply_url %}
         <div class="forum-post-card__quick-reply">
           {% if reply %}

@@ -1,6 +1,9 @@
 <div class="forum-reply-mirror">
   {{ include('aculta420_v2:forum-post-card', {
     stripe: 'brand',
+    accent_side: 'end',
+    accent_color: 'green',
+    badge: include('aculta420_v2:badge', { label: 'Resposta'|t, variant: 'neutral' }, with_context = false),
     author_name: author_name,
     author_role: null,
     author_posts: author_posts|default(null),
