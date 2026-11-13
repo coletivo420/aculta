@@ -16,7 +16,7 @@ Herde `AGENTS.md` da raiz. Consulte `docs/AGENT-POLICIES.md` **somente nas seç�
 ## Regras gerais
 
 - Core/contrib são a fonte de verdade; preserve a fronteira Core/contrib → Portal → contrato neutro → tema.
-- Endereço e CEP: regra na raiz (`AGENTS.md`); contrato central em `AccountAddressForm` e `aculta_portal_cep`. Não crie formulário de endereço paralelo. Antes de criar ou editar captura de endereço, leia `docs/decisions/ADR-033-endereco-busca-e-locais.md` e `docs/portal/ACCOUNT-ADDRESS.md`. Busca por logradouro é exclusiva de Events/Maps e não está implementada; preserve o comportamento de Conta e checkout.
+- Endereço e CEP: política Brasil/BR e módulo central `aculta_portal_cep` em `AGENTS.md` e ADR-034; contrato de formulário em `AccountAddressForm`. Não crie formulário de endereço paralelo. Antes de criar ou editar captura de endereço, leia `docs/decisions/ADR-033-endereco-busca-e-locais.md` e `docs/portal/ACCOUNT-ADDRESS.md`. Busca por logradouro é exclusiva de Events/Maps e não está implementada; preserve o comportamento de Conta e checkout.
 - Independência do tema: os módulos do Portal funcionam sem o tema ACULTA420. Valide contrato e renderização sem trocar o tema padrão do Runtime.
 - Valide DI, Entity API, access, render/cacheability e gates do escopo.
 - Rotas administrativas somente no MAIN (regra na raiz). Em subdomínio não renderize toolbar, link contextual ou ação administrativa. Política: `docs/portal/ADMIN-DOMAIN-POLICY.md`.

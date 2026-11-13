@@ -37,10 +37,9 @@ if (!is_string($readme) || substr_count($readme, $begin) !== 1 || substr_count($
   exit(1);
 }
 
-$agents = (string) @file_get_contents($root . '/AGENTS.md');
-if (!str_contains($agents, 'PROJECT-STATUS-INDEX-GUARD')) {
-  $errors[] = 'AGENTS.md precisa manter o marcador PROJECT-STATUS-INDEX-GUARD.';
-}
+// O contrato do indice e a tabela gerada no README e os YAMLs de status.
+// Nao vincular o gate a um texto literal em AGENTS.md: esse documento muda
+// conforme a politica de agentes, sem alterar a consistencia do indice.
 
 // 1. Manifestos: componentes do Portal e o tema.
 $manifests = [];

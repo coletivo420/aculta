@@ -32,7 +32,7 @@ O arquivo `docs/history/operations/AGENT-GUARDRAILS-FULL.md` é **arquivo histó
 | Bibliotecas e dependências | `docs/operations/AGENT-DEPENDENCIAS.md`; tabela vigente em `README.md` (`## Bibliotecas usadas`) |
 | Endereços e CEP centralizados | `docs/portal/ACCOUNT-ADDRESS.md`; `docs/decisions/ADR-034-pais-unico-brasil-endereco-central.md`; `web/modules/custom/aculta_portal/modules/aculta_portal_cep/README.md` |
 | Mapa do projeto | `docs/operations/MAPA-PARA-AGENTES.md` (leia antes de uma tarefa nova) |
-| Decisões do responsável | `docs/architecture/DECISOES-RESPONSAVEL-2026-10-28.md` (D-01 a D-43); prevalecem sobre planos |
+| Decisões do responsável | `docs/architecture/DECISOES-RESPONSAVEL-2026-10-28.md` e ADRs/decisões posteriores; prevalecem sobre planos historicos |
 | Checkouts, carrinho e pagamentos | `docs/decisions/ADR-032-portal-multi-cart-checkout.md`; `aculta_pagamentos_mercadopago/README.md`; `aculta_commerce/docs/PAYMENT-FLOW-CONTRACTS-0.1.0-B.md` |
 | Ingressos pagos (planejamento) | `web/modules/custom/aculta_portal/modules/aculta_events/docs/PLANO-INGRESSOS-PAGOS.md`; sem código ainda |
 

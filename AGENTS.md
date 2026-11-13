@@ -27,6 +27,9 @@ Regra compartilhada de Claude, Codex e demais agentes. Politica de revisao: `doc
 
 - Drupal 11 efetivo e compatibilidade Drupal 12 quando aplicavel. Preferir HTML nativo/Form API; HTMX para fragmentos onde agrega valor. Drupal AJAX e legado: migrar com justificativa e regressao, nao por obrigacao cega. jQuery local sob demanda conforme regra da area, sem carga global desnecessaria.
 - Reutilizar SDC, UI Suite, tokens e componentes existentes. Priorizar acessibilidade, responsividade e contratos de renderizacao; alternativas tecnicas sao permitidas com justificativa.
+- Endereco/CEP centralizados em `aculta_portal_cep`, pais unico Brasil (BR), conforme ADR-034. Nao duplicar formularios de endereco. Rotas administrativas e integracoes tecnicas pertencem ao dominio MAIN; manter a politica multidominio de acesso e escrita.
+- URLs publicas usam slugs em portugues minusculo com hifen e sem acentos (`docs/portal/FRIENDLY-PORTUGUESE-SLUGS.md`). Aceite de Termos e Politica e unico (`docs/portal/ACEITE-UNICO.md`); nao criar aceite paralelo.
+- A tabela de estado dos componentes no README e gerada a partir de `docs/operations/status/`; valide com `scripts/validate-project-status-index.php` quando mudar status ou versao.
 - Ler `TODO.md` e handoff do componente quando houver fase a retomar, nao por ritual. Preferir `rg`, trecho relevante e APIs instaladas; Core/contrib e referencias podem ser lidos quando necessarios.
 
 ## Revisao e documentacao
