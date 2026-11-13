@@ -163,8 +163,7 @@ final class WikiEditorialQueue {
       ])
       ->addCacheTags(['node_list:wiki_entry', 'content_moderation_state_list']);
 
-    $transitionValidation = $this->transitionValidation;
-    $result = $this->siteManagers->runInSite(SiteKey::Wiki, function () use ($cursor, $cacheability, $transitionValidation): WikiEditorialQueuePage {
+    $result = $this->siteManagers->runInSite(SiteKey::Wiki, function () use ($cursor, $cacheability): WikiEditorialQueuePage {
       $wikiDomain = $this->siteManagers->getDomain(SiteKey::Wiki);
       if ($wikiDomain === NULL) {
         return new WikiEditorialQueuePage([], NULL, $cacheability);
@@ -187,7 +186,7 @@ final class WikiEditorialQueue {
           // Core denies access to ContentModerationState. This query discovers
           // candidate VIDs only; every Node is revalidated below.
           ->accessCheck(FALSE)
-          ->aggregate('content_entity_id', 'MAX')
+          ->aggregate('content_entity_revision_id', 'MAX')
           ->groupBy('content_entity_revision_id')
           ->condition('content_entity_type_id', 'node')
           ->condition('workflow', 'wiki_editorial')
@@ -198,14 +197,7 @@ final class WikiEditorialQueue {
           $query->condition('content_entity_revision_id', $scanCursor, '<');
         }
 
-        $queryRows = $query->execute();
-        $revisionIds = [];
-        foreach ($queryRows as $queryRow) {
-          $revisionId = is_array($queryRow) ? ($queryRow['content_entity_revision_id'] ?? NULL) : NULL;
-          if (is_int($revisionId) || is_string($revisionId)) {
-            $revisionIds[] = (string) $revisionId;
-          }
-        }
+        $revisionIds = array_map('strval', array_values($query->execute()));
         if ($revisionIds === []) {
           $hasMoreCandidates = FALSE;
           break;

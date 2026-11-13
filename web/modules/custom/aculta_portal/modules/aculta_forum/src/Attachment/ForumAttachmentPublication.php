@@ -541,7 +541,7 @@ final class ForumAttachmentPublication {
     ?AccountInterface $account = NULL,
     bool $check_access = TRUE,
   ): bool {
-    if (!$gallery->isPublished()
+    if (!$gallery->isEnabled()
       || !$gallery->hasField('field_gallery_purpose')
       || $gallery->get('field_gallery_purpose')->value !== 'forum') {
       return FALSE;

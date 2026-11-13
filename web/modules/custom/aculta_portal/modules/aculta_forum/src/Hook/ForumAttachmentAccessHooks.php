@@ -47,7 +47,7 @@ final class ForumAttachmentAccessHooks {
     }
 
     // Unpublished galleries stay governed by the Gallery owner/moderator.
-    if (!$entity->isPublished()) {
+    if (!$entity->isEnabled()) {
       return AccessResult::neutral()
         ->addCacheableDependency($entity)
         ->addCacheContexts(['user.permissions'])

@@ -193,7 +193,7 @@ final class ForumGalleryPublication {
         continue;
       }
       // Recheck publication and comments immediately before deleting.
-      if ($gallery->isPublished()
+      if ($gallery->isEnabled()
         || $this->hasContentReference($gallery)) {
         continue;
       }
@@ -253,8 +253,8 @@ final class ForumGalleryPublication {
       }
     }
 
-    if ($gallery->isPublished() !== $is_public) {
-      $is_public ? $gallery->setPublished() : $gallery->setUnpublished();
+    if ($gallery->isEnabled() !== $is_public) {
+      $gallery->setStatus($is_public);
       $gallery->save();
     }
     foreach ($gallery->get('images')->referencedEntities() as $media) {

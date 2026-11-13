@@ -28,7 +28,7 @@ final class CheckoutStepResolver {
       // Resolve the flow without using CheckoutOrderManager::getCheckoutFlow(),
       // which saves the order as a side effect when the field is empty. Cart
       // rendering only needs a URL and must remain read-only.
-      $checkout_flow = $this->checkoutFlowResolver->resolve($order);
+      $checkout_flow = $this->resolveCheckoutFlow($order);
     }
     if (!$checkout_flow instanceof CheckoutFlowInterface) {
       return 'login';
@@ -41,6 +41,13 @@ final class CheckoutStepResolver {
       is_string($stored_step) ? $stored_step : NULL,
       $visible_steps,
     ) ?? 'login';
+  }
+
+  /**
+   * Resolves the flow, accounting for the resolver's documented NULL result.
+   */
+  private function resolveCheckoutFlow(OrderInterface $order): ?CheckoutFlowInterface {
+    return $this->checkoutFlowResolver->resolve($order);
   }
 
   /**
