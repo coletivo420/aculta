@@ -30,13 +30,12 @@ final class TopicPopupLayout {
     // Sem pré-visualização. "Cancelar" (secundário) fecha o popup.
     unset($form['actions']['preview']);
     $form['actions']['cancel'] = [
-      '#type' => 'html_tag',
-      '#tag' => 'button',
-      '#value' => t('Cancelar'),
-      '#attributes' => [
-        'type' => 'button',
-        'data-portal-ui' => 'button-secondary',
-        'data-aculta-dialog-close' => '',
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:button',
+      '#props' => [
+        'text' => (string) t('Cancelar'),
+        'variant' => 'secondary',
+        'attributes' => new \Drupal\Core\Template\Attribute(['data-aculta-dialog-close' => '']),
       ],
       '#weight' => 50,
     ];

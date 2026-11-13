@@ -1,4 +1,0 @@
-name: Comentário com autoria pública
-description: Conteúdo e identidade já autorizados/renderizados pelo Drupal e Portal. Rodapé com link permanente e ações de resposta (editar, citar, responder, excluir).
-component: aculta420_v2:discussion-comment
-class: Drupal\aculta420_v2\Story\DiscussionCommentStory

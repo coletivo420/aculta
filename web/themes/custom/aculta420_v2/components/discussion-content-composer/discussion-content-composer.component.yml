@@ -17,6 +17,14 @@ props:
       title: Estado do compositor
       enum: [editando, enviando, erro, enviado]
       default: editando
+    trigger_label:
+      type: string
+      title: Texto do botão que abre o popup
+      default: Nova publicação
+    dialog_title:
+      type: string
+      title: Título do popup
+      default: Nova publicação
 slots:
   messages:
     title: Mensagens de status ou erro

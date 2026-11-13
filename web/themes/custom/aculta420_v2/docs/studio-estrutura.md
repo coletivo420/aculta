@@ -163,8 +163,8 @@ Verificação: capturas V1 × V2 em 320, 390, 960 e 1440 px, claro e escuro, em 
 
 ### 4.3 Já existe na V2 (não reimportar)
 
-- Verbete (`wiki-entry`), categoria (`forum-category`), tópico (`forum-topic`) e
-  comentário (`discussion-comment`) como SDCs próprios da V2.
+- Verbete (`wiki-entry`), categoria (`forum-category`) e tópico (`forum-topic`)
+  como SDCs próprios da V2.
 - Modal de login em `<dialog>` (`multidomain-bar.js`).
 
 ### 4.4 Perfil público (base: V1)

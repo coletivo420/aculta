@@ -1,3 +1,9 @@
+{#
+ * @file
+ * Compositor de tópico em popup: usa o componente padrão Diálogo (dialog), que abre pelo gatilho.
+#}
+{% set dialog_id = target_id ~ '-dialog' %}
+{% set body %}
 <div id="{{ target_id }}" class="discussion-topic-composer discussion-topic-composer--{{ status }} forum-post-card forum-post-card--stripe-brand" data-discussion-topic-composer data-status="{{ status }}">
   <div class="forum-post-card__stripe"></div>
   <div class="forum-post-card__inner">
@@ -30,3 +36,11 @@
     </div>
   </div>
 </div>
+{% endset %}
+{{ include('aculta420_v2:dialog', {
+  id: dialog_id,
+  title: dialog_title|default('Novo tópico'),
+  trigger_label: trigger_label|default('Novo tópico'),
+  trigger_url: '#' ~ dialog_id,
+  content: body|raw,
+}, with_context = false) }}

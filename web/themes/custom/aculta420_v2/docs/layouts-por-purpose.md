@@ -58,7 +58,7 @@ do tema e módulos custom):
 
 Componentes com consumo: `accordion`, `alerts-trigger`, `author-card`, `avatar`,
 `badge`, `breadcrumb`, `button`, `card-cultural`, `cart-offcanvas`, `dialog`,
-`discussion-comment`, `empty-state`, `event-page-layout`, `forum-category`,
+`empty-state`, `event-page-layout`, `forum-category`,
 `forum-topic`, `icon`, `layout-page`, `lms-lesson-page`, `map-popup`,
 `messenger-trigger`, `multidomain-bar`, `pagination`, `purpose-showcase`,
 `revista-listing`, `revista-publication`, `revista-teaser`, `site-footer`,

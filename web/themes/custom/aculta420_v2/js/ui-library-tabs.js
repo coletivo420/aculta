@@ -104,3 +104,24 @@
     },
   };
 })(Drupal, once);
+
+// Alterna a visualização de todas as prévias entre desktop e celular.
+(function (Drupal, once) {
+  'use strict';
+  Drupal.behaviors.acultaUiLibraryViewport = {
+    attach(context) {
+      once('aculta-ui-library-viewport', '#aculta-btn-viewport', context).forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const container = document.getElementById('aculta-components-container');
+          if (!container) {
+            return;
+          }
+          const mobile = container.getAttribute('data-viewport') !== 'mobile';
+          container.setAttribute('data-viewport', mobile ? 'mobile' : 'desktop');
+          btn.setAttribute('aria-pressed', mobile ? 'true' : 'false');
+          btn.textContent = mobile ? Drupal.t('Visualizar em desktop') : Drupal.t('Visualizar em celular');
+        });
+      });
+    },
+  };
+})(Drupal, once);

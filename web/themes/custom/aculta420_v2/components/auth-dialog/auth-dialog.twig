@@ -4,9 +4,19 @@
 ] %}
 
 {% if trigger_label %}
-  <a class="button button--secondary aculta-dialog__trigger" href="{{ trigger_url|default('#' ~ id) }}" aria-controls="{{ id }}" aria-expanded="false" aria-haspopup="dialog" data-aculta-dialog-trigger data-aculta-auth-trigger>
-    {{ trigger_label }}
-  </a>
+  {{ include('aculta420_v2:button', {
+    text: trigger_label,
+    url: trigger_url|default('#' ~ id),
+    variant: 'secondary',
+    attributes: create_attribute({
+      class: ['aculta-dialog__trigger'],
+      'aria-controls': id,
+      'aria-expanded': 'false',
+      'aria-haspopup': 'dialog',
+      'data-aculta-dialog-trigger': '',
+      'data-aculta-auth-trigger': '',
+    }),
+  }, with_context = false) }}
 {% endif %}
 
 <dialog{{ attributes.addClass(dialog_classes) }} id="{{ id }}" aria-labelledby="{{ id }}-title" aria-modal="true" tabindex="-1" data-aculta-auth-dialog data-aculta-login-dialog data-aculta-utility-drawer>

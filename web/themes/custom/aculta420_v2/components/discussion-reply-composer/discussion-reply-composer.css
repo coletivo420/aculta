@@ -151,28 +151,6 @@
   margin-block-start: var(--spacing-xs, .5rem);
 }
 
-.discussion-reply-composer__form button,
-.discussion-reply-composer__form .button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 2.75rem; /* Touch target acessível 44px */
-  cursor: pointer;
-  text-decoration: none;
-  border-radius: var(--border-radius-md, .375rem);
-  font-size: var(--font-size-sm, .875rem);
-  font-weight: var(--font-weight-medium, 500);
-  padding-inline: var(--spacing-md, 1.25rem);
-  padding-block: var(--spacing-xs, .5rem);
-}
-
-.discussion-reply-composer__form .button--primary,
-.discussion-reply-composer__form button[type="submit"]:not(.button--danger):not(.button--secondary):not(.button--outline):not(.button--ghost),
-.discussion-reply-composer__form input[type="submit"]:not(.button--danger):not(.button--secondary):not(.button--outline):not(.button--ghost) {
-  color: var(--button-primary-fg);
-  border: 2px solid var(--button-primary-bg, var(--color-brand-primary));
-  background-color: var(--button-primary-bg, var(--color-brand-primary));
-}
 
 .discussion-reply-composer__form .button--primary:hover,
 .discussion-reply-composer__form button[type="submit"]:not(.button--danger):not(.button--secondary):not(.button--outline):not(.button--ghost):hover,

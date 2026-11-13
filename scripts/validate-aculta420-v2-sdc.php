@@ -83,7 +83,6 @@ $component_ids = [
   'account-experience-dashboard',
   'account-experience-card',
   'consent-banner',
-  'discussion-comment',
   'dialog',
   'data-table',
   'document-download',
@@ -302,15 +301,6 @@ $samples = [
   ],
   'consent-banner' => [
     '#props' => ['privacy_url' => '/sobre/politica-de-privacidade'],
-  ],
-  'discussion-comment' => [
-    '#props' => ['has_author' => TRUE, 'has_submitted' => TRUE],
-    '#slots' => [
-      'author' => 'Autoria pública',
-      'submitted' => '<time datetime="2026-11-04">4 de novembro de 2026</time>',
-      'body' => 'Contribuição na discussão.',
-      'footer' => '<a href="/topico/exemplo#comentario">Link permanente</a>',
-    ],
   ],
   'data-table' => [
     '#props' => ['label' => 'Tabela de conteúdos', 'mobile_variant' => 'cards'],

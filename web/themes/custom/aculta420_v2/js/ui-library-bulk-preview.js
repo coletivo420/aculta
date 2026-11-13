@@ -1,88 +1,144 @@
 /**
  * @file
- * Gerenciador de carregamento em lote de prévias ("Exibir todas as prévias").
+ * Prévias da biblioteca de componentes em Shadow DOM.
  *
- * Coordena o carregamento progressivo assíncrono das prévias sob demanda
- * da UI Patterns Library, respeitando um limite de concorrência configurável (padrão: 2).
- * Utiliza o HTMX nativo (htmx.ajax / data-hx-*) e apoia-se em Drupal.behaviors e core/once.
+ * Cada prévia é buscada na página do componente e montada num shadow root próprio, com as folhas de
+ * estilo do componente: o CSS de um item não vaza para os outros. Um carregador único atende o clique
+ * individual e o botão "Exibir todas as prévias" (lote, com concorrência limitada).
  */
 (function (Drupal, once) {
   'use strict';
 
-  // Configuração
   const CONCURRENCY_LIMIT = 2;
 
-  // Estado da fila única no cliente
   const state = {
     isRunning: false,
     isCancelled: false,
-    activeRequests: 0,
+    active: 0,
     queue: [],
-    loadedSet: new Set(),
-    errorSet: new Set(),
-    domElements: {
-      btnText: null,
-      status: null,
-      btn: null,
-    },
+    errors: new Set(),
+    btn: null,
+    btnText: null,
+    status: null,
   };
 
   /**
-   * Obtém o elemento de texto dentro do botão (garantindo que não seja o ícone).
+   * Seções da biblioteca visíveis (fora de grupos ocultos e da busca).
    */
-  function getButtonTextElement(btn) {
-    if (!btn) {
-      return null;
-    }
-    // Procura por classe específica ou por span não-ícone
-    const explicitText = btn.querySelector('.aculta-bulk-preview-btn-text');
-    if (explicitText) {
-      return explicitText;
-    }
-    const spans = Array.from(btn.querySelectorAll('span'));
-    const textSpan = spans.find((s) => !s.classList.contains('aculta-icon') && !s.closest('.aculta-icon'));
-    if (textSpan) {
-      return textSpan;
-    }
-    // Se o próprio botão não tem spans separados, retorna o botão
-    return btn;
+  function visibleSections() {
+    return Array.from(document.querySelectorAll('.ui_patterns_component'))
+      .filter((section) => section.querySelector('.ui_patterns_component__stories-container') && !section.closest('[hidden]'));
   }
 
   /**
-   * Botões de prévia do escopo atual: apenas os que estão visíveis,
-   * ou seja, da aba selecionada e que passam pelo filtro de busca.
+   * Liga os diálogos do tema (componente Diálogo) dentro do shadow root: o script do tema procura o
+   * diálogo pelo documento, que não enxerga o conteúdo do shadow root.
    */
-  function getScopeItems() {
-    return Array.from(document.querySelectorAll('.aculta-load-preview-btn'))
-      .filter((btn) => !btn.closest('[hidden]'))
-      .map((btn) => {
-        const url = btn.getAttribute('data-hx-get') || btn.getAttribute('href');
-        const targetSelector = btn.getAttribute('data-hx-target');
-        const selectSelector = btn.getAttribute('data-hx-select') || '#component-stories-wrapper';
-        const indicatorSelector = btn.getAttribute('data-hx-indicator');
-        const placeholder = btn.closest('.aculta-preview-placeholder');
-        const section = btn.closest('.ui_patterns_component');
-        const componentId = section ? section.id : (placeholder ? placeholder.id.replace('placeholder-', '') : null);
-        return { componentId, url, targetSelector, selectSelector, indicatorSelector };
+  function bindDialogs(wrap) {
+    wrap.querySelectorAll('dialog').forEach((dialog) => {
+      dialog.querySelectorAll('[data-aculta-dialog-close]').forEach((button) => {
+        button.addEventListener('click', () => dialog.close());
+      });
+      dialog.addEventListener('click', (event) => {
+        if (event.target === dialog) {
+          dialog.close();
+        }
+      });
+    });
+    wrap.querySelectorAll('[data-aculta-dialog-trigger]').forEach((trigger) => {
+      const id = trigger.getAttribute('aria-controls');
+      const dialog = id ? wrap.querySelector(`dialog[id="${CSS.escape(id)}"]`) : null;
+      if (!dialog) {
+        return;
+      }
+      trigger.addEventListener('click', (event) => {
+        event.preventDefault();
+        dialog.showModal();
+        trigger.setAttribute('aria-expanded', 'true');
+      });
+      dialog.addEventListener('close', () => trigger.setAttribute('aria-expanded', 'false'));
+    });
+  }
+
+  /**
+   * Monta a prévia de uma seção dentro de um shadow root.
+   *
+   * @return {Promise<boolean>} true quando carregou.
+   */
+  function loadPreview(section) {
+    if (section.dataset.acultaLoaded === '1') {
+      return Promise.resolve(true);
+    }
+    const placeholder = section.querySelector('.aculta-preview-placeholder');
+    const link = section.querySelector('.aculta-load-preview-btn');
+    if (!placeholder || !link) {
+      return Promise.resolve(false);
+    }
+    placeholder.classList.add('is-loading');
+
+    return fetch(link.getAttribute('href'), { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(String(response.status));
+        }
+        return response.text();
       })
-      .filter((item) => item.componentId && item.url && item.targetSelector);
+      .then((html) => {
+        const doc = new DOMParser().parseFromString(html, 'text/html');
+        const fragment = doc.querySelector('#component-stories-wrapper');
+        if (!fragment) {
+          throw new Error('fragment');
+        }
+
+        const host = document.createElement('div');
+        host.className = 'aculta-preview-host';
+        host.dataset.componentId = section.dataset.componentId || '';
+        const root = host.attachShadow({ mode: 'open' });
+
+        // Folhas de estilo e estilos da página do componente, isolados no shadow root.
+        doc.querySelectorAll('link[rel="stylesheet"][href], style').forEach((node) => {
+          root.appendChild(document.importNode(node, true));
+        });
+
+        // Tema: as variáveis CSS herdam para dentro do shadow root; o atributo de tema vai para o wrapper.
+        const wrap = document.createElement('div');
+        wrap.className = 'aculta-preview-host__content';
+        wrap.setAttribute('data-theme', document.documentElement.getAttribute('data-theme') || 'light');
+        wrap.appendChild(document.importNode(fragment, true));
+        // O título do card da biblioteca já mostra o nome do componente: o título grande do story é removido aqui.
+        wrap.querySelectorAll('.ui_patterns_story__name').forEach((title) => title.remove());
+        root.appendChild(wrap);
+
+        placeholder.replaceWith(host);
+        section.dataset.acultaLoaded = '1';
+
+        bindDialogs(wrap);
+        Drupal.attachBehaviors(wrap);
+        if (window.htmx && window.htmx.process) {
+          window.htmx.process(wrap);
+        }
+        return true;
+      })
+      .catch(() => {
+        placeholder.classList.remove('is-loading');
+        placeholder.classList.add('is-error');
+        return false;
+      });
   }
 
   /**
-   * Atualiza a interface (rótulo do botão e texto de status acessível).
-   * Contadores consideram somente o escopo visível.
+   * Atualiza o botão do lote e o texto de status com os contadores da seleção visível.
    */
   function updateUI() {
-    const { status, btn } = state.domElements;
+    const { btn, status } = state;
     if (!btn || !status) {
       return;
     }
-
-    const btnText = getButtonTextElement(btn);
-    const scopeIds = getScopeItems().map((item) => item.componentId);
-    const total = scopeIds.length;
-    const loaded = scopeIds.filter((id) => state.loadedSet.has(id)).length;
-    const errors = scopeIds.filter((id) => state.errorSet.has(id)).length;
+    const btnText = state.btnText;
+    const sections = visibleSections();
+    const total = sections.length;
+    const loaded = sections.filter((s) => s.dataset.acultaLoaded === '1').length;
+    const errors = sections.filter((s) => state.errors.has(s.id)).length;
     const completed = loaded + errors;
 
     if (state.isRunning) {
@@ -92,230 +148,90 @@
       if (btnText) {
         btnText.textContent = Drupal.t('Cancelar carregamento');
       }
-
-      let statusMsg = Drupal.t('Carregando prévias: @current de @total', {
-        '@current': loaded,
-        '@total': total,
-      });
+      let msg = Drupal.t('Carregando prévias: @current de @total', { '@current': loaded, '@total': total });
       if (errors > 0) {
-        statusMsg += Drupal.t(' (@errors com erro)', { '@errors': errors });
+        msg += Drupal.t(' (@errors com erro)', { '@errors': errors });
       }
-      status.textContent = statusMsg;
+      status.textContent = msg;
+      return;
     }
-    else {
-      btn.setAttribute('aria-pressed', 'false');
-      btn.disabled = false;
 
-      if (state.isCancelled) {
-        btn.setAttribute('data-state', 'cancelled');
-        if (btnText) {
-          btnText.textContent = Drupal.t('Continuar carregamento');
-        }
-        status.textContent = Drupal.t('Carregamento cancelado: @loaded de @total carregadas (@remaining restantes)', {
-          '@loaded': loaded,
-          '@total': total,
-          '@remaining': total - completed,
-        });
+    btn.setAttribute('aria-pressed', 'false');
+    btn.disabled = false;
+
+    if (state.isCancelled) {
+      btn.setAttribute('data-state', 'cancelled');
+      if (btnText) {
+        btnText.textContent = Drupal.t('Continuar carregamento');
       }
-      else if (completed >= total && total > 0) {
-        btn.setAttribute('data-state', 'finished');
-        if (errors > 0) {
-          if (btnText) {
-            btnText.textContent = Drupal.t('Tentar itens com erro (@count)', { '@count': errors });
-          }
-          status.textContent = Drupal.t('Concluído: @loaded carregadas, @errors com erro.', {
-            '@loaded': loaded,
-            '@errors': errors,
-          });
+      status.textContent = Drupal.t('Carregamento cancelado: @loaded de @total carregadas (@remaining restantes)', {
+        '@loaded': loaded,
+        '@total': total,
+        '@remaining': total - completed,
+      });
+    }
+    else if (completed >= total && total > 0) {
+      btn.setAttribute('data-state', 'finished');
+      if (errors > 0) {
+        if (btnText) {
+          btnText.textContent = Drupal.t('Tentar itens com erro (@count)', { '@count': errors });
         }
-        else {
-          btn.disabled = true;
-          if (btnText) {
-            btnText.textContent = Drupal.t('Todas as prévias carregadas');
-          }
-          status.textContent = Drupal.t('Todas as @total prévias carregadas com sucesso.', {
-            '@total': total,
-          });
-        }
+        status.textContent = Drupal.t('Concluído: @loaded carregadas, @errors com erro.', { '@loaded': loaded, '@errors': errors });
       }
       else {
-        btn.setAttribute('data-state', 'idle');
+        btn.disabled = true;
         if (btnText) {
-          btnText.textContent = Drupal.t('Exibir todas as prévias');
+          btnText.textContent = Drupal.t('Todas as prévias carregadas');
         }
-        if (loaded > 0) {
-          status.textContent = Drupal.t('@loaded de @total prévias carregadas.', {
-            '@loaded': loaded,
-            '@total': total,
-          });
-        }
-        else {
-          status.textContent = '';
-        }
+        status.textContent = Drupal.t('Todas as @total prévias carregadas com sucesso.', { '@total': total });
       }
+    }
+    else {
+      btn.setAttribute('data-state', 'idle');
+      if (btnText) {
+        btnText.textContent = Drupal.t('Exibir todas as prévias');
+      }
+      status.textContent = loaded > 0 ? Drupal.t('@loaded de @total prévias carregadas.', { '@loaded': loaded, '@total': total }) : '';
     }
   }
 
   /**
-   * Processa os próximos itens da fila enquanto houver slots de concorrência.
+   * Preenche a fila com as seções visíveis que ainda não carregaram (ou só as com erro, na retentativa).
+   */
+  function populateQueue(onlyErrors) {
+    state.queue = visibleSections().filter((section) => (
+      onlyErrors ? state.errors.has(section.id) : section.dataset.acultaLoaded !== '1'
+    ));
+  }
+
+  /**
+   * Processa a fila respeitando o limite de concorrência.
    */
   function processQueue() {
     if (!state.isRunning || state.isCancelled) {
       return;
     }
-
-    // Verifica se terminou
-    if (state.queue.length === 0 && state.activeRequests === 0) {
+    if (state.queue.length === 0 && state.active === 0) {
       state.isRunning = false;
       updateUI();
       return;
     }
-
-    while (state.activeRequests < CONCURRENCY_LIMIT && state.queue.length > 0) {
-      const item = state.queue.shift();
-      const componentId = item.componentId;
-
-      // Se já foi carregado por clique individual no meio do processo, pula
-      if (state.loadedSet.has(componentId)) {
-        continue;
-      }
-
-      loadComponentPreview(item);
-    }
-  }
-
-  /**
-   * Carrega a prévia de um componente individual utilizando HTMX.
-   */
-  function loadComponentPreview(item) {
-    const { componentId, url, targetSelector, selectSelector, indicatorSelector } = item;
-
-    const targetEl = document.querySelector(targetSelector);
-    if (!targetEl) {
-      // Se o target não existe mais no DOM, provavelmente já foi substituído
-      state.loadedSet.add(componentId);
-      updateUI();
-      processQueue();
-      return;
-    }
-
-    state.activeRequests++;
-    const indicatorEl = indicatorSelector ? document.querySelector(indicatorSelector) : null;
-    if (indicatorEl) {
-      indicatorEl.classList.add('htmx-request');
-    }
-
-    let settled = false;
-    const onComplete = (success) => {
-      if (settled) {
-        return;
-      }
-      settled = true;
-      state.activeRequests--;
-      if (indicatorEl) {
-        indicatorEl.classList.remove('htmx-request');
-      }
-
-      if (success) {
-        state.loadedSet.add(componentId);
-        state.errorSet.delete(componentId);
-      }
-      else {
-        state.errorSet.add(componentId);
-      }
-
-      updateUI();
-      // Prossegue a fila sequencialmente
-      processQueue();
-    };
-
-    // Procura o botão HTMX nativo para disparo padrão ou usa fetch sob fallback
-    const singleBtn = targetEl.querySelector('.aculta-load-preview-btn');
-    // Sempre pelo fetch: clicar no link pode navegar a página inteira quando o htmx não processa o botão.
-    if (false && singleBtn && window.htmx && window.htmx.trigger) {
-      // Escuta o término do ciclo HTMX especificamente neste target
-      const onAfterSwap = (evt) => {
-        const swapTarget = evt.detail ? evt.detail.target : evt.target;
-        if (swapTarget && (swapTarget === targetEl || targetEl.contains(swapTarget) || swapTarget.closest(`#preview-container-${componentId}`))) {
-          document.body.removeEventListener('htmx:afterSwap', onAfterSwap);
-          document.body.removeEventListener('htmx:responseError', onError);
-          document.body.removeEventListener('htmx:sendError', onError);
-          onComplete(true);
-        }
-      };
-
-      const onError = (evt) => {
-        const errElt = evt.detail ? (evt.detail.elt || evt.detail.target) : evt.target;
-        if (errElt && (errElt === singleBtn || singleBtn.contains(errElt))) {
-          document.body.removeEventListener('htmx:afterSwap', onAfterSwap);
-          document.body.removeEventListener('htmx:responseError', onError);
-          document.body.removeEventListener('htmx:sendError', onError);
-          onComplete(false);
-        }
-      };
-
-      document.body.addEventListener('htmx:afterSwap', onAfterSwap);
-      document.body.addEventListener('htmx:responseError', onError);
-      document.body.addEventListener('htmx:sendError', onError);
-
-      // Timeout de segurança caso o evento htmx não dispare
-      setTimeout(() => {
-        if (!settled) {
-          document.body.removeEventListener('htmx:afterSwap', onAfterSwap);
-          document.body.removeEventListener('htmx:responseError', onError);
-          document.body.removeEventListener('htmx:sendError', onError);
-          const loadedContainer = document.querySelector(`#preview-container-${componentId}`);
-          const storiesWrapper = loadedContainer ? loadedContainer.querySelector(selectSelector) : null;
-          onComplete(storiesWrapper !== null || !document.querySelector(targetSelector));
-        }
-      }, 10000);
-
-      // Dispara o clique no botão HTMX para acionar o ciclo completo do framework
-      singleBtn.click();
-    }
-    else {
-      // Fallback com fetch direto
-      fetch(url, {
-        headers: {
-          'HX-Request': 'true',
-          'X-Requested-With': 'XMLHttpRequest',
-        },
-      })
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error('Network error');
-        }
-        return res.text();
-      })
-      .then((html) => {
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(html, 'text/html');
-        const fragment = doc.querySelector(selectSelector);
-        if (fragment && targetEl.parentNode) {
-          targetEl.parentNode.replaceChild(fragment, targetEl);
-          Drupal.attachBehaviors(fragment);
-          onComplete(true);
+    while (state.active < CONCURRENCY_LIMIT && state.queue.length > 0) {
+      const section = state.queue.shift();
+      state.active += 1;
+      loadPreview(section).then((ok) => {
+        if (ok) {
+          state.errors.delete(section.id);
         }
         else {
-          onComplete(false);
+          state.errors.add(section.id);
         }
-      })
-      .catch(() => {
-        onComplete(false);
+      }).finally(() => {
+        state.active -= 1;
+        updateUI();
+        processQueue();
       });
     }
-  }
-
-  /**
-   * Constrói a fila com as prévias do escopo visível (aba selecionada).
-   * Em modo de retentativa, inclui apenas os itens com erro.
-   */
-  function populateQueue(onlyErrors = false) {
-    state.queue = getScopeItems().filter((item) => (
-      onlyErrors
-        ? state.errorSet.has(item.componentId)
-        : !state.loadedSet.has(item.componentId)
-    ));
   }
 
   /**
@@ -329,58 +245,60 @@
     updateUI();
   }
 
-  // Enquanto o lote roda, links e formulários dentro da grade não navegam a página inteira.
-  // Os botões "Carregar prévia" continuam funcionando normalmente.
+  // Durante o lote, links e formulários da grade não navegam a página (inclusive dentro dos shadow roots).
   document.addEventListener('click', (event) => {
     if (!state.isRunning) {
       return;
     }
-    const link = event.target && event.target.closest ? event.target.closest('a') : null;
-    if (link && link.closest('#aculta-components-container') && !link.classList.contains('aculta-load-preview-btn')) {
+    const path = event.composedPath ? event.composedPath() : [];
+    const link = path.find((node) => node.tagName === 'A');
+    if (link && path.some((node) => node.id === 'aculta-components-container') && !link.classList.contains('aculta-load-preview-btn')) {
       event.preventDefault();
     }
   }, true);
+
   document.addEventListener('submit', (event) => {
-    if (state.isRunning && event.target && event.target.closest && event.target.closest('#aculta-components-container')) {
+    if (!state.isRunning) {
+      return;
+    }
+    const path = event.composedPath ? event.composedPath() : [];
+    if (path.some((node) => node.id === 'aculta-components-container')) {
       event.preventDefault();
     }
   }, true);
 
   Drupal.behaviors.acultaUiLibraryBulkPreview = {
     attach(context) {
-      // 1. Escuta cliques em botões individuais para atualizar a contagem e conjuntos
-      once('aculta-single-preview-watcher', '.aculta-load-preview-btn', context).forEach((btn) => {
-        btn.addEventListener('click', () => {
-          const section = btn.closest('.ui_patterns_component');
-          const componentId = section ? section.id : null;
-          if (componentId) {
-            // Marca como em processamento ou assiste o swap
-            const onSwap = (evt) => {
-              if (evt.target && evt.target.matches && (evt.target.matches(`#preview-container-${componentId}`) || evt.target.closest(`#preview-container-${componentId}`))) {
-                state.loadedSet.add(componentId);
-                state.errorSet.delete(componentId);
-                document.body.removeEventListener('htmx:afterSwap', onSwap);
-                updateUI();
-              }
-            };
-            document.body.addEventListener('htmx:afterSwap', onSwap);
+      // Clique individual: carrega só a prévia daquela seção.
+      once('aculta-single-preview', '.aculta-load-preview-btn', context).forEach((link) => {
+        link.addEventListener('click', (event) => {
+          event.preventDefault();
+          const section = link.closest('.ui_patterns_component');
+          if (!section) {
+            return;
           }
+          loadPreview(section).then((ok) => {
+            if (ok) {
+              state.errors.delete(section.id);
+            }
+            else {
+              state.errors.add(section.id);
+            }
+            updateUI();
+          });
         });
       });
 
-      // 2. Inicializa o botão global "Exibir todas as prévias"
+      // Botão do lote.
       once('aculta-bulk-preview-init', '#aculta-btn-bulk-preview', context).forEach((btn) => {
-        state.domElements.btn = btn;
-        state.domElements.btnText = getButtonTextElement(btn);
-        state.domElements.status = document.getElementById('aculta-bulk-preview-status');
-
+        state.btn = btn;
+        state.btnText = btn.querySelector('.aculta-bulk-preview-btn-text') || btn.querySelector('span:not(.aculta-icon)') || btn;
+        state.status = document.getElementById('aculta-bulk-preview-status');
         document.addEventListener('aculta:ui-library-scope-changed', onScopeChanged);
         updateUI();
 
-        btn.addEventListener('click', (e) => {
-          e.preventDefault();
-
-          // Ação: Cancelar se já estiver rodando
+        btn.addEventListener('click', (event) => {
+          event.preventDefault();
           if (state.isRunning) {
             state.isRunning = false;
             state.isCancelled = true;
@@ -388,21 +306,14 @@
             updateUI();
             return;
           }
-
-          // Ação: Iniciar ou Continuar
           state.isCancelled = false;
           state.isRunning = true;
-
-          // Se estava finalizado com erros, tenta apenas os erros
-          const isRetryErrors = (btn.getAttribute('data-state') === 'finished'
-            && getScopeItems().some((item) => state.errorSet.has(item.componentId)));
-          populateQueue(isRetryErrors);
-
+          const retryErrors = btn.getAttribute('data-state') === 'finished' && state.errors.size > 0;
+          populateQueue(retryErrors);
           updateUI();
           processQueue();
         });
       });
     },
   };
-
 })(Drupal, once);

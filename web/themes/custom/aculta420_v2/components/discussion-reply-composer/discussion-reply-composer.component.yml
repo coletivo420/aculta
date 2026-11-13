@@ -38,6 +38,14 @@ props:
       type: [string, 'null']
       title: Título do conteúdo hospedeiro
       default: null
+    trigger_label:
+      type: string
+      title: Texto do botão que abre o popup
+      default: Responder
+    dialog_title:
+      type: string
+      title: Título do popup
+      default: Responder
 slots:
   messages:
     title: Mensagens de status ou erro

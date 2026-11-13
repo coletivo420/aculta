@@ -681,13 +681,6 @@ autorizada.
 - **Regra:** desde 2026-11-12 o título é renderizado pelo SDC `heading` no nível de `title_level`; o CSS tipográfico próprio foi removido.
 - **Estado:** adapters de Views para a página de categorias e a landing usam o mesmo SDC; Firefox ESR cobriu ambos os consumers em nove larguras e dois modos; título pelo SDC `heading` em 2026-11-12.
 
-### discussion-comment — Comentário de discussão
-- **Papel:** apresentação de autoria pública, data, conteúdo e links de comentário.
-- **Props:** `has_author`, `has_submitted`.
-- **Slots:** `author`, `submitted`, `body`, `footer`.
-- **Consumer:** template de comentário `aculta_discussion_post`.
-- **Estado:** template V1 e CSS portados; não há comentário desse bundle nas páginas do Runtime verificadas.
-
 ### map-popup — Balão de mapa
 - **Papel:** cartão compacto para um marcador de mapa.
 - **Props:** `title`, `url`, `category`, `address`, `route_url`.

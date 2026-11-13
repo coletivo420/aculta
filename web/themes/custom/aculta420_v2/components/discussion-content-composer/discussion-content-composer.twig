@@ -1,3 +1,9 @@
+{#
+ * @file
+ * Compositor em popup: usa o componente padrão Diálogo (dialog), que abre pelo gatilho.
+#}
+{% set dialog_id = target_id ~ '-dialog' %}
+{% set body %}
 <div id="{{ target_id }}" class="discussion-content-composer discussion-content-composer--{{ status|default('editando') }}" data-discussion-content-composer data-status="{{ status|default('editando') }}">
   {% if messages %}
     <div class="discussion-content-composer__messages" role="status" aria-live="polite">
@@ -8,3 +14,11 @@
     {{ form }}
   </div>
 </div>
+{% endset %}
+{{ include('aculta420_v2:dialog', {
+  id: dialog_id,
+  title: dialog_title|default('Nova publicação'),
+  trigger_label: trigger_label|default('Nova publicação'),
+  trigger_url: '#' ~ dialog_id,
+  content: body|raw,
+}, with_context = false) }}

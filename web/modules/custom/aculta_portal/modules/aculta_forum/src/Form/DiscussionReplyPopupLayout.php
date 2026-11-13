@@ -36,25 +36,23 @@ final class DiscussionReplyPopupLayout {
     }
     // "Limpar" zera o formulário (reset nativo, sem JavaScript).
     $form['actions']['clear'] = [
-      '#type' => 'html_tag',
-      '#tag' => 'button',
-      '#value' => t('Limpar'),
-      '#attributes' => [
-        'type' => 'button',
-        'data-portal-ui' => 'button-secondary',
-        'data-aculta-reply-clear' => '',
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:button',
+      '#props' => [
+        'text' => (string) t('Limpar'),
+        'variant' => 'secondary',
+        'attributes' => new \Drupal\Core\Template\Attribute(['data-aculta-reply-clear' => '']),
       ],
       '#weight' => 50,
     ];
     // "Cancelar" (secundário, como Limpar) fecha o popup.
     $form['actions']['cancel'] = [
-      '#type' => 'html_tag',
-      '#tag' => 'button',
-      '#value' => t('Cancelar'),
-      '#attributes' => [
-        'type' => 'button',
-        'data-portal-ui' => 'button-secondary',
-        'data-aculta-dialog-close' => '',
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:button',
+      '#props' => [
+        'text' => (string) t('Cancelar'),
+        'variant' => 'secondary',
+        'attributes' => new \Drupal\Core\Template\Attribute(['data-aculta-dialog-close' => '']),
       ],
       '#weight' => 51,
     ];

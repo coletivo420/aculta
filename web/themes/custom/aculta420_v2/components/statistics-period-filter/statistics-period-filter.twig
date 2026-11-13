@@ -10,5 +10,10 @@
       {% endfor %}
     </select>
   </label>
-  <button type="submit" class="statistics-period-filter__submit">{{ submit_label }}</button>
+  {{ include('aculta420_v2:button', {
+    text: submit_label,
+    variant: 'primary',
+    is_submit: true,
+    attributes: create_attribute({class: ['statistics-period-filter__submit']}),
+  }, with_context = false) }}
 </form>

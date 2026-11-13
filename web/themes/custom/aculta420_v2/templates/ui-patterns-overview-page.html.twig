@@ -25,12 +25,7 @@
     <div class="ui_patterns_component__stories-container" id="preview-container-{{ safe_component_id }}">
       <div class="aculta-preview-placeholder" id="placeholder-{{ safe_component_id }}">
         <a href="{{ single_url }}"
-           class="button button--secondary aculta-load-preview-btn use-htmx"
-           data-hx-get="{{ single_url }}"
-           data-hx-target="#placeholder-{{ safe_component_id }}"
-           data-hx-swap="outerHTML"
-           data-hx-select="#component-stories-wrapper"
-           data-hx-indicator="#indicator-{{ safe_component_id }}">
+            class="button button--secondary aculta-load-preview-btn">
           {{ 'Carregar prévia sob demanda'|t }} ({{ component.stories|length }} {{ 'histórias'|t }})
         </a>
         <span id="indicator-{{ safe_component_id }}" class="htmx-indicator" aria-hidden="true">{{ 'Carregando prévia...'|t }}</span>
@@ -116,11 +111,16 @@
       }, with_context: false) }}
     </div>
     <div id="aculta-bulk-preview-status" class="aculta-bulk-preview-status" aria-live="polite" role="status"></div>
+    <div class="aculta-component-library__viewport">
+      <button type="button" class="aculta-btn-viewport" id="aculta-btn-viewport" aria-pressed="false" data-viewport="desktop">
+        {{ 'Visualizar em celular'|t }}
+      </button>
+    </div>
   </div>
   <hr>
 
-  {% set full_ids = ['aculta420_v2:forum-post-card', 'aculta420_v2:forum-reply-mirror', 'aculta420_v2:forum-opening-post'] %}
-  <div id="aculta-components-container">
+  {% set full_ids = ['aculta420_v2:forum-post-card', 'aculta420_v2:forum-reply-mirror', 'aculta420_v2:forum-opening-post', 'aculta420_v2:forum-reply-compact', 'aculta420_v2:forum-quote', 'aculta420_v2:forum-topic-meta'] %}
+  <div id="aculta-components-container" data-viewport="desktop">
     {# Grade em duas colunas: sem os cards de largura total, que ficam no fim. #}
     {% for group_name, components in groups %}
       {% if components|filter(c => c.id not in full_ids)|length %}

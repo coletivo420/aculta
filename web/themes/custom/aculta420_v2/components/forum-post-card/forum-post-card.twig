@@ -13,8 +13,8 @@
             {{ avatar_markup }}
           </div>
         {% else %}
-          <div class="forum-post-card__avatar-fallback" aria-hidden="true">
-            {{ include('aculta420_v2:icon', { name: 'user-circle', variant: 'duotone', size: 'md' }, with_context = false) }}
+          <div class="forum-post-card__avatar">
+            {{ include('aculta420_v2:avatar', { size: 'md', label: author_name }, with_context = false) }}
           </div>
         {% endif %}
         <div class="forum-post-card__author-info">
@@ -32,7 +32,7 @@
             {% endif %}
             {% if author_reactions is not null and author_reactions is not same as('') %}
               <span class="forum-post-card__reaction-stat" title="{{ 'Reações recebidas'|t }}">
-                {{ include('aculta420_v2:reaction-emoji', { name: 'heart', variant: 'color', size: 'xs', label: 'Reações recebidas'|t }, with_context = false) }}
+                {{ include('aculta420_v2:reaction-emoji', { name: 'broccoli', variant: 'color', size: 'xs', label: 'Reações recebidas'|t }, with_context = false) }}
                 <span>{{ author_reactions }} {{ 'reações'|t }}</span>
               </span>
             {% endif %}

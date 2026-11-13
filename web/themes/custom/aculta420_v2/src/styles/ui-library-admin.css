@@ -200,3 +200,52 @@ main:has(.ui_patterns_component) {
 }
 
 
+
+/* Visualização em celular: todas as prévias ficam na largura de um celular (390 px), em uma coluna. */
+.aculta-component-library__viewport {
+  display: flex;
+  justify-content: flex-end;
+  margin-block: var(--spacing-sm) var(--spacing-md);
+}
+
+.aculta-btn-viewport {
+  padding: .375rem .875rem;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: var(--color-surface);
+  color: var(--color-text);
+  font: inherit;
+  cursor: pointer;
+}
+
+.aculta-btn-viewport[aria-pressed="true"] {
+  border-color: var(--color-brand-primary);
+  color: var(--color-brand-primary);
+}
+
+#aculta-components-container[data-viewport="mobile"] .aculta-preview-host {
+  display: block;
+  max-inline-size: 390px;
+  margin-inline: auto;
+}
+
+.aculta-preview-placeholder.is-loading {
+  opacity: .6;
+}
+
+.aculta-preview-placeholder.is-error {
+  color: var(--color-text-secondary);
+}
+
+.aculta-preview-host {
+  display: block;
+  min-inline-size: 0;
+  /* Cada prévia contém o próprio conteúdo: conteúdo mais largo rola dentro da prévia, sem invadir os vizinhos. */
+  contain: layout paint;
+  overflow: auto;
+}
+
+#aculta-components-container[data-viewport="mobile"] .aculta-component-library__group-wrapper,
+#aculta-components-container[data-viewport="mobile"] .aculta-component-library__full-grid {
+  display: block;
+}

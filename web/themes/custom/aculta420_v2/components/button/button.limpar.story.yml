@@ -1,0 +1,6 @@
+name: Limpar
+description: Ação secundária que zera os campos do formulário, sem enviar. Mesmo visual de Cancelar.
+props:
+  text: Limpar
+  variant: secondary
+  is_submit: false

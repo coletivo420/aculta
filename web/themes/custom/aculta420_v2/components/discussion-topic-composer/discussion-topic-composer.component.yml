@@ -21,6 +21,14 @@ props:
       type: [string, 'null']
       title: Título do fórum ou espaço onde o tópico será criado
       default: null
+    trigger_label:
+      type: string
+      title: Texto do botão que abre o popup
+      default: Novo tópico
+    dialog_title:
+      type: string
+      title: Título do popup
+      default: Novo tópico
 slots:
   messages:
     title: Mensagens de status ou erro
