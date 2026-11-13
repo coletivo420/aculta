@@ -242,13 +242,40 @@ final class PortalController extends ControllerBase {
    * aculta_portal.settings (mercado_pago_account_url).
    */
   private function paymentNotice(): array {
+    $paymentUrl = $this->safeMercadoPagoAccountUrl();
+
     return [
       '#theme' => 'aculta_portal_payment_notice',
       '#intro' => $this->t('Todos os nossos pagamentos são processados pelo Mercado Pago.'),
       '#link_label' => $this->t('Acesse sua conta Mercado Pago'),
-      '#url' => (string) $this->configs->get('aculta_portal.settings')->get('mercado_pago_account_url'),
+      '#url' => $paymentUrl !== NULL ? Url::fromUri($paymentUrl) : NULL,
       '#weight' => 10,
     ];
+  }
+
+  /**
+   * Restricts the configurable payment link to the official HTTPS domain.
+   */
+  private function safeMercadoPagoAccountUrl(): ?string {
+    $configuredUrl = $this->configs->get('aculta_portal.settings')->get('mercado_pago_account_url');
+    if (!is_string($configuredUrl)) {
+      return NULL;
+    }
+
+    $url = trim($configuredUrl);
+    $parts = parse_url($url);
+    if ($url === ''
+      || !is_array($parts)
+      || filter_var($url, FILTER_VALIDATE_URL) === FALSE
+      || strtolower((string) ($parts['scheme'] ?? '')) !== 'https'
+      || !in_array(strtolower((string) ($parts['host'] ?? '')), ['mercadopago.com.br', 'www.mercadopago.com.br'], TRUE)
+      || isset($parts['user'])
+      || isset($parts['pass'])
+      || (isset($parts['port']) && $parts['port'] !== 443)) {
+      return NULL;
+    }
+
+    return $url;
   }
 
   /**

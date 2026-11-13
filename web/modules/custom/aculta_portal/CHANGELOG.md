@@ -1,3 +1,8 @@
+## Não versionado — restringir destino do aviso Mercado Pago
+
+- A configuração do link agora só é exibida para HTTPS nos hosts oficiais
+  `mercadopago.com.br`; Twig renderiza com a função Drupal `link()`.
+
 ## Não versionado — Runtime Sync v2 e leitura no painel do Deployer (2026-11-11)
 
 - `scripts/runtime-sync.sh` v2, `scripts/runtime-sync/helper.py`, `scripts/runtime-sync/risk-rules.yml` e `scripts/test-runtime-sync.sh`: estado persistente atômico 0600 em `var/runtime-sync/` (`state.json` e `latest.json`, schema 2), correção do bug em que `HEAD == origin/dev` saía sem reconstruir caches pendentes, classificador cumulativo `R0..R4`/`RX`, CLI com `plan [--refresh]`, `doctor`, `status`, `sync-code [--adopt-baseline]`, `verify`, `structural-plan` e `isolation-plan`.

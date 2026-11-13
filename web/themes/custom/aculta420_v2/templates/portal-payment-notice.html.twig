@@ -4,7 +4,7 @@
     <p>
       {{ intro }}
       {% if url %}
-        <a class="aculta-payment-notice__link" href="{{ url }}" target="_blank" rel="noopener">{{ link_label }} ({{ 'abre em nova aba'|t }})</a>
+        {{ link(link_label, url, {class: ['aculta-payment-notice__link'], target: '_blank', rel: 'noopener'}) }} ({{ 'abre em nova aba'|t }})
       {% endif %}
     </p>
   </section>

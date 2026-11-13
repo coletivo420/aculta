@@ -1,3 +1,8 @@
+## Não versionado — link seguro no aviso Mercado Pago
+
+- O tema usa a função Drupal `link()` com classe e atributos do tema; a URL
+  validada vem do Portal.
+
 ## Não versionado — utilitários eliminados e contraste corrigido (2026-11-12)
 
 - `src/styles/utilities.css` removido. Nenhum token de `PortalUiHooks::TOKENS` usa mais `aculta-u-*`: os 39 tokens ganharam classes semânticas por domínio (`aculta-donation__*`, `aculta-shop-*`, `aculta-location-*`, `aculta-lms-*`, `aculta-messenger-*`, `aculta-we-sativa__*`, `studio__actions`) definidas em `portal-ui-map.css` e nos CSS dos módulos. `.aculta-panel` foi para `portal-ui-map.css`; `.aculta-u-block-start` (UI Styles de bloco, configurado em `block.block.*`, não vem do mapa) foi para `layout.css`.

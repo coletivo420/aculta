@@ -3,5 +3,5 @@
   O link abre em nova aba (rel="noopener").
 #}
 <section data-portal-payment-notice>
-  <p>{{ intro }}{% if url %} <a href="{{ url }}" target="_blank" rel="noopener">{{ link_label }} (abre em nova aba)</a>{% endif %}</p>
+  <p>{{ intro }}{% if url %} {{ link(link_label, url, {target: '_blank', rel: 'noopener'}) }} (abre em nova aba){% endif %}</p>
 </section>
