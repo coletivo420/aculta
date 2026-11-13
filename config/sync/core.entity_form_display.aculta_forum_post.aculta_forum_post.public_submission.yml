@@ -19,7 +19,7 @@ content:
     settings:
       size: 60
       placeholder: ''
-    third_party_settings: { }
+    third_party_settings: {  }
   body:
     type: text_textarea
     weight: 0
@@ -27,7 +27,7 @@ content:
     settings:
       rows: 8
       placeholder: ''
-    third_party_settings: { }
+    third_party_settings: {  }
 hidden:
   changed: true
   created: true

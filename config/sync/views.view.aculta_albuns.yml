@@ -157,7 +157,8 @@ display:
               slots:
                 content:
                   sources:
-                    - source: {  }
+                    -
+                      source: {  }
                       source_id: view_rows
               props: {  }
       row:
@@ -170,22 +171,26 @@ display:
             slots:
               cover:
                 sources:
-                  - source:
+                  -
+                    source:
                       ui_patterns_views_field: field_gallery_cover
                     source_id: view_field
               title:
                 sources:
-                  - source:
+                  -
+                    source:
                       ui_patterns_views_field: title
                     source_id: view_field
               published_at:
                 sources:
-                  - source:
+                  -
+                    source:
                       ui_patterns_views_field: field_published_at
                     source_id: view_field
               credits:
                 sources:
-                  - source:
+                  -
+                    source:
                       ui_patterns_views_field: field_credits
                     source_id: view_field
             props: {  }
@@ -219,44 +224,52 @@ display:
         slots:
           attachment_before:
             sources:
-              - source: {  }
+              -
+                source: {  }
                 source_id: view_attachment_before
           header:
             sources:
-              - source: {  }
+              -
+                source: {  }
                 source_id: view_header
           exposed:
             sources:
-              - source: {  }
+              -
+                source: {  }
                 source_id: view_exposed
           rows:
             sources:
-              - source: {  }
+              -
+                source: {  }
                 source_id: view_rows
           empty:
             sources:
-              - source: {  }
+              -
+                source: {  }
                 source_id: view_empty
           pager:
             sources:
-              - source: {  }
+              -
+                source: {  }
                 source_id: view_pager
           more:
             sources:
-              - source: {  }
+              -
+                source: {  }
                 source_id: view_more
           footer:
             sources:
-              - source: {  }
+              -
+                source: {  }
                 source_id: view_footer
           attachment_after:
             sources:
-              - source: {  }
+              -
+                source: {  }
                 source_id: view_attachment_after
         props:
           title:
-            source:
-              {  }
+            source: {  }
             source_id: view_title
       path: albuns
       menu:

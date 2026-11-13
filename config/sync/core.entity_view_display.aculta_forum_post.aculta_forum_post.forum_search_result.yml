@@ -17,7 +17,7 @@ content:
     label: hidden
     settings:
       link_to_entity: false
-    third_party_settings: { }
+    third_party_settings: {  }
     weight: 0
     region: content
   body:
@@ -25,14 +25,14 @@ content:
     label: hidden
     settings:
       trim_length: 280
-    third_party_settings: { }
+    third_party_settings: {  }
     weight: 1
     region: content
   topic:
     type: forum_post_search_topic_link
     label: hidden
-    settings: { }
-    third_party_settings: { }
+    settings: {  }
+    third_party_settings: {  }
     weight: 2
     region: content
 hidden:

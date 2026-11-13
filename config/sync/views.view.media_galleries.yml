@@ -210,7 +210,8 @@ display:
               slots:
                 content:
                   sources:
-                    - source: {  }
+                    -
+                      source: {  }
                       source_id: view_rows
               props: {  }
       row:
@@ -223,12 +224,14 @@ display:
             slots:
               cover:
                 sources:
-                  - source:
+                  -
+                    source:
                       ui_patterns_views_field: images_target_id
                     source_id: view_field
               title:
                 sources:
-                  - source:
+                  -
+                    source:
                       ui_patterns_views_field: title
                     source_id: view_field
               published_at:

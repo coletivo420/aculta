@@ -26,7 +26,6 @@ confirmation_response:
     confirm: '<front>'
     cancel: '<front>'
     error: '<front>'
-
 user_email_change:
   enabled: true
   notify_current: true

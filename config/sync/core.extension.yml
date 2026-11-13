@@ -20,9 +20,9 @@ module:
   aculta_id_cpf: 0
   aculta_image: 0
   aculta_index: 0
+  aculta_learning_contracts: 0
   aculta_linkweed: 0
   aculta_lms: 0
-  aculta_learning_contracts: 0
   aculta_lms_h5p: 0
   aculta_magazine: 0
   aculta_mail_confirmer: 0

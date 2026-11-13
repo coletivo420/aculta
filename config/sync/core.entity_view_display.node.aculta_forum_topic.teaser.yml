@@ -22,7 +22,7 @@ content:
     label: hidden
     settings:
       trim_length: 400
-    third_party_settings: { }
+    third_party_settings: {  }
     weight: 10
     region: content
   field_aculta_categories:
@@ -30,7 +30,7 @@ content:
     label: hidden
     settings:
       link: false
-    third_party_settings: { }
+    third_party_settings: {  }
     weight: 0
     region: content
 hidden:

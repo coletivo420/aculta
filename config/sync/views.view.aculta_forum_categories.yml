@@ -321,7 +321,7 @@ display:
             strip_tags: false
             trim: false
             html: false
-          element_type: ""
+          element_type: ''
           element_class: ''
           element_label_type: ''
           element_label_class: ''
@@ -377,7 +377,8 @@ display:
         type: default
         options:
           grouping:
-            - field: parent_name
+            -
+              field: parent_name
               rendered: false
               rendered_strip: false
           default_row_class: true
@@ -391,22 +392,26 @@ display:
             slots:
               parent:
                 sources:
-                  - source:
+                  -
+                    source:
                       ui_patterns_views_field: parent_card
                     source_id: view_field
               title:
                 sources:
-                  - source:
+                  -
+                    source:
                       ui_patterns_views_field: name
                     source_id: view_field
               description:
                 sources:
-                  - source:
+                  -
+                    source:
                       ui_patterns_views_field: description__value
                     source_id: view_field
               count:
                 sources:
-                  - source:
+                  -
+                    source:
                       ui_patterns_views_field: aculta_forum_category_topic_count
                     source_id: view_field
             props:
@@ -432,31 +437,40 @@ display:
         slots:
           attachment_before:
             sources:
-              - source_id: view_attachment_before
+              -
+                source_id: view_attachment_before
           header:
             sources:
-              - source_id: view_header
+              -
+                source_id: view_header
           exposed:
             sources:
-              - source_id: view_exposed
+              -
+                source_id: view_exposed
           rows:
             sources:
-              - source_id: view_rows
+              -
+                source_id: view_rows
           empty:
             sources:
-              - source_id: view_empty
+              -
+                source_id: view_empty
           pager:
             sources:
-              - source_id: view_pager
+              -
+                source_id: view_pager
           more:
             sources:
-              - source_id: view_more
+              -
+                source_id: view_more
           footer:
             sources:
-              - source_id: view_footer
+              -
+                source_id: view_footer
           attachment_after:
             sources:
-              - source_id: view_attachment_after
+              -
+                source_id: view_attachment_after
       display_extenders: {  }
       path: categorias
       menu:
@@ -480,31 +494,40 @@ display:
         slots:
           attachment_before:
             sources:
-              - source_id: view_attachment_before
+              -
+                source_id: view_attachment_before
           header:
             sources:
-              - source_id: view_header
+              -
+                source_id: view_header
           exposed:
             sources:
-              - source_id: view_exposed
+              -
+                source_id: view_exposed
           rows:
             sources:
-              - source_id: view_rows
+              -
+                source_id: view_rows
           empty:
             sources:
-              - source_id: view_empty
+              -
+                source_id: view_empty
           pager:
             sources:
-              - source_id: view_pager
+              -
+                source_id: view_pager
           more:
             sources:
-              - source_id: view_more
+              -
+                source_id: view_more
           footer:
             sources:
-              - source_id: view_footer
+              -
+                source_id: view_footer
           attachment_after:
             sources:
-              - source_id: view_attachment_after
+              -
+                source_id: view_attachment_after
       title: 'Categorias e subcategorias'
       block_description: 'Categorias da entrada do Growroom420'
       defaults:
@@ -521,17 +544,20 @@ display:
             slots:
               parent:
                 sources:
-                  - source:
+                  -
+                    source:
                       ui_patterns_views_field: parent_name
                     source_id: view_field
               title:
                 sources:
-                  - source:
+                  -
+                    source:
                       ui_patterns_views_field: name
                     source_id: view_field
               description:
                 sources:
-                  - source:
+                  -
+                    source:
                       ui_patterns_views_field: description__value
                     source_id: view_field
             props:

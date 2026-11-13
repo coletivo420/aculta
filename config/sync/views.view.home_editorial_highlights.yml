@@ -79,7 +79,8 @@ display:
               slots:
                 content:
                   sources:
-                    - source_id: view_rows
+                    -
+                      source_id: view_rows
                       source: {  }
       row:
         type: 'entity:node'

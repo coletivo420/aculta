@@ -6,36 +6,43 @@ reply_max_depth: 2
 topic_author_delete_policy: moderation_queue
 default_reaction: heart
 allowed_reactions:
-  - id: heart
+  -
+    id: heart
     icon: heart
     label: Curtir
     enabled: true
-  - id: thumbs_up
+  -
+    id: thumbs_up
     icon: thumbs-up
     label: Apoiar
     enabled: true
-  - id: seedling
+  -
+    id: seedling
     icon: seedling
     label: Cultivo
     enabled: true
-  - id: herb
+  -
+    id: herb
     icon: herb
     label: Botânica
     enabled: true
-  - id: fire
+  -
+    id: fire
     icon: fire
     label: Excelente
     enabled: true
-  - id: clap
+  -
+    id: clap
     icon: clapping-hands
     label: Aplausos
     enabled: true
-  - id: laugh
+  -
+    id: laugh
     icon: grinning-squinting-face
     label: Engraçado
     enabled: true
-  - id: pray
+  -
+    id: pray
     icon: folded-hands
     label: Gratidão
     enabled: true
-

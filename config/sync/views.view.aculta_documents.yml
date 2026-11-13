@@ -67,7 +67,7 @@ display:
         options:
           ui_patterns:
             ui_patterns:
-              component_id: aculta420_v2:layout-grid
+              component_id: 'aculta420_v2:layout-grid'
               variant_id: null
               props:
                 min_item_width:
@@ -77,7 +77,8 @@ display:
               slots:
                 content:
                   sources:
-                    - source_id: view_rows
+                    -
+                      source_id: view_rows
                       source: {  }
       row:
         type: 'entity:node'

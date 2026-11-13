@@ -124,8 +124,6 @@ display:
     position: 1
     display_options:
       title: ''
-      defaults:
-        style: false
       style:
         type: ui_patterns
         options:
@@ -144,8 +142,11 @@ display:
               slots:
                 content:
                   sources:
-                    - source: {  }
+                    -
                       source_id: view_rows
+                      source: {  }
+      defaults:
+        style: false
       display_extenders: {  }
       block_description: 'Catálogo público de Eventos'
       block_category: ACULTA

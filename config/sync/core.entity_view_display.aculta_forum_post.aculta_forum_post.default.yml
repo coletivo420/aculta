@@ -18,19 +18,19 @@ content:
     label: hidden
     settings:
       link_to_entity: false
-    third_party_settings: { }
+    third_party_settings: {  }
     weight: 0
     region: content
   body:
     type: text_default
     label: hidden
-    settings: { }
-    third_party_settings: { }
+    settings: {  }
+    third_party_settings: {  }
     weight: 1
     region: content
   flag_sinalizar_post_forum:
-    settings: { }
-    third_party_settings: { }
+    settings: {  }
+    third_party_settings: {  }
     weight: 20
     region: content
 hidden:

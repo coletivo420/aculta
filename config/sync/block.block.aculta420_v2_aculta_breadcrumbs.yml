@@ -23,5 +23,5 @@ third_party_settings:
   ui_styles:
     block:
       selected: {  }
-      extra: 'aculta-u-block-start'
+      extra: aculta-u-block-start
 visibility: {  }

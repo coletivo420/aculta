@@ -13,7 +13,7 @@ label: 'Faixa de acento'
 description: 'Escolha administrativa da faixa do teaser da Revista.'
 required: false
 translatable: false
-default_value: []
+default_value: {  }
 default_value_callback: ''
-settings: {}
+settings: {  }
 field_type: string
