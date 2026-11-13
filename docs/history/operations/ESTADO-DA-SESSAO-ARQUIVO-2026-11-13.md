@@ -45,3 +45,14 @@
 - **Pendências e bloqueios:** conferir workflows do novo SHA; falhas antigas do Kernel ainda não auditadas integralmente; Runtime Sync RX/BLOCKED.
 - **Próximo passo:** corrigir o próximo achado Kernel comprovado, após conferir o relatório JUnit remoto mais recente.
 
+
+# GitHub — contrato das métricas de moderação — 2026-11-13
+
+- **Objetivo:** corrigir expectativa Kernel obsoleta em `aculta_statistics`.
+- **Estado:** o teste do provedor Fórum cobre `posts_pending`; `reports_open` é coberto no provider de `aculta_cgu`, conforme ownership FST-07. Kernel do commit foi interrompido por shutdown do runner, sem relatório.
+- **Decisões e alternativas descartadas:** não reintroduzir denúncias no provider do Fórum nem ampliar o harness do módulo Statistics para instalar CGU, pois o owner já tem teste Kernel dedicado.
+- **Cuidados:** Kernel não rodado localmente por risco de travamento.
+- **Commits e arquivos:** pendente; teste de integração Kernel, TODO/status de `aculta_statistics` e este handoff.
+- **Verificações:** Semgrep, PHP lint, descoberta, Unit e PHPStan PASS em SHAs seguintes; Kernel continua sem relatório. O log do PHPStan documentou e motivou a correção separada do Index.
+- **Pendências e bloqueios:** obter conclusão Kernel; Semgrep antigo reportado como 427 não corresponde diretamente aos SARIF arquivados; Runtime Sync RX/BLOCKED.
+- **Próximo passo:** validar diff/gates leves, commitar e publicar; seguir o CI remoto e corrigir o próximo achado comprovado.

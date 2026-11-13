@@ -6,6 +6,12 @@ on:
   pull_request:
     branches: [ main, dev ]
 
+concurrency:
+  # The same branch commit can trigger both push and pull_request events.
+  # Keep one full PHP suite per head SHA so Kernel does not run twice in parallel.
+  group: php-quality-${{ github.event.pull_request.head.sha || github.sha }}
+  cancel-in-progress: true
+
 jobs:
   php-lint:
     runs-on: ubuntu-latest
