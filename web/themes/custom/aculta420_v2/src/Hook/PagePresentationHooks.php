@@ -315,26 +315,7 @@ final class PagePresentationHooks {
     $variables['aculta_accordion_sdc_available'] = $this->componentAvailable('accordion');
     if (($variables['node']?->bundle() ?? NULL) === 'revista'
       && ($variables['view_mode'] ?? NULL) === 'full') {
-      $sections = &$variables['content']['_layout_builder'];
-      $sections ??= [];
-      $variables['aculta_revista_full_component_layout'] = FALSE;
-      if (is_array($sections)) {
-        foreach ($sections as &$section) {
-          $layout = is_array($section) ? ($section['#layout'] ?? NULL) : NULL;
-          if ($layout instanceof LayoutInterface
-            && $layout->getPluginId() === 'ui_patterns:aculta420_v2:revista_publication') {
-            $variables['aculta_revista_full_component_layout'] = TRUE;
-            foreach (['post_meta' => 'meta', 'article_authors' => 'authors'] as $extra => $slot) {
-              if (!empty($variables['content'][$extra])) {
-                $section['#slots'][$slot] = $variables['content'][$extra];
-                unset($variables['content'][$extra]);
-              }
-            }
-            break;
-          }
-        }
-        unset($section);
-      }
+      $this->composeRevistaFull($variables);
     }
     if (($variables['node']?->bundle() ?? NULL) === 'revista'
       && ($variables['view_mode'] ?? NULL) === 'teaser') {
@@ -370,6 +351,113 @@ final class PagePresentationHooks {
       && ($variables['view_mode'] ?? NULL) === 'teaser') {
       $this->composeDocumentTeaser($variables);
     }
+  }
+
+  /**
+   * Composes the Revista full view with the SDC or UI Patterns component layout.
+   */
+  private function composeRevistaFull(array &$variables): void {
+    $node = $variables['node'] ?? NULL;
+    $content = $variables['content'] ?? [];
+    if (!$node instanceof NodeInterface || !is_array($content)) {
+      return;
+    }
+
+    $attributes = $variables['attributes'] ?? new Attribute();
+    if (!$attributes instanceof Attribute) {
+      $attributes = new Attribute((array) $attributes);
+    }
+    $attributes->addClass('node', 'node--type-revista', 'node--view-mode-full');
+    $variables['attributes'] = $attributes;
+
+    if (isset($content['_layout_builder']) && is_array($content['_layout_builder'])) {
+      foreach ($content['_layout_builder'] as &$section) {
+        $layout = is_array($section) ? ($section['#layout'] ?? NULL) : NULL;
+        if (!$layout instanceof LayoutInterface
+          || $layout->getPluginId() !== 'ui_patterns:aculta420_v2:revista_publication') {
+          continue;
+        }
+        foreach (['post_meta' => 'meta', 'article_authors' => 'authors'] as $extra => $slot) {
+          if (!empty($content[$extra])) {
+            $section['#slots'][$slot] = $content[$extra];
+            unset($content[$extra]);
+          }
+        }
+        unset($section);
+        $variables['content'] = $content;
+        return;
+      }
+      unset($section);
+    }
+
+    $meta = $content['post_meta'] ?? [];
+    $authors = $content['article_authors'] ?? [];
+    $layoutBuilder = $content['_layout_builder'] ?? [];
+    if (!empty($layoutBuilder)) {
+      $props = [
+        'has_meta' => !empty($meta),
+        'has_cover' => !$node->get('field_media_image')->isEmpty(),
+        'has_subtitle' => !$node->get('field_subtitle')->isEmpty(),
+        'has_summary' => !$node->get('field_summary')->isEmpty(),
+        'has_footer' => FALSE,
+        'has_authors' => !empty($authors),
+        'has_discussion' => FALSE,
+      ];
+      $slots = ['meta' => $meta, 'body' => $layoutBuilder, 'authors' => $authors];
+    }
+    else {
+      $footer = $content;
+      unset(
+        $footer['post_meta'],
+        $footer['field_media_image'],
+        $footer['field_subtitle'],
+        $footer['field_summary'],
+        $footer['body'],
+        $footer['field_editorial_category'],
+        $footer['field_tags'],
+        $footer['field_references'],
+        $footer['field_credits'],
+        $footer['article_authors'],
+        $footer['field_aculta_discussion'],
+        $footer['field_published_at'],
+      );
+      $props = [
+        'has_meta' => !empty($meta),
+        'has_cover' => !$node->get('field_media_image')->isEmpty(),
+        'has_subtitle' => !$node->get('field_subtitle')->isEmpty(),
+        'has_summary' => !$node->get('field_summary')->isEmpty(),
+        'has_footer' => $footer !== [],
+        'has_authors' => !empty($authors),
+        'has_discussion' => !empty($content['field_aculta_discussion']),
+      ];
+      $slots = [
+        'meta' => $meta,
+        'cover' => $content['field_media_image'] ?? [],
+        'subtitle' => $content['field_subtitle'] ?? [],
+        'summary' => $content['field_summary'] ?? [],
+        'body' => $content['body'] ?? [],
+        'footer' => [
+          'category' => $content['field_editorial_category'] ?? [],
+          'tags' => $content['field_tags'] ?? [],
+          'references' => $content['field_references'] ?? [],
+          'credits' => $content['field_credits'] ?? [],
+          'other' => $footer,
+        ],
+        'authors' => $authors,
+        'discussion' => $content['field_aculta_discussion'] ?? [],
+      ];
+    }
+
+    $component = [
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:revista-publication',
+      '#props' => $props,
+      '#slots' => $slots,
+    ];
+    CacheableMetadata::createFromRenderArray($variables['elements'] ?? [])
+      ->addCacheableDependency($node)
+      ->applyTo($component);
+    $variables['content'] = ['aculta_revista_publication' => $component];
   }
 
   /**
