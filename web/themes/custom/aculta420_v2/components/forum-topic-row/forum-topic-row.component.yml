@@ -11,7 +11,7 @@ props:
     pinned:
       type: boolean
       title: Tópico fixado
-      description: Estado base da linha; true a fixa, e conteúdo não vazio em pinned_content também a marca como fixada.
+      description: Estado de fixação recebido da View e usado para destacar a linha e exibir o badge de tópico fixado.
       default: false
     badges:
       type: [array, 'null']
@@ -37,7 +37,7 @@ props:
     replies:
       type: [string, integer, 'null']
       title: Total de respostas
-      description: Contagem fallback usada quando o slot replies_content não contém valor renderizado.
+      description: Contagem simples usada quando a View não fornece o slot formatado replies_content.
       default: null
     views:
       type: [string, integer, 'null']
@@ -47,7 +47,7 @@ props:
     last_activity:
       type: [string, 'null']
       title: Timestamp ou tempo relativo da última atividade
-      description: Valor fallback de atividade usado quando activity_content não contém saída renderizada.
+      description: Valor simples de atividade usado quando a View não fornece o slot formatado activity_content.
       default: null
 slots:
   title:
@@ -62,9 +62,6 @@ slots:
   thumbnail:
     title: Miniatura opcional
     description: Imagem ou ícone ilustrativo.
-  pinned_content:
-    title: Estado de tópico fixado
-    description: Campo renderizado pela View quando o tópico está fixado.
   replies_content:
     title: Total de respostas renderizado
     description: Contagem formatada pela View, com acesso e cache preservados.

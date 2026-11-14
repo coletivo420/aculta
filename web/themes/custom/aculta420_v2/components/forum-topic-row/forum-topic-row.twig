@@ -1,10 +1,4 @@
-{% set pinned_content_markup = pinned_content|default('')|render %}
-{% set pinned_content_text = pinned_content_markup|striptags|trim %}
-{% set replies_content_markup = replies_content|default('')|render %}
-{% set replies_content_text = replies_content_markup|striptags|trim %}
-{% set activity_content_markup = activity_content|default('')|render %}
-{% set activity_content_text = activity_content_markup|striptags|trim %}
-{% set is_pinned = pinned or pinned_content_text is not empty %}
+{% set is_pinned = pinned %}
 <article class="forum-topic-row{% if is_pinned %} forum-topic-row--pinned{% endif %}">
   {% if thumbnail %}
     <div class="forum-topic-row__thumbnail">
@@ -19,8 +13,6 @@
             {% for b in badges %}
               <span class="forum-topic-row__badge forum-topic-row__badge--{{ b.tone|default('neutral') }}">{{ b.label }}</span>
             {% endfor %}
-          {% elseif pinned_content_text is not empty %}
-            <span class="forum-topic-row__badge forum-topic-row__badge--official">{{ pinned_content_markup }}</span>
           {% else %}
             <span class="forum-topic-row__badge forum-topic-row__badge--official">{{ 'Fixo'|t }}</span>
           {% endif %}
@@ -45,8 +37,8 @@
     <div class="forum-topic-row__stat forum-topic-row__stat--replies">
       <dt class="forum-topic-row__stat-label">{{ 'Respostas'|t }}</dt>
       <dd class="forum-topic-row__stat-value">
-        {% if replies_content_text is not empty %}
-          {{ replies_content_markup }}
+        {% if replies_content %}
+          {{ replies_content }}
         {% elseif replies is not null %}
           {{ replies }}
         {% else %}
@@ -67,8 +59,8 @@
     <div class="forum-topic-row__stat forum-topic-row__stat--activity">
       <dt class="forum-topic-row__stat-label">{{ 'Atividade'|t }}</dt>
       <dd class="forum-topic-row__stat-value">
-        {% if activity_content_text is not empty %}
-          {{ activity_content_markup }}
+        {% if activity_content %}
+          {{ activity_content }}
         {% elseif last_activity is not null and last_activity is not empty %}
           {{ last_activity }}
         {% else %}

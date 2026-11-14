@@ -471,13 +471,12 @@ $samples = [
     ],
   ],
   'forum-topic-row' => [
-    '#props' => ['pinned' => FALSE, 'badges' => NULL, 'replies' => NULL, 'views' => NULL, 'last_activity' => NULL],
+    '#props' => ['pinned' => TRUE, 'badges' => NULL, 'replies' => NULL, 'views' => NULL, 'last_activity' => NULL],
     '#slots' => [
       'title' => Markup::create('<a href="/discussoes/topico-exemplo">Tópico de teste</a>'),
       'meta' => Markup::create('<article class="author-card">Autoria pública</article><span class="forum-topic-row__category">Cultura</span>'),
-      'pinned_content' => 'Fixo',
-      'replies_content' => '42',
-      'activity_content' => '2h atrás',
+      'replies_content' => Markup::create('42'),
+      'activity_content' => Markup::create('2h atrás'),
     ],
   ],
   'heading' => [
@@ -974,9 +973,6 @@ foreach ($component_ids as $component_id) {
       '#slots' => [
         'title' => 'Tópico sem atividade',
         'meta' => 'Categoria',
-        'pinned_content' => ['#markup' => ''],
-        'replies_content' => ['#markup' => ''],
-        'activity_content' => ['#markup' => ''],
       ],
     ];
     $empty_state_output = (string) $renderer->renderInIsolation($empty_state_build);

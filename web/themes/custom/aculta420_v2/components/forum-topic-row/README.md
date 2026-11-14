@@ -14,13 +14,13 @@ Linha de tópico em lista tabular de discussões do Fórum Growroom420.
 - `meta`: autor e categoria.
 - `preview`: trecho da mensagem mais recente (opcional).
 - `thumbnail`: imagem ou ícone opcional.
-- `pinned_content`: campo renderizado pela View quando o tópico está fixado.
 - `replies_content`: contagem renderizada pela View, preservando o formatter.
 - `activity_content`: última atividade renderizada pela View.
 
-Os slots `pinned_content`, `replies_content` e `activity_content` permitem que
-UI Patterns Views forneça saídas renderizadas com metadados de cache. Quando
-presentes, eles prevalecem sobre as props simples correspondentes.
+Os slots `replies_content` e `activity_content` permitem que UI Patterns Views
+forneça saídas renderizadas com metadados de cache. Quando presentes, eles
+prevalecem sobre as props simples correspondentes. A prop booleana `pinned` é a
+fonte única para o estado de fixação.
 
 ## Conformidade
 - Desktop: layout de linha com colunas claras para estatísticas.

@@ -16,8 +16,6 @@ slots:
     '#markup': '<span>por <strong>GrowerExperiente</strong></span> · <a href="/categorias/cultivo-basico">Cultivo Básico</a>'
   preview:
     '#markup': 'Aprenda o passo a passo seguro para germinar sementes com alta taxa de sucesso usando papel toalha.'
-  pinned_content:
-    '#markup': 'Fixo'
   replies_content:
     '#markup': '42'
   activity_content:
