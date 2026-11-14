@@ -64,9 +64,12 @@ final class CourseStructureOrderFormTest extends UnitTestCase {
     $build = $form->buildForm([], $formState);
 
     self::assertSame('aculta_lms_course_structure_order_form', $form->getFormId());
-    self::assertSame('aculta-course-order-lessons-88', $build['#attributes']['id']);
-    self::assertTrue($build['#attributes']['data-aculta-unsaved-changes']);
-    self::assertSame('11,12', $build['order']['#default_value']);
+    self::assertIsArray($build['#attributes'] ?? NULL);
+    $attributes = $build['#attributes'];
+    self::assertSame('aculta-course-order-lessons-88', $attributes['id'] ?? NULL);
+    self::assertTrue($attributes['data-aculta-unsaved-changes'] ?? NULL);
+    self::assertIsArray($build['order'] ?? NULL);
+    self::assertSame('11,12', $build['order']['#default_value'] ?? NULL);
   }
 
 }

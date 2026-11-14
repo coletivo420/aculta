@@ -76,7 +76,7 @@ final class EntityCourseProgressReaderTest extends UnitTestCase {
    *   Indica se o curso foi concluído.
    * @param mixed $score
    *   Nota obtida.
-   * @param array $cacheTags
+   * @param list<string> $cacheTags
    *   Tags de cache da entidade.
    *
    * @return \Drupal\Core\Entity\ContentEntityInterface
@@ -90,6 +90,7 @@ final class EntityCourseProgressReaderTest extends UnitTestCase {
         'finished' => $finished,
         'score' => $score,
         'changed' => 123,
+        default => throw new \LogicException(sprintf("Unexpected progress field '%s'.", $field)),
       };
       $field_list = $this->createMock(FieldItemListInterface::class);
       $field_list->method('getValue')->willReturn($value === NULL ? [] : [['value' => $value]]);

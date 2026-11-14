@@ -52,9 +52,15 @@ final class CourseResourceBuilderTest extends UnitTestCase {
     self::assertSame('container', $build['#type']);
     self::assertArrayNotHasKey('readings', $build);
     self::assertArrayNotHasKey('galleries', $build);
-    self::assertContains('user.group_permissions', $build['#cache']['contexts']);
-    self::assertContains('domain', $build['#cache']['contexts']);
-    self::assertContains('group:course', $build['#cache']['tags']);
+    self::assertIsArray($build['#cache'] ?? NULL);
+    $cache = $build['#cache'];
+    self::assertIsArray($cache['contexts'] ?? NULL);
+    self::assertIsArray($cache['tags'] ?? NULL);
+    $contexts = $cache['contexts'];
+    $tags = $cache['tags'];
+    self::assertContains('user.group_permissions', $contexts);
+    self::assertContains('domain', $contexts);
+    self::assertContains('group:course', $tags);
   }
 
   /**

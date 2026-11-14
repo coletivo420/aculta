@@ -9,6 +9,7 @@ use Drupal\aculta_lms\Access\CourseLessonPreviewAccessCheck;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Field\FieldItemList;
+use Drupal\Core\Field\FieldItemInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\group\Entity\GroupInterface;
@@ -75,6 +76,9 @@ final class CourseLessonPreviewAccessCheckTest extends UnitTestCase {
 
   /**
    * Creates a field item fixture for the lesson's course reference.
+   *
+   * @return FieldItemListInterface<FieldItemInterface>
+   *   Lesson course reference.
    */
   private static function field(int $value): FieldItemListInterface {
     return new class($value) extends FieldItemList {
@@ -84,7 +88,7 @@ final class CourseLessonPreviewAccessCheckTest extends UnitTestCase {
       /**
        * Returns the fixture field value.
        */
-      public function __get($property_name) {
+      public function __get(mixed $property_name): mixed {
         return $property_name === 'value' ? $this->fieldValue : NULL;
       }
 

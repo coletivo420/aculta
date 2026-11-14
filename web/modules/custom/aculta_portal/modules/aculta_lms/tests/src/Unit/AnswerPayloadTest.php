@@ -34,8 +34,8 @@ final class AnswerPayloadTest extends TestCase {
         AnswerPayload::fromJson($json);
         self::fail('JSON de resposta inválido foi aceito.');
       }
-      catch (\InvalidArgumentException) {
-        self::assertTrue(TRUE);
+      catch (\InvalidArgumentException $exception) {
+        self::assertNotSame('', $exception->getMessage());
       }
     }
   }
@@ -62,8 +62,8 @@ final class AnswerPayloadTest extends TestCase {
         $payload->withFileId($fileId);
         self::fail('A referência de arquivo inválida foi aceita.');
       }
-      catch (\InvalidArgumentException) {
-        self::assertTrue(TRUE);
+      catch (\InvalidArgumentException $exception) {
+        self::assertNotSame('', $exception->getMessage());
       }
     }
   }

@@ -76,8 +76,12 @@ final class CourseRoomBuilderTest extends UnitTestCase {
     );
     $build = $builder->build($course);
 
+    self::assertIsArray($build['participant_rosters'] ?? NULL);
+    self::assertIsArray($build['participant_rosters']['classes'] ?? NULL);
     self::assertSame(['class-1'], $build['participant_rosters']['classes']);
     self::assertArrayNotHasKey('aculta_learning_journey', $build);
+    self::assertIsArray($build['#cache'] ?? NULL);
+    self::assertIsArray($build['#cache']['contexts'] ?? NULL);
     self::assertContains('user.group_permissions', $build['#cache']['contexts']);
   }
 

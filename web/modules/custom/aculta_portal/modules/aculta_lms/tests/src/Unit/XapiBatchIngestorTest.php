@@ -27,7 +27,9 @@ final class XapiBatchIngestorTest extends UnitTestCase {
     $result = $this->ingestor()->ingest((string) $body, $this->claims(), []);
 
     $this->assertCount(1, $result['accepted']);
-    $this->assertSame(self::REGISTRATION, $result['accepted'][0]['context']['registration']);
+    $acceptedStatement = $result['accepted'][0];
+    $this->assertIsArray($acceptedStatement['context'] ?? NULL);
+    $this->assertSame(self::REGISTRATION, $acceptedStatement['context']['registration'] ?? NULL);
     $this->assertSame([], $result['refused']);
   }
 
@@ -134,6 +136,7 @@ final class XapiBatchIngestorTest extends UnitTestCase {
    */
   public function testRefusesStatementForDifferentContent(): void {
     $statement = $this->statement('a0000000-0000-4000-8000-000000000001');
+    $this->assertIsArray($statement['object'] ?? NULL);
     $statement['object']['id'] = 'https://teste.invalid/atividade/other';
     $result = $this->ingestor()->ingest((string) json_encode([$statement]), $this->claims(), []);
 
@@ -146,6 +149,7 @@ final class XapiBatchIngestorTest extends UnitTestCase {
    */
   public function testRefusesStatementForDifferentActor(): void {
     $statement = $this->statement('a0000000-0000-4000-8000-000000000001');
+    $this->assertIsArray($statement['actor'] ?? NULL);
     $statement['actor']['mbox_sha1sum'] = str_repeat('f', 40);
     $result = $this->ingestor()->ingest((string) json_encode([$statement]), $this->claims(), []);
 
