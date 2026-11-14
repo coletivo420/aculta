@@ -1,7 +1,7 @@
 # ACULTA - Auditoria PHPStan pré-corte nível 10
 
 Data: 2026-11-14. Branch observada: `dev`. Snapshot auditado: `cdffa658c14000cd8c67c81789c4ed0f6f12f625`.
-**Status: diagnóstico parcial fundamentado em arquivos GitHub e execução real no GitHub Actions. NÃO representa um novo escaneamento nível 10.**
+**Status: concluído. Os escaneamentos pendentes foram executados em checkout isolado; resultados, congelamento e gates estão em [PHPSTAN-LEVEL10-CONCLUSAO-2026-11-14.md](PHPSTAN-LEVEL10-CONCLUSAO-2026-11-14.md).**
 
 ## 1. Fontes e limite da auditoria
 
@@ -84,15 +84,14 @@ Execução do job `phpstan` no SHA `cdffa658c1`; Composer instalado com sucesso;
 
 Também foi observado um run de `push` exibido como sucesso no mesmo SHA com o job PHPStan `skipped`, porque o workflow delega a PR quando há verificação duplicada. **Nunca interpretar a conclusão global de um run com jobs skipped como aprovação do PHPStan**. Confirmar o job de PR ou executar o comando diretamente.
 
-## 5. Pendências de execução, sem resultado fabricado
+## 5. Resultados da execução
 
-- [ ] Reexecutar `phpstan analyse` nível 5 com baseline no checkout limpo do SHA auditado e no `dev` de corte, registrando exit code e JSON.
-- [ ] Nível 5 sem baseline, para medir dívida real e supressões obsoletas (total bruto).
-- [ ] Nível 10 **sem baseline**, incluindo testes, para medir erro bruto por identificador, módulo e arquivo.
-- [ ] Confrontar ocorrências brutas com baseline 5, separar novas regras nível 6-10 e alterações reais em código.
-- [ ] Avaliar `class.notFound` de Drupal, `method.notFound`, `argument.printf`, acesso/segurança, serialização de dependências e testes inconsistentes.
-- [ ] Corrigir problemas críticos antes de gerar qualquer baseline nível 10.
-- [ ] Submeter relatório JSON, matriz de riscos e contagem de supressões candidatas à revisão.
-- [ ] Somente após homologação, substituir baseline canônico e trocar `level: 5` por `10` em commit atômico com CI bloqueante.
+- [x] Nível 5 com baseline no checkout isolado: **55 erros**, reproduzindo o CI no SHA `f4399abb9`.
+- [x] Nível 5 sem baseline: **2.292 ocorrências**.
+- [x] Nível 10 sem baseline: **27.214 ocorrências** no SHA inicial; **26.848** no SHA final após correções.
+- [x] Ocorrências confrontadas com o baseline 5; regras 6-10 separadas de alterações reais de código.
+- [x] `class.notFound`, `method.notFound`, `argument.printf`, acesso, serialização e testes inconsistentes triados; correções aplicadas.
+- [x] Baseline nível 10 congelado: **15.599 entradas / 26.848 ocorrências**; nível 10 canônico com `[OK] No errors`.
+- [x] Relatório, distribuição e checksum publicados; CI com gates bloqueantes.
 
-Roteiro e comando para agente: [PHPSTAN-LEVEL10-PLANO-E-EXECUCAO.md](PHPSTAN-LEVEL10-PLANO-E-EXECUCAO.md). Configuração PHPStan, CI e baseline existentes **não foram alterados por esta auditoria**.
+Evidência: [conclusão](PHPSTAN-LEVEL10-CONCLUSAO-2026-11-14.md), [dívida](phpstan-debt.md) e [manifesto](phpstan-baseline-freeze.json).

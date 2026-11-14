@@ -1,16 +1,16 @@
 {
-  "frozen_at": "2026-11-14T17:38:32+00:00",
-  "source_sha": "4740f6103",
+  "frozen_at": "2026-11-14T17:52:22+00:00",
+  "source_sha": "c9fa42b42",
   "level": 10,
   "canonical_baseline": "phpstan-baseline.neon",
-  "baseline_sha256": "8b24e3841fedc16350ac30c2741a5d11d4f65792487c3057addf24f48c10be09",
-  "entries": 15611,
-  "occurrences": 26863,
-  "production": 15831,
+  "baseline_sha256": "9102346a70b269da3b278ae53b3119b503e8413b0868af14c5dae3a69ef0e962",
+  "entries": 15599,
+  "occurrences": 26848,
+  "production": 15816,
   "tests": 11032,
   "top_modules": {
     "aculta_forum": 3096,
-    "scripts": 3071,
+    "scripts": 3056,
     "aculta_lms": 2184,
     "aculta_messenger": 2073,
     "aculta_portal": 2020,
@@ -22,9 +22,9 @@
   },
   "top_identifiers": {
     "offsetAccess.nonOffsetAccessible": 8234,
-    "argument.type": 4659,
+    "argument.type": 4649,
     "method.nonObject": 3059,
-    "missingType.iterableValue": 2821,
+    "missingType.iterableValue": 2820,
     "cast.string": 2094,
     "cast.int": 1350,
     "method.notFound": 1004,
@@ -32,13 +32,23 @@
     "return.type": 371,
     "foreach.nonIterable": 356
   },
+  "policy": {
+    "new_inline_ignores_forbidden": true,
+    "touched_file_min_reduction": 1,
+    "touched_module_min_reduction": 1,
+    "automatic_regeneration_allowed": false,
+    "report_unmatched_ignored_errors": true
+  },
   "previous_baseline": {
     "level": 5,
     "commit": "2e631809619d0fecd56ca73c5193c0106b7f0c38",
-    "sha256": "3fa97bbe8ec817f06e189344e529076d9c6f408bb5b99da331c23bbaae52f8b1"
+    "sha256": "3fa97bbe8ec817f06e189344e529076d9c6f408bb5b99da331c23bbaae52f8b1",
+    "entries": 1413,
+    "occurrences": 2245
   },
   "environment": {
-    "php": "8.4.27",
+    "php_generation": "8.4.27",
+    "php_local_check": "8.5.12",
     "phpstan": "2.3.5",
     "drupal_extension": "mglaman/phpstan-drupal 2.2.2",
     "scope": [
@@ -46,12 +56,13 @@
       "web/themes/custom",
       "scripts"
     ],
-    "bleeding_edge": true,
-    "report_unmatched_ignored_errors": true
+    "bleeding_edge": true
   },
   "generation_command": "vendor/bin/phpstan analyse --configuration=.phpstan-audit.neon --level=10 --generate-baseline=phpstan-baseline.neon --memory-limit=5G",
   "gates": {
     "check": "php scripts/phpstan-debt-guard.php check --baseline=phpstan-baseline.neon --config=phpstan.neon --git-base=origin/dev --analysis=artifacts/phpstan.json",
-    "diff": "php scripts/phpstan-debt-guard.php diff --baseline=phpstan-baseline.neon --git-base=origin/dev"
+    "diff": "php scripts/phpstan-debt-guard.php diff --baseline=phpstan-baseline.neon --git-base=origin/dev",
+    "report": "php scripts/phpstan-debt-report.php --baseline=phpstan-baseline.neon --analysis=artifacts/phpstan.json --out=docs/operations/testing/phpstan-debt.md",
+    "guard_tests": "bats tests/shell/phpstan-debt-guard.bats"
   }
 }

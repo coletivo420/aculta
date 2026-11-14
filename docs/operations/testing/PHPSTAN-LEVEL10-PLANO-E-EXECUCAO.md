@@ -1,6 +1,6 @@
 # ACULTA - Plano de auditoria executável e adoção do PHPStan nível 10
 
-Data: 2026-11-14. Situação: **PLANEJADO / NÃO AUTORIZA CONGELAMENTO ANTES DE REESCANEAR**.
+Data: 2026-11-14. Situação: **EXECUTADO**. Resultados em [PHPSTAN-LEVEL10-CONCLUSAO-2026-11-14.md](PHPSTAN-LEVEL10-CONCLUSAO-2026-11-14.md).
 
 Documento complementar: [auditoria pré-corte](PHPSTAN-AUDITORIA-PRE-LEVEL10-2026-11-14.md). Escopo: `dev`, todos os módulos e temas personalizados e `scripts`, incluindo seus testes. Objetivo: adotar nível 10 com rastreabilidade da dívida histórica, evitando regressão de qualidade e sem mascarar bugs.
 
