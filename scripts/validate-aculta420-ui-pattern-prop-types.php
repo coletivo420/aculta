@@ -26,7 +26,6 @@ $expectedUnknownProps = [
   'aculta420_v2:forum-topic-row' => ['badges'],
   'aculta420_v2:statistics-category-ranking' => ['rows'],
   'aculta420_v2:studio-calendar' => ['filters', 'selected_day_events', 'weeks'],
-  'aculta420_v2:studio-menu' => ['items'],
 ];
 
 $componentManager = \Drupal::service(ComponentPluginManager::class);

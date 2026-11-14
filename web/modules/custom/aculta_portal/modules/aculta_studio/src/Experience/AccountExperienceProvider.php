@@ -83,6 +83,23 @@ final class AccountExperienceProvider implements StudioExperienceProviderInterfa
    */
   public function build(): array {
     $identity = $this->identity();
+    $menuItems = $this->studioMenuItems();
+    $sidebarMenuItems = array_map(
+      static fn (array $item): array => [
+        '#type' => 'component',
+        '#component' => 'aculta420_v2:studio-menu-item',
+        '#props' => $item + ['show_icon' => TRUE],
+      ],
+      $menuItems,
+    );
+    $dialogMenuItems = array_map(
+      static fn (array $item): array => [
+        '#type' => 'component',
+        '#component' => 'aculta420_v2:studio-menu-item',
+        '#props' => $item + ['show_icon' => FALSE],
+      ],
+      $menuItems,
+    );
     return [
       '#type' => 'component',
       '#component' => 'aculta420_v2:account-experience-dashboard',
@@ -104,7 +121,10 @@ final class AccountExperienceProvider implements StudioExperienceProviderInterfa
           '#component' => 'aculta420_v2:studio-menu',
           '#props' => [
             'title' => (string) new TranslatableMarkup('Studio Dashboard'),
-            'items' => $this->studioMenuItems(),
+          ],
+          '#slots' => [
+            'sidebar_items' => $sidebarMenuItems,
+            'dialog_items' => $dialogMenuItems,
           ],
         ],
         'avatar' => $identity['avatar'] ?? [],

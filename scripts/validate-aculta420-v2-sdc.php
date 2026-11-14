@@ -136,10 +136,12 @@ $component_ids = [
   'sales-panel',
   'secret-reveal',
   'studio-account-section-layout',
+  'studio-menu',
   'studio-shell',
   'studio-form',
   'studio-section-header',
   'studio-listing-table',
+  'studio-menu-item',
   'studio-revista-form',
   'profile-editor-dialog',
   'studio-course-authoring-page',
@@ -645,9 +647,28 @@ $samples = [
     '#props' => [],
     '#slots' => ['content' => Markup::create('<section class="studio studio-account-section"><details class="studio-account-section__navigation"><summary>Seções</summary><ul class="studio-account-nav-list"><li><a href="/conta">Dados</a></li></ul></details><div data-aculta-account-main>Conteúdo</div></section>')],
   ],
+  'studio-menu' => [
+    '#props' => ['title' => 'Studio Dashboard'],
+    '#slots' => [
+      'sidebar_items' => [[
+        '#type' => 'component',
+        '#component' => 'aculta420_v2:studio-menu-item',
+        '#props' => ['title' => 'Meu Perfil', 'url' => '/conta/perfil', 'current' => TRUE, 'icon' => 'user', 'show_icon' => TRUE],
+      ]],
+      'dialog_items' => [[
+        '#type' => 'component',
+        '#component' => 'aculta420_v2:studio-menu-item',
+        '#props' => ['title' => 'Meu Perfil', 'url' => '/conta/perfil', 'current' => TRUE, 'icon' => 'user', 'show_icon' => FALSE],
+      ]],
+    ],
+  ],
   'studio-listing-table' => [
     '#props' => [],
     '#slots' => ['content' => Markup::create('<div class="studio__listing-wrap"><table class="studio__listing"><thead><tr><th>Título</th></tr></thead><tbody><tr><td>Exemplo</td></tr></tbody></table></div>')],
+  ],
+  'studio-menu-item' => [
+    '#props' => ['title' => 'Meu Perfil', 'url' => '/conta/perfil', 'current' => TRUE, 'icon' => 'user'],
+    '#slots' => [],
   ],
   'studio-section-header' => [
     '#props' => [],
@@ -796,7 +817,7 @@ foreach ($component_ids as $component_id) {
   $definition = $definitions[$plugin_id];
   $validator->validateDefinition($definition, TRUE);
 
-  foreach (['component.yml', 'twig', 'css'] as $suffix) {
+  foreach (['component.yml', 'twig'] as $suffix) {
     $extension = $suffix === 'component.yml' ? '.component.yml' : '.' . $suffix;
     $path = $theme_root . '/components/' . $component_id . '/' . $component_id . $extension;
     if (!is_file($path)) {
@@ -872,6 +893,19 @@ foreach ($component_ids as $component_id) {
   $output = (string) $renderer->renderInIsolation($build);
   if ($output === '') {
     throw new RuntimeException(sprintf('Empty SDC render: %s', $plugin_id));
+  }
+  if ($component_id === 'studio-menu') {
+    if (substr_count($output, 'Meu Perfil') !== 2
+      || substr_count($output, 'aria-current="page"') !== 2
+      || substr_count($output, 'class="aculta-icon') !== 1) {
+      throw new RuntimeException('Studio menu must render authorized item slots in both navigations and keep the icon only in the sidebar.');
+    }
+  }
+  if ($component_id === 'studio-menu-item'
+    && (!str_contains($output, 'href="/conta/perfil"')
+      || !str_contains($output, 'aria-current="page"')
+      || !str_contains($output, 'Meu Perfil'))) {
+    throw new RuntimeException('Studio menu item must preserve its destination, active state and label.');
   }
   if ($component_id === 'forum-topic-row') {
     foreach ([

@@ -13,7 +13,7 @@ anteriores e não substituem a conferência do código atual.
   tema. Callback antigo de sugestão pode permanecer temporariamente por causa
   do cache do Runtime compartilhado; removê-lo depende de janela segura para
   rebuild.
-- 141 manifests SDC e 223 stories. Todos têm story: `hint` exemplifica os tons
+- 142 manifests SDC e 224 stories. Todos têm story: `hint` exemplifica os tons
   normal/muted; `sales-panel` e `secret-reveal` usam dados demonstrativos
   fictícios.
 - Config Sync habilita UI Patterns, Blocks, Field, Field Formatters, Layouts,
@@ -75,12 +75,12 @@ anteriores e não substituem a conferência do código atual.
    definições do provider. Stories para `hint`, `sales-panel` e `secret-reveal`
    foram adicionadas. Todos os slots agora têm título e descrição, e as props
    de topo têm título; o gate exige esses metadados. A contagem antiga de 440
-   props sem descrição foi substituída pela leitura recursiva dos 141 manifests
-   atuais: 373 props de topo, em 82 SDCs, e 498 nós de schema de props incluindo
-   itens/propriedades aninhados, em 89 SDCs, ainda não têm descrição. Nesta
+   props sem descrição foi substituída pela leitura recursiva dos 142 manifests
+   atuais: 371 props de topo, em 81 SDCs, e 492 nós de schema de props incluindo
+   itens/propriedades aninhados, em 81 SDCs, ainda não têm descrição. Nesta
    rodada, os 18 manifests do domínio Fórum foram conferidos contra seus Twig e
    tiveram todos esses campos documentados. A checagem do provider instalado encontrou
-   22 props com tipo `unknown`, em 13 SDCs; três são obrigatórias e não há
+   21 props com tipo `unknown`, em 12 SDCs; duas são obrigatórias e não há
    Sources UI Patterns para esse tipo. A auditoria classificou os produtores
    encontrados e registrou as fontes na ADR-056; restam as migrações de presenter
    de Eventos/Reações, descrições específicas das props e confirmação de uso

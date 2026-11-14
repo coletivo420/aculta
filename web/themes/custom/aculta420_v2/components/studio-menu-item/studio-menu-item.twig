@@ -1,0 +1,8 @@
+<li>
+  <a href="{{ url }}"{% if current %} aria-current="page"{% endif %}>
+    {% if show_icon %}
+      {{ include('aculta420_v2:icon', { name: icon|default('squares-four'), variant: 'duotone', size: 'md' }, with_context = false) }}
+    {% endif %}
+    <span>{{ title }}</span>
+  </a>
+</li>

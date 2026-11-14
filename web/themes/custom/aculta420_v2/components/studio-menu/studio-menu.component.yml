@@ -11,28 +11,17 @@ libraryOverrides:
 props:
   type: object
   additionalProperties: false
-  required: [title, items]
+  required: [title]
   properties:
     title:
       type: string
       title: Título
+      description: Nome do painel exibido na barra superior móvel.
       minLength: 1
-    items:
-      type: array
-      title: Itens do menu
-      default: []
-      items:
-        type: object
-        additionalProperties: false
-        required: [title, url, current]
-        properties:
-          title:
-            type: string
-            minLength: 1
-          url:
-            type: string
-          current:
-            type: boolean
-          icon:
-            type: string
-            description: "Nome do ícone Phosphor duotone (ex.: house, squares-four)."
+slots:
+  sidebar_items:
+    title: Links da navegação lateral
+    description: Itens SDC autorizados pelo provider do Studio, renderizados na navegação fixa de desktop.
+  dialog_items:
+    title: Links da navegação móvel
+    description: Cópias SDC dos itens autorizados, renderizadas dentro do diálogo móvel.

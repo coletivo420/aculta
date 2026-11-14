@@ -89,6 +89,8 @@ final class AccountExperienceProviderTest extends UnitTestCase {
     self::assertSame([], $build['#slots']['profile_link']);
     self::assertContains('user', $build['#cache']['contexts']);
     self::assertSame('Studio Dashboard', $build['#slots']['menu']['#props']['title']);
+    self::assertArrayNotHasKey('items', $build['#slots']['menu']['#props']);
+    self::assertSame(['sidebar_items' => [], 'dialog_items' => []], $build['#slots']['menu']['#slots']);
   }
 
   /**

@@ -12,14 +12,7 @@
 
 <aside class="aculta-studio-sidebar" aria-label="{{ 'Menu do Studio'|t }}">
   <ul class="aculta-studio-sidebar__list">
-    {% for item in items %}
-      <li>
-        <a href="{{ item.url }}"{% if item.current %} aria-current="page"{% endif %}>
-          {{ include('aculta420_v2:icon', { name: item.icon|default('squares-four'), variant: 'duotone', size: 'md' }, with_context = false) }}
-          <span>{{ item.title }}</span>
-        </a>
-      </li>
-    {% endfor %}
+    {{ sidebar_items }}
   </ul>
 </aside>
 
@@ -33,9 +26,7 @@
   </header>
   <nav class="aculta-utility-dialog__body aculta-studio-menu__nav" aria-label="{{ 'Menu do Studio'|t }}">
     <ul class="aculta-studio-menu__list">
-      {% for item in items %}
-        <li><a href="{{ item.url }}"{% if item.current %} aria-current="page"{% endif %}>{{ item.title }}</a></li>
-      {% endfor %}
+      {{ dialog_items }}
     </ul>
   </nav>
 </dialog>
