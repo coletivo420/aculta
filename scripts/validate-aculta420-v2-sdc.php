@@ -268,7 +268,7 @@ $samples = [
   ],
   'forum-author-line' => [
     '#props' => ['author_name' => 'Autora de exemplo'],
-    '#slots' => ['avatar' => Markup::create('<img src="/author-avatar.png" alt="Retrato da autora">')],
+    '#slots' => ['avatar' => new FormattableMarkup('<img src="/author-avatar.png" alt="Retrato da autora">', [])],
   ],
   'forum-comment' => [
     '#props' => [
@@ -1039,11 +1039,12 @@ foreach ($component_ids as $component_id) {
       }
       $story_data = \Symfony\Component\Yaml\Yaml::parseFile($chosen_story);
     }
-    $props = $story_data['props'] ?? [];
+    $story = is_array($story_data) ? $story_data : [];
+    $props = is_array($story['props'] ?? NULL) ? $story['props'] : [];
     $slots = [];
-    if (isset($story_data['slots']) && is_array($story_data['slots'])) {
-      foreach ($story_data['slots'] as $sname => $sval) {
-        $slots[$sname] = is_string($sval) ? Markup::create($sval) : $sval;
+    if (is_array($story['slots'] ?? NULL)) {
+      foreach ($story['slots'] as $sname => $sval) {
+        $slots[(string) $sname] = is_string($sval) ? new FormattableMarkup($sval, []) : $sval;
       }
     }
     $samples[$component_id] = [

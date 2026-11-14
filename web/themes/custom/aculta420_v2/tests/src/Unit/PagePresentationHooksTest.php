@@ -135,6 +135,9 @@ final class PagePresentationHooksTest extends UnitTestCase {
         'url' => '/forum/topico/1',
         'date' => ['#plain_text' => 'Hoje'],
         'display_submitted' => TRUE,
+        // ForumThemeHooks::preprocessNode() forwards the module-built avatar;
+        // the content key remains for backward compatibility and is excluded.
+        'opening_author_avatar' => $authorCard,
         'content' => [
           'body' => $body,
           'author_card' => $authorCard,
@@ -147,7 +150,9 @@ final class PagePresentationHooksTest extends UnitTestCase {
 
       $hooks->preprocessNode($variables);
 
-      $topic = $viewMode === 'full' ? $variables['content']['#slots']['topic'] : $variables['content'];
+      $content = is_array($variables['content'] ?? NULL) ? $variables['content'] : [];
+      $contentSlots = is_array($content['#slots'] ?? NULL) ? $content['#slots'] : [];
+      $topic = $viewMode === 'full' && is_array($contentSlots['topic'] ?? NULL) ? $contentSlots['topic'] : $content;
       self::assertSame('aculta420_v2:forum-topic', $topic['#component']);
       self::assertTrue($variables['attributes']->hasClass('aculta-forum-topic--' . $viewMode));
       self::assertTrue($variables['title_attributes']->hasClass('aculta-forum-topic__title'));
