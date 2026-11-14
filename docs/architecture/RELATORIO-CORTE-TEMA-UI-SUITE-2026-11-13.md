@@ -22,6 +22,8 @@ No checkout atual há **31 templates Twig em `web/themes/custom/aculta420_v2/tem
 
 O presenter `node--revista--teaser.html.twig` foi removido. `PagePresentationHooks::preprocessNode()` agora passa os fields formatados e o accent global ao SDC `revista-teaser` em render array, conserva dependências de cache do node/config e suprime o heading genérico do template Core para evitar título duplicado. O inventário de consumidores foi regenerado (461 registros mais cabeçalho). A validação de PHP e diff passou; saída no Runtime e aceitação visual seguem sem homologação.
 
+O Config Sync de `node.revista.full` também foi migrado para ComponentLayout UI Patterns com `revista-publication`. Os campos seguem em field blocks com os formatters atuais; os render arrays cacheáveis `post_meta` e `article_authors`, construídos pelo módulo em `node_view`, são encaminhados pelo tema aos slots `meta` e `authors` quando o ComponentLayout está ativo. O adapter mantém um fallback que compõe o SDC e preserva o layout Drupal anterior durante a transição. Essa configuração não foi importada; a renderização final segue pendente no Runtime.
+
 ## 2. Fotografia encontrada no commit atual
 
 - **141 manifests SDC e 223 stories** no checkout. Os gates de schema e contrato da UI Patterns Library passaram para esse conjunto; isso prova metadados/stories no código, não uso editorial nem renderização de todas as combinações.

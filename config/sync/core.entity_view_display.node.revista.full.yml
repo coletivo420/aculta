@@ -28,6 +28,7 @@ dependencies:
     - layout_builder
     - link
     - text
+    - ui_patterns_layouts
     - user
 third_party_settings:
   layout_builder:
@@ -35,20 +36,45 @@ third_party_settings:
     allow_custom: false
     sections:
       -
-        layout_id: 'ui_patterns:aculta420_v2:layout_section'
+        layout_id: 'ui_patterns:aculta420_v2:revista_publication'
         layout_settings:
           label: ''
           context_mapping:
             entity: layout_builder.entity
           ui_patterns:
-            component_id: 'aculta420_v2:layout-section'
+            component_id: 'aculta420_v2:revista-publication'
             variant_id: null
-            props: {  }
+            props:
+              has_meta:
+                source_id: select
+                source:
+                  value: true
+              has_subtitle:
+                source_id: 'field_property:node:field_subtitle:value'
+                source: {  }
+              has_summary:
+                source_id: 'field_property:node:field_summary:value'
+                source: {  }
+              has_cover:
+                source_id: 'field_property:node:field_media_image:target_id'
+                source: {  }
+              has_footer:
+                source_id: select
+                source:
+                  value: true
+              has_authors:
+                source_id: select
+                source:
+                  value: true
+              has_discussion:
+                source_id: select
+                source:
+                  value: true
             slots: {  }
         components:
           8404d4d8-1f70-44f5-99a5-5ec8f7365797:
             uuid: 8404d4d8-1f70-44f5-99a5-5ec8f7365797
-            region: content
+            region: subtitle
             configuration:
               id: 'field_block:node:revista:field_subtitle'
               label_display: '0'
@@ -65,7 +91,7 @@ third_party_settings:
             additional: {  }
           3b4c0bea-e556-4174-922e-bea378906560:
             uuid: 3b4c0bea-e556-4174-922e-bea378906560
-            region: content
+            region: summary
             configuration:
               id: 'field_block:node:revista:field_summary'
               label_display: '0'
@@ -80,7 +106,7 @@ third_party_settings:
             additional: {  }
           31da6d6a-0dd9-447f-acc8-6ad0407cc770:
             uuid: 31da6d6a-0dd9-447f-acc8-6ad0407cc770
-            region: content
+            region: footer
             configuration:
               id: 'extra_field_block:node:revista:content_moderation_control'
               label_display: '0'
@@ -90,7 +116,7 @@ third_party_settings:
             additional: {  }
           82b2dc3e-47e1-4c64-84b5-68af6f552d07:
             uuid: 82b2dc3e-47e1-4c64-84b5-68af6f552d07
-            region: content
+            region: cover
             configuration:
               id: 'field_block:node:revista:field_media_image'
               label_display: '0'
@@ -107,7 +133,7 @@ third_party_settings:
             additional: {  }
           b8f6eb5f-c2c7-4c4d-8d9a-52ebc916654b:
             uuid: b8f6eb5f-c2c7-4c4d-8d9a-52ebc916654b
-            region: content
+            region: body
             configuration:
               id: 'field_block:node:revista:body'
               label_display: '0'
@@ -122,7 +148,7 @@ third_party_settings:
             additional: {  }
           acdd5228-604d-4a97-87a4-d82bd8efd238:
             uuid: acdd5228-604d-4a97-87a4-d82bd8efd238
-            region: content
+            region: footer
             configuration:
               id: 'field_block:node:revista:field_references'
               label_display: '0'
@@ -142,7 +168,7 @@ third_party_settings:
             additional: {  }
           6184cb6e-66c4-44bc-ae48-d43c3fc60de3:
             uuid: 6184cb6e-66c4-44bc-ae48-d43c3fc60de3
-            region: content
+            region: footer
             configuration:
               id: 'field_block:node:revista:field_credits'
               label_display: '0'
@@ -157,7 +183,7 @@ third_party_settings:
             additional: {  }
           9874e8c3-eee1-402e-880a-1fd750484439:
             uuid: 9874e8c3-eee1-402e-880a-1fd750484439
-            region: content
+            region: footer
             configuration:
               id: 'field_block:node:revista:field_editorial_category'
               label_display: '0'
@@ -173,7 +199,7 @@ third_party_settings:
             additional: {  }
           fb28e2ee-c675-45ee-9f71-1790168f2199:
             uuid: fb28e2ee-c675-45ee-9f71-1790168f2199
-            region: content
+            region: footer
             configuration:
               id: 'field_block:node:revista:field_tags'
               label_display: '0'
@@ -189,7 +215,7 @@ third_party_settings:
             additional: {  }
           0a5aea53-77ee-4816-8f25-e5cc05a0e131:
             uuid: 0a5aea53-77ee-4816-8f25-e5cc05a0e131
-            region: content
+            region: discussion
             configuration:
               id: 'field_block:node:revista:field_aculta_discussion'
               label_display: '0'

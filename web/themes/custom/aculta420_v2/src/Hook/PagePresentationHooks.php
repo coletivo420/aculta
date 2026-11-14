@@ -10,6 +10,7 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Cache\CacheableDependencyInterface;
 use Drupal\Core\Extension\ExtensionList;
+use Drupal\Core\Layout\LayoutInterface;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Template\Attribute;
 use Drupal\Core\Hook\Attribute\Hook;
@@ -311,6 +312,29 @@ final class PagePresentationHooks {
   #[Hook('preprocess_node')]
   public function preprocessNode(array &$variables): void {
     $variables['aculta_accordion_sdc_available'] = $this->componentAvailable('accordion');
+    if (($variables['node']?->bundle() ?? NULL) === 'revista'
+      && ($variables['view_mode'] ?? NULL) === 'full') {
+      $sections = &$variables['content']['_layout_builder'];
+      $sections ??= [];
+      $variables['aculta_revista_full_component_layout'] = FALSE;
+      if (is_array($sections)) {
+        foreach ($sections as &$section) {
+          $layout = is_array($section) ? ($section['#layout'] ?? NULL) : NULL;
+          if ($layout instanceof LayoutInterface
+            && $layout->getPluginId() === 'ui_patterns:aculta420_v2:revista_publication') {
+            $variables['aculta_revista_full_component_layout'] = TRUE;
+            foreach (['post_meta' => 'meta', 'article_authors' => 'authors'] as $extra => $slot) {
+              if (!empty($variables['content'][$extra])) {
+                $section['#slots'][$slot] = $variables['content'][$extra];
+                unset($variables['content'][$extra]);
+              }
+            }
+            break;
+          }
+        }
+        unset($section);
+      }
+    }
     if (($variables['node']?->bundle() ?? NULL) === 'revista'
       && ($variables['view_mode'] ?? NULL) === 'teaser') {
       $config = $this->configFactory->get('aculta420_v2.settings');
