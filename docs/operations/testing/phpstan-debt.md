@@ -1,10 +1,10 @@
 # Dívida PHPStan — ACULTA
 
-Gerado em 2026-11-14T19:59:36+00:00 por `scripts/phpstan-debt-report.php`.
+Gerado em 2026-11-14T20:03:28+00:00 por `scripts/phpstan-debt-report.php`.
 
 | Item | Valor |
 | --- | --- |
-| Commit | `e10e01bb310d0447ecc790053ce8ee0b9bf0b060` |
+| Commit | `f43bedc493c625e48a5177ff66a2638637428b1a` |
 | PHP | 8.4.27 |
 | PHPStan | PHPStan - PHP Static Analysis Tool 2.3.5 |
 | Nível | 10 |
@@ -15,27 +15,27 @@ Gerado em 2026-11-14T19:59:36+00:00 por `scripts/phpstan-debt-report.php`.
 
 | Medida | Ocorrências |
 | --- | ---: |
-| Total bruto no nível 10 | 26491 |
-| Dívida congelada no baseline | 26491 |
+| Total bruto no nível 10 | 26450 |
+| Dívida congelada no baseline | 26450 |
 | Erros não suprimidos | 0 |
-| Entradas no baseline | 15463 |
+| Entradas no baseline | 15443 |
 | Produção | 15696 |
-| Testes | 10795 |
+| Testes | 10754 |
 
 ## Criticidade funcional
 
 | Criticidade | Ocorrências |
 | --- | ---: |
 | alta | 231 |
-| media | 23237 |
+| media | 23196 |
 | baixa | 3023 |
 
 ## Evolução desde o baseline de referência
 
 | Classificação | Entradas |
 | --- | ---: |
-| Dívida removida | 15 |
-| Dívida mantida | 15463 |
+| Dívida removida | 20 |
+| Dívida mantida | 15443 |
 | Nova dívida (bloqueante) | 0 |
 | Contagem aumentada (bloqueante) | 0 |
 | Contagem reduzida | 0 |
@@ -49,7 +49,7 @@ Gerado em 2026-11-14T19:59:36+00:00 por `scripts/phpstan-debt-report.php`.
 | scripts | 2996 |
 | aculta_messenger | 2073 |
 | aculta_portal | 2020 |
-| aculta_lms | 1903 |
+| aculta_lms | 1862 |
 | aculta_events | 1792 |
 | aculta_wiki | 1461 |
 | aculta_lms_h5p | 1299 |
@@ -80,13 +80,13 @@ Gerado em 2026-11-14T19:59:36+00:00 por `scripts/phpstan-debt-report.php`.
 
 | Identificador | Ocorrências |
 | --- | ---: |
-| `offsetAccess.nonOffsetAccessible` | 8074 |
-| `argument.type` | 4640 |
-| `method.nonObject` | 2969 |
+| `offsetAccess.nonOffsetAccessible` | 8044 |
+| `argument.type` | 4639 |
+| `method.nonObject` | 2962 |
 | `missingType.iterableValue` | 2796 |
 | `cast.string` | 2075 |
 | `cast.int` | 1344 |
-| `method.notFound` | 986 |
+| `method.notFound` | 985 |
 | `property.nonObject` | 666 |
 | `return.type` | 369 |
 | `foreach.nonIterable` | 354 |

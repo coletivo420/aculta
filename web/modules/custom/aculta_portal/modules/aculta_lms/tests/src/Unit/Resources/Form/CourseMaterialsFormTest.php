@@ -14,9 +14,10 @@ use Drupal\Core\Entity\EntityTypeRepositoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormState;
+use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Routing\CurrentRouteMatch;
 use Drupal\Core\Session\AccountProxyInterface;
-use Drupal\Core\Messenger\MessengerInterface;
+use Drupal\Core\Url;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupTypeInterface;
 use Drupal\group\Plugin\Group\Relation\GroupRelationTypeManagerInterface;
@@ -25,6 +26,7 @@ use Drupal\media\MediaInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
@@ -38,7 +40,7 @@ final class CourseMaterialsFormTest extends UnitTestCase {
   /**
    * Current test account.
    *
-   * @var \Drupal\Core\Session\AccountProxyInterface
+   * @var AccountProxyInterface&MockObject
    */
   private AccountProxyInterface $account;
 
@@ -141,13 +143,30 @@ final class CourseMaterialsFormTest extends UnitTestCase {
     $form->setMessenger($this->createMock(MessengerInterface::class));
 
     $build = $form->buildForm([], new FormState());
-    self::assertSame('aculta420_v2:lms-course-materials', $build['course_documents']['#component']);
-    self::assertSame('aculta_lms.course_document_add', $build['course_documents']['#slots']['add']['#url']->getRouteName());
-    self::assertSame('Guia privado', $build['course_documents']['#slots']['items']['#items'][0]['label']['#plain_text']);
-    self::assertSame('aculta_lms.course_document_edit', $build['course_documents']['#slots']['items']['#items'][0]['edit']['#url']->getRouteName());
-    self::assertSame(['course' => '12', 'media' => '55'], $build['course_documents']['#slots']['items']['#items'][0]['edit']['#url']->getRouteParameters());
-    self::assertArrayNotHasKey('edit', $build['course_documents']['#slots']['items']['#items'][1]);
-    self::assertFalse($build['actions']['submit']['#disabled']);
+    $courseDocuments = $this->assertArray($build['course_documents'] ?? NULL);
+    self::assertSame('aculta420_v2:lms-course-materials', $courseDocuments['#component'] ?? NULL);
+    $slots = $this->assertArray($courseDocuments['#slots'] ?? NULL);
+    $add = $this->assertArray($slots['add'] ?? NULL);
+    $addUrl = $add['#url'] ?? NULL;
+    self::assertInstanceOf(Url::class, $addUrl);
+    self::assertSame('aculta_lms.course_document_add', $addUrl->getRouteName());
+    $items = $this->assertArray($slots['items'] ?? NULL);
+    $mediaItems = $items['#items'] ?? NULL;
+    self::assertIsArray($mediaItems);
+    self::assertArrayHasKey(0, $mediaItems);
+    self::assertArrayHasKey(1, $mediaItems);
+    $firstItem = $this->assertArray($mediaItems[0]);
+    $label = $this->assertArray($firstItem['label'] ?? NULL);
+    self::assertSame('Guia privado', $label['#plain_text'] ?? NULL);
+    $edit = $this->assertArray($firstItem['edit'] ?? NULL);
+    $editUrl = $edit['#url'] ?? NULL;
+    self::assertInstanceOf(Url::class, $editUrl);
+    self::assertSame('aculta_lms.course_document_edit', $editUrl->getRouteName());
+    self::assertSame(['course' => '12', 'media' => '55'], $editUrl->getRouteParameters());
+    self::assertArrayNotHasKey('edit', $this->assertArray($mediaItems[1]));
+    $actions = $this->assertArray($build['actions'] ?? NULL);
+    $submit = $this->assertArray($actions['submit'] ?? NULL);
+    self::assertFalse($submit['#disabled'] ?? NULL);
   }
 
   /**
@@ -194,10 +213,10 @@ final class CourseMaterialsFormTest extends UnitTestCase {
     );
     $transientDisplay->expects(self::once())
       ->method('buildForm')
-      ->with($course, self::isType('array'), self::isInstanceOf(FormState::class));
+      ->with($course, self::isArray(), self::isInstanceOf(FormState::class));
     $transientDisplay->expects(self::once())
       ->method('extractFormValues')
-      ->with($course, self::isType('array'), self::isInstanceOf(FormState::class));
+      ->with($course, self::isArray(), self::isInstanceOf(FormState::class));
 
     $displayStorage = $this->createMock(EntityStorageInterface::class);
     $displayStorage->expects(self::exactly(2))
@@ -239,10 +258,14 @@ final class CourseMaterialsFormTest extends UnitTestCase {
 
     $formState = new FormState();
     $build = $form->buildForm([], $formState);
-    self::assertFalse($build['actions']['submit']['#disabled']);
+    $actions = $this->assertArray($build['actions'] ?? NULL);
+    $submit = $this->assertArray($actions['submit'] ?? NULL);
+    self::assertFalse($submit['#disabled'] ?? NULL);
     $form->submitForm($build, $formState);
-    self::assertSame('aculta_lms.course_structure', $formState->getRedirect()->getRouteName());
-    self::assertSame(['course' => '12'], $formState->getRedirect()->getRouteParameters());
+    $redirect = $formState->getRedirect();
+    self::assertInstanceOf(Url::class, $redirect);
+    self::assertSame('aculta_lms.course_structure', $redirect->getRouteName());
+    self::assertSame(['course' => '12'], $redirect->getRouteParameters());
 
     $isAdministrator = FALSE;
     $denied = FALSE;
@@ -253,6 +276,20 @@ final class CourseMaterialsFormTest extends UnitTestCase {
       $denied = TRUE;
     }
     self::assertTrue($denied, 'A permission revoked after the form was built must deny submission.');
+  }
+
+  /**
+   * Asserts that a render array value has the expected array boundary.
+   *
+   * @param mixed $value
+   *   The value to validate.
+   *
+   * @return array<array-key, mixed>
+   *   The validated array.
+   */
+  private function assertArray(mixed $value): array {
+    self::assertIsArray($value);
+    return $value;
   }
 
 }
