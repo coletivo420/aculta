@@ -45,7 +45,7 @@ final class PhotoEditorHooks {
   /**
    * Entrega a prévia e o formulário próprio para a composição do tema.
    *
-   * @param array $photoForm
+   * @param array<array-key, mixed> $photoForm
    *   Estrutura do editor de foto da conta.
    * @param \Drupal\user\UserInterface $account
    *   Conta cuja foto está sendo editada.
@@ -62,6 +62,9 @@ final class PhotoEditorHooks {
 
   /**
    * Implements hook_form_BASE_FORM_ID_alter() for user forms: formulário de foto do painel.
+   *
+   * @param array<array-key, mixed> $form
+   *   Estrutura do formulário, alterada no lugar.
    */
   #[Hook('form_user_form_alter')]
   public function formUserFormAlter(array &$form, FormStateInterface $form_state, string $form_id): void {
@@ -77,10 +80,19 @@ final class PhotoEditorHooks {
     // atuais (sem apagar nenhum).
     $form['roles'] = ['#type' => 'value', '#value' => array_values($account->getRoles(TRUE))];
 
-    $fid = (int) ($account->get('user_picture')->target_id ?? 0);
+    $fid = $this->intValue($account->get('user_picture')->target_id ?? 0);
     $file = $fid > 0 ? $this->entityTypeManager->getStorage('file')->load($fid) : NULL;
-    $form['#attached']['library'][] = 'aculta_user/photo-flow';
-    $form['#attached']['drupalSettings']['acultaUser']['savedFid'] = $fid;
+    // Anexos são lidos e gravados de volta por nível, sem escrita aninhada em valores não tipados.
+    $attached = is_array($form['#attached'] ?? NULL) ? $form['#attached'] : [];
+    $libraries = is_array($attached['library'] ?? NULL) ? $attached['library'] : [];
+    $libraries[] = 'aculta_user/photo-flow';
+    $attached['library'] = $libraries;
+    $settings = is_array($attached['drupalSettings'] ?? NULL) ? $attached['drupalSettings'] : [];
+    $acultaUser = is_array($settings['acultaUser'] ?? NULL) ? $settings['acultaUser'] : [];
+    $acultaUser['savedFid'] = $fid;
+    $settings['acultaUser'] = $acultaUser;
+    $attached['drupalSettings'] = $settings;
+    $form['#attached'] = $attached;
 
     if (PhotoEditorGuard::isAcervo($account, $file)) {
       $this->guard->adjustForm($form, $form_state, $fid);
@@ -88,7 +100,22 @@ final class PhotoEditorHooks {
     }
 
     // Foto personalizada: sem recorte inline; o recorte fica no popup próprio.
-    $form['user_picture']['widget'][0]['#after_build'][] = [PhotoEditorGuard::class, 'hideInlineCrop'];
+    $userPicture = is_array($form['user_picture']) ? $form['user_picture'] : [];
+    $widgets = is_array($userPicture['widget'] ?? NULL) ? $userPicture['widget'] : [];
+    $widget = is_array($widgets[0] ?? NULL) ? $widgets[0] : [];
+    $afterBuild = is_array($widget['#after_build'] ?? NULL) ? $widget['#after_build'] : [];
+    $afterBuild[] = [PhotoEditorGuard::class, 'hideInlineCrop'];
+    $widget['#after_build'] = $afterBuild;
+    $widgets[0] = $widget;
+    $userPicture['widget'] = $widgets;
+    $form['user_picture'] = $userPicture;
+  }
+
+  /**
+   * Inteiro de um valor de campo; zero quando não é numérico.
+   */
+  private function intValue(mixed $value): int {
+    return is_numeric($value) ? (int) $value : 0;
   }
 
 }

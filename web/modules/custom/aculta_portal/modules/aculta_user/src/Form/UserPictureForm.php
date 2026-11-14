@@ -86,12 +86,12 @@ class UserPictureForm extends FormBase {
   /**
    * Monta o formulário de foto do perfil.
    *
-   * @param array $form
+   * @param array<array-key, mixed> $form
    *   Estrutura do formulário.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   Estado atual do formulário.
    *
-   * @return array
+   * @return array<array-key, mixed>
    *   Estrutura do formulário renderizável.
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
@@ -103,16 +103,20 @@ class UserPictureForm extends FormBase {
     if (empty($form_state->getUserInput())) {
       $this->avatarPool->clearPending($account);
     }
-    $current = (int) ($account->get('user_picture')->target_id ?? 0);
+    $current = $this->intValue($account->get('user_picture')->target_id ?? 0);
     $isAcervo = $current > 0 && str_starts_with((string) $this->entityTypeManagerService->getStorage('file')->load($current)?->getFileUri(), AvatarPool::DIRECTORY . '/');
 
     // O campo de envio começa vazio nos dois estados: nome e link da foto atual não aparecem no popup
     // (a prévia mostra a foto).
-    $form['#attributes']['data-aculta-user-picture'] = '';
-    $form['#attributes']['data-portal-ui'] = 'photo-dialog';
+    // Atributos são lidos e gravados de volta como array, sem escrita aninhada em valor não tipado.
+    $attributes = is_array($form['#attributes'] ?? NULL) ? $form['#attributes'] : [];
+    $attributes['data-aculta-user-picture'] = '';
+    $attributes['data-portal-ui'] = 'photo-dialog';
+    $form['#attributes'] = $attributes;
 
     // Mesmo conteúdo do popup anterior: prévia do avatar atual e a orientação de uso.
     $currentFile = $current > 0 ? $this->entityTypeManagerService->getStorage('file')->load($current) : NULL;
+    $currentUri = $currentFile?->getFileUri();
     $pending = $this->avatarPool->pendingEntry($account);
     if ($currentFile !== NULL || $pending !== NULL) {
       $image = $pending !== NULL
@@ -122,7 +126,7 @@ class UserPictureForm extends FormBase {
           '#alt' => (string) $account->label(),
           '#attributes' => ['data-portal-ui' => 'account-avatar'],
         ]
-        : $this->imageRenderer->build('avatar', $currentFile->getFileUri(), (string) $this->t('Foto de perfil de @name', ['@name' => $account->getDisplayName()]), ['data-portal-ui' => 'account-avatar']);
+        : (is_string($currentUri) ? $this->imageRenderer->build('avatar', $currentUri, (string) $this->t('Foto de perfil de @name', ['@name' => $account->getDisplayName()]), ['data-portal-ui' => 'account-avatar']) : NULL);
       $form['preview'] = [
         '#type' => 'html_tag',
         '#tag' => 'div',
@@ -209,6 +213,9 @@ class UserPictureForm extends FormBase {
    *
    * O sorteio só troca a prévia pendente; o rebuild do formulário devolve o
    * avatar sorteado no fragmento do HTMX.
+   *
+   * @param array<array-key, mixed> $form
+   *   Estrutura do formulário.
    */
   public function noSubmit(array &$form, FormStateInterface $form_state): void {
     $account = $this->account();
@@ -218,7 +225,14 @@ class UserPictureForm extends FormBase {
   }
 
   /**
-   * Remove o botão "Remover" do campo quando a foto é do acervo do sistema (regra de estado). */
+   * Remove o botão "Remover" do campo quando a foto é do acervo do sistema (regra de estado).
+   *
+   * @param array<array-key, mixed> $element
+   *   Elemento do campo de foto.
+   *
+   * @return array<array-key, mixed>
+   *   Elemento sem o botão "Remover" quando for do acervo.
+   */
   public static function withoutRemoveForAcervo(array $element, FormStateInterface $form_state): array {
     if (!empty($element['#aculta_acervo'])) {
       unset($element['remove_button']);
@@ -232,7 +246,7 @@ class UserPictureForm extends FormBase {
    * A foto personalizada substituída é apagada pelo hook de troca de foto
    * (PictureReplacementHooks).
    *
-   * @param array $form
+   * @param array<array-key, mixed> $form
    *   Estrutura do formulário.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   Estado atual do formulário.
@@ -254,7 +268,7 @@ class UserPictureForm extends FormBase {
   /**
    * Salva a foto enviada ou aplica o avatar sorteado no modal.
    *
-   * @param array $form
+   * @param array<array-key, mixed> $form
    *   Estrutura do formulário.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   Estado atual do formulário.
@@ -264,9 +278,9 @@ class UserPictureForm extends FormBase {
     if ($account === NULL) {
       return;
     }
-    $current = (int) ($account->get('user_picture')->target_id ?? 0);
+    $current = $this->intValue($account->get('user_picture')->target_id ?? 0);
     $fids = array_values(array_filter((array) $form_state->getValue('imagem')));
-    $new = (int) ($fids[0] ?? 0);
+    $new = $this->intValue($fids[0] ?? 0);
 
     $file = $new > 0 ? $this->entityTypeManagerService->getStorage('file')->load($new) : NULL;
 
@@ -284,6 +298,13 @@ class UserPictureForm extends FormBase {
     $account->save();
     $this->messenger()->addStatus($this->t('Foto do perfil salva.'));
     $form_state->setRedirect('aculta_portal.dashboard');
+  }
+
+  /**
+   * Inteiro de um valor de campo ou de formulário; zero quando não é numérico.
+   */
+  private function intValue(mixed $value): int {
+    return is_numeric($value) ? (int) $value : 0;
   }
 
 }
