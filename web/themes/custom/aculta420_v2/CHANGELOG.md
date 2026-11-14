@@ -1926,3 +1926,9 @@ State: Dev. No RC, production deployment, or release tag is declared.
   `discussion-reply-composer` e mantém mensagens, contexto e Form API como
   render arrays nos slots. Removido o override Twig; restam 34 templates.
 
+## Atualização — removido o override da ponte genérica do Portal (2026-11-13)
+
+- O tema e o módulo já forneciam o mesmo template neutro que imprime o render
+  array criado por preprocess. Removida a cópia do tema; a ponte genérica e o
+  fallback semântico do Portal permanecem. Restam 33 templates Twig.
+

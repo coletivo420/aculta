@@ -27,7 +27,7 @@ Decisões que governam o tema estão em `docs/decisions/` na raiz do repositóri
 
 ## Estado em uma frase
 
-O código e o Config Sync contêm SDCs, UI Patterns e UI Styles; o uso efetivo por consumidor ainda precisa ser cruzado com displays e Runtime. O shell tem cinco regiões e um template. ADR-056 mantém corte orientado por consumidores: 141 SDCs/223 stories, todos os SDCs com story, e 34 templates Twig restantes no tema após migrar carrinho, aviso de pagamento, gatilho de busca, termos da Conta, cartão de autoria, seções editoriais, páginas Links, doação, botão do Portal, shell e editor de foto da Conta, popup do mapa e compositor de respostas do Fórum para SDCs. A descoberta no Runtime, cobertura visual/autenticada, igualdade de Config Sync e lacunas de migração continuam pendentes quando não há evidência atual.
+O código e o Config Sync contêm SDCs, UI Patterns e UI Styles; o uso efetivo por consumidor ainda precisa ser cruzado com displays e Runtime. O shell tem cinco regiões e um template. ADR-056 mantém corte orientado por consumidores: 141 SDCs/223 stories, todos os SDCs com story, e 33 templates Twig restantes no tema após migrar carrinho, aviso de pagamento, gatilho de busca, termos da Conta, cartão de autoria, seções editoriais, páginas Links, doação, botão do Portal, shell e editor de foto da Conta, popup do mapa e compositor de respostas do Fórum para SDCs. O override redundante da ponte genérica do Portal também foi removido; a descoberta no Runtime, cobertura visual/autenticada, igualdade de Config Sync e lacunas de migração continuam pendentes quando não há evidência atual.
 
 ## Estrutura
 
