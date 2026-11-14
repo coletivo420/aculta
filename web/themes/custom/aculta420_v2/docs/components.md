@@ -1,6 +1,6 @@
 # Catálogo de componentes do tema V2
 
-Componentes SDC com schemas estritos (`additionalProperties: false`). Os nomes de prop e slot abaixo são os do `*.component.yml`. "Estado" indica o que foi entregue e verificado. Inventário do worktree em 2026-11-14: 148 manifests SDC e 240 stories, incluindo `delete-confirm` e `posting-overlay` ainda não rastreados e a nova story `reply-indent.depth-2-intermediate`; os gates SDC/Library passaram, mas o snapshot ainda aguarda preview visual. A existência do manifest/story não prova, por si só, que um consumidor de produção esteja configurado.
+Componentes SDC com schemas estritos (`additionalProperties: false`). Os nomes de prop e slot abaixo são os do `*.component.yml`. "Estado" indica o que foi entregue e verificado. Inventário do worktree em 2026-11-14: 150 manifests SDC e 244 stories, incluindo `delete-confirm`, `posting-overlay` e as novas stories de `reply-indent`; os gates SDC/Library passaram, mas o snapshot ainda aguarda preview visual. A existência do manifest/story não prova, por si só, que um consumidor de produção esteja configurado.
 
 Prefixo de uso: `aculta420_v2:<nome>`. Em Twig, use `include` com `with_context = false`, ou `embed` quando o componente tem slots.
 
@@ -15,11 +15,10 @@ Prefixo de uso: `aculta420_v2:<nome>`. Em Twig, use `include` com `with_context 
 
 A UI Patterns Library descobre os componentes diretamente dos arquivos
 `*.component.yml` e suas stories; não há uma lista paralela para manter. Neste
-worktree há 148 manifests SDC e 240 stories, incluindo `delete-confirm` e
-`posting-overlay` ainda não rastreados. O Drupal precisa reconstruir seus caches de descoberta para
+worktree há 150 manifests SDC e 244 stories; todos têm ao menos uma story e templates Twig em schema estrito. O Drupal precisa reconstruir seus caches de descoberta para
 refletir alterações no Runtime. Todos os SDCs têm ao
 menos uma story. A configuração habilita
-`ui_patterns_library`. A última descoberta Runtime registrada listou 145 SDCs, anterior à inclusão de `reply-indent`; cache e descoberta precisam ser atualizados após consolidar os 148 manifests do worktree.
+`ui_patterns_library`. A última descoberta Runtime registrada listou 145 SDCs, anterior à inclusão de `reply-indent`; cache e descoberta precisam ser atualizados após consolidar os 150 manifests do worktree.
 
 O grupo `Layouts` também alimenta os plugins de `ui_patterns_layouts`, usados
 pelo Layout Builder. Os sete layouts declarados são `event-page-layout`, `layout-page`, `layout-section`, `layout-two-columns`, `layout-grid`, `layout-narrow` e `layout-full`. O rodapé institucional (`site-footer`) também é um item desta biblioteca, com regiões `brand`, `nav`, `content` e `legal`; ele está posicionado no layout de blocos do display `footer` do bloco `aculta_institution`. O gate de Runtime cobre hoje seis layouts

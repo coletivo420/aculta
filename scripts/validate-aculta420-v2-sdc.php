@@ -168,6 +168,8 @@ $component_ids = [
   'status-messages',
   'tabs',
   'wiki-entry',
+  'forum-quote',
+  'reply-indent',
 ];
 $manager = \Drupal::service('plugin.manager.sdc');
 $validator = \Drupal::service('Drupal\Core\Theme\Component\ComponentValidator');
@@ -870,6 +872,27 @@ $samples = [
     '#props' => ['label' => 'Suítes ACULTA'],
     '#slots' => [
       'items' => Markup::create('<div class="item-list"><ul class="item-list__items"><li><a href="/marley" aria-current="page">Marley</a></li><li><a href="/ganjalab">Ganjalab</a></li></ul></div>'),
+    ],
+  ],
+  'forum-quote' => [
+    '#props' => [
+      'author_name' => 'Autora citada',
+      'timestamp' => '10/05/2030',
+      'theme' => 'light',
+      'density' => 'default',
+      'accent_side' => 'start',
+    ],
+    '#slots' => [
+      'content' => Markup::create('<p>Texto citado de exemplo.</p>'),
+    ],
+  ],
+  'reply-indent' => [
+    '#props' => [
+      'first' => true,
+      'depth' => 2,
+    ],
+    '#slots' => [
+      'content' => Markup::create('<p>Conteúdo da resposta recuada.</p>'),
     ],
   ],
 ];

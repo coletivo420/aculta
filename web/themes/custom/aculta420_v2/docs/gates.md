@@ -27,8 +27,8 @@ Os caminhos são relativos à raiz do repositório. Gates "Drush" rodam com `php
 | `validate-aculta420-layout-builder-batch.php` | `php scripts/validate-aculta420-layout-builder-batch.php` (delega ao Drush) | 22 displays habilitados, `allow_custom` conforme contrato, ComponentLayout UI Patterns ligado ao SDC, props/slots esperados, config ativa igual ao Sync, saída via Layout Builder ou adapter SDC Wiki e acesso às rotas de defaults | mudança de `layout_builder` em displays ou no lote |
 | `validate-ui-patterns-views-cutover.php` | `php scripts/validate-ui-patterns-views-cutover.php` | Row/style/display ligados aos SDCs, sources dos fields e partes do display, pager, filtros, ordenação e acesso nativos preservados | mudança no piloto UI Patterns Views |
 
-Última execução do gate `validate-aculta420-v2-sdc.php`: PASS, 79 componentes
-descobertos e renderizados isoladamente em 2026-11-13; inclui
+Última execução do gate `validate-aculta420-v2-sdc.php`: PASS, 97 componentes
+descobertos e renderizados isoladamente em 2026-11-14; inclui `forum-quote` e `reply-indent`, além de inclui
 `courses-catalog`, `lms-course-curriculum`, `lms-course-materials`,
 `lms-h5p-course`, `lms-lesson-page`, `layout-section`, `article-authors`,
 `related-content`, `sales-panel`, `image-audit-report`, `consent-banner`,
