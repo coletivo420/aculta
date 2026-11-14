@@ -25,4 +25,4 @@ props:
 slots:
   avatar:
     title: Avatar
-    description: Render array Drupal ou markup de imagem confiável; strings são emitidas como HTML sem sanitização. Vazio usa o SDC avatar com iniciais.
+    description: Conteúdo renderizável de avatar encaminhado ao slot media do SDC avatar; sem conteúdo, o quadro permanece vazio e não gera iniciais.

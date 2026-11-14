@@ -54,7 +54,7 @@ props:
 slots:
   avatar:
     title: Avatar do autor
-    description: Imagem própria do autor (markup). Vazio usa o avatar padrão do componente aculta420_v2:avatar.
+    description: Conteúdo renderizável do avatar encaminhado ao slot do SDC forum-author-line; sem conteúdo, avatar mostra o quadro vazio.
   content:
     title: Conteúdo da resposta
     description: Texto da resposta.

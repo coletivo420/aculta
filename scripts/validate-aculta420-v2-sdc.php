@@ -107,6 +107,9 @@ $component_ids = [
   'forum-category-page',
   'forum-list-page',
   'forum-search-page',
+  'forum-author-line',
+  'forum-post-card',
+  'forum-reply-compact',
   'forum-topic',
   'forum-topic-page',
   'forum-topic-row',
@@ -203,6 +206,24 @@ $samples = [
     '#slots' => [
       'avatar' => Markup::create('<img src="/author-example.png" alt="Retrato de exemplo">'),
       'actions' => '',
+    ],
+  ],
+  'forum-author-line' => [
+    '#props' => ['author_name' => 'Autora de exemplo'],
+    '#slots' => ['avatar' => Markup::create('<img src="/author-avatar.png" alt="Retrato da autora">')],
+  ],
+  'forum-post-card' => [
+    '#props' => ['author_name' => 'Autora de exemplo'],
+    '#slots' => [
+      'avatar' => Markup::create('<img src="/author-avatar.png" alt="Retrato da autora">'),
+      'body' => 'Mensagem do fórum.',
+    ],
+  ],
+  'forum-reply-compact' => [
+    '#props' => ['author_name' => 'Autora de exemplo'],
+    '#slots' => [
+      'avatar' => Markup::create('<img src="/author-avatar.png" alt="Retrato da autora">'),
+      'content' => 'Resposta do fórum.',
     ],
   ],
   'accordion' => [
@@ -985,6 +1006,10 @@ foreach ($component_ids as $component_id) {
       || !str_contains($output, 'Biografia pública autorizada.')
       || !str_contains($output, 'alt="Retrato de exemplo"'))) {
     throw new RuntimeException('Author card must render its authorized identity, bio, and avatar slot.');
+  }
+  if (in_array($component_id, ['forum-author-line', 'forum-post-card', 'forum-reply-compact'], TRUE)
+    && !str_contains($output, 'alt="Retrato da autora"')) {
+    throw new RuntimeException(sprintf('The %s composition must preserve the author avatar slot and its alternative text.', $component_id));
   }
   if ($component_id === 'tabs'
     && (!str_contains($output, '<nav')

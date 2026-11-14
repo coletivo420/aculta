@@ -101,7 +101,7 @@ props:
 slots:
   avatar:
     title: Avatar do autor
-    description: Render array Drupal ou markup de imagem confiável; strings são encaminhadas como HTML sem sanitização ao SDC forum-author-line.
+    description: Conteúdo renderizável do avatar encaminhado ao slot avatar do SDC forum-author-line sem inspeção ou conversão em texto.
   body:
     title: Conteúdo da mensagem
     description: Texto e mídias renderizadas do post.
