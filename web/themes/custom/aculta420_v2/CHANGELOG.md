@@ -1876,3 +1876,11 @@ State: Dev. No RC, production deployment, or release tag is declared.
   temas.
 - Removido o override adaptador do tema. Restam 45 templates; validação visual
   autenticada no Runtime segue pendente.
+
+## Atualização — seção editorial encaminhada diretamente ao SDC (2026-11-14)
+
+- `PagePresentationHooks` agora monta `layout-section` com os títulos como
+  render arrays `html_tag` e o corpo original no slot `content`; enumerações e
+  fallback semântico do módulo permanecem preservados.
+- Removido o override `aculta-section.html.twig`. Restam 44 templates no tema;
+  validação visual no Runtime continua pendente.

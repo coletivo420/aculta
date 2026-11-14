@@ -15,8 +15,9 @@ final class LayoutSectionComponentTest extends UnitTestCase {
   /**
    * Editorial options remain strict SDC props with bounded values.
    */
-  public function testEditorialSectionPropsAndAdapter(): void {
+  public function testEditorialSectionPropsAndThemePreprocess(): void {
     $themeDir = dirname(__DIR__, 3);
+    $repositoryRoot = dirname($themeDir, 4);
     $componentPath = $themeDir . '/components/layout-section/layout-section.component.yml';
     $metadata = Yaml::parse((string) file_get_contents($componentPath));
 
@@ -34,12 +35,17 @@ final class LayoutSectionComponentTest extends UnitTestCase {
     self::assertSame('city', $story['props']['section_variant']);
     self::assertSame('yellow', $story['props']['section_color']);
 
-    $adapter = (string) file_get_contents($themeDir . '/templates/aculta-section.html.twig');
-    self::assertStringContainsString("include('aculta420_v2:layout-section'", $adapter);
-    self::assertStringContainsString('class="aculta-section-title"', $adapter);
-    self::assertStringContainsString('section_variant: section_variant|default', $adapter);
-    self::assertStringContainsString('section_color: section_color|default', $adapter);
-    self::assertStringContainsString('content: section_body', $adapter);
+    $preprocess = (string) file_get_contents($themeDir . '/src/Hook/PagePresentationHooks.php');
+    self::assertStringContainsString("#[Hook('preprocess_aculta_section')]", $preprocess);
+    self::assertStringContainsString("'#component' => 'aculta420_v2:layout-section'", $preprocess);
+    self::assertStringContainsString("['default', 'city', 'transparency']", $preprocess);
+    self::assertStringContainsString("['default', 'red', 'green', 'yellow', 'green-dark']", $preprocess);
+    self::assertStringContainsString("'content' => is_array(", $preprocess);
+    self::assertStringContainsString("is_array(\$attributes) ? \$attributes : []", $preprocess);
+
+    $fallback = (string) file_get_contents($repositoryRoot . '/web/modules/custom/aculta_portal/templates/aculta-section.html.twig');
+    self::assertStringContainsString('{{ component }}', $fallback);
+    self::assertStringContainsString('<section>', $fallback);
   }
 
   /**

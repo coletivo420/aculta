@@ -752,6 +752,7 @@ final class PortalHooks {
           'section_variant' => 'default',
           'section_color' => 'default',
           'section_body' => NULL,
+          'component' => NULL,
         ],
         'template' => 'aculta-section',
         'path' => $this->moduleList->getPath('aculta_portal') . '/templates',

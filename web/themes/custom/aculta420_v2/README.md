@@ -27,7 +27,7 @@ Decisões que governam o tema estão em `docs/decisions/` na raiz do repositóri
 
 ## Estado em uma frase
 
-O código e o Config Sync contêm SDCs, UI Patterns e UI Styles; o uso efetivo por consumidor ainda precisa ser cruzado com displays e Runtime. O shell tem cinco regiões e um template. ADR-056 mantém corte orientado por consumidores: 139 SDCs/221 stories, todos os SDCs com story, e 45 templates Twig restantes no tema após migrar carrinho, aviso de pagamento, gatilho de busca, termos da Conta e cartão de autoria para SDCs. A descoberta no Runtime, cobertura visual/autenticada, igualdade de Config Sync e lacunas de migração continuam pendentes quando não há evidência atual.
+O código e o Config Sync contêm SDCs, UI Patterns e UI Styles; o uso efetivo por consumidor ainda precisa ser cruzado com displays e Runtime. O shell tem cinco regiões e um template. ADR-056 mantém corte orientado por consumidores: 139 SDCs/221 stories, todos os SDCs com story, e 44 templates Twig restantes no tema após migrar carrinho, aviso de pagamento, gatilho de busca, termos da Conta, cartão de autoria e seções editoriais para SDCs. A descoberta no Runtime, cobertura visual/autenticada, igualdade de Config Sync e lacunas de migração continuam pendentes quando não há evidência atual.
 
 ## Estrutura
 

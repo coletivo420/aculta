@@ -401,6 +401,64 @@ final class PagePresentationHooks {
   }
 
   /**
+   * Sends editorial section values to the shared layout SDC.
+   *
+   * The Portal's hook remains the theme-neutral fallback contract. When this
+   * theme is active, only the component owns the section presentation and the
+   * body remains a render array in the SDC slot.
+   */
+  #[Hook('preprocess_aculta_section')]
+  public function preprocessEditorialSection(array &$variables): void {
+    if (!$this->componentAvailable('layout-section')) {
+      return;
+    }
+
+    $header = [];
+    foreach ([
+      'section_title' => ['tag' => 'h2', 'class' => 'aculta-section-title'],
+      'section_heading' => ['tag' => 'h3', 'class' => 'aculta-section-heading'],
+    ] as $key => $heading) {
+      $value = $variables[$key] ?? NULL;
+      if (is_string($value) && $value !== '') {
+        $header[$key] = [
+          '#type' => 'html_tag',
+          '#tag' => $heading['tag'],
+          '#attributes' => ['class' => [$heading['class']]],
+          '#value' => $value,
+        ];
+      }
+    }
+
+    $attributes = $variables['attributes'] ?? [];
+    if ($attributes instanceof Attribute) {
+      $attributes = $attributes->toArray();
+    }
+    $sectionVariant = (string) ($variables['section_variant'] ?? 'default');
+    if (!in_array($sectionVariant, ['default', 'city', 'transparency'], TRUE)) {
+      $sectionVariant = 'default';
+    }
+    $sectionColor = (string) ($variables['section_color'] ?? 'default');
+    if (!in_array($sectionColor, ['default', 'red', 'green', 'yellow', 'green-dark'], TRUE)) {
+      $sectionColor = 'default';
+    }
+
+    $variables['component'] = [
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:layout-section',
+      '#props' => [
+        'tone' => 'default',
+        'section_variant' => $sectionVariant,
+        'section_color' => $sectionColor,
+      ],
+      '#slots' => [
+        'header' => $header,
+        'content' => is_array($variables['section_body'] ?? NULL) ? $variables['section_body'] : [],
+      ],
+      '#attributes' => is_array($attributes) ? $attributes : [],
+    ];
+  }
+
+  /**
    * Maps compatible Portal components to V2 SDCs.
    *
    * The Portal fallback preprocess runs before theme preprocess and fills a
