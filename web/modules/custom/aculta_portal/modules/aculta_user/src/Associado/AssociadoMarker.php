@@ -64,22 +64,28 @@ final class AssociadoMarker implements ActiveAssociateInterface {
   }
 
   /**
-   * Situação atual da conta, ou NULL se nunca pediu adesão. */
+   * Situação atual da conta, ou NULL se nunca pediu adesão.
+   */
   public function situacao(int $uid): ?string {
     $marca = $this->marcaDe($uid);
-    return $marca === NULL ? NULL : (string) $marca->get('situacao')->value;
+    return $marca === NULL ? NULL : $this->textValue($marca->get('situacao')->value);
   }
 
   /**
-   * Data de adesão (primeira ativação), ou NULL. */
+   * Data de adesão (primeira ativação), ou NULL.
+   */
   public function dataAdesao(int $uid): ?int {
     $marca = $this->marcaDe($uid);
     $valor = $marca?->get('data_adesao')->value;
-    return $valor === NULL || $valor === '' ? NULL : (int) $valor;
+    return $valor === NULL || $valor === '' ? NULL : $this->intValue($valor);
   }
 
   /**
-   * Uids ativos, em ordem crescente. */
+   * Uids ativos, em ordem crescente.
+   *
+   * @return int[]
+   *   Uids com situação ativa.
+   */
   public function uids(): array {
     $storage = $this->entityTypeManager->getStorage('aculta_associado');
     $ids = $storage->getQuery()->accessCheck(FALSE)
@@ -87,7 +93,7 @@ final class AssociadoMarker implements ActiveAssociateInterface {
     $uids = [];
     foreach ($storage->loadMultiple($ids) as $marca) {
       if ($marca instanceof AssociadoMarcador) {
-        $uids[] = (int) $marca->get('uid')->target_id;
+        $uids[] = $this->intValue($marca->get('uid')->target_id);
       }
     }
     return $uids;
@@ -109,9 +115,9 @@ final class AssociadoMarker implements ActiveAssociateInterface {
         continue;
       }
       $linhas[] = [
-        'uid' => (int) $marca->get('uid')->target_id,
-        'situacao' => (string) $marca->get('situacao')->value,
-        'data_adesao' => $marca->get('data_adesao')->value === NULL ? NULL : (int) $marca->get('data_adesao')->value,
+        'uid' => $this->intValue($marca->get('uid')->target_id),
+        'situacao' => $this->textValue($marca->get('situacao')->value),
+        'data_adesao' => $marca->get('data_adesao')->value === NULL ? NULL : $this->intValue($marca->get('data_adesao')->value),
       ];
     }
     return $linhas;
@@ -130,7 +136,7 @@ final class AssociadoMarker implements ActiveAssociateInterface {
     $uids = [];
     foreach ($storage->loadMultiple($ids) as $marca) {
       if ($marca instanceof AssociadoMarcador) {
-        $uids[] = (int) $marca->get('uid')->target_id;
+        $uids[] = $this->intValue($marca->get('uid')->target_id);
       }
     }
     return $uids;
@@ -148,7 +154,7 @@ final class AssociadoMarker implements ActiveAssociateInterface {
     }
     $marca = $this->marcaDe($uid);
     // Quem foi desligado pode pedir de novo; a data de adesão é mantida.
-    if ($marca !== NULL && (string) $marca->get('situacao')->value !== self::DESLIGADO) {
+    if ($marca !== NULL && $this->textValue($marca->get('situacao')->value) !== self::DESLIGADO) {
       return FALSE;
     }
     if ($marca === NULL) {
@@ -176,7 +182,7 @@ final class AssociadoMarker implements ActiveAssociateInterface {
     if ($marca === NULL) {
       $marca = $this->criarMarca($uid, ['situacao' => self::PENDENTE]);
     }
-    if ((string) $marca->get('situacao')->value === $situacao) {
+    if ($this->textValue($marca->get('situacao')->value) === $situacao) {
       return FALSE;
     }
     $marca->set('situacao', $situacao);
@@ -224,7 +230,7 @@ final class AssociadoMarker implements ActiveAssociateInterface {
       return FALSE;
     }
     $marca = $this->marcaDe($uid) ?? $this->criarMarca($uid);
-    $atual = $marca->isNew() ? NULL : (string) $marca->get('situacao')->value;
+    $atual = $marca->isNew() ? NULL : $this->textValue($marca->get('situacao')->value);
     if (in_array($atual, [self::ATIVO, self::SUSPENSO, self::CONVIDADO], TRUE)) {
       return FALSE;
     }
@@ -244,7 +250,7 @@ final class AssociadoMarker implements ActiveAssociateInterface {
    */
   public function aceitarConvite(int $uid): bool {
     $marca = $this->marcaDe($uid);
-    if ($marca === NULL || (string) $marca->get('situacao')->value !== self::CONVIDADO) {
+    if ($marca === NULL || $this->textValue($marca->get('situacao')->value) !== self::CONVIDADO) {
       return FALSE;
     }
     $marca->set('situacao', self::ATIVO);
@@ -265,7 +271,7 @@ final class AssociadoMarker implements ActiveAssociateInterface {
    */
   public function recusarConvite(int $uid): bool {
     $marca = $this->marcaDe($uid);
-    if ($marca === NULL || (string) $marca->get('situacao')->value !== self::CONVIDADO) {
+    if ($marca === NULL || $this->textValue($marca->get('situacao')->value) !== self::CONVIDADO) {
       return FALSE;
     }
     $marca->delete();
@@ -281,7 +287,7 @@ final class AssociadoMarker implements ActiveAssociateInterface {
    */
   public function recusar(int $uid): bool {
     $marca = $this->marcaDe($uid);
-    if ($marca === NULL || (string) $marca->get('situacao')->value !== self::PENDENTE) {
+    if ($marca === NULL || $this->textValue($marca->get('situacao')->value) !== self::PENDENTE) {
       return FALSE;
     }
     $marca->delete();
@@ -326,6 +332,20 @@ final class AssociadoMarker implements ActiveAssociateInterface {
       throw new \LogicException('A entidade aculta_associado não é AssociadoMarcador.');
     }
     return $marca;
+  }
+
+  /**
+   * Texto de um valor de campo; vazio quando o valor não é escalar.
+   */
+  private function textValue(mixed $value): string {
+    return is_scalar($value) || $value instanceof \Stringable ? (string) $value : '';
+  }
+
+  /**
+   * Inteiro de um valor de campo; zero quando não é numérico.
+   */
+  private function intValue(mixed $value): int {
+    return is_numeric($value) ? (int) $value : 0;
   }
 
 }

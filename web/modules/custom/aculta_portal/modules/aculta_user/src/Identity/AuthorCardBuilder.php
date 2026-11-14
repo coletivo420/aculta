@@ -19,6 +19,9 @@ final class AuthorCardBuilder {
 
   /**
    * Builds a historical card without creating or exposing a User account.
+   *
+   * @return array<array-key, mixed>
+   *   Render array do cartão histórico.
    */
   public function buildLegacy(LegacyAuthor $author): array {
     return $this->buildLegacyWithDisplayName($author, (string) $author->label());
@@ -26,6 +29,12 @@ final class AuthorCardBuilder {
 
   /**
    * Builds a historical author card for Forum content.
+   */
+  /**
+   * Cartão histórico do Fórum.
+   *
+   * @return array<array-key, mixed>
+   *   Render array do cartão.
    */
   public function buildLegacyForum(LegacyAuthor $author): array {
     return $this->buildLegacyWithDisplayName(
@@ -36,6 +45,12 @@ final class AuthorCardBuilder {
 
   /**
    * Builds the shared historical card with an explicitly selected display name.
+   */
+  /**
+   * Cartão histórico com o nome de exibição informado.
+   *
+   * @return array<array-key, mixed>
+   *   Render array do cartão.
    */
   private function buildLegacyWithDisplayName(LegacyAuthor $author, string $displayName): array {
     $build = [
@@ -65,6 +80,9 @@ final class AuthorCardBuilder {
    * access or invents social actions. Only identity and the avatar permitted
    * by PublicProfilePolicy enter the card.
    *
+   * @param array<array-key, mixed> $actions
+   *   Ações renderizáveis fornecidas pelo chamador.
+   *
    * @return array|null
    *   Cacheable theme-hook array, or NULL if no public identity is available.
    */
@@ -88,6 +106,9 @@ final class AuthorCardBuilder {
    *
    * The host must already have decided to show the account's display name,
    * such as the LMS class roster. The avatar is always the acervo one.
+   *
+   * @return array<array-key, mixed>
+   *   Render array do cartão de fallback.
    */
   public function buildFallback(UserInterface $account, string $size = 'sm', ?string $designation = NULL): array {
     return $this->card($this->identityResolver->resolveFallback($account), [], $designation, $size);
@@ -95,6 +116,12 @@ final class AuthorCardBuilder {
 
   /**
    * Renders a resolved identity into the theme-neutral card contract.
+   *
+   * @param array<array-key, mixed> $actions
+   *   Ações renderizáveis fornecidas pelo chamador.
+   *
+   * @return array<array-key, mixed>
+   *   Render array do cartão.
    */
   private function card(AuthorIdentity $identity, array $actions, ?string $designation, string $size): array {
     $data = $identity->toArray();

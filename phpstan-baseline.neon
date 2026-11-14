@@ -73745,24 +73745,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_user/aculta_user.install
 
 		-
-			rawMessage: Cannot cast mixed to int.
-			identifier: cast.int
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Associado/AssociadoMarker.php
-
-		-
-			rawMessage: Cannot cast mixed to string.
-			identifier: cast.string
-			count: 8
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Associado/AssociadoMarker.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_user\Associado\AssociadoMarker::uids() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Associado/AssociadoMarker.php
-
-		-
 			rawMessage: Cannot cast mixed to string.
 			identifier: cast.string
 			count: 1
@@ -74183,48 +74165,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Hook/EnrollmentRoleHooks.php
 
 		-
-			rawMessage: 'Argument of an invalid type mixed supplied for foreach, only iterables are supported.'
-			identifier: foreach.nonIterable
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Hook/ForumModerationHooks.php
-
-		-
-			rawMessage: Cannot access an offset on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Hook/ForumModerationHooks.php
-
-		-
-			rawMessage: Cannot access offset '#options' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Hook/ForumModerationHooks.php
-
-		-
-			rawMessage: Cannot access offset 'status' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Hook/ForumModerationHooks.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_user\Hook\ForumModerationHooks::commentAdminOverviewAlter() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Hook/ForumModerationHooks.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_user\Hook\ForumModerationHooks::validateCommentAdminOverviewSelection() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Hook/ForumModerationHooks.php
-
-		-
-			rawMessage: 'Parameter #1 $ids of method Drupal\Core\Entity\EntityStorageBase::loadMultiple() expects array<int|string>|null, array<mixed, mixed> given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Hook/ForumModerationHooks.php
-
-		-
 			rawMessage: Cannot cast mixed to int.
 			identifier: cast.int
 			count: 1
@@ -74277,42 +74217,6 @@ parameters:
 			identifier: argument.type
 			count: 2
 			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Hook/PictureReplacementHooks.php
-
-		-
-			rawMessage: Cannot access an offset on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Hook/ProfileNicknameValidationHooks.php
-
-		-
-			rawMessage: Cannot access offset 'value' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Hook/ProfileNicknameValidationHooks.php
-
-		-
-			rawMessage: Cannot access offset 0 on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Hook/ProfileNicknameValidationHooks.php
-
-		-
-			rawMessage: Cannot cast mixed to string.
-			identifier: cast.string
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Hook/ProfileNicknameValidationHooks.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_user\Hook\ProfileNicknameValidationHooks::formAlter() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Hook/ProfileNicknameValidationHooks.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_user\Hook\ProfileNicknameValidationHooks::validateNickname() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Hook/ProfileNicknameValidationHooks.php
 
 		-
 			rawMessage: 'Method Drupal\aculta_user\Hook\PublicForumTopicAuthorHooks::entityView() has parameter $build with no value type specified in iterable type array.'
@@ -74387,49 +74291,7 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Identity/AccountMenuPresentationBuilder.php
 
 		-
-			rawMessage: 'Method Drupal\aculta_user\Identity\AuthorCardBuilder::build() has parameter $actions with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Identity/AuthorCardBuilder.php
-
-		-
 			rawMessage: 'Method Drupal\aculta_user\Identity\AuthorCardBuilder::build() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Identity/AuthorCardBuilder.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_user\Identity\AuthorCardBuilder::buildFallback() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Identity/AuthorCardBuilder.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_user\Identity\AuthorCardBuilder::buildLegacy() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Identity/AuthorCardBuilder.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_user\Identity\AuthorCardBuilder::buildLegacyForum() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Identity/AuthorCardBuilder.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_user\Identity\AuthorCardBuilder::buildLegacyWithDisplayName() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Identity/AuthorCardBuilder.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_user\Identity\AuthorCardBuilder::card() has parameter $actions with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Identity/AuthorCardBuilder.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_user\Identity\AuthorCardBuilder::card() return type has no value type specified in iterable type array.'
 			identifier: missingType.iterableValue
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Identity/AuthorCardBuilder.php

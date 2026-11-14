@@ -28,6 +28,9 @@ final class ProfileNicknameValidationHooks {
 
   /**
    * Adds the User-owned nickname policy to role Profile entity forms.
+   *
+   * @param array<array-key, mixed> $form
+   *   Estrutura do formulário, alterada no lugar.
    */
   #[Hook('form_alter')]
   public function formAlter(array &$form, FormStateInterface $form_state, string $form_id): void {
@@ -43,11 +46,16 @@ final class ProfileNicknameValidationHooks {
       return;
     }
 
-    $form['#validate'][] = [$this, 'validateNickname'];
+    $validators = is_array($form['#validate'] ?? NULL) ? $form['#validate'] : [];
+    $validators[] = [$this, 'validateNickname'];
+    $form['#validate'] = $validators;
   }
 
   /**
    * Rejects invalid or already claimed nicknames in Profile forms.
+   *
+   * @param array<array-key, mixed> $form
+   *   Estrutura do formulário, alterada no lugar.
    */
   public function validateNickname(array &$form, FormStateInterface $form_state): void {
     $form_object = $form_state->getFormObject();
@@ -60,9 +68,9 @@ final class ProfileNicknameValidationHooks {
     }
 
     $submitted = $form_state->getValue('field_nickname');
-    $nickname = trim((string) (is_array($submitted) ? ($submitted[0]['value'] ?? '') : $submitted));
+    $nickname = trim($this->textValue($this->nicknameOf($submitted)));
     $existing_values = $profile->get('field_nickname')->getValue();
-    $existing = trim((string) ($existing_values[0]['value'] ?? ''));
+    $existing = trim($this->textValue($this->nicknameOf($existing_values)));
     if ($nickname === $existing || $nickname === '') {
       return;
     }
@@ -83,6 +91,24 @@ final class ProfileNicknameValidationHooks {
     elseif (is_string($submitted)) {
       $form_state->setValue('field_nickname', $nickname);
     }
+  }
+
+  /**
+   * Valor do apelido: o 'value' do primeiro item quando é lista; senão o próprio valor (vazio se o item não existe).
+   */
+  private function nicknameOf(mixed $values): mixed {
+    if (!is_array($values)) {
+      return $values;
+    }
+    $first = $values[0] ?? NULL;
+    return is_array($first) ? ($first['value'] ?? '') : '';
+  }
+
+  /**
+   * Texto de um valor de campo; vazio quando o valor não é escalar.
+   */
+  private function textValue(mixed $value): string {
+    return is_scalar($value) || $value instanceof \Stringable ? (string) $value : '';
   }
 
 }

@@ -94,40 +94,60 @@ final class ForumModerationHooks {
       : NULL;
     if ($fieldName !== NULL) {
       $field = $entity->get($fieldName);
-      $values = $field->getValue() ?: [[]];
-      foreach ($values as &$value) {
-        $value['status'] = CommentingStatus::Closed->value;
+      $raw = $field->getValue();
+      $values = is_array($raw) && $raw !== [] ? $raw : [[]];
+      foreach ($values as $index => $value) {
+        $row = is_array($value) ? $value : [];
+        $row['status'] = CommentingStatus::Closed->value;
+        $values[$index] = $row;
       }
-      unset($value);
       $field->setValue($values);
     }
   }
 
   /**
    * Keeps contextual discussion comments out of Core's general queue.
+   *
+   * @param array<array-key, mixed> $form
+   *   Estrutura do formulário, alterada no lugar.
    */
   #[Hook('form_comment_admin_overview_alter')]
   public function commentAdminOverviewAlter(array &$form, FormStateInterface $form_state, string $form_id): void {
-    if (!isset($form['comments']['#options']) || !is_array($form['comments']['#options'])) {
+    $commentsField = is_array($form['comments'] ?? NULL) ? $form['comments'] : [];
+    $options = is_array($commentsField['#options'] ?? NULL) ? $commentsField['#options'] : NULL;
+    if ($options === NULL) {
       return;
     }
-    foreach (array_keys($form['comments']['#options']) as $cid) {
+    foreach (array_keys($options) as $cid) {
       $comment = $this->entityTypeManager->getStorage('comment')->load($cid);
       if ($comment instanceof CommentInterface
         && ($this->isContextManagedComment($comment) || $this->isImportedHistoric($comment))) {
-        unset($form['comments']['#options'][$cid]);
+        unset($options[$cid]);
       }
     }
+    // Grava as opções filtradas de volta, sem escrita aninhada em valores não tipados.
+    $commentsField['#options'] = $options;
+    $form['comments'] = $commentsField;
     // Core bulk moderation saves directly instead of checking entity access.
     // Validate submitted IDs even when a caller forges a hidden row.
-    $form['#validate'][] = [$this, 'validateCommentAdminOverviewSelection'];
+    $validators = is_array($form['#validate'] ?? NULL) ? $form['#validate'] : [];
+    $validators[] = [$this, 'validateCommentAdminOverviewSelection'];
+    $form['#validate'] = $validators;
   }
 
   /**
    * Rejects archive comments submitted through the core bulk moderation form.
+   *
+   * @param array<array-key, mixed> $form
+   *   Estrutura do formulário.
    */
   public function validateCommentAdminOverviewSelection(array &$form, FormStateInterface $form_state): void {
-    $ids = array_filter((array) $form_state->getValue('comments', []));
+    $ids = [];
+    foreach (array_filter((array) $form_state->getValue('comments', [])) as $id) {
+      if (is_int($id) || is_string($id)) {
+        $ids[] = $id;
+      }
+    }
     if ($ids === []) {
       return;
     }
