@@ -6,8 +6,8 @@
 > presenters do módulo. Os nomes da tabela são hipóteses antigas, não evidência
 > atual. Refaça cada linha por meio de código e Config Sync segundo ADR-056. Em
 > 2026-11-14 o checkout passou a compor `accordion` diretamente no preprocess
-> do view mode full de `aculta_faq`; `event-page-layout` ainda não tem
-> consumidor encontrado.
+> do view mode full de `aculta_faq` e `EventPageController::page()` passou a compor
+> `event-page-layout`; a renderização destas composições no Runtime segue pendente.
 
 Inventário de 2026-11-05: quais templates de página cada purpose usa e quais
 componentes SDC eles consomem. Serve de base para a adoção dos componentes
@@ -86,7 +86,7 @@ Componentes com consumo: `accordion`, `alerts-trigger`, `author-card`, `avatar`,
 | `shop` (Loja) | Não localizado no repositório do tema | Nenhum | Aguarda autorização da Loja (ver `price`) |
 | `courses` (Cursos/LMS) | `lms-lesson-page` (SDC); `aculta_lms` sem templates próprios localizados | `lms-lesson-page`, `progress` (sem consumo) | Falta `progress` e `tabs` |
 | `forum` | Tópico full e formulário de criação usam presenters do tema; listagens públicas, categorias e busca têm overrides Views | `forum-topic`, `forum-opening-post`, `forum-topic-row`, `forum-list-page`, `forum-category-page`, `forum-search-page`, `pagination` | Remoções foram revertidas onde não havia substituto equivalente; Views ainda usam style/row default e exigem migração para UI Patterns Views |
-| `eventos` | View `eventos_publicos` na raiz; nenhum presenter de detalhe encontrado | `card-cultural` na row da listagem; sem consumidor encontrado para `event-page-layout` | Listagem configurada; apresentação do detalhe pendente de rastreio; estado vazio sem consumer real |
+| `eventos` | View `eventos_publicos` na raiz; controller de detalhe compõe `event-page-layout` por render array | `card-cultural`, `event-page-layout` | Listagem UI Patterns configurada; hook/template próprio do detalhe removido. Renderização, acesso, cache, mapa e estados do detalhe aguardam homologação Runtime |
 | `links` (LinkWeed) | O módulo emite diretamente o SDC `social-links-page`; não há presenter de página do tema | `social-links-page` | Migração de template concluída; verificar consumer do `hero-banner` separadamente |
 
 ## 3. Ordem sugerida de adoção

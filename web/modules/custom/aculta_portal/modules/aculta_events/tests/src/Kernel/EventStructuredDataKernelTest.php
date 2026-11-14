@@ -30,7 +30,8 @@ final class EventStructuredDataKernelTest extends KernelTestBase {
    */
   protected static $modules = [
     'system', 'user', 'key', 'address', 'geofield', 'options', 'link', 'text',
-    'filter', 'taxonomy', 'datetime', 'datetime_range', 'aculta_calendar',
+    'filter', 'taxonomy', 'datetime', 'datetime_range', 'ui_patterns',
+    'ui_patterns_views', 'aculta_calendar',
     'aculta_events',
   ];
 
@@ -126,7 +127,7 @@ final class EventStructuredDataKernelTest extends KernelTestBase {
 
     $controller = EventPageController::create($this->container);
     $publicPage = $controller->page('evento-hibrido-publico');
-    $publicMarkup = (string) $publicPage['#datas'][0]['#markup'];
+    $publicMarkup = (string) $publicPage['#slots']['essentials']['dates']['items']['date_0']['#markup'];
     $publicJson = $this->extractJsonLd($publicPage['#attached']['html_head'], 'aculta_events_event_jsonld');
     $publicLocation = $publicJson['@graph'][0]['location'] ?? NULL;
 
@@ -141,7 +142,8 @@ final class EventStructuredDataKernelTest extends KernelTestBase {
     $ownerJson = $this->extractJsonLd($ownerPage['#attached']['html_head'], 'aculta_events_event_jsonld');
     $ownerLocations = $ownerJson['@graph'][0]['location'] ?? [];
 
-    $this->assertStringContainsString('Local de endereço reservado', (string) $ownerPage['#datas'][0]['#markup']);
+    $ownerMarkup = (string) $ownerPage['#slots']['essentials']['dates']['items']['date_0']['#markup'];
+    $this->assertStringContainsString('Local de endereço reservado', $ownerMarkup);
     $this->assertCount(2, $ownerLocations);
     $this->assertSame('Rua Reservada, 987', $ownerLocations[1]['address']['streetAddress'] ?? NULL);
     $this->assertSame('80000-987', $ownerLocations[1]['address']['postalCode'] ?? NULL);
@@ -416,7 +418,7 @@ final class EventStructuredDataKernelTest extends KernelTestBase {
     $json = $this->extractJsonLd($page['#attached']['html_head'], 'aculta_events_event_jsonld');
     $encoded = json_encode($json, JSON_UNESCAPED_UNICODE);
 
-    $this->assertNull($page['#organizador']);
+    $this->assertArrayNotHasKey('sidebar', $page['#slots']);
     $this->assertStringNotContainsString('nome-cadastral-privado', (string) $encoded);
     $this->assertArrayNotHasKey('organizer', $json['@graph'][0]);
     $this->assertContains('user:1', $page['#cache']['tags']);

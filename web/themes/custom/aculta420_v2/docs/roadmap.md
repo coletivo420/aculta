@@ -100,10 +100,10 @@ anteriores e não substituem a conferência do código atual.
    variants/defaults, includes e escaping. Renomear apenas conceitos realmente
    reutilizáveis com plano de compatibilidade das referências persistidas.
 3. **P2 — cruzar integrações:** matriz estática regenerada em 2026-11-14 com
-   457 linhas (cabeçalho e 456 consumers): 148 SDCs, 159 displays Views, 52
+   456 linhas (cabeçalho e 455 consumers): 148 SDCs, 159 displays Views, 52
    instâncias de bloco, 22 displays com Layout Builder e 19 templates Twig Drupal
    do tema. Foram achadas
-   referências literais a 114 SDCs; os 34 sem referência literal não são
+   referências literais a 113 SDCs; os 35 sem referência literal não são
    candidatos automáticos a exclusão, pois a Library os publica e usos
    editoriais/dinâmicos não aparecem nessa busca. Ainda falta reconciliar as
    escolhas editoriais persistidas no Runtime e revisar a lista por consumidor.

@@ -32,7 +32,8 @@ final class EventDateHooksKernelTest extends KernelTestBase {
    */
   protected static $modules = [
     'system', 'user', 'taxonomy', 'link', 'text', 'filter', 'datetime', 'datetime_range',
-    'options', 'field', 'key', 'address', 'geofield', 'views', 'aculta_calendar', 'aculta_events',
+    'options', 'field', 'key', 'address', 'geofield', 'views', 'ui_patterns',
+    'ui_patterns_views', 'aculta_calendar', 'aculta_events',
   ];
 
   /**
@@ -82,7 +83,7 @@ final class EventDateHooksKernelTest extends KernelTestBase {
 
     $pagina = EventPageController::create($this->container)->page((string) $evento->get('field_slug')->value);
 
-    $this->assertSame([], $pagina['#datas']);
+    $this->assertArrayNotHasKey('dates', $pagina['#slots']['essentials'] ?? []);
   }
 
   /**
@@ -93,8 +94,12 @@ final class EventDateHooksKernelTest extends KernelTestBase {
 
     $pagina = EventPageController::create($this->container)->page((string) $evento->get('field_slug')->value);
 
-    $this->assertCount(1, $pagina['#datas']);
-    $this->assertStringContainsString(' às ', (string) $pagina['#datas'][0]['#markup']);
+    $dateItems = array_filter(
+      array_keys($pagina['#slots']['essentials']['dates']['items']),
+      static fn (string|int $key): bool => is_string($key) && !str_starts_with($key, '#'),
+    );
+    $this->assertCount(1, $dateItems);
+    $this->assertStringContainsString(' às ', (string) $pagina['#slots']['essentials']['dates']['items']['date_0']['#markup']);
   }
 
   /**

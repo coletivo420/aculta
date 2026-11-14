@@ -441,29 +441,169 @@ final class EventPageController extends ControllerBase {
       $websiteUrl = '';
     }
 
+    $eventType = $evento->get('field_tipo')->entity?->label();
+    $eventType = $eventType !== NULL ? (string) $eventType : NULL;
+    $description = (string) $evento->get('body')->value;
+    $organizer = $organizadorIdentidade?->toArray()['display_name'] ?? NULL;
+    $slots = [
+      'title' => $this->buildTitleSlot(
+        (string) $evento->label(),
+        (string) $evento->get('field_subtitulo')->value,
+        $evento->get('field_status')->value === 'cancelado',
+      ),
+    ];
+    $essentials = $this->buildEssentialsSlot(
+      $eventType,
+      $linhas,
+      $websiteUrl !== '' ? Url::fromUri($websiteUrl) : NULL,
+    );
+    if ($essentials !== []) {
+      $slots['essentials'] = $essentials;
+    }
+    if ($description !== '') {
+      $slots['content'] = $this->buildDescriptionSlot($description);
+    }
+    if ($organizer !== NULL && $organizer !== '') {
+      $slots['sidebar'] = $this->buildOrganizerSlot($organizer);
+    }
+    if ($mapaRender !== NULL) {
+      $slots['highlight'] = $mapaRender;
+    }
+
     return [
-      '#theme' => 'aculta_event_page',
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:event-page-layout',
+      '#attributes' => ['class' => ['aculta-event']],
+      '#props' => [],
+      '#slots' => $slots,
       '#prefix' => $prefix !== '' ? $prefix : NULL,
-      '#titulo' => (string) $evento->label(),
-      '#subtitulo' => (string) $evento->get('field_subtitulo')->value,
-      '#descricao' => (string) $evento->get('body')->value,
-      '#tipo' => $evento->get('field_tipo')->entity?->label(),
-      '#organizador' => $organizadorIdentidade?->toArray()['display_name'] ?? NULL,
-      '#organizacao' => $orgData,
-      '#coorganizadores' => $coOrgs,
-      '#classificacao_etaria' => $classificacao !== '' ? $classificacao : NULL,
-      '#selos_acessibilidade' => $selosAcessibilidade,
-      '#seguranca' => $seguranca !== '' ? $seguranca : NULL,
-      '#url' => $websiteUrl !== '' ? Url::fromUri($websiteUrl) : NULL,
-      '#datas' => $linhas,
-      '#mapa' => $mapaRender,
-      '#cancelado' => $evento->get('field_status')->value === 'cancelado',
       '#cache' => [
         'contexts' => $cacheability->getCacheContexts(),
         'tags' => $cacheability->getCacheTags(),
         'max-age' => $cacheability->getCacheMaxAge(),
       ],
       '#attached' => $anexos,
+    ];
+  }
+
+  /**
+   * Builds the title slot without moving event data into component props.
+   */
+  private function buildTitleSlot(string $title, string $subtitle, bool $cancelled): array {
+    $slot = [
+      '#type' => 'container',
+      'heading' => [
+        '#type' => 'html_tag',
+        '#tag' => 'h1',
+        '#value' => $title,
+      ],
+    ];
+    if ($subtitle !== '') {
+      $slot['subtitle'] = [
+        '#type' => 'html_tag',
+        '#tag' => 'p',
+        '#attributes' => ['class' => ['aculta-event-page-layout__subtitle']],
+        '#value' => $subtitle,
+      ];
+    }
+    if ($cancelled) {
+      $slot['cancelled'] = [
+        '#type' => 'html_tag',
+        '#tag' => 'p',
+        '#attributes' => [
+          'class' => ['aculta-event-page-layout__cancelled'],
+          'role' => 'status',
+        ],
+        '#value' => $this->t('Este evento foi cancelado.'),
+      ];
+    }
+    return $slot;
+  }
+
+  /**
+   * Builds the event type, dates and validated external link slot.
+   *
+   * @param string|null $type
+   *   Event type label, when available.
+   * @param array<int, array<string, mixed>> $dates
+   *   Formatted date render arrays, including access-aware links.
+   * @param \Drupal\Core\Url|null $website
+   *   Validated external event URL, when available.
+   */
+  private function buildEssentialsSlot(?string $type, array $dates, ?Url $website): array {
+    $slot = ['#type' => 'container'];
+    if ($type !== NULL && $type !== '') {
+      $slot['type'] = [
+        '#type' => 'inline_template',
+        '#template' => '<p><strong>{{ label }}</strong> {{ type }}</p>',
+        '#context' => [
+          'label' => $this->t('Tipo:'),
+          'type' => $type,
+        ],
+      ];
+    }
+    if ($dates !== []) {
+      $items = [];
+      foreach ($dates as $index => $date) {
+        $items['date_' . $index] = $date + [
+          '#prefix' => '<li>',
+          '#suffix' => '</li>',
+        ];
+      }
+      $slot['dates'] = [
+        '#type' => 'container',
+        'heading' => [
+          '#type' => 'html_tag',
+          '#tag' => 'h2',
+          '#value' => $this->t('Datas'),
+        ],
+        'items' => [
+          '#type' => 'html_tag',
+          '#tag' => 'ul',
+          ...$items,
+        ],
+      ];
+    }
+    if ($website !== NULL) {
+      $slot['website'] = [
+        '#type' => 'container',
+        'link' => [
+          '#type' => 'link',
+          '#title' => $this->t('Site do evento'),
+          '#url' => $website,
+        ],
+      ];
+    }
+    return count($slot) > 1 ? $slot : [];
+  }
+
+  /**
+   * Builds the description slot using Twig's escaped text rendering.
+   */
+  private function buildDescriptionSlot(string $description): array {
+    return [
+      '#type' => 'inline_template',
+      '#template' => '<div class="aculta-event-page-layout__description">{{ description|nl2br }}</div>',
+      '#context' => ['description' => $description],
+    ];
+  }
+
+  /**
+   * Builds the organizer slot with plain-text identity data only.
+   */
+  private function buildOrganizerSlot(?string $organizer): array {
+    return [
+      '#type' => 'container',
+      'heading' => [
+        '#type' => 'html_tag',
+        '#tag' => 'h2',
+        '#value' => $this->t('Organizador'),
+      ],
+      'name' => [
+        '#type' => 'html_tag',
+        '#tag' => 'p',
+        '#value' => $organizer,
+      ],
     ];
   }
 

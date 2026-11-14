@@ -32,7 +32,8 @@ final class EventCatalogueKernelTest extends KernelTestBase {
    */
   protected static $modules = [
     'system', 'user', 'key', 'address', 'geofield', 'options', 'link', 'text',
-    'filter', 'taxonomy', 'datetime', 'datetime_range', 'views', 'aculta_calendar',
+    'filter', 'taxonomy', 'datetime', 'datetime_range', 'views', 'ui_patterns',
+    'ui_patterns_views', 'aculta_calendar',
     'aculta_events',
   ];
 
@@ -194,8 +195,8 @@ final class EventCatalogueKernelTest extends KernelTestBase {
     $this->cenario();
     $controlador = EventPageController::create($this->container);
     $pagina = $controlador->page('oficina-de-ceramica');
-    $this->assertSame('Oficina de cerâmica', $pagina['#titulo']);
-    $this->assertSame('Oficina', $pagina['#tipo']);
+    $this->assertSame('Oficina de cerâmica', $pagina['#slots']['title']['heading']['#value']);
+    $this->assertSame('Oficina', $pagina['#slots']['essentials']['type']['#context']['type']);
 
     $this->expectException(NotFoundHttpException::class);
     $controlador->page('rascunho-secreto');
@@ -226,7 +227,7 @@ final class EventCatalogueKernelTest extends KernelTestBase {
     ]));
     $page = EventPageController::create($this->container)->page('oficina-recorrente');
     $this->assertContains('user.permissions', $page['#cache']['contexts']);
-    $adminMarkup = $page['#datas'][0]['#markup'];
+    $adminMarkup = $page['#slots']['essentials']['dates']['items']['date_0']['#markup'];
     $id = (string) $data->id();
     $this->assertStringContainsString('/painel-administrativo/eventos/datas/' . $id . '/recorrencia', $adminMarkup);
     $this->assertStringContainsString('/painel-administrativo/eventos/datas/' . $id . '/ocorrencia/' . $inicio->getTimestamp(), $adminMarkup);
@@ -235,7 +236,8 @@ final class EventCatalogueKernelTest extends KernelTestBase {
 
     $this->container->get('current_user')->setAccount(new UserSession(['uid' => 0]));
     $publicPage = EventPageController::create($this->container)->page('oficina-recorrente');
-    $this->assertStringNotContainsString('/painel-administrativo/eventos/datas/' . $id . '/recorrencia', $publicPage['#datas'][0]['#markup']);
+    $publicMarkup = $publicPage['#slots']['essentials']['dates']['items']['date_0']['#markup'];
+    $this->assertStringNotContainsString('/painel-administrativo/eventos/datas/' . $id . '/recorrencia', $publicMarkup);
     $this->assertContains('user.permissions', $publicPage['#cache']['contexts']);
   }
 

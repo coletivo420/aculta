@@ -14,27 +14,6 @@ declare(strict_types=1);
  */
 
 /**
- * Implements hook_theme().
- */
-function aculta_events_theme(): array {
-  return [
-    'aculta_event_page' => [
-      'variables' => [
-        'titulo' => NULL,
-        'subtitulo' => NULL,
-        'descricao' => NULL,
-        'tipo' => NULL,
-        'organizador' => NULL,
-        'url' => NULL,
-        'datas' => [],
-        'mapa' => NULL,
-        'cancelado' => FALSE,
-      ],
-    ],
-  ];
-}
-
-/**
  * Implements hook_cron().
  */
 function aculta_events_cron(): void {

@@ -529,9 +529,11 @@ Props: nenhuma (`additionalProperties: false`). Slots: `title`, `highlight`,
 `essentials`, `content` e `sidebar`. Story: `event-page-layout.default.story.yml`.
 O CSS local apresenta render arrays de apoiadores e citações identificados por
 `EventEditorialPresenter` via `data-portal-ui`. Sem JavaScript. No checkout
-atual não foi encontrado consumidor PHP/Twig nem referência no Config Sync para
-`event-page-layout`; a story é documentação, não prova de uso. A implementação
-fica candidata a P2/P3 até confirmar a composição real do detalhe do Evento.
+atual, `EventPageController::page()` compõe este SDC diretamente por render
+array; título, mapa, dados essenciais, descrição e organizador são entregues em
+slots renderizáveis, sem entidades ou render arrays inteiros em props. A checagem
+de acesso ao evento, cacheabilidade e anexos permanece no módulo owner. Runtime,
+descoberta na Library e renderização real ainda aguardam homologação.
 
 ### lms-lesson-page
 
