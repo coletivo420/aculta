@@ -1,0 +1,10 @@
+name: Erro ao adicionar item
+description: Erro anunciado como alerta, sem link para o carrinho.
+component: aculta420_v2:cart-status
+props:
+  status_type: error
+  status_role: alert
+  message: A quantidade solicitada não está disponível.
+  url: ''
+  link_label: ''
+  close_label: Fechar aviso

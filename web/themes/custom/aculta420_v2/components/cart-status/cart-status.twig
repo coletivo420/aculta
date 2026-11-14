@@ -1,4 +1,3 @@
-{# The SDC owns status visuals; Portal JS retains the dismissal data contract. #}
 {% set status_message %}
   <p>
     <span>{{ message }}</span>
@@ -10,6 +9,6 @@
   role: status_role,
   messages: [status_message],
   dismissible: true,
-  close_label: close_label|default('Fechar aviso'|t),
+  close_label: close_label,
   attributes: create_attribute({'data-portal-cart-status': ''}),
 }, with_context = false) }}

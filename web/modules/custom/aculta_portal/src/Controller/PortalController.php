@@ -245,10 +245,13 @@ final class PortalController extends ControllerBase {
     $paymentUrl = $this->safeMercadoPagoAccountUrl();
 
     return [
-      '#theme' => 'aculta_portal_payment_notice',
-      '#intro' => $this->t('Todos os nossos pagamentos são processados pelo Mercado Pago.'),
-      '#link_label' => $this->t('Acesse sua conta Mercado Pago'),
-      '#url' => $paymentUrl,
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:payment-notice',
+      '#props' => [
+        'intro' => (string) $this->t('Todos os nossos pagamentos são processados pelo Mercado Pago.'),
+        'link_label' => (string) $this->t('Acesse sua conta Mercado Pago'),
+        'url' => $paymentUrl,
+      ],
       '#weight' => 10,
     ];
   }

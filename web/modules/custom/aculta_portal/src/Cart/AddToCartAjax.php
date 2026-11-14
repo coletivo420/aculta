@@ -133,17 +133,19 @@ class AddToCartAjax {
    */
   private function statusBox(FormStateInterface $formState, string $url): array {
     $errors = array_map(static fn($error): string => strip_tags((string) $error), array_values($formState->getErrors()));
-    // Variáveis do template com nomes próprios: "#type" é o tipo de elemento do Drupal, não uma variável.
     return [
-      '#theme' => 'aculta_portal_cart_status',
-      '#status_type' => $errors === [] ? 'success' : 'error',
-      '#status_role' => $errors === [] ? 'status' : 'alert',
-      '#message' => $errors === []
-        ? (string) $this->translation->translate('Item adicionado com sucesso.')
-        : implode(' ', $errors),
-      '#url' => $errors === [] ? $url : '',
-      '#link_label' => (string) $this->translation->translate('Ver carrinho'),
-      '#close_label' => (string) $this->translation->translate('Fechar'),
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:cart-status',
+      '#props' => [
+        'status_type' => $errors === [] ? 'success' : 'error',
+        'status_role' => $errors === [] ? 'status' : 'alert',
+        'message' => $errors === []
+          ? (string) $this->translation->translate('Item adicionado com sucesso.')
+          : implode(' ', $errors),
+        'url' => $errors === [] ? $url : '',
+        'link_label' => (string) $this->translation->translate('Ver carrinho'),
+        'close_label' => (string) $this->translation->translate('Fechar'),
+      ],
     ];
   }
 

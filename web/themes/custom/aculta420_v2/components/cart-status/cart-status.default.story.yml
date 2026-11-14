@@ -1,0 +1,10 @@
+name: Item adicionado
+description: Confirmação com acesso ao carrinho e controle de dispensa.
+component: aculta420_v2:cart-status
+props:
+  status_type: success
+  status_role: status
+  message: Item adicionado com sucesso.
+  url: /loja/carrinho
+  link_label: Ver carrinho
+  close_label: Fechar aviso

@@ -1,0 +1,39 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Status do carrinho
+status: stable
+description: Mensagem de sucesso ou erro após uma ação no carrinho.
+group: Commerce
+libraryOverrides:
+  dependencies:
+    - core/components.aculta420_v2--status-messages
+props:
+  type: object
+  additionalProperties: false
+  required: [status_type, status_role, message]
+  properties:
+    status_type:
+      title: Tipo do status
+      type: string
+      enum: [success, error]
+    status_role:
+      title: Papel acessível
+      type: string
+      enum: [status, alert]
+    message:
+      title: Mensagem
+      type: string
+      minLength: 1
+    url:
+      title: Link opcional do carrinho
+      type: string
+      format: uri-reference
+      default: ''
+    link_label:
+      title: Rótulo do link
+      type: string
+      default: ''
+    close_label:
+      title: Rótulo para dispensar o status
+      type: string
+      minLength: 1
+      default: Fechar aviso

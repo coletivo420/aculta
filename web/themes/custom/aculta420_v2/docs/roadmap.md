@@ -13,7 +13,7 @@ anteriores e não substituem a conferência do código atual.
   tema. Callback antigo de sugestão pode permanecer temporariamente por causa
   do cache do Runtime compartilhado; removê-lo depende de janela segura para
   rebuild.
-- 137 manifests SDC e 218 stories. Todos têm story: `hint` exemplifica os tons
+- 138 manifests SDC e 220 stories. Todos têm story: `hint` exemplifica os tons
   normal/muted; `sales-panel` e `secret-reveal` usam dados demonstrativos
   fictícios.
 - Config Sync habilita UI Patterns, Blocks, Field, Field Formatters, Layouts,
@@ -31,7 +31,7 @@ anteriores e não substituem a conferência do código atual.
 - A UI Patterns Library upstream monta a página de provider percorrendo as
   definições agrupadas do component plugin manager. Não localizei filtro
   oficial para ocultar SDCs individuais. O inventário revisado detecta
-  referências literais de produção para 83 dos 137 SDCs; 54 não têm referência
+  referências literais de produção para 84 dos 138 SDCs; 54 não têm referência
   literal encontrada após excluir testes, stories e arquivos do próprio SDC.
   A busca ainda não prova ausência de uso editorial/runtime nem reconhece IDs
   dinâmicos; não remover componentes pelo resultado isolado. Todos os SDCs têm
@@ -49,10 +49,10 @@ anteriores e não substituem a conferência do código atual.
   `e37f3d8d45ecba9719d4b97dde67effc2236b13f`, com checkout servido atrás do
   remote, worktree suja e compartilhada. Nenhuma alteração de Runtime será
   feita até a reconciliação dos drifts e liberação do preflight.
-- Restam 50 templates Twig no tema neste branch. O inventário completo abaixo
-  registra os 51 originais e classifica os consumidores; o painel de carrinho
-  já foi removido após migração para SDC. Nenhum outro será removido só por
-  pertencer a `templates/`.
+- Restam 48 templates Twig no tema neste branch. O inventário completo abaixo
+  registra os 51 originais e classifica os consumidores; painel, status do
+  carrinho e aviso de pagamento já emitem SDCs diretamente. Nenhum outro será
+  removido só por pertencer a `templates/`.
 - O catálogo de Eventos compõe `card-cultural` pela row de Views; não depende do
   antigo template de card. A verificação HTTP recente respondeu 200; a
   homologação visual completa continua pendente.
@@ -83,11 +83,11 @@ anteriores e não substituem a conferência do código atual.
    auditoria semântica restante: nomes, tipagem, slots/props,
    variants/defaults, includes e escaping. Renomear apenas conceitos realmente
    reutilizáveis com plano de compatibilidade das referências persistidas.
-3. **P2 — cruzar integrações:** produzir matriz dos 137 SDCs e consumidores em
+3. **P2 — cruzar integrações:** produzir matriz dos 138 SDCs e consumidores em
    Config Sync/PHP/Twig: Manage Display, Layout Builder, Views, Field Formatters,
    Blocks, Library ou uso interno. Confirmar Sources da versão instalada e
    manter consulta, acesso, cache e negócio nos donos atuais.
-4. **P3 — continuar removendo os 50 templates restantes:** a matriz abaixo
+4. **P3 — continuar removendo os 48 templates restantes:** a matriz abaixo
    classifica o inventário completo. Buscar substituição por displays/UI Patterns ou render arrays SDC em cada
    arquivo. Testar fallback Core e preservar apenas presenters mínimos quando
    não houver display builder ou plugin substituto.
@@ -107,11 +107,11 @@ e cache; (4) publicar este diff, que remove pasta, alias, testes exclusivos,
 gate e referências operacionais; (5) confirmar que a rota oficial da UI Patterns
 Library continua habilitada. O Runtime atual ainda não permite a etapa (2).
 
-### Inventário completo de templates no checkout (50)
+### Inventário completo de templates no checkout (48)
 
-O inventário inicial de 51 caminhos foi confirmado em `HEAD` por `git ls-tree`; este lote removeu o override `portal-cart-panel.html.twig` após migrar seu consumidor. A lista abaixo contém os 50 caminhos restantes neste checkout. A classificação por consumidor e substituição funcional continua pendente arquivo a arquivo. Os templates não devem ser removidos apenas por estarem nesta pasta.
+O inventário inicial de 51 caminhos foi confirmado em `HEAD` por `git ls-tree`; os lotes do carrinho removeram `portal-cart-panel.html.twig`, `portal-cart-status.html.twig` e `portal-payment-notice.html.twig` após migrar seus consumidores. A lista abaixo contém os 48 caminhos restantes neste checkout. A classificação por consumidor e substituição funcional continua pendente arquivo a arquivo. Os templates não devem ser removidos apenas por estarem nesta pasta.
 
-**raiz:** `aculta-donation-back.html.twig`, `aculta-donation-donate.html.twig`, `aculta-donation-quick.html.twig`, `aculta-links-landing.html.twig`, `aculta-links-page.html.twig`, `aculta-mailer-wrap.html.twig`, `aculta-maps-marker-icon-template.html.twig`, `aculta-maps-popup-content.html.twig`, `aculta-portal-account-terms-modal.html.twig`, `aculta-portal-button.html.twig`, `aculta-portal-photo-editor.html.twig`, `aculta-portal-shell.html.twig`, `aculta-section.html.twig`, `aculta-user-author-card.html.twig`, `comment--comments.html.twig`, `comment--field-aculta-discussion.html.twig`, `discussion-reaction-picker.html.twig`, `discussion-reply-composer.html.twig`, `input--submit.html.twig`, `page-title.html.twig`, `portal-cart-status.html.twig`, `portal-component.html.twig`, `portal-payment-notice.html.twig`, `portal-search-trigger.html.twig`, `ui-patterns-overview-page.html.twig`, `ui-patterns-single-page.html.twig`, `ui-patterns-stories-compact.html.twig`, `ui-patterns-stories-full.html.twig`.
+**raiz:** `aculta-donation-back.html.twig`, `aculta-donation-donate.html.twig`, `aculta-donation-quick.html.twig`, `aculta-links-landing.html.twig`, `aculta-links-page.html.twig`, `aculta-mailer-wrap.html.twig`, `aculta-maps-marker-icon-template.html.twig`, `aculta-maps-popup-content.html.twig`, `aculta-portal-account-terms-modal.html.twig`, `aculta-portal-button.html.twig`, `aculta-portal-photo-editor.html.twig`, `aculta-portal-shell.html.twig`, `aculta-section.html.twig`, `aculta-user-author-card.html.twig`, `comment--comments.html.twig`, `comment--field-aculta-discussion.html.twig`, `discussion-reaction-picker.html.twig`, `discussion-reply-composer.html.twig`, `input--submit.html.twig`, `page-title.html.twig`, `portal-component.html.twig`, `portal-search-trigger.html.twig`, `ui-patterns-overview-page.html.twig`, `ui-patterns-single-page.html.twig`, `ui-patterns-stories-compact.html.twig`, `ui-patterns-stories-full.html.twig`.
 
 **commerce:** `commerce-product--produto-loja--catalog.html.twig`.
 
@@ -125,7 +125,7 @@ O inventário inicial de 51 caminhos foi confirmado em `HEAD` por `git ls-tree`;
 
 **views:** `views-view--aculta-forum-public-topics--page-category-term.html.twig`, `views-view--aculta-forum-public-topics.html.twig`, `views-view--aculta-forum-search--page-search.html.twig`, `views-view--revista-sessoes--page-revista.html.twig`, `views-view-fields--aculta-forum-categories--page-categories.html.twig`, `views-view-fields--aculta-forum-public-topics.html.twig`, `views-view-unformatted--aculta-forum-categories--page-categories.html.twig`.
 
-### Matriz completa de classificação dos 51 templates originais (1 removido)
+### Matriz completa de classificação dos 51 templates originais (3 removidos)
 
 A listagem acima foi cruzada com Twig, hooks PHP e Config Sync no HEAD desta branch. A evidência comprova contrato de código/configuração, não uso editorial persistido nem o estado carregado no Runtime. “Migrar” significa emitir SDC/UI Patterns pelo render array ou display; não significa trocar Twig por cópia de markup.
 
@@ -143,13 +143,13 @@ A listagem acima foi cruzada com Twig, hooks PHP e Config Sync no HEAD desta bra
 | 2 | content/node-add-form--aculta-forum-topic.html.twig, input--submit.html.twig | Sugestões Form API/Core; cobrem formulário de criação do fórum e submit global Drupal. | Não remover mecanicamente. Testar fallback Core em todos os domínios. Adotar SDC para submit só por elemento/formatter suportado, sem mudar validação, label, disabled, AJAX ou destino. |
 | 8 | commerce/commerce-product--produto-loja--catalog.html.twig; content/node--aculta-faq--full.html.twig, content/node--aculta-forum-topic.html.twig, content/node--document--teaser.html.twig, content/node--revista--full.html.twig, content/node--revista--teaser.html.twig, content/node--wiki-entry--full.html.twig, content/node--wiki-entry--teaser.html.twig | Sugestões de entity view mode; Config Sync contém produto_loja.catalog, aculta_forum_topic full/teaser, document full/teaser, revista full/teaser e wiki_entry full/teaser; FAQ tem display default, sem display full dedicado no Sync. Existem SDCs como document-card, revista-publication, forum-opening-post e cartões Wiki. | Migrar cada display para UI Patterns field formatter/SDC com slots de render arrays. Auditar revisão, tradução, acesso, metatags, discussão, anexos e cache; conservar adapter mínimo quando formatter não representar o contrato. |
 | 7 | layout/html.html.twig, layout/page--shell-v2.html.twig, layout/page.html.twig, misc/status-messages.html.twig, navigation/breadcrumb.html.twig, navigation/pager.html.twig, page-title.html.twig | Overrides Drupal Core; page--shell-v2 ainda tem sugestão em aculta420_v2.theme; layout/page.html.twig compõe layout-page; mensagens/título já incluem SDCs. | Preservar layout/page.html.twig como shell até provar equivalência Core das cinco regiões/atributos. Remover page--shell-v2 após remover sugestão/config antiga e reconstruir cache. Avaliar html/messages/breadcrumb/pager/title separadamente, preservando metadados, links e pager AJAX. |
-| 3 | portal-cart-status.html.twig, portal-payment-notice.html.twig, portal-search-trigger.html.twig | PortalHooks registra hooks; AddToCartAjax emite status; status/pagamento incluem SDCs; busca monta markup e ícone SDC. O painel agora é renderizado diretamente como `aculta420_v2:cart-offcanvas-body`, compartilhado com o drawer. | Migrar status/aviso para render arrays SDC; busca pode compor SDC trigger. Preservar URL validada, tradução e dismiss. |
+| 1 | portal-search-trigger.html.twig | PortalHooks registra o hook; SearchUtility emite link, atributos de modal Drupal AJAX e ícone no template do tema. | Criar SDC de gatilho e emitir diretamente pelo render array; preservar rota, atributos, biblioteca AJAX e cache até uma migração HTMX própria. |
 | 4 | ui-patterns-overview-page.html.twig, ui-patterns-single-page.html.twig, ui-patterns-stories-compact.html.twig, ui-patterns-stories-full.html.twig | Overrides da interface administrativa oficial; UiPatternsStoryHooks acrescenta navegação e hidrata props/slots das stories. | Não converter a interface administrativa em SDC próprio. Testar templates upstream; manter somente overrides sem substituto suportado, sobretudo hidratação de stories. Remover CSS/JS/preprocess junto com o último override. |
 | 7 | views/views-view--aculta-forum-public-topics--page-category-term.html.twig, views/views-view--aculta-forum-public-topics.html.twig, views/views-view--aculta-forum-search--page-search.html.twig, views/views-view--revista-sessoes--page-revista.html.twig, views/views-view-fields--aculta-forum-categories--page-categories.html.twig, views/views-view-fields--aculta-forum-public-topics.html.twig, views/views-view-unformatted--aculta-forum-categories--page-categories.html.twig | Views/displays homônimos estão no Config Sync. Categorias já tem display com row ui_patterns; outros usam fields/Search API/entity teaser conforme a config. | Por display, migrar row/style/fields a UI Patterns Views e SDCs existentes; revalidar exposed filters, empty, pager, agrupamento, acesso e cache. Remover wrappers/fields/unformatted só quando a view real deixar de usar a sugestão. |
 
-**Ordem de execução:** priorizar adapters que já incluem SDC (doação, Links, termos, shell, seção, autor, composer, status, pagamento); depois presenters genéricos e componentes interativos; em seguida displays de entidade e Views; por último overrides Core, UI Patterns Library e e-mail. Cada remoção exige consumidor comprovado em Config Sync e Runtime autorizado, comparação de markup e gate de escopo. Não remover shell estrutural, envelope de e-mail ou hooks Form API sem substituto equivalente.
+**Ordem de execução:** priorizar adapters restantes que já incluem SDC (doação, Links, termos, shell, seção, autor, composer); depois presenters genéricos e componentes interativos; em seguida displays de entidade e Views; por último overrides Core, UI Patterns Library e e-mail. Cada remoção exige consumidor comprovado em Config Sync e Runtime autorizado, comparação de markup e gate de escopo. Não remover shell estrutural, envelope de e-mail ou hooks Form API sem substituto equivalente.
 
-A matriz cobria os 51 arquivos originais; este lote removeu um e atualizou sua classificação. Consumidores editoriais persistidos, exceções por domínio e renderização no Runtime seguem pendentes. A classificação ainda não autoriza outras remoções por proximidade de um SDC.
+A matriz cobre os 51 arquivos originais; três foram removidos após migração e as linhas restantes classificam 48 consumidores. Consumidores editoriais persistidos, exceções por domínio e renderização no Runtime seguem pendentes. A classificação ainda não autoriza outras remoções por proximidade de um SDC.
 
 ## Continuação do corte CSS SDC-first (2026-11-13)
 

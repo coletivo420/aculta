@@ -721,16 +721,6 @@ final class PortalHooks {
         'template' => 'aculta-portal-account-terms-modal',
         'path' => $this->moduleList->getPath('aculta_portal') . '/templates',
       ],
-      'aculta_portal_payment_notice' => [
-        'variables' => [
-          'intro' => NULL,
-          'link_label' => NULL,
-          'url' => NULL,
-          'logo' => NULL,
-        ],
-        'template' => 'portal-payment-notice',
-        'path' => $this->moduleList->getPath('aculta_portal') . '/templates',
-      ],
       'aculta_portal_element' => [
         'variables' => [
           'tag' => 'span',
@@ -759,18 +749,6 @@ final class PortalHooks {
           'trigger_attributes' => NULL,
         ],
         'template' => 'portal-search-trigger',
-        'path' => $this->moduleList->getPath('aculta_portal') . '/templates',
-      ],
-      'aculta_portal_cart_status' => [
-        'variables' => [
-          'status_type' => 'success',
-          'status_role' => 'status',
-          'message' => NULL,
-          'url' => NULL,
-          'link_label' => NULL,
-          'close_label' => NULL,
-        ],
-        'template' => 'portal-cart-status',
         'path' => $this->moduleList->getPath('aculta_portal') . '/templates',
       ],
       'aculta_portal_shell' => [

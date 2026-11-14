@@ -1843,3 +1843,11 @@ State: Dev. No RC, production deployment, or release tag is declared.
   do módulo e do tema para `portal-cart-panel`.
 - O tema passa a 137 SDCs/218 stories e 50 templates restantes. Runtime e
   comparação visual/acessível continuam pendentes.
+
+## Atualização — status e aviso de pagamento migrados para SDC (2026-11-14)
+
+- `cart-status` compõe o SDC `status-messages`; `PortalController` emite
+  `payment-notice` diretamente, mantendo a validação HTTPS do Mercado Pago.
+- Removidos os hooks e templates de módulo/tema para `portal-cart-status` e
+  `portal-payment-notice`. O tema passa a 138 SDCs/220 stories e 48 templates.
+- Renderização Drupal, acessibilidade e visual no Runtime continuam pendentes.

@@ -14,12 +14,18 @@ final class PortalThemeAdaptersTest extends UnitTestCase {
   /**
    * Payment notice delegates presentation to its SDC and preserves link safety.
    */
-  public function testPaymentNoticeUsesSurfaceSdc(): void {
+  public function testPaymentNoticeUsesSdcRenderArray(): void {
     $themeDir = dirname(__DIR__, 3);
-    $template = (string) file_get_contents($themeDir . '/templates/portal-payment-notice.html.twig');
+    $repoRoot = dirname(__DIR__, 7);
+    $controller = (string) file_get_contents($repoRoot . '/web/modules/custom/aculta_portal/src/Controller/PortalController.php');
 
-    self::assertStringContainsString("include('aculta420_v2:payment-notice'", $template);
-    self::assertStringNotContainsString('aculta-panel--default', $template);
+    self::assertStringContainsString("'#component' => 'aculta420_v2:payment-notice'", $controller);
+    self::assertFileDoesNotExist(
+      $themeDir . '/templates/portal-payment-notice.html.twig',
+    );
+    self::assertFileDoesNotExist(
+      $repoRoot . '/web/modules/custom/aculta_portal/templates/portal-payment-notice.html.twig',
+    );
 
     $component = (string) file_get_contents($themeDir . '/components/payment-notice/payment-notice.component.yml');
     $twig = (string) file_get_contents($themeDir . '/components/payment-notice/payment-notice.twig');

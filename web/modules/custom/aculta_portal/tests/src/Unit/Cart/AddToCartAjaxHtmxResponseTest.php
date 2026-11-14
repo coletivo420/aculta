@@ -28,13 +28,23 @@ class AddToCartAjaxHtmxResponseTest extends UnitTestCase {
   /**
    * Monta o serviço com dependências simuladas.
    */
-  private function service(CartUtility $cart, MessengerInterface $messenger, Request $request): AddToCartAjax {
+  private function service(
+    CartUtility $cart,
+    MessengerInterface $messenger,
+    Request $request,
+    ?array &$rendered = NULL,
+  ): AddToCartAjax {
     $translation = $this->createMock(TranslationInterface::class);
     $translation->method('translate')->willReturnCallback(
       static fn (string $texto, array $args = []): string => strtr($texto, $args),
     );
     $renderer = $this->createMock(RendererInterface::class);
-    $renderer->method('renderInIsolation')->willReturn('<div>render</div>');
+    $renderer->method('renderInIsolation')->willReturnCallback(
+      static function (array $build) use (&$rendered): string {
+        $rendered[] = $build;
+        return '<div>render</div>';
+      },
+    );
 
     $stack = new RequestStack();
     $stack->push($request);
@@ -82,18 +92,23 @@ class AddToCartAjaxHtmxResponseTest extends UnitTestCase {
 
     $state = $this->formState([]);
     $captured = NULL;
+    $rendered = [];
     $state->expects($this->once())->method('setResponse')->willReturnCallback(
       static function (Response $response) use (&$captured): void {
         $captured = $response;
       },
     );
 
-    $service = $this->service($this->cart(2), $messenger, $request);
+    $service = $this->service($this->cart(2), $messenger, $request, $rendered);
     $form = [];
     $service->htmxResponse($form, $state);
 
     $this->assertInstanceOf(Response::class, $captured);
     $this->assertStringContainsString('id="portal-cart-status-', (string) $captured->getContent());
+    $this->assertSame('component', $rendered[0]['#type']);
+    $this->assertSame('aculta420_v2:cart-status', $rendered[0]['#component']);
+    $this->assertSame('success', $rendered[0]['#props']['status_type']);
+    $this->assertSame('aculta420_v2:cart-offcanvas-body', $rendered[1]['#component']);
     $trigger = json_decode((string) $captured->headers->get('HX-Trigger'), TRUE);
     $this->assertSame('2', $trigger['aculta:cart-updated']['count']);
     $this->assertSame('Abrir carrinho (2 itens)', $trigger['aculta:cart-updated']['label']);
@@ -109,18 +124,22 @@ class AddToCartAjaxHtmxResponseTest extends UnitTestCase {
 
     $state = $this->formState(['quantity' => 'Quantidade <b>inválida</b>']);
     $captured = NULL;
+    $rendered = [];
     $state->expects($this->once())->method('setResponse')->willReturnCallback(
       static function (Response $response) use (&$captured): void {
         $captured = $response;
       },
     );
 
-    $service = $this->service($this->cart(0), $messenger, $request);
+    $service = $this->service($this->cart(0), $messenger, $request, $rendered);
     $form = [];
     $service->htmxResponse($form, $state);
 
     $this->assertInstanceOf(Response::class, $captured);
     $this->assertStringContainsString('portal-cart-status-', (string) $captured->getContent());
+    $this->assertSame('error', $rendered[0]['#props']['status_type']);
+    $this->assertSame('alert', $rendered[0]['#props']['status_role']);
+    $this->assertSame('Quantidade inválida', $rendered[0]['#props']['message']);
     $trigger = json_decode((string) $captured->headers->get('HX-Trigger'), TRUE);
     $this->assertSame('0', $trigger['aculta:cart-updated']['count']);
   }
