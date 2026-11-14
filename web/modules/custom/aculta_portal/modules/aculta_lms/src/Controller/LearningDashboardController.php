@@ -24,7 +24,8 @@ use Drupal\user\UserInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
- * Builds student and educator LMS dashboard presentations. */
+ * Builds student and educator LMS dashboard presentations.
+ */
 final class LearningDashboardController {
 
   use StringTranslationTrait;
@@ -43,7 +44,11 @@ final class LearningDashboardController {
   }
 
   /**
-   * Educator view: status counts for one class, with no student answer data. */
+   * Educator view: status counts for one class, with no student answer data.
+   *
+   * @return array<array-key, mixed>
+   *   Render array for the class dashboard or its unavailable state.
+   */
   public function class(GroupInterface $group, GroupInterface $course): array {
     $data = $this->dashboards->classDashboard($group, $this->currentUser);
     if ($data === NULL || (string) $data['course']->id() !== (string) $course->id()) {
@@ -61,7 +66,8 @@ final class LearningDashboardController {
       static fn($lesson): bool => $lesson instanceof LessonEntity,
     ));
     usort($lessons, static fn(LessonEntity $a, LessonEntity $b): int =>
-      [(int) $a->get('weight')->value, (int) $a->id()] <=> [(int) $b->get('weight')->value, (int) $b->id()]
+      [self::integerSortValue($a->get('weight')->value), self::integerSortValue($a->id())]
+      <=> [self::integerSortValue($b->get('weight')->value), self::integerSortValue($b->id())]
     );
     foreach ($lessons as $lesson) {
       $cacheability->addCacheableDependency($lesson);
@@ -73,7 +79,8 @@ final class LearningDashboardController {
         static fn($activity): bool => $activity instanceof ActivityEntity,
       ));
       usort($activities, static fn(ActivityEntity $a, ActivityEntity $b): int =>
-        [(int) $a->get('weight')->value, (int) $a->id()] <=> [(int) $b->get('weight')->value, (int) $b->id()]
+        [self::integerSortValue($a->get('weight')->value), self::integerSortValue($a->id())]
+        <=> [self::integerSortValue($b->get('weight')->value), self::integerSortValue($b->id())]
       );
       foreach ($activities as $activity) {
         $activityId = (string) $activity->id();
@@ -85,11 +92,16 @@ final class LearningDashboardController {
         $deadline = $this->deadlines->deadlineForClass($group, $activity);
         $timestamp = NULL;
         if ($deadline instanceof GroupRelationshipInterface && !$deadline->get('field_activity_due_at')->isEmpty()) {
-          $date = new \DateTimeImmutable((string) $deadline->get('field_activity_due_at')->value, new \DateTimeZone('UTC'));
-          $timestamp = $date->getTimestamp();
+          $dateValue = $deadline->get('field_activity_due_at')->value;
+          if (is_string($dateValue) && $dateValue !== '') {
+            $date = new \DateTimeImmutable($dateValue, new \DateTimeZone('UTC'));
+            $timestamp = $date->getTimestamp();
+          }
         }
+        $activityType = $activity->get('type')->value;
+        $activityLabel = is_string($activityType) ? str_replace('_', ' ', $activityType) : '';
         $activityRows[] = [
-          ['data' => ['#plain_text' => (string) $this->t('Atividade @type', ['@type' => str_replace('_', ' ', (string) $activity->get('type')->value)])]],
+          ['data' => ['#plain_text' => (string) $this->t('Atividade @type', ['@type' => $activityLabel])]],
           [
             'data' => [
               '#plain_text' => $timestamp === NULL
@@ -110,18 +122,14 @@ final class LearningDashboardController {
         ];
       }
     }
-    $labels = [
-      'students' => $this->t('Estudantes matriculados'),
-      'not_started' => $this->t('Ainda não iniciaram'),
-      'in_progress' => $this->t('Em andamento'),
-      'pending_evaluation' => $this->t('Aguardando avaliação'),
-      'passed' => $this->t('Concluíram com aprovação'),
-      'failed' => $this->t('Não concluíram'),
+    $rows = [
+      [$this->t('Estudantes matriculados'), $data['students']],
+      [$this->t('Ainda não iniciaram'), $data['not_started']],
+      [$this->t('Em andamento'), $data['in_progress']],
+      [$this->t('Aguardando avaliação'), $data['pending_evaluation']],
+      [$this->t('Concluíram com aprovação'), $data['passed']],
+      [$this->t('Não concluíram'), $data['failed']],
     ];
-    $rows = [];
-    foreach ($labels as $key => $label) {
-      $rows[] = [$label, (int) $data[$key]];
-    }
     $period = ClassStatusHistory::normalizePeriod(
       $this->requestStack?->getCurrentRequest()?->query->get('dias'),
     );
@@ -141,7 +149,7 @@ final class LearningDashboardController {
         '#type' => 'html_tag',
         '#tag' => 'p',
         '#value' => Html::escape((string) $this->t('Curso: @course', [
-          '@course' => $data['course']->label(),
+          '@course' => $data['course']->label() ?? '',
         ])),
       ],
       'metrics' => [
@@ -209,6 +217,9 @@ final class LearningDashboardController {
 
   /**
    * Builds no-JavaScript links for the allowed history periods.
+   *
+   * @return array<string, mixed>
+   *   Tabs component render array.
    */
   private function buildHistoryPeriodSelector(GroupInterface $course, GroupInterface $class, int $activePeriod): array {
     $options = [];
@@ -221,8 +232,10 @@ final class LearningDashboardController {
         ], ['query' => ['dias' => $days]]),
       )->toRenderable();
       if ($days === $activePeriod) {
-        $link['#attributes']['class'][] = 'is-active';
-        $link['#attributes']['aria-current'] = 'page';
+        $link['#attributes'] = [
+          'class' => ['is-active'],
+          'aria-current' => 'page',
+        ];
       }
       $options[] = $link;
     }
@@ -244,6 +257,22 @@ final class LearningDashboardController {
   private function educatorTimezone(): string {
     $account = $this->entityTypeManager->getStorage('user')->load($this->currentUser->id());
     return $account instanceof UserInterface && $account->getTimeZone() ? $account->getTimeZone() : 'UTC';
+  }
+
+  /**
+   * Converts valid integer field values and entity IDs for stable sorting.
+   *
+   * Malformed values sort as zero, matching the historical integer cast for
+   * empty values while avoiding coercion of arbitrary mixed input.
+   */
+  private static function integerSortValue(mixed $value): int {
+    if (is_int($value)) {
+      return $value;
+    }
+    if (is_string($value) && preg_match('/^-?\d+$/D', $value) === 1) {
+      return (int) $value;
+    }
+    return 0;
   }
 
 }

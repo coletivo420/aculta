@@ -44185,72 +44185,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Controller/CourseStructureController.php
 
 		-
-			rawMessage: Cannot access an offset on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Controller/LearningDashboardController.php
-
-		-
-			rawMessage: Cannot access offset 'aria-current' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Controller/LearningDashboardController.php
-
-		-
-			rawMessage: Cannot access offset 'class' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Controller/LearningDashboardController.php
-
-		-
-			rawMessage: 'Cannot call method id() on mixed.'
-			identifier: method.nonObject
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Controller/LearningDashboardController.php
-
-		-
-			rawMessage: 'Cannot call method label() on mixed.'
-			identifier: method.nonObject
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Controller/LearningDashboardController.php
-
-		-
-			rawMessage: Cannot cast mixed to int.
-			identifier: cast.int
-			count: 5
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Controller/LearningDashboardController.php
-
-		-
-			rawMessage: Cannot cast mixed to string.
-			identifier: cast.string
-			count: 3
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Controller/LearningDashboardController.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_lms\Controller\LearningDashboardController::buildHistoryPeriodSelector() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Controller/LearningDashboardController.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_lms\Controller\LearningDashboardController::class() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Controller/LearningDashboardController.php
-
-		-
-			rawMessage: 'Parameter #1 $other_object of method Drupal\Core\Cache\CacheableMetadata::addCacheableDependency() expects object, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Controller/LearningDashboardController.php
-
-		-
-			rawMessage: 'Parameter #2 $args of method Drupal\aculta_lms\Controller\LearningDashboardController::t() expects array<string, bool|float|int|string|Stringable>, array<string, mixed> given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Controller/LearningDashboardController.php
-
-		-
 			rawMessage: 'Method Drupal\aculta_lms\Controller\LmsForumModerationController::comments() return type has no value type specified in iterable type array.'
 			identifier: missingType.iterableValue
 			count: 1
@@ -45899,66 +45833,6 @@ parameters:
 			identifier: cast.string
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Learning/EntityCourseProgressReader.php
-
-		-
-			rawMessage: 'Argument of an invalid type mixed supplied for foreach, only iterables are supported.'
-			identifier: foreach.nonIterable
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/LearningDashboardManager.php
-
-		-
-			rawMessage: Cannot cast mixed to int.
-			identifier: cast.int
-			count: 5
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/LearningDashboardManager.php
-
-		-
-			rawMessage: Cannot cast mixed to string.
-			identifier: cast.string
-			count: 7
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/LearningDashboardManager.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_lms\LearningDashboardManager::classDashboard() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/LearningDashboardManager.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_lms\LearningDashboardManager::studentDashboard() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/LearningDashboardManager.php
-
-		-
-			rawMessage: 'Parameter #1 $cache_tags of method Drupal\Core\Cache\CacheableMetadata::addCacheTags() expects array<string>, array given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/LearningDashboardManager.php
-
-		-
-			rawMessage: 'Parameter #1 $course of method Drupal\aculta_lms\LearningDashboardManager::studentLearningCourse() expects array<string, mixed>, array<mixed, mixed> given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/LearningDashboardManager.php
-
-		-
-			rawMessage: 'Parameter #1 $course of method Drupal\aculta_lms\LearningDashboardManager::studentLearningCourse() expects array<string, mixed>, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/LearningDashboardManager.php
-
-		-
-			rawMessage: 'Parameter $cache of class Drupal\aculta_lms\Learning\StudentLearningSummary constructor expects Drupal\Core\Cache\CacheableMetadata, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/LearningDashboardManager.php
-
-		-
-			rawMessage: 'Parameter $description of class Drupal\aculta_lms\Learning\CourseJourney constructor expects array<string, mixed>, array given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/LearningDashboardManager.php
 
 		-
 			rawMessage: 'Cannot call method hasPermission() on Drupal\group\Entity\GroupInterface|null.'
@@ -47677,18 +47551,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/ClassDashboardKernelTest.php
 
 		-
-			rawMessage: 'Cannot call method getCacheContexts() on mixed.'
-			identifier: method.nonObject
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/ClassDashboardKernelTest.php
-
-		-
-			rawMessage: 'Cannot call method getCacheTags() on mixed.'
-			identifier: method.nonObject
-			count: 5
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/ClassDashboardKernelTest.php
-
-		-
 			rawMessage: 'Cannot call method getOption() on mixed.'
 			identifier: method.nonObject
 			count: 1
@@ -47721,7 +47583,7 @@ parameters:
 		-
 			rawMessage: 'Parameter #2 $haystack of static method PHPUnit\Framework\Assert::assertContains() expects iterable, mixed given.'
 			identifier: argument.type
-			count: 4
+			count: 2
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/ClassDashboardKernelTest.php
 
 		-
@@ -48157,69 +48019,9 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/LearningDashboardKernelTest.php
 
 		-
-			rawMessage: Cannot access offset 'completed_lessons' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/LearningDashboardKernelTest.php
-
-		-
-			rawMessage: Cannot access offset 'pending_evaluation' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/LearningDashboardKernelTest.php
-
-		-
-			rawMessage: Cannot access offset 'progress_percent' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/LearningDashboardKernelTest.php
-
-		-
-			rawMessage: Cannot access offset 'status' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/LearningDashboardKernelTest.php
-
-		-
 			rawMessage: Cannot access offset 'tags' on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/LearningDashboardKernelTest.php
-
-		-
-			rawMessage: Cannot access offset 'total_lessons' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/LearningDashboardKernelTest.php
-
-		-
-			rawMessage: Cannot access offset 0 on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 5
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/LearningDashboardKernelTest.php
-
-		-
-			rawMessage: Cannot access property $value on mixed.
-			identifier: property.nonObject
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/LearningDashboardKernelTest.php
-
-		-
-			rawMessage: 'Cannot call method get() on mixed.'
-			identifier: method.nonObject
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/LearningDashboardKernelTest.php
-
-		-
-			rawMessage: 'Cannot call method getCacheContexts() on mixed.'
-			identifier: method.nonObject
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/LearningDashboardKernelTest.php
-
-		-
-			rawMessage: 'Cannot call method getCacheTags() on mixed.'
-			identifier: method.nonObject
-			count: 2
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/LearningDashboardKernelTest.php
 
 		-
@@ -48229,21 +48031,15 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/LearningDashboardKernelTest.php
 
 		-
-			rawMessage: 'Parameter #1 $array of function array_values expects array<T>, mixed given.'
+			rawMessage: 'Parameter #2 $haystack of static method PHPUnit\Framework\Assert::assertContains() expects iterable, mixed given.'
 			identifier: argument.type
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/LearningDashboardKernelTest.php
 
 		-
-			rawMessage: 'Parameter #2 $haystack of static method PHPUnit\Framework\Assert::assertContains() expects iterable, mixed given.'
-			identifier: argument.type
-			count: 3
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/LearningDashboardKernelTest.php
-
-		-
 			rawMessage: 'Parameter #2 $haystack of static method PHPUnit\Framework\Assert::assertCount() expects Countable|iterable, mixed given.'
 			identifier: argument.type
-			count: 3
+			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/LearningDashboardKernelTest.php
 
 		-

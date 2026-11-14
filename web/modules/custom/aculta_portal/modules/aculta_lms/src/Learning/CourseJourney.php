@@ -26,7 +26,7 @@ final readonly class CourseJourney {
    *   Course identifier owned by the learning provider.
    * @param string $courseLabel
    *   Human-readable course label.
-   * @param array<string, mixed> $description
+   * @param array<array-key, mixed> $description
    *   Render array of the course description, already cacheable.
    * @param bool $started
    *   Whether the account has a learning status for the course.

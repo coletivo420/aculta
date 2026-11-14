@@ -1,10 +1,10 @@
 # Dívida PHPStan — ACULTA
 
-Gerado em 2026-11-14T21:12:11+00:00 por `scripts/phpstan-debt-report.php`.
+Gerado em 2026-11-14T21:39:27+00:00 por `scripts/phpstan-debt-report.php`.
 
 | Item | Valor |
 | --- | --- |
-| Commit | `ff09e8c95a8fa8b54935d50601e04a961bb21828` |
+| Commit | `8e5c6492c917c41954e1b019d713f4f089b0f0ff` |
 | PHP | 8.4.27 |
 | PHPStan | PHPStan - PHP Static Analysis Tool 2.3.5 |
 | Nível | 10 |
@@ -15,30 +15,30 @@ Gerado em 2026-11-14T21:12:11+00:00 por `scripts/phpstan-debt-report.php`.
 
 | Medida | Ocorrências |
 | --- | ---: |
-| Total bruto no nível 10 | 25960 |
-| Dívida congelada no baseline | 25960 |
+| Total bruto no nível 10 | 25891 |
+| Dívida congelada no baseline | 25891 |
 | Erros não suprimidos | 0 |
-| Entradas no baseline | 15196 |
-| Produção | 15674 |
-| Testes | 10286 |
+| Entradas no baseline | 15162 |
+| Produção | 15636 |
+| Testes | 10255 |
 
 ## Criticidade funcional
 
 | Criticidade | Ocorrências |
 | --- | ---: |
 | alta | 231 |
-| media | 22744 |
-| baixa | 2985 |
+| media | 22679 |
+| baixa | 2981 |
 
 ## Evolução desde o baseline de referência
 
 | Classificação | Entradas |
 | --- | ---: |
-| Dívida removida | 32 |
-| Dívida mantida | 15196 |
+| Dívida removida | 34 |
+| Dívida mantida | 15162 |
 | Nova dívida (bloqueante) | 0 |
 | Contagem aumentada (bloqueante) | 0 |
-| Contagem reduzida | 0 |
+| Contagem reduzida | 3 |
 | Identidade de erro alterada (revisão) | 0 |
 
 ## Dívida por módulo (prioridade de redução)
@@ -51,7 +51,7 @@ Gerado em 2026-11-14T21:12:11+00:00 por `scripts/phpstan-debt-report.php`.
 | aculta_portal | 2020 |
 | aculta_events | 1792 |
 | aculta_wiki | 1461 |
-| aculta_lms | 1403 |
+| aculta_lms | 1334 |
 | aculta_lms_h5p | 1299 |
 | aculta_index | 1112 |
 | aculta_user | 899 |
@@ -80,16 +80,16 @@ Gerado em 2026-11-14T21:12:11+00:00 por `scripts/phpstan-debt-report.php`.
 
 | Identificador | Ocorrências |
 | --- | ---: |
-| `offsetAccess.nonOffsetAccessible` | 7924 |
-| `argument.type` | 4561 |
-| `method.nonObject` | 2818 |
-| `missingType.iterableValue` | 2775 |
-| `cast.string` | 2060 |
-| `cast.int` | 1343 |
+| `offsetAccess.nonOffsetAccessible` | 7911 |
+| `argument.type` | 4547 |
+| `method.nonObject` | 2804 |
+| `missingType.iterableValue` | 2771 |
+| `cast.string` | 2050 |
+| `cast.int` | 1333 |
 | `method.notFound` | 914 |
-| `property.nonObject` | 666 |
+| `property.nonObject` | 664 |
 | `return.type` | 367 |
-| `foreach.nonIterable` | 353 |
+| `foreach.nonIterable` | 351 |
 | `binaryOp.invalid` | 299 |
 | `offsetAccess.invalidOffset` | 196 |
 | `missingType.return` | 135 |

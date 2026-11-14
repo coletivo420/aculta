@@ -40,8 +40,6 @@ final class LearningDashboardManagerTest extends UnitTestCase {
     $manager = $this->manager(NULL, $certificates, $entityTypeManager);
 
     $dashboard = $manager->studentDashboard(new UserSession(['uid' => 42]));
-    self::assertInstanceOf(\Drupal\Core\Cache\CacheableMetadata::class, $dashboard['cache']);
-
     self::assertSame([], $dashboard['courses']);
     self::assertSame([], $dashboard['certificates']);
     self::assertContains('user', $dashboard['cache']->getCacheContexts());
@@ -86,12 +84,9 @@ final class LearningDashboardManagerTest extends UnitTestCase {
     $manager = new LearningDashboardManager($coursesReader, $certificates, $entityTypeManager, $progressReader, $lessonReader);
 
     $dashboard = $manager->studentDashboard($account);
-    self::assertIsArray($dashboard['courses']);
     $courseRows = $dashboard['courses'];
     self::assertArrayHasKey(0, $courseRows);
-    self::assertIsArray($courseRows[0]);
     $courseRow = $courseRows[0];
-    self::assertInstanceOf(\Drupal\Core\Cache\CacheableMetadata::class, $dashboard['cache']);
 
     self::assertCount(1, $courseRows);
     self::assertSame(1, $courseRow['total_lessons']);

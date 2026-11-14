@@ -36,6 +36,35 @@ use Drupal\user\UserInterface;
  * Implements the ACULTA Studio journey contract so presentation consumers can
  * stop importing provider-specific entities. The manager translates Group
  * membership and ACULTA learning state into the neutral view model.
+ *
+ * @phpstan-type StudentDashboardCourse array{
+ *   id: string,
+ *   label: string,
+ *   description: array<string, mixed>,
+ *   status: string,
+ *   score: int|float|null,
+ *   finished: bool,
+ *   url: \Drupal\Core\Url|null,
+ *   cache_tags: list<string>,
+ *   completed_lessons: int,
+ *   total_lessons: int,
+ *   progress_percent: int,
+ *   pending_evaluation: bool,
+ *   started: bool,
+ *   last_activity: int,
+ *   current_lesson: null
+ * }
+ * @phpstan-type ClassDashboardData array{
+ *   students: int,
+ *   not_started: int,
+ *   in_progress: int,
+ *   pending_evaluation: int,
+ *   passed: int,
+ *   failed: int,
+ *   cache: \Drupal\Core\Cache\CacheableMetadata,
+ *   course: \Drupal\group\Entity\GroupInterface,
+ *   by_student?: array<int, string>
+ * }
  */
 final class LearningDashboardManager implements CourseJourneyReaderInterface, StudentLearningSummaryReaderInterface {
 
@@ -50,7 +79,7 @@ final class LearningDashboardManager implements CourseJourneyReaderInterface, St
   /**
    * Gets course and completion information belonging to one learner.
    *
-   * @return array
+   * @return array{courses: list<StudentDashboardCourse>, continue: StudentDashboardCourse|null, certificates: array<int|string, \Drupal\aculta_lms\Entity\CourseCertificate>, cache: \Drupal\Core\Cache\CacheableMetadata}
    *   The learner's courses, certificates and cache metadata.
    */
   public function studentDashboard(AccountInterface $account): array {
@@ -82,6 +111,7 @@ final class LearningDashboardManager implements CourseJourneyReaderInterface, St
       }
       $progress = $this->progressReader->current($course, $account);
       $metadata->addCacheTags($progress === NULL ? [] : $progress->cacheTags);
+      $cacheTags = array_values(array_filter($course_data->cacheTags, 'is_string'));
       $total = count($available_lessons);
       // P2 stores course-level completion only. It has no lesson-status rows
       // or current-lesson pointer, so a detailed lesson count cannot be read.
@@ -102,16 +132,16 @@ final class LearningDashboardManager implements CourseJourneyReaderInterface, St
         'score' => $course_data->score,
         'finished' => $course_data->finished,
         'url' => $course_data->url,
-        'cache_tags' => $course_data->cacheTags,
+        'cache_tags' => $cacheTags,
         'completed_lessons' => $completed,
         'total_lessons' => $total,
         'progress_percent' => $total > 0 ? min(100, (int) round($completed / $total * 100)) : 0,
         'pending_evaluation' => $course_data->status === AccountCourseSummary::STATUS_AWAITING_EVALUATION,
         'started' => $progress !== NULL,
-        'last_activity' => $last_activity,
+        'last_activity' => $last_activity ?? 0,
         'current_lesson' => $current_lesson,
       ];
-      $metadata->addCacheTags($course_data->cacheTags);
+      $metadata->addCacheTags($cacheTags);
     }
 
     // Retomada honesta: only a started, unfinished course with a canonical
@@ -123,10 +153,10 @@ final class LearningDashboardManager implements CourseJourneyReaderInterface, St
       if (empty($course['started']) || $course['finished'] || !$course['url'] instanceof Url) {
         continue;
       }
-      if ((int) $course['last_activity'] <= 0) {
+      if ($course['last_activity'] <= 0) {
         continue;
       }
-      if ($continue === NULL || (int) $course['last_activity'] > (int) $continue['last_activity']) {
+      if ($continue === NULL || $course['last_activity'] > $continue['last_activity']) {
         $continue = $course;
       }
     }
@@ -153,20 +183,27 @@ final class LearningDashboardManager implements CourseJourneyReaderInterface, St
       $courses[] = $this->studentLearningCourse($course);
     }
 
-    $continue = is_array($data['continue'] ?? NULL)
+    $continue = $data['continue'] !== NULL
       ? $this->studentLearningCourse($data['continue'])
       : NULL;
     $certificates = [];
     foreach ($data['certificates'] as $certificate) {
-      if (!$certificate instanceof CourseCertificate) {
+      $courseTitle = $certificate->get('course_title')->value;
+      $state = $certificate->get('state')->value;
+      $issued = $certificate->get('issued')->value;
+      $verificationCode = $certificate->get('verification_code')->value;
+      if (!is_string($courseTitle)
+        || !is_string($state)
+        || (!is_int($issued) && (!is_string($issued) || !ctype_digit($issued)))
+        || !is_string($verificationCode)) {
         continue;
       }
       $certificates[] = new StudentLearningCertificate(
-        courseTitle: (string) $certificate->get('course_title')->value,
-        state: (string) $certificate->get('state')->value,
-        issuedAt: (int) $certificate->get('issued')->value,
+        courseTitle: $courseTitle,
+        state: $state,
+        issuedAt: is_int($issued) ? $issued : (int) $issued,
         verificationUrl: Url::fromRoute('aculta_lms.certificate_verify', [
-          'codigo' => (string) $certificate->get('verification_code')->value,
+          'codigo' => $verificationCode,
         ]),
       );
     }
@@ -182,25 +219,22 @@ final class LearningDashboardManager implements CourseJourneyReaderInterface, St
   /**
    * Converts one already-authorized LMS course record to the neutral contract.
    *
-   * @param array<string, mixed> $course
+   * @param StudentDashboardCourse $course
    *   Course projection returned by studentDashboard().
    */
   private function studentLearningCourse(array $course): StudentLearningCourse {
-    $current = $course['current_lesson'] ?? NULL;
-    $url = $course['url'] ?? NULL;
-
     return new StudentLearningCourse(
-      id: (string) $course['id'],
-      label: (string) $course['label'],
-      continueUrl: $url instanceof Url ? clone $url : NULL,
-      completedLessons: (int) ($course['completed_lessons'] ?? 0),
-      totalLessons: (int) ($course['total_lessons'] ?? 0),
-      progressPercent: (int) ($course['progress_percent'] ?? 0),
-      pendingEvaluation: (bool) ($course['pending_evaluation'] ?? FALSE),
-      started: (bool) ($course['started'] ?? FALSE),
-      finished: (bool) ($course['finished'] ?? FALSE),
-      currentLessonLabel: is_array($current) ? (string) ($current['label'] ?? '') : NULL,
-      currentLessonFinished: is_array($current) && !empty($current['finished']),
+      id: $course['id'],
+      label: $course['label'],
+      continueUrl: $course['url'] instanceof Url ? clone $course['url'] : NULL,
+      completedLessons: $course['completed_lessons'],
+      totalLessons: $course['total_lessons'],
+      progressPercent: $course['progress_percent'],
+      pendingEvaluation: $course['pending_evaluation'],
+      started: $course['started'],
+      finished: $course['finished'],
+      currentLessonLabel: NULL,
+      currentLessonFinished: FALSE,
     );
   }
 
@@ -339,7 +373,7 @@ final class LearningDashboardManager implements CourseJourneyReaderInterface, St
   /**
    * Gets counts only for current learners in one class, without answer data.
    *
-   * @return array|null
+   * @return ClassDashboardData|null
    *   Aggregated class metrics and cache metadata, or NULL when unavailable.
    */
   public function classDashboard(GroupInterface $class, AccountInterface $account): ?array {
@@ -427,7 +461,11 @@ final class LearningDashboardManager implements CourseJourneyReaderInterface, St
       if (!$status instanceof ContentEntityInterface) {
         continue;
       }
-      $uid = (int) $status->get('uid')->value;
+      $ownerId = $status->get('uid')->value;
+      if (!is_int($ownerId) && (!is_string($ownerId) || !ctype_digit($ownerId))) {
+        continue;
+      }
+      $uid = (int) $ownerId;
       if (isset($members[$uid])) {
         $statuses_by_student[$uid] = $status;
         $result['cache']->addCacheableDependency($status);
@@ -441,7 +479,11 @@ final class LearningDashboardManager implements CourseJourneyReaderInterface, St
         $bySituation[(int) $member_id] = 'not_started';
         continue;
       }
-      $key = match ((string) $status->get('status')->value) {
+      $statusValue = $status->get('status')->value;
+      if (!is_string($statusValue)) {
+        continue;
+      }
+      $key = match ($statusValue) {
         CourseProgress::STATUS_PROGRESS => 'in_progress',
         CourseProgress::STATUS_NEEDS_EVALUATION => 'pending_evaluation',
         CourseProgress::STATUS_PASSED => 'passed',
