@@ -165,7 +165,7 @@ final class SocialLinkForm extends FormBase {
    * Texto de um valor de formulário ou de campo; vazio quando o valor não é escalar.
    */
   private function textValue(mixed $value): string {
-    return is_scalar($value) ? (string) $value : '';
+    return is_scalar($value) || $value instanceof \Stringable ? (string) $value : '';
   }
 
 }

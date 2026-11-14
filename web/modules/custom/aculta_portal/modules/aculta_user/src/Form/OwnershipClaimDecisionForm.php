@@ -207,7 +207,7 @@ final class OwnershipClaimDecisionForm extends FormBase {
    * Texto de um valor de campo ou de formulário; vazio quando o valor não é escalar.
    */
   private function textValue(mixed $value): string {
-    return is_scalar($value) ? (string) $value : '';
+    return is_scalar($value) || $value instanceof \Stringable ? (string) $value : '';
   }
 
   /**

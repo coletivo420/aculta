@@ -31,7 +31,7 @@ final class AcultaUserAgreementAuditController extends ControllerBase {
    * Texto de uma coluna da linha; vazio quando o valor não é escalar.
    */
   private function textValue(mixed $value): string {
-    return is_scalar($value) ? (string) $value : '';
+    return is_scalar($value) || $value instanceof \Stringable ? (string) $value : '';
   }
 
   /**
