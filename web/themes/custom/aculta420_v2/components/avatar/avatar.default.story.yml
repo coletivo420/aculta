@@ -1,9 +1,9 @@
 name: Avatar com mídia
-description: "Avatar do sistema ACULTA com mídia de exemplo. A imagem real vem do Avatar Pool (aculta_user, AvatarPool e AvatarResolver), que escolhe o avatar padrão do acervo para contas sem foto própria; o componente só apresenta a mídia recebida no slot media, com texto alternativo explícito."
+description: "Avatar do sistema ACULTA com mídia real do Avatar Pool (aculta_user). A função aculta_avatar_sample() usa o AvatarResolver para obter um avatar do acervo, o mesmo que o site mostra para contas sem foto própria; o componente só apresenta a mídia recebida no slot media, com texto alternativo explícito."
 component: aculta420_v2:avatar
 props:
   size: lg
 slots:
   media:
     type: inline_template
-    template: '<img src="/themes/custom/aculta420_v2/assets/avatars/pirates-002-polvo-pirata.png" alt="Avatar de exemplo do acervo" width="128" height="128">'
+    template: '{{ render_var(aculta_avatar_sample("Avatar de exemplo do Avatar Pool")) }}'

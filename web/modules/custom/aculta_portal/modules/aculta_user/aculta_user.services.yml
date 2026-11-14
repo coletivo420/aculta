@@ -67,6 +67,11 @@ services:
   aculta_user.avatar_resolver:
     class: Drupal\aculta_user\Avatar\AvatarResolver
     arguments: ['@aculta_image.render', '@aculta_user.avatar_pool']
+  aculta_user.twig_avatar_extension:
+    class: Drupal\aculta_user\Twig\AvatarTwigExtension
+    arguments: ['@aculta_user.avatar_resolver']
+    tags:
+      - { name: twig.extension }
   aculta_user.social_auth_fields_subscriber:
     class: Drupal\aculta_user\EventSubscriber\SocialAuthFieldsSubscriber
     arguments: ['@entity_type.manager']
