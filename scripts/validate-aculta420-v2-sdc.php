@@ -62,6 +62,16 @@ foreach ($source_files as $source_file) {
     throw new RuntimeException(sprintf('Framework-owned classes or attributes are forbidden in %s.', $source_file->getPathname()));
   }
 }
+$purged_reaction_components = [
+  'discussion-reaction-picker',
+  'discussion-reaction-category',
+  'discussion-reaction-option',
+];
+foreach ($purged_reaction_components as $component_id) {
+  if (is_dir($theme_root . '/components/' . $component_id)) {
+    throw new RuntimeException(sprintf('Legacy reaction selector component must remain purged: %s.', $component_id));
+  }
+}
 $component_ids = [
   'accordion',
   'account-terms-modal',
@@ -87,9 +97,6 @@ $component_ids = [
   'data-table',
   'document-download',
   'discussion-reaction-bar',
-  'discussion-reaction-picker',
-  'discussion-reaction-category',
-  'discussion-reaction-option',
   'donation-presentation',
   'empty-state',
   'event-page-layout',
@@ -343,67 +350,8 @@ $samples = [
       'can_react' => TRUE,
       'is_own_content' => FALSE,
       'react_url' => '/discussion/aculta_forum_post/42/react',
-      'picker_url' => '/discussion/aculta_forum_post/42/reactions',
       'csrf_token' => 'token-de-teste',
     ],
-  ],
-  'discussion-reaction-picker' => [
-    '#props' => [],
-    '#slots' => [
-      'categories' => [[
-        '#type' => 'component',
-        '#component' => 'aculta420_v2:discussion-reaction-category',
-        '#props' => ['category_key' => 'comunidade', 'label' => 'Comunidade'],
-        '#slots' => [
-          'items' => [[
-            '#type' => 'component',
-            '#component' => 'aculta420_v2:discussion-reaction-option',
-            '#props' => [
-              'reaction_id' => 'apoio',
-              'name' => 'Apoio',
-              'icon' => 'heart',
-              'keywords' => 'apoio coracao comunidade',
-              'target_id' => 'discussion-reactions-comment-123',
-              'react_url' => '/discussoes/reagir/comment/123',
-              'csrf_token' => 'dummy-token',
-              'selected' => TRUE,
-            ],
-          ]],
-        ],
-      ]],
-    ],
-  ],
-  'discussion-reaction-category' => [
-    '#props' => ['category_key' => 'comunidade', 'label' => 'Comunidade'],
-    '#slots' => [
-      'items' => [[
-        '#type' => 'component',
-        '#component' => 'aculta420_v2:discussion-reaction-option',
-        '#props' => [
-          'reaction_id' => 'apoio',
-          'name' => 'Apoio',
-          'icon' => 'heart',
-          'keywords' => 'apoio comunidade',
-          'target_id' => 'discussion-reactions-comment-123',
-          'react_url' => '/discussoes/reagir/comment/123',
-          'csrf_token' => 'dummy-token',
-          'selected' => TRUE,
-        ],
-      ]],
-    ],
-  ],
-  'discussion-reaction-option' => [
-    '#props' => [
-      'reaction_id' => 'apoio',
-      'name' => 'Apoio',
-      'icon' => 'heart',
-      'keywords' => 'apoio comunidade',
-      'target_id' => 'discussion-reactions-comment-123',
-      'react_url' => '/discussoes/reagir/comment/123',
-      'csrf_token' => 'dummy-token',
-      'selected' => TRUE,
-    ],
-    '#slots' => [],
   ],
   'donation-presentation' => [
     '#props' => ['variant' => 'thanks'],
@@ -978,18 +926,6 @@ foreach ($component_ids as $component_id) {
       || !str_contains($output, 'aria-current="page"')
       || !str_contains($output, 'Meu Perfil'))) {
     throw new RuntimeException('Studio menu item must preserve its destination, active state and label.');
-  }
-  if ($component_id === 'discussion-reaction-picker'
-    && (!str_contains($output, 'data-reaction-picker-search')
-      || !str_contains($output, 'data-reaction-category="comunidade"')
-      || !str_contains($output, 'data-emoji-keywords="apoio coracao comunidade"'))) {
-    throw new RuntimeException('Reaction picker must render its search controls and categorized SDC options.');
-  }
-  if ($component_id === 'discussion-reaction-option'
-    && (!str_contains($output, 'name="csrf_token" value="dummy-token"')
-      || !str_contains($output, 'name="reaction" value="apoio"')
-      || !str_contains($output, 'is-selected'))) {
-    throw new RuntimeException('Reaction option must preserve CSRF, reaction ID and selected state.');
   }
   if ($component_id === 'forum-topic-row') {
     foreach ([

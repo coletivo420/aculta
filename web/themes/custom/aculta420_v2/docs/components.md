@@ -1,6 +1,6 @@
 # Catálogo de componentes do tema V2
 
-Componentes SDC com schemas estritos (`additionalProperties: false`). Os nomes de prop e slot abaixo são os do `*.component.yml`. "Estado" indica o que foi entregue e verificado. Inventário do checkout atualizado em 2026-11-14: 148 manifests SDC e 233 stories; schemas e renderização isolada são conferidos pelos gates de `docs/gates.md`. A existência do manifest/story não prova, por si só, que um consumidor de produção esteja configurado.
+Componentes SDC com schemas estritos (`additionalProperties: false`). Os nomes de prop e slot abaixo são os do `*.component.yml`. "Estado" indica o que foi entregue e verificado. Inventário do checkout atualizado em 2026-11-14 após remover o seletor: 145 manifests SDC e 230 stories; schemas e renderização isolada são conferidos pelos gates de `docs/gates.md`. A existência do manifest/story não prova, por si só, que um consumidor de produção esteja configurado.
 
 Prefixo de uso: `aculta420_v2:<nome>`. Em Twig, use `include` com `with_context = false`, ou `embed` quando o componente tem slots.
 
@@ -15,10 +15,10 @@ Prefixo de uso: `aculta420_v2:<nome>`. Em Twig, use `include` com `with_context 
 
 A UI Patterns Library descobre os componentes diretamente dos arquivos
 `*.component.yml` e suas stories; não há uma lista paralela para manter. Neste
-checkout há 148 manifests SDC e 233 stories. O Drupal precisa reconstruir seus
+checkout há 145 manifests SDC e 230 stories. O Drupal precisa reconstruir seus
 caches de descoberta para refletir alterações no Runtime. Todos os SDCs têm ao
 menos uma story. A configuração habilita
-`ui_patterns_library`; descoberta no Runtime não foi confirmada nesta revisão.
+`ui_patterns_library`. A última descoberta Runtime anterior à remoção do seletor listou 148 SDCs; o cache precisa ser reconstruído para refletir os 145 manifests atuais.
 
 O grupo `Layouts` também alimenta os plugins de `ui_patterns_layouts`, usados
 pelo Layout Builder. Os sete layouts declarados são `event-page-layout`, `layout-page`, `layout-section`, `layout-two-columns`, `layout-grid`, `layout-narrow` e `layout-full`. O rodapé institucional (`site-footer`) também é um item desta biblioteca, com regiões `brand`, `nav`, `content` e `legal`; ele está posicionado no layout de blocos do display `footer` do bloco `aculta_institution`. O gate de Runtime cobre hoje seis layouts
@@ -46,19 +46,14 @@ Link com rótulo, destino, estado atual e ícone opcional. O provider do Studio
 permanece responsável por filtrar destinos antes de criar o render array.
 Story: `studio-menu-item.default.story.yml`.
 
-### discussion-reaction-picker — Seletor de reações
+### discussion-reaction-bar — Barra de Reações
 
-Fragmento HTMX com busca local e categorias recebidas pelo slot `categories`.
-O módulo Fórum prepara a árvore de SDCs depois que a rota valida o acesso.
-
-### discussion-reaction-category — Categoria de reações
-
-Agrupa opções SDC no slot `items`; mantém a chave usada pelo filtro local.
-
-### discussion-reaction-option — Opção de reação
-
-Formulário com fallback POST e atualização HTMX. O módulo owner fornece
-endpoint, token CSRF, reação permitida e estado selecionado.
+`DiscussionReactionBuilder` monta este SDC para comentários e publicações do
+Fórum. O componente apresenta as reações recebidas e oferece a interação
+permitida, com fallback POST e atualização HTMX. A paleta é renderizada dentro
+da própria barra; não há componente, rota ou fragmento separado de seletor.
+Permissão, token CSRF e reações válidas permanecem sob responsabilidade do
+módulo `aculta_forum`.
 
 ### article-authors — Autoria editorial
 

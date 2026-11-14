@@ -14,7 +14,7 @@
 {# Ids dos popovers únicos por instância: a mesma barra pode aparecer várias vezes numa página. #}
 {% set uid = random(100000000) %}
 {% set more_id = 'reaction-more-' ~ uid %}
-{% set picker_id = 'reaction-picker-' ~ uid %}
+{% set palette_id = 'reaction-palette-' ~ uid %}
 
 <div id="{{ target_id }}" class="discussion-reaction-bar" data-discussion-reaction-bar data-entity-type="{{ entity_type }}" data-entity-id="{{ entity_id }}">
 {% if can_react %}
@@ -31,34 +31,26 @@
       </button>
     </form>
 
-    {# Seletor de reações: servidor (picker_url) quando disponível; senão, popover com a paleta do próprio componente. #}
-    <div class="discussion-reaction-bar__picker-wrapper">
-      {% if picker_url %}
-        {% set picker_target_id = 'discussion-reaction-picker-' ~ target_id %}
-        <button type="button" class="discussion-reaction-bar__btn discussion-reaction-bar__btn--trigger" aria-haspopup="dialog" aria-expanded="false" title="{{ 'Mais reações'|t }}" aria-label="{{ 'Mais reações'|t }}" data-hx-get="{{ picker_url }}" data-hx-target="#{{ picker_target_id }}" data-hx-swap="innerHTML" data-reaction-picker-trigger>
-          {{ include('aculta420_v2:icon', { name: 'smiley', variant: 'regular', size: 'sm' }, with_context = false) }}
-        </button>
-        <div id="{{ picker_target_id }}" class="discussion-reaction-bar__picker-container"></div>
-      {% else %}
-        <button type="button" class="discussion-reaction-bar__btn discussion-reaction-bar__btn--trigger" popovertarget="{{ picker_id }}" style="anchor-name: --{{ picker_id }}" aria-haspopup="dialog" aria-expanded="false" title="{{ 'Escolher reação'|t }}" aria-label="{{ 'Escolher reação'|t }}">
-          {{ include('aculta420_v2:icon', { name: 'smiley', variant: 'regular', size: 'sm' }, with_context = false) }}
-        </button>
-        <div id="{{ picker_id }}" class="discussion-reaction-bar__popover discussion-reaction-bar__popover--palette" style="position-anchor: --{{ picker_id }}" popover="auto" role="dialog" aria-label="{{ 'Escolher reação'|t }}" data-reaction-popover>
-          <div class="discussion-reaction-bar__popover-list">
-            {% for key, reaction in allowed_reactions %}
-              {% if reaction.enabled|default(true) %}
-                <form method="post" action="{{ react_url }}" data-hx-post="{{ react_url }}" data-hx-target="#{{ target_id }}" data-hx-swap="outerHTML" class="discussion-reaction-bar__form">
-                  <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-                  <input type="hidden" name="reaction" value="{{ key }}">
-                  <button type="submit" class="discussion-reaction-bar__palette-btn{% if user_reaction == key %} is-selected{% endif %}" title="{{ reaction.label }}" aria-label="{{ reaction.label }}">
-                    {{ include('aculta420_v2:reaction-emoji', { name: reaction.icon, variant: 'color', size: 'sm', label: reaction.label }, with_context = false) }}
-                  </button>
-                </form>
-              {% endif %}
-            {% endfor %}
-          </div>
+    {# Paleta de reações integrada à Barra de Reações. #}
+    <div class="discussion-reaction-bar__palette-wrapper">
+      <button type="button" class="discussion-reaction-bar__btn discussion-reaction-bar__btn--trigger" popovertarget="{{ palette_id }}" style="anchor-name: --{{ palette_id }}" aria-haspopup="dialog" aria-expanded="false" title="{{ 'Escolher reação'|t }}" aria-label="{{ 'Escolher reação'|t }}">
+        {{ include('aculta420_v2:icon', { name: 'smiley', variant: 'regular', size: 'sm' }, with_context = false) }}
+      </button>
+      <div id="{{ palette_id }}" class="discussion-reaction-bar__popover discussion-reaction-bar__popover--palette" style="position-anchor: --{{ palette_id }}" popover="auto" role="dialog" aria-label="{{ 'Escolher reação'|t }}" data-reaction-popover>
+        <div class="discussion-reaction-bar__popover-list">
+          {% for key, reaction in allowed_reactions %}
+            {% if reaction.enabled|default(true) %}
+              <form method="post" action="{{ react_url }}" data-hx-post="{{ react_url }}" data-hx-target="#{{ target_id }}" data-hx-swap="outerHTML" class="discussion-reaction-bar__form">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                <input type="hidden" name="reaction" value="{{ key }}">
+                <button type="submit" class="discussion-reaction-bar__palette-btn{% if user_reaction == key %} is-selected{% endif %}" title="{{ reaction.label }}" aria-label="{{ reaction.label }}">
+                  {{ include('aculta420_v2:reaction-emoji', { name: reaction.icon, variant: 'color', size: 'sm', label: reaction.label }, with_context = false) }}
+                </button>
+              </form>
+            {% endif %}
+          {% endfor %}
         </div>
-      {% endif %}
+      </div>
     </div>
   </div>
 {% else %}

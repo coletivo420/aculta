@@ -13,7 +13,7 @@ anteriores e não substituem a conferência do código atual.
   chave `aculta_shell_variant` não existe no Config Sync nem no Runtime ativo.
   O hook no-op temporário de compatibilidade foi removido depois do rebuild do
   cache Drupal em 2026-11-14.
-- 148 manifests SDC e 233 stories. Todos têm story: `hint` exemplifica os tons
+- 145 manifests SDC e 230 stories após remover os três componentes do seletor. Todos têm story: `hint` exemplifica os tons
   normal/muted; `sales-panel` e `secret-reveal` usam dados demonstrativos
   fictícios.
 - Config Sync habilita UI Patterns, Blocks, Field, Field Formatters, Layouts,
@@ -39,19 +39,18 @@ anteriores e não substituem a conferência do código atual.
   `docs/architecture/inventarios/ui-suite-consumidores-iniciais.csv`.
 - Decisão do responsável (2026-11-13): remover por completo o módulo customizado
   `aculta_ui_library`, inclusive o redirect legado, e manter somente a UI Patterns
-  Library oficial. `config/sync/core.extension.yml` já não habilita o módulo; a
-  configuração ainda não foi importada no Runtime. A desinstalação precisa
-  ocorrer antes de apagar o código. Na leitura Runtime de 2026-11-14, antes deste lote local, o `doctor` confirmou
-  branch/worktree limpos, lock e bootstrap, sem updates ou deploy hooks. Permanecem nove configs
-  divergentes: `aculta420_v2.settings`, o display footer da instituição,
-  `node.revista.full`, cinco Views (`aculta_forum_categories`,
-  `aculta_forum_public_topics`, `aculta_forum_search`, `courses`,
-  `courses_catalog`) e `revista_sessoes`. O risco cumulativo continua RX e há
-  avisos de schema para 11 módulos removidos. O checkout compartilhado com
-  Apache é o modo esperado e não bloqueia a janela. Cache Drupal foi
-  reconstruído em 2026-11-14, mas o baseline registrado pelo Runtime Sync
-  continua em `e37f3d8d45ecba9719d4b97dde67effc2236b13f`. Nenhuma
-  importação/migração estrutural foi executada.
+  Library oficial. Estado conferido em 2026-11-14: o módulo está ausente de
+  `core.extension` no Config Sync e no Runtime; o Runtime habilita
+  `ui_patterns_library`; o último cache anterior à purga descobria 148 SDCs `aculta420_v2`. O checkout agora tem 145 e requer rebuild.
+  Não há código executável do módulo no checkout; os dois documentos restantes
+  neste diretório foram removidos. Persiste apenas a chave órfã de schema no
+  Runtime, cuja limpeza requer backup e prova de restauração.
+  A leitura Runtime de 2026-11-14 confirmou zero updates e zero deploy hooks e
+  nove configurações divergentes (`aculta420_v2.settings`, o display footer da
+  instituição, `node.revista.full`, cinco Views e `revista_sessoes`). O risco
+  cumulativo do Runtime Sync continua RX e seu baseline permanece em
+  `e37f3d8d45ecba9719d4b97dde67effc2236b13f`; não houve importação estrutural.
+  O checkout compartilhado com Apache é o modo esperado.
 - Restam 17 templates Twig Drupal no tema. O fallback de fields para
   `aculta_forum_categories:page_categories` foi removido após leitura somente
   no Runtime confirmar que sua row ativa usa UI Patterns + `forum-category`;
@@ -84,28 +83,30 @@ anteriores e não substituem a conferência do código atual.
    foram adicionadas. Todos os slots agora têm título e descrição, e as props
    de topo têm título; o gate exige esses metadados. A contagem antiga de 440
    props sem descrição foi substituída pela leitura recursiva dos manifests
-   atuais: 371 props de topo, em 81 SDCs, e 492 nós de schema de props incluindo
-   itens/propriedades aninhados, em 81 SDCs, ainda não têm descrição. Nesta
+   antes da purga: 371 props de topo e 492 nós de schema sem descrição em 81 SDCs.
+   Recalcular para os 145 SDCs atuais. Nesta
    rodada, os 18 manifests anteriores do domínio Fórum foram conferidos contra seus Twig e
    tiveram todos esses campos documentados. A checagem do provider instalado encontrou
    21 props com tipo `unknown`, em 12 SDCs; duas são obrigatórias e não há
    Sources UI Patterns para esse tipo. A auditoria classificou os produtores
    encontrados e registrou as fontes na ADR-056. Os presenters de Eventos e a
    barra de reações já chamam SDCs diretamente, preservando cálculo, acesso e
-   cache nos módulos. O seletor HTMX de reações também foi migrado para os SDCs
-   `discussion-reaction-picker`, `discussion-reaction-category` e
-   `discussion-reaction-option`; os templates/hook paralelos foram removidos.
-   O resultado no Runtime ainda precisa de homologação. Seguem
+   cache nos módulos. O seletor HTMX e seus SDCs (`discussion-reaction-picker`,
+   `discussion-reaction-category`, `discussion-reaction-option`) foram removidos.
+   A rota e o builder de fragmento também saíram. `DiscussionReactionBuilder`
+   entrega `discussion-reaction-bar`, cuja paleta interna preserva a interação.
+   As barras de Reações e Reações Recebidas mantêm seus contratos. O resultado
+   no Runtime ainda precisa de homologação. Seguem
    pendentes as descrições específicas das props e a confirmação de uso
    editorial persistido no Runtime. Avançar na auditoria semântica restante:
    nomes, tipagem, slots/props,
    variants/defaults, includes e escaping. Renomear apenas conceitos realmente
    reutilizáveis com plano de compatibilidade das referências persistidas.
 3. **P2 — cruzar integrações:** matriz estática regenerada em 2026-11-14 com
-   454 linhas (cabeçalho e 453 consumers): 148 SDCs, 159 displays Views, 52
+   451 linhas (cabeçalho e 450 consumers): 145 SDCs, 159 displays Views, 52
    instâncias de bloco, 22 displays com Layout Builder e 17 templates Twig Drupal
    do tema. Foram achadas
-   referências literais a 113 SDCs; os 35 sem referência literal não são
+   referências literais a 110 SDCs; os 35 sem referência literal não são
    candidatos automáticos a exclusão, pois a Library os publica e usos
    editoriais/dinâmicos não aparecem nessa busca. Ainda falta reconciliar as
    escolhas editoriais persistidas no Runtime e revisar a lista por consumidor.
@@ -137,19 +138,16 @@ anteriores e não substituem a conferência do código atual.
    cache-hit, acesso público/autenticado, tradução, claro/escuro, teclado e
    larguras aplicáveis. Runtime Sync/rebuild somente após preflight liberado.
 
-### Plano de retirada de `aculta_ui_library`
+### Retirada de `aculta_ui_library`
 
-O módulo não possui entidade/configuração própria nem schema de banco: contém
-redirect, access check, serviços, metadados e testes. O Config Sync já foi
-atualizado para retirar `aculta_ui_library`; `ui_patterns_library` é extensão
-separada e permanece habilitada. Ordem segura: (1) registrar os arquivos
-afetados no plano estrutural; (2) com
-backup/restore comprovados e preflight liberado, desinstalar o módulo no Runtime
-enquanto seu código continua disponível; (3) sincronizar a desinstalação e
-verificar estado/cache; (4) remover pasta do módulo, alias, testes exclusivos,
-gates que o carregam, status e referências operacionais; (5) confirmar que a
-rota oficial da UI Patterns Library continua habilitada. Não apagar os arquivos
-do módulo antes da desinstalação, pois o checkout é compartilhado com Apache.
+Concluída no código e no estado ativo: o Config Sync e o Runtime não habilitam
+`aculta_ui_library`; a extensão não tem código executável, rota ou gate próprio
+no checkout. Os documentos históricos residuais foram removidos. A UI Patterns
+Library permanece habilitada. O último cache Runtime anterior à purga descobria 148 SDCs; o checkout atual tem 145 e requer rebuild. A única pendência
+é uma chave órfã em `system.schema` no Runtime. Tratar essa chave como limpeza
+focal de banco: gerar plano, backup privado e prova de restauração em
+`aculta_runtime_copia`; então removê-la pela API Drupal e validar. Não fazer
+importação geral de configuração para resolver esse resíduo.
 
 ### Templates restantes no tema para P3
 

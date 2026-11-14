@@ -1,5 +1,0 @@
-props:
-  category_key: comunidade
-  label: Comunidade
-slots:
-  items: []

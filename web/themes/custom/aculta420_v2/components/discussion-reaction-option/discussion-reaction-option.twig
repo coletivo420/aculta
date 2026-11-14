@@ -1,7 +1,0 @@
-<form method="post" action="{{ react_url }}" data-hx-post="{{ react_url }}" data-hx-target="#{{ target_id }}" data-hx-swap="outerHTML" class="discussion-reaction-bar__popup-form">
-  <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-  <input type="hidden" name="reaction" value="{{ reaction_id }}">
-  <button type="submit" class="discussion-reaction-bar__palette-btn{% if selected %} is-selected{% endif %}" title="{{ name }}" aria-label="{{ name }}" data-emoji-name="{{ name|lower }}" data-emoji-keywords="{{ keywords|lower }}">
-    {{ include('aculta420_v2:reaction-emoji', {name: icon, variant: 'color', size: 'md'}, with_context: false) }}
-  </button>
-</form>

@@ -63,7 +63,17 @@ Anteriormente:
    - Propriedades de ícones integradas aos SDCs do tema (ex: `button` via `$ref: 'ui-patterns://icon'`).
 3. **UI Styles Page e UI Library:**
    - Alvo: `ui_styles_page` para estilos de regiões por tema (`/admin/appearance/ui-styles/page/theme/{theme}`). O módulo está habilitado no Runtime e no Config Sync, mas `aculta420_v2.settings` não registra mapeamento `ui_styles_page.regions`; atributos Twig seguem pendentes na US-03.
+
    - Rota da UI Library (`/painel-administrativo/aparencia/ui/patterns`, `/icons`, `/styles`) com links dinâmicos e controle de acesso exclusivo para administradores.
+
+### Revisão de implementação (2026-11-14)
+
+A interface autônoma descrita na seção 2.2 foi removida: os SDCs
+`discussion-reaction-picker`, `discussion-reaction-category` e
+`discussion-reaction-option`, além da rota HTMX que os fornecia. Os consumidores
+usam `discussion-reaction-bar`, que mantém sua paleta e submissão; acesso,
+catálogo permitido e token CSRF continuam no módulo `aculta_forum`. As barras de
+Reações e Reações Recebidas permanecem distintas e inalteradas.
 
 ---
 

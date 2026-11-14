@@ -57,6 +57,7 @@ Critérios: PASS (executado e verde), FAIL, DEFERRED (não roda aqui; motivo), N
 | PHP alterado | `php -l` nos arquivos; `php scripts/phpunit-suites.php --check`; `phpstan analyse` (com `vendor/`) | `php -l` e suites: PASS. PHPStan: DEFERRED (sem `vendor/`) |
 | Twig | validadores SDC do tema; `php -l` em módulos com PHP | DEFERRED onde o validador depende de Drush |
 | CSS (tema) | `npm run lint:css` (versão efetiva no `package.json`) | PASS histórico em 2026-11-11; verificar CI corrente, que registrou falhas posteriores |
+| CSS alterado (focal) | `node_modules/.bin/stylelint <arquivos.css>` a partir da raiz, com `.stylelintrc.json` (extends `stylelint-config-drupal`, plugin `stylelint-order`) | Exit 0 = PASS; qualquer outro código = FAIL com saída colada. Binário ausente = DEFERRED com motivo. Regras frequentes: `order/properties-order`, `max-empty-lines`. Aplica-se a `.css` de componente, folha de área e tema |
 | JavaScript novo ou alterado | `npm run lint:js` (ESLint 9 na raiz) | Executar no ambiente da entrega; consultar o CI atual para PASS/FAIL |
 | SDC | `validate-aculta420-sdc-schemas.php`, `validate-aculta420-v2-sdc.php` | DEFERRED (depende do ambiente Drupal) |
 | UI Patterns | `validate-ui-patterns-views-cutover.php` | DEFERRED (Runtime/browser) |

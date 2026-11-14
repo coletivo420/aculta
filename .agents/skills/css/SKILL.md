@@ -27,9 +27,10 @@ Tokens em `web/themes/custom/aculta420_v2/src/styles/tokens.css`. Bloco claro em
 - 44 px em controle interativo (`--tap-target-min`). Exceção só com registro (ex.: barra institucional, ADR-047).
 
 ## Ordem de verificação
-1. `php scripts/validate-aculta420-ui-styles.php`
-2. `php scripts/validate-aculta420-v2-foundations.php`
-3. `php scripts/validate-aculta420-ui-skins.php`
+1. Stylelint no CSS alterado, a partir da raiz do repositório: `node_modules/.bin/stylelint "web/themes/custom/aculta420_v2/components/<nome>/<nome>.css"` (ou `npm run lint:css` para o tema inteiro). Config em `.stylelintrc.json`. Corrija `order/properties-order` (ordem das propriedades, ex.: `grid-template-areas` antes de `grid-template-columns`, `grid-area` depois de `flex-direction`) e `max-empty-lines` (no máximo uma linha vazia). Exit 0 é PASS.
+2. `php scripts/validate-aculta420-ui-styles.php`
+3. `php scripts/validate-aculta420-v2-foundations.php`
+4. `php scripts/validate-aculta420-ui-skins.php`
 4. Auditoria de contraste no modo escuro, sem falha nova.
 5. Remoção de regra de área só depois de `grep` confirmar que nenhum markup ativo usa o seletor. Nunca remova regra global de elemento (`button`, `input[type=submit]`, `.form-submit`).
 

@@ -138,8 +138,18 @@ Escopo funcional restante (login/logout, sessões multidomínio, modais HTMX, fo
   - **Defeito candidato (não corrigido):** o alvo do `innerHTML` não recebe o fragmento esperado. Confirmar se o endpoint deveria devolver só o fragmento do picker e por que não o faz para `HX-Request`.
 - Teste funcional de HTMX: não implementado nesta rodada, porque o contrato dos endpoints ainda não é fragmento. Um teste de fragmento hoje falharia.
 
-## 10. Correção do seletor de reação (HTMX)
+### Atualização do endpoint de reações (2026-11-14)
 
-- Contrato decidido pelo responsável: fragmento. `DiscussionReactionController::picker` agora devolve só o HTML do componente `discussion_reaction_picker` quando a requisição traz `HX-Request`. Sem o cabeçalho, mantém a página completa.
-- Injeção: `@renderer` adicionado ao serviço `aculta_forum.discussion_reaction_controller` (sem uso de `\Drupal::`).
-- Verificação: `php -l` PASS. **Não verificado em execução**: a correção só será comprovada depois de publicada e sincronizada no Runtime, o que depende da adoção supervisionada. Teste funcional de fragmento: a escrever após a sincronização.
+O endpoint `/discussoes/reagir/{entity_type}/{entity_id}/opcoes` e o SDC de
+seletor foram removidos. A composição ativa é `discussion-reaction-bar`, que
+mantém sua própria paleta; o endpoint de submissão `reaction_react` continua
+responsável pelo toggle protegido por acesso e CSRF. As observações de 2026-11-11
+acima são históricas e não descrevem rotas atuais.
+
+## 10. Seletor de reação legado (HTMX)
+
+O registro de implementação anterior está superado pela atualização de
+2026-11-14 acima: a rota, o método `DiscussionReactionController::picker` e os
+SDCs dedicados ao seletor foram removidos. A submissão de reações continua
+protegida pelo endpoint `reaction_react`; a escolha é feita pela paleta integrada
+à `discussion-reaction-bar`.

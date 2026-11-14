@@ -27,7 +27,7 @@ Decisões que governam o tema estão em `docs/decisions/` na raiz do repositóri
 
 ## Estado em uma frase
 
-O checkout contém 148 SDCs e 233 stories, e todos os SDCs têm ao menos uma story. Restam 17 templates Twig Drupal no tema; o corte continua orientado pelos consumidores, preservando adaptadores necessários ao Drupal e à composição UI Suite. O shell declara cinco regiões e usa um template de página. `aculta_ui_library` foi retirado do Config Sync e aguarda a desinstalação estrutural antes da remoção de seu código. Uso editorial persistido, composição no Runtime, cobertura visual/autenticada e igualdade entre Config Sync e Runtime seguem pendentes onde não há evidência atual.
+O checkout contém 145 SDCs e 230 stories, e todos os SDCs têm ao menos uma story. Restam 17 templates Twig Drupal no tema; o corte continua orientado pelos consumidores, preservando adaptadores necessários ao Drupal e à composição UI Suite. O shell declara cinco regiões e usa um template de página. `aculta_ui_library` foi removido do checkout e não está habilitado no Sync nem no Runtime; há uma entrada órfã em `system.schema` a limpar com backup/restauração comprovados. O cache Runtime ainda reflete as 148 definições anteriores à remoção do seletor e precisa ser reconstruído; uso editorial persistido, composição, cobertura visual/autenticada e igualdade entre Config Sync e Runtime seguem pendentes onde não há evidência atual.
 
 ## Estrutura
 

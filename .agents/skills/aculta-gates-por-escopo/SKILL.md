@@ -26,7 +26,7 @@ Escolha pelo arquivo alterado e pelas integrações realmente presentes no Compo
 | Diff | Validações candidatas |
 | --- | --- |
 | `.component.yml`, Twig ou story | `validate-aculta420-sdc-schemas.php`, `validate-aculta420-v2-sdc.php`; teste Unit/Kernel focal se existir |
-| CSS, tokens, tema claro/escuro ou contraste | `validate-aculta420-v2-foundations.php`, `validate-aculta420-ui-styles.php`; lint CSS do tema se aplicável |
+| CSS, tokens, tema claro/escuro ou contraste | Stylelint nos `.css` alterados: `node_modules/.bin/stylelint <arquivos>` a partir da raiz (ou `npm run lint:css` para o tema); `validate-aculta420-v2-foundations.php`, `validate-aculta420-ui-styles.php` |
 | `aculta420_v2.ui_styles.yml` | `validate-aculta420-ui-styles.php` e schema SDC somente se contrato de componentes também mudar |
 | mapa `data-portal-ui` ou módulo/tema | `validate-module-theme-boundary.php`, `validate-aculta420-mapped-classes.php` |
 | UI Patterns Library, SDC, preview ou descoberta de componente | `validate-aculta420-sdc-library-contract.php`, schema SDC e testes focais dos consumidores alterados; Runtime/browser quando aplicável |

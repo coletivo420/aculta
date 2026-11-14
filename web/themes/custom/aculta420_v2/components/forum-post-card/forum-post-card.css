@@ -603,19 +603,18 @@
   }
 }
 
-
 /* Autoria lateral (author_position: side): corpo à esquerda, autoria em coluna à direita, rodapé na largura toda.
    Só no desktop; no celular o cartão empilha como antes. */
 @media (min-width: 48rem) {
   .forum-post-card--author-side > .forum-post-card__inner {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(12rem, 16rem);
     grid-template-areas: "body header" "footer footer";
+    grid-template-columns: minmax(0, 1fr) minmax(12rem, 16rem);
     column-gap: var(--spacing-lg);
   }
   .forum-post-card--author-side > .forum-post-card__inner > .forum-post-card__header {
-    grid-area: header;
     flex-direction: column;
+    grid-area: header;
     align-items: stretch;
     padding: var(--spacing-md);
     border-radius: var(--border-radius-md, .5rem);
@@ -629,7 +628,15 @@
 .forum-post-card--density-compact .forum-post-card__author {
   flex-direction: row;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: flex-start;
+}
+
+/* Nome do autor sempre alinhado à esquerda, em qualquer modo (topo, lateral ou compacto). */
+.forum-post-card__author,
+.forum-post-card__author .forum-author-line,
+.forum-post-card__author .forum-author-line__identity {
+  justify-content: flex-start;
+  text-align: start;
 }
 
 .forum-post-card--density-compact .forum-author-line {

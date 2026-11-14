@@ -3,10 +3,6 @@ name: Barra de Reações
 description: Barra interativa de reações com contador de emojis e seletor popup no estilo Discourse.
 status: stable
 group: Comunidade
-libraryOverrides:
-  dependencies:
-    - core/drupal
-    - core/once
 props:
   type: object
   additionalProperties: false
@@ -54,10 +50,6 @@ props:
       type: string
       title: URL para submissão da reação
       default: ''
-    picker_url:
-      type: [string, 'null']
-      title: URL para carregar os emojis extras via HTMX
-      default: null
     csrf_token:
       type: string
       title: Token CSRF para envio seguro
