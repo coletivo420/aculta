@@ -4,18 +4,19 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_lms\Unit;
 
-use Drupal\Core\StringTranslation\TranslatableMarkup;
-use Drupal\aculta_lms\Context\LmsActivityDiscussionResolver;
 use Drupal\aculta_lms\Access\ClassActivityDeadlineAccessCheck;
+use Drupal\aculta_lms\Context\LmsActivityDiscussionResolver;
 use Drupal\aculta_lms\Deadline\ClassActivityDeadlineManager;
 use Drupal\Core\Access\AccessResult;
-use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\Core\Cache\CacheableDependencyInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Query\QueryInterface;
 use Drupal\Core\Field\FieldItemInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
 use Drupal\group\Entity\GroupInterface;
@@ -25,6 +26,7 @@ use Drupal\node\NodeInterface;
 use Drupal\Tests\UnitTestCase;
 use Drupal\user\UserInterface;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Verifies activity discussions stay inside the course and Group access.
@@ -102,10 +104,16 @@ final class LmsActivityDiscussionResolverTest extends UnitTestCase {
 
     self::assertSame('component', $build['#type']);
     self::assertSame('aculta420_v2:layout-section', $build['#component']);
-    self::assertCount(1, $build['#slots']['content']['#items']);
-    self::assertSame('Perguntas da atividade', $build['#slots']['content']['#items'][0]['#title']);
-    self::assertContains('user.group_permissions', $build['#cache']['contexts']);
-    self::assertContains('group_relationship_list:plugin:group_node:aculta_lms_topic', $build['#cache']['tags']);
+    $slots = $this->assertArray($build['#slots'] ?? NULL);
+    $content = $this->assertArray($slots['content'] ?? NULL);
+    $items = $content['#items'] ?? NULL;
+    self::assertIsArray($items);
+    self::assertCount(1, $items);
+    $item = $this->assertArray($items[0] ?? NULL);
+    self::assertSame('Perguntas da atividade', $item['#title'] ?? NULL);
+    $cache = $this->assertArray($build['#cache'] ?? NULL);
+    self::assertContains('user.group_permissions', $this->assertArray($cache['contexts'] ?? NULL));
+    self::assertContains('group_relationship_list:plugin:group_node:aculta_lms_topic', $this->assertArray($cache['tags'] ?? NULL));
   }
 
   /**
@@ -197,9 +205,15 @@ final class LmsActivityDiscussionResolverTest extends UnitTestCase {
 
     $build = $resolver->build($activity, $course, $account);
 
-    self::assertCount(1, $build['#slots']['content']['#items']);
-    self::assertSame('Perguntas da turma', $build['#slots']['content']['#items'][0]['#title']);
-    self::assertContains('group_relationship_list:plugin:lms_classes:entity:7', $build['#cache']['tags']);
+    $slots = $this->assertArray($build['#slots'] ?? NULL);
+    $content = $this->assertArray($slots['content'] ?? NULL);
+    $items = $content['#items'] ?? NULL;
+    self::assertIsArray($items);
+    self::assertCount(1, $items);
+    $item = $this->assertArray($items[0] ?? NULL);
+    self::assertSame('Perguntas da turma', $item['#title'] ?? NULL);
+    $cache = $this->assertArray($build['#cache'] ?? NULL);
+    self::assertContains('group_relationship_list:plugin:lms_classes:entity:7', $this->assertArray($cache['tags'] ?? NULL));
   }
 
   /**
@@ -227,7 +241,11 @@ final class LmsActivityDiscussionResolverTest extends UnitTestCase {
   }
 
   /**
-   * Creates a field item list with one value. */
+   * Creates a field item list with one value.
+   *
+   * @return \Drupal\Core\Field\FieldItemListInterface<\Drupal\Core\Field\FieldItemInterface>&MockObject
+   *   The field item list mock.
+   */
   private function fieldList(mixed $value): FieldItemListInterface {
     $item = $this->createMock(FieldItemInterface::class);
     $item->method('getValue')->willReturn(['value' => $value]);
@@ -245,11 +263,29 @@ final class LmsActivityDiscussionResolverTest extends UnitTestCase {
   }
 
   /**
-   * Configures cache metadata on a cacheable mock entity. */
-  private function setCacheMetadata(object $entity, array $tags): void {
+   * Configures cache metadata on a cacheable mock entity.
+   *
+   * @param list<string> $tags
+   *   Cache tags for the mock.
+   */
+  private function setCacheMetadata(CacheableDependencyInterface&MockObject $entity, array $tags): void {
     $entity->method('getCacheTags')->willReturn($tags);
     $entity->method('getCacheContexts')->willReturn([]);
     $entity->method('getCacheMaxAge')->willReturn(-1);
+  }
+
+  /**
+   * Asserts that a render array value is an array before reading its keys.
+   *
+   * @param mixed $value
+   *   The value to validate.
+   *
+   * @return array<array-key, mixed>
+   *   The validated array.
+   */
+  private function assertArray(mixed $value): array {
+    self::assertIsArray($value);
+    return $value;
   }
 
 }

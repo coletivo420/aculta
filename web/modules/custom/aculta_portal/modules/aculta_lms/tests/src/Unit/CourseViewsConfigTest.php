@@ -24,28 +24,59 @@ final class CourseViewsConfigTest extends TestCase {
       'courses_admin' => ['path' => 'admin/lms/courses', 'permission' => 'create lms_course group'],
       'classes_admin' => ['path' => 'admin/lms/classes', 'permission' => 'create lms_class group'],
     ] as $view_id => $expectation) {
-      $install = Yaml::parseFile($module_root . '/config/install/views.view.' . $view_id . '.yml');
-      $sync = Yaml::parseFile($sync_root . '/views.view.' . $view_id . '.yml');
-      self::assertSame($view_id, $install['id']);
+      $install = $this->stringKeyedMap(Yaml::parseFile($module_root . '/config/install/views.view.' . $view_id . '.yml'));
+      $sync = $this->stringKeyedMap(Yaml::parseFile($sync_root . '/views.view.' . $view_id . '.yml'));
+      self::assertSame($view_id, $install['id'] ?? NULL);
+      $displays = $this->stringKeyedMap($install['display'] ?? NULL);
       $page_display = array_find(
-        $install['display'],
-        static fn (array $display): bool => ($display['display_plugin'] ?? NULL) === 'page',
+        $displays,
+        static fn (mixed $display, mixed $key): bool => is_array($display)
+          && ($display['display_plugin'] ?? NULL) === 'page',
       );
-      self::assertNotNull($page_display);
-      self::assertSame($expectation['path'], $page_display['display_options']['path']);
+      self::assertIsArray($page_display);
+      $pageDisplayMap = $this->stringKeyedMap($page_display);
+      $pageOptions = $this->stringKeyedMap($pageDisplayMap['display_options'] ?? NULL);
+      self::assertSame($expectation['path'], $pageOptions['path'] ?? NULL);
+      $defaultDisplay = $this->stringKeyedMap($displays['default'] ?? NULL);
+      $defaultOptions = $this->stringKeyedMap($defaultDisplay['display_options'] ?? NULL);
       if ($expectation['permission'] === NULL) {
-        self::assertSame('entity:group', $install['display']['default']['display_options']['row']['type']);
-        self::assertSame('default', $install['display']['default']['display_options']['row']['options']['view_mode']);
+        $row = $this->stringKeyedMap($defaultOptions['row'] ?? NULL);
+        $rowOptions = $this->stringKeyedMap($row['options'] ?? NULL);
+        self::assertSame('entity:group', $row['type'] ?? NULL);
+        self::assertSame('default', $rowOptions['view_mode'] ?? NULL);
       }
       else {
+        $access = $this->stringKeyedMap($defaultOptions['access'] ?? NULL);
+        $accessOptions = $this->stringKeyedMap($access['options'] ?? NULL);
+        $style = $this->stringKeyedMap($defaultOptions['style'] ?? NULL);
+        $styleOptions = $this->stringKeyedMap($style['options'] ?? NULL);
         self::assertSame(
           $expectation['permission'],
-          $install['display']['default']['display_options']['access']['options']['perm'],
+          $accessOptions['perm'] ?? NULL,
         );
-        self::assertSame('', $install['display']['default']['display_options']['style']['options']['class']);
+        self::assertSame('', $styleOptions['class'] ?? NULL);
       }
       self::assertSame($install, $sync);
     }
+  }
+
+  /**
+   * Validates a parsed YAML mapping before inspecting its values.
+   *
+   * @param mixed $value
+   *   The parsed YAML value.
+   *
+   * @return array<string, mixed>
+   *   A mapping with string keys.
+   */
+  private function stringKeyedMap(mixed $value): array {
+    self::assertIsArray($value);
+    $mapping = [];
+    foreach ($value as $key => $item) {
+      self::assertIsString($key);
+      $mapping[$key] = $item;
+    }
+    return $mapping;
   }
 
 }
