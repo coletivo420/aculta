@@ -1859,3 +1859,11 @@ State: Dev. No RC, production deployment, or release tag is declared.
 - Removidos os hooks e templates de módulo/tema para `portal-search-trigger`.
 - O tema passa a 139 SDCs/221 stories e 47 templates restantes; Runtime e
   validação de navegador continuam pendentes.
+
+## Atualização — modal de termos emitido diretamente por SDC (2026-11-14)
+
+- `AcultaUserAgreementHooks` agora envia o SDC `account-terms-modal` com o
+  formulário Form API no slot; conserva biblioteca, contexto `user` e max-age 0.
+- Removidos o hook de tema e os templates duplicados do módulo e do tema.
+- Restam 46 templates no tema; revisão visual/autenticada no Runtime segue
+  pendente.

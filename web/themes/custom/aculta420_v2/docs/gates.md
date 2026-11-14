@@ -621,12 +621,14 @@ alterações indevidas nos 22 displays, não aplicar o novo tom em massa.
   418.334 bytes, 2.387 regras e 2.847 seletores; repetição entre folhas: 5 pares.
 - Browser autenticado da Conta pendente.
 
-## Atualização — lista do modal de termos vinculada ao SDC (2026-11-13)
+## Atualização — modal de termos emitido diretamente como SDC (2026-11-13)
 
-- O template de termos compõe `account-terms-modal`; a lista de documentos usa
-  seu asset local, e o Twig conserva o ID, `hidden` e `data-dialog-title`.
-- O gate CSS scope verifica o contrato de template, CSS e atributos; o gate SDC
-  renderiza o componente isoladamente. Resultado desta revisão ainda pendente.
+- O hook de aceite emite `account-terms-modal` diretamente com o formulário no
+  slot `content`; o componente conserva o ID, `hidden` e `data-dialog-title`.
+- O JavaScript continua anexado por `aculta_portal/account-terms-modal`; os
+  metadados de cache por usuário e `max-age: 0` são preservados.
+- Lint PHP e contrato SDC/UI Patterns Library: PASS. Revisão R2 independente:
+  sem bloqueios funcionais. Validação autenticada da Conta permanece pendente.
 
 ## Atualização — presenters de Eventos e Reações migrados para SDC (2026-11-13)
 

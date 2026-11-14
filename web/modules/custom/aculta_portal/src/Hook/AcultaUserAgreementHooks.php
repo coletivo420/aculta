@@ -74,9 +74,12 @@ final class AcultaUserAgreementHooks {
     }
     $form = $this->formBuilder->getForm(AcultaUserAgreementAcceptForm::class);
     $page_bottom['aculta_user_agreement_terms'] = [
-      '#theme' => 'aculta_portal_account_terms_modal',
-      '#title' => $this->translation->translate('Aceite dos termos'),
-      '#form' => $form,
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:account-terms-modal',
+      '#props' => [
+        'title' => (string) $this->translation->translate('Aceite dos termos'),
+      ],
+      '#slots' => ['content' => $form],
       '#attached' => ['library' => ['aculta_portal/account-terms-modal']],
       '#cache' => ['contexts' => ['user'], 'max-age' => 0],
     ];

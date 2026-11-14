@@ -713,14 +713,6 @@ final class PortalHooks {
   #[Hook('theme')]
   public function theme(): array {
     return [
-      'aculta_portal_account_terms_modal' => [
-        'variables' => [
-          'title' => NULL,
-          'form' => NULL,
-        ],
-        'template' => 'aculta-portal-account-terms-modal',
-        'path' => $this->moduleList->getPath('aculta_portal') . '/templates',
-      ],
       'aculta_portal_element' => [
         'variables' => [
           'tag' => 'span',
