@@ -537,6 +537,83 @@ final class PagePresentationHooks {
   }
 
   /**
+   * Maps donation back/donate actions to the shared button SDC.
+   */
+  #[Hook('preprocess_aculta_donation_back')]
+  public function preprocessDonationBack(array &$variables): void {
+    $this->preprocessDonationButton($variables, 'outline');
+  }
+
+  /**
+   * Maps donation calls to action to the shared button SDC.
+   */
+  #[Hook('preprocess_aculta_donation_donate')]
+  public function preprocessDonationDonate(array &$variables): void {
+    $this->preprocessDonationButton($variables, 'primary');
+  }
+
+  /**
+   * Composes the quick donation list from the list SDC and button SDCs.
+   */
+  #[Hook('preprocess_aculta_donation_quick')]
+  public function preprocessDonationQuick(array &$variables): void {
+    if (!$this->componentAvailable('donation-quick') || !$this->componentAvailable('button')) {
+      return;
+    }
+
+    $items = [];
+    foreach (is_array($variables['links'] ?? NULL) ? $variables['links'] : [] as $link) {
+      if (!is_array($link) || !isset($link['title'], $link['url'])) {
+        continue;
+      }
+      $items[] = [
+        '#type' => 'html_tag',
+        '#tag' => 'li',
+        'button' => [
+          '#type' => 'component',
+          '#component' => 'aculta420_v2:button',
+          '#props' => [
+            'text' => (string) $link['title'],
+            'url' => (string) $link['url'],
+            'variant' => 'secondary',
+          ],
+        ],
+      ];
+    }
+
+    $variables['component'] = [
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:donation-quick',
+      '#props' => [],
+      '#slots' => ['items' => $items],
+    ];
+  }
+
+  /**
+   * Builds a SDC render array for the neutral donation action hook.
+   */
+  private function preprocessDonationButton(array &$variables, string $variant): void {
+    if (!$this->componentAvailable('button')) {
+      return;
+    }
+
+    $attributes = $variables['attributes'] ?? [];
+    if ($attributes instanceof Attribute) {
+      $attributes = $attributes->toArray();
+    }
+    $variables['component'] = [
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:button',
+      '#props' => [
+        'text' => isset($variables['label']) ? (string) $variables['label'] : '',
+        'url' => isset($variables['href']) ? (string) $variables['href'] : NULL,
+        'variant' => $variant,
+      ],
+      '#attributes' => is_array($attributes) ? $attributes : [],
+    ];
+  }
+
+  /**
    * Maps compatible Portal components to V2 SDCs.
    *
    * The Portal fallback preprocess runs before theme preprocess and fills a

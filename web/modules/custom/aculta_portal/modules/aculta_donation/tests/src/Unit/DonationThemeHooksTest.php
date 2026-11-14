@@ -30,8 +30,8 @@ final class DonationThemeHooksTest extends UnitTestCase {
       ],
       array_keys($theme),
     );
-    $this->assertSame(['links' => []], $theme['aculta_donation_quick']['variables']);
-    $this->assertSame(['label' => NULL, 'href' => NULL], $theme['aculta_donation_donate']['variables']);
+    $this->assertSame(['links' => [], 'component' => NULL], $theme['aculta_donation_quick']['variables']);
+    $this->assertSame(['label' => NULL, 'href' => NULL, 'component' => NULL], $theme['aculta_donation_donate']['variables']);
     $this->assertSame('commerce_checkout_pane', $theme['commerce_checkout_pane__commerce_donation_pane']['base hook']);
   }
 

@@ -712,6 +712,14 @@ regras globalmente. Story: `map-canvas.default.story.yml`.
 - **Props:** `text`, `url`, `variant` (`primary`, `secondary`, `outline` ou `ghost`), `is_submit`, `disabled`, `icon_before`, `icon_after`.
 - **Estado:** entregue.
 
+### donation-quick — Valores rápidos de doação
+- **Papel:** lista valores e destinos preparados pelo módulo de doação, compondo cada ação com o SDC `button`.
+- **Props:** nenhuma.
+- **Slot:** `items`, itens `<li>` com botões renderizados.
+- **Story:** `donation-quick.default.story.yml`, com valores fictícios e opção aberta.
+- **Regra:** decisões, valores, destinos e ordem continuam no `aculta_donation`; o SDC só define a lista semântica.
+- **Estado:** emissor dos três itens foi migrado para UI Suite; fallback do módulo permanece para outros temas.
+
 ### status-messages — Mensagens de estado
 - **Papel:** mensagem anunciada a tecnologias assistivas, incluindo estados do carrinho.
 - **Props:** `type` (`status`, `info`, `warning` ou `error`), `messages` ou slot `content` para render arrays com links/ações, `role` opcional (`status`/`alert`), `dismissible` e `close_label`.
@@ -725,7 +733,7 @@ regras globalmente. Story: `map-canvas.default.story.yml`.
 - **Story:** `social-links-page.default.story.yml`.
 - **Regra:** o tema só apresenta os dados do módulo; não consulta dono, entidades ou destinos. Desde 2026-11-12 o H1 é renderizado pelo SDC `heading` (nível 1, faixa tricolor), mantendo o `id` usado por `aria-labelledby`.
 - **CSS:** listas e canais usam os atributos neutros `data-portal-ui` diretamente; o estilo acompanha este SDC e o SDC `site-footer`, sem classes de ponte no mapa global.
-- **Estado:** adapter e componente implementados em C4; H1 pelo SDC em 2026-11-12; validação visual pendente.
+- **Estado:** integração direta a partir do contrato neutro do LinkWeed; o módulo conserva o fallback para outros temas. Validação visual pendente.
 
 ### icon — Ícone
 - **Papel:** ícone SVG decorativo, injetado inline e oculto para leitores de tela (`aria-hidden`).

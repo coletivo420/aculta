@@ -101,6 +101,7 @@ final class PortalUiHooks {
     'coorganizer-title' => ['coorganizer-item__title'],
     'coorganizers-list' => ['coorganizers-list'],
     'donation-account-invite-link' => [],
+    'donation-quick' => [],
     'donation-register-dialog' => ['aculta-utility-dialog'],
     'donation-register-dialog-body' => ['aculta-utility-dialog__body'],
     'donation-register-dialog-close' => ['aculta-utility-dialog__close'],

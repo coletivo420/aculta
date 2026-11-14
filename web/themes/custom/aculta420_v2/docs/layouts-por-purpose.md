@@ -62,7 +62,7 @@ Componentes com consumo: `accordion`, `alerts-trigger`, `author-card`, `avatar`,
 `forum-topic`, `icon`, `layout-page`, `lms-lesson-page`, `map-popup`,
 `messenger-trigger`, `multidomain-bar`, `pagination`, `purpose-showcase`,
 `revista-listing`, `revista-publication`, `revista-teaser`, `site-footer`,
-`social-links-page`, `status-messages`, `tabs`, `wiki-entry`.
+`donation-quick`, `donation-presentation`, `social-links-page`, `status-messages`, `tabs`, `wiki-entry`.
 
 ## 2. Páginas por purpose
 
@@ -70,7 +70,7 @@ Componentes com consumo: `accordion`, `alerts-trigger`, `author-card`, `avatar`,
 | --- | --- | --- | --- |
 | `main` | `templates/layout/page.html.twig` (`layout-page`), `site-footer`, `multidomain-bar` | `layout-page`, `site-footer`, `multidomain-bar` | Shell usa componentes; página interna de conteúdo sem `hero-banner` |
 | `account` | Não localizado no repositório como template de página; Studio usa `context-tabs` e os componentes de perfil | `tabs`, `author-card` e `profile-details` consumidos para abas, identidade, bio e redes | `form-field` e `progress` sem consumer de Studio |
-| `support` (Apoio) | `aculta_donation`: `aculta-donation-donate`, `-summary`, `-quick`, `-back`, `-summary-container` | Nenhum SDC | Templates próprios do módulo, sem componente |
+| `support` (Apoio) | Hooks neutros do `aculta_donation`; templates do módulo são fallbacks para outros temas | `button`, `donation-quick`, `donation-presentation` | Blocos Doar/Voltar e valores rápidos emitem SDCs; formulários e resumo da doação continuam no módulo |
 | `magazine` (Revista) | `content/node--revista--full`, `content/node--revista--teaser`, `views/views-view--revista-sessoes--page-revista` | `revista-publication`, `revista-teaser`, `revista-listing`, `author-card` | Principal candidato a `card-cultural` com faixa de acento |
 | `wiki` | `content/node--wiki-entry--full`, `content/node--wiki-entry--teaser` | `wiki-entry`, `breadcrumb` | Aguarda confirmação da F2 para faixa de acento da Wiki |
 | `shop` (Loja) | Não localizado no repositório do tema | Nenhum | Aguarda autorização da Loja (ver `price`) |

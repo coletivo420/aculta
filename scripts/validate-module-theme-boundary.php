@@ -182,10 +182,13 @@ foreach ($files($module . '/templates', ['twig']) as $path) {
   $assert(!preg_match('/\sclass\s*=/', $text), 'Template do módulo com class= (apresentação deve ficar no tema): ' . basename($path));
   // @todo template do módulo tem um correspondente no tema (ou é só estrutura com fallback neutro).
   $themeTemplate = $theme . '/templates/' . basename($path);
-  // Template estrutural sem design (fallback de elemento genérico): o tema
-  // não precisa sobrescrever.
-  $structural = ['portal-element.html.twig'];
-  $assert(is_file($themeTemplate) || in_array(basename($path), $structural, TRUE), 'Template do módulo sem correspondente no tema (ACULTA420 deve sobrescrever): ' . basename($path));
+  // Templates com fallback semântico neutro podem ser consumidos diretamente
+  // por um SDC no preprocess do tema, sem override Twig ACULTA420.
+  $neutralFallbacks = [
+    'portal-element.html.twig',
+    'aculta-section.html.twig',
+  ];
+  $assert(is_file($themeTemplate) || in_array(basename($path), $neutralFallbacks, TRUE), 'Template do módulo sem correspondente no tema (ACULTA420 deve sobrescrever): ' . basename($path));
 }
 
 // 9. JS do módulo não usa seletores de classe de design (.portal-*,

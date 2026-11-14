@@ -1892,3 +1892,12 @@ State: Dev. No RC, production deployment, or release tag is declared.
 - Removidos os dois overrides Twig do tema. Os templates neutros do módulo
   continuam como fallback para outros temas. Restam 42 templates no tema;
   validação visual e autenticada no Runtime segue pendente.
+
+## Atualização — blocos de doação encaminhados diretamente a SDCs (2026-11-14)
+
+- Os blocos Doar/Voltar usam o SDC `button`; valores rápidos usam o novo SDC
+  `donation-quick`, com story e botões secundários. Decisões, valores, URLs e
+  cache continuam nos plugins do módulo.
+- Mantidos os templates do módulo como fallback para outros temas; removidos
+  os três overrides do tema. O catálogo passa a 140 SDCs/222 stories e o tema
+  fica com 39 templates; homologação visual no Runtime pendente.

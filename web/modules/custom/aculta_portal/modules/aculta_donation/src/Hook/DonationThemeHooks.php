@@ -23,18 +23,21 @@ class DonationThemeHooks {
       'aculta_donation_quick' => [
         'variables' => [
           'links' => [],
+          'component' => NULL,
         ],
       ],
       'aculta_donation_donate' => [
         'variables' => [
           'label' => NULL,
           'href' => NULL,
+          'component' => NULL,
         ],
       ],
       'aculta_donation_back' => [
         'variables' => [
           'label' => NULL,
           'href' => NULL,
+          'component' => NULL,
         ],
       ],
       'commerce_checkout_pane__commerce_donation_pane' => [
