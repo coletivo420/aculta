@@ -1768,6 +1768,9 @@ State: Dev. No RC, production deployment, or release tag is declared.
 - `forum-search-page` agora controla o wrapper completo da View e declara slots
   para título, filtros, resultados, estado vazio e demais regiões do Search API.
   O template fica responsável por conectar atributos e conteúdo Drupal ao SDC.
+- Criado `mail-envelope` para a tabela visual de mensagens, incluindo logo,
+  corpo e rodapé opcional. O template owner conserva o documento HTML, metadados,
+  CSS inline para claro/escuro e o caminho de texto simples.
 - Removidos `src/styles/forum.css`, a biblioteca `forum` e seu attachment em
   `PagePresentationHooks`. Listagem, categoria e busca carregam CSS a partir
   dos SDCs que efetivamente compõem cada View.
