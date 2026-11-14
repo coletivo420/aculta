@@ -33,8 +33,10 @@ anteriores e não substituem a conferência do código atual.
   oficial para ocultar SDCs individuais. O CSV de consumidores foi regenerado
   para o checkout atual; os campos `runtime_status` ainda incluem snapshots
   antigos. Não remover SDCs por busca literal: a ausência de referência não
-  prova ausência de uso editorial ou dinâmico. Classificar os 35 sem referência
-  literal pela intenção de biblioteca e confirmar seleções editoriais no
+  prova ausência de uso editorial ou dinâmico. Os 35 sem referência literal
+  foram classificados pela intenção declarada nos manifests em
+  `docs/architecture/ACULTA420-V2-AUDITORIA-SDCS-SEM-REFERENCIA-2026-11-14.md`;
+  todos permanecem publicados. Confirmar seleções editoriais persistidas no
   Runtime após liberar preflight. Matriz:
   `docs/architecture/inventarios/ui-suite-consumidores-iniciais.csv`.
 - Decisão do responsável (2026-11-13): remover por completo o módulo customizado
@@ -113,8 +115,11 @@ anteriores e não substituem a conferência do código atual.
    do tema. Foram achadas
    referências literais a 110 SDCs; os 35 sem referência literal não são
    candidatos automáticos a exclusão, pois a Library os publica e usos
-   editoriais/dinâmicos não aparecem nessa busca. Ainda falta reconciliar as
-   escolhas editoriais persistidas no Runtime e revisar a lista por consumidor.
+   editoriais/dinâmicos não aparecem nessa busca. A leitura do provider sem
+   cache encontrou 145 definições SDC; a classificação de intenção dos 35 está
+   em `docs/architecture/ACULTA420-V2-AUDITORIA-SDCS-SEM-REFERENCIA-2026-11-14.md`.
+   Ainda falta reconciliar seleções editoriais persistidas no Runtime e revisar
+   consumidores por item.
    Leituras Drush somente no Runtime em 2026-11-14 confirmaram estado ativo
    diferente do Sync: `aculta_forum_categories.page_categories` usa row UI
    Patterns + `forum-category`, mas estilo `default` agrupado por `parent_name`;
