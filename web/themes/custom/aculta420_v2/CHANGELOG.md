@@ -1885,6 +1885,13 @@ State: Dev. No RC, production deployment, or release tag is declared.
 - Removido o override `aculta-section.html.twig`. Restam 44 templates no tema;
   validação visual no Runtime continua pendente.
 
+## Atualização — shell da Conta encaminhado diretamente a SDC (2026-11-13)
+
+- `AccountShellBuilder` preserva o conteúdo em render array; o preprocess envia
+  os dados tipados ao SDC `account-shell`, mantendo cache e biblioteca de
+  navegação no wrapper do módulo. Removido o override Twig do tema; restam 37
+  templates Twig.
+
 ## Atualização — botão do Portal encaminhado diretamente a SDC (2026-11-13)
 
 - O hook neutro `aculta_portal_button` agora emite o SDC `button` via preprocess

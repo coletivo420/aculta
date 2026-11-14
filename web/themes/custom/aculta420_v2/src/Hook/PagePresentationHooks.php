@@ -624,6 +624,57 @@ final class PagePresentationHooks {
   }
 
   /**
+   * Sends the account shell's semantic data and content slot to its SDC.
+   */
+  #[Hook('preprocess_aculta_portal_shell')]
+  public function preprocessPortalShell(array &$variables): void {
+    if (!$this->componentAvailable('account-shell')) {
+      return;
+    }
+
+    $menuItems = [];
+    foreach (is_array($variables['menu_items'] ?? NULL) ? $variables['menu_items'] : [] as $item) {
+      if (!is_array($item) || !isset($item['label'], $item['href'])) {
+        continue;
+      }
+      $menuItems[] = [
+        'label' => (string) $item['label'],
+        'href' => (string) $item['href'],
+        'active' => (bool) ($item['active'] ?? FALSE),
+      ];
+    }
+
+    $accordionItems = [];
+    foreach (is_array($variables['accordion_items'] ?? NULL) ? $variables['accordion_items'] : [] as $item) {
+      if (!is_array($item) || !isset($item['label'], $item['href'])) {
+        continue;
+      }
+      $accordionItems[] = [
+        'label' => (string) $item['label'],
+        'href' => (string) $item['href'],
+        'open' => (bool) ($item['open'] ?? FALSE),
+      ];
+    }
+
+    $logout = is_array($variables['logout'] ?? NULL) ? $variables['logout'] : [];
+    $variables['component'] = [
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:account-shell',
+      '#props' => [
+        'title' => (string) new \Drupal\Core\StringTranslation\TranslatableMarkup('Minha conta'),
+        'section_title' => (string) ($variables['section_title'] ?? ''),
+        'menu_items' => $menuItems,
+        'accordion_items' => $accordionItems,
+        'logout' => [
+          'label' => (string) ($logout['label'] ?? ''),
+          'href' => (string) ($logout['href'] ?? ''),
+        ],
+      ],
+      '#slots' => ['content' => $variables['content'] ?? []],
+    ];
+  }
+
+  /**
    * Builds a SDC render array for the neutral donation action hook.
    */
   private function preprocessDonationButton(array &$variables, string $variant): void {

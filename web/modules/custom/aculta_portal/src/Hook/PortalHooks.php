@@ -741,6 +741,7 @@ final class PortalHooks {
           'accordion_items' => [],
           'logout' => [],
           'content' => NULL,
+          'component' => NULL,
         ],
         'template' => 'aculta-portal-shell',
         'path' => $this->moduleList->getPath('aculta_portal') . '/templates',
