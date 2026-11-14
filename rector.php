@@ -13,7 +13,7 @@ return static function (RectorConfig $rectorConfig): void {
         __DIR__ . '/web/modules/custom/aculta_mcp',
         __DIR__ . '/web/modules/custom/aculta_mcp_client',
         __DIR__ . '/web/modules/custom/aculta_portal',
-        __DIR__ . '/web/themes/custom/aculta420',
+        __DIR__ . '/web/themes/custom/aculta420_v2',
     ]);
 
     $rectorConfig->sets([

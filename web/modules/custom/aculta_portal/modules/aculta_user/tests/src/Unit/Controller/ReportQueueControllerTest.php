@@ -62,6 +62,8 @@ final class ReportQueueControllerTest extends UnitTestCase {
 
       /**
        * Returns an empty queue with a second page to exercise the pager.
+       *
+       * @return array{items: array<never>, total_items: int, total_pages: int}
        */
       public function getQueueItems(AccountInterface $account, string $purpose, string $status, int $page, int $limit): array {
         return ['items' => [], 'total_items' => 0, 'total_pages' => 2];
