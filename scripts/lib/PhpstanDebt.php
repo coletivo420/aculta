@@ -23,7 +23,10 @@ final class PhpstanDebt {
    *   Parsed entries in file order.
    */
   public static function parseBaseline(string $contents): array {
-    $lines = (array) preg_split('/\R/', $contents);
+    $lines = preg_split('/\R/', $contents);
+    if ($lines === FALSE) {
+      throw new \RuntimeException('não foi possível dividir o baseline em linhas.');
+    }
     $lineCount = count($lines);
     $entries = [];
     $index = 0;
@@ -56,7 +59,7 @@ final class PhpstanDebt {
       $message = self::decodeScalar($message);
       $identifier = self::decodeScalar($fields['identifier']);
       $path = self::decodeScalar($fields['path']);
-      $count = (int) self::decodeScalar($fields['count']);
+      $count = (int) self::decodeScalar((string) $fields['count']);
       $error = '';
       if ($path === '') {
         $error = 'entrada sem path';

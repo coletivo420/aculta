@@ -411,7 +411,7 @@ function phpstan_guard_new_ignores(string $diffText): array {
       $line++;
       continue;
     }
-    if (preg_match('/@phpstan-ignore(-next-line|-line)?\b/', $row) === 1) {
+    if (preg_match('~(?://|\#|/\*|\*)\s*@phpstan-ignore(-next-line|-line)?\b~', $row) === 1) {
       $ignores[] = ['path' => $path, 'line' => $line];
     }
     $line++;
@@ -421,6 +421,9 @@ function phpstan_guard_new_ignores(string $diffText): array {
 
 /**
  * Returns changed PHP files from an explicit list or git diff.
+ *
+ * @param array<string, string> $options
+ *   CLI options.
  *
  * @return list<string>
  *   Repository-relative paths.
