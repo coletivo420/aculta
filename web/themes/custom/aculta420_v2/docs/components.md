@@ -964,7 +964,7 @@ Cada entrada tem: papel, props, slots, JavaScript (se houver), estado e a regra 
 
 ### forum-reply-mirror — Cartão do Post do Fórum Espelhado
 - **Papel:** cartão de post do fórum no layout espelhado, para comentários pares: autor, faixa e reações à direita; ações à esquerda.
-- **Props:** `author_name` (string, obrigatório), `timestamp`, `author_posts`, `author_reactions` (opcionais).
+- **Props:** `author_name` (string, obrigatório), `timestamp`, `author_posts` (opcional).
 - **Slots:** `avatar`, `body`, `actions`, `reactions_slot`.
 - **Story:** `forum-reply-mirror.default.story.yml`.
 - **Regra:** desktop (a partir de 48rem) inverte colunas e faixa; mobile (abaixo de 48rem) muda só a faixa de lado. Faixa de destaque vermelha (`--button-danger-bg`) e linha acima das ações verde (`--color-brand-primary`). Os comentários pares de `field_aculta_discussion` usam as mesmas regras em `forum-post-card.css`.
@@ -972,7 +972,7 @@ Cada entrada tem: papel, props, slots, JavaScript (se houver), estado e a regra 
 
 ### forum-opening-post — Postagem de Abertura do Tópico
 - **Papel:** primeiro post do tópico na página completa, com o mesmo destaque da linha de tópico fixado.
-- **Props:** `author_name` (string, obrigatório), `author_posts`, `author_reactions`, `timestamp`, `permalink_url`, `delete_url`, `edit_url`, `quote_url`, `reply_url`, `density`. O chamador fornece apenas os destinos permitidos pela política de acesso e moderação; ícones são resolvidos pelos SDCs das ações.
+- **Props:** `author_name` (string, obrigatório), `author_posts`, `timestamp`, `permalink_url`, `delete_url`, `edit_url`, `quote_url`, `reply_url`, `density`. O chamador fornece apenas os destinos permitidos pela política de acesso e moderação; ícones são resolvidos pelos SDCs das ações.
 - **Slots:** `body`.
 - **Story:** `forum-opening-post.default.story.yml`.
 - **Regra:** destaque usa barra lateral `--color-brand-primary` e fundo `--color-surface-highlight`; o corpo vem do Drupal, sem leitura de entidade no componente.
@@ -989,7 +989,7 @@ Cada entrada tem: papel, props, slots, JavaScript (se houver), estado e a regra 
 
 ### forum-post-card — Cartão de Post do Fórum
 - **Papel:** postagem no tópico com faixa colorida no topo (stripe), identificação de autor, papel, contagem de posts, timestamp, corpo e reações.
-- **Props:** `stripe` (enum `brand|highlight|member`), `author_name` (string, obrigatória), `author_role` (opcional), `author_posts` (opcional), `timestamp` (opcional), `reactions` (opcional), `reply_url` (opcional).
+- **Props:** `stripe` (enum `brand|highlight|member`), `author_name` (string, obrigatória), `author_role` (opcional), `author_posts` (opcional), `timestamp` (opcional), `reactions` (opcional), `reply_url` (opcional). Contagens agregadas de reação do autor não fazem parte deste cartão; a barra recebida é um slot renderizável.
 - **Slots:** `avatar`, `body`, `actions`, `reply`.
 - **Story:** `forum-post-card.default.story.yml`.
 - **Regra:** o papel do autor e a variante de faixa vêm do Portal; o tema não consulta papel de usuário nem entidade. Dados ausentes viram placeholder `—`.

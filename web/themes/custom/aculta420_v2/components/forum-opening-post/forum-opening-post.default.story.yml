@@ -2,7 +2,6 @@ name: Postagem de abertura do tópico
 props:
   author_name: PiradoPirata
   author_posts: 9
-  author_reactions: 1
   timestamp: 07/11/2026 14:36
   permalink_url: /forum/topico/123#post-1
   edit_url: /discussoes/editar/comment/1

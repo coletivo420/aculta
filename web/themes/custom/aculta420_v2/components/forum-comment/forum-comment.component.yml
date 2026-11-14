@@ -53,11 +53,6 @@ props:
       title: Contagem de publicações
       description: Quantidade de publicações do autor ou null quando indisponível.
       default: null
-    author_reactions:
-      type: [string, integer, 'null']
-      title: Reações recebidas
-      description: Quantidade de reações recebidas pelo autor ou null quando indisponível.
-      default: null
     timestamp:
       type: [string, 'null']
       title: Data do comentário

@@ -29,11 +29,6 @@ props:
       title: Contagem de posts do autor
       description: Número de posts do autor mostrado como metadado opcional.
       default: null
-    author_reactions:
-      type: [string, integer, 'null']
-      title: Contagem de reações recebidas pelo autor
-      description: Número de reações recebidas pelo autor mostrado como metadado opcional.
-      default: null
 slots:
   avatar:
     title: Avatar ou cartão de autor

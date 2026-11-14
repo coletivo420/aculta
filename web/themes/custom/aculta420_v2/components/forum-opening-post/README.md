@@ -4,7 +4,7 @@ Primeiro post do tópico na página completa. Usa o mesmo destaque da linha de t
 
 ## Propriedades (Props)
 - `author_name` (string, obrigatório): nome do autor do tópico.
-- `author_posts` e `author_reactions` (string, inteiro ou null): contagens de autoria opcionais.
+- `author_posts` (string, inteiro ou null): contagem opcional de posts do autor.
 - `timestamp` (string ou null): data de publicação já formatada.
 - `permalink_url`, `delete_url`, `edit_url`, `quote_url` e `reply_url` (string ou null): destinos das ações opcionais. O chamador é responsável por decidir quais URLs pode fornecer conforme as regras de acesso e moderação.
 - `density` (string): espaçamento do cartão (`default` ou `compact`).

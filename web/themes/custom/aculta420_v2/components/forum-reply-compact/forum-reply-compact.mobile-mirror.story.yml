@@ -6,7 +6,6 @@ props:
   author_name: PiradoPirata
   timestamp: Há 1 hora
   reacted: true
-  reaction_count: 3
 slots:
   admin:
     '#type': component

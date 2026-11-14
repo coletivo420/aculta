@@ -46,11 +46,6 @@ props:
       title: Usuário atual reagiu
       description: Marca visualmente a resposta quando o usuário atual já reagiu a ela.
       default: false
-    reaction_count:
-      type: [integer, 'null']
-      title: Contagem de reações
-      description: Total de reações resumidas na resposta; null omite a contagem.
-      default: null
 slots:
   avatar:
     title: Avatar do autor

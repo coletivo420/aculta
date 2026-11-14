@@ -24,11 +24,6 @@ props:
       title: Contagem de posts do autor
       description: Total formatado de posts do autor; null omite essa estatística.
       default: null
-    author_reactions:
-      type: [string, integer, 'null']
-      title: Contagem de reações recebidas pelo autor
-      description: Total formatado de reações recebidas; null omite essa estatística.
-      default: null
     timestamp:
       type: [string, 'null']
       title: Data de publicação formatada

@@ -64,11 +64,6 @@ props:
       title: Contagem de posts do autor
       description: Número de posts do autor; null ou string vazia omite a contagem.
       default: null
-    author_reactions:
-      type: [string, integer, 'null']
-      title: Contagem de reações recebidas pelo autor
-      description: Número de reações recebidas pelo autor, apresentado como metadado.
-      default: null
     timestamp:
       type: [string, 'null']
       title: Data ou horário da publicação

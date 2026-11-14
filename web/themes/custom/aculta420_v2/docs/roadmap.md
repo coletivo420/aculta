@@ -100,9 +100,9 @@ anteriores e não substituem a conferência do código atual.
    passou para 150 SDCs/244 stories, confirmando UI Patterns Library oficial
    habilitada e ausência de catálogo customizado. O validator Drupal passou
    isoladamente em 95 SDCs; essa validação não cobre `forum-quote` nem `reply-indent`.
-   Auditoria atual do worktree (150 manifests): 555 props de topo, das quais
+   Auditoria atual do worktree (150 manifests): 550 props de topo, das quais
    todas têm descrição. Considerando os nós de schema tipados sob as props,
-   incluindo itens de arrays e schemas aninhados, são 719 nós, todos com
+   incluindo itens de arrays e schemas aninhados, são 714 nós, todos com
    descrição. O lote final conferiu `multidomain-bar`, `navigation-bar`,
    `payment-notice` e `purpose-showcase` contra templates/producers PHP, além
    de schemas aninhados em `statistics-trend-chart`, `statistics-period-filter`,
@@ -116,7 +116,7 @@ anteriores e não substituem a conferência do código atual.
    (`author-card`, `donation-presentation`, `forum-topic`, `layout-page`,
    `site-footer`, `wiki-entry`) permanecem props comuns por representarem
    contexto/conteúdo/estrutura. Os enums metadata e SDC estão alinhados nos sete
-   manifests. A prop sem consumidor `auth-dialog.password_reset_url` foi removida do schema/story após busca estática; a recuperação de senha continua contextual nas mensagens do `UserLoginForm`, sem link persistente inicial. O gate SDC agora garante alinhamento e labels nos manifests; schema e contrato da
+   manifests. A prop sem consumidor `auth-dialog.password_reset_url` foi removida do schema/story após busca estática; a recuperação de senha continua contextual nas mensagens do `UserLoginForm`, sem link persistente inicial. Os contratos sem saída `forum-post-card.author_reactions`, `forum-comment.author_reactions`, `forum-opening-post.author_reactions`, `forum-reply-mirror.author_reactions` e `forum-reply-compact.reaction_count` foram removidos com suas stories/chamadas; a barra recebida segue no slot, e os dados de perfil continuam ligados ao cartão `author-card` quando aplicável. O gate SDC agora garante alinhamento e labels nos manifests; schema e contrato da
    Library passaram. Preview e render direto no Runtime continuam pendentes. Os 159 nomes de props obrigatórias aparecem nos Twig dos próprios SDCs; isso
    confirma uso nominal, mas não os valores do producer. Oito props são fornecidas
    por stories executáveis PHP/provider em vez de aparecer inline no YAML. Avaliar

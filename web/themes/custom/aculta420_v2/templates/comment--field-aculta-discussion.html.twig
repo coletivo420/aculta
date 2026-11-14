@@ -9,7 +9,6 @@
 {% endset %}
 {% set author_name_val = author_card ? (author_card['#display_name']|default(author)) : author %}
 {% set author_posts_val = author_posts is defined ? author_posts : null %}
-{% set author_reactions_val = author_reactions_received is defined ? author_reactions_received : (author_card ? author_card['#reactions_received']|default(null) : null) %}
 {% set composer_target_id = 'discussion-composer-' ~ commented_entity_type ~ '-' ~ commented_entity_id ~ '-' ~ comment.id %}
 
 {% if publication_comment|default(false) %}
@@ -81,7 +80,6 @@
   composer_target_id: composer_target_id,
   author_name: author_name_val|default('Participante'|t),
   author_posts: author_posts_val,
-  author_reactions: author_reactions_val,
   timestamp: created|default(null),
   accent_side: accent_side|default('start'),
   reply_depth: reply_depth|default(0),

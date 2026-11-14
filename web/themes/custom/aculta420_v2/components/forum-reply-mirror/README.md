@@ -7,7 +7,7 @@ Variante de resposta do fórum para comentários pares. Reproduz o layout de `fo
 - **Cores:** faixa de destaque à direita em vermelho (`--button-danger-bg`); linha acima das ações em verde (`--color-brand-primary`).
 
 ## Propriedades
-- `author_name` (obrigatório), `timestamp`, `author_posts`, `author_reactions`.
+- `author_name` (obrigatório), `timestamp`, `author_posts`.
 
 ## Slots
 - `avatar`, `body`, `actions`, `reactions_slot`.

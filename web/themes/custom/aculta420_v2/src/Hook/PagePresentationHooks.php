@@ -417,7 +417,6 @@ final class PagePresentationHooks {
       '#props' => [
         'author_name' => $owner->getDisplayName(),
         'author_posts' => $variables['author_posts'] ?? NULL,
-        'author_reactions' => $variables['author_reactions_received'] ?? NULL,
         'timestamp' => $this->dateFormatter?->format($node->getCreatedTime(), 'custom', 'd/m/Y H:i')
           ?? date('d/m/Y H:i', $node->getCreatedTime()),
         'permalink_url' => $variables['url'] ?? NULL,

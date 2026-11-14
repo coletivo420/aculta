@@ -2,7 +2,6 @@ name: Cartão do Post do Fórum Espelhado (mobile)
 props:
   author_name: PiradoPirata
   author_posts: 342
-  author_reactions: 19
   timestamp: Há 3 horas
   density: compact
 slots:
