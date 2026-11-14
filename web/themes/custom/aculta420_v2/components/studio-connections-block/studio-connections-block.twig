@@ -17,7 +17,6 @@
             <div class="aculta-studio-connections-block__avatar">
               {{ include('aculta420_v2:avatar', {
                 size: 'md',
-                label: item.name,
                 media: item.avatar_url ? ('<img src="' ~ item.avatar_url|e('html_attr') ~ '" alt="' ~ (item.avatar_alt|default(item.name))|e('html_attr') ~ '" loading="lazy">')|raw : null
               }, with_context = false) }}
             </div>

@@ -12,7 +12,7 @@
     <div class="forum-quote__text">
       {% if author_name %}
         <div class="forum-quote__author-row">
-                    {{ include('aculta420_v2:avatar', { size: 'sm', label: author_name, media: avatar ? avatar|raw : null }, with_context = false) }}
+                    {{ include('aculta420_v2:avatar', { size: 'sm', media: avatar ? avatar|raw : null }, with_context = false) }}
           <cite class="forum-quote__author">{{ author_name }}</cite>
         </div>
       {% endif %}

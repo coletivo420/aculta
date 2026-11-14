@@ -12,11 +12,6 @@ props:
       title: Tamanho
       enum: [xs, sm, md, lg, xl]
       default: md
-    label:
-      type: string
-      title: Nome acessível para o fallback neutro
-      minLength: 1
-      default: Avatar
 slots:
   media:
     title: Mídia do avatar

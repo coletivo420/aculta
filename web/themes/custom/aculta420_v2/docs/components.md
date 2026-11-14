@@ -416,16 +416,16 @@ identidade visual de domínio no SDC. Sem JavaScript.
 ### avatar
 
 Consumer atual: `account-menu` usa o componente no resumo e no painel de
-identidade (32 px, `size: sm`), com a mídia entregue pelo Portal e o fallback
-neutro sem foto. `author-card` mantém o slot de autoria.
+identidade (32 px, `size: sm`), com a mídia entregue pelo Portal (acervo do ACULTA
+ou foto da conta). `author-card` mantém o slot de autoria.
 
 ### avatar — contrato
 
-Apresenta a mídia fornecida pelo módulo proprietário no slot `media` e mantém o
-texto alternativo do render array. Sem mídia, mostra o ícone neutro `user-circle`
-com nome acessível; não gera iniciais nem consulta usuário. Props: `size`
-(`xs`, `sm`, `md`, `lg`, `xl`) e `label` (usado no fallback). Stories:
-`avatar.default.story.yml` e `avatar.fallback.story.yml`. Sem JavaScript.
+Apresenta a mídia do sistema de avatar do ACULTA no slot `media`, fornecida pelo
+módulo proprietário (acervo ou foto da conta, via `AvatarResolver`), e mantém o
+texto alternativo do render array. Não há fallback próprio: sem mídia, a forma
+fica vazia; nunca há ícone, inicial ou letra gerada do nome. Prop: `size`
+(`xs`, `sm`, `md`, `lg`, `xl`). Story: `avatar.default.story.yml`. Sem JavaScript.
 
 ### tabs
 

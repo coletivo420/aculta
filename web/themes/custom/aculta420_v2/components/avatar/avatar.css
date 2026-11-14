@@ -20,13 +20,6 @@
   object-fit: cover;
 }
 
-.aculta-avatar__fallback {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  inline-size: 55%;
-}
-
 .aculta-avatar--xs { inline-size: 1.5rem; }
 .aculta-avatar--sm { inline-size: 2rem; }
 .aculta-avatar--md { inline-size: 2.5rem; }
