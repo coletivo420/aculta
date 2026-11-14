@@ -12,23 +12,28 @@ props:
       type: string
       title: Identificador do container alvo
       minLength: 1
+      description: ID DOM estável do compositor usado como alvo para atualizações HTMX.
     status:
       type: string
       title: Estado do compositor
       enum: [editando, enviando, erro, enviado]
       default: editando
+      description: Estado da submissão refletido nas classes e atributos de estado do compositor.
     host_title:
       type: [string, 'null']
       title: Título do fórum ou espaço onde o tópico será criado
       default: null
+      description: Nome público do fórum ou espaço em que o novo tópico será publicado, quando disponível.
     trigger_label:
       type: string
       title: Texto do botão que abre o popup
       default: Novo tópico
+      description: Texto visível e nome acessível do controle que abre o formulário de novo tópico.
     dialog_title:
       type: string
       title: Título do popup
       default: Novo tópico
+      description: Título apresentado no cabeçalho do diálogo de criação de tópico.
 slots:
   messages:
     title: Mensagens de status ou erro

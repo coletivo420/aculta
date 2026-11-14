@@ -24,6 +24,7 @@ $expectedUnknownProps = [
   'aculta420_v2:forum-sidebar-panels' => ['featured', 'moderators', 'related', 'rules', 'stats'],
   'aculta420_v2:forum-topic-card' => ['badges'],
   'aculta420_v2:forum-topic-row' => ['badges'],
+  'aculta420_v2:mail-envelope' => ['colors'],
   'aculta420_v2:statistics-category-ranking' => ['rows'],
   'aculta420_v2:studio-calendar' => ['filters', 'selected_day_events', 'weeks'],
 ];

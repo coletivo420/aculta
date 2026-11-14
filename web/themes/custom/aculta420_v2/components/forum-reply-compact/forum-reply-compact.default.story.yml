@@ -32,7 +32,6 @@ slots:
       target_id: discussion-reactions-reply-story
       entity_type: comment
       entity_id: '2'
-      total_count: 3
       user_reaction: broccoli
       default_reaction: broccoli
       can_react: true

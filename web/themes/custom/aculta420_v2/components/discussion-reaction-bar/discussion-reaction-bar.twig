@@ -1,16 +1,14 @@
 {#
 /**
  * @file
- * Barra de Reações (interativa): permite reagir, com até 2 reações visíveis, "+" com popover das demais e seletor de reações.
+ * Barra de Reações (interativa): permite reagir e abrir a paleta integrada de opções.
  * Quando o usuário não pode reagir, renderiza a Barra de Reações Recebidas (somente leitura).
  * Popovers nativos (atributo popover): ficam sobre a página e não deslocam as reações.
  */
 #}
 {% set default_reaction = default_reaction|default('broccoli') %}
 {% set user_reaction = user_reaction|default(null) %}
-{% set total_count = total_count|default(0) %}
 {% set can_react = can_react|default(false) %}
-{% set is_own_content = is_own_content|default(false) %}
 {# Ids dos popovers únicos por instância: a mesma barra pode aparecer várias vezes numa página. #}
 {% set uid = random(100000000) %}
 {% set more_id = 'reaction-more-' ~ uid %}

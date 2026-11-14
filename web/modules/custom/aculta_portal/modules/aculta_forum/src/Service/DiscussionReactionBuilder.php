@@ -10,7 +10,6 @@ use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
-use Drupal\user\EntityOwnerInterface;
 
 /**
  * Builds the discussion reaction bar render array.
@@ -30,9 +29,6 @@ class DiscussionReactionBuilder {
     $entityType = $entity->getEntityTypeId();
     $entityId = (int) $entity->id();
     $uid = $account->isAuthenticated() ? (int) $account->id() : NULL;
-    $authorUid = $entity instanceof EntityOwnerInterface ? (int) $entity->getOwnerId() : 0;
-    $isOwnContent = ($uid !== NULL && $uid > 0 && $authorUid > 0 && $uid === $authorUid);
-
     $reactionsData = $this->reactionManager->loadReactions($entityType, $entityId, $uid);
     $access = $this->reactionEndpointAccess->access($entityType, (string) $entityId, $account);
     $canReact = $access->isAllowed();
@@ -59,12 +55,10 @@ class DiscussionReactionBuilder {
         'entity_type' => $entityType,
         'entity_id' => (string) $entityId,
         'reactions' => $reactionsData['reactions'],
-        'total_count' => $reactionsData['total_count'],
         'user_reaction' => $reactionsData['user_reaction'],
         'allowed_reactions' => $allowedReactions,
         'default_reaction' => $defaultReaction,
         'can_react' => $canReact,
-        'is_own_content' => $isOwnContent,
         'react_url' => $reactUrl,
         'csrf_token' => $csrfToken,
       ],

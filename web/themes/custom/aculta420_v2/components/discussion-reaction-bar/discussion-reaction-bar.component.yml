@@ -1,6 +1,6 @@
 $schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
 name: Barra de Reações
-description: Barra interativa de reações com contador de emojis e seletor popup no estilo Discourse.
+description: Barra interativa para publicar ou remover uma reação; a paleta de opções faz parte da própria barra.
 status: stable
 group: Comunidade
 props:
@@ -11,46 +11,48 @@ props:
     target_id:
       type: string
       title: ID do elemento alvo para HTMX
+      description: Identificador DOM único usado como alvo da atualização HTMX da barra para esta entidade.
     entity_type:
       type: string
       title: Tipo de entidade
       enum: [comment, aculta_forum_post, node]
+      description: Tipo de entidade do Drupal ao qual a reação pertence, dentro dos tipos aceitos pelo endpoint do Fórum.
     entity_id:
       type: string
       title: ID da entidade
+      description: Identificador da entidade do Drupal cujas reações serão exibidas e atualizadas.
     reactions:
       type: object
       title: Mapa de reações ativas com contagem
       default: {}
-    total_count:
-      type: integer
-      title: Total de reações
-      default: 0
+      description: Mapa indexado pelo identificador da reação; cada item contém a contagem calculada pelo módulo proprietário.
     user_reaction:
       type: [string, 'null']
       title: Emoji reagido pelo usuário atual
       default: null
+      description: Identificador da reação atualmente registrada para o usuário, ou null quando ele ainda não reagiu.
     allowed_reactions:
       type: object
       title: Catálogo de emojis permitidos
       default: {}
+      description: Catálogo autorizado de opções, indexado pelo identificador da reação e com ícone e rótulo fornecidos pelo Fórum.
     default_reaction:
       type: string
       title: Emoji padrão de clique rápido
       default: broccoli
+      description: Identificador da opção acionada pelo botão de reação rápida; deve corresponder a uma entrada do catálogo permitido.
     can_react:
       type: boolean
       title: Se o usuário atual pode reagir
       default: false
-    is_own_content:
-      type: boolean
-      title: Se o post pertence ao usuário atual
-      default: false
+      description: Resultado de acesso preparado pelo módulo Fórum; false apresenta somente a barra de reações recebidas.
     react_url:
       type: string
       title: URL para submissão da reação
       default: ''
+      description: URL do endpoint de reação gerada pelo módulo Fórum após resolver a entidade.
     csrf_token:
       type: string
       title: Token CSRF para envio seguro
       default: ''
+      description: Token CSRF associado à entidade e emitido pelo módulo Fórum para proteger os envios POST.

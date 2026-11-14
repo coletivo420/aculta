@@ -17,7 +17,6 @@ slots:
       target_id: discussion-reactions-quote-story
       entity_type: comment
       entity_id: '1'
-      total_count: 19
       user_reaction: thumbs_up
       default_reaction: broccoli
       can_react: true

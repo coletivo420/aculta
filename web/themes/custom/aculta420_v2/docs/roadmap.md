@@ -81,15 +81,20 @@ anteriores e não substituem a conferência do código atual.
    Não cortar SDCs pela falta de referência literal: a Library atual lista as
    definições do provider. Stories para `hint`, `sales-panel` e `secret-reveal`
    foram adicionadas. Todos os slots agora têm título e descrição, e as props
-   de topo têm título; o gate exige esses metadados. A contagem antiga de 440
-   props sem descrição foi substituída pela leitura recursiva dos manifests
-   antes da purga: 371 props de topo e 492 nós de schema sem descrição em 81 SDCs.
-   Recalcular para os 145 SDCs atuais. Nesta
+   de topo têm título; o gate exige esses metadados. Auditoria atual dos 145
+   manifests: 526 props de topo, das quais 333 ainda não têm descrição;
+   seguindo `properties`, `items`, `additionalProperties`, `oneOf`, `anyOf` e
+   `allOf`, são 654 nós de propriedade, com 429 sem descrição em 75 SDCs. O
+   snapshot anterior à purga tinha 539 props de topo/371 sem descrição e 667
+   nós recursivos/467 sem descrição em 81 SDCs; a métrica antiga de 492 foi
+   descartada por não reproduzir a contagem atual. Nesta
    rodada, os 18 manifests anteriores do domínio Fórum foram conferidos contra seus Twig e
    tiveram todos esses campos documentados. A checagem do provider instalado encontrou
-   21 props com tipo `unknown`, em 12 SDCs; duas são obrigatórias e não há
-   Sources UI Patterns para esse tipo. A auditoria classificou os produtores
-   encontrados e registrou as fontes na ADR-056. Os presenters de Eventos e a
+   A validação atual do provider encontrou 22 props `unknown` em 13 SDCs,
+   incluindo `mail-envelope.colors`; duas props obrigatórias já estavam no
+   inventário anterior. O objeto de cores do envelope é fornecido pelo adapter
+   de e-mail, sem Source configurável no provider. A auditoria classificou os
+   produtores encontrados e registrou as fontes na ADR-056. Os presenters de Eventos e a
    barra de reações já chamam SDCs diretamente, preservando cálculo, acesso e
    cache nos módulos. O seletor HTMX e seus SDCs (`discussion-reaction-picker`,
    `discussion-reaction-category`, `discussion-reaction-option`) foram removidos.
@@ -183,7 +188,7 @@ Cada um exige revisão de fronteira com seu módulo owner antes de remoção.
 | Grupo/arquivos | Evidência encontrada | Direção de planejamento |
 | --- | --- | --- |
 | `layout/html.html.twig`, `layout/page.html.twig` | Infraestrutura de documento/página Drupal. O override HTML mantém `#drupal-modal` (consumido pelos comandos Dialog/AJAX do Core e pelo UI Icons Picker), favicon, Apple touch icon, manifest e configuração HTMX. O fallback `core/modules/system/templates/html.html.twig` não contém o contêiner `#drupal-modal` nem esses quatro metadados. `page.html.twig` compõe `layout-page`, mas também seleciona conteúdo/variantes para LMS, Studio e rodapé social. | Não remover `html.html.twig` por comparação superficial com o Core. Para retirá-lo, primeiro migrar os metadados para attachments do Drupal e fornecer o alvo `#drupal-modal` por uma integração renderizável, preservando a ordem dos placeholders; validar diálogos AJAX, Entity Embed e UI Icons. Para `page.html.twig`, mover decisões de domínio para preprocess/render arrays; manter a ponte de regiões somente enquanto nenhum plugin/layout UI Suite substituir essa composição sem perder os contratos do page hook. |
-| `ui-patterns-overview-page.html.twig`, `ui-patterns-stories-compact.html.twig`, `ui-patterns-stories-full.html.twig` | Overrides remanescentes da Library; implementam catálogo e prévias progressivas/HTMX, exibem metadados e hidratam props/slots de stories. `ui-patterns-single-page.html.twig` foi removido em 2026-11-14 e voltou ao template upstream. | Manter overview/stories enquanto o upstream não oferecer preview sob demanda: a implementação oficial renderiza as stories no overview, incluindo 232 no checkout atual. A documentação oficial permite overrides de template e informa migração futura para SDC/display building em 2.1/2.2. Migrar só quando a API suportar lazy loading e mantiver todas as stories disponíveis; preservar todos os SDCs e stories catalogados. |
+| `ui-patterns-overview-page.html.twig`, `ui-patterns-stories-compact.html.twig`, `ui-patterns-stories-full.html.twig` | Overrides remanescentes da Library; implementam catálogo e prévias progressivas/HTMX, exibem metadados e hidratam props/slots de stories. `ui-patterns-single-page.html.twig` foi removido em 2026-11-14 e voltou ao template upstream. | Manter overview/stories enquanto o upstream não oferecer preview sob demanda: a implementação oficial renderiza as stories no overview, incluindo as 230 stories do checkout atual. A documentação oficial permite overrides de template e informa migração futura para SDC/display building em 2.1/2.2. Migrar só quando a API suportar lazy loading e mantiver todas as stories disponíveis; preservar todos os SDCs e stories catalogados. |
 | Override do tema `aculta-maps-marker-icon-template.html.twig` | Removido em 2026-11-14. O `MapRenderer` produz o wrapper inerte do marcador num `inline_template` com autoescape e inclui o SDC `icon`; remove a dependência do registro antigo de template Twig sem introduzir novo componente ou cache de descoberta. | Corte concluído; validar rendering e clone do ícone em requisição nova no Runtime. |
 | Overrides do tema `page-title.html.twig`, `misc/status-messages.html.twig`, `navigation/breadcrumb.html.twig`, `navigation/pager.html.twig`; template owner `aculta-maps-popup-content.html.twig` | Composição leve de SDCs (`map-popup`, `heading`, `status-messages`, `breadcrumb`, `pagination`) com dados/atributos Drupal. O popup é template do módulo Maps, não override do tema; o modal de termos já compõe SDC direto pelo tema. | Para os overrides do tema, tentar render array SDC/configuração ou integração UI Patterns. Manter presenter fino apenas se o hook Drupal/Core for inevitável; revisar prop type `links` e atributos. Migrar o template owner apenas respeitando a fronteira do módulo Maps. |
 | `aculta-mailer-wrap.html.twig` | Hook `aculta_mailer_wrap`, enviado pelo `AcultaMailerMail`; o template mantém documento HTML, metadados, CSS inline de claro/escuro e saída simples. A tabela visual, logo, corpo e rodapé opcional passaram ao SDC `mail-envelope` incluído no template. | Composição visual agora está no SDC publicado pela UI Patterns Library; manter a ponte do documento de e-mail por depender do pipeline de mail. Verificar geração real HTML/texto, URL do logo e cores após cache no Runtime. |

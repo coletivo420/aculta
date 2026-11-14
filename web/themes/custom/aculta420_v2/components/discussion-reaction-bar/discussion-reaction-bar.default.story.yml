@@ -3,7 +3,6 @@ props:
   target_id: discussion-reactions-comment-123
   entity_type: comment
   entity_id: '123'
-  total_count: 5
   user_reaction: broccoli
   default_reaction: broccoli
   can_react: true
