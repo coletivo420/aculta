@@ -43,7 +43,14 @@ final class AnswerReviewForm extends FormBase {
   }
 
   /**
-   * Builds the educator's answer grading form. */
+   * Builds the educator's answer grading form.
+   *
+   * @param array<array-key, mixed> $form
+   *   The form render array being built.
+   *
+   * @return array<array-key, mixed>
+   *   The completed grading form render array.
+   */
   public function buildForm(array $form, FormStateInterface $form_state, ?GroupInterface $course = NULL, ?GroupInterface $group = NULL, ?AnswerEntity $answer = NULL): array {
     if (!$course instanceof GroupInterface || !$group instanceof GroupInterface || !$answer instanceof AnswerEntity) {
       return $form;
@@ -51,13 +58,22 @@ final class AnswerReviewForm extends FormBase {
 
     // Keep the entity identity in server-side form state. Do not trust a hidden
     // answer ID when a grader submits the evaluation.
-    $form_state->set('aculta_lms_answer_id', (int) $answer->id());
-    $form_state->set('aculta_lms_course_id', (int) $course->id());
-    $form_state->set('aculta_lms_group_id', (int) $group->id());
+    $answerId = self::positiveInteger($answer->id());
+    $courseId = self::positiveInteger($course->id());
+    $groupId = self::positiveInteger($group->id());
+    if ($answerId === NULL || $courseId === NULL || $groupId === NULL) {
+      return $form;
+    }
+    $form_state->set('aculta_lms_answer_id', $answerId);
+    $form_state->set('aculta_lms_course_id', $courseId);
+    $form_state->set('aculta_lms_group_id', $groupId);
 
-    $user = $this->entityTypeManager->getStorage('user')->load((int) $answer->get('uid')->value);
-    $activity = $this->entityTypeManager->getStorage('aculta_lms_activity')->load((int) $answer->get('activity_id')->value);
-    $lesson = $activity instanceof ContentEntityInterface ? $this->entityTypeManager->getStorage('aculta_lms_lesson')->load((int) $activity->get('lesson_id')->value) : NULL;
+    $userId = self::positiveInteger($answer->get('uid')->value);
+    $activityId = self::positiveInteger($answer->get('activity_id')->value);
+    $user = $userId === NULL ? NULL : $this->entityTypeManager->getStorage('user')->load($userId);
+    $activity = $activityId === NULL ? NULL : $this->entityTypeManager->getStorage('aculta_lms_activity')->load($activityId);
+    $lessonId = $activity instanceof ContentEntityInterface ? self::positiveInteger($activity->get('lesson_id')->value) : NULL;
+    $lesson = $lessonId === NULL ? NULL : $this->entityTypeManager->getStorage('aculta_lms_lesson')->load($lessonId);
     $payload = Json::encode($answer->getAnswerPayload()->toArray());
 
     $form['attempt'] = [
@@ -68,17 +84,17 @@ final class AnswerReviewForm extends FormBase {
     $form['attempt']['student'] = [
       '#type' => 'item',
       '#title' => $this->t('Estudante'),
-      '#plain_text' => $user instanceof UserInterface ? $user->getDisplayName() : (string) $answer->get('uid')->value,
+      '#plain_text' => $user instanceof UserInterface ? $user->getDisplayName() : self::stringValue($answer->get('uid')->value),
     ];
     $form['attempt']['lesson'] = [
       '#type' => 'item',
       '#title' => $this->t('Aula'),
-      '#plain_text' => $lesson instanceof ContentEntityInterface ? (string) $lesson->get('title')->value : (string) $this->t('Aula removida'),
+      '#plain_text' => $lesson instanceof ContentEntityInterface ? self::stringValue($lesson->get('title')->value) : (string) $this->t('Aula removida'),
     ];
     $form['attempt']['activity'] = [
       '#type' => 'item',
       '#title' => $this->t('Tipo de atividade'),
-      '#plain_text' => $activity instanceof ContentEntityInterface ? str_replace('_', ' ', (string) $activity->get('type')->value) : (string) $this->t('Atividade removida'),
+      '#plain_text' => $activity instanceof ContentEntityInterface ? str_replace('_', ' ', self::stringValue($activity->get('type')->value)) : (string) $this->t('Atividade removida'),
     ];
     $form['attempt']['payload'] = [
       '#type' => 'item',
@@ -114,21 +130,23 @@ final class AnswerReviewForm extends FormBase {
     $form['feedback'] = [
       '#type' => 'textarea',
       '#title' => $this->t('Feedback para o estudante'),
-      '#default_value' => (string) ($answer->get('feedback')->value ?? ''),
+      '#default_value' => self::stringValue($answer->get('feedback')->value ?? NULL),
       '#description' => $this->t('O feedback é registrado como comentário publicado da resposta e pode gerar uma notificação ao estudante.'),
     ];
-    $form['actions']['#type'] = 'actions';
-    $form['actions']['submit'] = [
-      '#type' => 'submit',
-      '#value' => $this->t('Salvar avaliação'),
-      '#button_type' => 'primary',
-    ];
-    $form['actions']['cancel'] = [
-      '#type' => 'aculta_portal_button',
-      '#props' => [
-        'text' => (string) $this->t('Voltar às respostas'),
-        'url' => Url::fromRoute('aculta_lms.answer_reviews', ['course' => $course->id(), 'group' => $group->id()])->toString(),
-        'variant' => 'secondary',
+    $form['actions'] = [
+      '#type' => 'actions',
+      'submit' => [
+        '#type' => 'submit',
+        '#value' => $this->t('Salvar avaliação'),
+        '#button_type' => 'primary',
+      ],
+      'cancel' => [
+        '#type' => 'aculta_portal_button',
+        '#props' => [
+          'text' => (string) $this->t('Voltar às respostas'),
+          'url' => Url::fromRoute('aculta_lms.answer_reviews', ['course' => $courseId, 'group' => $groupId])->toString(),
+          'variant' => 'secondary',
+        ],
       ],
     ];
 
@@ -136,7 +154,11 @@ final class AnswerReviewForm extends FormBase {
   }
 
   /**
-   * Validates the submitted score. */
+   * Validates the submitted score.
+   *
+   * @param array<array-key, mixed> $form
+   *   The form render array being validated.
+   */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
     $score = $form_state->getValue('score');
     if (!is_numeric($score) || !is_finite((float) $score) || (float) $score < 0 || (float) $score > 100) {
@@ -145,18 +167,28 @@ final class AnswerReviewForm extends FormBase {
   }
 
   /**
-   * Saves the grade and educator feedback. */
+   * Saves the grade and educator feedback.
+   *
+   * @param array<array-key, mixed> $form
+   *   The submitted form render array.
+   */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
-    $answer = $this->entityTypeManager->getStorage('aculta_lms_answer')->load((int) $form_state->get('aculta_lms_answer_id'));
+    $answerId = self::positiveInteger($form_state->get('aculta_lms_answer_id'));
+    $answer = $answerId === NULL ? NULL : $this->entityTypeManager->getStorage('aculta_lms_answer')->load($answerId);
     if (!$answer instanceof AnswerEntity) {
       $this->messenger()->addError($this->t('A resposta não está mais disponível.'));
       return;
     }
 
-    $feedback = trim((string) $form_state->getValue('feedback'));
+    $score = $form_state->getValue('score');
+    if (!is_numeric($score) || !is_finite((float) $score) || (float) $score < 0 || (float) $score > 100) {
+      $this->messenger()->addError($this->t('Informe uma nota entre 0 e 100.'));
+      return;
+    }
+    $feedback = trim(self::stringValue($form_state->getValue('feedback')));
     $transaction = $this->database->startTransaction();
     try {
-      $answer->set('score', (float) $form_state->getValue('score'));
+      $answer->set('score', (float) $score);
       $answer->set('feedback', $feedback);
       $answer->set('state', CourseAnswer::STATE_GRADED)->save();
 
@@ -166,7 +198,7 @@ final class AnswerReviewForm extends FormBase {
           'entity_id' => $answer->id(),
           'field_name' => 'comments',
           'comment_type' => EducatorFeedbackPolicy::COMMENT_TYPE,
-          'uid' => (int) $this->currentUser->id(),
+          'uid' => self::positiveInteger($this->currentUser->id()) ?? 0,
           'comment_body' => ['value' => $feedback, 'format' => 'plain_text'],
           'status' => CommentInterface::PUBLISHED,
         ]);
@@ -181,10 +213,32 @@ final class AnswerReviewForm extends FormBase {
     unset($transaction);
 
     $this->messenger()->addStatus($this->t('Avaliação gravada.'));
-    $form_state->setRedirect('aculta_lms.answer_reviews', [
-      'course' => (int) $form_state->get('aculta_lms_course_id'),
-      'group' => (int) $form_state->get('aculta_lms_group_id'),
-    ]);
+    $courseId = self::positiveInteger($form_state->get('aculta_lms_course_id'));
+    $groupId = self::positiveInteger($form_state->get('aculta_lms_group_id'));
+    if ($courseId !== NULL && $groupId !== NULL) {
+      $form_state->setRedirect('aculta_lms.answer_reviews', ['course' => $courseId, 'group' => $groupId]);
+    }
+  }
+
+  /**
+   * Parses a positive entity ID without coercing arbitrary mixed values.
+   */
+  private static function positiveInteger(mixed $value): ?int {
+    if (is_int($value)) {
+      return $value > 0 ? $value : NULL;
+    }
+    if (is_string($value) && preg_match('/^[1-9]\d*$/D', $value) === 1) {
+      $id = (int) $value;
+      return (string) $id === $value ? $id : NULL;
+    }
+    return NULL;
+  }
+
+  /**
+   * Reads a known string field value without coercing mixed data.
+   */
+  private static function stringValue(mixed $value): string {
+    return is_string($value) ? $value : '';
   }
 
 }
