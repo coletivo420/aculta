@@ -108,6 +108,7 @@ $component_ids = [
   'forum-list-page',
   'forum-search-page',
   'forum-author-line',
+  'forum-comment',
   'forum-post-card',
   'forum-reply-compact',
   'forum-topic',
@@ -211,6 +212,18 @@ $samples = [
   'forum-author-line' => [
     '#props' => ['author_name' => 'Autora de exemplo'],
     '#slots' => ['avatar' => Markup::create('<img src="/author-avatar.png" alt="Retrato da autora">')],
+  ],
+  'forum-comment' => [
+    '#props' => [
+      'composer_target_id' => 'sdc-forum-comment-composer',
+      'author_name' => 'Autora de exemplo',
+    ],
+    '#slots' => [
+      'avatar' => Markup::create('<img src="/author-avatar.png" alt="Retrato da autora">'),
+      'body' => Markup::create('<p>Comentário renderizado.</p>'),
+      'actions' => Markup::create('<a href="/comentarios/1">Link permanente</a>'),
+      'reactions_slot' => Markup::create('<button type="button">Reagir</button>'),
+    ],
   ],
   'forum-post-card' => [
     '#props' => ['author_name' => 'Autora de exemplo'],
@@ -1006,6 +1019,12 @@ foreach ($component_ids as $component_id) {
   if (in_array($component_id, ['forum-author-line', 'forum-post-card', 'forum-reply-compact'], TRUE)
     && !str_contains($output, 'alt="Retrato da autora"')) {
     throw new RuntimeException(sprintf('The %s composition must preserve the author avatar slot and its alternative text.', $component_id));
+  }
+  if ($component_id === 'forum-comment'
+    && (!str_contains($output, 'alt="Retrato da autora"')
+      || !str_contains($output, 'Comentário renderizado.')
+      || !str_contains($output, 'Reagir'))) {
+    throw new RuntimeException('Forum comment must preserve avatar, body, and reaction slots when composing the post card.');
   }
   if ($component_id === 'tabs'
     && (!str_contains($output, '<nav')
