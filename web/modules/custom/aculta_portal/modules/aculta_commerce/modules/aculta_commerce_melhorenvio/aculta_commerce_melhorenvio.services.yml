@@ -151,6 +151,14 @@ services:
     tags:
       - { name: event_subscriber }
 
+  # O Portal publica CartUpdatedEvent depois de reconstruir o carrinho salvo;
+  # atualiza a cotação sem acoplar apresentação ao módulo opcional.
+  aculta_commerce_melhorenvio.cart_updated_subscriber:
+    class: Drupal\aculta_commerce_melhorenvio\EventSubscriber\CartUpdatedSubscriber
+    autowire: true
+    tags:
+      - { name: event_subscriber }
+
   # Endpoint JSON do componente shipping-calculator. Limite por IP usa o serviço de flood do Drupal.
   aculta_commerce_melhorenvio.simulate_controller:
     class: Drupal\aculta_commerce_melhorenvio\Controller\ShippingSimulatorController

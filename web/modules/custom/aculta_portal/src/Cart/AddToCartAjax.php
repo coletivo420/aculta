@@ -11,6 +11,8 @@ use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
+use Drupal\aculta_portal\Event\CartUpdatedEvent;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
@@ -37,6 +39,7 @@ class AddToCartAjax {
     private readonly MessengerInterface $messenger,
     #[Autowire(service: 'request_stack')]
     private readonly RequestStack $requestStack,
+    private readonly ?EventDispatcherInterface $eventDispatcher = NULL,
   ) {}
 
   /**
@@ -89,19 +92,23 @@ class AddToCartAjax {
     $formId = (string) $formState->getFormObject()->getFormId();
     $statusId = $this->statusId($formId);
     $cart = $this->cart->build();
+    $this->eventDispatcher?->dispatch(new CartUpdatedEvent());
     // A caixa "Item adicionado com sucesso." substitui a mensagem padrão do
     // Commerce, que não pode ficar para a próxima página.
     $this->messenger->deleteAll();
 
     $box = $this->statusBox($formState, (string) $cart['url']);
     $painel = [
-      '#theme' => 'aculta_portal_cart_panel',
-      '#sites' => $cart['sites'],
-      '#total' => $cart['total'],
-      '#url' => $cart['url'],
-      '#empty' => $cart['empty'],
-      '#checkout_url' => $cart['checkout_url'],
-      'htmx_oob' => TRUE,
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:cart-offcanvas-body',
+      '#props' => [
+        'sites' => $cart['sites'],
+        'total' => $cart['total'],
+        'url' => $cart['url'],
+        'empty' => $cart['empty'],
+        'checkout_url' => $cart['checkout_url'],
+        'htmx_oob' => TRUE,
+      ],
     ];
     $body = '<div id="' . $statusId . '">'
       . $this->renderer->renderInIsolation($box)

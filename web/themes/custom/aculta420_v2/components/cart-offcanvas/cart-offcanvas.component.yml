@@ -6,6 +6,7 @@ group: Commerce
 libraryOverrides:
   dependencies:
     - aculta420_v2/utility-drawers
+    - core/components.aculta420_v2--cart-offcanvas-body
 props:
   type: object
   additionalProperties: false

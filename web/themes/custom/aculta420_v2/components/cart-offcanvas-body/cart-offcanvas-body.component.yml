@@ -1,0 +1,57 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Corpo do carrinho
+status: stable
+description: Conteúdo substituível do carrinho, compartilhado pelo drawer e pela resposta HTMX.
+group: Commerce
+libraryOverrides:
+  dependencies:
+    - aculta420_v2/utility-drawers
+props:
+  type: object
+  additionalProperties: false
+  properties:
+    empty:
+      title: Carrinho sem itens
+      type: boolean
+      default: true
+    url:
+      title: Endereço do carrinho
+      type: string
+      default: ''
+    total:
+      title: Valor total do carrinho
+      type: string
+      default: ''
+    sites:
+      title: Carrinhos separados por site
+      type: array
+      default: []
+      items:
+        type: object
+        additionalProperties: false
+        required: [key, label, total, items]
+        properties:
+          key: { type: string }
+          label: { type: string }
+          count: { type: integer, minimum: 0, default: 0 }
+          empty: { type: boolean, default: true }
+          total: { type: string }
+          checkout_url: { type: string, default: '' }
+          items:
+            type: array
+            items:
+              type: object
+              additionalProperties: false
+              required: [title, quantity, total]
+              properties:
+                title: { type: string }
+                quantity: { type: string }
+                total: { type: string }
+    checkout_url:
+      title: Endereço para finalizar a compra
+      type: string
+      default: ''
+    htmx_oob:
+      title: Marcar como substituição externa HTMX
+      type: boolean
+      default: false

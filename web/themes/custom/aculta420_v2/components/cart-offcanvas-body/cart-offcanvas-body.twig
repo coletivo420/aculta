@@ -1,10 +1,3 @@
-{#
-  Corpo do painel do carrinho (aculta_portal), apresentação ACULTA420.
-
-  O envio HTMX de adicionar ao carrinho substitui este corpo por
-  `hx-swap-oob` (o id é o alvo), por isso o wrapper com a mesma classe e o id
-  estável são obrigatórios.
-#}
 <div id="aculta-cart-offcanvas-body" class="aculta-utility-dialog__body aculta-cart-offcanvas__body"{% if htmx_oob %} hx-swap-oob="outerHTML"{% endif %}>
   {% if empty %}
     <p class="aculta-cart-offcanvas__empty">{{ 'Sem produto(s) no carrinho.'|t }}</p>

@@ -1834,3 +1834,12 @@ State: Dev. No RC, production deployment, or release tag is declared.
   do Studio e o resumo de Localização agora compõem `surface-panel`; o wrapper
   de cadastro do checkout já não existe. Os tokens funcionais mantidos sem mapa
   foram documentados por família após inspeção dos emissores e seletores.
+
+## Atualização — painel OOB do carrinho migrado para SDC (2026-11-14)
+
+- `cart-offcanvas-body` centraliza o markup do painel no drawer e na resposta
+  HTMX `hx-swap-oob`; a Library ganha stories de carrinho preenchido e vazio.
+- `AddToCartAjax` renderiza o SDC diretamente. Removidos os hooks e os templates
+  do módulo e do tema para `portal-cart-panel`.
+- O tema passa a 137 SDCs/218 stories e 50 templates restantes. Runtime e
+  comparação visual/acessível continuam pendentes.

@@ -24,7 +24,9 @@ conta própria.
 - A gaveta do carrinho não tem campo de CEP e não calcula.
 - Ela lê o último cálculo do visitante (componente `shipping-summary`). Sem cálculo, orienta a calcular na página do
   produto ou no carrinho completo.
-- O carrinho AJAX (`portal-cart-panel`) recebe o mesmo resumo.
+- Depois que a resposta HTMX reconstrói o carrinho salvo, o Portal publica
+  `CartUpdatedEvent`; o submódulo recalcula e salva a cotação usando as linhas
+  atuais. A gaveta não apresenta o resumo de frete.
 
 ## D3. O cálculo acompanha o visitante do produto até o carrinho (2026-10-27)
 
