@@ -1851,3 +1851,11 @@ State: Dev. No RC, production deployment, or release tag is declared.
 - Removidos os hooks e templates de módulo/tema para `portal-cart-status` e
   `portal-payment-notice`. O tema passa a 138 SDCs/220 stories e 48 templates.
 - Renderização Drupal, acessibilidade e visual no Runtime continuam pendentes.
+
+## Atualização — gatilho de busca migrado para SDC (2026-11-14)
+
+- `SearchUtility` emite `aculta420_v2:search-trigger` diretamente e mantém
+  rota, cache, atributos de modal como fallback e aprimoramento HTMX da barra.
+- Removidos os hooks e templates de módulo/tema para `portal-search-trigger`.
+- O tema passa a 139 SDCs/221 stories e 47 templates restantes; Runtime e
+  validação de navegador continuam pendentes.

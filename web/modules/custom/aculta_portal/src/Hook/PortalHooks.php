@@ -742,15 +742,6 @@ final class PortalHooks {
         'template' => 'portal-component',
         'path' => $this->moduleList->getPath('aculta_portal') . '/templates',
       ],
-      'aculta_portal_search_trigger' => [
-        'variables' => [
-          'url' => NULL,
-          'label' => NULL,
-          'trigger_attributes' => NULL,
-        ],
-        'template' => 'portal-search-trigger',
-        'path' => $this->moduleList->getPath('aculta_portal') . '/templates',
-      ],
       'aculta_portal_shell' => [
         'variables' => [
           'section_title' => NULL,

@@ -1,0 +1,26 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Gatilho de busca
+status: stable
+description: Link acessível que abre a busca contextual da barra institucional.
+group: Navegação
+libraryOverrides:
+  dependencies:
+    - core/components.aculta420_v2--multidomain-bar
+props:
+  type: object
+  additionalProperties: false
+  required: [url, label]
+  properties:
+    url:
+      title: Endereço do popup de busca
+      type: string
+      format: uri-reference
+      minLength: 1
+    label:
+      title: Nome acessível do gatilho
+      type: string
+      minLength: 1
+    attributes:
+      title: Atributos e dados de interação
+      type: Drupal\Core\Template\Attribute
+      default: null

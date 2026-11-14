@@ -35,18 +35,21 @@ final class SearchUtility {
    */
   public function build(): array {
     return [
-      '#theme' => 'aculta_portal_search_trigger',
-      '#label' => $this->t('Buscar no site'),
-      '#url' => Url::fromRoute('aculta_portal.search_popup')->toString(),
-      // Fallback V1: use-ajax (modal do Core) e o token de design do tema.
-      '#trigger_attributes' => new Attribute([
-        'class' => ['use-ajax'], 'data-portal-ui' => 'search-utility',
-        'data-dialog-type' => 'modal',
-        'data-dialog-options' => Json::encode([
-          'closeText' => (string) $this->t('Fechar'),
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:search-trigger',
+      '#props' => [
+        'label' => (string) $this->t('Buscar no site'),
+        'url' => Url::fromRoute('aculta_portal.search_popup')->toString(),
+        // Fallback para temas que não aprimoram o link para o diálogo HTMX.
+        'attributes' => new Attribute([
+          'class' => ['use-ajax'], 'data-portal-ui' => 'search-utility',
+          'data-dialog-type' => 'modal',
+          'data-dialog-options' => Json::encode([
+            'closeText' => (string) $this->t('Fechar'),
+          ]),
+          'title' => (string) $this->t('Buscar no site'),
         ]),
-        'title' => (string) $this->t('Buscar no site'),
-      ]),
+      ],
       '#attached' => ['library' => ['core/drupal.dialog.ajax']],
       '#cache' => ['contexts' => ['domain', 'url.path']],
     ];

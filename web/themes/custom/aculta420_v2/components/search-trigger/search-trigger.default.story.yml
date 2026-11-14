@@ -1,0 +1,7 @@
+name: Abrir busca
+description: Gatilho de busca com nome acessível e destino para o popup.
+component: aculta420_v2:search-trigger
+props:
+  url: /busca/popup
+  label: Buscar no site
+  attributes: null
