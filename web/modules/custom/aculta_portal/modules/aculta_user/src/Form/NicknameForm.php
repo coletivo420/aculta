@@ -46,6 +46,12 @@ final class NicknameForm extends FormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<array-key, mixed> $form
+   *   Estrutura do formulário.
+   *
+   * @return array<array-key, mixed>
+   *   Estrutura do formulário.
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $profile = $this->profile();
@@ -55,7 +61,7 @@ final class NicknameForm extends FormBase {
     $form['nickname'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Apelido público'),
-      '#default_value' => (string) ($profile->get('field_nickname')->value ?? ''),
+      '#default_value' => $this->textValue($profile->get('field_nickname')->value ?? ''),
       '#maxlength' => AccountNames::MAX,
       '#required' => TRUE,
       '#description' => $this->t('De 3 a 40 caracteres: letras sem acento, números e hífen; um sufixo numérico como #2 é permitido e vira -2 na URL. Alguns nomes são reservados. A alteração muda a URL pública sem redirecionar o endereço antigo.'),
@@ -70,9 +76,12 @@ final class NicknameForm extends FormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<array-key, mixed> $form
+   *   Estrutura do formulário.
    */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
-    $nickname = trim((string) $form_state->getValue('nickname'));
+    $nickname = trim($this->textValue($form_state->getValue('nickname')));
     if (!AccountNames::isValid($nickname)) {
       $form_state->setErrorByName('nickname', $this->t('Use um apelido de 3 a 40 caracteres, com letras sem acento, números ou hífen, que não seja reservado.'));
       return;
@@ -84,11 +93,14 @@ final class NicknameForm extends FormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<array-key, mixed> $form
+   *   Estrutura do formulário.
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     // Reload the owner's Profile and write this one field only.
     $profile = $this->profile();
-    $profile->set('field_nickname', trim((string) $form_state->getValue('nickname')));
+    $profile->set('field_nickname', trim($this->textValue($form_state->getValue('nickname'))));
     $profile->save();
     $this->messenger()->addStatus($this->t('Apelido público salvo.'));
     $form_state->setRedirect('aculta_studio.profile');
@@ -107,6 +119,13 @@ final class NicknameForm extends FormBase {
       throw new AccessDeniedHttpException();
     }
     return $profile;
+  }
+
+  /**
+   * Texto de um valor de formulário ou de campo; vazio quando o valor não é escalar.
+   */
+  private function textValue(mixed $value): string {
+    return is_scalar($value) || $value instanceof \Stringable ? (string) $value : '';
   }
 
 }

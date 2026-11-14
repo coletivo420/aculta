@@ -40,7 +40,11 @@ final class AssociadosController extends ControllerBase {
   }
 
   /**
-   * Tela: pedidos pendentes (com link para decidir) e situações, com RG mascarado. */
+   * Tela: pedidos pendentes (com link para decidir) e situações, com RG mascarado.
+   *
+   * @return array<array-key, mixed>
+   *   Render array do relatório.
+   */
   public function report(): array {
     $pendentes = [];
     foreach ($this->marker->pendentes() as $uid) {
@@ -102,6 +106,9 @@ final class AssociadosController extends ControllerBase {
    * CSV completo, somente para quem tem a permissão de exportação. */
   public function export(): Response {
     $handle = fopen('php://temp', 'r+');
+    if ($handle === FALSE) {
+      return new Response('', 500, ['Cache-Control' => 'no-store']);
+    }
     fputcsv($handle, [
       'apelido',
       'email',
@@ -148,7 +155,7 @@ final class AssociadosController extends ControllerBase {
         continue;
       }
       $profile = PerfilDoPapel::principal($this->entityTypeManagerService->getStorage('profile'), $account);
-      $get = static fn (string $field): string => $profile && $profile->hasField($field) ? (string) $profile->get($field)->value : '';
+      $get = fn (string $field): string => $profile && $profile->hasField($field) ? $this->textValue($profile->get($field)->value) : '';
       $adesao = $linha['data_adesao'];
       $rows[] = [
         'uid' => (string) $linha['uid'],
@@ -206,6 +213,13 @@ final class AssociadosController extends ControllerBase {
    */
   private function mask(string $rg): string {
     return $rg === '' ? '' : str_repeat('•', max(0, strlen($rg) - 2)) . substr($rg, -2);
+  }
+
+  /**
+   * Texto de um valor de campo; vazio quando o valor não é escalar.
+   */
+  private function textValue(mixed $value): string {
+    return is_scalar($value) || $value instanceof \Stringable ? (string) $value : '';
   }
 
 }

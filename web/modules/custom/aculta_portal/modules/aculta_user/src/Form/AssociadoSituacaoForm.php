@@ -61,7 +61,10 @@ final class AssociadoSituacaoForm extends FormBase {
    * @param \Drupal\user\UserInterface|null $user
    *   Conta cuja situação será alterada.
    *
-   * @return array
+   * @param array<array-key, mixed> $form
+   *   Estrutura do formulário.
+   *
+   * @return array<array-key, mixed>
    *   Formulário renderizável.
    */
   public function buildForm(array $form, FormStateInterface $form_state, ?UserInterface $user = NULL): array {
@@ -105,11 +108,14 @@ final class AssociadoSituacaoForm extends FormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<array-key, mixed> $form
+   *   Estrutura do formulário.
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
-    $uid = (int) $form_state->get('uid');
-    $situacao = (string) $form_state->getValue('situacao');
-    $motivo = (string) $form_state->getValue('motivo');
+    $uid = $this->intValue($form_state->get('uid'));
+    $situacao = $this->textValue($form_state->getValue('situacao'));
+    $motivo = $this->textValue($form_state->getValue('motivo'));
     $admin = (int) $this->currentUserService->id();
     if ($situacao === AssociadoMarker::CONVIDADO) {
       $ok = $this->marker->convidar($uid, $admin, $motivo);
@@ -152,6 +158,20 @@ final class AssociadoSituacaoForm extends FormBase {
       AssociadoMarker::CONVIDADO => (string) $this->t('convidado (aguardando aceite)'),
       default => (string) $this->t('sem pedido de adesão'),
     };
+  }
+
+  /**
+   * Texto de um valor de formulário; vazio quando o valor não é escalar.
+   */
+  private function textValue(mixed $value): string {
+    return is_scalar($value) || $value instanceof \Stringable ? (string) $value : '';
+  }
+
+  /**
+   * Inteiro de um valor de formulário; zero quando não é numérico.
+   */
+  private function intValue(mixed $value): int {
+    return is_numeric($value) ? (int) $value : 0;
   }
 
 }

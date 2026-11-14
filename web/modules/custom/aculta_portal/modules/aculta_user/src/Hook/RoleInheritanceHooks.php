@@ -28,7 +28,7 @@ final class RoleInheritanceHooks {
   /**
    * Aplica os papéis herdados às contas carregadas.
    *
-   * @param array $users
+   * @param array<array-key, mixed> $users
    *   Contas de usuário carregadas.
    */
   #[Hook('user_load')]
@@ -38,7 +38,7 @@ final class RoleInheritanceHooks {
         continue;
       }
       $emailConfirmado = $this->emailConfirmationPolicy?->isConfirmed($user) ?? TRUE;
-      foreach ($this->heranca->herdados($user->getRoles(), $emailConfirmado) as $papel) {
+      foreach ($this->heranca->herdados($this->stringsOf($user->getRoles()), $emailConfirmado) as $papel) {
         if (!$user->hasRole($papel)) {
           $user->addRole($papel);
         }
@@ -65,7 +65,7 @@ final class RoleInheritanceHooks {
   /**
    * Ajusta os papéis padrão no formulário de conta do usuário.
    *
-   * @param array $form
+   * @param array<array-key, mixed> $form
    *   Formulário alterado por referência.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   Estado do formulário.
@@ -74,16 +74,21 @@ final class RoleInheritanceHooks {
   public function formUserAlter(array &$form, FormStateInterface $form_state): void {
     $formObject = $form_state->getFormObject();
     $conta = $formObject instanceof EntityFormInterface ? $formObject->getEntity() : NULL;
-    if (!isset($form['account']['roles']['#default_value']) || !$conta instanceof UserInterface) {
+    // O valor padrão é lido e gravado de volta por nível, sem escrita aninhada em valores não tipados.
+    $account = is_array($form['account'] ?? NULL) ? $form['account'] : [];
+    $roles = is_array($account['roles'] ?? NULL) ? $account['roles'] : [];
+    if (!array_key_exists('#default_value', $roles) || $roles['#default_value'] === NULL || !$conta instanceof UserInterface) {
       return;
     }
-    $form['account']['roles']['#default_value'] = array_values(array_diff(
-      $form['account']['roles']['#default_value'],
+    $roles['#default_value'] = array_values(array_diff(
+      $this->stringsOf($roles['#default_value']),
       $this->heranca->herdadosNaoGravados(
         (int) $conta->id(),
         $this->emailConfirmationPolicy?->isConfirmed($conta) ?? TRUE,
       ),
     ));
+    $account['roles'] = $roles;
+    $form['account'] = $account;
   }
 
   /**
@@ -91,7 +96,30 @@ final class RoleInheritanceHooks {
    */
   #[Hook('user_role_delete')]
   public function userRoleDelete(RoleInterface $papel): void {
-    $this->heranca->removerPapel($papel->id());
+    $this->heranca->removerPapel($this->textValue($papel->id()));
+  }
+
+  /**
+   * Só os itens textuais de uma lista (papéis são strings).
+   *
+   * @return list<string>
+   *   Itens que são strings, na mesma ordem.
+   */
+  private function stringsOf(mixed $values): array {
+    $strings = [];
+    foreach (is_array($values) ? $values : [] as $value) {
+      if (is_string($value)) {
+        $strings[] = $value;
+      }
+    }
+    return $strings;
+  }
+
+  /**
+   * Texto de um valor; vazio quando o valor não é escalar.
+   */
+  private function textValue(mixed $value): string {
+    return is_scalar($value) || $value instanceof \Stringable ? (string) $value : '';
   }
 
 }

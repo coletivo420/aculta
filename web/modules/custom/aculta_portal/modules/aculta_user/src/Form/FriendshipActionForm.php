@@ -40,14 +40,27 @@ final class FriendshipActionForm extends FormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<array-key, mixed> $form
+   *   Estrutura do formulário.
+   *
+   * @return array<array-key, mixed>
+   *   Estrutura do formulário.
    */
   public function buildForm(array $form, FormStateInterface $form_state, ?UserInterface $target = NULL, ?AcultaFriendshipInterface $relationship = NULL): array {
     if ($target === NULL || !$target->isActive() || !$this->currentAccount->isAuthenticated() || (int) $target->id() === (int) $this->currentAccount->id()) {
       return [];
     }
     $form_state->set('target_uid', (int) $target->id());
-    $form['#cache']['contexts'][] = 'user';
-    $form['#attributes']['data-portal-ui'] = 'friendship-action-form';
+    // Cache e atributos são lidos e gravados de volta como arrays, sem escrita aninhada em valores não tipados.
+    $cache = is_array($form['#cache'] ?? NULL) ? $form['#cache'] : [];
+    $contexts = is_array($cache['contexts'] ?? NULL) ? $cache['contexts'] : [];
+    $contexts[] = 'user';
+    $cache['contexts'] = $contexts;
+    $form['#cache'] = $cache;
+    $attributes = is_array($form['#attributes'] ?? NULL) ? $form['#attributes'] : [];
+    $attributes['data-portal-ui'] = 'friendship-action-form';
+    $form['#attributes'] = $attributes;
     $form['actions'] = ['#type' => 'actions'];
     $status = $relationship?->getStatus();
     $requester = $relationship?->getRequesterId();
@@ -86,9 +99,12 @@ final class FriendshipActionForm extends FormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<array-key, mixed> $form
+   *   Estrutura do formulário.
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
-    $uid = (int) $form_state->get('target_uid');
+    $uid = is_numeric($form_state->get('target_uid')) ? (int) $form_state->get('target_uid') : 0;
     $target = $this->entityManager->getStorage('user')->load($uid);
     if (!$target instanceof UserInterface || !$target->isActive() || $uid === (int) $this->currentAccount->id()) {
       $this->messenger()->addError($this->t('Não foi possível atualizar esse relacionamento.'));
