@@ -41,4 +41,14 @@ Regra compartilhada de Claude, Codex e demais agentes. Politica de revisao: `doc
 
 Indice por area: `docs/operations/AGENT-POLICY-INDEX.md`. Skills canonicas: `.agents/skills/`. Procedimentos de Runtime: `docs/operations/RUNTIME-SYNC.md`.
 Padrao de implementacao Drupal 11+ e compatibilidade Drupal 12: `docs/portal/DRUPAL-12-STANDARDS.md`.
-Analise PHP/Drupal e erros PHPStan: skill `aculta-phpstan` (referencias por familia, nivel efetivo em `phpstan.neon`; nao ampliar baseline por rotina).
+Analise PHP/Drupal e erros PHPStan: skill `aculta-phpstan` (referencias por familia; comandos e familias em `.agents/skills/aculta-phpstan/`).
+
+Politica PHPStan nivel 10:
+
+- O nivel oficial e 10; codigo novo e alterado deve respeita-lo. Nao reduzir nivel, `reportUnmatchedIgnoredErrors`, escopo ou regras para obter verde.
+- Divida congelada em `phpstan-baseline.neon`: corrigir os erros do arquivo alterado e reduzir ao menos uma ocorrencia por modulo tocado. O gate `scripts/phpstan-debt-guard.php diff` reprova o contrario.
+- Nao regenerar o baseline por rotina nem no CI. Reducao legitima remove as entradas correspondentes no mesmo commit, com testes.
+- Erro novo **nunca** pode ser suprimido: `@phpstan-ignore`, `@phpstan-ignore-next-line` ou `@phpstan-ignore-line` adicionado no diff falha o gate. Apenas a divida ja congelada permanece suprimida, pelo baseline.
+- Stub ou exclusao nova exige identificador exato, motivo e revisao; sem mecanismo generico de bypass.
+- Antes de publicar: `vendor/bin/phpstan analyse`, `phpstan-debt-guard.php check` e `diff` com `--analysis` da execucao canonica. Relatar erros preexistentes, introduzidos e corrigidos; falha de infraestrutura e distinta de falha de analise.
+- Job estavel do CI: **PHPStan level 10 gate**; `skipped`/`cancelled` nao e PASS.
