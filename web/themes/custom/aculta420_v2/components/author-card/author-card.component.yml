@@ -67,7 +67,7 @@ props:
     reactions_given:
       type: integer
       title: Reações dadas
-      description: Participa da condição para montar a área de estatísticas, mas o Twig atual não exibe este valor; revisar o contrato antes de removê-lo.
+      description: Quantidade de reações dadas, exibida nas variantes author_forum, author_forum_stacked e profile_full quando maior que zero.
       default: 0
     social_links:
       type: array

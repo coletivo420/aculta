@@ -41,6 +41,8 @@
 .author-card__social-links a { display: inline-flex; align-items: center; justify-content: center; color: var(--color-link-editorial); border-radius: var(--radius-full); min-block-size: var(--tap-target-min); min-inline-size: var(--tap-target-min); }
 .author-card__social-links a:hover { background: var(--color-surface); }
 .author-card__actions { margin-block-start: var(--spacing-xs); }
+.author-card__reactions-stats { display: flex; flex-wrap: wrap; margin: var(--spacing-xs) 0 0; padding: 0; list-style: none; gap: var(--spacing-sm); }
+.author-card__reaction-stat { display: inline-flex; align-items: center; color: var(--color-text-secondary); font-size: var(--font-size-sm); gap: var(--spacing-xs); }
 .author-card--stacked { flex-direction: column; }
 .author-card--author_editorial { align-items: flex-start; }
 

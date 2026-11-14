@@ -1030,6 +1030,41 @@ foreach ($component_ids as $component_id) {
       || !str_contains($output, 'alt="Retrato de exemplo"'))) {
     throw new RuntimeException('Author card must render its authorized identity, bio, and avatar slot.');
   }
+  if ($component_id === 'author-card') {
+    $reaction_stats_build = [
+      '#type' => 'component',
+      '#component' => $plugin_id,
+      '#props' => [
+        'variant' => 'author_forum',
+        'display_name' => 'Participante de exemplo',
+        'reactions_received' => 3,
+        'reactions_given' => 2,
+      ],
+    ];
+    $reaction_stats = (string) $renderer->renderInIsolation($reaction_stats_build);
+    if (!str_contains($reaction_stats, 'Reações recebidas')
+      || !str_contains($reaction_stats, 'Reações dadas')
+      || !str_contains($reaction_stats, '>3</span>')
+      || !str_contains($reaction_stats, '>2</span>')) {
+      throw new RuntimeException('Author card must render both reaction counts with accessible labels.');
+    }
+
+    $given_only_build = [
+      '#type' => 'component',
+      '#component' => $plugin_id,
+      '#props' => [
+        'variant' => 'author_forum',
+        'display_name' => 'Participante de exemplo',
+        'reactions_given' => 2,
+      ],
+    ];
+    $given_only = (string) $renderer->renderInIsolation($given_only_build);
+    if (!str_contains($given_only, 'Reações dadas')
+      || !str_contains($given_only, '>2</span>')
+      || str_contains($given_only, 'Reações recebidas')) {
+      throw new RuntimeException('Author card must render given-only reaction statistics without an empty list item.');
+    }
+  }
   if (in_array($component_id, ['forum-author-line', 'forum-post-card', 'forum-reply-compact'], TRUE)
     && !str_contains($output, 'alt="Retrato da autora"')) {
     throw new RuntimeException(sprintf('The %s composition must preserve the author avatar slot and its alternative text.', $component_id));

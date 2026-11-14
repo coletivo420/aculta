@@ -13,7 +13,7 @@ anteriores e não substituem a conferência do código atual.
   chave `aculta_shell_variant` não existe no Config Sync nem no Runtime ativo.
   O hook no-op temporário de compatibilidade foi removido depois do rebuild do
   cache Drupal em 2026-11-14.
-- 150 manifests SDC e 243 stories no worktree atual. O total inclui componentes ainda não rastreados e as stories específicas do Editor de Foto e de `reply-indent`; todos têm ao menos uma story. `hint` exemplifica os tons
+- 150 manifests SDC e 244 stories no worktree atual. O total inclui componentes ainda não rastreados e as stories específicas do Editor de Foto e de `reply-indent`; todos têm ao menos uma story. `hint` exemplifica os tons
   normal/muted; `sales-panel` e `secret-reveal` usam dados demonstrativos
   fictícios.
 - Config Sync habilita UI Patterns, Blocks, Field, Field Formatters, Layouts,
@@ -97,7 +97,7 @@ anteriores e não substituem a conferência do código atual.
    definições do provider. Stories para `hint`, `sales-panel` e `secret-reveal`
    foram adicionadas. Todos os slots agora têm título e descrição, e as props
    de topo têm título; o gate exige esses metadados. `validate-aculta420-sdc-library-contract.php`
-   passou para 150 SDCs/243 stories, confirmando UI Patterns Library oficial
+   passou para 150 SDCs/244 stories, confirmando UI Patterns Library oficial
    habilitada e ausência de catálogo customizado. O validator Drupal passou
    isoladamente em 95 SDCs; essa validação não cobre `forum-quote` nem `reply-indent`.
    Auditoria atual do worktree (150 manifests): 549 props de topo, das quais
@@ -142,9 +142,8 @@ anteriores e não substituem a conferência do código atual.
    `account-experience-dashboard`, `account-shell`, `profile-details`,
    `author-card`, `cart-offcanvas`, `cart-offcanvas-body`,
    `donation-presentation`, `alerts-trigger`, `messenger-trigger`,
-   `card-cultural` e `events-upcoming-block`. O Twig de `author-card` usa `reactions_given` apenas como
-   condição e não imprime seu valor; verificar o contrato com os producers
-   antes de decidir mantê-lo ou removê-lo. O lote priorizado por referências acrescentou descrições a
+   `card-cultural` e `events-upcoming-block`. O SDC `author-card` agora exibe contagens positivas de reações recebidas
+   e dadas nas variantes do Fórum e perfil, com rótulos acessíveis. O lote priorizado por referências acrescentou descrições a
    `status-messages` (18 arquivos), `heading` (11), `avatar` (9) e `popup` (5).
    Os denominadores anteriores (525 e 689) não batiam com os manifests; totais
    históricos de 526/333 e 654/429 também não descrevem este checkout. Três lotes recentes documentaram 18 manifests
@@ -298,7 +297,7 @@ separada, sem importação autorizada nesta etapa.
 | Grupo/arquivos | Evidência encontrada | Direção de planejamento |
 | --- | --- | --- |
 | `layout/html.html.twig`, `layout/page.html.twig` | Infraestrutura de documento/página Drupal. O override HTML mantém `#drupal-modal` (consumido pelos comandos Dialog/AJAX do Core e pelo UI Icons Picker), favicon, Apple touch icon, manifest e configuração HTMX. O fallback `core/modules/system/templates/html.html.twig` não contém o contêiner `#drupal-modal` nem esses quatro metadados. `page.html.twig` compõe `layout-page`, mas também seleciona conteúdo/variantes para LMS, Studio e rodapé social. | Não remover `html.html.twig` por comparação superficial com o Core. Para retirá-lo, primeiro migrar os metadados para attachments do Drupal e fornecer o alvo `#drupal-modal` por uma integração renderizável, preservando a ordem dos placeholders; validar diálogos AJAX, Entity Embed e UI Icons. Para `page.html.twig`, mover decisões de domínio para preprocess/render arrays; manter a ponte de regiões somente enquanto nenhum plugin/layout UI Suite substituir essa composição sem perder os contratos do page hook. |
-| `ui-patterns-overview-page.html.twig`, `ui-patterns-stories-compact.html.twig`, `ui-patterns-stories-full.html.twig` | Overrides remanescentes da Library; implementam catálogo e prévias progressivas/HTMX, exibem metadados e hidratam props/slots de stories. `ui-patterns-single-page.html.twig` foi removido em 2026-11-14 e voltou ao template upstream. | Manter overview/stories enquanto o upstream não oferecer preview sob demanda: a implementação oficial renderiza as stories no overview, incluindo as 243 stories do worktree. A documentação oficial permite overrides de template e informa migração futura para SDC/display building em 2.1/2.2. Migrar só quando a API suportar lazy loading e mantiver todas as stories disponíveis; preservar todos os SDCs e stories catalogados. |
+| `ui-patterns-overview-page.html.twig`, `ui-patterns-stories-compact.html.twig`, `ui-patterns-stories-full.html.twig` | Overrides remanescentes da Library; implementam catálogo e prévias progressivas/HTMX, exibem metadados e hidratam props/slots de stories. `ui-patterns-single-page.html.twig` foi removido em 2026-11-14 e voltou ao template upstream. | Manter overview/stories enquanto o upstream não oferecer preview sob demanda: a implementação oficial renderiza as stories no overview, incluindo as 244 stories do worktree. A documentação oficial permite overrides de template e informa migração futura para SDC/display building em 2.1/2.2. Migrar só quando a API suportar lazy loading e mantiver todas as stories disponíveis; preservar todos os SDCs e stories catalogados. |
 | Override do tema `aculta-maps-marker-icon-template.html.twig` | Removido em 2026-11-14. O `MapRenderer` produz o wrapper inerte do marcador num `inline_template` com autoescape e inclui o SDC `icon`; remove a dependência do registro antigo de template Twig sem introduzir novo componente ou cache de descoberta. | Corte concluído; validar rendering e clone do ícone em requisição nova no Runtime. |
 | Overrides do tema `page-title.html.twig`, `misc/status-messages.html.twig`, `navigation/breadcrumb.html.twig`, `navigation/pager.html.twig`; template owner `aculta-maps-popup-content.html.twig` | Composição leve de SDCs (`map-popup`, `heading`, `status-messages`, `breadcrumb`, `pagination`) com dados/atributos Drupal. O popup é template do módulo Maps, não override do tema; o modal de termos já compõe SDC direto pelo tema. | Para os overrides do tema, tentar render array SDC/configuração ou integração UI Patterns. Manter presenter fino apenas se o hook Drupal/Core for inevitável; revisar prop type `links` e atributos. Migrar o template owner apenas respeitando a fronteira do módulo Maps. |
 | `aculta-mailer-wrap.html.twig` | Hook `aculta_mailer_wrap`, enviado pelo `AcultaMailerMail`; o template mantém documento HTML, metadados, CSS inline de claro/escuro e saída simples. A tabela visual, logo, corpo e rodapé opcional passaram ao SDC `mail-envelope` incluído no template. | Composição visual agora está no SDC publicado pela UI Patterns Library; manter a ponte do documento de e-mail por depender do pipeline de mail. Verificar geração real HTML/texto, URL do logo e cores após cache no Runtime. |

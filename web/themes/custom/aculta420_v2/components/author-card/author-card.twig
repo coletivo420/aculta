@@ -5,9 +5,9 @@
   author_forum: 'Growroom420'|t,
   author_forum_stacked: 'Growroom420'|t,
   author_lms: 'Discussão de cursos'|t,
-  author_wiki: 'Wiki420'|t
+  author_wiki: 'Wiki420'|t,
 } %}
-{% set social_icons = { instagram: 'instagram-logo', facebook: 'facebook-logo', reddit: 'reddit-logo' } %}
+{% set social_icons = {instagram: 'instagram-logo', facebook: 'facebook-logo', reddit: 'reddit-logo'} %}
 <article{{ attributes.addClass('author-card', 'author-card--' ~ layout, 'author-card--' ~ variant, 'author-card--' ~ size|default('md')) }}>
   {% if has_avatar %}
     <div class="author-card__avatar">
@@ -21,14 +21,22 @@
     {% if context_labels[variant] is defined %}<span class="author-card__context">{{ context_labels[variant] }}</span>{% endif %}
     {% if member_since and variant in ['author_forum', 'author_forum_stacked'] %}<span class="author-card__joined">{{ 'Conta ACULTA desde @year'|t({'@year': member_since}) }}</span>{% endif %}
     {% if (reactions_received > 0 or reactions_given > 0) and variant in ['author_forum', 'author_forum_stacked', 'profile_full'] %}
-      <div class="author-card__reactions-stats" aria-label="{{ 'Reações da comunidade'|t }}">
+      <ul class="author-card__reactions-stats" aria-label="{{ 'Reações da comunidade'|t }}">
         {% if reactions_received > 0 %}
-          <span class="author-card__reaction-stat" title="{{ 'Reações recebidas'|t }}">
-            {{ include('aculta420_v2:icon', { name: 'heart', variant: 'fill', size: 'sm' }, with_context = false) }}
+          <li class="author-card__reaction-stat">
+            {{ include('aculta420_v2:icon', {name: 'heart', variant: 'fill', size: 'sm'}, with_context: false) }}
+            <span class="visually-hidden">{{ 'Reações recebidas'|t }}</span>
             <span>{{ reactions_received }}</span>
-          </span>
+          </li>
         {% endif %}
-      </div>
+        {% if reactions_given > 0 %}
+          <li class="author-card__reaction-stat">
+            {{ include('aculta420_v2:icon', {name: 'heart', variant: 'regular', size: 'sm'}, with_context: false) }}
+            <span class="visually-hidden">{{ 'Reações dadas'|t }}</span>
+            <span>{{ reactions_given }}</span>
+          </li>
+        {% endif %}
+      </ul>
     {% endif %}
     {% if designation %}<span class="author-card__designation">{{ designation }}</span>{% endif %}
     {% if source_label %}<span class="author-card__source">{{ source_label }}</span>{% endif %}
@@ -39,7 +47,7 @@
           {% if social_icons[social.network] is defined and social.url %}
             <li>
               <a href="{{ social.url }}" rel="nofollow noopener noreferrer" target="_blank" aria-label="{{ social.label }}" title="{{ social.label }}">
-                {{ include('aculta420_v2:icon', { name: social_icons[social.network], variant: 'regular', size: 'md' }, with_context = false) }}
+                {{ include('aculta420_v2:icon', {name: social_icons[social.network], variant: 'regular', size: 'md'}, with_context: false) }}
               </a>
             </li>
           {% endif %}

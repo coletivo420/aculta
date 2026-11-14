@@ -877,9 +877,9 @@ regras globalmente. Story: `map-canvas.default.story.yml`.
 - **Papel:** apresenta identidade pública e contextual preparada pelo `aculta_user`, inclusive autoria editorial.
 - **Props:** `variant`, `size`, `display_name`, `profile_url`, `source_label`, `has_avatar`, `has_actions`, `member_since`, `designation`, `bio`, `reactions_received`, `reactions_given`, `social_links`.
 - **Slots:** `avatar`, `actions`.
-- **Story:** `author-card.default.story.yml`.
-- **Regra:** não carrega usuário/Profile, não decide visibilidade e não inventa iniciais; o producer preserva os render arrays cacheáveis em `#slots`. O Core injeta esses slots nos blocks `avatar` e `actions` do SDC. O Twig exibe `reactions_received` nos contextos habilitados; `reactions_given` atualmente participa apenas da condição da área de estatísticas e não tem saída visual, portanto permanece como dívida de contrato a revisar.
-- **Estado:** o validator do tema passou para 91 SDCs e confere identidade, bio e mídia no slot `avatar`; Core e UI Patterns Library usam o mesmo mecanismo de slot por block. A evidência do gate não substitui homologação publicada/autenticada do author box no Runtime; a rota pública ainda não foi homologada. A comparação `/meu-perfil` (Firefox ESR, 89/89, 22 ignoradas, 2026-11-06) é histórica para layout/teclado. Revisar separadamente a saída visual de ações e a dívida `reactions_given`.
+- **Stories:** `author-card.default.story.yml` e `author-card.forum-reactions.story.yml`.
+- **Regra:** não carrega usuário/Profile, não decide visibilidade e não inventa iniciais; o producer preserva os render arrays cacheáveis em `#slots`. O Core injeta esses slots nos blocks `avatar` e `actions` do SDC. As variantes `author_forum`, `author_forum_stacked` e `profile_full` exibem, com rótulos acessíveis, as contagens positivas de reações recebidas e dadas.
+- **Estado:** o validator do tema confere identidade, bio e mídia no slot `avatar`, além da saída das duas contagens e do caso apenas com reações dadas. Core e UI Patterns Library usam o mesmo mecanismo de slot por block. A homologação publicada/autenticada do author box no Runtime continua pendente; a comparação `/meu-perfil` (Firefox ESR, 89/89, 22 ignoradas, 2026-11-06) é histórica para layout/teclado.
 
 ### profile-details — Detalhes de perfil
 - **Papel:** apresenta biografia ou redes sociais já preparadas pelo `aculta_user` no Studio.
