@@ -212,7 +212,6 @@ final class StudioDashboardCalendarComposer {
         'current_month_label' => $grid['rotulo'],
         'previous_url' => $prevUrl,
         'next_url' => $nextUrl,
-        'active_filter' => $filtroValido,
         'filters' => $filtrosProps,
         'weeks' => $weeksProps,
         'selected_date_label' => $selectedDateLabel,

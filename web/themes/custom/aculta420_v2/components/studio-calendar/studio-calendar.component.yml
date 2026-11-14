@@ -6,7 +6,7 @@ status: experimental
 props:
   type: object
   additionalProperties: false
-  required: [title, current_month_label, active_filter]
+  required: [title, current_month_label]
   properties:
     title:
       title: Título do calendário
@@ -23,11 +23,6 @@ props:
     next_url:
       title: Endereço do próximo mês
       type: [string, 'null']
-    active_filter:
-      title: Filtro de calendário ativo
-      type: string
-      enum: [cursos, eventos, meus_eventos]
-      default: cursos
     filters:
       title: Filtros disponíveis
       type: array

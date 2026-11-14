@@ -96,7 +96,7 @@ final class StudioCalendarIntegrationKernelTest extends KernelTestBase {
     $build = $composer->compose(2026, 11, 'cursos', '2026-11-06');
     self::assertSame('aculta420_v2:studio-calendar', $build['#component']);
     self::assertSame('Novembro de 2026', $build['#props']['current_month_label']);
-    self::assertSame('cursos', $build['#props']['active_filter']);
+    self::assertTrue($build['#props']['filters'][0]['active']);
     self::assertTrue($build['#props']['can_add_event']);
     self::assertSame('/culturas/propostas/evento/nova', $build['#props']['add_event_url']);
     self::assertNotEmpty($build['#props']['weeks']);
@@ -113,7 +113,7 @@ final class StudioCalendarIntegrationKernelTest extends KernelTestBase {
       'dia' => '2026-11-10',
     ]);
     $fragBuild = $controller->fragment($request);
-    self::assertSame('eventos', $fragBuild['#props']['active_filter']);
+    self::assertTrue($fragBuild['#props']['filters'][1]['active']);
     self::assertSame('Novembro de 2026', $fragBuild['#props']['current_month_label']);
   }
 

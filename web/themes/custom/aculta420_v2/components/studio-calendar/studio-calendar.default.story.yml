@@ -5,7 +5,6 @@ props:
   current_month_label: Novembro de 2026
   previous_url: /estudio/calendario?ano=2026&mes=10&filtro=cursos
   next_url: /estudio/calendario?ano=2026&mes=12&filtro=cursos
-  active_filter: cursos
   filters:
     - id: cursos
       label: Cursos
