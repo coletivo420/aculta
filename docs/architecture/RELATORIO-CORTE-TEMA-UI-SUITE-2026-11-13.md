@@ -1,7 +1,7 @@
 # Relatório de corte do tema para composição integral com UI Suite
 
-**Data:** 2026-11-13
-**Escopo:** análise estática do checkout ACULTA; sem alteração de tema/configuração, sem execução de migração e sem homologação no Runtime.
+**Data da revisão:** 2026-11-14
+**Escopo:** estado do checkout após o commit `6537d1083a1ee100c457c48219e04a62a70403f4`; sem importação estrutural nem homologação visual pós-commit no Runtime.
 **Decisão relacionada:** ADR-054, seção “Decisão vigente — corte radical da apresentação legada”.
 
 ## 1. Objetivo operacional
@@ -10,23 +10,25 @@
 
 O alvo é retirar a composição paralela em templates Twig, preprocess/hooks, CSS de domínio e configuração de apresentação duplicada. Manter a fundação mínima Drupal, a estrutura do shell, os tokens/skins e os componentes SDC que serão montados editorialmente. Não apagar conteúdo nem comportamento dos módulos owners.
 
-## 1.1 Corte aplicado nesta execução
+## 1.1 Estado do corte no checkout atual
 
-Foram retirados **35 templates Twig do tema** e o hook `ForumListHooks`, que só preparava contagens para templates de Views removidos. Os arquivos removidos abrangem adapters de doação, Eventos, Links, Portal, seção/editorial, autoria, Commerce, node displays de FAQ/Fórum/documentos/Revista/Wiki, form do tópico, reações/composição do Fórum, submit, status/pagamento/busca e templates específicos de Views de Fórum/Revista. O diretório `templates/` passou de 55 para 20 arquivos.
+O lote publicado em `6537d1083a1ee100c457c48219e04a62a70403f4` removeu dois presenters: `templates/content/node--wiki-entry--full.html.twig` e `templates/layout/page--shell-v2.html.twig`, além da folha e configuração do shell paralelo. O display `node.wiki_entry.full` agora seleciona `aculta420_v2:wiki-entry` pelo ComponentLayout UI Patterns e mapeia os campos para suas regiões/slots. `page.html.twig` é o shell único e compõe `layout-page`.
 
-Foram preservados os templates de comentário: a revisão do consumer do Fórum mostrou que eles preservam `attributes`, âncoras, estados, links operacionais e acessibilidade do Core. Também ficaram shell/HTML, título/navegação base, UI Patterns Library, e-mail, Portal photo editor/terms modal, `portal-component` e fragmentos Leaflet/Maps.
+A revisão R3 identificou perda funcional em remoções mais amplas de Fórum, Revista, catálogo de produto, teasers e formulários; esses templates foram mantidos até existir substituição equivalente. Portanto a afirmação anterior de que 35 templates foram retirados e `templates/` caiu de 55 para 20 **não descreve o checkout atual** e fica substituída por este registro.
 
-O corte removeu overrides e deixou Drupal/Core ou templates neutros dos módulos como fallback. **Ainda não converteu todos os consumers para UI Patterns nem configurou os 95 displays/Views/35 placements**; portanto esta entrega é o corte de overrides, não o estado final “100% UI Suite”. Saída renderizada e fallback não foram executados no Runtime. Não há alegação de PASS funcional/visual.
+No checkout atual há **31 templates Twig em `web/themes/custom/aculta420_v2/templates/`**, além dos templates internos dos SDCs. O corte ainda não converteu todos os consumidores nem homologou a saída renderizada no Runtime. Não há alegação de PASS funcional/visual pós-commit.
 
-## 2. Fotografia encontrada
+## 2. Fotografia encontrada no commit atual
 
-- **135 diretórios SDC** estão visíveis agora. Durante a execução, `discussion-comment` foi removido localmente e um novo diretório `forum-author-line` apareceu em andamento; o worktree está sendo alterado simultaneamente. A UI Patterns Library descobre os SDCs pelo provider de tema. Eles já pertencem ao fluxo UI Suite; não se deve excluí-los por não terem referência literal em PHP/Twig.
-- **55 templates Twig** em `templates/`, incluindo shell, adapters de domínio, templates de conteúdo/Views, formulários/fragmentos e quatro templates próprios da UI Patterns Library.
-- **7 classes de Hook**, **8 classes Story PHP**, `PagePresentationHooks`, `PortalUiHooks`, `SurfaceSettingsHooks`, `ForumListHooks`, `UnpublishedPreviewHooks`, `MailEnvelopeHooks`, `UiPatternsStoryHooks`, `WikiBrandMediaProps` e `ComponentLibraryRoutes` são código de apresentação/integridade que exige classificação própria antes do corte.
-- **19 folhas CSS** em `src/styles/`, além dos CSS distribuídos dentro dos SDCs. `global-styling` carrega 9 itens, incluindo Google Fonts e estilos globais de button, surface e heading.
-- **95 entity view displays** no inventário estático; **22 com Layout Builder habilitado**. **35 blocos** em placements do tema; o inventário estático atual não encontrou bloco nas regiões antigas. Esses números não provam o estado do Runtime.
-- `core.extension.yml` declara Layout Builder e integrações UI Patterns para blocks, field, field formatters, layouts, library e Views, além de UI Styles para block, Layout Builder, UI Patterns, Views e page. O checkout não contém `web/core`, `web/modules/contrib` ou `vendor`; a presença/versão efetiva no Runtime e o comportamento de cada plugin não foram revalidados nesta análise.
-- Foram encontrados displays/View configs já usando UI Patterns e ComponentLayout, mas também templates específicos e estilos de domínio. O estado é misto; “UI Suite habilitado” não significa “todas as páginas compostas pelo UI Suite”.
+- **141 manifests SDC e 223 stories** no checkout. Os gates de schema e contrato da UI Patterns Library passaram para esse conjunto; isso prova metadados/stories no código, não uso editorial nem renderização de todas as combinações.
+- **31 templates Twig** sob `web/themes/custom/aculta420_v2/templates/`. Os 141 SDCs têm seus próprios templates, que são implementação dos componentes e não devem ser contados como presenters Drupal legados.
+- O diretório contém shell, templates de conteúdo/Views, formulários/fragmentos, quatro templates da UI Patterns Library, e-mail e adapters de módulos. A classificação individual vigente continua no roadmap do tema.
+- `node.wiki_entry.full` usa agora Layout Builder + `ui_patterns:aculta420_v2:wiki_entry`; oito regiões/slots recebem summary, body, categories, image, references, related, discussion e actions. A revisão independente confirmou o mapeamento no Config Sync e o contrato do SDC.
+- O único shell é `templates/layout/page.html.twig`, com cinco regiões declaradas em `aculta420_v2.info.yml`; o SDC `layout-page` fornece o landmark `main`.
+- O inventário de integrações/consumidores fica em `docs/architecture/inventarios/ui-suite-consumidores-iniciais.csv`; foi regenerado para os arquivos do checkout atual. Não confundir os campos de Runtime capturados em snapshots de 2026-11-10/11 com estado atual.
+- A matriz foi regenerada a partir do checkout em 2026-11-14: **462 linhas**, incluindo 141 SDCs, 159 displays de Views, 52 instâncias de blocos, 22 displays com Layout Builder e 31 overrides Twig do tema. A busca encontrou referências literais de produção a 107 SDCs; 34 não têm referência literal no código ou configuração varridos. Isso não demonstra que sejam órfãos: a UI Patterns Library cataloga todos, e usos editoriais/dinâmicos não são enumeráveis pela busca. Campos `runtime_status` da matriz são snapshots antigos ou “not observed”, não estado atual.
+- `runtime-sync doctor --format=json`, executado após o push, retornou **BLOCKED/RX** no commit atual: 0 updates e 0 deploy hooks pendentes; drift em `aculta420_v2.settings` e `core.entity_view_display.block_content.aculta_institution.footer`; schema ausente para 11 módulos, incluindo `aculta_ui_library`; checkout compartilhado com Apache e cache/baseline ainda em `e37f3d8d45ecba9719d4b97dde67effc2236b13f`. Não executar sincronização, importação, desinstalação ou rebuild com esse preflight.
+- “UI Suite habilitado” não significa “todas as páginas compostas pelo UI Suite”. O plano continua por domínio e exige inventário, migração e homologação por consumidor.
 
 ## 3. O que deve sair do caminho de renderização
 
@@ -196,7 +198,9 @@ A auditoria presente é do repositório. Há mudanças locais em andamento em ar
 - Todo SDC mantido é intencional para UI Patterns; páginas complexas não escondem composição editorial dentro de componentes monolíticos.
 - Todos os dez domínios abrem e entregam rotas/conteúdo/formulários com acesso/cache intactos. Paridade com o visual antigo não é exigida.
 
-## 11. Verificação da composição UI Suite (2026-11-13)
+## 11. Snapshot anterior da composição UI Suite (2026-11-13)
+
+Esta seção preserva a fotografia feita antes do commit `6537d1083a1ee100c457c48219e04a62a70403f4`. Contagens de SDCs, status de `node.wiki_entry.full`, caminhos removidos e estado do Runtime abaixo são históricos; para o estado atual, prevalece a seção 2 revisada em 2026-11-14 e o roadmap do tema.
 
 ### Configuração declarada
 
