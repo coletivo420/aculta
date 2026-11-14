@@ -1761,6 +1761,10 @@ State: Dev. No RC, production deployment, or release tag is declared.
   explícitos para cabeçalho, navegação, tópicos, vazio, pager e painel lateral.
   O Twig da View só conecta dados Drupal e SDCs filhos ao contrato do componente;
   a story demonstra a composição pela UI Patterns Library.
+- `forum-list-page` também passou a controlar a grade e os slots de categorias,
+  busca, navegação, rows, estado vazio, pager e painel lateral. O cabeçalho das
+  rows agora usa estilos próprios do SDC da página, sem depender do CSS de
+  `forum-topic-row`.
 - Removidos `src/styles/forum.css`, a biblioteca `forum` e seu attachment em
   `PagePresentationHooks`. Listagem, categoria e busca carregam CSS a partir
   dos SDCs que efetivamente compõem cada View.

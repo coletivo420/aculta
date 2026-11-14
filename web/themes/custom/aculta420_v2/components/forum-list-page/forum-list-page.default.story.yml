@@ -2,6 +2,27 @@ name: Lista pública de tópicos
 description: View de tópicos com categorias, abas, paginação e regras do Fórum.
 component: aculta420_v2:forum-list-page
 slots:
-  content:
+  header:
     type: inline_template
-    template: '<header><h1>Growroom420</h1></header><div class="aculta-forum-list__layout"><aside class="aculta-forum-list__categories"><h2>Categorias</h2><ul class="aculta-forum-list__category-list"><li><a class="aculta-forum-list__category is-all" href="#">Todas as categorias</a></li></ul></aside><section class="aculta-forum-list__panel" aria-label="Lista de tópicos"><div class="aculta-forum-list__rows"><article class="forum-topic-row">Tópico de exemplo</article></div></section><aside class="aculta-forum-list__aside">Regras</aside></div>'
+    template: '<header><h1>Growroom420</h1><p>Comunidade para aprender e trocar experiências.</p></header>'
+  categories:
+    type: inline_template
+    template: '<ul class="aculta-forum-list__category-list"><li><a class="aculta-forum-list__category is-all" href="#">Todas as categorias <span class="aculta-forum-list__category-count">24</span></a></li><li><a class="aculta-forum-list__category" href="#">Cultivo <span class="aculta-forum-list__category-count">8</span></a></li></ul>'
+  search:
+    type: inline_template
+    template: '<div class="aculta-forum-list__search"><input type="search" aria-label="Buscar tópicos" placeholder="Buscar tópicos"></div>'
+  navigation:
+    type: inline_template
+    template: '<nav aria-label="Ordenação dos tópicos">Recentes · Populares · Novas · Sem resposta</nav>'
+  shortcuts:
+    type: inline_template
+    template: '<ul class="aculta-forum-list__soon"><li>Não lidos</li><li>Seguindo</li></ul>'
+  topics:
+    type: inline_template
+    template: '<article class="forum-topic-row">Tópico de exemplo</article>'
+  pager:
+    type: inline_template
+    template: '<nav aria-label="Paginação">Página 1</nav>'
+  sidebar:
+    type: inline_template
+    template: '<section><h2>Regras da comunidade</h2><p>Colabore com respostas úteis e fundamentadas.</p></section>'

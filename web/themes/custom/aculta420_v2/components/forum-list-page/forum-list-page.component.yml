@@ -7,9 +7,33 @@ props:
   type: object
   additionalProperties: false
 slots:
-  content:
-    title: Lista pública
-    description: Conteúdo e rows preparados pela View de tópicos do Fórum.
+  header:
+    title: Cabeçalho
+    description: Título, descrição e ação principal da comunidade.
+  categories:
+    title: Categorias
+    description: Links de categoria e contagens preparados pelo tema.
+  search:
+    title: Busca
+    description: Campo ou formulário de busca da lista.
+  navigation:
+    title: Navegação
+    description: Abas de ordenação da lista de tópicos.
+  shortcuts:
+    title: Atalhos
+    description: Ações secundárias disponíveis na lista.
+  topics:
+    title: Tópicos
+    description: Linhas de tópicos renderizadas pela View.
+  empty:
+    title: Estado vazio
+    description: Mensagem exibida quando a View não retorna tópicos.
+  pager:
+    title: Paginação
+    description: Paginação renderizada pela View.
+  sidebar:
+    title: Painel lateral
+    description: Estatísticas, regras e conteúdo complementar da comunidade.
 assets:
   css:
     component:

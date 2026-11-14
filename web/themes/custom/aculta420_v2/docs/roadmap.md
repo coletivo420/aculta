@@ -14,7 +14,7 @@ anteriores e não substituem a conferência do código atual.
   A função antiga de sugestão `page__shell_v2` agora é no-op, mantida somente
   para que um registro de hook em cache não aponte para função ausente; removê-la
   depende de rebuild seguro do Runtime compartilhado.
-- 146 manifests SDC e 229 stories. Todos têm story: `hint` exemplifica os tons
+- 146 manifests SDC e 230 stories. Todos têm story: `hint` exemplifica os tons
   normal/muted; `sales-panel` e `secret-reveal` usam dados demonstrativos
   fictícios.
 - Config Sync habilita UI Patterns, Blocks, Field, Field Formatters, Layouts,

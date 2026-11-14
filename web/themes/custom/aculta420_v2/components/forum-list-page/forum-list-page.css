@@ -16,6 +16,7 @@
 .aculta-forum-list__rows { min-inline-size: 0; }
 .aculta-forum-list__rows .view-empty { padding: var(--spacing-lg); color: var(--color-text-muted); }
 .aculta-forum-list__pager { padding: var(--spacing-base); border-block-start: 1px solid var(--color-border); }
+.aculta-forum-list__topics-header { display: none; }
 
 .aculta-forum-list__layout { display: grid; gap: var(--spacing-base); min-inline-size: 0; }
 .aculta-forum-list__aside,
@@ -58,6 +59,28 @@
 @media (min-width: 60rem) {
   .aculta-forum-list__layout { grid-template-columns: minmax(0, 1fr) 18rem; align-items: start; }
   .aculta-forum-list__categories { grid-column: 1 / -1; }
+}
+
+@media (min-width: 48rem) {
+  .aculta-forum-list__topics-header {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 19.5rem;
+    align-items: center;
+    padding: var(--spacing-xs) var(--spacing-lg);
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    border-block-end: 1px solid var(--color-border);
+    background: var(--color-canvas);
+    font-size: .6875rem;
+    font-weight: 700;
+    gap: var(--spacing-sm);
+  }
+  .aculta-forum-list__topics-header-cols {
+    display: grid;
+    grid-template-columns: repeat(3, 6.5rem);
+    text-align: center;
+  }
 }
 
 @media (min-width: 75rem) {
