@@ -33,7 +33,7 @@ anteriores e não substituem a conferência do código atual.
   oficial para ocultar SDCs individuais. O CSV de consumidores foi regenerado
   para o checkout atual; os campos `runtime_status` ainda incluem snapshots
   antigos. Não remover SDCs por busca literal: a ausência de referência não
-  prova ausência de uso editorial ou dinâmico. Classificar os 34 sem referência
+  prova ausência de uso editorial ou dinâmico. Classificar os 35 sem referência
   literal pela intenção de biblioteca e confirmar seleções editoriais no
   Runtime após liberar preflight. Matriz:
   `docs/architecture/inventarios/ui-suite-consumidores-iniciais.csv`.
