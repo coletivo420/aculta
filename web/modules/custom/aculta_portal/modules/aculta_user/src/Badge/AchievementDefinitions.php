@@ -10,7 +10,8 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\file\FileUsage\FileUsageInterface;
 
 /**
- * Catálogo configurável de critérios fechados; User preserva definições e fatos. */
+ * Catálogo configurável de critérios fechados; User preserva definições e fatos.
+ */
 final class AchievementDefinitions {
 
   public const TRIGGERS = [
@@ -33,7 +34,7 @@ final class AchievementDefinitions {
   /**
    * Retorna todas as conquistas, combinando padrões e configuração.
    *
-   * @return array<string, array<string, mixed>>
+   * @return array<string, array<array-key, mixed>>
    *   Definições de conquistas indexadas pelo identificador.
    */
   public function all(): array {
@@ -71,24 +72,29 @@ final class AchievementDefinitions {
         'image_uuid' => '',
       ];
     }
-    foreach ($this->configs->get('aculta_user.achievement_definitions')->get('definitions') ?? [] as $id => $definition) {
+    $configured = $this->configs->get('aculta_user.achievement_definitions')->get('definitions');
+    foreach ($this->arrayValue($configured) as $id => $definition) {
       if (!preg_match('/^[a-z][a-z0-9_]{2,63}$/D', (string) $id) || !is_array($definition) || empty($definition['label'])) {
         continue;
       }
-      $definition['triggers'] = array_values(array_intersect(array_keys(self::TRIGGERS), $definition['triggers'] ?? []));
+      $definition['triggers'] = $this->triggersFrom($definition['triggers'] ?? NULL);
       $definition['origem'] = $definition['triggers'] === ['manual'] ? BadgeCatalog::MANUAL : BadgeCatalog::AUTOMATICA;
-      $defaults[$id] = $definition;
+      $defaults[(string) $id] = $definition;
     }
     return $defaults;
   }
 
   /**
-   * Salva um item sem sobrescrever edições concorrentes dos demais. */
+   * Salva um item sem sobrescrever edições concorrentes dos demais.
+   *
+   * @param array<array-key, mixed> $definition
+   *   Campos da conquista a gravar.
+   */
   public function save(string $id, array $definition): void {
-    if (!preg_match('/^[a-z][a-z0-9_]{2,63}$/D', $id) || trim((string) ($definition['label'] ?? '')) === '') {
+    if (!preg_match('/^[a-z][a-z0-9_]{2,63}$/D', $id) || trim($this->textValue($definition['label'] ?? '')) === '') {
       throw new \InvalidArgumentException('Identificador ou nome de conquista inválido.');
     }
-    $triggers = array_values(array_intersect(array_keys(self::TRIGGERS), $definition['triggers'] ?? []));
+    $triggers = $this->triggersFrom($definition['triggers'] ?? NULL);
     if ($triggers === []) {
       throw new \InvalidArgumentException('Escolha pelo menos uma forma de concessão.');
     }
@@ -99,7 +105,7 @@ final class AchievementDefinitions {
     try {
       $this->configs->reset('aculta_user.achievement_definitions');
       $previous = $this->all()[$id] ?? NULL;
-      $imageUuid = (string) ($previous['image_uuid'] ?? '');
+      $imageUuid = $this->textValue($previous['image_uuid'] ?? '');
       $oldFiles = !empty($previous['image_uuid']) ? $this->entities->getStorage('file')->loadByProperties(['uuid' => $previous['image_uuid']]) : [];
       $oldFile = $oldFiles ? reset($oldFiles) : NULL;
       $newFile = NULL;
@@ -107,8 +113,9 @@ final class AchievementDefinitions {
         $imageUuid = '';
       }
       if (!empty($definition['image_fid'])) {
-        $file = $this->entities->getStorage('file')->load((int) $definition['image_fid']);
-        if (!$file || !str_starts_with($file->getFileUri(), 'public://') || !str_starts_with((string) $file->getMimeType(), 'image/')) {
+        $file = $this->entities->getStorage('file')->load($this->intValue($definition['image_fid']));
+        $uri = $file?->getFileUri();
+        if (!$file || !is_string($uri) || !str_starts_with($uri, 'public://') || !str_starts_with($this->textValue($file->getMimeType()), 'image/')) {
           throw new \InvalidArgumentException('Envie uma imagem pública válida.');
         }
         $file->setPermanent();
@@ -116,26 +123,27 @@ final class AchievementDefinitions {
         $newFile = $file;
         $imageUuid = $file->uuid();
       }
-      $imageChanged = $imageUuid !== (string) ($previous['image_uuid'] ?? '');
-      $version = (int) ($previous['criterion_version'] ?? 1);
-      $previousTriggers = $previous['triggers'] ?? [];
+      $imageChanged = $imageUuid !== $this->textValue($previous['image_uuid'] ?? '');
+      $version = $this->intValue($previous['criterion_version'] ?? 1);
+      $previousTriggers = $this->arrayValue($previous['triggers'] ?? NULL);
       $comparison = $triggers;
       sort($previousTriggers);
       sort($comparison);
       if ($previous !== NULL && $previousTriggers !== $comparison) {
         $version++;
       }
+      $imageKey = $definition['image'] ?? ($previous['image'] ?? '');
       $this->configs->getEditable('aculta_user.achievement_definitions')->set('definitions.' . $id, [
-        'label' => trim((string) $definition['label']),
-        'description' => trim((string) ($definition['description'] ?? '')),
+        'label' => trim($this->textValue($definition['label'])),
+        'description' => trim($this->textValue($definition['description'] ?? '')),
         'enabled' => !empty($definition['enabled']),
         'triggers' => $triggers,
         'criterion_version' => $version,
-        'image' => !empty($definition['remove_image']) ? '' : (in_array($definition['image'] ?? $previous['image'] ?? '', [
+        'image' => !empty($definition['remove_image']) ? '' : (in_array($imageKey, [
           'fundadore',
           'associado',
           'apoiador',
-        ], TRUE) ? ($definition['image'] ?? $previous['image']) : ''),
+        ], TRUE) ? $imageKey : ''),
         'image_uuid' => $imageUuid,
       ])->save();
       if ($imageChanged && $oldFile) {
@@ -154,13 +162,55 @@ final class AchievementDefinitions {
   }
 
   /**
-   * Detach the image and delete its managed file when it has no other usage. */
+   * Detach the image and delete its managed file when it has no other usage.
+   */
   public function removeImage(string $id): void {
     $definition = $this->all()[$id] ?? NULL;
     if ($definition === NULL) {
       throw new \InvalidArgumentException('Conquista não encontrada.');
     }
     $this->save($id, $definition + ['remove_image' => TRUE, 'image_fid' => NULL]);
+  }
+
+  /**
+   * Gatilhos pedidos que existem no catálogo, na ordem do catálogo.
+   *
+   * @return list<string>
+   *   Chaves de TRIGGERS presentes no valor pedido.
+   */
+  private function triggersFrom(mixed $value): array {
+    // Só texto pode ser gatilho: as chaves de TRIGGERS são strings não numéricas.
+    $requested = [];
+    foreach ($this->arrayValue($value) as $item) {
+      if (is_string($item)) {
+        $requested[] = $item;
+      }
+    }
+    return array_values(array_intersect(array_keys(self::TRIGGERS), $requested));
+  }
+
+  /**
+   * O valor como array, ou vazio quando não é array.
+   *
+   * @return array<array-key, mixed>
+   *   Valor recebido, ou lista vazia.
+   */
+  private function arrayValue(mixed $value): array {
+    return is_array($value) ? $value : [];
+  }
+
+  /**
+   * Texto de um valor de configuração; vazio quando o valor não é escalar.
+   */
+  private function textValue(mixed $value): string {
+    return is_scalar($value) ? (string) $value : '';
+  }
+
+  /**
+   * Inteiro de um valor de configuração; zero quando o valor não é numérico.
+   */
+  private function intValue(mixed $value): int {
+    return is_numeric($value) ? (int) $value : 0;
   }
 
 }

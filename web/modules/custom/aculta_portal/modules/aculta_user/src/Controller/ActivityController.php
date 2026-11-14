@@ -32,7 +32,8 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 final class ActivityController implements ContainerInjectionInterface {
 
   /**
-   * Rótulos das abas, na ordem do menu. */
+   * Rótulos das abas, na ordem do menu.
+   */
   public const TABS = [
     'wiki' => 'Wiki',
     'forum' => 'Fórum',
@@ -63,7 +64,11 @@ final class ActivityController implements ContainerInjectionInterface {
   }
 
   /**
-   * Renderiza a aba pedida. */
+   * Renderiza a aba pedida.
+   *
+   * @return array<string, mixed>
+   *   Render array da aba de atividade.
+   */
   public function view(string $aba): array {
     if ($this->siteManager->getCurrentSiteKey()?->value !== 'account' || !isset(self::TABS[$aba])) {
       throw new NotFoundHttpException();
@@ -82,7 +87,10 @@ final class ActivityController implements ContainerInjectionInterface {
       'comentarios' => $this->comentarios($uid),
       default => ['#markup' => (string) $this->stringTranslation->translate('Nenhuma conquista ainda. As conquistas chegam em uma etapa futura.')],
     };
-    $this->modules->alter('aculta_user_activity_content', $conteudo, $aba, $uid);
+    // alter() recebe os argumentos por referência: passa cópias para não alterar $aba nem $uid.
+    $contexto = $aba;
+    $contextoUid = $uid;
+    $this->modules->alter('aculta_user_activity_content', $conteudo, $contexto, $contextoUid);
     // Mesmo padrão de Meus Dados e Segurança: descrição, abas (links com URL própria) e o conteúdo da aba.
     return [
       '#cache' => ['contexts' => $cache->getCacheContexts(), 'tags' => $cache->getCacheTags(), 'max-age' => 0],
@@ -115,7 +123,11 @@ final class ActivityController implements ContainerInjectionInterface {
   }
 
   /**
-   * Links das abas, com a aba atual marcada (aria-current e is-active), como em Meus Dados e Segurança. */
+   * Links das abas, com a aba atual marcada (aria-current e is-active), como em Meus Dados e Segurança.
+   *
+   * @return array<int, array<mixed>>
+   *   Links das abas, na ordem do menu.
+   */
   private function tabLinks(string $atual): array {
     $links = [];
     foreach (self::TABS as $id => $label) {
@@ -123,9 +135,10 @@ final class ActivityController implements ContainerInjectionInterface {
         'data-portal-account-data-link' => 'true',
         'data-portal-ui' => 'account-data-link',
       ]);
-      if ($id === $atual) {
-        $link['#element_attributes']->setAttribute('aria-current', 'page');
-        $link['#element_attributes']->addClass('is-active');
+      $attributes = $link['#element_attributes'] ?? NULL;
+      if ($id === $atual && $attributes instanceof Attribute) {
+        $attributes->setAttribute('aria-current', 'page');
+        $attributes->addClass('is-active');
       }
       $links[] = $link;
     }
@@ -133,7 +146,11 @@ final class ActivityController implements ContainerInjectionInterface {
   }
 
   /**
-   * Verbetes publicados em que a pessoa criou pelo menos uma revisão, com link para o histórico público. */
+   * Verbetes publicados em que a pessoa criou pelo menos uma revisão, com link para o histórico público.
+   *
+   * @return array<string, mixed>
+   *   Render array da lista de verbetes.
+   */
   private function wiki(int $uid): array {
     $revisions = $this->entityTypeManager->getStorage('node')->getQuery()
       ->accessCheck(FALSE)
@@ -146,7 +163,11 @@ final class ActivityController implements ContainerInjectionInterface {
   }
 
   /**
-   * Tópicos de Fórum criados pela pessoa que continuam publicados. */
+   * Tópicos de Fórum criados pela pessoa que continuam publicados.
+   *
+   * @return array<string, mixed>
+   *   Render array da lista de tópicos.
+   */
   private function forum(int $uid): array {
     $query = $this->entityTypeManager->getStorage('node')->getQuery();
     $nids = $query
@@ -166,7 +187,11 @@ final class ActivityController implements ContainerInjectionInterface {
   }
 
   /**
-   * Publicações da Revista de autoria da pessoa, publicadas. */
+   * Publicações da Revista de autoria da pessoa, publicadas.
+   *
+   * @return array<string, mixed>
+   *   Render array da lista de publicações.
+   */
   private function revista(int $uid): array {
     $nids = $this->entityTypeManager->getStorage('node')->getQuery()
       ->accessCheck(FALSE)->condition('type', 'revista')->condition('uid', $uid)->condition('status', 1)->execute();
@@ -174,7 +199,11 @@ final class ActivityController implements ContainerInjectionInterface {
   }
 
   /**
-   * Respostas publicadas pela pessoa, em Comments ou posts revisionáveis do Fórum. */
+   * Respostas publicadas pela pessoa, em Comments ou posts revisionáveis do Fórum.
+   *
+   * @return array<string, mixed>
+   *   Render array da lista de comentários.
+   */
   private function comentarios(int $uid): array {
     $ids = $this->entityTypeManager->getStorage('comment')->getQuery()
       ->accessCheck(FALSE)
@@ -266,13 +295,13 @@ final class ActivityController implements ContainerInjectionInterface {
         }
         $url->setOption('fragment', 'forum-post-' . $post->id());
         $entries[] = [
-          'created' => (int) $post->get('created')->value,
+          'created' => $this->intValue($post->get('created')->value),
           'sort_id' => 'post-' . $post->id(),
           'link' => [
             '#type' => 'link',
             '#title' => $this->stringTranslation->translate(
               '@subject — @topic',
-              ['@subject' => $post->get('subject')->value, '@topic' => $topic->label()],
+              ['@subject' => $this->textValue($post->get('subject')->value), '@topic' => $this->textValue($topic->label())],
             ),
             '#url' => $url,
           ],
@@ -290,7 +319,13 @@ final class ActivityController implements ContainerInjectionInterface {
   }
 
   /**
-   * Mantém os nós publicados do tipo indicado. */
+   * Mantém os nós publicados do tipo indicado.
+   *
+   * @phpstan-param list<int|string> $nids
+   *
+   * @return list<int>
+   *   IDs dos nós publicados do tipo.
+   */
   private function publishedNodeIds(array $nids, string $bundle): array {
     if ($nids === []) {
       return [];
@@ -306,7 +341,13 @@ final class ActivityController implements ContainerInjectionInterface {
   }
 
   /**
-   * Lista de nós com link, ou mensagem de vazio com link para a área. */
+   * Lista de nós com link, ou mensagem de vazio com link para a área.
+   *
+   * @phpstan-param list<int|string> $nids
+   *
+   * @return array<string, mixed>
+   *   Render array da lista de nós.
+   */
   private function nodeList(
     array $nids,
     string $bundle,
@@ -326,12 +367,12 @@ final class ActivityController implements ContainerInjectionInterface {
       if ($showReplies && $node->hasField('field_aculta_discussion')) {
         // Core's Comment field reads its published-only aggregate from
         // comment_entity_statistics; do not count replies with a query per row.
-        $replyCount = (int) $node->get('field_aculta_discussion')->comment_count;
+        $replyCount = $this->intValue($node->get('field_aculta_discussion')->comment_count);
         $title = $this->stringTranslation->formatPlural(
           $replyCount,
           '1 comentário — @title',
           '@count comentários — @title',
-          ['@title' => $title],
+          ['@title' => $this->textValue($node->label())],
         );
       }
       $url = $history ? Url::fromRoute('entity.node.version_history', ['node' => $node->id()]) : $node->toUrl();
@@ -357,6 +398,20 @@ final class ActivityController implements ContainerInjectionInterface {
       ];
     }
     return ['#theme' => 'item_list', '#items' => $items];
+  }
+
+  /**
+   * Texto de um valor de campo; vazio quando o valor não é escalar.
+   */
+  private function textValue(mixed $value): string {
+    return is_scalar($value) ? (string) $value : '';
+  }
+
+  /**
+   * Inteiro de um valor de campo; zero quando o valor não é numérico.
+   */
+  private function intValue(mixed $value): int {
+    return is_numeric($value) ? (int) $value : 0;
   }
 
 }
