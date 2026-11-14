@@ -58,6 +58,7 @@ $allowedThemeReferences = [
   // UI Patterns Views composes the active theme's SDC while the Forum module
   // continues to own View data, access, filtering, sorting and cache config.
   'modules/aculta_forum/config/install/views.view.aculta_forum_categories.yml',
+  'modules/aculta_forum/config/install/views.view.aculta_forum_public_topics.yml',
   // Config contract test checks that the editorial format uses the theme's
   // UI Styles class catalog; production module code remains theme independent.
   'modules/aculta_editor/tests/src/Kernel/AcultaEditorFormatsKernelTest.php',

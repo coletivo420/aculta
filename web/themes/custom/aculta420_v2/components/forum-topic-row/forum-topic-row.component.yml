@@ -54,3 +54,12 @@ slots:
   thumbnail:
     title: Miniatura opcional
     description: Imagem ou ícone ilustrativo.
+  pinned_content:
+    title: Estado de tópico fixado
+    description: Campo renderizado pela View quando o tópico está fixado.
+  replies_content:
+    title: Total de respostas renderizado
+    description: Contagem formatada pela View, com acesso e cache preservados.
+  activity_content:
+    title: Última atividade renderizada
+    description: Data ou atividade formatada pela View, com acesso e cache preservados.

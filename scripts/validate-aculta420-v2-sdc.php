@@ -98,6 +98,7 @@ $component_ids = [
   'forum-list-page',
   'forum-search-page',
   'forum-topic',
+  'forum-topic-row',
   'green-stash-page',
   'heading',
   'hero-banner',
@@ -424,6 +425,16 @@ $samples = [
       'meta' => 'Publicado recentemente',
       'bookmark' => '',
       'content' => '<div class="aculta-author-card">Autoria pública</div><div class="field--name-body">Descrição do tópico.</div>',
+    ],
+  ],
+  'forum-topic-row' => [
+    '#props' => ['pinned' => FALSE, 'badges' => NULL, 'replies' => NULL, 'views' => NULL, 'last_activity' => NULL],
+    '#slots' => [
+      'title' => Markup::create('<a href="/discussoes/topico-exemplo">Tópico de teste</a>'),
+      'meta' => Markup::create('<article class="author-card">Autoria pública</article><span class="forum-topic-row__category">Cultura</span>'),
+      'pinned_content' => 'Fixo',
+      'replies_content' => '42',
+      'activity_content' => '2h atrás',
     ],
   ],
   'heading' => [
@@ -861,6 +872,43 @@ foreach ($component_ids as $component_id) {
   $output = (string) $renderer->renderInIsolation($build);
   if ($output === '') {
     throw new RuntimeException(sprintf('Empty SDC render: %s', $plugin_id));
+  }
+  if ($component_id === 'forum-topic-row') {
+    foreach ([
+      'forum-topic-row--pinned',
+      'Tópico de teste',
+      'Autoria pública',
+      'Cultura',
+      '42',
+      '2h atrás',
+    ] as $required_output) {
+      if (!str_contains($output, $required_output)) {
+        throw new RuntimeException(sprintf('Forum topic row is missing expected output: %s', $required_output));
+      }
+    }
+    $empty_state_build = [
+      '#type' => 'component',
+      '#component' => $plugin_id,
+      '#props' => [
+        'pinned' => FALSE,
+        'badges' => NULL,
+        'replies' => NULL,
+        'views' => NULL,
+        'last_activity' => NULL,
+      ],
+      '#slots' => [
+        'title' => 'Tópico sem atividade',
+        'meta' => 'Categoria',
+        'pinned_content' => ['#markup' => ''],
+        'replies_content' => ['#markup' => ''],
+        'activity_content' => ['#markup' => ''],
+      ],
+    ];
+    $empty_state_output = (string) $renderer->renderInIsolation($empty_state_build);
+    if (str_contains($empty_state_output, 'forum-topic-row--pinned')
+      || !str_contains($empty_state_output, 'Dado indisponível')) {
+      throw new RuntimeException('Empty Forum topic row slots must not pin rows and must retain unavailable-data placeholders.');
+    }
   }
   if ($component_id === 'avatar') {
     if (!str_contains($output, 'alt="Retrato de exemplo"') || str_contains($output, 'role="img"')) {

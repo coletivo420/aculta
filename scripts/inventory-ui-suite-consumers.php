@@ -136,6 +136,10 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
       && (string) $displayId !== 'default'
       && is_file($forumTopicFieldsTemplate)
       && str_contains((string) file_get_contents($forumTopicFieldsTemplate), "aculta420_v2:forum-topic-row");
+    $isForumTopicsRowPilot = $viewId === 'aculta_forum_public_topics'
+      && (string) $displayId !== 'default'
+      && $rowPlugin === 'ui_patterns'
+      && ($rowPatterns['component_id'] ?? NULL) === 'aculta420_v2:forum-topic-row';
     $documentTeaserHook = $theme . '/src/Hook/PagePresentationHooks.php';
     $documentCardSdc = $theme . '/components/document-card/document-card.component.yml';
     $isDocumentCardSdc = $viewId === 'aculta_documents'
@@ -298,7 +302,7 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
         ? 'BLOCKED_UPSTREAM'
         : (($isWikiEntriesPilot || $isWikiCategoriesPilot) && $displayId === 'default'
         ? 'FUNCTIONAL_NATIVE_EXCEPTION'
-        : ($isForumTopicsSdc || $isRevistaTeaserSdc || $isForumGalleryPilot || $isProductGalleryPilot || ($isForumCategoryPilot && (string) $displayId === 'block_landing') || $isDocumentsPilot || $isShopCatalogPilot || $isWikiEntriesPilot || $documentRuntimeVerified || $shopRuntimeVerified || $wikiRuntimeVerified || $wikiCategoriesRuntimeVerified
+        : ($isForumTopicsRowPilot || $isForumTopicsSdc || $isRevistaTeaserSdc || $isForumGalleryPilot || $isProductGalleryPilot || ($isForumCategoryPilot && (string) $displayId === 'block_landing') || $isDocumentsPilot || $isShopCatalogPilot || $isWikiEntriesPilot || $documentRuntimeVerified || $shopRuntimeVerified || $wikiRuntimeVerified || $wikiCategoriesRuntimeVerified
         ? 'UI_SUITE_NATIVE'
         : (($isViewsFunctionalBase || $isEventsBase || $isAdminViewNative || $isWebformSubmissions || $isNativeCoreView)
         ? 'FUNCTIONAL_NATIVE_EXCEPTION'
@@ -312,7 +316,8 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
         $isWikiEntriesPilot => 'UI Patterns layout-grid composes native node teaser render arrays through the wiki-entry SDC adapter; keep publication, bundle, active Domain, access, order and pager in Views',
         $isWikiCategoriesPilot => 'UI Patterns layout-grid composes native taxonomy-term rows; preserve vocabulary filter, term links, access, editorial order and pager in Views',
         $isDocumentCardSdc => 'The document teaser row uses the existing document-card SDC; finish its UI Patterns layout composition and Runtime validation',
-        $isForumTopicsSdc => 'The Fields row adapter already composes the reusable forum-topic-row SDC; preserve it and migrate to the UI Patterns row plugin only when dynamic entity props and rendered slots can be mapped without losing topic state',
+        $isForumTopicsRowPilot => 'UI Patterns ComponentRow composes forum-topic-row from View-rendered fields, including policy-resolved author identity; preserve View query, domain/access filters, sorting, pager and cache',
+        $isForumTopicsSdc => 'The Fields row adapter composes forum-topic-row as a fallback until the configured UI Patterns row is imported and verified',
         $isProductGalleryPilot => 'UI Patterns layout-grid composes the native Commerce product media View; preserve product Media IDs, ordering, published/image filters and produto_galeria view mode',
         $isNativeCoreView => 'Native Core/contrib View for administration, account, groups or media; keep query, access, filters, pager and Drupal render arrays',
         $isWebformSubmissions => 'Webform submission administration is a functional native Views table; keep Webform query/access/filters and Drupal table presentation',
@@ -341,6 +346,7 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
         $isShopCatalogPilot => 'UI Patterns layout-grid and product-card SDC are confirmed in current source; Runtime/browser snapshot predates the Commerce preprocess migration and must be repeated',
         $isWikiEntriesPilot => 'UI Patterns layout-grid and wiki-entry SDC are confirmed in current source; Runtime/browser snapshot predates the preprocess migration and must be repeated',
         $isDocumentCardSdc => 'Document SDC adapter is present; Runtime row rendering and grid integration are pending',
+        $isForumTopicsRowPilot => 'UI Patterns ComponentRow configured in Sync/install; Runtime snapshot predates this change and cannot verify row output, public-author policy, access or cache; browser comparison remains pending',
         $isForumTopicsSdc && is_array($runtimeView) && is_array($runtimeView['displays'][$displayId] ?? NULL) => 'Runtime config matches Sync; executable View returns 10 rows; access-profile and browser visual evidence not re-run in this inventory pass',
         $isForumTopicsSdc => 'Existing SDC row adapter is confirmed in source; Runtime output, access profiles and browser evidence need verification',
         $isProductGalleryPilot => $productGalleryRuntimeConfigured
@@ -386,6 +392,7 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
         $isDocumentsPilot => 'configured in Sync/source; SDC hook adapter changed after the Runtime snapshot; Runtime access/render/cache validation pending',
         $isDocumentCardSdc => 'document teaser SDC adapter is confirmed in source; View style migration and Runtime output remain pending',
         $isWikiEntriesPilot => 'configured in Sync/source; SDC hook adapter changed after the Runtime snapshot; Runtime access/render/cache validation pending',
+        $isForumTopicsRowPilot => 'configured in Sync/install; Runtime snapshot predates UI Patterns row; import, row output, author policy, access/cache and visual acceptance pending',
         $isForumTopicsSdc && is_array($runtimeView) && is_array($runtimeView['displays'][$displayId] ?? NULL) => 'active; native Views fields row uses forum-topic-row SDC adapter; 10 results; browser/access acceptance not re-run',
         $isForumTopicsSdc => 'existing SDC row adapter confirmed in source; Runtime output not recorded',
         $isProductGalleryPilot && $productGalleryRuntimeConfigured => 'active; Commerce product 1 supplies seven media IDs; UI Patterns style returns seven rows; visual acceptance deferred',

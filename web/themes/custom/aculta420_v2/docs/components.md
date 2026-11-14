@@ -848,10 +848,10 @@ Cada entrada tem: papel, props, slots, JavaScript (se houver), estado e a regra 
 ### forum-topic-row — Linha de Tópico do Fórum
 - **Papel:** linha da listagem de discussões em tabela com pílulas de status, autor, categoria e contadores em colunas no desktop ou empilhados no mobile.
 - **Props:** `pinned` (bool, obrigatório), `badges` (array de `{label, tone}`, opcional), `replies` (opcional), `views` (opcional), `last_activity` (opcional).
-- **Slots:** `title`, `meta`, `preview`, `thumbnail`.
+- **Slots:** `title`, `meta`, `preview`, `thumbnail`, `pinned_content`, `replies_content`, `activity_content`.
 - **Story:** `forum-topic-row.default.story.yml`.
 - **Regra:** destaque fixado recebe fundo `--color-surface-highlight` e borda lateral verde; dados ausentes (como visualizações) viram placeholder neutro `—`.
-- **Estado:** entregue na Entrega 1 do redesenho visual Growroom420; schema estrito validado.
+- **Estado:** entregue na Entrega 1 do redesenho visual Growroom420; schema estrito validado. A View pública de tópicos passa a compor esta row por UI Patterns Views; os slots de contadores/atividade preservam os formatters da View.
 
 ### forum-reply-mirror — Cartão do Post do Fórum Espelhado
 - **Papel:** cartão de post do fórum no layout espelhado, para comentários pares: autor, faixa e reações à direita; ações à esquerda.
