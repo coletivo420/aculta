@@ -117,9 +117,11 @@ anteriores e não substituem a conferência do código atual.
    `site-footer`, `wiki-entry`) permanecem props comuns por representarem
    contexto/conteúdo/estrutura. Os enums metadata e SDC estão alinhados nos sete
    manifests. O gate SDC agora garante alinhamento e labels nos manifests; schema e contrato da
-   Library passaram. Preview e render direto no Runtime continuam pendentes. Avaliar
-   também as 159 props obrigatórias, defaults e estados vazios; ausência de
-   metadados não é falha automática. O worktree tem 275 slots; a varredura lexical apontou 16
+   Library passaram. Preview e render direto no Runtime continuam pendentes. Os 159 nomes de props obrigatórias aparecem nos Twig dos próprios SDCs; isso
+   confirma uso nominal, mas não os valores do producer. Oito props são fornecidas
+   por stories executáveis PHP/provider em vez de aparecer inline no YAML. Avaliar
+   defaults e estados vazios caso a caso; ausência de metadados não é falha
+   automática. O worktree tem 275 slots; a varredura lexical apontou 16
    candidatos;
    triagem manual classificou 11 usos com conversão/inspeção de conteúdo, quatro
    verificações de presença e um falso positivo. As 11 ações foram concluídas:
