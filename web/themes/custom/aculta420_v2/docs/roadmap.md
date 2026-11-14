@@ -47,11 +47,13 @@ anteriores e não substituem a conferência do código atual.
   Não há código executável do módulo no checkout; os dois documentos restantes
   neste diretório foram removidos. Persiste apenas a chave órfã de schema no
   Runtime, cuja limpeza requer backup e prova de restauração.
-  A leitura Runtime de 2026-11-14 confirmou zero updates e zero deploy hooks e
-  nove configurações divergentes (`aculta420_v2.settings`, o display footer da
-  instituição, `node.revista.full`, cinco Views e `revista_sessoes`). O risco
-  cumulativo do Runtime Sync continua RX e seu baseline permanece em
-  `e37f3d8d45ecba9719d4b97dde67effc2236b13f`; não houve importação estrutural.
+  A leitura `doctor` read-only de 2026-11-14 confirmou zero updates e zero
+  deploy hooks e cinco configurações divergentes: `aculta420_v2.settings`, o
+  display footer da instituição, `node.revista.full`, `aculta_forum_categories`
+  e `aculta_forum_public_topics`. O checkout e `origin/dev` estão em
+  `f4399abb9702`; o cache/baseline continua `e37f3d8d45ecba9719d4b97dde67effc2236b13f`,
+  o risco cumulativo segue RX e nenhuma escrita foi feita. Não houve importação
+  estrutural; o checkout compartilhado permanece sujo por outras frentes.
   O checkout compartilhado com Apache é o modo esperado.
 - Restam 17 templates Twig Drupal no tema. O fallback de fields para
   `aculta_forum_categories:page_categories` foi removido após leitura somente
