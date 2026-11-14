@@ -8,6 +8,7 @@ use Drupal\Core\Url;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ExtensionList;
 use Drupal\Core\File\FileSystemInterface;
+use Drupal\file\FileInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Drupal\user\UserDataInterface;
 use Drupal\user\UserInterface;
@@ -17,6 +18,8 @@ use Drupal\user\UserInterface;
  *
  * Fonte da verdade: assets/avatars/meta/avatars.json, com entradas ativas e arquivo existente. A escolha fica em
  * user.data (aculta_user, avatar_id), para que a rotação futura saiba o que já foi sorteado.
+ *
+ * @phpstan-type AvatarEntry array{id: string, file: string, alt: string, active: bool}
  */
 class AvatarPool {
 
@@ -54,7 +57,10 @@ class AvatarPool {
   }
 
   /**
-   * Copia a imagem da entrada para o acervo público e a grava em user_picture. */
+   * Copia a imagem da entrada para o acervo público e a grava em user_picture.
+   *
+   * @phpstan-param AvatarEntry $entry
+   */
   private function assignEntry(UserInterface $account, array $entry): bool {
     $root = $this->appRoot . '/' . $this->modules->getPath('aculta_user') . '/assets/avatars/';
     $basename = basename($entry['file']);
@@ -84,9 +90,9 @@ class AvatarPool {
     ]);
     $file->save();
 
-    $account->set('user_picture', ['target_id' => $file->id(), 'alt' => $entry['alt'] ?? '']);
+    $account->set('user_picture', ['target_id' => $file->id(), 'alt' => $entry['alt']]);
     if ((int) $account->id() > 0) {
-      $this->userData->set('aculta_user', (int) $account->id(), 'avatar_id', (string) $entry['id']);
+      $this->userData->set('aculta_user', (int) $account->id(), 'avatar_id', $entry['id']);
     }
     return TRUE;
   }
@@ -114,24 +120,19 @@ class AvatarPool {
    * PictureReplacementHooks). Retorna o uri da nova foto, ou NULL.
    */
   public function reroll(UserInterface $account): ?string {
-    $current = (string) $this->userData->get('aculta_user', (int) $account->id(), 'avatar_id');
-    $entry = $this->pick($current);
+    $entry = $this->pick($this->storedId($account, 'avatar_id'));
     if ($entry === NULL) {
       return NULL;
     }
-    $previous = (int) ($account->get('user_picture')->target_id ?? 0);
+    $previous = $this->pictureFid($account);
     $account->set('user_picture', NULL);
     if (!$this->assignEntry($account, $entry)) {
       return NULL;
     }
     $account->save();
-    if ($previous > 0) {
-      $old = $this->entityTypeManager->getStorage('file')->load($previous);
-      if ($old !== NULL && str_starts_with($old->getFileUri(), self::DIRECTORY . '/') && !$this->isUsedByOthers($previous, (int) $account->id())) {
-        $old->delete();
-      }
-    }
-    return (string) $this->entityTypeManager->getStorage('file')->load((int) $account->get('user_picture')->target_id)?->getFileUri();
+    $this->deleteReplacedPicture($previous, $account);
+    $file = $this->entityTypeManager->getStorage('file')->load($this->pictureFid($account));
+    return $file instanceof FileInterface ? $file->getFileUri() : NULL;
   }
 
   /**
@@ -140,25 +141,29 @@ class AvatarPool {
    * Escolhe uma entrada sem alterar a foto da conta; só vale quando a pessoa
    * clica em "Salvar foto do perfil" (applyPending). Fechar o modal descarta a
    * escolha.
+   *
+   * @phpstan-return AvatarEntry|null
    */
   public function preview(UserInterface $account): ?array {
-    $current = (string) $this->userData->get('aculta_user', (int) $account->id(), 'avatar_id');
-    $entry = $this->pick($current);
+    $entry = $this->pick($this->storedId($account, 'avatar_id'));
     if ($entry !== NULL) {
-      $this->userData->set('aculta_user', (int) $account->id(), 'sorteio_pendente', (string) $entry['id']);
+      $this->userData->set('aculta_user', (int) $account->id(), 'sorteio_pendente', $entry['id']);
     }
     return $entry;
   }
 
   /**
-   * Entrada sorteada e ainda não salva, ou NULL. */
+   * Entrada sorteada e ainda não salva, ou NULL.
+   *
+   * @phpstan-return AvatarEntry|null
+   */
   public function pendingEntry(UserInterface $account): ?array {
-    $id = (string) $this->userData->get('aculta_user', (int) $account->id(), 'sorteio_pendente');
+    $id = $this->storedId($account, 'sorteio_pendente');
     if ($id === '') {
       return NULL;
     }
     foreach ($this->available() as $item) {
-      if ((string) ($item['id'] ?? '') === $id) {
+      if ($item['id'] === $id) {
         return $item;
       }
     }
@@ -166,19 +171,26 @@ class AvatarPool {
   }
 
   /**
-   * Limpa a escolha pendente (ao abrir o modal, ao salvar e ao sortear de novo). */
+   * Limpa a escolha pendente (ao abrir o modal, ao salvar e ao sortear de novo).
+   */
   public function clearPending(UserInterface $account): void {
     $this->userData->delete('aculta_user', (int) $account->id(), 'sorteio_pendente');
   }
 
   /**
-   * URL pública da imagem de uma entrada do catálogo (prévia, sem copiar para o acervo). */
+   * URL pública da imagem de uma entrada do catálogo (prévia, sem copiar para o acervo).
+   *
+   * @phpstan-param AvatarEntry $entry
+   */
   public function previewUrl(array $entry): string {
     return Url::fromUri('base:' . $this->modules->getPath('aculta_user') . '/assets/avatars/' . $entry['file'])->toString();
   }
 
   /**
-   * Avatar ilustrativo estável para apresentações públicas sem foto de conta. */
+   * Avatar ilustrativo estável para apresentações públicas sem foto de conta.
+   *
+   * @phpstan-return AvatarEntry|null
+   */
   public function fallbackEntry(int $seed = 0): ?array {
     $available = $this->available();
     if ($available === []) {
@@ -201,43 +213,90 @@ class AvatarPool {
     if ($entry === NULL) {
       return FALSE;
     }
-    $previous = (int) ($account->get('user_picture')->target_id ?? 0);
+    $previous = $this->pictureFid($account);
     if (!$this->assignEntry($account, $entry)) {
       return FALSE;
     }
     $account->save();
-    if ($previous > 0) {
-      $old = $this->entityTypeManager->getStorage('file')->load($previous);
-      if ($old !== NULL && str_starts_with($old->getFileUri(), self::DIRECTORY . '/') && !$this->isUsedByOthers($previous, (int) $account->id())) {
-        $old->delete();
-      }
-    }
+    $this->deleteReplacedPicture($previous, $account);
     return TRUE;
   }
 
   /**
-   * Verdadeiro se outra conta ainda usa a foto. */
+   * Apaga a cópia anterior do acervo, se ela existir e nenhuma outra conta a usa.
+   */
+  private function deleteReplacedPicture(int $previous, UserInterface $account): void {
+    if ($previous <= 0) {
+      return;
+    }
+    $old = $this->entityTypeManager->getStorage('file')->load($previous);
+    $uri = $old instanceof FileInterface ? $old->getFileUri() : NULL;
+    if ($old instanceof FileInterface && is_string($uri) && str_starts_with($uri, self::DIRECTORY . '/') && !$this->isUsedByOthers($previous, (int) $account->id())) {
+      $old->delete();
+    }
+  }
+
+  /**
+   * Fid atual de user_picture, ou 0 quando a conta não tem foto.
+   */
+  private function pictureFid(UserInterface $account): int {
+    $value = $account->get('user_picture')->target_id;
+    return is_numeric($value) ? (int) $value : 0;
+  }
+
+  /**
+   * Valor de user.data (aculta_user) como texto, ou vazio quando ausente.
+   */
+  private function storedId(UserInterface $account, string $key): string {
+    $value = $this->userData->get('aculta_user', (int) $account->id(), $key);
+    return is_string($value) ? $value : '';
+  }
+
+  /**
+   * Verdadeiro se outra conta ainda usa a foto.
+   */
   private function isUsedByOthers(int $fid, int $uid): bool {
     return $this->entityTypeManager->getStorage('user')->getQuery()
       ->accessCheck(FALSE)->condition('user_picture.target_id', $fid)->condition('uid', $uid, '<>')->range(0, 1)->count()->execute() > 0;
   }
 
   /**
-   * Entradas ativas do catálogo cujo arquivo existe. */
+   * Entradas ativas do catálogo cujo arquivo existe.
+   *
+   * Entradas malformadas do JSON são descartadas, em vez de confiar no formato.
+   *
+   * @phpstan-return list<AvatarEntry>
+   */
   private function available(): array {
-    $catalog = json_decode((string) file_get_contents($this->appRoot . '/' . $this->modules->getPath('aculta_user') . '/assets/avatars/meta/avatars.json'), TRUE);
+    $json = file_get_contents($this->appRoot . '/' . $this->modules->getPath('aculta_user') . '/assets/avatars/meta/avatars.json');
+    $catalog = is_string($json) ? json_decode($json, TRUE) : NULL;
     $root = $this->appRoot . '/' . $this->modules->getPath('aculta_user') . '/assets/avatars/';
-    return array_values(array_filter(
-      is_array($catalog) ? $catalog : [],
-      static fn (array $item): bool => !empty($item['active']) && is_file($root . ($item['file'] ?? '')),
-    ));
+    $items = [];
+    foreach (is_array($catalog) ? $catalog : [] as $item) {
+      if (!is_array($item) || !is_string($item['id'] ?? NULL) || !is_string($item['file'] ?? NULL)) {
+        continue;
+      }
+      if (empty($item['active']) || !is_file($root . $item['file'])) {
+        continue;
+      }
+      $items[] = [
+        'id' => $item['id'],
+        'file' => $item['file'],
+        'alt' => is_string($item['alt'] ?? NULL) ? $item['alt'] : '',
+        'active' => TRUE,
+      ];
+    }
+    return $items;
   }
 
   /**
-   * Sorteia uma entrada ativa cujo arquivo existe, diferente da atual quando possível. */
+   * Sorteia uma entrada ativa cujo arquivo existe, diferente da atual quando possível.
+   *
+   * @phpstan-return AvatarEntry|null
+   */
   private function pick(string $exclude = ''): ?array {
     $available = $this->available();
-    $others = array_values(array_filter($available, static fn (array $item): bool => (string) ($item['id'] ?? '') !== $exclude));
+    $others = array_values(array_filter($available, static fn (array $item): bool => $item['id'] !== $exclude));
     $pool = $others !== [] ? $others : $available;
     return $pool === [] ? NULL : $pool[random_int(0, count($pool) - 1)];
   }

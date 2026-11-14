@@ -34,7 +34,8 @@ use Symfony\Component\HttpFoundation\RequestStack;
 final class AvatarCropForm extends FormBase {
 
   /**
-   * Tipo de recorte do avatar (config/sync/crop.type.aculta_avatar_1x1.yml). */
+   * Tipo de recorte do avatar (config/sync/crop.type.aculta_avatar_1x1.yml).
+   */
   public const CROP_TYPE = 'aculta_avatar_1x1';
 
   /**
@@ -43,7 +44,8 @@ final class AvatarCropForm extends FormBase {
   public const DIALOG_OPTIONS = ['title' => 'Recortar foto'];
 
   /**
-   * Estilo de imagem usado pela visualização do avatar. */
+   * Estilo de imagem usado pela visualização do avatar.
+   */
   public const STYLE = 'aculta_avatar';
 
   public function __construct(
@@ -105,24 +107,28 @@ final class AvatarCropForm extends FormBase {
   }
 
   /**
-   * Imagem que não é do acervo do sistema. */
+   * Imagem que não é do acervo do sistema.
+   */
   private function isCroppable(FileInterface $file): bool {
-    return !str_starts_with($file->getFileUri(), AvatarPool::DIRECTORY . '/');
+    $uri = $file->getFileUri();
+    return is_string($uri) && $uri !== '' && !str_starts_with($uri, AvatarPool::DIRECTORY . '/');
   }
 
   /**
    * Monta o formulário de recorte da foto.
    *
-   * @param array $form
+   * @param array<string, mixed> $form
    *   Estrutura do formulário.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   Estado atual do formulário.
    *
-   * @return array
+   * @return array<string, mixed>
    *   Estrutura do formulário.
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
-    $form['#attributes']['data-portal-ui'] = 'avatar-crop-dialog';
+    $attributes = is_array($form['#attributes'] ?? NULL) ? $form['#attributes'] : [];
+    $attributes['data-portal-ui'] = 'avatar-crop-dialog';
+    $form['#attributes'] = $attributes;
     $file = $this->targetFile();
     if ($file === NULL) {
       $form['vazio'] = ['#markup' => $this->t('Envie uma foto própria para recortar.')];
@@ -131,7 +137,9 @@ final class AvatarCropForm extends FormBase {
     // Envio sem AJAX para a própria rota, com o arquivo a recortar: o modal não pode usar a URL com formato de modal.
     $form['#action'] = Url::fromRoute('aculta_user.avatar_crop', [], ['query' => ['fid' => (int) $file->id()]])->toString();
     // Sem abas nem seções: o recorte mostra direto a caixa de recorte (ver flattenCropWrappers).
-    $form['#after_build'][] = [self::class, 'flattenCropWrappers'];
+    $afterBuild = is_array($form['#after_build'] ?? NULL) ? $form['#after_build'] : [];
+    $afterBuild[] = [self::class, 'flattenCropWrappers'];
+    $form['#after_build'] = $afterBuild;
     $form['image_crop'] = [
       '#type' => 'image_crop',
       '#file' => $file,
@@ -164,30 +172,56 @@ final class AvatarCropForm extends FormBase {
    *
    * Troca só o tipo de elemento para container: nomes, #parents e valores enviados ficam iguais, então o submit lê o
    * mesmo caminho (image_crop > crop_wrapper > CROP_TYPE > crop_container > values).
+   *
+   * @param array<string, mixed> $form
+   *   Estrutura do formulário.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Estado atual do formulário.
+   *
+   * @return array<string, mixed>
+   *   Estrutura do formulário com as molduras trocadas.
    */
   public static function flattenCropWrappers(array $form, FormStateInterface $form_state): array {
-    if (!isset($form['image_crop']['crop_wrapper']) || !is_array($form['image_crop']['crop_wrapper'])) {
+    $image = $form['image_crop'] ?? NULL;
+    if (!is_array($image)) {
       return $form;
     }
-    self::flattenElement($form['image_crop']['crop_wrapper']);
+    $wrapper = $image['crop_wrapper'] ?? NULL;
+    if (!is_array($wrapper)) {
+      return $form;
+    }
+    self::flattenElement($wrapper);
+    $image['crop_wrapper'] = $wrapper;
+    $form['image_crop'] = $image;
     return $form;
   }
 
   /**
-   * Troca a moldura (tipo e theme_wrappers) de details/vertical_tabs por container, em todos os níveis. */
+   * Troca a moldura (tipo e theme_wrappers) de details/vertical_tabs por container, em todos os níveis.
+   *
+   * Trabalha numa cópia de cada filho e grava de volta, o que produz a mesma estrutura do ajuste por referência.
+   *
+   * @param array<array-key, mixed> $element
+   *   Elemento a ajustar, alterado no lugar.
+   */
   private static function flattenElement(array &$element): void {
     foreach (Element::children($element) as $key) {
-      if (!is_array($element[$key])) {
+      if (!is_int($key) && !is_string($key)) {
         continue;
       }
-      if (in_array($element[$key]['#type'] ?? NULL, ['details', 'vertical_tabs'], TRUE)) {
-        // O pre_render de details/vertical_tabs reagrupa os filhos (#group): sem ele, cada campo sai duplicado.
-        $element[$key]['#type'] = 'container';
-        $element[$key]['#theme_wrappers'] = ['container'];
-        $element[$key]['#pre_render'] = [];
-        unset($element[$key]['#group'], $element[$key]['#open']);
+      $child = $element[$key] ?? NULL;
+      if (!is_array($child)) {
+        continue;
       }
-      self::flattenElement($element[$key]);
+      if (in_array($child['#type'] ?? NULL, ['details', 'vertical_tabs'], TRUE)) {
+        // O pre_render de details/vertical_tabs reagrupa os filhos (#group): sem ele, cada campo sai duplicado.
+        $child['#type'] = 'container';
+        $child['#theme_wrappers'] = ['container'];
+        $child['#pre_render'] = [];
+        unset($child['#group'], $child['#open']);
+      }
+      self::flattenElement($child);
+      $element[$key] = $child;
     }
     if (($element['#type'] ?? NULL) === 'details') {
       $element['#type'] = 'container';
@@ -197,33 +231,49 @@ final class AvatarCropForm extends FormBase {
   }
 
   /**
+   * Valores enviados do recorte (crop_wrapper > tipo > crop_container > values), ou NULL quando ausentes.
+   *
+   * @return array<array-key, mixed>|null
+   *   Propriedades do recorte enviadas pelo formulário (valores não tipados, vindos do POST).
+   */
+  private function cropValues(FormStateInterface $form_state): ?array {
+    $imageCrop = $form_state->getValue('image_crop');
+    $wrapper = is_array($imageCrop) ? ($imageCrop['crop_wrapper'] ?? NULL) : NULL;
+    $type = is_array($wrapper) ? ($wrapper[self::CROP_TYPE] ?? NULL) : NULL;
+    $container = is_array($type) ? ($type['crop_container'] ?? NULL) : NULL;
+    $values = is_array($container) ? ($container['values'] ?? NULL) : NULL;
+    return is_array($values) ? $values : NULL;
+  }
+
+  /**
    * Aplica o recorte, torna o arquivo permanente e troca a foto da conta.
    *
-   * @param array $form
+   * @param array<string, mixed> $form
    *   Estrutura do formulário.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   Estado atual do formulário.
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $file = $this->targetFile();
-    $wrapper = $form_state->getValue('image_crop')['crop_wrapper'] ?? [];
+    $props = $this->cropValues($form_state);
     $cropType = $this->entityTypeManagerService->getStorage('crop_type')->load(self::CROP_TYPE);
-    if ($file === NULL || !$cropType instanceof CropType || !isset($wrapper[self::CROP_TYPE]['crop_container']['values'])) {
+    $uri = $file?->getFileUri();
+    $fid = $file?->id();
+    if ($file === NULL || !is_string($uri) || !is_int($fid) || !$cropType instanceof CropType || $props === NULL) {
       $this->messenger()->addError($this->t('Não foi possível aplicar o recorte.'));
       return;
     }
-    $props = $wrapper[self::CROP_TYPE]['crop_container']['values'];
-    $ref = ['file-id' => $file->id(), 'file-uri' => $file->getFileUri()];
+    $ref = ['file-id' => $fid, 'file-uri' => $uri];
     if (($props['crop_applied'] ?? '0') === '1' && !empty($props['width']) && !empty($props['height'])) {
-      if (Crop::cropExists($file->getFileUri(), self::CROP_TYPE)) {
+      if (Crop::cropExists($uri, self::CROP_TYPE)) {
         $this->cropManager->updateCrop($props, $ref, $cropType);
       }
       else {
         $this->cropManager->applyCrop($props, $ref, $cropType);
       }
     }
-    elseif (Crop::cropExists($file->getFileUri(), self::CROP_TYPE)) {
-      $this->cropManager->deleteCrop($file->getFileUri(), $cropType, $file->id());
+    elseif (Crop::cropExists($uri, self::CROP_TYPE)) {
+      $this->cropManager->deleteCrop($uri, $cropType, $fid);
     }
 
     $this->flushDerivatives($file);
@@ -234,7 +284,7 @@ final class AvatarCropForm extends FormBase {
     $file->save();
     $account = $this->entityTypeManagerService->getStorage('user')->load($this->currentUserService->id());
     if ($account instanceof UserInterface) {
-      $account->set('user_picture', ['target_id' => $file->id(), 'alt' => (string) $account->label()]);
+      $account->set('user_picture', ['target_id' => $fid, 'alt' => (string) $account->label()]);
       $account->save();
     }
     $this->messenger()->addStatus($this->t('Foto do perfil atualizada.'));
@@ -242,7 +292,8 @@ final class AvatarCropForm extends FormBase {
   }
 
   /**
-   * Apaga os derivados do estilo de avatar deste arquivo, para não servir recorte antigo. */
+   * Apaga os derivados do estilo de avatar deste arquivo, para não servir recorte antigo.
+   */
   private function flushDerivatives(FileInterface $file): void {
     $style = $this->imageRenderer->styleEntity('avatar');
     if ($style !== NULL) {
