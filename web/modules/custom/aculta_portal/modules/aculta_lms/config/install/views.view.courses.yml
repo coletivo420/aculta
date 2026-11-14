@@ -8,6 +8,7 @@ dependencies:
     - views
     - group
     - user
+    - ui_patterns_views
 _core:
   default_config_hash: 8G8IYgl3ZlVpyNetip_TMiN1pzHJlDrgm_9Mo_mGuPg
 id: courses
@@ -77,11 +78,27 @@ display:
           plugin_id: boolean
           value: '1'
       style:
-        type: grid_responsive
+        type: ui_patterns
         options:
-          columns: 3
-          cell_min_width: 250
-          grid_gutter: 20
+          ui_patterns:
+            ui_patterns:
+              component_id: 'aculta420_v2:layout-grid'
+              variant_id: null
+              props:
+                min_item_width:
+                  source_id: select
+                  source:
+                    value: 16rem
+                max_columns:
+                  source_id: number
+                  source:
+                    value: '3'
+              slots:
+                content:
+                  sources:
+                    -
+                      source_id: view_rows
+                      source: {  }
       row:
         type: entity:group
         options:

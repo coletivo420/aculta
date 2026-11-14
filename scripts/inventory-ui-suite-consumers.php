@@ -113,6 +113,11 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
       && ($stylePatterns['component_id'] ?? NULL) === 'aculta420_v2:layout-grid'
       && $rowPlugin === 'ui_patterns'
       && ($rowPatterns['component_id'] ?? NULL) === 'aculta420_v2:revista-album-card';
+    $isLmsCourseGridPilot = in_array($viewId, ['courses', 'courses_catalog'], TRUE)
+      && $stylePlugin === 'ui_patterns'
+      && ($stylePatterns['component_id'] ?? NULL) === 'aculta420_v2:layout-grid'
+      && $rowPlugin === 'entity:group'
+      && ($rowOptions['options']['view_mode'] ?? '') === 'default';
     $isUpstreamVvjsExample = preg_match('/^vvj[a-z]_example$/', $viewId) === 1;
     $isWebformSubmissions = $viewId === 'webform_submissions';
     $isNativeCoreView = in_array($viewId, [
@@ -122,13 +127,11 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
       'profiles',
       'comments_recent',
       'commerce_user_orders',
-      'courses',
       'aculta_forum_lms_admin_comments',
       'aculta_magazine_admin_comments',
       'aculta_activities',
       'aculta_forum_search',
       'aculta_forum_unread_topics',
-      'courses_catalog',
       'perfis_publicos',
     ], TRUE);
     $forumTopicFieldsTemplate = $theme . '/templates/views/views-view-fields--aculta-forum-public-topics.html.twig';
@@ -284,6 +287,7 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
         'media_galleries' => 'media_gallery (contrib)',
         'aculta_documents' => 'aculta_portal:transparency',
         'aculta_shop_catalog' => 'aculta_portal:commerce',
+        'courses', 'courses_catalog' => 'aculta_lms',
         'wiki_entries' => 'aculta_wiki',
         'wiki_categories' => 'aculta_wiki',
         'vvjs_example' => 'vvjs:upstream_demo',
@@ -309,6 +313,8 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
         : (($albumsRuntimeVerified || $forumRuntimeVerified || $eventsRuntimeVerified || $revistaRuntimeVerified || $revistaNewsRuntimeVerified || $homeEditorialRuntimeVerified || $albumPhotosRuntimeVerified || $mediaGalleriesRuntimeVerified) ? 'UI_SUITE_NATIVE' : 'MIGRATION_IN_PROGRESS')))),
       'replacement_or_action' => match (TRUE) {
         $isUpstreamVvjsExample => 'Upstream demonstration View, not an ACULTA feature; do not edit contrib. Any removal or replacement must be handled as a separately authorized upstream-example lifecycle change',
+        $isLmsCourseGridPilot && (string) $displayId === 'default' => 'Inherited LMS base display configures UI Patterns layout-grid for its concrete course displays; preserve the native Group row, filters, access, pager and cache',
+        $isLmsCourseGridPilot => 'UI Patterns layout-grid composes the native Group rows; preserve Group default view mode, published/type filters, access, pager and cache',
         $isWikiEntriesPilot && $displayId === 'default' => 'Functional inherited Views base; keep query/access/filter/sort and inherited UI Patterns style, with no independent route output',
         $isWikiCategoriesPilot && $displayId === 'default' => 'Functional inherited Views base; preserve taxonomy query/access/order and inherited UI Patterns style, with no independent route output',
         $isDocumentsPilot => 'The document teaser SDC owns card markup; UI Patterns layout-grid composes the native published-node teaser rows while preserving Field API file rendering',
@@ -338,6 +344,7 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
       },
       'risk_or_evidence_gap' => match (TRUE) {
         $isUpstreamVvjsExample => 'Example View remains in Config Sync and its Runtime status was not changed in this microphase; it is not counted as a product consumer',
+        $isLmsCourseGridPilot => 'Sync now selects UI Patterns layout-grid; the read-only Runtime query before this change found grid_responsive for courses and default for courses_catalog; import, output, pager, access/cache and browser comparison remain pending',
         $isDocumentsPilot && $documentRuntimeVerified => 'Runtime View retained 3 published nodes; SDC output, anonymous access and field render arrays verified; browser visual, editor/admin profiles and cache-hit remain pending',
         $isShopCatalogPilot && $shopRuntimeVerified => 'Anonymous Runtime returned product-card SDC with price, summary and add-to-cart; Firefox passed 10/10 viewports/modes with focus and contrast; zoom 200%, other roles, cache-hit and human visual acceptance remain pending',
         $isWikiEntriesPilot && $wikiRuntimeVerified => 'Anonymous Runtime returned six published wiki-entry teaser rows through the SDC adapter; Firefox browser comparison passed for the page and canonical article; zoom, cache-hit, other roles and assistive technology remain pending',
@@ -384,6 +391,7 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
       'detected_consumers' => '',
       'runtime_status' => match (TRUE) {
         $isUpstreamVvjsExample => 'upstream contributed demonstration; Runtime status not changed or claimed',
+        $isLmsCourseGridPilot => 'configured in Sync/install; previous Runtime read found a native Views style; import and render/access/cache/browser validation pending',
         $isDocumentsPilot && $documentRuntimeVerified => 'active; UI Patterns layout-grid; 3 published document rows; anonymous View output with Field API slots; visual browser acceptance pending',
         $isShopCatalogPilot && $shopRuntimeVerified => sprintf('active; UI Patterns layout-grid; %d product rows; Commerce catalog view mode and native add-to-cart retained', $shopRuntimeDisplay['result_count']),
         $isShopCatalogPilot => 'configured in Sync/source; SDC hook adapter changed after the Runtime snapshot; Runtime price/access/cache validation pending',

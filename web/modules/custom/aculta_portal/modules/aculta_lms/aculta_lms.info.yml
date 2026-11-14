@@ -41,4 +41,5 @@ dependencies:
   - drupal:text
   - drupal:key
   - drupal:views
+  - ui_patterns:ui_patterns_views
   - webform_score:webform_score

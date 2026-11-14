@@ -4,9 +4,11 @@ As Views `courses` e `courses_catalog` são configuração padrão deste módulo
 com cópias sincronizadas em `config/sync`. Elas consultam grupos do tipo
 `lms_course`, preservam as rotas `/courses` e `/cursos/catalogo` e renderizam
 cada Group pelo modo de exibição padrão (`entity:group`). A capa e a descrição
-seguem o display `group.lms_course.default`; a grade usa o plugin
-`grid_responsive` do Drupal Core. O row plugin legado `course_card_row` não é
-mais necessário.
+seguem o display `group.lms_course.default`; UI Patterns Views compõe as rows
+com o SDC `layout-grid` (mínimo de 16rem, máximo de três colunas). Os filtros,
+permissão, renderização de Group, pager e cache permanecem na View. O row plugin
+legado `course_card_row` não é mais necessário. Config Sync e Runtime ainda
+precisam ser alinhados/homologados antes de remover qualquer fallback adicional.
 
 # ACULTA LMS
 
