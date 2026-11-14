@@ -48,11 +48,6 @@ props:
       title: URL de autenticação com o Google
       description: Quando informada, exibe o link de autenticação Google e o divisor do formulário.
       format: uri-reference
-    password_reset_url:
-      type: [string, 'null']
-      title: URL para recuperação de senha
-      description: Prop declarada, mas não renderizada pelo Twig atual; revisar sua necessidade antes de tratá-la como link funcional.
-      format: uri-reference
     register_url:
       type: [string, 'null']
       title: URL de cadastro de nova conta

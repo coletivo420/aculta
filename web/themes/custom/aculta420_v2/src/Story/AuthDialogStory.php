@@ -62,7 +62,6 @@ final class AuthDialogStory extends StoryDefault implements ContainerFactoryPlug
       'show_accent_stripes' => TRUE,
       'close_label' => 'Fechar janela de acesso',
       'google_auth_url' => '/user/login/google',
-      'password_reset_url' => '/user/password',
       'register_url' => '/user/register',
     ];
   }
