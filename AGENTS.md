@@ -41,3 +41,4 @@ Regra compartilhada de Claude, Codex e demais agentes. Politica de revisao: `doc
 
 Indice por area: `docs/operations/AGENT-POLICY-INDEX.md`. Skills canonicas: `.agents/skills/`. Procedimentos de Runtime: `docs/operations/RUNTIME-SYNC.md`.
 Padrao de implementacao Drupal 11+ e compatibilidade Drupal 12: `docs/portal/DRUPAL-12-STANDARDS.md`.
+Analise PHP/Drupal e erros PHPStan: skill `aculta-phpstan` (referencias por familia, nivel efetivo em `phpstan.neon`; nao ampliar baseline por rotina).

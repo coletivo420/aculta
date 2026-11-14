@@ -9,6 +9,8 @@ Use para escrever ou revisar PHP/Drupal em módulos customizados. Para contratos
 
 Fonte normativa: `docs/portal/DRUPAL-12-STANDARDS.md`. Esta skill é um checklist de revisão. Não substitui o documento. Leia só a seção que a revisão exige.
 
+Para erros PHPStan e contratos de tipos, use a skill `aculta-phpstan` e apenas a referência da família de erro relevante; a política de baseline e CI fica centralizada nela.
+
 1. **Hooks:** prefira `#[Hook]` em classe OOP com injecao nas APIs que suportam este contrato. Hook procedural ou outra tecnica so com justificativa de compatibilidade verificada na versao instalada. Seção 4 do padrão.
 2. **Serviços:** nenhum `\Drupal::` novo em `src/`. Injete pelo construtor e declare o serviço em `*.services.yml`. Seção 7.
 3. **Subscribers:** implementam `EventSubscriberInterface` com a tag `event_subscriber`. Não mude prioridade por estética. Seção 8.
