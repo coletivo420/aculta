@@ -11,7 +11,7 @@ Regra compartilhada de Claude, Codex e demais agentes. Politica de revisao: `doc
 
 ## Git e entrega
 
-- Integrar em `dev`, por commit atomico em portugues e push fast-forward em `origin/dev`; selecionar apenas arquivos da tarefa e revisar diff/staged. Worktree isolada e permitida; preservar alteracoes de outros agentes.
+- Integrar em `dev`, por commit atomico em portugues e push fast-forward em `origin/dev`; selecionar apenas arquivos da tarefa e revisar diff/staged. Todos os agentes trabalham na mesma worktree: isolar os proprios commits (staged apenas por caminho explicito, revisando o diff) e preservar alteracoes de outros agentes, sem reset, stash, checkout ou clean que descarte trabalho alheio. Worktree separada nao e obrigatoria.
 - Nao usar force push, reset destrutivo ou reescrita de historico compartilhado. Se `dev` avancar, integrar sem perder o trabalho alheio e revisar de novo. PR, merge em `main` e tag so sob pedido explicito.
 - Trailer de CLI e opcional e deve identificar a sessao real; nao atribuir coautoria ficticia. Informar hashes confirmados, resultados de testes e pendencias.
 - Apos push que altera codigo servido, consultar a skill `aculta-runtime-sync` quando houver ambiente comprovado. Alteracao apenas documental nao exige sincronizacao/cache. Sem acesso, baseline confiavel ou worktree isolado: DEFERRED/BLOCKED, sem contornar preflight.

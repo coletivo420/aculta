@@ -4,8 +4,8 @@ Este procedimento complementa o `AGENTS.md` da raiz. Em caso de conflito,
 prevalece a regra geral mais recente do responsável.
 
 ## Branch e publicação
-- Faça o trabalho autorizado diretamente na branch `dev` e envie commits para
-  `origin/dev`. Worktrees isoladas, inclusive detached, podem ser usadas para preservar trabalho concorrente. PRs e merge em main somente com pedido.
+- Faça o trabalho autorizado diretamente na branch `dev` da worktree compartilhada e envie commits para
+  `origin/dev`. Todos os agentes trabalham na mesma worktree: isole os próprios commits (stage só por caminho explícito) e preserve alterações de outros agentes, sem reset, stash, checkout ou clean que descartem trabalho alheio. Worktree separada não é obrigatória. PRs e merge em main somente com pedido.
 - Antes de editar, confira `git status --short --branch` e preserve mudanças
   paralelas. Não sobrescreva trabalho de outras pessoas.
 - Faça commits pequenos, limitados à tarefa. Publique por fast-forward; nunca

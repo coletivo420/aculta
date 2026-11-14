@@ -5,7 +5,7 @@ description: Revisa, testa e publica uma entrega atomica em origin/dev; sincroni
 
 # Commit e entrega
 
-1. Confirme `git status --short`, branch/remoto e o diff. Preservar trabalho alheio; staged apenas por caminho explicito, nunca `git add -A` indiscriminado.
+1. Confirme `git status --short`, branch/remoto e o diff. Todos os agentes trabalham na mesma worktree compartilhada: isole os próprios commits e preserve trabalho alheio. Staged apenas por caminho explícito, nunca `git add -A` indiscriminado.
 2. Classifique a revisao R0-R3 conforme `docs/operations/AGENT-REVIEW-POLICY.md`. Autorrevisao e gates de escopo em toda entrega; R2/R3 exigem segunda revisao antes de publicar; R3 exige autorizacao por operacao.
 3. Execute `git diff --cached --check` e revise o staged. Commit atomico em portugues, sem coautoria ficticia. Trailer de CLI e opcional e identifica apenas a sessao real.
 4. Push fast-forward em `origin/dev` e confirmacao do SHA remoto. Se o remoto avancou, integre sem sobrescrever arquivo de outro agente e refaca os testes afetados. Nunca force push, reset destrutivo ou reescrita de historico.
