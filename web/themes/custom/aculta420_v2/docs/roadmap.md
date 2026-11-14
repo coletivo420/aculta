@@ -74,8 +74,12 @@ anteriores e não substituem a conferência do código atual.
    Não cortar SDCs pela falta de referência literal: a Library atual lista as
    definições do provider. Stories para `hint`, `sales-panel` e `secret-reveal`
    foram adicionadas. Todos os slots agora têm título e descrição, e as props
-   de topo têm título; o gate exige esses metadados. Permanecem 440 props sem
-   descrição específica, em 93 SDCs. A checagem do provider instalado encontrou
+   de topo têm título; o gate exige esses metadados. A contagem antiga de 440
+   props sem descrição foi substituída pela leitura recursiva dos 141 manifests
+   atuais: 373 props de topo, em 82 SDCs, e 498 nós de schema de props incluindo
+   itens/propriedades aninhados, em 89 SDCs, ainda não têm descrição. Nesta
+   rodada, os 18 manifests do domínio Fórum foram conferidos contra seus Twig e
+   tiveram todos esses campos documentados. A checagem do provider instalado encontrou
    22 props com tipo `unknown`, em 13 SDCs; três são obrigatórias e não há
    Sources UI Patterns para esse tipo. A auditoria classificou os produtores
    encontrados e registrou as fontes na ADR-056; restam as migrações de presenter

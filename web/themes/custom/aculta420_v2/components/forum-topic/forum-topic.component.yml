@@ -11,16 +11,20 @@ props:
     variant:
       type: string
       title: Variante de apresentação
+      description: Escolhe a apresentação compacta de teaser ou a composição completa do tópico.
       enum: [teaser, full]
     has_title:
       type: boolean
       title: Título visível no conteúdo
+      description: Controla se o slot title aparece dentro do componente.
     has_meta:
       type: boolean
       title: Data de publicação disponível
+      description: Controla a exibição do slot meta no rodapé da apresentação.
     has_bookmark:
       type: boolean
       title: Ação de favorito disponível
+      description: Controla se o slot bookmark renderizado pelo Drupal aparece no tópico.
 slots:
   title:
     title: Título do tópico
@@ -30,7 +34,7 @@ slots:
     description: Data e metadados de publicação do tópico.
   bookmark:
     title: Ação de favorito
-    description: Render array de ação com acesso validado pelo Drupal.
+    description: Render array da ação; o chamador deve validar acesso e fornecer apenas controles permitidos.
   content:
     title: Conteúdo
-    description: Campos, autoria e discussão renderizados e autorizados pelo Drupal.
+    description: Render arrays Drupal ou markup confiável de campos, autoria e discussão; strings saem sem escape, então o chamador deve fornecer conteúdo seguro e autorizado.

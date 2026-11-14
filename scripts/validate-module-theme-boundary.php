@@ -53,7 +53,6 @@ $allowedThemeReferences = [
   // Ícones SVG do tema resolvidos pelo provedor de ícones do fórum.
   'modules/aculta_forum/src/Hook/DiscussionCommentPermalinkHooks.php',
   'modules/aculta_forum/src/Hook/DiscussionCommentActionIconHooks.php',
-  'modules/aculta_forum/src/Hook/TopicOpeningPostHooks.php',
   'modules/aculta_forum/tests/src/Unit/ForumTopicDisplayConfigTest.php',
   // UI Patterns Views composes the active theme's SDC while the Forum module
   // continues to own View data, access, filtering, sorting and cache config.

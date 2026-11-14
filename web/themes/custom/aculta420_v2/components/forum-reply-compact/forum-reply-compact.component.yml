@@ -11,6 +11,7 @@ props:
     author_url:
       type: [string, 'null']
       title: Link para a conta pública do autor
+      description: Destino público aplicado ao nome do autor; null deixa o nome sem link.
       default: null
     theme:
       type: string
@@ -33,18 +34,22 @@ props:
     author_name:
       type: string
       title: Nome do autor
+      description: Nome público exibido na linha de autoria da resposta.
       minLength: 1
     timestamp:
       type: [string, 'null']
       title: Horário da resposta
+      description: Data pronta para exibição junto ao nome do autor.
       default: null
     reacted:
       type: boolean
       title: Usuário atual reagiu
+      description: Marca visualmente a resposta quando o usuário atual já reagiu a ela.
       default: false
     reaction_count:
       type: [integer, 'null']
       title: Contagem de reações
+      description: Total de reações resumidas na resposta; null omite a contagem.
       default: null
 slots:
   avatar:

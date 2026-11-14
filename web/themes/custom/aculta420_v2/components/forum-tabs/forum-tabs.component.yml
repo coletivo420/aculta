@@ -11,28 +11,35 @@ props:
     label:
       type: string
       title: Rótulo acessível da navegação
+      description: Nome acessível do conjunto de abas anunciado pelo elemento nav.
       minLength: 1
     items:
       type: array
       title: Itens da navegação
+      description: Abas em ordem de navegação, cada uma com rótulo e destino, mais estado selecionado e contador opcionais.
       items:
         type: object
+        description: Uma aba da navegação com rótulo, URL e estado opcional.
         additionalProperties: false
         required: [label, href]
         properties:
           label:
             type: string
             title: Rótulo da aba
+            description: Texto visível e acessível da opção de navegação.
           href:
             type: string
             title: Destino da aba
+            description: URL de destino da listagem ou filtro selecionado.
           active:
             type: boolean
             title: Indica se a aba está selecionada
+            description: Quando true, aplica o estado selecionado e aria-current="page".
             default: false
           count:
             type: [integer, 'null']
             title: Contador opcional de itens não lidos ou total
+            description: Quantidade exibida como badge quando maior que zero; null omite o badge.
             default: null
 slots:
   filters:

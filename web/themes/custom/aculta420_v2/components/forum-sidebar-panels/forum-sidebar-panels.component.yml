@@ -10,64 +10,85 @@ props:
     stats:
       type: [array, 'null']
       title: Estatísticas da comunidade
+      description: Itens de estatística com rótulo e valor para o painel lateral.
       default: null
       items:
         type: object
+        description: Uma métrica composta por rótulo e valor.
         additionalProperties: false
         required: [label]
         properties:
           label:
             type: string
+            description: Nome curto da métrica da comunidade.
           value:
             type: [string, integer, 'null']
+            description: Valor pronto para exibição; null apresenta o estado indisponível.
     featured:
       type: [array, 'null']
       title: Tópicos em destaque
+      description: Tópicos selecionados para o painel, cada um com título e destino público.
       default: null
       items:
         type: object
+        description: Um tópico público em destaque com título e destino.
         additionalProperties: false
         required: [title, url]
         properties:
           title:
             type: string
+            description: Título vinculado ao destino público do tópico.
           url:
             type: string
+            description: URL pública do tópico em destaque.
           thumbnail:
             type: [string, 'null']
+            description: URL opcional da miniatura decorativa do tópico.
           replies:
             type: [string, integer, 'null']
+            description: Contagem opcional de respostas apresentada sob o título.
     moderators:
       type: [array, 'null']
       title: Moderadores da comunidade
+      description: Pessoas moderadoras exibidas com nome e função opcional; o template usa um ícone fixo.
       default: null
       items:
         type: object
+        description: Uma pessoa moderadora identificada pelo nome.
         additionalProperties: false
         required: [name]
         properties:
           name:
             type: string
+            description: Nome público da pessoa moderadora.
           role:
             type: [string, 'null']
+            description: Função comunitária opcional mostrada junto ao nome.
     rules:
       type: [array, 'null']
       title: Regras da comunidade
+      description: Lista ordenada de regras apresentadas no painel lateral.
       default: null
       items:
         type: string
+        description: Uma regra curta apresentada na lista de diretrizes.
     related:
       type: [array, 'null']
       title: Categorias relacionadas
+      description: Categorias sugeridas com rótulo e destino para navegação.
       default: null
       items:
         type: object
+        description: Uma categoria relacionada com nome e destino público.
         additionalProperties: false
         required: [name, url]
         properties:
           name:
             type: string
+            description: Nome da categoria relacionado ao contexto atual.
           url:
             type: string
+            description: Destino público da categoria relacionada.
           count:
             type: [string, integer, 'null']
+            description: Total opcional de tópicos dessa categoria.

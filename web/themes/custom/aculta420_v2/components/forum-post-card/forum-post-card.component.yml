@@ -17,6 +17,7 @@ props:
     author_url:
       type: [string, 'null']
       title: Link para a conta pública do autor
+      description: Destino público aplicado ao nome do autor; null mantém a identidade sem link.
       default: null
     author_position:
       type: string
@@ -33,6 +34,7 @@ props:
     stripe:
       type: string
       title: Variante da faixa colorida no topo
+      description: Define o conjunto de cores da faixa superior do cartão.
       enum: [brand, highlight, member]
       default: brand
     accent_side:
@@ -44,51 +46,62 @@ props:
     accent_color:
       type: string
       title: Cor da faixa lateral
+      description: Define a cor semântica da faixa lateral quando ela está habilitada.
       enum: [green, yellow, red]
       default: green
     author_name:
       type: string
       title: Nome do autor
+      description: Nome público mostrado no cabeçalho de autoria.
       minLength: 1
     author_role:
       type: [string, 'null']
       title: Papel do autor entregue pelo Portal
+      description: Papel público opcional exibido ao lado da identidade do autor.
       default: null
     author_posts:
       type: [string, integer, 'null']
       title: Contagem de posts do autor
+      description: Número de posts do autor; null ou string vazia omite a contagem.
       default: null
     author_reactions:
       type: [string, integer, 'null']
       title: Contagem de reações recebidas pelo autor
+      description: Número de reações recebidas pelo autor, apresentado como metadado.
       default: null
     timestamp:
       type: [string, 'null']
       title: Data ou horário da publicação
+      description: Data pronta para exibição na linha de autoria.
       default: null
     reactions:
       type: [array, 'null']
       title: Reações recebidas
+      description: Lista de reações resumidas por rótulo e contagem, usada quando não há barra interativa no slot.
       default: null
       items:
         type: object
+        description: Uma reação resumida pelo rótulo e pela contagem.
         additionalProperties: false
         required: [label, count]
         properties:
           label:
             type: string
             title: Rótulo da reação
+            description: Nome da reação usado na representação resumida.
           count:
             type: integer
             title: Contagem da reação
+            description: Quantidade dessa reação recebida pelo post.
     reply_url:
       type: [string, 'null']
       title: URL de ação para responder
+      description: Destino opcional do link de resposta quando o slot reply não fornece um controle renderizado.
       default: null
 slots:
   avatar:
     title: Avatar do autor
-    description: Elemento de avatar neutro ou imagem entregue pelo Portal.
+    description: Render array Drupal ou markup de imagem confiável; strings são encaminhadas como HTML sem sanitização ao SDC forum-author-line.
   body:
     title: Conteúdo da mensagem
     description: Texto e mídias renderizadas do post.

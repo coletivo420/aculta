@@ -28,30 +28,37 @@ props:
     author_name:
       type: [string, 'null']
       title: Autor citado
+      description: Nome do autor original mostrado na identificação da citação.
       default: null
     avatar:
       type: [string, 'null']
       title: Mídia do avatar do autor citado (markup da imagem)
+      description: Somente markup de imagem confiável e já renderizado; o componente não sanitiza o valor. Vazio usa o avatar com iniciais.
       default: null
     permalink_url:
       type: [string, 'null']
       title: Link para a publicação citada
+      description: Destino público do permalink da mensagem original.
       default: null
     edit_url:
       type: [string, 'null']
       title: URL para editar
+      description: Destino de edição fornecido pelo chamador depois de decidir se deve oferecer a ação.
       default: null
     delete_url:
       type: [string, 'null']
       title: URL para excluir
+      description: Destino de exclusão ou solicitação fornecido pelo chamador depois de aplicar a política.
       default: null
     quote_url:
       type: [string, 'null']
       title: URL para citar
+      description: Destino da ação de citação fornecido pelo chamador quando aplicável.
       default: null
     reply_url:
       type: [string, 'null']
       title: URL para responder
+      description: Destino do fluxo de resposta fornecido pelo chamador quando aplicável.
       default: null
 slots:
   content:

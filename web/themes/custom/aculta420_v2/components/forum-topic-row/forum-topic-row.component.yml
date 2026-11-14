@@ -11,35 +11,43 @@ props:
     pinned:
       type: boolean
       title: Tópico fixado
+      description: Estado base da linha; true a fixa, e conteúdo não vazio em pinned_content também a marca como fixada.
       default: false
     badges:
       type: [array, 'null']
       title: Pílulas de estado ou destaque
+      description: Badges opcionais mostrados antes do título, cada um com rótulo e tom.
       default: null
       items:
         type: object
+        description: Um badge com rótulo e variante visual.
         additionalProperties: false
         required: [label]
         properties:
           label:
             type: string
             title: Rótulo da pílula
+            description: Texto visível do badge.
           tone:
             type: string
             title: Tom da pílula
+            description: Variante semântica que define a cor visual do badge.
             enum: [neutral, highlight, success, official]
             default: neutral
     replies:
       type: [string, integer, 'null']
       title: Total de respostas
+      description: Contagem fallback usada quando o slot replies_content não contém valor renderizado.
       default: null
     views:
       type: [string, integer, 'null']
       title: Total de visualizações
+      description: Contagem de visualizações exibida na coluna correspondente; null mostra indisponível.
       default: null
     last_activity:
       type: [string, 'null']
       title: Timestamp ou tempo relativo da última atividade
+      description: Valor fallback de atividade usado quando activity_content não contém saída renderizada.
       default: null
 slots:
   title:

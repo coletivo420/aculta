@@ -863,7 +863,7 @@ Cada entrada tem: papel, props, slots, JavaScript (se houver), estado e a regra 
 
 ### forum-opening-post — Postagem de Abertura do Tópico
 - **Papel:** primeiro post do tópico na página completa, com o mesmo destaque da linha de tópico fixado.
-- **Props:** `author_name` (string, obrigatório), `timestamp` (string, opcional).
+- **Props:** `author_name` (string, obrigatório), `author_posts`, `author_reactions`, `timestamp`, `permalink_url`, `delete_url`, `edit_url`, `quote_url`, `reply_url`, `density`. O chamador fornece apenas os destinos permitidos pela política de acesso e moderação; ícones são resolvidos pelos SDCs das ações.
 - **Slots:** `body`.
 - **Story:** `forum-opening-post.default.story.yml`.
 - **Regra:** destaque usa barra lateral `--color-brand-primary` e fundo `--color-surface-highlight`; o corpo vem do Drupal, sem leitura de entidade no componente.

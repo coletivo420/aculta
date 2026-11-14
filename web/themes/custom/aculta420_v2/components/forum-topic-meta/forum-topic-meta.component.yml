@@ -23,25 +23,31 @@ props:
     title:
       type: string
       title: Título do tópico
+      description: Título principal do tópico, anunciado como heading nível dois.
       minLength: 1
     status:
       type: string
       title: Status do tópico
+      description: Estado que determina o rótulo e o estilo de aberto ou fechado.
       enum: [open, closed]
       default: open
     posts:
       type: [integer, 'null']
       title: Quantidade de posts
+      description: Total de postagens; null omite o indicador correspondente.
       default: null
     participants:
       type: [integer, 'null']
       title: Quantidade de participantes
+      description: Total de participantes; null omite o indicador correspondente.
       default: null
     views:
       type: [integer, 'null']
       title: Visualizações
+      description: Total de visualizações; null omite o indicador correspondente.
       default: null
     last_activity:
       type: [string, 'null']
       title: Última atividade
+      description: Data ou tempo relativo formatado; valor vazio omite o indicador.
       default: null

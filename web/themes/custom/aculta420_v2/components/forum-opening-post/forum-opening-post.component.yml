@@ -17,58 +17,47 @@ props:
     author_name:
       type: string
       title: Nome do autor
+      description: Nome público exibido no cartão da postagem inicial.
       minLength: 1
     author_posts:
       type: [string, integer, 'null']
       title: Contagem de posts do autor
+      description: Total formatado de posts do autor; null omite essa estatística.
       default: null
     author_reactions:
       type: [string, integer, 'null']
       title: Contagem de reações recebidas pelo autor
+      description: Total formatado de reações recebidas; null omite essa estatística.
       default: null
     timestamp:
       type: [string, 'null']
       title: Data de publicação formatada
+      description: Data pronta para exibição junto à identidade do autor.
       default: null
     permalink_url:
       type: [string, 'null']
       title: Link permanente do tópico
+      description: Destino público da ação que abre o permalink da postagem.
       default: null
     delete_url:
       type: [string, 'null']
-      title: Link de exclusão do tópico (somente com acesso)
+      title: Destino do fluxo de exclusão
+      description: URL do fluxo de exclusão ou solicitação fornecida pelo chamador após aplicar a política de acesso.
       default: null
     edit_url:
       type: [string, 'null']
-      title: Link de edição (somente com acesso)
+      title: Destino de edição
+      description: URL de edição fornecida pelo chamador depois de validar se a edição deve ser oferecida.
       default: null
     quote_url:
       type: [string, 'null']
       title: Link de citar abertura (somente com acesso)
+      description: URL de citação fornecida pelo chamador depois de validar se a ação deve ser oferecida.
       default: null
     reply_url:
       type: [string, 'null']
       title: Endereço do compositor de resposta ao tópico
-      default: null
-    link_icon:
-      type: [string, 'null']
-      title: Ícone do link permanente (markup SVG)
-      default: null
-    delete_icon:
-      type: [string, 'null']
-      title: Ícone de excluir (markup SVG)
-      default: null
-    edit_icon:
-      type: [string, 'null']
-      title: Ícone de editar (markup SVG)
-      default: null
-    quote_icon:
-      type: [string, 'null']
-      title: Ícone de citar (markup SVG)
-      default: null
-    reply_icon:
-      type: [string, 'null']
-      title: Ícone de responder (markup SVG)
+      description: URL do fluxo de resposta fornecida pelo chamador quando a ação está disponível.
       default: null
 slots:
   avatar:

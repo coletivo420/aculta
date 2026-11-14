@@ -11,15 +11,18 @@ props:
     author_name:
       type: string
       title: Nome público
+      description: Nome de exibição aplicado ao rótulo acessível e à identidade do autor.
     profile_url:
       type: [string, 'null']
       title: Link para a conta pública do autor
+      description: Quando informado, transforma a identidade em link para o perfil público; null mantém texto sem link.
       default: null
     timestamp:
       type: [string, 'null']
       title: Horário (texto já formatado)
+      description: Data ou horário pronto para exibição depois da identidade do autor.
       default: null
 slots:
   avatar:
     title: Avatar
-    description: Imagem própria do autor. Vazio usa o componente aculta420_v2:avatar com as iniciais.
+    description: Render array Drupal ou markup de imagem confiável; strings são emitidas como HTML sem sanitização. Vazio usa o SDC avatar com iniciais.
