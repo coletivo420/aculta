@@ -40,6 +40,7 @@ final class AuthorCardThemeHooks {
           'designation' => NULL,
           'actions' => [],
           'source_label' => NULL,
+          'component' => NULL,
         ],
         'template' => 'aculta-user-author-card',
         'path' => $this->moduleList->getPath('aculta_user') . '/templates',
