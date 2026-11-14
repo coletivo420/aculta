@@ -8,6 +8,7 @@ use Drupal\aculta420_v2\Support\ComponentLibraryRoutes;
 use Drupal\aculta420_v2\Presentation\WikiBrandMediaProps;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Cache\CacheableMetadata;
+use Drupal\Core\Cache\CacheableDependencyInterface;
 use Drupal\Core\Extension\ExtensionList;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Template\Attribute;
@@ -334,7 +335,58 @@ final class PagePresentationHooks {
           ->addCacheableDependency($config)
           ->applyTo($variables['elements']);
       }
+      $this->composeRevistaTeaser($variables, $accent, $config);
     }
+  }
+
+  /**
+   * Composes the Revista teaser from the published SDC and Drupal field output.
+   *
+   * @param array $variables
+   *   Node theme variables.
+   * @param string|null $accent
+   *   Accent selected globally in UI Styles.
+   * @param \Drupal\Core\Cache\CacheableDependencyInterface $config
+   *   The theme configuration object, used as a cache dependency.
+   */
+  private function composeRevistaTeaser(array &$variables, ?string $accent, CacheableDependencyInterface $config): void {
+    $node = $variables['node'] ?? NULL;
+    $content = $variables['content'] ?? [];
+    if (!$node instanceof NodeInterface || !is_array($content)) {
+      return;
+    }
+
+    $hasCategory = !$node->get('field_editorial_category')->isEmpty();
+    $hasSubtitle = !$node->get('field_subtitle')->isEmpty();
+    $hasSummary = !$node->get('field_summary')->isEmpty();
+    $hasCover = !$node->get('field_media_image')->isEmpty();
+    $component = [
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:revista-teaser',
+      '#props' => [
+        'title' => (string) ($variables['label'] ?? $node->label()),
+        'url' => $node->toUrl('canonical')->toString(),
+        'accent' => $accent,
+        'has_category' => $hasCategory,
+        'has_subtitle' => $hasSubtitle,
+        'has_summary' => $hasSummary,
+        'has_cover' => $hasCover,
+      ],
+      '#slots' => [
+        'image' => $content['field_media_image'] ?? [],
+        'category' => $content['field_editorial_category'] ?? [],
+        'subtitle' => $content['field_subtitle'] ?? [],
+        'summary' => $content['field_summary'] ?? [],
+      ],
+    ];
+    CacheableMetadata::createFromRenderArray($content)
+      ->addCacheableDependency($node)
+      ->addCacheableDependency($config)
+      ->applyTo($component);
+    $variables['content'] = $component;
+    // The Core node template prints a generic heading for non-full displays.
+    // The SDC owns the teaser title and already renders its linked heading.
+    $variables['label'] = FALSE;
   }
 
   /**

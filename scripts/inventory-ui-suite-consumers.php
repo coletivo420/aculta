@@ -170,11 +170,15 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
       && ($rowOptions['options']['view_mode'] ?? '') === 'default';
     $isEventsBase = $viewId === 'eventos_publicos' && (string) $displayId === 'default';
     $revistaTeaserTemplate = $theme . '/templates/content/node--revista--teaser.html.twig';
+    $revistaTeaserHook = $theme . '/src/Hook/PagePresentationHooks.php';
     $isRevistaTeaserSdc = $viewId === 'revista_sessoes'
       && str_starts_with($rowPlugin, 'entity:node')
       && ($rowOptions['options']['view_mode'] ?? '') === 'teaser'
-      && is_file($revistaTeaserTemplate)
-      && str_contains((string) file_get_contents($revistaTeaserTemplate), "aculta420_v2:revista-teaser");
+      && ((is_file($revistaTeaserTemplate)
+        && str_contains((string) file_get_contents($revistaTeaserTemplate), "aculta420_v2:revista-teaser"))
+        || (is_file($revistaTeaserHook)
+          && str_contains((string) file_get_contents($revistaTeaserHook), "aculta420_v2:revista-teaser")
+          && str_contains((string) file_get_contents($revistaTeaserHook), 'composeRevistaTeaser')));
     $isViewsDefaultBase = (string) $displayId === 'default';
     $isViewsFunctionalBase = $isViewsDefaultBase;
     $displayPath = (string) ($options['path'] ?? '');

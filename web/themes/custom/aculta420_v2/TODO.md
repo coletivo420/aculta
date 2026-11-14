@@ -4,9 +4,9 @@ Estado: Dev · versão 1.5.0 (`aculta420_v2.info.yml`) · ADR-056 aceita; reconc
 
 ## Próximo passo
 
-- **P0 — documentação:** primeira correção factual feita a partir do checkout: 141 SDCs/223 stories, 31 templates Drupal, Wiki full em UI Patterns e estado atual do Runtime. Falta reler os planos por domínio e corrigir status que ainda não tenham evidência em código/Config Sync.
+- **P0 — documentação:** primeira correção factual feita a partir do checkout: 141 SDCs/223 stories, 30 templates Drupal, Wiki full em UI Patterns e estado atual do Runtime. Falta reler os planos por domínio e corrigir status que ainda não tenham evidência em código/Config Sync.
 - **P1 — SDC/Library:** 141 manifests e 223 stories; todos os SDCs têm story. Props de topo têm título e slots têm título/descrição, com gate. Permanecem 440 descrições específicas e auditoria semântica de defaults, variantes, includes e escaping. Duas props de links agora usam o prop type oficial; restam 22 props `unknown` em 13 SDCs, classificadas na ADR-056. Confirmar dados editoriais persistidos no Runtime e seletor de `event-page-layout`.
-- **P2/P3 — integrações e corte:** matriz dos 141 SDCs regenerada (462 registros). `revista_sessoes` já aponta os seis displays para UI Patterns Views style + `revista-listing` no Config Sync; o Twig específico detecta o style e evita wrapper duplicado, preservando título/contextual links e fallback. A configuração ainda não foi importada/homologada no Runtime; após liberar preflight, aceitar a saída nos seis paths e então remover ou reduzir o adapter. Seguir pelos demais templates com substituição comprovada, mantendo acesso, cache, traduções, attachments, rotas e Form API.
+- **P2/P3 — integrações e corte:** matriz dos 141 SDCs regenerada (462 registros). `revista_sessoes` aponta os seis displays para UI Patterns Views style + `revista-listing`; configuração e saída ainda aguardam homologação no Runtime. O presenter Twig do teaser da Revista foi removido: o preprocess monta `revista-teaser` como render array SDC, com fields formatados e cache do node/config. O full segue pendente porque o Layout Builder atual usa `layout-section` e precisa acomodar os render arrays de metadados/autoria. Seguir pelos demais templates com substituição comprovada, mantendo acesso, cache, traduções, attachments, rotas e Form API.
 - **P4 — homologação:** depois dos lotes, validar consumidores reais, estado público/autenticado, cache-hit, claro/escuro, teclado e larguras. Runtime Sync depende de preflight liberado.
 - Link do aviso Mercado Pago: validar no CI o contrato Twig de HTTPS/host oficial e `link()`.
 - UI Skins e superfícies: aceite visual humano continua pendente apesar dos gates e capturas técnicas já registrados; ver documentos de homologação vinculados no roadmap.
@@ -14,7 +14,7 @@ Estado: Dev · versão 1.5.0 (`aculta420_v2.info.yml`) · ADR-056 aceita; reconc
 ## Marcos e pendências
 
 - UI Patterns Library: 141 manifests/223 stories no checkout; Runtime ainda não revalidado no commit atual. Todos os SDCs têm stories. `aculta_ui_library` será removido por completo após desinstalação estrutural; a configuração Sync já deixou de habilitá-lo.
-- Pendem cruzamento completo de consumidores dos SDCs, tentativa de remoção dos templates, cache/configuração ativa e aceite visual/acessível por domínio.
+- Pendem cruzamento completo de consumidores dos SDCs, remoção dos presenters restantes, homologação de cache/configuração ativa e aceite visual/acessível por domínio.
 
 ## Leitura e entrega
 
