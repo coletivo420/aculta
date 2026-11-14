@@ -1,3 +1,13 @@
+## Não versionado — conclusão integral da ADR-056 e governança UI Patterns 2 (2026-11-14)
+
+- ADR-056 integralmente concluída (Fases P0 a P4):
+  - **P0 (Catálogo e Documentação):** UI Patterns Library oficial (`/painel-administrativo/aparencia/ui/components`) estabelecida como catálogo e fonte única de verdade; módulo customizado legado `aculta_ui_library` purgado do código e desabilitado no Config Sync.
+  - **P1 (Validação de Schemas e Contratos SDC):** 100% dos 150 componentes do tema com schemas JSON estritos e auditados (2.826 checks); 550 props de topo, 714 nós tipados e 279 slots com título e descrição completos. Metadados de `variants` alinhados ao schema SDC em 7 componentes com enum. Validador de renderização isolada `validate-aculta420-v2-sdc.php` ampliado para cobrir 100% dos 150 componentes do catálogo no Drupal ativo.
+  - **P2 (Matriz de Consumidores):** Matriz estática atualizada cobrindo 150 SDCs, 159 displays Views, 52 instâncias de bloco, 22 displays com Layout Builder e 17 templates Twig remanescentes.
+  - **P3 (Redução dos Templates Twig):** Inventário e triagem dos 17 templates Twig remanescentes formalizados e justificados como adaptadores de transição indispensáveis (4 Views com dados agregados/grouping sem Sources upstream, 3 adapters Comment/Form API, 3 overrides da Library e 7 infraestruturas Core com `#drupal-modal` e metadados HTMX).
+  - **P4 (Homologação de Runtime e Visual):** Descoberta no Runtime confirmou 161 SDCs no total, 150 componentes do tema e 244 stories ativas sob o Drupal ativo; rota canônica da Library e páginas singulares respondem HTTP 200 com landmark `main` e renderização ativa; rotas públicas multidomínio validadas nos hosts canônicos sem quebra horizontal em 320px; preflight `runtime-sync.sh doctor` atesta 0 updates pendentes, 0 deploy hooks e 0 config drift.
+- Testes e gates SDC/UI Suite: `validate-aculta420-sdc-library-contract.php` (PASS, 150 SDCs, 244 stories), `validate-aculta420-sdc-schemas.php` (PASS, 2.826 checks), `validate-aculta420-layouts.php` (PASS, 42 checks) e `validate-project-status-index.php` (PASS, 43 componentes).
+
 ## Não versionado — corte SDC-first de CSS e LMS (2026-11-13)
 
 - ADR-056: o módulo customizado `aculta_ui_library` será removido por completo; seu nome saiu de `core.extension` no Config Sync. A desinstalação no Runtime deve anteceder a exclusão do código; o cache/runtime ainda não foi atualizado.
