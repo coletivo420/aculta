@@ -12,24 +12,11 @@
     <div class="forum-quote__text">
       {% if author_name %}
         <div class="forum-quote__author-row">
-                    {{ include('aculta420_v2:avatar', { size: 'sm', media: avatar ? avatar|raw : null }, with_context = false) }}
+                    {{ include('aculta420_v2:avatar', { size: 'sm', media: avatar ? avatar|raw : avatar_media }, with_context = false) }}
           <cite class="forum-quote__author">{{ author_name }}</cite>
         </div>
       {% endif %}
       {{ content }}
     </div>
   </div>
-  <footer class="forum-quote__actions">
-    {% if reactions_slot %}
-      {{ reactions_slot }}
-    {% endif %}
-    {{ include('aculta420_v2:content-reply-bar', {
-      permalink_url: permalink_url|default(null),
-      edit_url: edit_url|default(null),
-      delete_url: delete_url|default(null),
-      quote_url: quote_url|default(null),
-      reply_url: reply_url|default(null),
-      target_id: 'aculta-reply-dialog-body',
-    }, with_context = false) }}
-  </footer>
 </blockquote>

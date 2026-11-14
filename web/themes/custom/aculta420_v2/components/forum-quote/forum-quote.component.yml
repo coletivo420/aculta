@@ -61,6 +61,9 @@ props:
       description: Destino do fluxo de resposta fornecido pelo chamador quando aplicável.
       default: null
 slots:
+  avatar_media:
+    title: Mídia do avatar do autor citado
+    description: Render array do sistema de avatar do ACULTA (AvatarResolver/Avatar Pool); sem mídia, a forma fica vazia.
   content:
     title: Conteúdo
     description: Texto citado.
