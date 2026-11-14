@@ -1,10 +1,10 @@
 # Dívida PHPStan — ACULTA
 
-Gerado em 2026-11-14T20:47:45+00:00 por `scripts/phpstan-debt-report.php`.
+Gerado em 2026-11-14T20:50:09+00:00 por `scripts/phpstan-debt-report.php`.
 
 | Item | Valor |
 | --- | --- |
-| Commit | `a4086e117187e0a60efb328820bed102325e50e2` |
+| Commit | `35f73b55c021cb9d483278887e7c0ef59f3dcb65` |
 | PHP | 8.4.27 |
 | PHPStan | PHPStan - PHP Static Analysis Tool 2.3.5 |
 | Nível | 10 |
@@ -15,27 +15,27 @@ Gerado em 2026-11-14T20:47:45+00:00 por `scripts/phpstan-debt-report.php`.
 
 | Medida | Ocorrências |
 | --- | ---: |
-| Total bruto no nível 10 | 26058 |
-| Dívida congelada no baseline | 26058 |
+| Total bruto no nível 10 | 26027 |
+| Dívida congelada no baseline | 26027 |
 | Erros não suprimidos | 0 |
-| Entradas no baseline | 15261 |
+| Entradas no baseline | 15253 |
 | Produção | 15696 |
-| Testes | 10362 |
+| Testes | 10331 |
 
 ## Criticidade funcional
 
 | Criticidade | Ocorrências |
 | --- | ---: |
 | alta | 231 |
-| media | 22830 |
+| media | 22799 |
 | baixa | 2997 |
 
 ## Evolução desde o baseline de referência
 
 | Classificação | Entradas |
 | --- | ---: |
-| Dívida removida | 19 |
-| Dívida mantida | 15261 |
+| Dívida removida | 8 |
+| Dívida mantida | 15253 |
 | Nova dívida (bloqueante) | 0 |
 | Contagem aumentada (bloqueante) | 0 |
 | Contagem reduzida | 0 |
@@ -45,7 +45,7 @@ Gerado em 2026-11-14T20:47:45+00:00 por `scripts/phpstan-debt-report.php`.
 
 | Módulo | Ocorrências |
 | --- | ---: |
-| aculta_forum | 3096 |
+| aculta_forum | 3065 |
 | scripts | 2996 |
 | aculta_messenger | 2073 |
 | aculta_portal | 2020 |
@@ -81,12 +81,12 @@ Gerado em 2026-11-14T20:47:45+00:00 por `scripts/phpstan-debt-report.php`.
 | Identificador | Ocorrências |
 | --- | ---: |
 | `offsetAccess.nonOffsetAccessible` | 7939 |
-| `argument.type` | 4578 |
-| `method.nonObject` | 2840 |
+| `argument.type` | 4577 |
+| `method.nonObject` | 2822 |
 | `missingType.iterableValue` | 2783 |
 | `cast.string` | 2062 |
 | `cast.int` | 1344 |
-| `method.notFound` | 926 |
+| `method.notFound` | 914 |
 | `property.nonObject` | 666 |
 | `return.type` | 369 |
 | `foreach.nonIterable` | 353 |
