@@ -128,7 +128,6 @@ final class RelatedContentBlockKernelTest extends KernelTestBase {
     $blockManager = $this->container->get('plugin.manager.block');
     $this->assertTrue($blockManager->hasDefinition('aculta_index_related_content'));
 
-    /** @var \Drupal\aculta_index\Plugin\Block\RelatedContentBlock $block */
     $block = $blockManager->createInstance('aculta_index_related_content');
     $this->assertInstanceOf(RelatedContentBlock::class, $block);
 
@@ -428,7 +427,7 @@ final class RelatedContentBlockKernelTest extends KernelTestBase {
    * Builds and activates an index generation from existing entities.
    */
   private function buildAndActivateGeneration(): void {
-    /** @var \Drupal\aculta_index\Maintenance\ContentIndexRebuilder $rebuilder */
+    /** @var \Drupal\aculta_index\Rebuild\ContentIndexRebuilder $rebuilder */
     $rebuilder = $this->container->get('aculta_index.rebuilder');
     $generationId = $rebuilder->start();
     $complete = FALSE;
@@ -448,7 +447,11 @@ final class RelatedContentBlockKernelTest extends KernelTestBase {
     $worker = $this->container->get('plugin.manager.queue_worker')
       ->createInstance(ContentIndexWorkManager::QUEUE_ID);
     $queue = $this->container->get('queue')->get(ContentIndexWorkManager::QUEUE_ID);
-    while ($item = $queue->claimItem()) {
+    while (TRUE) {
+      $item = $queue->claimItem();
+      if (!is_object($item)) {
+        break;
+      }
       $worker->processItem($item->data);
       $queue->deleteItem($item);
     }

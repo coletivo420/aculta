@@ -24,13 +24,13 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 final class DiscussionCommentModerationForm extends FormBase {
 
   public function __construct(
-    private readonly RouteMatchInterface $modRoute,
-    private readonly KeyValueFactoryInterface $modKeyValue,
-    private readonly LoggerChannelFactoryInterface $modLogger,
-    private readonly AccountProxyInterface $modModerator,
-    private readonly DateFormatterInterface $modDates,
-    private readonly EntityTypeManagerInterface $modEntities,
-    private readonly DiscussionReactionManager $modReactions,
+    protected readonly RouteMatchInterface $modRoute,
+    protected readonly KeyValueFactoryInterface $modKeyValue,
+    protected readonly LoggerChannelFactoryInterface $modLogger,
+    protected readonly AccountProxyInterface $modModerator,
+    protected readonly DateFormatterInterface $modDates,
+    protected readonly EntityTypeManagerInterface $modEntities,
+    protected readonly DiscussionReactionManager $modReactions,
   ) {}
 
   public static function create(ContainerInterface $container): static {
@@ -185,7 +185,7 @@ final class DiscussionCommentModerationForm extends FormBase {
    */
   private function reactionTotal(int $cid): int {
     $reactions = $this->modReactions->loadReactions('comment', $cid, NULL);
-    return (int) ($reactions['total_count'] ?? 0);
+    return (int) $reactions['total_count'];
   }
 
 }

@@ -354,6 +354,7 @@ services:
       - '@aculta_forum.discussion_context_resolver'
       - '@aculta_forum.quote_builder'
       - '@current_user'
+      - '@keyvalue'
 
   aculta_forum.discussion_reaction_access:
     class: Drupal\aculta_forum\Service\DiscussionReactionAccess

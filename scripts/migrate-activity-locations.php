@@ -13,6 +13,7 @@ declare(strict_types=1);
  *   drush scr scripts/migrate-activity-locations.php -- --rollback.
  */
 
+use Drupal\aculta_events\Migration\ActivityLocationMigrator;
 use Drupal\Core\DrupalKernel;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -20,7 +21,7 @@ if (!class_exists('\Drupal')) {
   $autoloader = require_once dirname(__DIR__) . '/vendor/autoload.php';
   require_once dirname(__DIR__) . '/web/core/includes/bootstrap.inc';
   $request = Request::createFromGlobals();
-  $kernel = DrupalKernel::createFromRequest('prod', $autoloader, dirname(__DIR__) . '/web');
+  $kernel = DrupalKernel::createFromRequest($request, $autoloader, 'prod', TRUE, dirname(__DIR__) . '/web');
   $kernel->boot();
   $kernel->preHandle($request);
 }

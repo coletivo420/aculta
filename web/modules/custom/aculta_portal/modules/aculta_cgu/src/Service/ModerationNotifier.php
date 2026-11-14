@@ -110,7 +110,7 @@ final class ModerationNotifier {
         $correlationId,
       );
       $result = $this->mailer->deliver($message);
-      if (!$result->isAccepted()) {
+      if (!$result->sent) {
         $this->logger->error('Falha de entrega do aviso de denúncia (@correlation).', [
           '@correlation' => $correlationId,
         ]);

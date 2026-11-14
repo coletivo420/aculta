@@ -13,6 +13,7 @@ use Drupal\aculta_forum\Form\TopicOpeningEditForm;
 use Drupal\comment\CommentInterface;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\KeyValueStore\KeyValueFactoryInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\node\NodeInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -30,6 +31,7 @@ class DiscussionReplyController extends ControllerBase {
     protected readonly DiscussionContextResolver $contextResolver,
     protected readonly ForumQuoteBuilder $quoteBuilder,
     protected readonly AccountProxyInterface $forumCurrentUser,
+    protected readonly KeyValueFactoryInterface $forumKeyValue,
   ) {}
 
   /**
@@ -71,7 +73,7 @@ class DiscussionReplyController extends ControllerBase {
     $editId = $request->query->get('editar');
     if ($editId !== NULL && ctype_digit((string) $editId)) {
       $editComment = $this->forumEntityTypeManager->getStorage('comment')->load((int) $editId);
-      $tombstoned = $editComment instanceof CommentInterface && (bool) \Drupal::keyValue('aculta_forum_comment_tombstones')->get((string) $editComment->id());
+      $tombstoned = $editComment instanceof CommentInterface && (bool) $this->forumKeyValue->get('aculta_forum_comment_tombstones')->get((string) $editComment->id());
       // Resposta excluída pelo autor não pode mais ser editada, nem pelo administrador.
       if ($tombstoned) {
         throw new \Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException('Resposta excluída.');

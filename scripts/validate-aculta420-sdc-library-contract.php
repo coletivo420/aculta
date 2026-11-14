@@ -25,7 +25,6 @@ $componentCount = 0;
 $storyCount = 0;
 
 // Every SDC must have at least one Library story.
-$storylessDebt = [];
 $storylessFound = [];
 
 if (!is_dir($componentsRoot)) {
@@ -74,9 +73,7 @@ foreach ($iterator as $file) {
   $storyCount += count($stories);
   if ($stories === []) {
     $storylessFound[] = $name;
-    if (!in_array($name, $storylessDebt, TRUE)) {
-      $errors[] = "SDC novo ou não autorizado sem story: {$name}.";
-    }
+    $errors[] = "SDC sem story: {$name}.";
   }
 
   foreach (glob($directory . '/*.story.yml') ?: [] as $story) {
@@ -103,10 +100,8 @@ foreach (new RecursiveIteratorIterator(
 }
 
 sort($storylessFound);
-$expectedDebt = $storylessDebt;
-sort($expectedDebt);
-if ($storylessFound !== $expectedDebt) {
-  $errors[] = 'A lista de SDCs sem story não corresponde à política: todos os componentes devem ter ao menos uma story.';
+if ($storylessFound !== []) {
+  $errors[] = 'Todos os componentes devem ter ao menos uma story; encontrados: ' . implode(', ', $storylessFound) . '.';
 }
 
 // Component directories containing top-level Twig templates must be SDCs.
@@ -141,7 +136,7 @@ if ($errors !== []) {
 }
 
 printf(
-  "PASS — validate-aculta420-sdc-library-contract (%d SDCs, %d stories; props e slots titulados, slots descritos; UI Patterns Library oficial habilitada sem módulo catálogo customizado)\n",
+  "PASS — validate-aculta420-sdc-library-contract (%d SDCs, %d stories, %d SDCs sem story; props e slots titulados, slots descritos; UI Patterns Library oficial habilitada sem módulo catálogo customizado)\n",
   $componentCount,
   $storyCount,
   count($storylessFound),

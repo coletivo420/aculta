@@ -19,13 +19,13 @@ final class StudioMenuStory extends StoryDefault implements ContainerFactoryPlug
    *
    * @var array<string, mixed>|null
    */
-  private ?array $menuBuild = NULL;
+  protected ?array $menuBuild = NULL;
 
   public function __construct(
     array $configuration,
     $plugin_id,
     $plugin_definition,
-    private readonly AccountExperienceProvider $accountExperienceProvider,
+    protected readonly AccountExperienceProvider $accountExperienceProvider,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }

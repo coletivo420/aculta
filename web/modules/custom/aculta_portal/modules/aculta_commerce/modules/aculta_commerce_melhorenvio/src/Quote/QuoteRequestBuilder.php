@@ -52,7 +52,7 @@ final class QuoteRequestBuilder {
    * A API do Melhor Envio monta as caixas a partir da lista `products`; o
    * módulo não soma dimensões.
    *
-   * @param \Drupal\aculta_commerce_melhorenvio\Quote\ShipmentAddressPair $pair
+   * @param \Drupal\aculta_commerce_melhorenvio\Address\ShipmentAddressPair $pair
    *   Par de endereços de origem e destino.
    * @param list<\Drupal\aculta_commerce_melhorenvio\Quote\QuoteItem> $items
    *   Itens do carrinho.

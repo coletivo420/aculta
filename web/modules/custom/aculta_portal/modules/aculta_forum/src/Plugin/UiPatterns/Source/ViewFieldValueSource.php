@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_forum\Plugin\UiPatterns\Source;
 
-use Drupal\Core\Field\FieldableEntityInterface;
+use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\Context\EntityContextDefinition;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
@@ -42,12 +42,14 @@ final class ViewFieldValueSource extends ViewsSourceBase {
     }
 
     $field = $view->field[$field_id];
-    if (!$field instanceof FieldPluginBase || $this->isViewFieldExcluded($field_id, $view)) {
+    if ($this->isViewFieldExcluded($field_id, $view)) {
       return NULL;
     }
 
     $row = $view->result[$row_index];
-    $entity = $row->_entity ?? NULL;
+    // ResultRow::$_entity is typed as non-null, but views can leave rows
+    // without an entity for non-entity-backed result sets.
+    $entity = $row->_entity;
     if (!$entity instanceof FieldableEntityInterface || !$entity->hasField($field_id)) {
       return NULL;
     }

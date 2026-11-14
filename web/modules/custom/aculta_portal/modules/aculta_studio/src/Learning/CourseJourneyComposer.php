@@ -31,7 +31,7 @@ final class CourseJourneyComposer {
   /**
    * Builds the "Minha jornada" body for the native course page.
    *
-   * @param \Drupal\aculta_studio\Learning\CourseJourney $journey
+   * @param \Drupal\aculta_lms\Learning\CourseJourney $journey
    *   Authorized journey data from the ACULTA course journey contract.
    *
    * @return array<string, mixed>
@@ -77,7 +77,7 @@ final class CourseJourneyComposer {
   /**
    * Wraps an ACULTA activity form in the learning room shell.
    *
-   * @param \Drupal\aculta_studio\Learning\CourseJourney $journey
+   * @param \Drupal\aculta_lms\Learning\CourseJourney $journey
    *   Authorized journey data.
    * @param int $lesson_delta
    *   Requested lesson delta.
@@ -91,7 +91,7 @@ final class CourseJourneyComposer {
    */
   public function buildRoom(CourseJourney $journey, int $lesson_delta, int $activity_delta, array $content): array {
     $lesson = $journey->lessonByDelta($lesson_delta);
-    $lesson_label = $lesson?->label ?? $this->t('Aula');
+    $lesson_label = $lesson->label ?? $this->t('Aula');
     $position = $journey->lessonPosition($lesson_delta);
     $subtitle = $position === NULL
       ? $journey->courseLabel
@@ -156,7 +156,7 @@ final class CourseJourneyComposer {
   /**
    * Builds the course summary with progress and current position.
    *
-   * @param \Drupal\aculta_studio\Learning\CourseJourney $journey
+   * @param \Drupal\aculta_lms\Learning\CourseJourney $journey
    *   Authorized journey data.
    *
    * @return array<string, mixed>
@@ -186,7 +186,7 @@ final class CourseJourneyComposer {
   /**
    * Builds the ordered curriculum section.
    *
-   * @param \Drupal\aculta_studio\Learning\CourseJourney $journey
+   * @param \Drupal\aculta_lms\Learning\CourseJourney $journey
    *   Authorized journey data.
    *
    * @return array<string, mixed>
@@ -221,7 +221,7 @@ final class CourseJourneyComposer {
   /**
    * Builds the ordered lesson list used by the journey and the room.
    *
-   * @param \Drupal\aculta_studio\Learning\CourseJourney $journey
+   * @param \Drupal\aculta_lms\Learning\CourseJourney $journey
    *   Authorized journey data.
    * @param int|null $current_delta
    *   Current route lesson delta, when on the room.
@@ -245,7 +245,7 @@ final class CourseJourneyComposer {
   /**
    * Builds one lesson item with a state that never relies on color alone.
    *
-   * @param \Drupal\aculta_studio\Learning\CourseJourneyLesson $lesson
+   * @param \Drupal\aculta_lms\Learning\CourseJourneyLesson $lesson
    *   Authorized lesson data.
    * @param int|null $current_delta
    *   Current route lesson delta.
@@ -311,7 +311,7 @@ final class CourseJourneyComposer {
   /**
    * Builds course progress without inventing a percentage for empty courses.
    *
-   * @param \Drupal\aculta_studio\Learning\CourseJourney $journey
+   * @param \Drupal\aculta_lms\Learning\CourseJourney $journey
    *   Authorized journey data.
    *
    * @return array<string, mixed>

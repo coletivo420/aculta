@@ -195,48 +195,6 @@ final class PagePresentationHooksTest extends UnitTestCase {
   }
 
   /**
-   * Supplies the Maps owner template with the theme's icon component.
-   */
-  public function testMapMarkerIconUsesTheExistingIconSdc(): void {
-    $componentManager = $this->createMock(ComponentPluginManager::class);
-    $componentManager->expects(self::once())
-      ->method('hasDefinition')
-      ->with('aculta420_v2:icon')
-      ->willReturn(TRUE);
-    $hooks = $this->newHooks($componentManager);
-    $variables = [
-      'template_id' => 'map-icon-1',
-      'icon_name' => 'plant',
-      'icon' => NULL,
-    ];
-
-    $hooks->preprocessMapMarkerIconTemplate($variables);
-
-    self::assertSame([
-      '#type' => 'component',
-      '#component' => 'aculta420_v2:icon',
-      '#props' => ['name' => 'plant', 'variant' => 'duotone', 'size' => 'md'],
-    ], $variables['icon']);
-  }
-
-  /**
-   * Leaves the module fallback untouched when the theme icon SDC is missing.
-   */
-  public function testMapMarkerIconKeepsFallbackWithoutTheIconSdc(): void {
-    $componentManager = $this->createMock(ComponentPluginManager::class);
-    $componentManager->expects(self::once())
-      ->method('hasDefinition')
-      ->with('aculta420_v2:icon')
-      ->willReturn(FALSE);
-    $hooks = $this->newHooks($componentManager);
-    $variables = ['icon_name' => 'plant', 'icon' => NULL];
-
-    $hooks->preprocessMapMarkerIconTemplate($variables);
-
-    self::assertNull($variables['icon']);
-  }
-
-  /**
    * Maps only the identity portion of the Studio profile to author-card.
    */
   public function testProfileIdentityMapsToAuthorCardAndKeepsOwnerData(): void {

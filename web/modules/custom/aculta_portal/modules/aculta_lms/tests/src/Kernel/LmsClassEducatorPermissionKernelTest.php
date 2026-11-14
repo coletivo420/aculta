@@ -369,7 +369,6 @@ final class LmsClassEducatorPermissionKernelTest extends KernelTestBase {
     self::assertSame('empty', $viewDisplays['default']['display_options']['arguments']['gid']['default_action']);
     self::assertSame(['group_node:aculta_lms_topic' => 'group_node:aculta_lms_topic'], $viewDisplays['default']['display_options']['relationships']['group_relationship']['group_relation_plugins']);
     $viewFactory = $this->container->get('views.executable');
-    self::assertInstanceOf(ViewExecutableFactory::class, $viewFactory);
     $moderationController = new LmsForumModerationController(
       $moderationManager,
       $this->container->get('entity_type.manager'),
@@ -513,7 +512,7 @@ final class LmsClassEducatorPermissionKernelTest extends KernelTestBase {
 
     $resolver = new DiscussionContextResolver([$provider]);
     $commentAccessHook = new LmsCommentModerationAccessHooks($resolver);
-    $moderationHooks = new LmsDiscussionModerationHooks($resolver);
+    $moderationHooks = new DiscussionModerationHooks($resolver);
     self::assertTrue($commentAccessHook->entityAccess($comment, 'view', $educator)->isAllowed());
     self::assertTrue($commentAccessHook->entityAccess($comment, 'approve', $educator)->isAllowed());
     self::assertTrue($commentAccessHook->entityAccess($comment, 'update', $educator)->isNeutral());

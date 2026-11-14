@@ -100,12 +100,11 @@ final class DiscussionReactionEntityViewHooks {
       if ($variables['publication_comment']) {
         $reactions = $this->reactionManager->loadReactions('comment', (int) $threadComment->id(), NULL);
         $total = 0;
-        foreach (($reactions['reactions'] ?? []) as $reaction) {
-          $total += (int) ($reaction['count'] ?? 0);
+        foreach ($reactions['reactions'] as $reaction) {
+          $total += (int) $reaction['count'];
         }
         $variables['sort_total'] = $total;
         $variables['sort_created'] = (int) $threadComment->getCreatedTime();
-        $cid = (int) $threadComment->id();
         // Ações da resposta: responder, citar e editar abrem o Compositor de Resposta da Discussão;
         // a rota valida o acesso. Excluir só aparece quando a conta pode.
         $cid = (int) $threadComment->id();
@@ -325,8 +324,8 @@ final class DiscussionReactionEntityViewHooks {
     foreach ($comments as $cid => $comment) {
       $reactions = $this->reactionManager->loadReactions('comment', $cid, NULL);
       $sum = 0;
-      foreach (($reactions['reactions'] ?? []) as $reaction) {
-        $sum += (int) ($reaction['count'] ?? 0);
+      foreach ($reactions['reactions'] as $reaction) {
+        $sum += (int) $reaction['count'];
       }
       $totals[$cid] = $sum;
     }

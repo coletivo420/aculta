@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_lms\Unit\Resources;
 
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Cache\CacheableDependencyInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
@@ -27,7 +28,7 @@ use PHPUnit\Framework\Attributes\Group;
  * Tests course-scoped access for gallery resources.
  */
 #[Group('aculta_lms')]
-#[CoversClass(\Drupal\aculta_lms\Resources\Hook\GalleryCourseAccessHooks::class)]
+#[CoversClass(\Drupal\aculta_lms\Hook\GalleryCourseAccessHooks::class)]
 final class GalleryCourseAccessHooksTest extends UnitTestCase {
 
   /**
@@ -53,6 +54,7 @@ final class GalleryCourseAccessHooksTest extends UnitTestCase {
     $result = $hook->entityAccess($this->gallery(), 'view', $this->account);
 
     self::assertTrue($result->isAllowed());
+    self::assertInstanceOf(CacheableDependencyInterface::class, $result);
     self::assertContains('user.group_permissions', $result->getCacheContexts());
     self::assertContains('group:course-42', $result->getCacheTags());
   }
@@ -66,6 +68,7 @@ final class GalleryCourseAccessHooksTest extends UnitTestCase {
     $result = $hook->entityAccess($this->gallery(), 'view', $this->account);
 
     self::assertTrue($result->isNeutral());
+    self::assertInstanceOf(CacheableDependencyInterface::class, $result);
     self::assertSame(0, $result->getCacheMaxAge());
   }
 

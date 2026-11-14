@@ -39,13 +39,22 @@ class ForumThemeHooks {
     if (!$node instanceof NodeInterface || $node->bundle() !== 'aculta_forum_topic') {
       return;
     }
-    $owner = $node->getOwner();
-    if ($owner === NULL) {
+    // Sem apelido, build() não tem identidade: o fallback do acervo mantém o avatar.
+    $card = $this->buildOpeningAuthorCard($node->getOwner());
+    if ($card === NULL) {
       return;
     }
-    // Sem apelido, build() não tem identidade: o fallback do acervo mantém o avatar.
-    $card = $this->authorCardBuilder->build($owner, 'author_forum') ?? $this->authorCardBuilder->buildFallback($owner);
     $variables['opening_author_avatar'] = $card['#avatar'] ?? NULL;
+  }
+
+  /**
+   * Builds the opening author card, tolerating a node without a live owner.
+   */
+  private function buildOpeningAuthorCard(?UserInterface $owner): ?array {
+    if ($owner === NULL) {
+      return NULL;
+    }
+    return $this->authorCardBuilder->build($owner, 'author_forum') ?? $this->authorCardBuilder->buildFallback($owner);
   }
 
   /**

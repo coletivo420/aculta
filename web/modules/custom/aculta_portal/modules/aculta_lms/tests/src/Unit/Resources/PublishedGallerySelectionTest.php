@@ -29,7 +29,7 @@ use PHPUnit\Framework\Attributes\Group;
  * Tests selection of published galleries from a course editing form.
  */
 #[Group('aculta_lms')]
-#[CoversClass(\Drupal\aculta_lms\Resources\Plugin\EntityReferenceSelection\PublishedGallerySelection::class)]
+#[CoversClass(\Drupal\aculta_lms\Plugin\EntityReferenceSelection\PublishedGallerySelection::class)]
 final class PublishedGallerySelectionTest extends UnitTestCase {
 
   /**

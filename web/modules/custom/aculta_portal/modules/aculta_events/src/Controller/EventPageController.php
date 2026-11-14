@@ -328,56 +328,15 @@ final class EventPageController extends ControllerBase {
       $prefix = '<div class="event-admin-actions mb-4">' . $buttonHtml . '</div>';
     }
 
-    // Organização verificada e coorganizadores (ARQ-05 / OC-C).
-    $orgData = NULL;
-    if ($org !== NULL && $orgAccess?->isAllowed()) {
-      $orgSlug = (string) $org->get('field_slug')->value;
-      $orgUrl = $orgSlug !== ''
-        ? Url::fromRoute('aculta_events.organization_page', ['slug' => $orgSlug])
-        : NULL;
-      $orgData = [
-        'label' => (string) $org->label(),
-        'url' => $orgUrl?->toString(),
-      ];
-    }
-
-    $coOrgs = [];
+    // Coorganizadores mantêm a dependência de acesso mesmo quando não há saída
+    // própria nesta página.
     foreach ($evento->get('field_coorganizadores')->referencedEntities() as $coOrg) {
-      if (!$coOrg instanceof EventOrganization) {
-        continue;
-      }
-      $coOrgAccess = $coOrg->access('view', $this->currentUser(), TRUE);
-      $cacheability->addCacheableDependency($coOrg)->addCacheableDependency($coOrgAccess);
-      if ($coOrgAccess->isAllowed()) {
-        $coOrgSlug = (string) $coOrg->get('field_slug')->value;
-        $coUrl = $coOrgSlug !== ''
-          ? Url::fromRoute('aculta_events.organization_page', ['slug' => $coOrgSlug])
-          : NULL;
-        $coOrgs[] = [
-          'label' => (string) $coOrg->label(),
-          'url' => $coUrl?->toString(),
-        ];
+      if ($coOrg instanceof EventOrganization) {
+        $cacheability->addCacheableDependency($coOrg)
+          ->addCacheableDependency($coOrg->access('view', $this->currentUser(), TRUE));
       }
     }
 
-    // Campos estruturados de acessibilidade, segurança e classificação
-    // (ARQ-04).
-    $acessibilidadeTexto = (string) $evento->get('field_acessibilidade')->value;
-    $selosAcessibilidade = [];
-    if ($acessibilidadeTexto !== '') {
-      $linhasAcess = preg_split('/[\r\n;]+/', $acessibilidadeTexto);
-      if ($linhasAcess !== FALSE) {
-        foreach ($linhasAcess as $item) {
-          $trimmed = trim($item);
-          if ($trimmed !== '') {
-            $selosAcessibilidade[] = $trimmed;
-          }
-        }
-      }
-    }
-
-    $classificacao = (string) $evento->get('field_classificacao_etaria')->value;
-    $seguranca = (string) $evento->get('field_seguranca')->value;
     $cacheability->setCacheMaxAge($validade);
 
     // Mapa contextual: se houver locais físicos autorizados com coordenadas,

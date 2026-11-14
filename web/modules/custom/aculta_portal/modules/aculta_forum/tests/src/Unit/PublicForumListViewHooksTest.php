@@ -96,7 +96,7 @@ final class PublicForumListTestEntityStorage extends EntityStorageBase {
    * Constructs the test storage.
    */
   public function __construct(
-    private readonly QueryInterface $query,
+    protected readonly QueryInterface $query,
   ) {}
 
   /**
