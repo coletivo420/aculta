@@ -1,5 +1,10 @@
 # Janela estrutural do Runtime — 2026-11-12 (plano)
 
+> Atualização em 2026-11-14: o responsável decidiu manter permanentemente o
+> checkout compartilhado com Apache no desenvolvimento. A seção de isolamento
+> F4 abaixo está supersedida e não é precondição para operações; os demais
+> requisitos de janela estrutural continuam vigentes.
+
 **Estado: PLANO. Nada deste documento foi executado no Runtime.**
 
 - **Objetivo:** zerar o drift de configuração entre `config/sync` e o Runtime de
@@ -9,8 +14,7 @@
 - **Classificação:** R3 (`config/sync/**`). Execução autônoma: **não**.
   `structural-plan` gerado em 2026-11-12T13:53:57Z.
 - **Ambiente:** servidor de desenvolvimento `test`, banco `aculta_runtime`,
-  remoto `coletivo420/aculta`, checkout servido compartilhado com o Apache (F4
-  ainda não isolado).
+  remoto `coletivo420/aculta`, checkout servido compartilhado com o Apache.
 
 ## 1. O que o plano não faz
 
@@ -261,7 +265,7 @@ ser concluído antes do fechamento.
 
 ## 8. Fora do escopo desta janela
 
-- Isolamento F4 (checkout de agentes × worktree do Apache).
+- Isolamento de checkout (requisito retirado por decisão de 2026-11-14).
 - Composer, dependências, patches e `web/libraries`.
 - Remoção de módulos ou conteúdo.
 - Interface de homologação visual além do smoke acima.

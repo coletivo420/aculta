@@ -11,8 +11,6 @@ Centraliza operacoes sensiveis de:
   config:status, deploy:hook-status).
 - Geracao de planos estruturais verificaveis (structural-plan), incluindo
   deteccao de casos de ordem nao padrao (ex.: commerce_shipping).
-- Preparacao e validacao de worktree isolada de Runtime (F4), sem executar
-  cutover do Apache nem alterar symlinks servidos.
 """
 
 from __future__ import annotations
@@ -966,33 +964,6 @@ def build_structural_plan(
     }
 
 
-def prepare_runtime_worktreeManifest(repo_root: Path, target_dir: str | None, target_sha: str) -> dict[str, Any]:
-    """Inspeciona e planeja (ou prepara sob flag explicita) a separacao entre checkout de trabalho e Runtime (F4)."""
-    shared_items = [
-        {"path": "vendor", "strategy": "shared_or_locked_install", "exists_in_repo": (repo_root / "vendor").exists()},
-        {"path": "web/sites/default/settings.php", "strategy": "preserve_and_mount_0640", "exists_in_repo": (repo_root / "web/sites/default/settings.php").exists()},
-        {"path": "web/sites/default/settings.local.php", "strategy": "preserve_and_mount_0640", "exists_in_repo": (repo_root / "web/sites/default/settings.local.php").exists()},
-        {"path": "web/sites/default/files", "strategy": "shared_persistent_symlink", "exists_in_repo": (repo_root / "web/sites/default/files").exists()},
-        {"path": "private", "strategy": "shared_persistent_symlink", "exists_in_repo": (repo_root / "private").exists()},
-        {"path": "secrets", "strategy": "shared_restricted_dir_0750", "exists_in_repo": (repo_root / "secrets").exists()},
-        {"path": "var/deployer", "strategy": "shared_state_dir", "exists_in_repo": (repo_root / "var/deployer").exists()},
-        {"path": "var/runtime-sync", "strategy": "shared_state_dir_0700", "exists_in_repo": (repo_root / "var/runtime-sync").exists()},
-    ]
-    return {
-        "schema_version": SCHEMA_VERSION,
-        "current_isolation_state": "SHARED_CHECKOUT_ACTIVE",
-        "warning": "O checkout editado pelos agentes ainda e o mesmo servido pelo Apache (/home/aculta -> checkout). Alteracoes locais ficam visiveis antes do sync-code ate que o cutover F4 seja aprovado e executado.",
-        "recommended_strategy": "git worktree add --detach <runtime_checkout_path> <validated_sha>",
-        "branch_exclusivity_rule": "A branch 'dev' nunca fica checada em duas worktrees; o Runtime usa HEAD detached no SHA validado.",
-        "target_sha": target_sha,
-        "target_dir": target_dir,
-        "persistent_mounts": shared_items,
-        "domains_to_verify": SITE_KEYS_DEV,
-        "cutover_executed": False,
-        "rollback_procedure": "Restaurar symlink /home/aculta (ou DocumentRoot) para o checkout anterior e reconstruir caches com drush cr.",
-    }
-
-
 def main() -> int:
     parser = argparse.ArgumentParser(description="ACULTA Runtime Sync v2 helper")
     sub = parser.add_subparsers(dest="cmd", required=True)
@@ -1027,11 +998,6 @@ def main() -> int:
     p_splan.add_argument("--target-sha", required=True)
     p_splan.add_argument("--state-status", default="OK")
     p_splan.add_argument("--drush-json-file", default="")
-
-    p_f4 = sub.add_parser("isolation-plan")
-    p_f4.add_argument("--repo-root", required=True)
-    p_f4.add_argument("--target-sha", required=True)
-    p_f4.add_argument("--target-dir", default="")
 
     args = parser.parse_args()
 
@@ -1155,12 +1121,6 @@ def main() -> int:
             except Exception:
                 drush_info = None
         plan = build_structural_plan(repo_root, args.base_sha, args.target_sha, delta, drush_info)
-        print(json.dumps(sanitize_obj(plan), indent=2, ensure_ascii=True))
-        return 0
-
-    if args.cmd == "isolation-plan":
-        repo_root = Path(args.repo_root)
-        plan = prepare_runtime_worktreeManifest(repo_root, args.target_dir or None, args.target_sha)
         print(json.dumps(sanitize_obj(plan), indent=2, ensure_ascii=True))
         return 0
 

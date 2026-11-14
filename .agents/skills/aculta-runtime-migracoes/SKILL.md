@@ -15,7 +15,7 @@ description: Use quando alterações do ACULTA exigirem Composer, configuração
 2. **Confirme ambiente.** `doctor` em `test`: origem `coletivo420/aculta`, checkout servido, host, URI HTTPS e banco `aculta_runtime`; preserve segredos e trabalho alheio.
 3. **Confira exceções de ordem.** No `commerce_shipping`, `updatedb` e `pm:uninstall` precisam do **vendor antigo** antes do `composer install`; `structural-plan` detecta.
 4. **Prove backup e restore.** Snapshot fora do Git/docroot (0600) com SHA-256, prova em destino autorizado (`aculta_runtime_copia`), bootstrap e contagens. `aculta_simpletest` nunca guarda o Runtime.
-5. **Tenha ordem explícita.** Push, `structural-plan` e autorização de código não autorizam `updatedb`, `config:import`, `pm:uninstall`, exclusões ou cutover F4.
+5. **Tenha ordem explícita.** Push, `structural-plan` e autorização de código não autorizam `updatedb`, `config:import`, `pm:uninstall` ou exclusões persistentes.
 6. **Escreva só na janela aprovada.** Reconfirme `doctor`, pause agentes/cron e use `composer install` com lock (nunca update).
 7. **Homologue e feche.** Após `drush cr`, rode `verify` e smoke dos dez `site_keys`. Com HEAD == `origin/dev`, worktree limpo, plano compatível e drift/updatedb/deploy zerados, o responsável roda `ACULTA_SYNC_STRUCTURAL_CONFIRM=1 … structural-complete --plan=<plano.json>`: não importa config nem roda updatedb, só valida, reconstrói cache e avança o baseline. Em falha, pare em `PARTIAL`/`FAILED` e restaure.
 8. **Handoff.** Registre SHAs, gates, evidências de backup/restore e pendências, sem segredos ou caminhos absolutos.
@@ -24,7 +24,7 @@ description: Use quando alterações do ACULTA exigirem Composer, configuração
 
 A CLI do `aculta_deployer` é standalone e o `var/deployer/status.json` mantém o schema 1; o painel administrativo consome `var/runtime-sync/state.json` e `latest.json` (schema 2) via `DeployerStatusReader::readRuntimeSync()`, somente leitura.
 
-**Não existe executor autônomo (`structural-apply`).** `structural-complete` só fecha janela já executada, com confirmação e gates zerados; não executa mudança estrutural. O cutover F4 (`isolation-plan`) exige aprovação do responsável.
+**Não existe executor autônomo (`structural-apply`).** `structural-complete` só fecha janela já executada, com confirmação e gates zerados; não executa mudança estrutural. O checkout compartilhado com Apache é o modo esperado no servidor de desenvolvimento.
 
 ## Banco de ensaio da cópia do Runtime
 

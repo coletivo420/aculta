@@ -1,4 +1,4 @@
-# Planejamento de updates, config, isolamento e recuperação (Runtime Sync v2)
+# Planejamento de updates, config e recuperação (Runtime Sync v2)
 
 ## Gates antes de qualquer escrita persistente
 
@@ -20,11 +20,11 @@ O runbook `docs/operations/RUNTIME-UPDATE-WINDOW.md` documenta a remoção do co
 
 Nunca prescreva `composer install -> updatedb -> config:import` como sequência universal. `drush deploy` só pode ser usado quando a sequência padrão inteira for compatível e aprovada, sem uninstall ou migração intercalada.
 
-## Separação entre checkout de agentes e Runtime (F4)
+## Checkout compartilhado com o Apache
 
-- Enquanto `/home/aculta` apontar para o mesmo checkout editado pelos agentes (`/home/piradopirata/projetos/aculta`), qualquer arquivo salvo em `web/` atinge o Apache antes do `sync-code`.
-- O comando `bash scripts/runtime-sync.sh isolation-plan` inspeciona os mounts persistentes (`vendor`, `settings.php`, `settings.local.php`, `files`, `private`, `secrets`, `var/deployer`, `var/runtime-sync`) e prepara a estratégia com `git worktree add --detach <runtime_dir> <validated_sha>`, garantindo que a branch `dev` nunca fique checada em duas worktrees.
-- O cutover real de symlinks ou `DocumentRoot` do Apache exige aprovação específica do responsável e smoke pós-troca nos dez `site_keys`.
+- `/home/aculta` aponta para o checkout editado pelos agentes (`/home/piradopirata/projetos/aculta`) e `public_html -> web`; essa composição é intencional no servidor de desenvolvimento.
+- Alterações em `web/` podem afetar imediatamente as respostas do Apache. Antes de `sync-code`, preservar trabalho alheio e exigir checkout limpo; após o lock, o script revalida `HEAD` e limpeza antes e depois das operações.
+- Não criar worktree separada nem mudar symlinks ou `DocumentRoot` como pré-requisito para o fluxo cotidiano.
 
 ## Invariantes de recuperação
 

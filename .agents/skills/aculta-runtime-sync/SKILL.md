@@ -11,7 +11,7 @@ description: Use após push em origin/dev, ao inspecionar SHA, cache, divergênc
 
 ## Procedimento obrigatório
 
-1. **Determine onde está.** `pwd -P`, `hostname -s`, `git status --short --branch`, `git remote -v`, `git rev-parse HEAD`, `git ls-remote origin refs/heads/dev`. Confirme manualmente remoto esperado (`coletivo420/aculta`), branch `dev`, checkout servido e ambiente `test`. Não altere remotes, worktrees, links, settings ou permissões por conta própria.
+1. **Determine onde está.** `pwd -P`, `hostname -s`, `git status --short --branch`, `git remote -v`, `git rev-parse HEAD`, `git ls-remote origin refs/heads/dev`. Confirme manualmente remoto esperado (`coletivo420/aculta`), branch `dev`, checkout servido e ambiente `test`. O checkout compartilhado com Apache é esperado; não exija isolamento como precondição. Não altere remotes, links, settings ou permissões por conta própria.
 2. **Inspecione antes de escrever.** `bash scripts/runtime-sync.sh status` e `bash scripts/runtime-sync.sh plan` (ou `plan --refresh` para buscar objetos em staging isolado fora do checkout). Compare `HEAD`, `origin/dev`, `last_cache_success_sha` e `last_validated_sha`. Ausência de baseline = **UNKNOWN** (`INDETERMINATE`), nunca PASS.
 3. **Leia os sinais do Drupal.** Execute `bash scripts/runtime-sync.sh doctor --format=json` no host comprovado com URI HTTPS de desenvolvimento e banco `aculta_runtime`, tratando `updatedb:status`, `config:status` e `deploy:hook-status` como dados estruturados. Sem acesso ao Runtime, registre DEFERRED.
 4. **Classifique o delta cumulativo** desde `last_validated_sha`: R0 documental; R1 código/cache; R2 dependências; R3 Drupal estrutural; R4 destrutivo/infra; RX indeterminado. Mudança de `*.install`, hooks, lockfiles, `config/sync`, settings, renames estruturais ou dados exige revisão. RX bloqueia.
@@ -19,9 +19,9 @@ description: Use após push em origin/dev, ao inspecionar SHA, cache, divergênc
 6. **Valide e feche.** Use `verify` e confira SHA, cache, Drush, pendências e smoke dos `site_keys`; falha de `drush cr` após fast-forward deixa `PARTIAL`. Após import/updatedb autorizados, com HEAD == `origin/dev`, worktree limpo e plano compatível, rode `ACULTA_SYNC_STRUCTURAL_CONFIRM=1 … structural-complete --plan=<plano.json>`: ele não importa config nem roda updatedb, exige drift/updatedb/deploy zerados, reconstrói o cache e avança `last_validated_sha`.
 7. **Registre sem segredos** modo, SHAs, gates PASS/FAIL/DEFERRED, alterações realizadas, bloqueio e próximo passo. Nunca atribua um PASS a simulação de Drush (`scripts/test-runtime-sync.sh`) quando a tarefa exigir Runtime real.
 
-## Segurança e coordenação (F3/F4)
+## Segurança e coordenação (F3)
 
 - Só ambiente de desenvolvimento (`*.aculta.toca.net.br`). `drush cr` escreve em tabelas de cache e requer lock e registro.
-- O lock cooperativo (`var/deployer/runtime-sync.lock`) serializa instâncias do sincronizador, mas **não impede editores externos**. Sem o cutover F4 (`isolation-plan`), o checkout dos agentes continua sendo o DocumentRoot: alterações não commitadas ficam visíveis e bloqueiam `sync-code`.
+- O checkout de desenvolvimento é o mesmo checkout servido pelo Apache, conforme `docs/architecture/environments.md`. Alterações em arquivos servidos ficam visíveis imediatamente. O preflight exige worktree limpa antes de `sync-code` para evitar aplicar um alvo sobre trabalho não commitado; o lock (`var/deployer/runtime-sync.lock`) serializa sincronizadores, mas não impede edições externas. A ausência de isolamento não é falha nem bloqueio.
 - Proibidos `git reset --hard`, `git clean`, `git stash` automático, force push, Composer, `updatedb`, `config:import`, `pm:uninstall` ou SQL destrutivo na rotina cotidiana.
 - Para R2-R4 ou mudança estrutural, use `bash scripts/runtime-sync.sh structural-plan` e carregue `aculta-runtime-migracoes`.

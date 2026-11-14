@@ -102,7 +102,7 @@ Escopo funcional restante (login/logout, sessões multidomínio, modais HTMX, fo
 
 ## 6. Ferramentas faltantes ou bloqueadas
 
-- **Runtime (Fase 14):** DEFERRED. `runtime-sync.sh plan` recusa a worktree (não está em `dev`). Rodar no checkout compartilhado foi bloqueado pelo isolamento da sessão. Próximo passo: `plan` a partir do checkout servido, fora da worktree, sem `sync-code` até revisar o delta.
+- **Runtime (Fase 14; fotografia de 2026-11-11):** DEFERRED. `runtime-sync.sh plan` recusava aquela worktree por não estar em `dev`. A recomendação de executar fora do checkout compartilhado foi supersedida em 2026-11-14: o checkout compartilhado com Apache é permanente. Para uma nova execução, usar o checkout corrente e consultar `doctor`/`plan`; os demais gates continuam vigentes.
 - **gitleaks no histórico:** não executado (guarda de worktree recusou `git` com `-C`). Rodar a partir da worktree com `gitleaks git`.
 - **Security Review (Fase 3):** DEFERRED (sem Drush).
 

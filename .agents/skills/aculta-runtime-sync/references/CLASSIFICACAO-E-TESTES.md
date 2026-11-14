@@ -35,5 +35,5 @@ Referências: `docs/operations/RUNTIME-SYNC-PLANO-V2.md`, `docs/operations/RUNTI
 ## Evidências e limites
 
 - `bash scripts/test-runtime-sync.sh` valida a **orquestração simulada** com Git bare e Drush falso.
-- Homologação real requer o servidor `test` (`toca`), checkout limpo (ou worktree isolada F4), outputs Drush sem segredos e smokes por `site_key`.
+- Homologação real requer o servidor `test` (`toca`), checkout compartilhado limpo, outputs Drush sem segredos e smokes por `site_key`. Isolamento entre checkout e Apache não é requisito.
 - Estados de gate: `PASS`, `FAIL`, `SKIP`, `DEFERRED`, `N/A`, sempre acompanhados de motivo.

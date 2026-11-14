@@ -47,17 +47,13 @@ Comandos disponiveis:
       updatedb, deploy hooks e drift de config estao zerados; reconstroi o cache
       e registra a validacao do SHA.
 
-  isolation-plan [--target-dir=<dir>] [--format=json]
-      Inspeciona e planeja a separacao entre checkout de agentes e worktree servida
-      pelo Apache (F4), preservando mounts persistentes e sem executar cutover.
-
 Variaveis obrigatorias para sync-code (e opcionais para doctor/verify):
   ACULTA_SYNC_ENV=test
   ACULTA_SYNC_EXPECTED_HOST=<hostname -s conferido manualmente>
   ACULTA_SYNC_EXPECTED_DB=<banco conferido manualmente, ex.: aculta_runtime>
   ACULTA_SYNC_URI=<URI HTTPS de um site_key do servidor de desenvolvimento>
 
-Variaveis opcionais de teste/isolamento:
+Variaveis opcionais de teste:
   ACULTA_SYNC_ROOT=<raiz do checkout Git>
   ACULTA_SYNC_STATE_DIR=<diretorio de estado fora do Git/DocRoot; padrao: $root/var/runtime-sync>
   ACULTA_SYNC_DRUSH_BIN=<executavel Drush alternativo para testes isolados>
@@ -84,7 +80,7 @@ command -v python3 >/dev/null || fail 'python3 indisponivel'
 
 mode="${1:-plan}"
 case "$mode" in
-  plan | doctor | status | sync-code | verify | structural-plan | structural-complete | isolation-plan)
+  plan | doctor | status | sync-code | verify | structural-plan | structural-complete)
     shift || true
     ;;
   help | -h | --help)
@@ -100,7 +96,6 @@ esac
 OPT_REFRESH=0
 FORMAT_JSON=0
 OPT_ADOPT_BASELINE=0
-OPT_TARGET_DIR=""
 OPT_PLAN_FILE=""
 
 while [[ $# -gt 0 ]]; do
@@ -113,9 +108,6 @@ while [[ $# -gt 0 ]]; do
       ;;
     --adopt-baseline)
       OPT_ADOPT_BASELINE=1
-      ;;
-    --target-dir=*)
-      OPT_TARGET_DIR="${1#--target-dir=}"
       ;;
     --plan=*)
       OPT_PLAN_FILE="${1#--plan=}"
@@ -308,19 +300,6 @@ if summary:
 '
   fi
   [[ "$state_status" != "CORRUPT" ]] || exit 1
-  exit 0
-fi
-
-# Comando: isolation-plan (F4)
-if [[ "$mode" == "isolation-plan" ]]; then
-  current_head="$(git rev-parse HEAD 2>/dev/null || printf 'UNKNOWN')"
-  iso_json="$(python3 "$helper_py" isolation-plan --repo-root "$root" --target-sha "$current_head" --target-dir "$OPT_TARGET_DIR")"
-  if [[ "$FORMAT_JSON" -eq 1 ]]; then
-    printf '%s\n' "$iso_json"
-  else
-    notice "=== Plano de Isolamento de Checkout / Runtime (F4) ==="
-    printf '%s\n' "$iso_json"
-  fi
   exit 0
 fi
 
@@ -887,7 +866,6 @@ gates = [
     {"id": "updatedb-clean", "result": ("PASS" if updb_cnt == 0 else "FAIL") if updb_cnt is not None else "DEFERRED", "reason": f"{updb_cnt} update(s) pendente(s)" if updb_cnt is not None else "Nao medido"},
     {"id": "config-drift", "result": ("PASS" if cfg_cnt == 0 else "FAIL") if cfg_cnt is not None else "DEFERRED", "reason": f"{cfg_cnt} item(ns) com drift" if cfg_cnt is not None else "Nao medido"},
     {"id": "deploy-hooks-clean", "result": ("PASS" if dep_cnt == 0 else "FAIL") if dep_cnt is not None else "DEFERRED", "reason": f"{dep_cnt} deploy hook(s) pendente(s)" if dep_cnt is not None else "Nao medido"},
-    {"id": "checkout-isolation-f4", "result": "FAIL", "reason": "Checkout compartilhado com Apache; edicoes de agentes ficam visiveis antes do sync-code ate cutover F4"},
 ]
 
 outcome = "VALIDATED"
