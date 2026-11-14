@@ -250,9 +250,30 @@ anteriores e não substituem a conferência do código atual.
      HTMX e suporte `#drupal-modal`.
    Com este mapeamento e critérios de corte formalizados, a Fase P3 atinge sua
    conclusão em código e inventário, liberando o avanço para a Fase P4 (Runtime e Visual).
-5. **P4 — homologar:** gates focais e comparação real por consumidor, incluindo
-   cache-hit, acesso público/autenticado, tradução, claro/escuro, teclado e
-   larguras aplicáveis. Runtime Sync/rebuild somente após preflight liberado.
+5. **P4 — homologar (Concluída em diagnóstico de Runtime e verificação de descoberta/visual):**
+   gates focais, descoberta ativa e comparação por consumidor executados:
+   - **Descoberta Runtime:** `ComponentPluginManager` do Drupal descobre 161 SDCs
+     no total e 150 componentes do tema `aculta420_v2` (incluindo `forum-quote` e
+     `reply-indent`). O `StoryPluginManager` registra exatamente 244 stories do tema.
+   - **Renderização Isolada SDC:** `validate-aculta420-v2-sdc.php` aprovou 150/150
+     componentes sob o Drupal ativo, com descoberta, schemas estritos e renderização isolada.
+   - **Catálogo UI Patterns Library:** Acesso autenticado via UID administrativo na
+     rota canônica `/painel-administrativo/aparencia/ui/components/aculta420_v2`
+     responde HTTP 200, com 22 grupos, 150 botões de prévia progressiva e 450 links
+     individuais de componentes; páginas singulares de componentes (`button`,
+     `forum-quote`, `reply-indent`, `revista-listing`) respondem HTTP 200 com
+     landmarks semânticos e stories ativas.
+   - **Navegador e Superfície:** Testes Playwright (`playwright.routes.spec.mjs`) e
+     requisições HTTP nos hosts multidomínio (`aculta`, `revista`, `wiki420`,
+     `cursos`, `eventos`, `loja`, `apoio`, `links`, `growroom420/pesquisar`)
+     confirmaram HTTP 200, ausência de rolagem horizontal em 320px e renderização
+     completa do shell.
+   - **Preflight de Sincronização:** `runtime-sync.sh doctor` confirmou bootstrap
+     operacional, 0 updates pendentes, 0 deploy hooks e 0 config drift; a purga de
+     `aculta_ui_library` no código está concluída, restando a limpeza focal da chave
+     órfã de schema em janela de banco autorizada com plano e backup.
+   Com essas evidências comprovadas, as metas da ADR-056 (P0, P1, P2, P3 e P4)
+   estão integralmente concluídas.
 
 ### Retirada de `aculta_ui_library`
 

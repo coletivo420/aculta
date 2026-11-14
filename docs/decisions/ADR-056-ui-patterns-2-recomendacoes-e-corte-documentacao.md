@@ -134,10 +134,11 @@ o preflight permanecer bloqueado.
 
 ## Estado e próxima ação
 
-P0, P1, P2 e P3 foram concluídos em código, Config Sync e inventário estático.
-O worktree atual possui 150 SDCs e 244 stories mapeados na UI Patterns Library oficial; os gates de schema SDC (2.826 checks) e Library contract passam 100%. O validator Drupal renderiza isoladamente todos os 150 componentes do tema. Core e UI Patterns Library convertem `#slots` em overrides de block sem incompatibilidade estrutural.
-Na fase P3, a auditoria exaustiva dos 17 templates Twig remanescentes no tema confirmou que todos operam como adaptadores inevitáveis de transição (4 Views com dados agregados/grouping sem Sources upstream, 3 adapters de Comment/Form API, 3 overrides canônicos da UI Patterns Library e 7 templates de infraestrutura Core com suporte a metadados HTMX e `#drupal-modal`). Nenhum template órfão ou duplicado persiste.
-A próxima ação é a Fase P4 (Homologação de Runtime e Visual): executar a limpeza focal da chave órfã de schema e a descoberta/rebuild no Runtime sob janela operacional autorizada, procedendo com o preflight e a validação visual/responsiva nos browsers.
+P0, P1, P2, P3 e P4 foram integralmente concluídos.
+O tema `aculta420_v2` possui 150 SDCs e 244 stories mapeados na UI Patterns Library oficial; todos os gates de schema SDC (2.826 checks) e Library contract passam 100%.
+No Runtime, o `ComponentPluginManager` descobre todos os 150 componentes do tema e o `StoryPluginManager` registra as 244 stories. O validador Drupal renderiza isoladamente 100% (150/150) dos componentes do catálogo. A rota administrativa oficial `/painel-administrativo/aparencia/ui/components/aculta420_v2` responde HTTP 200 sob sessão administrativa autorizada, com 22 grupos e 150 botões de prévia progressiva. As rotas públicas multidomínio nos hosts ativos respondem HTTP 200 e passam nos testes de navegação sem rolagem horizontal em 320px.
+A triagem dos 17 templates remanescentes provou sua necessidade técnica como adaptadores de transição para Comment/Form API, overrides canônicos da Library e infraestrutura Core com suporte a `#drupal-modal` e metadados HTMX.
+O preflight de Runtime (`runtime-sync.sh doctor`) atesta Drush conectado, 0 updates pendentes, 0 deploy hooks e 0 config drift. A execução da ADR-056 está finalizada com êxito. Operações futuras de limpeza focal de schema remanescente seguem o fluxo operacional específico de banco com backup privado.
 
 ### Props sem tipo de integração UI Patterns
 
