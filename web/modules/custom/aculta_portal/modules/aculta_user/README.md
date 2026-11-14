@@ -1,3 +1,7 @@
+## Coautoria nativa - preparação de corte direto (2026-11-14)
+
+O plano de substituição do contrib Node Co-Authors 1.2.3, incluindo as quatro sessões administrativas MAIN e os gates de segurança, está em [docs/COAUTORIA.md](docs/COAUTORIA.md). Nesta primeira entrega há somente API de consulta, fábrica de campo não registrada e Unit focal. Não houve remoção do contrib, mudança de schema, permissões ou Runtime; o corte é único e depende de revisão R2/R3 e autorização operacional própria.
+
 Em dev.91, a instalação limpa e o rollback do módulo passam a ter cobertura Kernel isolada (`AcultaUserInstallRollbackKernelTest`): schema próprio, entidades, profile types, field storages, serviços, rotas e permissões são verificados na instalação; o uninstall é bloqueado enquanto houver amizade e, depois da remoção, derruba tabelas, entidades, config simples e profile types. As field storages do Profile permanecem no rollback por serem config compartilhada com dados de membros. A instalação limpa do site completo (cadeia Portal↔MP) não é deste módulo.
 
 Em dev.80, os cartões de autoria histórica exibidos no Fórum acrescentam `-gr` ao nome para identificar a origem Growroom. Autores legados não têm perfil público individual nem rota `/u/`; o memorial coletivo `/u/lendashistoricas` mantém os nomes sem sufixo. Unit focal 1/1, PHPCS e lint alterados PASS; nenhuma importação ou escrita no Runtime.
