@@ -2,7 +2,7 @@
   <div class="aculta-wiki-card__inner">
     {% if has_image %}<div class="aculta-wiki-card__image">{{ image }}</div>{% endif %}
     {{ include('aculta420_v2:heading', {
-      text: title,
+      content: title,
       level: 5,
     }, with_context: false) }}
     {% if has_summary %}<div class="aculta-wiki-card__summary">{{ summary }}</div>{% endif %}

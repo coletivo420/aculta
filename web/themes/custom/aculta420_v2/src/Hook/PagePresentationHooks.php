@@ -361,6 +361,60 @@ final class PagePresentationHooks {
       }
       $this->composeRevistaTeaser($variables, $accent, $config);
     }
+    if (($variables['node']?->bundle() ?? NULL) === 'wiki_entry'
+      && ($variables['view_mode'] ?? NULL) === 'teaser') {
+      $this->composeWikiTeaser($variables);
+    }
+  }
+
+  /**
+   * Composes a Wiki teaser with the existing SDC and Field API render arrays.
+   */
+  private function composeWikiTeaser(array &$variables): void {
+    $node = $variables['node'] ?? NULL;
+    $content = $variables['content'] ?? [];
+    if (!$node instanceof NodeInterface || !is_array($content)) {
+      return;
+    }
+
+    $attributes = $variables['attributes'] ?? new Attribute();
+    if (!$attributes instanceof Attribute) {
+      $attributes = new Attribute((array) $attributes);
+    }
+    $attributes->addClass('aculta-wiki-card');
+    $variables['attributes'] = $attributes;
+
+    $component = [
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:wiki-entry',
+      '#props' => [
+        'variant' => 'teaser',
+        'url' => $node->toUrl('canonical')->toString(),
+        'has_image' => !$node->get('field_wiki_image')->isEmpty()
+          && ($content['field_wiki_image']['#access'] ?? TRUE),
+        'has_summary' => !$node->get('field_wiki_summary')->isEmpty()
+          && ($content['field_wiki_summary']['#access'] ?? TRUE),
+        'has_categories' => !$node->get('field_wiki_categories')->isEmpty()
+          && ($content['field_wiki_categories']['#access'] ?? TRUE),
+      ],
+      '#slots' => [
+        'title' => [
+          '#type' => 'link',
+          '#title' => (string) ($variables['label'] ?? $node->label()),
+          '#url' => $node->toUrl('canonical'),
+          '#options' => ['attributes' => ['rel' => 'bookmark']],
+        ],
+        'image' => $content['field_wiki_image'] ?? [],
+        'summary' => $content['field_wiki_summary'] ?? [],
+        'categories' => $content['field_wiki_categories'] ?? [],
+      ],
+    ];
+    CacheableMetadata::createFromRenderArray($variables['elements'] ?? [])
+      ->addCacheableDependency($node)
+      ->applyTo($component);
+    $variables['content'] = $component;
+    // The SDC owns the linked title, as the removed template did.
+    $variables['label'] = FALSE;
   }
 
   /**
