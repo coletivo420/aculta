@@ -61,14 +61,14 @@
   "generation_command": "vendor/bin/phpstan analyse --configuration=.phpstan-audit.neon --level=10 --generate-baseline=phpstan-baseline.neon --memory-limit=5G",
   "post_freeze_reductions": {
     "date": "2026-11-14",
-    "entries_removed": 437,
-    "occurrences_removed": 957,
-    "current_entries": 15162,
-    "current_occurrences": 25891,
-    "current_production": 15636,
+    "entries_removed": 472,
+    "occurrences_removed": 992,
+    "current_entries": 15127,
+    "current_occurrences": 25856,
+    "current_production": 15601,
     "current_tests": 10255,
-    "current_baseline_sha256": "14810def5fdf6352cab95b91f616bb278ff5ad0433f19209aef1425901f00a8a",
-    "reason": "Correções em aculta_studio, no carregador do curso piloto, na tipagem e validação de testes do LMS, na validação do envio de respostas, no teste de materiais do curso, na tipagem das fixtures de exclusão de conteúdo, nos render arrays de materiais do curso, nas fixtures dos testes de acesso a anexos e revisão de respostas, na fixture de pedido de matrícula, na validação da configuração de Views, nas estruturas do render array de discussões, nas fixtures de limpeza e acesso a documentos e nos contratos de declarações xAPI e uploads de respostas; sem regeneração automática do baseline, além da tipagem dos testes de ordenação do editor, autoria de cursos e índice de conteúdo do LMS e nos testes unitários de seleção de turma, painel de aprendizagem e disponibilidade de matrícula no LMS e nas fixtures do índice de conteúdo, acesso a notas Webform, slugs de curso e tour de estudantes do LMS e nas fixtures de arquivamento de tentativas, prazos de atividades, autorização de autoria e etapas dos wizards do LMS e na fixture de movimentação de tópicos públicos do Fórum e nos testes unitários restantes de prazos, acesso a recursos, tentativas, jornadas, salas, ordenação, xAPI e progresso do LMS; também nas fronteiras de ingestão xAPI, ownership do progresso e fixtures unitárias restantes do LMS; também nos contratos do painel de aprendizagem e seus consumidores de teste Kernel."
+    "current_baseline_sha256": "06809bffaeeaff5eebe8a3acb0ba823aaa7ba65265aef0fcc31fd63f87a63f53",
+    "reason": "Correções em aculta_studio, no carregador do curso piloto, na tipagem e validação de testes do LMS, na validação do envio de respostas, no teste de materiais do curso, na tipagem das fixtures de exclusão de conteúdo, nos render arrays de materiais do curso, nas fixtures dos testes de acesso a anexos e revisão de respostas, na fixture de pedido de matrícula, na validação da configuração de Views, nas estruturas do render array de discussões, nas fixtures de limpeza e acesso a documentos e nos contratos de declarações xAPI e uploads de respostas; sem regeneração automática do baseline, além da tipagem dos testes de ordenação do editor, autoria de cursos e índice de conteúdo do LMS e nos testes unitários de seleção de turma, painel de aprendizagem e disponibilidade de matrícula no LMS e nas fixtures do índice de conteúdo, acesso a notas Webform, slugs de curso e tour de estudantes do LMS e nas fixtures de arquivamento de tentativas, prazos de atividades, autorização de autoria e etapas dos wizards do LMS e na fixture de movimentação de tópicos públicos do Fórum e nos testes unitários restantes de prazos, acesso a recursos, tentativas, jornadas, salas, ordenação, xAPI e progresso do LMS; também nas fronteiras de ingestão xAPI, ownership do progresso e fixtures unitárias restantes do LMS; também nos contratos do painel de aprendizagem e seus consumidores de teste Kernel; também contratos de formulários e render arrays, hooks de turmas e feedback de resposta livre do LMS, incluindo quatro ocorrências propagadas ao implementador."
   },
   "gates": {
     "check": "php scripts/phpstan-debt-guard.php check --baseline=phpstan-baseline.neon --config=phpstan.neon --git-base=origin/dev --analysis=artifacts/phpstan.json",

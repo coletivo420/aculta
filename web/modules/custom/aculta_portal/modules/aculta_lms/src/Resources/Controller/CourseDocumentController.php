@@ -37,6 +37,9 @@ final class CourseDocumentController {
 
   /**
    * Builds the owner Media form with a contextual post-save Group relation.
+   *
+   * @return array<array-key, mixed>
+   *   Entity form render array.
    */
   public function add(GroupInterface $course): array {
     if ($course->bundle() !== 'lms_course') {
@@ -68,6 +71,9 @@ final class CourseDocumentController {
 
   /**
    * Form API callback, resolved through the registered service ID.
+   *
+   * @param array<array-key, mixed> $form
+   *   The current form render array.
    */
   public function submitDocumentToCourse(array &$form, FormStateInterface $form_state): void {
     $this->attachDocumentToCourse($form, $form_state);
@@ -75,6 +81,9 @@ final class CourseDocumentController {
 
   /**
    * Rechecks course access and attaches the saved Media after its owner form.
+   *
+   * @param array<array-key, mixed> $form
+   *   The current form render array.
    */
   public function attachDocumentToCourse(array &$form, FormStateInterface $form_state): void {
     $course = $this->routeMatcher->getParameter('course');
@@ -106,6 +115,9 @@ final class CourseDocumentController {
 
   /**
    * Builds the owner Media edit form after rechecking course ancestry/access.
+   *
+   * @return array<array-key, mixed>
+   *   Entity form render array.
    */
   public function edit(GroupInterface $course, MediaInterface $media): array {
     if ($course->bundle() !== 'lms_course' || $media->bundle() !== 'course_document') {

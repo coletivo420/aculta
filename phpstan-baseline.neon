@@ -44695,30 +44695,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Form/ClassActivityDeadlineForm.php
 
 		-
-			rawMessage: Cannot cast mixed to int.
-			identifier: cast.int
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Form/ClassRosterVisibilityForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_lms\Form\ClassRosterVisibilityForm::buildForm() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Form/ClassRosterVisibilityForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_lms\Form\ClassRosterVisibilityForm::buildForm() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Form/ClassRosterVisibilityForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_lms\Form\ClassRosterVisibilityForm::submitForm() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Form/ClassRosterVisibilityForm.php
-
-		-
 			rawMessage: Cannot access offset 'submit' on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
@@ -45445,18 +45421,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Hook/CoreEditorAssetOrderingHooks.php
 
 		-
-			rawMessage: 'Method Drupal\aculta_lms\Hook\CourseClassRelationHooks::groupRelationTypeAlter() has parameter $definitions with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Hook/CourseClassRelationHooks.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_lms\Hook\CourseClassRelationHooks::permissions() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Hook/CourseClassRelationHooks.php
-
-		-
 			rawMessage: Cannot cast mixed to int.
 			identifier: cast.int
 			count: 1
@@ -45919,58 +45883,10 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Plugin/ActivityAnswer/FreeTextAnswerPluginBase.php
 
 		-
-			rawMessage: 'Method Drupal\aculta_lms\Plugin\ActivityAnswer\FreeTextAnswerPluginBase::formativeFeedback() has parameter $configuration with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Plugin/ActivityAnswer/FreeTextAnswerPluginBase.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_lms\Plugin\ActivityAnswer\FreeTextAnswerPluginBase::formativeFeedback() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Plugin/ActivityAnswer/FreeTextAnswerPluginBase.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_lms\Plugin\ActivityAnswer\FreeTextAnswerPluginBase::formativeScore() has parameter $configuration with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Plugin/ActivityAnswer/FreeTextAnswerPluginBase.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_lms\Plugin\ActivityAnswer\FreeTextAnswerPluginBase::validate() has parameter $configuration with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Plugin/ActivityAnswer/FreeTextAnswerPluginBase.php
-
-		-
 			rawMessage: 'Parameter #1 $value of function count expects array|Countable, mixed given.'
 			identifier: argument.type
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Plugin/ActivityAnswer/FreeTextAnswerPluginBase.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_lms\Plugin\ActivityAnswer\FreeTextAnswerPluginInterface::formativeFeedback() has parameter $configuration with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Plugin/ActivityAnswer/FreeTextAnswerPluginInterface.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_lms\Plugin\ActivityAnswer\FreeTextAnswerPluginInterface::formativeFeedback() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Plugin/ActivityAnswer/FreeTextAnswerPluginInterface.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_lms\Plugin\ActivityAnswer\FreeTextAnswerPluginInterface::formativeScore() has parameter $configuration with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Plugin/ActivityAnswer/FreeTextAnswerPluginInterface.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_lms\Plugin\ActivityAnswer\FreeTextAnswerPluginInterface::validate() has parameter $configuration with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Plugin/ActivityAnswer/FreeTextAnswerPluginInterface.php
 
 		-
 			rawMessage: 'Method Drupal\aculta_lms\Plugin\ActivityAnswer\ObjectiveAnswerPluginBase::activityType() should return string but returns mixed.'
@@ -45983,24 +45899,6 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Plugin/ActivityAnswer/ObjectiveAnswerPluginBase.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_lms\Plugin\Block\ProximosEventosBlock::__construct() has parameter $configuration with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Plugin/Block/ProximosEventosBlock.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_lms\Plugin\Block\ProximosEventosBlock::build() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Plugin/Block/ProximosEventosBlock.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_lms\Plugin\Block\ProximosEventosBlock::create() has parameter $configuration with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Plugin/Block/ProximosEventosBlock.php
 
 		-
 			rawMessage: 'Method Drupal\aculta_lms\Plugin\EntityReferenceSelection\PublishedGallerySelection::__construct() has parameter $configuration with no value type specified in iterable type array.'
@@ -46175,30 +46073,6 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Resources/ContentIndex/LmsCourseContentIndexProvider.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_lms\Resources\Controller\CourseDocumentController::add() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Resources/Controller/CourseDocumentController.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_lms\Resources\Controller\CourseDocumentController::attachDocumentToCourse() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Resources/Controller/CourseDocumentController.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_lms\Resources\Controller\CourseDocumentController::edit() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Resources/Controller/CourseDocumentController.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_lms\Resources\Controller\CourseDocumentController::submitDocumentToCourse() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Resources/Controller/CourseDocumentController.php
 
 		-
 			rawMessage: 'Argument of an invalid type mixed supplied for foreach, only iterables are supported.'
@@ -46451,90 +46325,6 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Wizard/Step/CourseStructureStepForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_lms\Wizard\Step\TourActivitiesStepForm::buildForm() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Wizard/Step/TourActivitiesStepForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_lms\Wizard\Step\TourActivitiesStepForm::buildForm() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Wizard/Step/TourActivitiesStepForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_lms\Wizard\Step\TourActivitiesStepForm::submitForm() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Wizard/Step/TourActivitiesStepForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_lms\Wizard\Step\TourCompleteStepForm::buildForm() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Wizard/Step/TourCompleteStepForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_lms\Wizard\Step\TourCompleteStepForm::buildForm() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Wizard/Step/TourCompleteStepForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_lms\Wizard\Step\TourCompleteStepForm::submitForm() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Wizard/Step/TourCompleteStepForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_lms\Wizard\Step\TourNavigationStepForm::buildForm() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Wizard/Step/TourNavigationStepForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_lms\Wizard\Step\TourNavigationStepForm::buildForm() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Wizard/Step/TourNavigationStepForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_lms\Wizard\Step\TourNavigationStepForm::submitForm() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Wizard/Step/TourNavigationStepForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_lms\Wizard\Step\TourWelcomeStepForm::buildForm() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Wizard/Step/TourWelcomeStepForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_lms\Wizard\Step\TourWelcomeStepForm::buildForm() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Wizard/Step/TourWelcomeStepForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_lms\Wizard\Step\TourWelcomeStepForm::submitForm() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Wizard/Step/TourWelcomeStepForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_lms\Wizard\StudentTourWizard::finish() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Wizard/StudentTourWizard.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_lms\Wizard\StudentTourWizard::getOperations() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Wizard/StudentTourWizard.php
 
 		-
 			rawMessage: 'Method Drupal\aculta_lms\Xapi\XapiAttemptToken::verify() return type has no value type specified in iterable type array.'

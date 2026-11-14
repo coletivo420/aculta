@@ -59,10 +59,6 @@ final class StudentTourWizardTest extends UnitTestCase {
     $navigation = $operations['navigation'];
     $activities = $operations['activities'];
     $complete = $operations['complete'];
-    $this->assertIsArray($welcome);
-    $this->assertIsArray($navigation);
-    $this->assertIsArray($activities);
-    $this->assertIsArray($complete);
     $this->assertSame('Boas-vindas', $this->operationTitle($welcome));
     $this->assertSame('Navegacao e Sala de Aula', $this->operationTitle($navigation));
     $this->assertSame('Atividades e Avaliacoes', $this->operationTitle($activities));

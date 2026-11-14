@@ -39,6 +39,9 @@ class StudentTourWizard extends FormWizardBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @return array<string, array{title: string, form: class-string<\Drupal\Core\Form\FormBase>}>
+   *   Wizard operations keyed by operation ID.
    */
   public function getOperations($cached_values): array {
     return [
@@ -70,6 +73,9 @@ class StudentTourWizard extends FormWizardBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<array-key, mixed> $form
+   *   The wizard form render array.
    */
   public function finish(array &$form, FormStateInterface $form_state): void {
     $this->messenger()->addStatus($this->t('Voce concluiu o tour guiado! Bons estudos.'));

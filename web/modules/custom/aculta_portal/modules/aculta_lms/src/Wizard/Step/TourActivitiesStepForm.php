@@ -21,6 +21,12 @@ class TourActivitiesStepForm extends FormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<array-key, mixed> $form
+   *   The form render array being built.
+   *
+   * @return array<array-key, mixed>
+   *   The completed form render array.
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $form['activities_info'] = [
@@ -33,6 +39,9 @@ class TourActivitiesStepForm extends FormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<array-key, mixed> $form
+   *   The submitted form render array.
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {}
 

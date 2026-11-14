@@ -1,10 +1,10 @@
 # Dívida PHPStan — ACULTA
 
-Gerado em 2026-11-14T21:39:27+00:00 por `scripts/phpstan-debt-report.php`.
+Gerado em 2026-11-14T21:51:18+00:00 por `scripts/phpstan-debt-report.php`.
 
 | Item | Valor |
 | --- | --- |
-| Commit | `8e5c6492c917c41954e1b019d713f4f089b0f0ff` |
+| Commit | `aec270c3fe189ad74be1748a7cf1b27d21c24d17` |
 | PHP | 8.4.27 |
 | PHPStan | PHPStan - PHP Static Analysis Tool 2.3.5 |
 | Nível | 10 |
@@ -15,11 +15,11 @@ Gerado em 2026-11-14T21:39:27+00:00 por `scripts/phpstan-debt-report.php`.
 
 | Medida | Ocorrências |
 | --- | ---: |
-| Total bruto no nível 10 | 25891 |
-| Dívida congelada no baseline | 25891 |
+| Total bruto no nível 10 | 25856 |
+| Dívida congelada no baseline | 25856 |
 | Erros não suprimidos | 0 |
-| Entradas no baseline | 15162 |
-| Produção | 15636 |
+| Entradas no baseline | 15127 |
+| Produção | 15601 |
 | Testes | 10255 |
 
 ## Criticidade funcional
@@ -27,18 +27,18 @@ Gerado em 2026-11-14T21:39:27+00:00 por `scripts/phpstan-debt-report.php`.
 | Criticidade | Ocorrências |
 | --- | ---: |
 | alta | 231 |
-| media | 22679 |
-| baixa | 2981 |
+| media | 22678 |
+| baixa | 2947 |
 
 ## Evolução desde o baseline de referência
 
 | Classificação | Entradas |
 | --- | ---: |
-| Dívida removida | 34 |
-| Dívida mantida | 15162 |
+| Dívida removida | 35 |
+| Dívida mantida | 15127 |
 | Nova dívida (bloqueante) | 0 |
 | Contagem aumentada (bloqueante) | 0 |
-| Contagem reduzida | 3 |
+| Contagem reduzida | 0 |
 | Identidade de erro alterada (revisão) | 0 |
 
 ## Dívida por módulo (prioridade de redução)
@@ -51,7 +51,7 @@ Gerado em 2026-11-14T21:39:27+00:00 por `scripts/phpstan-debt-report.php`.
 | aculta_portal | 2020 |
 | aculta_events | 1792 |
 | aculta_wiki | 1461 |
-| aculta_lms | 1334 |
+| aculta_lms | 1299 |
 | aculta_lms_h5p | 1299 |
 | aculta_index | 1112 |
 | aculta_user | 899 |
@@ -83,9 +83,9 @@ Gerado em 2026-11-14T21:39:27+00:00 por `scripts/phpstan-debt-report.php`.
 | `offsetAccess.nonOffsetAccessible` | 7911 |
 | `argument.type` | 4547 |
 | `method.nonObject` | 2804 |
-| `missingType.iterableValue` | 2771 |
+| `missingType.iterableValue` | 2737 |
 | `cast.string` | 2050 |
-| `cast.int` | 1333 |
+| `cast.int` | 1332 |
 | `method.notFound` | 914 |
 | `property.nonObject` | 664 |
 | `return.type` | 367 |

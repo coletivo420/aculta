@@ -39,6 +39,13 @@ final class ProximosEventosBlock extends BlockBase implements ContainerFactoryPl
 
   /**
    * Construtor.
+   *
+   * @param array<string, mixed> $configuration
+   *   Block configuration.
+   * @param string $plugin_id
+   *   Plugin instance ID.
+   * @param mixed $plugin_definition
+   *   Plugin definition provided by Drupal discovery.
    */
   public function __construct(
     array $configuration,
@@ -53,6 +60,13 @@ final class ProximosEventosBlock extends BlockBase implements ContainerFactoryPl
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $configuration
+   *   Block configuration.
+   * @param string $plugin_id
+   *   Plugin instance ID.
+   * @param mixed $plugin_definition
+   *   Plugin definition provided by Drupal discovery.
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): static {
     return new static(
@@ -67,6 +81,9 @@ final class ProximosEventosBlock extends BlockBase implements ContainerFactoryPl
 
   /**
    * {@inheritdoc}
+   *
+   * @return array<string, mixed>
+   *   Block render array.
    */
   public function build(): array {
     $fuso = new \DateTimeZone('America/Sao_Paulo');
@@ -98,6 +115,9 @@ final class ProximosEventosBlock extends BlockBase implements ContainerFactoryPl
 
   /**
    * {@inheritdoc}
+   *
+   * @return list<string>
+   *   Cache contexts varying by the current account.
    */
   public function getCacheContexts(): array {
     return Cache::mergeContexts(parent::getCacheContexts(), ['user']);
