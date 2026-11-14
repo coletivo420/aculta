@@ -308,11 +308,16 @@ final class PagePresentationHooks {
   }
 
   /**
-   * Exposes whether a SDC is registered, not merely present as a source file.
+   * Composes theme-owned presentation for node view modes.
    */
   #[Hook('preprocess_node')]
   public function preprocessNode(array &$variables): void {
-    $variables['aculta_accordion_sdc_available'] = $this->componentAvailable('accordion');
+    $node = $variables['node'] ?? NULL;
+    if ($node instanceof NodeInterface
+      && $node->bundle() === 'aculta_faq'
+      && ($variables['view_mode'] ?? NULL) === 'full') {
+      $this->composeFaqFull($variables, $node);
+    }
     if ($variables['node']?->bundle() === 'revista'
       && ($variables['view_mode'] ?? NULL) === 'full') {
       $this->composeRevistaFull($variables);
@@ -458,6 +463,43 @@ final class PagePresentationHooks {
       ->addCacheableDependency($node)
       ->applyTo($component);
     $variables['content'] = ['aculta_revista_publication' => $component];
+  }
+
+  /**
+   * Composes the FAQ question and answer through the published accordion SDC.
+   *
+   * @param array<string, mixed> $variables
+   *   Node theme variables.
+   * @param \Drupal\node\NodeInterface $node
+   *   FAQ node being rendered.
+   */
+  private function composeFaqFull(array &$variables, NodeInterface $node): void {
+    $content = $variables['content'] ?? NULL;
+    $answer = is_array($content) ? ($content['body'] ?? NULL) : NULL;
+    if (!is_array($content) || !is_array($answer)) {
+      return;
+    }
+
+    $component = $this->componentAvailable('accordion')
+      ? [
+        '#type' => 'component',
+        '#component' => 'aculta420_v2:accordion',
+        '#props' => [
+          'title' => (string) $node->label(),
+        ],
+        '#slots' => [
+          'content' => $answer,
+        ],
+      ]
+      : [
+        '#type' => 'details',
+        '#title' => (string) $node->label(),
+        '#open' => FALSE,
+        '#attributes' => ['class' => ['faq-answer']],
+        'answer' => $answer,
+      ];
+    CacheableMetadata::createFromRenderArray($content)->applyTo($component);
+    $variables['content'] = $component;
   }
 
   /**

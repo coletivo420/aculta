@@ -4,9 +4,10 @@
 > várias linhas abaixo obsoletas, mas consumidores não migraram todos para um
 > único fallback: alguns usam displays/Views/UI Patterns e outros mantêm
 > presenters do módulo. Os nomes da tabela são hipóteses antigas, não evidência
-> atual. Refaça cada linha por meio de código e Config Sync segundo ADR-056; o
-> SDC `event-page-layout` e o `accordion` não têm consumidor encontrado no
-> checkout atual.
+> atual. Refaça cada linha por meio de código e Config Sync segundo ADR-056. Em
+> 2026-11-14 o checkout passou a compor `accordion` diretamente no preprocess
+> do view mode full de `aculta_faq`; `event-page-layout` ainda não tem
+> consumidor encontrado.
 
 Inventário de 2026-11-05: quais templates de página cada purpose usa e quais
 componentes SDC eles consomem. Serve de base para a adoção dos componentes

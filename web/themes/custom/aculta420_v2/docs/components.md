@@ -422,7 +422,12 @@ Inclui botão Google com ícone de marca, divisor centralizado "ou entre com sua
 
 Resposta expansível baseada em details/summary, sem JavaScript e operável por
 teclado nativamente. Props: title e expanded; slot: content. Story:
-accordion.default.story.yml. Não encontramos consumidor PHP, Twig ou Config Sync no checkout atual; a afirmação de uso por `node--aculta-faq--full.html.twig` está obsoleta. O display `node.aculta_faq.default` usa Layout Builder com `layout-section` e o formatter `text_default` para o campo body.
+accordion.default.story.yml. `PagePresentationHooks::composeFaqFull()` compõe
+este SDC no view mode `full` do bundle `aculta_faq`, usando o título do node e o
+render array do campo body. O override Twig específico foi removido; o template
+Core mantém o wrapper do node, contextual links e title prefix/suffix. Se o SDC
+não estiver registrado, o preprocess usa o elemento Drupal `details` com o
+mesmo título e render array de resposta.
 
 ### form-field
 

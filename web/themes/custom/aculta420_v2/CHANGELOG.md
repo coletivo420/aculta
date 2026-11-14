@@ -1934,3 +1934,13 @@ State: Dev. No RC, production deployment, or release tag is declared.
   array criado por preprocess. Removida a cópia do tema; a ponte genérica e o
   fallback semântico do Portal permanecem. Restam 33 templates Twig.
 
+## Atualização — FAQ composto pelo SDC accordion (2026-11-14)
+
+- Removido `templates/content/node--aculta-faq--full.html.twig`.
+- `PagePresentationHooks::preprocessNode()` compõe o SDC `accordion` com o
+  título do node e o render array de `body`, preservando cacheabilidade do
+  conteúdo. O template Core mantém wrapper, atributos, title prefix/suffix e
+  contextual links. Se a descoberta do SDC falhar, o fallback usa o elemento
+  Core `details` com o mesmo título e resposta.
+- Validação no Runtime e aceite visual/acessível permanecem pendentes devido ao
+  preflight Runtime bloqueado.

@@ -97,16 +97,17 @@ entrega; Firefox autenticado, capturas, teclado e zoom permanecem pendentes.
 
 ## Evento, FAQ e LMS — P4 parcial
 
-Evento já usa adapter e story próprias em event-page-layout. FAQ agora
-apresenta cada resposta por accordion SDC com fallback nativo durante cache
-SDC aquecido. A página de aula do LMS ainda precisa de adapter de apresentação
+Evento já usa adapter e story próprias em event-page-layout. O view mode full
+do FAQ compõe o SDC `accordion` pelo preprocess do tema; quando a definição não
+está registrada, o preprocess usa o elemento Core `details`. A página de aula do LMS ainda precisa de adapter de apresentação
 V2 e story própria; permanece pendente. Capturas e interação autenticada das
 três áreas aguardam Firefox visível (DISPLAY indisponível).
 
 ## Evento, FAQ e LMS — P4 com implementação; validação visual pendente
 
-Evento já usa adapter e story próprias em event-page-layout. FAQ apresenta cada
-resposta por accordion SDC com fallback nativo durante cache SDC aquecido. Aula
+Evento já usa adapter e story próprias em event-page-layout. O view mode full
+do FAQ compõe o SDC `accordion` pelo preprocess do tema; quando a definição não
+está registrada, o preprocess usa o elemento Core `details`. Aula
 LMS envolve o render array original em lms-lesson-page, com story dedicada; o
 módulo mantém acesso, cache, atividade e conteúdo. Capturas e interação
 autenticada das três áreas aguardam Firefox visível (DISPLAY indisponível).

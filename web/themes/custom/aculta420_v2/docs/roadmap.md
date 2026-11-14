@@ -49,7 +49,7 @@ anteriores e não substituem a conferência do código atual.
   11 módulos sem schema e baseline de cache/validação em
   `e37f3d8d45ecba9719d4b97dde67effc2236b13f`. Não há updates ou deploy hooks
   pendentes. Nenhuma importação/migração estrutural foi executada.
-- Restam 26 templates Twig Drupal no tema. O shell paralelo foi removido e
+- Restam 25 templates Twig Drupal no tema. O shell paralelo foi removido e
   `node.wiki_entry.full` usa ComponentLayout UI Patterns com o SDC `wiki-entry`.
   O Config Sync também prepara `node.revista.full` com o SDC `revista-publication`;
   o preprocess preserva a composição SDC quando o ComponentLayout ainda não está ativo no Runtime. Os demais
@@ -89,8 +89,8 @@ anteriores e não substituem a conferência do código atual.
    variants/defaults, includes e escaping. Renomear apenas conceitos realmente
    reutilizáveis com plano de compatibilidade das referências persistidas.
 3. **P2 — cruzar integrações:** matriz estática regenerada em 2026-11-14 com
-   458 linhas: 141 SDCs, 159 displays Views, 52 instâncias de bloco, 22
-   displays com Layout Builder e 26 overrides Twig do tema. Foram achadas
+   457 linhas: 141 SDCs, 159 displays Views, 52 instâncias de bloco, 22
+   displays com Layout Builder e 25 overrides Twig do tema. Foram achadas
    referências literais a 107 SDCs; os 34 sem referência literal não são
    candidatos automáticos a exclusão, pois a Library os publica e usos
    editoriais/dinâmicos não aparecem nessa busca. Ainda falta reconciliar as
@@ -102,7 +102,7 @@ anteriores e não substituem a conferência do código atual.
    entrar no Runtime. A API do Component Display Extender não oferece Source
    para `title_prefix/title_suffix`/contextual links. Runtime, cache e os seis
    paths ainda precisam de homologação após liberar o preflight.
-4. **P3 — tentar eliminar os 26 templates:** a triagem por fonte está abaixo.
+4. **P3 — tentar eliminar os 25 templates:** a triagem por fonte está abaixo.
    Buscar substituição por displays/UI Patterns ou render arrays SDC em cada
    arquivo. Testar fallback Core e preservar apenas presenters mínimos quando
    não houver display builder ou plugin substituto.
@@ -146,7 +146,7 @@ do módulo antes da desinstalação, pois o checkout é compartilhado com Apache
 `views/views-view-fields--aculta-forum-public-topics.html.twig` e
 `views/views-view-unformatted--aculta-forum-categories--page-categories.html.twig`.
 
-### Classificação inicial dos 26 templates pelo código
+### Classificação atual dos 25 templates pelo código
 
 | Grupo/arquivos | Evidência encontrada | Direção de planejamento |
 | --- | --- | --- |
@@ -163,7 +163,7 @@ do módulo antes da desinstalação, pois o checkout é compartilhado com Apache
 | `aculta_portal` Revista full | `PagePresentationHooks::composeRevistaFull()` preserva fields renderizados e compõe o SDC `revista-publication` como render array quando o ComponentLayout UI Patterns ainda não está ativo; quando ativo, encaminha `post_meta` e `article_authors` aos slots existentes. O Twig específico foi removido; o wrapper Core mantém artigo, contextual links e title prefix/suffix. | Corte no código concluído; importação da configuração e homologação de layout, acesso e cache no Runtime continuam pendentes. |
 | `content/node--revista--teaser.html.twig` | Removido em 2026-11-14. `PagePresentationHooks::preprocessNode()` compõe o SDC `revista-teaser` com os render arrays dos fields do view mode e mantém a configuração de accent como dependência de cache. | Corte concluído no código do checkout; Runtime/renderização após cache não homologados. |
 | `aculta_portal` Loja | O template Commerce do catálogo foi removido; `PagePresentationHooks::preprocessCommerceProduct()` passa o render array de `catalog` ao SDC `product-card` e o template Core mantém o wrapper `article`. | UI Patterns `layout-grid` continua compondo as linhas Commerce; validar render, preço, acesso e cache quando o Runtime for liberado. |
-| `content/node--aculta-faq--full.html.twig` | Compõe FAQ com SDC `accordion` e mantém fallback nativo `<details>`. | Mantido: o Layout Builder atual só dispõe o body dentro de `layout-section`; migrar a coleção de perguntas para accordion por UI Patterns sem remover o fallback acessível. |
+| `content/node--aculta-faq--full.html.twig` | Removido em 2026-11-14. `PagePresentationHooks::composeFaqFull()` compõe `accordion` com título do node e render array de `body` no view mode `full`; se a descoberta do SDC falhar, usa o elemento Core `details`. O template Core mantém wrapper e contextual links. | Corte de código concluído; verificar composição real, acesso e cache no Runtime após desbloquear o preflight. |
 | `discussion-reaction-picker.html.twig`, `input--submit.html.twig` | O picker mantém o form/CSRF/HTMX; o submit genérico converte controles Drupal para o SDC `button`, preservando atributos. | Mantidos: o fallback do módulo ainda imprime IDs de emoji como texto e o fallback Core do submit perde o visual SDC. Migrar os produtores mantendo contratos Form API, ícones e atributos. |
 | `views/views-view--revista-sessoes--page-revista.html.twig` | Os seis displays herdam UI Patterns Views style `revista-listing` pelo Config Sync; rows continuam node teaser. O template específico da Página Revista preserva title/contextual links, filtros, empty, pager, attachments, more, footer e feed, além de fallback anterior ao import. | Configuração preparada; o template imprime a saída SDC do style plugin quando ativo, sem duplo wrapper. Após liberar sync, verificar os seis paths, acesso/cache, empty, pager, anexos e contextual links. Só depois avaliar retirada; o Component Display Extender não fornece Source para o contexto administrativo do Views que o Twig atual preserva. |
 
