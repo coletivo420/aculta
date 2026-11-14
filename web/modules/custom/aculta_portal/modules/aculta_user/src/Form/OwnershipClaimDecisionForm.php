@@ -53,6 +53,12 @@ final class OwnershipClaimDecisionForm extends FormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $form
+   *   Estrutura do formulário.
+   *
+   * @return array<string, mixed>
+   *   Estrutura do formulário.
    */
   public function buildForm(array $form, FormStateInterface $form_state, ?OwnershipClaim $aculta_ownership_claim = NULL): array {
     if ($aculta_ownership_claim === NULL) {
@@ -60,8 +66,8 @@ final class OwnershipClaimDecisionForm extends FormBase {
     }
     $this->claim = $aculta_ownership_claim;
 
-    $targetType = (string) $this->claim->get('target_type')->value;
-    $targetId = (int) $this->claim->get('target_id')->value;
+    $targetType = $this->textValue($this->claim->get('target_type')->value);
+    $targetId = $this->intValue($this->claim->get('target_id')->value);
     $claimantUid = (int) $this->claim->get('uid')->target_id;
 
     $userStorage = $this->entityTypeMgr->getStorage('user');
@@ -76,12 +82,12 @@ final class OwnershipClaimDecisionForm extends FormBase {
       }
     }
 
-    $status = (string) $this->claim->get('status')->value;
-    $created = (int) $this->claim->get('created')->value;
+    $status = $this->textValue($this->claim->get('status')->value);
+    $created = $this->intValue($this->claim->get('created')->value);
 
     $form['summary'] = [
       '#type' => 'details',
-      '#title' => $this->t('Dados do pedido de reivindicação #@id', ['@id' => $this->claim->id()]),
+      '#title' => $this->t('Dados do pedido de reivindicação #@id', ['@id' => $this->textValue($this->claim->id())]),
       '#open' => TRUE,
       'content' => [
         '#theme' => 'table',
@@ -90,17 +96,17 @@ final class OwnershipClaimDecisionForm extends FormBase {
           [$this->t('Solicitante:'), $claimantText],
           [$this->t('Data da solicitação:'), $created > 0 ? $this->dateFormatter->format($created, 'medium') : '-'],
           [$this->t('Situação atual:'), ucfirst($status)],
-          [$this->t('Contato / Documento:'), (string) ($this->claim->get('contato')->value ?? '-')],
-          [$this->t('Justificativa informada:'), (string) $this->claim->get('justificativa')->value],
+          [$this->t('Contato / Documento:'), $this->textValue($this->claim->get('contato')->value)],
+          [$this->t('Justificativa informada:'), $this->textValue($this->claim->get('justificativa')->value)],
         ],
       ],
     ];
 
     if ($status !== 'pending') {
-      $decidedByUid = (int) $this->claim->get('decided_by')->value;
+      $decidedByUid = $this->intValue($this->claim->get('decided_by')->value);
       $decidedBy = $decidedByUid > 0 ? $userStorage->load($decidedByUid) : NULL;
       $decidedByName = $decidedBy !== NULL ? $decidedBy->getDisplayName() : ($decidedByUid > 0 ? sprintf('UID #%d', $decidedByUid) : '-');
-      $decidedAt = (int) $this->claim->get('decided_at')->value;
+      $decidedAt = $this->intValue($this->claim->get('decided_at')->value);
 
       $form['decision_info'] = [
         '#type' => 'details',
@@ -111,7 +117,7 @@ final class OwnershipClaimDecisionForm extends FormBase {
           '#rows' => [
             [$this->t('Moderador:'), $decidedByName],
             [$this->t('Data da decisão:'), $decidedAt > 0 ? $this->dateFormatter->format($decidedAt, 'medium') : '-'],
-            [$this->t('Parecer:'), (string) $this->claim->get('decision_notes')->value],
+            [$this->t('Parecer:'), $this->textValue($this->claim->get('decision_notes')->value)],
           ],
         ],
       ];
@@ -171,20 +177,23 @@ final class OwnershipClaimDecisionForm extends FormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $form
+   *   Estrutura do formulário.
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     if ($this->claim === NULL) {
       return;
     }
 
-    $decision = (string) $form_state->getValue('decision');
-    $notes = (string) $form_state->getValue('decision_notes');
+    $decision = $this->textValue($form_state->getValue('decision'));
+    $notes = $this->textValue($form_state->getValue('decision_notes'));
     $approved = ($decision === 'approved');
 
     try {
       $this->claimService->decideClaim($this->claim, $this->currentUser(), $approved, $notes);
       $this->messenger()->addStatus($this->t('A decisão sobre a reivindicação #@id foi registrada com sucesso.', [
-        '@id' => $this->claim->id(),
+        '@id' => $this->textValue($this->claim->id()),
       ]));
     }
     catch (\Throwable $e) {
@@ -192,6 +201,20 @@ final class OwnershipClaimDecisionForm extends FormBase {
     }
 
     $form_state->setRedirect('aculta_user.ownership_claims');
+  }
+
+  /**
+   * Texto de um valor de campo ou de formulário; vazio quando o valor não é escalar.
+   */
+  private function textValue(mixed $value): string {
+    return is_scalar($value) ? (string) $value : '';
+  }
+
+  /**
+   * Inteiro de um valor de campo; zero quando o valor não é numérico.
+   */
+  private function intValue(mixed $value): int {
+    return is_numeric($value) ? (int) $value : 0;
   }
 
 }
