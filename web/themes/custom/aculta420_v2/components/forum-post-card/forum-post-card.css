@@ -666,3 +666,52 @@
     gap: .125rem;
   }
 }
+
+/* Cartão compacto (respostas): nome com mais respiro entre as linhas; posts e data no canto inferior direito, logo abaixo do nome. */
+/* Nome do autor sempre em uma linha; se não couber, reticências. */
+.forum-post-card .forum-author-line__name {
+  min-inline-size: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.forum-post-card--density-compact .forum-post-card__author {
+  align-items: stretch;
+}
+
+.forum-post-card--density-compact .forum-post-card__author-info {
+  align-self: flex-end;
+  margin-inline-start: auto;
+  text-align: end;
+}
+
+.forum-post-card--density-compact .forum-post-card__author-meta {
+  justify-content: flex-end;
+  margin-block-start: .125rem;
+}
+
+/* Cartão compacto: o nome sobe, alinhado ao topo do avatar. */
+.forum-post-card--density-compact .forum-post-card__author > .forum-author-line {
+  align-self: flex-start;
+}
+
+/* Nome do autor encolhe dentro do bloco (reticências); posts e data não encolhem. */
+.forum-post-card .forum-post-card__author {
+  min-inline-size: 0;
+}
+
+.forum-post-card .forum-post-card__author > .forum-author-line,
+.forum-post-card .forum-author-line__identity {
+  min-inline-size: 0;
+  max-inline-size: 100%;
+}
+
+.forum-post-card .forum-author-line__name {
+  flex: 0 1 auto;
+  min-inline-size: 0;
+}
+
+.forum-post-card .forum-post-card__author-info {
+  flex-shrink: 0;
+}

@@ -8,6 +8,9 @@ use Drupal\aculta_user\Avatar\AvatarResolver;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Hook\Attribute\Hook;
+use Drupal\aculta_user\Identity\AuthorCardBuilder;
+use Drupal\node\NodeInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\user\UserInterface;
 
@@ -20,7 +23,30 @@ class ForumThemeHooks {
     private readonly AccountProxyInterface $currentUser,
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly AvatarResolver $avatarResolver,
+    #[Autowire(service: 'aculta_user.author_card_builder')]
+    private readonly AuthorCardBuilder $authorCardBuilder,
   ) {}
+
+  /**
+   * Avatar do autor do tópico, montado do mesmo cartão público do autor.
+   *
+   * Um render array novo a cada preprocess evita a reutilização de um array
+   * já impresso, que o Drupal renderiza vazio.
+   */
+  #[Hook('preprocess_node')]
+  public function preprocessNode(array &$variables): void {
+    $node = $variables['node'] ?? NULL;
+    if (!$node instanceof NodeInterface || $node->bundle() !== 'aculta_forum_topic') {
+      return;
+    }
+    $owner = $node->getOwner();
+    if ($owner === NULL) {
+      return;
+    }
+    // Sem apelido, build() não tem identidade: o fallback do acervo mantém o avatar.
+    $card = $this->authorCardBuilder->build($owner, 'author_forum') ?? $this->authorCardBuilder->buildFallback($owner);
+    $variables['opening_author_avatar'] = $card['#avatar'] ?? NULL;
+  }
 
   /**
    * Avatar do usuário logado para o compositor de resposta.

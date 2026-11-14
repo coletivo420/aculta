@@ -6,6 +6,7 @@ namespace Drupal\Tests\aculta_forum\Unit;
 
 use Drupal\aculta_forum\Hook\ForumThemeHooks;
 use Drupal\aculta_user\Avatar\AvatarResolver;
+use Drupal\aculta_user\Identity\AuthorCardBuilder;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Tests\UnitTestCase;
@@ -25,6 +26,8 @@ final class ForumThemeHooksTest extends UnitTestCase {
       $this->createMock(AccountProxyInterface::class),
       $this->createMock(EntityTypeManagerInterface::class),
       $this->createMock(AvatarResolver::class),
+      // Classe final: o teste só usa theme(), então a instância sem construtor basta.
+      (new \ReflectionClass(AuthorCardBuilder::class))->newInstanceWithoutConstructor(),
     );
     $theme = $hooks->theme([], 'module', 'aculta_forum', '/modules/custom/aculta_forum');
 

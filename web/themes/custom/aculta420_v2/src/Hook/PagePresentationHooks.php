@@ -428,7 +428,7 @@ final class PagePresentationHooks {
       ],
       '#slots' => [
         'body' => $variables['content']['body'] ?? [],
-        'avatar' => $variables['content']['author_card'] ?? [],
+        'avatar' => $variables['opening_author_avatar'] ?? [],
         'reactions_slot' => $openingReactionBar,
       ],
       '#weight' => -100,

@@ -46,7 +46,9 @@ final class DiscussionCommentAuthorHooks {
       }
 
       $author = $entity instanceof EntityOwnerInterface ? $entity->getOwner() : NULL;
-      if ($author instanceof UserInterface && ($card = $this->authorCardBuilder->build($author, 'author_forum')) !== NULL) {
+      if ($author instanceof UserInterface) {
+        // Sem apelido não há identidade pública; o acervo é o fallback obrigatório.
+        $card = $this->authorCardBuilder->build($author, 'author_forum') ?? $this->authorCardBuilder->buildFallback($author);
         $build['author_card'] = $card + ['#weight' => -20];
       }
       return;
@@ -77,10 +79,7 @@ final class DiscussionCommentAuthorHooks {
     }
 
     $author = $entity->getOwner();
-    $card = $this->authorCardBuilder->build($author, $variant);
-    if ($card === NULL) {
-      return;
-    }
+    $card = $this->authorCardBuilder->build($author, $variant) ?? $this->authorCardBuilder->buildFallback($author);
     $card['#weight'] = -20;
     $build['author_card'] = $card;
   }

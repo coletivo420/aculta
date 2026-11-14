@@ -29,7 +29,7 @@
       </p>
     {% endif %}
   {% endblock %}
-  {% block avatar %}{{ author_card }}{% endblock %}
+  {% block avatar %}{% if author_card and author_card['#avatar'] is defined %}{{ render_var(author_card['#avatar']) }}{% endif %}{% endblock %}
   {% block body %}{{ comment_body }}{% endblock %}
   {% block actions %}{{ actions_markup }}{% endblock %}
   {% block reactions_slot %}{{ reaction_bar_val }}{% endblock %}

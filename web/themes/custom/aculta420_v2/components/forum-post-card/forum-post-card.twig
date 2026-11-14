@@ -8,7 +8,9 @@
     <header class="forum-post-card__header">
       <div class="forum-post-card__author">
         {% set avatar_markup = avatar is iterable ? render_var(avatar) : avatar %}
-        {% set has_avatar = avatar_markup and ('<img' in avatar_markup or '<svg' in avatar_markup or avatar_markup|striptags|trim != '') %}
+        {# Markup é objeto: o operador 'in' não o enxerga; converte para texto antes de checar. #}
+        {% set avatar_text = avatar_markup ~ '' %}
+        {% set has_avatar = avatar_text|trim != '' and ('<img' in avatar_text or '<svg' in avatar_text or avatar_text|striptags|trim != '') %}
         {# Avatar e nome vêm do componente forum-author-line; sem avatar próprio, ele usa aculta420_v2:avatar. #}
         {{ include('aculta420_v2:forum-author-line', { author_name: author_name, profile_url: author_url, timestamp: null, avatar: has_avatar ? avatar_markup : null }, with_context = false) }}
         <div class="forum-post-card__author-info">
