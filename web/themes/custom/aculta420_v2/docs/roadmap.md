@@ -49,8 +49,13 @@ anteriores e não substituem a conferência do código atual.
   11 módulos sem schema e baseline de cache/validação em
   `e37f3d8d45ecba9719d4b97dde67effc2236b13f`. Não há updates ou deploy hooks
   pendentes. Nenhuma importação/migração estrutural foi executada.
-- Restam 20 templates Twig Drupal no tema. O shell paralelo foi removido e
-  `node.wiki_entry.full` usa ComponentLayout UI Patterns com o SDC `wiki-entry`.
+- Restam 19 templates Twig Drupal no tema. O fallback de fields para
+  `aculta_forum_categories:page_categories` foi removido após leitura somente
+  no Runtime confirmar que sua row ativa usa UI Patterns + `forum-category`;
+  o template de agrupamento continua necessário porque o estilo ativo ainda
+  agrupa por categoria-pai. A renderização final ainda precisa de homologação.
+  O shell paralelo foi removido e `node.wiki_entry.full` usa ComponentLayout
+  UI Patterns com o SDC `wiki-entry`.
   O Config Sync também prepara `node.revista.full` com o SDC `revista-publication`;
   o preprocess preserva a composição SDC quando o ComponentLayout ainda não está ativo no Runtime. Os demais
   permanecem até o consumidor ter substituição equivalente, inclusive
@@ -94,8 +99,9 @@ anteriores e não substituem a conferência do código atual.
    variants/defaults, includes e escaping. Renomear apenas conceitos realmente
    reutilizáveis com plano de compatibilidade das referências persistidas.
 3. **P2 — cruzar integrações:** matriz estática regenerada em 2026-11-14 com
-   456 linhas: 146 SDCs, 159 displays Views, 52 instâncias de bloco, 22
-   displays com Layout Builder e 20 templates Twig Drupal do tema. Foram achadas
+   455 linhas (cabeçalho e 454 consumers): 146 SDCs, 159 displays Views, 52
+   instâncias de bloco, 22 displays com Layout Builder e 19 templates Twig Drupal
+   do tema. Foram achadas
    referências literais a 112 SDCs; os 34 sem referência literal não são
    candidatos automáticos a exclusão, pois a Library os publica e usos
    editoriais/dinâmicos não aparecem nessa busca. Ainda falta reconciliar as
@@ -107,7 +113,7 @@ anteriores e não substituem a conferência do código atual.
    entrar no Runtime. A API do Component Display Extender não oferece Source
    para `title_prefix/title_suffix`/contextual links. Runtime, cache e os seis
    paths ainda precisam de homologação após liberar o preflight.
-4. **P3 — reduzir os 20 templates com substituição comprovada:** a triagem por
+4. **P3 — reduzir os 19 templates com substituição comprovada:** a triagem por
    fonte está abaixo. Para cada arquivo, classificar se é markup de domínio
    removível, adapter Drupal→SDC/UI Patterns ou infraestrutura do hook Core.
    Remover templates de domínio quando o display/UI Patterns assumir o contrato;
@@ -135,7 +141,8 @@ do módulo antes da desinstalação, pois o checkout é compartilhado com Apache
 ### Templates restantes no tema para P3
 
 Conferidos por `find web/themes/custom/aculta420_v2/templates -name '*.twig'`
-em 2026-11-14 (20 arquivos após remover uma sugestão de tema sem hook consumidor):
+em 2026-11-14 (19 arquivos após remover uma sugestão sem hook consumidor e o
+fallback de fields substituído por row UI Patterns ativa):
 
 `aculta-mailer-wrap.html.twig`, `comment--comments.html.twig`,
 `comment--field-aculta-discussion.html.twig`,
@@ -149,7 +156,6 @@ em 2026-11-14 (20 arquivos após remover uma sugestão de tema sem hook consumid
 `views/views-view--aculta-forum-public-topics.html.twig`,
 `views/views-view--aculta-forum-search--page-search.html.twig`,
 `views/views-view--revista-sessoes--page-revista.html.twig`,
-`views/views-view-fields--aculta-forum-categories--page-categories.html.twig`,
 `views/views-view-fields--aculta-forum-public-topics.html.twig` e
 `views/views-view-unformatted--aculta-forum-categories--page-categories.html.twig`.
 
@@ -175,7 +181,7 @@ Cada um exige revisão de fronteira com seu módulo owner antes de remoção.
 | Template owner `aculta-portal-photo-editor.html.twig` | Já compõe `aculta420_v2:account-photo-editor` pelo hook `preprocess_aculta_portal_photo_editor`, com o render array de Form API no slot `content`; o template owner imprime esse componente e mantém wrapper neutro como fallback. | Composição SDC concluída no código; não entra na contagem dos templates do tema. Homologar formulário, acesso, cache e fallback no Runtime. |
 | Template owner `portal-component.html.twig` | Ponte neutra de fallback fornecida pelo Portal; `PagePresentationHooks::preprocessPortalComponent()` mapeia contratos semânticos conhecidos para SDCs do tema. | Manter enquanto houver emissores do contrato neutro e fallback não mapeado; migrar emissores apenas quando puder preservar a independência do módulo em relação ao tema. Não entra na contagem dos templates do tema. |
 | `content/node--aculta-forum-topic.html.twig` (removido em 2026-11-14); `content/node-add-form--aculta-forum-topic.html.twig` (removido em 2026-11-14) | `PagePresentationHooks::composeForumTopic()` monta `forum-opening-post`, `forum-topic` e `forum-topic-page` como render arrays. O wrapper Core mantém atributos, prefixo/sufixo, título de teaser e contextual links. O arquivo `node-add-form--aculta-forum-topic.html.twig` não tinha hook consumidor: Core registra `node_edit_form` (`NodeThemeHooks::theme()`), e nenhum código do projeto registra `node_add_form`; a rota usa Form API/`TopicComposerFormHooks`. O SDC `discussion-topic-composer` continua na Library e tem story executável, mas isso não torna aquele filename um template ativo. | O corte do node foi feito e testado anteriormente. A sugestão órfã de formulário foi removida sem alterar Form API ou handlers. Manter ambos os SDCs (`discussion-topic-composer` e `forum-composer-guidelines`) no catálogo; a conexão de produção dessas composições é uma tarefa separada, sem inferi-la pela story. Runtime/browser do tópico e do formulário ainda precisa de homologação quando o preflight liberar. |
-| `views/views-view--aculta-forum-public-topics*.html.twig`, `views/views-view-fields--aculta-forum-public-topics.html.twig`, `views/views-view-fields--aculta-forum-categories--page-categories.html.twig`, `views/views-view-unformatted--aculta-forum-categories--page-categories.html.twig`, `views/views-view--aculta-forum-search--page-search.html.twig` | Config Sync/install configuram `page_categories` com estilo UI Patterns `layout-grid` e row SDC `forum-category`; `block_landing` também usa essa row e o SDC `views-display`. O agrupamento nativo por categoria-pai foi removido; o nome da categoria-pai permanece no slot de cada cartão. Para tópicos públicos, Config Sync/install selecionam a row UI Patterns `forum-topic-row`, mapeiam título/categoria/autor e contadores/atividade da View. O template fields permanece como fallback até aplicar a configuração no Runtime. A busca ainda usa rows Search API e presenters próprios. Na versão instalada, o `ComponentDisplayExtender` fornece Sources para view title, rows, empty, pager, exposed form, header/footer, attachments, more/feed e campos; seu contexto inclui a View e o ID do display. Ele não recebe `title_prefix`, `title_suffix`, contextual links nem variáveis extras do `ForumListHooks` (`forum_categories`, contagens e URLs). | A configuração UI Patterns por row está preparada, mas depende de importação e homologação Runtime. Manter os fallbacks de categorias e tópicos até confirmar os displays aplicados. Para eliminar wrappers, primeiro definir um adapter/source que entregue metadados Core e dados derivados com cacheability explícita; não basta selecionar um SDC no display. Preservar query Search API, filtros, pager, acesso e cache em todas as rotas. A página da lista também exige migrar categorias/contagens do `ForumListHooks` para um contrato de View ou render array cacheável. |
+| `views/views-view--aculta-forum-public-topics*.html.twig`, `views/views-view-fields--aculta-forum-public-topics.html.twig`, `views/views-view-unformatted--aculta-forum-categories--page-categories.html.twig`, `views/views-view--aculta-forum-search--page-search.html.twig` | Config Sync/install configuram `page_categories` com estilo UI Patterns `layout-grid` e row SDC `forum-category`; `block_landing` também usa essa row e o SDC `views-display`. Leitura somente no Runtime em 2026-11-14 confirmou a row UI Patterns + `forum-category` em `page_categories`, mas encontrou estilo Drupal padrão com agrupamento por `parent_name`; isso difere do Sync, portanto o template unformatted de agrupamento continua protegendo a saída ativa. O template `views-view-fields--...page-categories.html.twig` foi removido porque a row ativa substitui esse presenter. Para tópicos públicos, Config Sync/install selecionam a row UI Patterns `forum-topic-row`, mapeando título/categoria/autor e contadores/atividade; o Runtime ainda usa row `fields`, então o adapter SDC de fields continua necessário até o cutover. A busca ainda usa rows Search API e presenter próprio. Na versão instalada, o `ComponentDisplayExtender` fornece Sources para view title, rows, empty, pager, exposed form, header/footer, attachments, more/feed e campos; seu contexto inclui a View e o ID do display. Ele não recebe `title_prefix`, `title_suffix`, contextual links nem variáveis extras do `ForumListHooks` (`forum_categories`, contagens e URLs). | A row de categorias já está ativa no Runtime e seu fallback de fields saiu; falta homologar a saída renderizada e alinhar a configuração de estilo. Para tópicos públicos, manter o fallback até confirmar troca efetiva da row no Runtime. Para eliminar wrappers, definir primeiro um adapter/source que entregue metadados Core e dados derivados com cacheability explícita; não basta selecionar um SDC no display. Preservar query Search API, filtros, pager, acesso e cache em todas as rotas. A página da lista também exige migrar categorias/contagens do `ForumListHooks` para um contrato de View ou render array cacheável. |
 | `aculta_portal` Revista full | `PagePresentationHooks::composeRevistaFull()` preserva fields renderizados e compõe o SDC `revista-publication` como render array quando o ComponentLayout UI Patterns ainda não está ativo; quando ativo, encaminha `post_meta` e `article_authors` aos slots existentes. O Twig específico foi removido; o wrapper Core mantém artigo, contextual links e title prefix/suffix. | Corte no código concluído; importação da configuração e homologação de layout, acesso e cache no Runtime continuam pendentes. |
 | `content/node--revista--teaser.html.twig` | Removido em 2026-11-14. `PagePresentationHooks::preprocessNode()` compõe o SDC `revista-teaser` com os render arrays dos fields do view mode e mantém a configuração de accent como dependência de cache. | Corte concluído no código do checkout; Runtime/renderização após cache não homologados. |
 | `aculta_portal` Loja | O template Commerce do catálogo foi removido; `PagePresentationHooks::preprocessCommerceProduct()` passa o render array de `catalog` ao SDC `product-card` e o template Core mantém o wrapper `article`. | UI Patterns `layout-grid` continua compondo as linhas Commerce; validar render, preço, acesso e cache quando o Runtime for liberado. |
