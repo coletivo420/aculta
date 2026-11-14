@@ -140,6 +140,12 @@ services:
     class: Drupal\aculta_user\Identity\AccountMenuPresentationBuilder
     arguments: ['@entity_type.manager', '@aculta_user.public_profile_policy', '@aculta_user.avatar_resolver']
 
-  # API passiva de coautoria; o campo e os hooks serão ativados em corte único.
+  # Sistema nativo de coautoria de Node do aculta_user.
   aculta_user.coauthor_manager:
     class: Drupal\aculta_user\CoAuthor\CoAuthorManager
+
+  Drupal\aculta_user\CoAuthor\CoAuthorManagerInterface: '@aculta_user.coauthor_manager'
+
+  aculta_user.coauthor_audit:
+    class: Drupal\aculta_user\CoAuthor\CoAuthorAuditService
+    arguments: ['@database', '@datetime.time']

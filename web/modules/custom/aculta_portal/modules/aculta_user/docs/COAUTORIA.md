@@ -98,3 +98,21 @@ Após desinstalar com fluxo Drupal suportado, confirmar remoção/field purge, i
 - PASS só se executado; DEFERRED quando não há vendor, revisão independente, banco ou ambiente.
 
 **Classe de revisão:** R1 para o código passivo da entrega atual (revisão do diff e lint). R2 para autorização, privacidade e domínio (revisor independente). R3 para corte de schema/dados/Composer (revisor independente, backup/rollback e autorização operacional). O corte só é concluído quando a nova API está ativa, o contrib está ausente e todas as validações críticas passam.
+
+
+## 6. Estado da Implementação e Fechamento (2026-11-14)
+
+- **Inventário (P0):** Realizado com identificação de zero registros de `co_authors` no Runtime, 11 form displays e 21 view displays.
+- **Núcleo (P1) e Acesso (P2):** Concluído com `CoAuthorFieldDefinition`, `NodeCoAuthorHooks`, `CoAuthorManager`, `CoAuthorValidationConstraint` e `CoAuthorAuditService`. Coautores de conteúdo têm permissão de visualização e edição condicionada a `access content` e permissões de autoria, respeitando bundles habilitados.
+- **Regra de Exclusão de Fórum:** `aculta_forum_topic` expressamente excluído da coautoria (`aculta_coauthors` não registrado nem suportado neste bundle).
+- **Administração (P3):** As 4 rotas administrativas foram implementadas sob `/painel-administrativo/` no domínio MAIN:
+  - `/painel-administrativo/pessoas/coautorias` (`CoAuthorAdminController`)
+  - `/painel-administrativo/pessoas/coautorias/{node}/gerenciar` (`CoAuthorManageForm`)
+  - `/painel-administrativo/pessoas/coautorias/auditoria` (`CoAuthorAuditController`)
+  - `/painel-administrativo/configuracoes/pessoas/coautoria` (`CoAuthorSettingsForm`)
+- **Consumidores (P4):** `aculta_magazine` desacoplado de `node_co_authors`. Fórum limpo de resíduos de coautoria. Displays de nós em `config/sync` atualizados para `aculta_coauthors` (e removidos de `aculta_forum_topic`).
+- **Corte do Contrib e Configuração (P5/P6):**
+  - `drupal/node_co_authors` removido de `composer.json`.
+  - `node_co_authors: 0` removido de `config/sync/core.extension.yml`.
+  - Testes Unit e Kernel executados com 100% de sucesso.
+  - Procedimento operacional de corte de Runtime (pm:uninstall / update no ambiente) documentado para execução com autorização explícita conforme `AGENTS.md`.

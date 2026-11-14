@@ -190,7 +190,6 @@ Versões instaladas no `composer.lock` e no `web/themes/custom/aculta420/package
 | `drupal/message_notify` | 1.5.0 | Composer | Envio de notificações |
 | `drupal/message_subscribe` | 2.1.0 | Composer | Assinaturas de notificação |
 | `drupal/private_message` | 3.0.7 | Composer | Mensagens privadas |
-| `drupal/node_co_authors` | 1.2.3 | Composer | Coautoria de conteúdo |
 | `drupal/social_auth` | 4.1.2 | Composer | Base de login social |
 | `drupal/social_auth_google` | 4.0.3 | Composer | Login com Google |
 | `drupal/captcha` | 2.0.10 | Composer | CAPTCHA em formulários |

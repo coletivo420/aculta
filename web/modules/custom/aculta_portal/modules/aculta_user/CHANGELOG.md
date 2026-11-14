@@ -1,3 +1,17 @@
+## Não versionado — Substituição de node_co_authors por Coautoria proprietária
+
+- Conclusão da substituição integral do módulo contribuído `node_co_authors` pelo sistema de coautoria nativo do `aculta_user`.
+- Adição do Base Field revisionável `aculta_coauthors` em nós, com Hook OOP `NodeCoAuthorHooks` e constraint de validação `AcultaCoAuthorValidation`.
+- Implementação das 4 seções administrativas em `/painel-administrativo/` (domínio MAIN):
+  - `/painel-administrativo/pessoas/coautorias` (`CoAuthorAdminController`)
+  - `/painel-administrativo/pessoas/coautorias/{node}/gerenciar` (`CoAuthorManageForm`)
+  - `/painel-administrativo/pessoas/coautorias/auditoria` (`CoAuthorAuditController`)
+  - `/painel-administrativo/configuracoes/pessoas/coautoria` (`CoAuthorSettingsForm`)
+- Serviço de auditoria `CoAuthorAuditService` com schema `aculta_coauthor_audit`.
+- Filtro Views `aculta_author_coauthor_name` para busca unificada de autoria e coautoria.
+- Exclusão estrita do bundle de Fórum (`aculta_forum_topic`), que não suporta coautoria.
+- Remoção da dependência `drupal/node_co_authors` do `composer.json` e `core.extension.yml`.
+
 ## Não versionado — liberação de HX-Request em AccountModalAccess (ADR-050 F2 item 3)
 
 - `AccountModalAccess::isModalRequest()` passa a aceitar o cabeçalho `HX-Request`,

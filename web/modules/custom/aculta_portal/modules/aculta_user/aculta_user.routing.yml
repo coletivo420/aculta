@@ -38,6 +38,50 @@ aculta_user.people:
   options:
     _admin_route: true
 
+aculta_user.coauthors.overview:
+  path: '/painel-administrativo/pessoas/coautorias'
+  defaults:
+    _controller: '\Drupal\aculta_user\Controller\CoAuthorAdminController::overview'
+    _title: 'Coautorias'
+  requirements:
+    _permission: 'administer aculta coauthors'
+  options:
+    _admin_route: true
+
+aculta_user.coauthors.manage:
+  path: '/painel-administrativo/pessoas/coautorias/{node}/gerenciar'
+  defaults:
+    _form: '\Drupal\aculta_user\Form\CoAuthorManageForm'
+    _title: 'Gerenciar coautores'
+  requirements:
+    _permission: 'administer aculta coauthors'
+    node: '\d+'
+  options:
+    _admin_route: true
+    parameters:
+      node:
+        type: entity:node
+
+aculta_user.coauthors.audit:
+  path: '/painel-administrativo/pessoas/coautorias/auditoria'
+  defaults:
+    _controller: '\Drupal\aculta_user\Controller\CoAuthorAuditController::listing'
+    _title: 'Auditoria de coautorias'
+  requirements:
+    _permission: 'view aculta coauthor audit'
+  options:
+    _admin_route: true
+
+aculta_user.coauthors.settings:
+  path: '/painel-administrativo/configuracoes/pessoas/coautoria'
+  defaults:
+    _form: '\Drupal\aculta_user\Form\CoAuthorSettingsForm'
+    _title: 'Coautoria'
+  requirements:
+    _permission: 'administer aculta coauthors'
+  options:
+    _admin_route: true
+
 aculta_user.ownership_claims:
   path: '/painel-administrativo/pessoas/reivindicacoes'
   defaults:

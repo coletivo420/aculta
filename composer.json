@@ -310,7 +310,6 @@
         "drupal/message_notify": "^1.5",
         "drupal/message_subscribe": "^2.1",
         "drupal/metatag": "^2.2",
-        "drupal/node_co_authors": "^1.2",
         "drupal/pathauto": "1.x-dev@dev",
         "drupal/pdfpreview": "^1.2@dev",
         "drupal/photoswipe": "^5.0",

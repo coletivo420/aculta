@@ -459,8 +459,8 @@ final class MagazineNoticeManager implements MagazineNoticeManagerInterface {
     if ((int) $node->getOwnerId() === $uid) {
       return TRUE;
     }
-    if ($node->hasField('co_authors')) {
-      foreach ($node->get('co_authors')->getValue() as $item) {
+    if ($node->hasField('aculta_coauthors')) {
+      foreach ($node->get('aculta_coauthors')->getValue() as $item) {
         if ((int) ($item['target_id'] ?? 0) === $uid) {
           return TRUE;
         }

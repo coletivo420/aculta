@@ -176,7 +176,9 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
     self::assertSame(['body', 'field_aculta_categories', 'title'], array_keys($config['content']));
     self::assertArrayHasKey('field_aculta_discussion', $config['hidden']);
     self::assertArrayHasKey('field_autor_legado', $config['hidden']);
-    foreach (['co_authors', 'moderation_state', 'path', 'simple_sitemap', 'url_redirects'] as $field) {
+    self::assertArrayNotHasKey('co_authors', $config['hidden']);
+    self::assertArrayNotHasKey('aculta_coauthors', $config['hidden']);
+    foreach (['moderation_state', 'path', 'simple_sitemap', 'url_redirects'] as $field) {
       self::assertArrayHasKey($field, $config['hidden'], $field);
     }
   }

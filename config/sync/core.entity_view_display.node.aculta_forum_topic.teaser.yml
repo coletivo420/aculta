@@ -34,7 +34,6 @@ content:
     weight: 0
     region: content
 hidden:
-  co_authors: true
   field_aculta_discussion: true
   field_autor_legado: true
   field_domain_source: true

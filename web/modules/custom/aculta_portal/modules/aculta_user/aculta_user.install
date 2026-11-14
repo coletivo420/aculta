@@ -43,6 +43,22 @@ function aculta_user_schema(): array {
     'primary key' => ['uid'],
     'unique keys' => ['nickname_slug' => ['slug']],
   ];
+  $schema['aculta_coauthor_audit'] = [
+    'description' => 'Audit log of node coauthorship changes.',
+    'fields' => [
+      'id' => ['type' => 'serial', 'not null' => TRUE],
+      'nid' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE],
+      'actor_uid' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE],
+      'action' => ['type' => 'varchar', 'length' => 32, 'not null' => TRUE],
+      'created' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE],
+      'coauthors' => ['type' => 'varchar', 'length' => 1024, 'not null' => FALSE, 'default' => ''],
+    ],
+    'primary key' => ['id'],
+    'indexes' => [
+      'node_lookup' => ['nid'],
+      'actor_lookup' => ['actor_uid'],
+    ],
+  ];
   return $schema;
 }
 

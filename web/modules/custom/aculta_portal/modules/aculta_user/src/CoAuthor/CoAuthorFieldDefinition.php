@@ -10,10 +10,9 @@ use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 
 /**
- * ACULTA-owned node field blueprint, not registered before the cutover.
+ * ACULTA-owned node field blueprint.
  *
- * The eventual entity_base_field_info hook must call this factory for node
- * entities only. No storage is installed by this class alone.
+ * The entity_base_field_info hook calls this factory for node entities.
  */
 final class CoAuthorFieldDefinition {
 
@@ -44,7 +43,8 @@ final class CoAuthorFieldDefinition {
           'placeholder' => '',
         ],
       ])
-      ->setDisplayConfigurable('form', TRUE);
+      ->setDisplayConfigurable('form', TRUE)
+      ->addConstraint('AcultaCoAuthorValidation');
   }
 
 }

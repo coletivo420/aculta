@@ -16,7 +16,6 @@ dependencies:
   - metatag:metatag
   - pathauto:pathauto
   - views:views
-  - node_co_authors:node_co_authors
   - flag:flag
   - ui_styles:ui_styles
   - entity_usage:entity_usage

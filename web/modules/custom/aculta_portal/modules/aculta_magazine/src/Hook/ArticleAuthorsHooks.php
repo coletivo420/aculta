@@ -41,9 +41,20 @@ final class ArticleAuthorsHooks {
 
   /**
    * Adiciona a caixa de autores à publicação da Revista.
+   *
+   * @param array $build
+   *   The render array.
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   The entity being viewed.
+   * @param mixed $display
+   *   The display configuration.
+   * @param string $view_mode
+   *   The view mode.
+   *
+   * @phpstan-ignore missingType.iterableValue
    */
   #[Hook('node_view')]
-  public function nodeView(array &$build, EntityInterface $entity, $display, $view_mode): void {
+  public function nodeView(array &$build, EntityInterface $entity, mixed $display, string $view_mode): void {
     if (!$entity instanceof NodeInterface
       || !RevistaPublications::isPublication($entity->bundle())
       || $entity->isNew()
@@ -64,8 +75,10 @@ final class ArticleAuthorsHooks {
       $authors[(int) $owner->id()] = ['user' => $owner, 'role' => 'author'];
       $cache->addCacheableDependency($owner);
     }
-    if ($entity->hasField('co_authors')) {
-      foreach ($entity->get('co_authors')->referencedEntities() as $user) {
+    if ($entity->hasField('aculta_coauthors')) {
+      /** @var array<int, \Drupal\Core\Entity\EntityInterface> $coAuthorEntities */
+      $coAuthorEntities = (array) $entity->get('aculta_coauthors')->referencedEntities();
+      foreach ($coAuthorEntities as $user) {
         if ($user instanceof UserInterface && !isset($authors[(int) $user->id()])) {
           $authors[(int) $user->id()] = ['user' => $user, 'role' => 'coauthor'];
           $cache->addCacheableDependency($user);
@@ -109,7 +122,12 @@ final class ArticleAuthorsHooks {
   /**
    * Builds the shared identity card with Magazine-owned author/co-author role.
    *
-   * @return array|null
+   * @param \Drupal\user\UserInterface $user
+   *   The user entity.
+   * @param string $role
+   *   The role ('author' or 'coauthor').
+   *
+   * @return array<string, mixed>|null
    *   The render array for this author, or NULL without a public identity.
    */
   private function authorItem(UserInterface $user, string $role): ?array {

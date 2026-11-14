@@ -98,9 +98,11 @@ final class MagazineNoticeEventPublisher {
     if ($ownerUid > 0) {
       $recipients[$ownerUid] = TRUE;
     }
-    if ($node->hasField('co_authors')) {
-      foreach ($node->get('co_authors')->getValue() as $item) {
-        $uid = (int) ($item['target_id'] ?? 0);
+    if ($node->hasField('aculta_coauthors')) {
+      /** @var array<int, array<string, mixed>> $coAuthorValues */
+      $coAuthorValues = (array) $node->get('aculta_coauthors')->getValue();
+      foreach ($coAuthorValues as $item) {
+        $uid = isset($item['target_id']) && is_scalar($item['target_id']) ? (int) $item['target_id'] : 0;
         if ($uid > 0) {
           $recipients[$uid] = TRUE;
         }
@@ -138,9 +140,11 @@ final class MagazineNoticeEventPublisher {
     if ($ownerUid > 0) {
       $recipients[$ownerUid] = TRUE;
     }
-    if ($node->hasField('co_authors')) {
-      foreach ($node->get('co_authors')->getValue() as $item) {
-        $uid = (int) ($item['target_id'] ?? 0);
+    if ($node->hasField('aculta_coauthors')) {
+      /** @var array<int, array<string, mixed>> $coAuthorValues */
+      $coAuthorValues = (array) $node->get('aculta_coauthors')->getValue();
+      foreach ($coAuthorValues as $item) {
+        $uid = isset($item['target_id']) && is_scalar($item['target_id']) ? (int) $item['target_id'] : 0;
         if ($uid > 0) {
           $recipients[$uid] = TRUE;
         }

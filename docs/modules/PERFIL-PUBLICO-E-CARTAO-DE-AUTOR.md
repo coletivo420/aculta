@@ -36,7 +36,7 @@ Perfil privado: somente foto e apelido.
 
 ## 4. Cartão de autor (publicações da Revista)
 
-- **Autor principal:** `node.uid`. **Coautores:** campo `co_authors` do módulo contrib `drupal/node_co_authors`
+- **Autor principal:** `node.uid`. **Coautores:** campo `aculta_coauthors` do módulo proprietário `aculta_user`
   (1.2.3, Drupal 11). Coautores recebem os direitos de conteúdo do autor, como aceito pelo responsável;
   só quem tem "administer nodes" edita o campo.
 - **Onde aparece:** `node_view` (modo `full`), só em Notícias publicadas, no propósito `magazine`

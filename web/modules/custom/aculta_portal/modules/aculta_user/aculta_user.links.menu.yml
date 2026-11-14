@@ -26,3 +26,24 @@ aculta_user.ownership_claims:
   route_name: aculta_user.ownership_claims
   parent: aculta_portal.admin
   weight: 7
+
+aculta_user.coauthors.overview:
+  title: 'Coautorias'
+  description: 'Gerenciamento de coautorias de conteúdos.'
+  route_name: aculta_user.coauthors.overview
+  parent: aculta_portal.admin
+  weight: 8
+
+aculta_user.coauthors.audit:
+  title: 'Auditoria de coautorias'
+  description: 'Histórico de eventos de coautoria de conteúdos.'
+  route_name: aculta_user.coauthors.audit
+  parent: aculta_portal.admin
+  weight: 9
+
+aculta_user.coauthors.settings:
+  title: 'Coautoria'
+  description: 'Configurações de coautoria de conteúdos.'
+  route_name: aculta_user.coauthors.settings
+  parent: user.admin_index
+  weight: 15

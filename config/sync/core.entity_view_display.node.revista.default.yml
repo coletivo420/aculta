@@ -149,7 +149,7 @@ mode: default
 content: {  }
 hidden:
   body: true
-  co_authors: true
+  aculta_coauthors: true
   content_moderation_control: true
   entity_print_view_epub: true
   entity_print_view_pdf: true

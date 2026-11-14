@@ -43,7 +43,7 @@ content:
       placeholder: ''
       show_summary: false
     third_party_settings: {  }
-  co_authors:
+  aculta_coauthors:
     type: entity_reference_autocomplete_tags
     weight: 17
     region: content
@@ -224,7 +224,6 @@ content:
     third_party_settings: {  }
 hidden:
   field_aculta_discussion: true
-  field_coautores: true
   field_revista_accent: true
   promote: true
   sticky: true

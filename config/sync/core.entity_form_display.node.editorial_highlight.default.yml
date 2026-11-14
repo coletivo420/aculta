@@ -18,7 +18,7 @@ targetEntityType: node
 bundle: editorial_highlight
 mode: default
 content:
-  co_authors:
+  aculta_coauthors:
     type: entity_reference_autocomplete_tags
     weight: 17
     region: content

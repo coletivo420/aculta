@@ -1,3 +1,9 @@
+## Não versionado — Desacoplamento de node_co_authors e integração com aculta_coauthors
+
+- Remoção da dependência `node_co_authors:node_co_authors` do manifesto `aculta_magazine.info.yml`.
+- Atualização de `ArticleAuthorsHooks`, `MagazineNoticeEventPublisher` e `MagazineNoticeManager` para consumir o campo proprietário `aculta_coauthors`.
+- Preservação dos créditos editoriais em `field_editorial_author` e `field_credits`.
+
 ## 0.5.0-dev.19 — escolha administrativa de accent na Revista
 
 - Campo nativo `field_revista_accent` no owner `aculta_magazine`; o formulário usa o widget UI Styles com três opções fechadas, sem classes livres.

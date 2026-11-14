@@ -27,8 +27,11 @@ final class CoAuthorManager implements CoAuthorManagerInterface {
 
     $ownerId = (int) $node->getOwnerId();
     $ids = [];
-    foreach ($node->get(self::FIELD_NAME)->getValue() as $item) {
-      if (!is_array($item) || !isset($item['target_id']) || !is_scalar($item['target_id'])) {
+    /** @var array<int, array<string, mixed>> $rawValues */
+    $rawValues = (array) $node->get(self::FIELD_NAME)->getValue();
+
+    foreach ($rawValues as $item) {
+      if (!isset($item['target_id']) || !is_scalar($item['target_id'])) {
         continue;
       }
       $value = (string) $item['target_id'];

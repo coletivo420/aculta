@@ -60,6 +60,11 @@ final class CoAuthorManagerTest extends TestCase {
 
   /**
    * Builds a node mock backed by the expected new field.
+   *
+   * @param int $owner
+   *   The owner user ID.
+   * @param array<int, array<string, mixed>> $values
+   *   Raw field values.
    */
   private function node(int $owner, array $values): NodeInterface {
     $field = $this->createMock(FieldItemListInterface::class);

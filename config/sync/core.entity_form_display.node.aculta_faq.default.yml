@@ -25,7 +25,7 @@ content:
       rows: 8
       placeholder: ''
     third_party_settings: {  }
-  co_authors:
+  aculta_coauthors:
     type: entity_reference_autocomplete_tags
     weight: 17
     region: content
