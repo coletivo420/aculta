@@ -184,6 +184,16 @@ function phpstan_guard_diff(array $options, array &$violations, array &$notes): 
     }
   }
 
+  // New inline suppressions are forbidden: only debt frozen in the baseline
+  // may remain suppressed. A new error must be fixed, never ignored.
+  foreach (phpstan_guard_new_ignores(phpstan_guard_diff_text($options)) as $ignore) {
+    $violations[] = sprintf(
+      'novo @phpstan-ignore proibido em %s:%d; corrija o erro em vez de suprimi-lo.',
+      $ignore['path'],
+      $ignore['line'],
+    );
+  }
+
   $reference = phpstan_guard_reference($options, $notes);
   if ($reference === NULL) {
     $notes[] = 'sem baseline de referência: meta de redução por módulo não aplicada.';
@@ -350,6 +360,63 @@ function phpstan_guard_reference(array $options, array &$notes): ?array {
  */
 function phpstan_guard_reference_level(array $reference): int {
   return (int) ($reference['level'] ?? PHPSTAN_GUARD_REQUIRED_LEVEL);
+}
+
+/**
+ * Returns the unified diff used to detect newly added inline suppressions.
+ *
+ * @param array<string, string> $options
+ *   CLI options.
+ */
+function phpstan_guard_diff_text(array $options): string {
+  $file = $options['diff-text'] ?? NULL;
+  if ($file !== NULL && $file !== '') {
+    if (!is_file($file)) {
+      throw new RuntimeException("diff de referência não encontrado: {$file}");
+    }
+    return (string) file_get_contents($file);
+  }
+  $base = $options['git-base'] ?? NULL;
+  if ($base === NULL || $base === '') {
+    return '';
+  }
+  $command = ['git', 'diff', '--unified=0', '--diff-filter=ACMR', $base, 'HEAD'];
+  $diff = phpstan_guard_run($command);
+  if ($diff['code'] !== 0) {
+    throw new RuntimeException("git diff falhou para detecção de ignores: " . trim($diff['output']));
+  }
+  return $diff['output'];
+}
+
+/**
+ * Finds inline PHPStan suppressions added by the diff.
+ *
+ * @return list<array{path: string, line: int}>
+ *   Added suppressions with their file and new line number.
+ */
+function phpstan_guard_new_ignores(string $diffText): array {
+  $ignores = [];
+  $path = '';
+  $line = 0;
+  foreach (preg_split('/\R/', $diffText) ?: [] as $row) {
+    if (str_starts_with($row, '+++ b/')) {
+      $path = substr($row, 6);
+      continue;
+    }
+    if (preg_match('/^@@ -\d+(?:,\d+)? \+(\d+)(?:,\d+)? @@/', $row, $match) === 1) {
+      $line = (int) $match[1];
+      continue;
+    }
+    if ($path === '' || !str_ends_with($path, '.php') || !str_starts_with($row, '+') || str_starts_with($row, '+++')) {
+      $line++;
+      continue;
+    }
+    if (preg_match('/@phpstan-ignore(-next-line|-line)?\b/', $row) === 1) {
+      $ignores[] = ['path' => $path, 'line' => $line];
+    }
+    $line++;
+  }
+  return $ignores;
 }
 
 /**

@@ -145,3 +145,22 @@ check() {
   grep -q '"uncovered": 1' "$TMP/report.json"
   grep -q '"frozen": 3' "$TMP/report.json"
 }
+
+@test "novo @phpstan-ignore adicionado no diff: FAIL" {
+  run php "$GUARD" diff \
+    --baseline="$FIX/baseline-removed.neon" \
+    --reference-baseline="$FIX/baseline-a.neon" \
+    --changed-files="$FIX/changed-mod-a.txt" \
+    --diff-text="$FIX/diff-with-new-ignore.txt"
+  [ "$status" -eq 1 ]
+  [[ "$output" == *"novo @phpstan-ignore proibido"* ]]
+}
+
+@test "diff sem novo @phpstan-ignore: PASS" {
+  run php "$GUARD" diff \
+    --baseline="$FIX/baseline-removed.neon" \
+    --reference-baseline="$FIX/baseline-a.neon" \
+    --changed-files="$FIX/changed-mod-a.txt" \
+    --diff-text="$FIX/diff-clean.txt"
+  [ "$status" -eq 0 ]
+}
