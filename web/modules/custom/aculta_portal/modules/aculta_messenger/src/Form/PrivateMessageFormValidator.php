@@ -64,7 +64,7 @@ final class PrivateMessageFormValidator {
       return;
     }
 
-    foreach ($thread->getMembersId() as $memberId) {
+    foreach ($thread->getMemberIds() as $memberId) {
       $memberId = (int) $memberId;
       // A sender block prevents sending; the conversation remains listed so
       // the member can unblock through its options.
@@ -110,7 +110,7 @@ final class PrivateMessageFormValidator {
       return TRUE;
     }
 
-    foreach ($thread->getMembersId() as $memberId) {
+    foreach ($thread->getMemberIds() as $memberId) {
       $recipientId = (int) $memberId;
       if ($recipientId < 1 || $recipientId === (int) $this->currentUser->id()) {
         continue;
@@ -175,7 +175,7 @@ final class PrivateMessageFormValidator {
     $thread = $formState->get('thread');
     if ($thread instanceof PrivateMessageThreadInterface && (int) $thread->id() > 0) {
       $freshThread = $this->acquireThreadWriteLock($thread, $formState);
-      if ($freshThread instanceof PrivateMessageThreadInterface && !$formState->hasAnyErrors()) {
+      if ($freshThread instanceof PrivateMessageThreadInterface) {
         try {
           $sender = $this->entityTypeManager->getStorage('user')->loadUnchanged((int) $this->currentUser->id());
           if (!$sender instanceof UserInterface || !$this->policy->canReceiveMessages($sender)) {

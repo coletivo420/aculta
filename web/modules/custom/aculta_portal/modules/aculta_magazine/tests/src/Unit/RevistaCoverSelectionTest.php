@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_magazine\Unit;
 
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Drupal\aculta_file_uploader\ConsumerUploadPolicy;
 use Drupal\aculta_file_uploader\RecentUploads;
 use Drupal\aculta_magazine\Hook\RevistaCoverStudioHooks;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormState;
+use Drupal\Core\DependencyInjection\ClassResolver;
+use Drupal\Core\Utility\CallableResolver;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Group as TestGroup;
@@ -25,13 +28,26 @@ final class RevistaCoverSelectionTest extends UnitTestCase {
   private const FIELD_NAME = 'field_media_image';
 
   /**
+   * Provides the translation service the hook uses through Drupal.
+   */
+  protected function setUp(): void {
+    parent::setUp();
+    // FormState::$anyErrors is static; reset it so another test's validation
+    // error does not make this test see an error that does not exist.
+    (new FormState())->clearErrors();
+    $container = new ContainerBuilder();
+    $container->set('string_translation', $this->getStringTranslationStub());
+    \Drupal::setContainer($container);
+  }
+
+  /**
    * Monta o hook com dependências simuladas.
    */
   private function hook(): RevistaCoverStudioHooks {
     return new RevistaCoverStudioHooks(
       $this->createMock(EntityTypeManagerInterface::class),
       $this->createMock(AccountProxyInterface::class),
-      // Classes finais: sem construtor, pois validateCover não as usa sem escolha do Studio.
+      // Final classes are unused when validateCover has no Studio selection.
       (new \ReflectionClass(RecentUploads::class))->newInstanceWithoutConstructor(),
       (new \ReflectionClass(ConsumerUploadPolicy::class))->newInstanceWithoutConstructor(),
     );
@@ -69,6 +85,21 @@ final class RevistaCoverSelectionTest extends UnitTestCase {
     $this->hook()->validateCover($form, $form_state);
 
     self::assertTrue($form_state->hasAnyErrors());
+  }
+
+  /**
+   * The after-build callback resolves the hook service notation.
+   */
+  public function testAfterBuildCallbackResolvesThroughCallableResolver(): void {
+    $hook = $this->hook();
+    $container = new ContainerBuilder();
+    $container->set(RevistaCoverStudioHooks::class, $hook);
+    $resolver = new CallableResolver(new ClassResolver($container));
+
+    $callback = $resolver->getCallableFromDefinition(RevistaCoverStudioHooks::class . ':afterBuild');
+
+    self::assertSame($hook, $callback[0]);
+    self::assertSame('afterBuild', $callback[1]);
   }
 
 }

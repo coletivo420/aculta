@@ -1,0 +1,51 @@
+{#
+/**
+ * @file
+ * Bloco de interação / meta do tópico: título, status e indicadores.
+ */
+#}
+<section{% if theme == 'dark' %} data-theme="dark"{% endif %} class="forum-topic-meta forum-topic-meta--density-{{ density|default('default') }}{% if density == 'compact' %} aculta-mobile-frame{% endif %}">
+  <div class="forum-topic-meta__tricolor" aria-hidden="true">
+    <span class="forum-topic-meta__tricolor-segment forum-topic-meta__tricolor-segment--green"></span>
+    <span class="forum-topic-meta__tricolor-segment forum-topic-meta__tricolor-segment--yellow"></span>
+    <span class="forum-topic-meta__tricolor-segment forum-topic-meta__tricolor-segment--red"></span>
+  </div>
+  <div class="forum-topic-meta__inner">
+    <header class="forum-topic-meta__header">
+      <span class="forum-topic-meta__icon" aria-hidden="true">
+        {{ include('aculta420_v2:icon', { name: 'chat-circle', variant: 'regular', size: 'md' }, with_context = false) }}
+      </span>
+      <h2 class="forum-topic-meta__title">{{ title }}</h2>
+      <span class="forum-topic-meta__status forum-topic-meta__status--{{ status }}">
+        <span class="forum-topic-meta__dot" aria-hidden="true"></span>
+        {{ status == 'closed' ? 'Fechado'|t : 'Aberto'|t }}
+      </span>
+    </header>
+    <dl class="forum-topic-meta__stats">
+      {% if posts is not null %}
+        <div class="forum-topic-meta__stat">
+          <dt>{{ include('aculta420_v2:icon', { name: 'chat-circle', variant: 'regular', size: 'sm' }, with_context = false) }}</dt>
+          <dd><strong>{{ posts }}</strong><span>{{ 'posts'|t }}</span></dd>
+        </div>
+      {% endif %}
+      {% if participants is not null %}
+        <div class="forum-topic-meta__stat">
+          <dt>{{ include('aculta420_v2:icon', { name: 'users-three', variant: 'regular', size: 'sm' }, with_context = false) }}</dt>
+          <dd><strong>{{ participants }}</strong><span>{{ 'participantes'|t }}</span></dd>
+        </div>
+      {% endif %}
+      {% if views is not null %}
+        <div class="forum-topic-meta__stat">
+          <dt>{{ include('aculta420_v2:icon', { name: 'eye', variant: 'regular', size: 'sm' }, with_context = false) }}</dt>
+          <dd><strong>{{ views }}</strong><span>{{ 'visualizações'|t }}</span></dd>
+        </div>
+      {% endif %}
+      {% if last_activity %}
+        <div class="forum-topic-meta__stat">
+          <dt>{{ include('aculta420_v2:icon', { name: 'calendar-blank', variant: 'regular', size: 'sm' }, with_context = false) }}</dt>
+          <dd><strong>{{ last_activity }}</strong><span>{{ 'última atividade'|t }}</span></dd>
+        </div>
+      {% endif %}
+    </dl>
+  </div>
+</section>

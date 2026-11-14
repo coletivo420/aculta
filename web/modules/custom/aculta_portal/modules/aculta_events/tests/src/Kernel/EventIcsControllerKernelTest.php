@@ -136,7 +136,7 @@ final class EventIcsControllerKernelTest extends KernelTestBase {
     $this->assertSame('max-age=0, no-store, private', $resposta->headers->get('Cache-Control'));
     $this->assertSame('noindex, nofollow, noarchive', $resposta->headers->get('X-Robots-Tag'));
     $route = $this->container->get('router.route_provider')->getRouteByName('aculta_events.location_ics');
-    $this->assertSame('eventos', $route->getOption('_aculta_domain_purpose'));
+    $this->assertSame('eventos', $route->getOption('_aculta_site_key'));
     $this->assertSame('entity:aculta_event_location', $route->getOption('parameters')['aculta_event_location']['type']);
   }
 

@@ -66,6 +66,7 @@ final class ShippingSimulation {
    * A mensagem ao visitante é definida aqui, em um único lugar; o componente só a apresenta.
    *
    * @return array{state: string, reason: ?string, message: string, options: list<array{name: string, company: string, price: string, days: ?int}>}
+   *   Estrutura serializável com estado, motivo, mensagem e opções.
    */
   public function toArray(): array {
     $options = [];
@@ -86,7 +87,9 @@ final class ShippingSimulation {
   }
 
   /**
-   * Texto curto para o visitante. Estados disponíveis não têm mensagem. Motivos internos (origem, credencial, pacote)
+   * Texto curto para o visitante.
+   *
+   * Estados disponíveis não têm mensagem. Motivos internos (origem, credencial, pacote)
    * viram a mesma frase genérica: o visitante não precisa saber qual configuração falta.
    */
   public function message(): string {

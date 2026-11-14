@@ -7,6 +7,8 @@
 
 declare(strict_types=1);
 
+use Drupal\Core\Config\FileStorage;
+
 /**
  * Aposenta a criação do campo de categoria em fóruns contribuídos.
  */
@@ -38,4 +40,27 @@ function aculta_magazine_update_10003(): string {
     $generator->updateEntityAlias($topic, 'bulkupdate');
   }
   return count($topics) . ' tópico(s) do Fórum com URL de /topico/.';
+}
+
+/**
+ * Adds the native, owner-managed accent choice to Revista nodes. */
+function aculta_magazine_update_10004(): string {
+  $storage = new FileStorage(__DIR__ . '/config/install');
+  $entity_types = [
+    'field_storage_config' => 'field.storage.node.field_revista_accent',
+    'field_config' => 'field.field.node.revista.field_revista_accent',
+  ];
+  foreach ($entity_types as $entity_type => $name) {
+    $manager = \Drupal::entityTypeManager()->getStorage($entity_type);
+    if ($manager->load($entity_type === 'field_storage_config' ? 'node.field_revista_accent' : 'node.revista.field_revista_accent')) {
+      continue;
+    }
+    $data = $storage->read($name);
+    if ($data === FALSE) {
+      throw new RuntimeException("Missing install configuration: $name");
+    }
+    unset($data['_core']);
+    $manager->create($data)->save();
+  }
+  return 'Campo nativo de accent criado para a Revista.';
 }

@@ -41,9 +41,6 @@ final class PublicForumTopicAuthorHooks {
     }
 
     $author = $entity->getOwner();
-    if (!$author instanceof UserInterface) {
-      return;
-    }
 
     $card = $this->authorCardBuilder->build($author, 'author_forum');
     if ($card === NULL) {

@@ -6,7 +6,8 @@ namespace Drupal\aculta_portal\Email;
 
 use Drupal\aculta_mailer\Template\MailTemplateRenderer;
 use Drupal\aculta_mailer\Type\MailTypeRegistry;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Url;
 use Drupal\user\OneTimeAuthentication;
@@ -20,7 +21,8 @@ use Drupal\user\UserInterface;
  */
 final class AccountMailRouter {
 
-  /** Chave do Core => ID do tipo na camada. */
+  /**
+   * Chave do Core => ID do tipo na camada. */
   public const TYPES = [
     'password_reset' => AccountPasswordResetMailType::ID,
     'register_no_approval_required' => AccountRegisterMailType::ID,
@@ -32,7 +34,7 @@ final class AccountMailRouter {
     private readonly MailTemplateRenderer $renderer,
     private readonly OneTimeAuthentication $oneTime,
     private readonly ConfigFactoryInterface $configFactory,
-    private readonly DomainPurposeManager $purposes,
+    private readonly DomainSiteManager $purposes,
   ) {}
 
   /**
@@ -68,7 +70,7 @@ final class AccountMailRouter {
    * Entrada pública: a rota de login no domínio de Conta (`/entrar`). Sem esse domínio, a rota do próprio site.
    */
   private function loginUrl(): string {
-    $url = $this->purposes->routeUrl('account', 'user.login');
+    $url = $this->purposes->routeUrl(SiteKey::Account, 'user.login');
     return ($url ?? Url::fromRoute('user.login', [], ['absolute' => TRUE]))->setAbsolute()->toString();
   }
 

@@ -4,25 +4,27 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_lms\Account;
 
-use Drupal\aculta_learning_contracts\Learning\AccountCourseSummary;
-use Drupal\aculta_learning_contracts\Learning\AccountCoursesReaderInterface;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_lms\Learning\AccountCourseSummary;
+use Drupal\aculta_lms\Learning\AccountCoursesReaderInterface;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\Core\Access\AccessResultInterface;
+use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\group\GroupMembershipLoaderInterface;
+use Drupal\group\Entity\GroupInterface;
+use Drupal\aculta_lms\Group\GroupMembershipReaderInterface;
 use Drupal\aculta_lms\Learning\CourseProgress;
 use Drupal\aculta_lms\Learning\CourseProgressReaderInterface;
-use Drupal\group\Entity\GroupInterface;
 
 /**
- * Adapts authorized Group course data and ACULTA progress to account summaries (ADR-042, decisão 6).
+ * Adapts Group course data and ACULTA progress to account summaries.
  */
 final class AccountCoursesReader implements AccountCoursesReaderInterface {
 
   public function __construct(
     private readonly CourseProgressReaderInterface $progress,
-    private readonly GroupMembershipLoaderInterface $membershipLoader,
-    private readonly DomainPurposeManager $domainPurposeManager,
+    private readonly GroupMembershipReaderInterface $membershipLoader,
+    private readonly DomainSiteManager $siteManager,
   ) {}
 
   /**
@@ -33,23 +35,23 @@ final class AccountCoursesReader implements AccountCoursesReaderInterface {
 
     foreach ($this->membershipLoader->loadByUser($account) as $membership) {
       $course = $membership->getGroup();
-      if (!$course instanceof GroupInterface || $course->bundle() !== 'lms_course') {
+      if ($course->bundle() !== 'lms_course') {
         continue;
       }
 
       // Do not expose metadata or progress through a stale membership.
-      $access = $course->access('view', $account, TRUE);
-      if ($access instanceof AccessResultInterface) {
-        if (!$access->isAllowed()) {
-          continue;
-        }
-        $accessCacheTags = $access->getCacheTags();
-      }
-      elseif ($access === TRUE) {
-        // Group access hooks can return a boolean despite the object flag.
+      $access = $this->viewAccess($course, $account);
+      if ($access === TRUE) {
+        // Group access hooks may return a boolean despite the object flag.
         // Treat an explicit grant as allowed; the learner dashboard is already
         // varied by user and must not cache this result across requests.
         $accessCacheTags = [];
+      }
+      elseif ($access instanceof AccessResultInterface) {
+        if (!$access->isAllowed()) {
+          continue;
+        }
+        $accessCacheTags = CacheableMetadata::createFromObject($access)->getCacheTags();
       }
       else {
         continue;
@@ -63,11 +65,11 @@ final class AccountCoursesReader implements AccountCoursesReaderInterface {
         $descriptionFormat = (string) $course->get('field_description')->format;
       }
 
-      $statusCode = $progress?->status ?? '';
-      $finished = $progress?->finished ?? FALSE;
+      $statusCode = $progress === NULL ? '' : $progress->status;
+      $finished = $progress !== NULL && $progress->finished;
       $url = NULL;
       if ($statusCode !== CourseProgress::STATUS_NEEDS_EVALUATION) {
-        $url = $this->domainPurposeManager->routeUrl('courses', 'entity.group.canonical', ['group' => $course->id()]);
+        $url = $this->siteManager->routeUrl(SiteKey::Courses, 'entity.group.canonical', ['group' => $course->id()]);
       }
 
       $items[] = new AccountCourseSummary(
@@ -82,13 +84,26 @@ final class AccountCoursesReader implements AccountCoursesReaderInterface {
         cacheTags: array_values(array_unique(array_merge(
           $course->getCacheTags(),
           $accessCacheTags,
-          $progress?->cacheTags ?? [],
+          $progress === NULL ? [] : $progress->cacheTags,
         ))),
       );
     }
 
     usort($items, static fn(AccountCourseSummary $a, AccountCourseSummary $b): int => strnatcasecmp($a->label, $b->label));
     return $items;
+  }
+
+  /**
+   * Reads course view access as the group access hooks actually return it.
+   *
+   * Group access hooks may return a boolean even when an object was requested,
+   * so the union is the honest runtime contract at this call site.
+   *
+   * @return \Drupal\Core\Access\AccessResultInterface|bool
+   *   The access result object or an explicit boolean grant.
+   */
+  private function viewAccess(GroupInterface $course, AccountInterface $account): AccessResultInterface|bool {
+    return $course->access('view', $account, TRUE);
   }
 
   /**

@@ -1,0 +1,31 @@
+{
+  "frente": "aculta-maps",
+  "data": "2026-11-07",
+  "metodo": "Playwright Firefox ESR (headless), suíte de homologação visual",
+  "motor": "firefox",
+  "viewports_css_px": [320, 390, 768, 1024, 1440],
+  "modos_de_cor": ["light", "dark"],
+  "zoom": "200% (viewport efetiva 320 px)",
+  "javascript": ["enabled", "disabled"],
+  "urls_testadas": [
+    "https://eventos.aculta.toca.net.br/mapa",
+    "https://eventos.aculta.toca.net.br/locais/1"
+  ],
+  "commit_testado": {
+    "hash": "c2ca27a06872b2b7b657cfbe3cdbe0b2eda0a489"
+  },
+  "resultados": {
+    "mapa": {
+      "320px": "Altura computada 286px, Leaflet ativo, 4 tiles carregados, overflowX=false",
+      "390px": "Altura computada 286px, Leaflet ativo, 6 tiles carregados, overflowX=false",
+      "768px": "Altura computada 382px, Leaflet ativo, 12 tiles carregados, overflowX=false",
+      "1024px": "Altura computada 478px, Leaflet ativo, 15 tiles carregados, overflowX=false",
+      "1440px": "Altura computada 478px, Leaflet ativo, 15 tiles carregados, overflowX=false",
+      "zoom200": "Viewport efetiva 320px preservada sem quebra ou overflow",
+      "nojs": "Lista textual de locais e link de rota perfeitamente funcionais sem JavaScript"
+    },
+    "local_1": {
+      "comportamento": "Local sem coordenadas cadastradas não exibe container de mapa vazio, exibindo dados e agenda normalmente"
+    }
+  }
+}

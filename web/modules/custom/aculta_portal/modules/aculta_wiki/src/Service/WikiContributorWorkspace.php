@@ -4,11 +4,15 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_wiki\Service;
 
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
-use Drupal\aculta_contributions\Entity\Contribution;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
+use Drupal\aculta_cgu\Entity\Contribution;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Cache\CacheableMetadata;
+use Drupal\Core\Cache\RefinableCacheableDependencyInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Session\AccountInterface;
@@ -55,7 +59,7 @@ final class WikiContributorWorkspace {
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entities,
-    private readonly DomainPurposeManager $domainPurposes,
+    private readonly DomainSiteManager $siteManagers,
     TranslationInterface $stringTranslation,
     private readonly RequestStack $requestStack,
     private readonly ?WikiEditorialQueue $editorialQueue = NULL,
@@ -71,7 +75,7 @@ final class WikiContributorWorkspace {
       return AccessResult::forbidden()->addCacheContexts(['user', 'user.permissions']);
     }
 
-    $result = $this->domainPurposes->runInPurpose('wiki', function () use ($account): AccessResultInterface {
+    $result = $this->siteManagers->runInSite(SiteKey::Wiki, function () use ($account): AccessResultInterface {
       $create = $this->entities->getAccessControlHandler('node')
         ->createAccess('wiki_entry', $account, [], TRUE);
       $node = $this->entities->getStorage('node')->getQuery()
@@ -98,14 +102,20 @@ final class WikiContributorWorkspace {
         ->condition('purpose', 'wiki')
         ->range(0, 1)
         ->execute();
-      return $create->orIf(AccessResult::allowedIf($node !== [] || $proposal !== [] || $contribution !== []))
-        ->addCacheContexts(['user', 'user.permissions', 'domain'])
-        ->addCacheTags(['node_list:wiki_entry', 'aculta_wiki_proposal_list', 'aculta_contribution_list']);
+      $result = $create->orIf(AccessResult::allowedIf($node !== [] || $proposal !== [] || $contribution !== []));
+      if ($result instanceof RefinableCacheableDependencyInterface) {
+        $result->addCacheContexts(['user', 'user.permissions', 'domain'])
+          ->addCacheTags(['node_list:wiki_entry', 'aculta_wiki_proposal_list', 'aculta_contribution_list']);
+      }
+      return $result;
     });
     if (!$result instanceof AccessResultInterface) {
       return AccessResult::forbidden()->addCacheContexts(['user', 'user.permissions', 'domain']);
     }
-    return $result->addCacheContexts(['user', 'user.permissions']);
+    if ($result instanceof RefinableCacheableDependencyInterface) {
+      $result->addCacheContexts(['user', 'user.permissions']);
+    }
+    return $result;
   }
 
   /**
@@ -127,6 +137,7 @@ final class WikiContributorWorkspace {
       ])
       ->addCacheTags(['node_list:wiki_entry', 'aculta_wiki_proposal_list', 'aculta_contribution_list']);
     $build = [
+      '#attached' => ['library' => ['aculta_wiki/contribution-workspace']],
       '#type' => 'container',
       '#attributes' => ['data-portal-ui' => 'we-sativa-workspace'],
       'header' => [
@@ -140,9 +151,9 @@ final class WikiContributorWorkspace {
       ],
     ];
 
-    $startUrl = $this->domainPurposes->routeUrl('wiki', 'aculta_studio.we_sativa_start');
+    $startUrl = $this->siteManagers->routeUrl(SiteKey::Wiki, 'aculta_studio.we_sativa_start');
     if ($startUrl !== NULL) {
-      $startAccess = $this->domainPurposes->runInPurpose('wiki', fn () => $startUrl->access($account, TRUE));
+      $startAccess = $this->siteManagers->runInSite(SiteKey::Wiki, fn () => $startUrl->access($account, TRUE));
       if ($startAccess instanceof AccessResultInterface) {
         $cacheability->addCacheableDependency($startAccess);
         if ($startAccess->isAllowed()) {
@@ -151,12 +162,12 @@ final class WikiContributorWorkspace {
       }
     }
 
-    $create = $this->domainPurposes->runInPurpose('wiki', fn () => $this->entities
+    $create = $this->siteManagers->runInSite(SiteKey::Wiki, fn () => $this->entities
       ->getAccessControlHandler('node')->createAccess('wiki_entry', $account, [], TRUE));
     $create ??= AccessResult::forbidden()->addCacheContexts(['user', 'user.permissions', 'domain']);
     $cacheability->addCacheableDependency($create);
     if ($create->isAllowed()) {
-      $url = $this->domainPurposes->routeUrl('wiki', 'aculta_wiki.studio_entry_create');
+      $url = $this->siteManagers->routeUrl(SiteKey::Wiki, 'aculta_wiki.studio_entry_create');
       if ($url !== NULL) {
         $createLink = Link::fromTextAndUrl($this->t('Criar verbete'), $url)->toRenderable();
         $createLink['#attributes']['data-portal-ui'] = 'we-sativa-create';
@@ -166,11 +177,11 @@ final class WikiContributorWorkspace {
 
     $nodeCursor = $this->requestCursor('wiki_node_cursor');
     $nodeState = $this->requestEntryState();
-    $nodePage = $this->domainPurposes->runInPurpose('wiki', function () use ($account, $nodeCursor, $nodeState, $cacheability): array {
+    $nodePage = $this->siteManagers->runInSite(SiteKey::Wiki, function () use ($account, $nodeCursor, $nodeState, $cacheability): array {
       $items = [];
       $page = $this->ownNodes($account, $nodeCursor, $nodeState);
       foreach ($page['items'] as $node) {
-        if (!$node instanceof NodeInterface || $node->bundle() !== 'wiki_entry') {
+        if ($node->bundle() !== 'wiki_entry') {
           continue;
         }
         $view = $node->access('view', $account, TRUE);
@@ -184,7 +195,7 @@ final class WikiContributorWorkspace {
       if (!$view->isAllowed()) {
         continue;
       }
-      $url = $this->domainPurposes->routeUrl('wiki', 'entity.node.canonical', ['node' => $node->id()]);
+      $url = $this->siteManagers->routeUrl(SiteKey::Wiki, 'entity.node.canonical', ['node' => $node->id()]);
       if ($url !== NULL) {
         $item = [
           '#theme' => 'aculta_portal_component',
@@ -194,11 +205,11 @@ final class WikiContributorWorkspace {
             'content' => ['#plain_text' => $this->nodeState($node)],
           ],
         ];
-        $update = $this->domainPurposes->runInPurpose('wiki', fn () => $node->access('update', $account, TRUE));
+        $update = $this->siteManagers->runInSite(SiteKey::Wiki, fn () => $node->access('update', $account, TRUE));
         if ($update instanceof AccessResultInterface) {
           $cacheability->addCacheableDependency($update);
           if ($update->isAllowed()) {
-            $editUrl = $this->domainPurposes->routeUrl('wiki', 'entity.node.edit_form', ['node' => $node->id()]);
+            $editUrl = $this->siteManagers->routeUrl(SiteKey::Wiki, 'entity.node.edit_form', ['node' => $node->id()]);
             if ($editUrl !== NULL) {
               $item['#slots']['footer'] = Link::fromTextAndUrl($this->t('Editar'), $editUrl)->toRenderable();
             }
@@ -226,13 +237,10 @@ final class WikiContributorWorkspace {
     ];
 
     $proposalCursor = $this->requestCursor('wiki_proposal_cursor');
-    $proposalPage = $this->domainPurposes->runInPurpose('wiki', function () use ($account, $proposalCursor, $cacheability): array {
+    $proposalPage = $this->siteManagers->runInSite(SiteKey::Wiki, function () use ($account, $proposalCursor, $cacheability): array {
       $items = [];
       $page = $this->ownProposals($account, $proposalCursor);
       foreach ($page['items'] as $proposal) {
-        if (!$proposal instanceof WikiProposal && !$proposal instanceof Contribution) {
-          continue;
-        }
         $view = $proposal->access('view', $account, TRUE);
         $cacheability->addCacheableDependency($proposal)->addCacheableDependency($view);
         $items[] = [$proposal, $view];
@@ -244,7 +252,7 @@ final class WikiContributorWorkspace {
       if (!$view->isAllowed()) {
         continue;
       }
-      $url = $this->domainPurposes->routeUrl('wiki', 'aculta_wiki.proposal_status', ['proposal' => $proposal->id()]);
+      $url = $this->siteManagers->routeUrl(SiteKey::Wiki, 'aculta_wiki.proposal_status', ['proposal' => $proposal->id()]);
       if ($url !== NULL) {
         $proposalLinks[] = [
           '#theme' => 'aculta_portal_component',
@@ -270,9 +278,19 @@ final class WikiContributorWorkspace {
         $cacheability->addCacheableDependency($page);
         $items = [];
         foreach ($page->getItems() as $revision) {
-          $url = $this->domainPurposes->routeUrl('wiki', 'entity.node.revision', ['node' => $revision->id(), 'node_revision' => $revision->getRevisionId()]);
+          $url = $this->siteManagers->routeUrl(SiteKey::Wiki, 'entity.node.revision', [
+            'node' => $revision->id(),
+            'node_revision' => $revision->getRevisionId(),
+          ]);
           if ($url !== NULL) {
-            $items[] = ['#theme' => 'aculta_portal_component', '#name' => 'card', '#slots' => ['header' => Link::fromTextAndUrl((string) $revision->label(), $url)->toRenderable(), 'content' => ['#plain_text' => $this->t('Em revisão')]]];
+            $items[] = [
+              '#theme' => 'aculta_portal_component',
+              '#name' => 'card',
+              '#slots' => [
+                'header' => Link::fromTextAndUrl((string) $revision->label(), $url)->toRenderable(),
+                'content' => ['#plain_text' => $this->t('Em revisão')],
+              ],
+            ];
           }
         }
         $build['editorial_review'] = $this->listSection($this->t('Verbetes em revisão'), $items, $this->t('Não há verbetes autorizados para revisar.'));
@@ -287,9 +305,16 @@ final class WikiContributorWorkspace {
         $cacheability->addCacheableDependency($page);
         $items = [];
         foreach ($page->getItems() as $proposal) {
-          $url = $this->domainPurposes->routeUrl('wiki', 'aculta_wiki.proposal_decide', ['proposal' => $proposal->id()]);
+          $url = $this->siteManagers->routeUrl(SiteKey::Wiki, 'aculta_wiki.proposal_decide', ['proposal' => $proposal->id()]);
           if ($url !== NULL) {
-            $items[] = ['#theme' => 'aculta_portal_component', '#name' => 'card', '#slots' => ['header' => Link::fromTextAndUrl((string) $proposal->label(), $url)->toRenderable(), 'content' => ['#plain_text' => $this->proposalState($proposal)]]];
+            $items[] = [
+              '#theme' => 'aculta_portal_component',
+              '#name' => 'card',
+              '#slots' => [
+                'header' => Link::fromTextAndUrl((string) $proposal->label(), $url)->toRenderable(),
+                'content' => ['#plain_text' => $this->proposalState($proposal)],
+              ],
+            ];
           }
         }
         $build['proposal_moderation'] = $this->listSection($this->t('Propostas para moderação'), $items, $this->t('Não há propostas pendentes.'));
@@ -317,6 +342,7 @@ final class WikiContributorWorkspace {
       ->addCacheContexts(['user', 'user.permissions', 'domain'])
       ->addCacheTags(['node_list:wiki_entry', 'aculta_wiki_proposal_list']);
     $build = [
+      '#attached' => ['library' => ['aculta_wiki/contribution-workspace']],
       '#type' => 'container',
       '#attributes' => ['data-portal-ui' => 'we-sativa-start'],
       'header' => [
@@ -330,14 +356,14 @@ final class WikiContributorWorkspace {
       ],
     ];
 
-    $create = $this->domainPurposes->runInPurpose('wiki', fn () => $this->entities
+    $create = $this->siteManagers->runInSite(SiteKey::Wiki, fn () => $this->entities
       ->getAccessControlHandler('node')->createAccess('wiki_entry', $account, [], TRUE));
     if ($create instanceof AccessResultInterface) {
       $cacheability->addCacheableDependency($create);
       if ($create->isAllowed()) {
-        $createUrl = $this->domainPurposes->routeUrl('wiki', 'aculta_wiki.studio_entry_create');
+        $createUrl = $this->siteManagers->routeUrl(SiteKey::Wiki, 'aculta_wiki.studio_entry_create');
         if ($createUrl !== NULL) {
-          $routeAccess = $this->domainPurposes->runInPurpose('wiki', fn () => $createUrl->access($account, TRUE));
+          $routeAccess = $this->siteManagers->runInSite(SiteKey::Wiki, fn () => $createUrl->access($account, TRUE));
           if ($routeAccess instanceof AccessResultInterface) {
             $cacheability->addCacheableDependency($routeAccess);
             if ($routeAccess->isAllowed()) {
@@ -348,12 +374,12 @@ final class WikiContributorWorkspace {
       }
     }
 
-    $drafts = $this->domainPurposes->runInPurpose('wiki', fn () => $this->ownNodes($account, NULL, 'in_progress'));
+    $drafts = $this->siteManagers->runInSite(SiteKey::Wiki, fn () => $this->ownNodes($account, NULL, 'in_progress'));
     foreach ($drafts['items'] as $draft) {
       if (!$draft instanceof NodeInterface) {
         continue;
       }
-      $update = $this->domainPurposes->runInPurpose('wiki', fn () => $draft->access('update', $account, TRUE));
+      $update = $this->siteManagers->runInSite(SiteKey::Wiki, fn () => $draft->access('update', $account, TRUE));
       $cacheability->addCacheableDependency($draft);
       if (!$update instanceof AccessResultInterface) {
         continue;
@@ -362,11 +388,11 @@ final class WikiContributorWorkspace {
       if (!$update->isAllowed()) {
         continue;
       }
-      $editUrl = $this->domainPurposes->routeUrl('wiki', 'entity.node.edit_form', ['node' => $draft->id()]);
+      $editUrl = $this->siteManagers->routeUrl(SiteKey::Wiki, 'entity.node.edit_form', ['node' => $draft->id()]);
       if ($editUrl === NULL) {
         continue;
       }
-      $routeAccess = $this->domainPurposes->runInPurpose('wiki', fn () => $editUrl->access($account, TRUE));
+      $routeAccess = $this->siteManagers->runInSite(SiteKey::Wiki, fn () => $editUrl->access($account, TRUE));
       if (!$routeAccess instanceof AccessResultInterface) {
         continue;
       }
@@ -392,9 +418,9 @@ final class WikiContributorWorkspace {
       break;
     }
 
-    $workUrl = $this->domainPurposes->routeUrl('wiki', 'aculta_studio.we_sativa');
+    $workUrl = $this->siteManagers->routeUrl(SiteKey::Wiki, 'aculta_studio.we_sativa');
     if ($workUrl !== NULL) {
-      $workAccess = $this->domainPurposes->runInPurpose('wiki', fn () => $workUrl->access($account, TRUE));
+      $workAccess = $this->siteManagers->runInSite(SiteKey::Wiki, fn () => $workUrl->access($account, TRUE));
       if ($workAccess instanceof AccessResultInterface) {
         $cacheability->addCacheableDependency($workAccess);
         if ($workAccess->isAllowed()) {
@@ -470,9 +496,6 @@ final class WikiContributorWorkspace {
       }
       $hasMoreCandidates = count($ids) === $batchSize;
       foreach ($storage->loadMultiple($ids) as $node) {
-        if (!$node instanceof NodeInterface) {
-          continue;
-        }
         $scanCursor = [(int) $node->getChangedTime(), (int) $node->id()];
         $candidateCount++;
         $nodeState = $node->hasField('moderation_state') ? (string) $node->get('moderation_state')->value : '';
@@ -541,8 +564,8 @@ final class WikiContributorWorkspace {
       $ids = array_values($query->execute());
       $items = [...$items, ...array_values($storage->loadMultiple($ids))];
     }
-    usort($items, static function (WikiProposal|Contribution $left, WikiProposal|Contribution $right): int {
-      $changed = (int) $right->get('changed')->value <=> (int) $left->get('changed')->value;
+    usort($items, function (EntityInterface $left, EntityInterface $right): int {
+      $changed = $this->changedTimestamp($right) <=> $this->changedTimestamp($left);
       if ($changed !== 0) {
         return $changed;
       }
@@ -572,6 +595,13 @@ final class WikiContributorWorkspace {
   }
 
   /**
+   * Gets a changed timestamp from a content entity candidate.
+   */
+  private function changedTimestamp(EntityInterface $entity): int {
+    return $entity instanceof ContentEntityInterface ? (int) $entity->get('changed')->value : 0;
+  }
+
+  /**
    * Reads a scalar pagination cursor from the active request.
    */
   private function requestCursor(string $key): ?string {
@@ -593,7 +623,7 @@ final class WikiContributorWorkspace {
   private function entryFilters(string $active): array {
     $links = [];
     foreach (self::ENTRY_FILTERS as $state => $filter) {
-      $url = $this->domainPurposes->routeUrl('wiki', 'aculta_studio.we_sativa');
+      $url = $this->siteManagers->routeUrl(SiteKey::Wiki, 'aculta_studio.we_sativa');
       if ($url === NULL) {
         continue;
       }
@@ -660,7 +690,7 @@ final class WikiContributorWorkspace {
    *   Renderable link or NULL when the account Domain is unavailable.
    */
   private function nextPageLink(\Stringable|string $label, string $cursorKey, string $cursor): ?array {
-    $url = $this->domainPurposes->routeUrl('wiki', 'aculta_studio.we_sativa');
+    $url = $this->siteManagers->routeUrl(SiteKey::Wiki, 'aculta_studio.we_sativa');
     if ($url === NULL) {
       return NULL;
     }

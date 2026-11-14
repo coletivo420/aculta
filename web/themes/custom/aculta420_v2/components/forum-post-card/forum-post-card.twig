@@ -1,0 +1,78 @@
+{% set accent_side = accent_side is defined ? accent_side : 'start' %}
+<article{% if theme == 'dark' %} data-theme="dark"{% endif %} class="forum-post-card forum-post-card--author-{{ author_position|default('top') }} forum-post-card--density-{{ density|default('default') }}{% if density == 'compact' %} aculta-mobile-frame{% endif %} forum-post-card--stripe-{{ stripe|default('brand') }}{% if accent_side %} forum-post-card--side-{{ accent_side }} forum-post-card--accent-{{ accent_color|default('green') }}{% endif %}">
+  <div class="forum-post-card__stripe"></div>
+  {% if accent_side %}
+    <div class="forum-post-card__side-stripe" aria-hidden="true"></div>
+  {% endif %}
+  <div class="forum-post-card__inner">
+    <header class="forum-post-card__header">
+      <div class="forum-post-card__author">
+        {# Avatar e nome vêm do componente forum-author-line; sem avatar próprio, ele usa aculta420_v2:avatar. #}
+        {{ include('aculta420_v2:forum-author-line', { author_name: author_name, profile_url: author_url, timestamp: null, avatar: avatar }, with_context = false) }}
+        <div class="forum-post-card__author-info">
+          {% if author_role %}
+            <div class="forum-post-card__author-name-row">
+              <span class="forum-post-card__author-role">{{ author_role }}</span>
+            </div>
+          {% endif %}
+          <div class="forum-post-card__author-meta">
+            {% if author_posts is not null and author_posts is not same as('') %}
+              <span class="forum-post-card__post-count">{{ author_posts }} {{ 'posts'|t }}</span>
+            {% else %}
+              <span class="forum-post-card__post-count">—<span class="visually-hidden">{{ 'Dado indisponível'|t }}</span></span>
+            {% endif %}
+            {% if timestamp %}
+              <span class="forum-post-card__time">· {{ timestamp }}</span>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      {% if badge %}
+        <div class="forum-post-card__badge">
+          {{ badge }}
+        </div>
+      {% endif %}
+      {% if reply or reply_url %}
+        <div class="forum-post-card__quick-reply">
+          {% if reply %}
+            {{ reply }}
+          {% elseif reply_url %}
+            <a href="{{ reply_url }}" class="forum-post-card__reply-link">
+              {{ include('aculta420_v2:icon', { name: 'arrow-bend-up-left', variant: 'duotone', size: 'sm' }, with_context = false) }}
+              <span>{{ 'Responder'|t }}</span>
+            </a>
+          {% endif %}
+        </div>
+      {% endif %}
+    </header>
+
+    <div class="forum-post-card__body">
+      {{ body }}
+      {% if reactions_received %}
+        <div class="forum-post-card__reactions-received">
+          {{ reactions_received }}
+        </div>
+      {% endif %}
+    </div>
+
+    <footer class="forum-post-card__footer">
+      <div class="forum-post-card__reactions">
+        {% if reactions_slot %}
+          {{ reactions_slot }}
+        {% elseif reactions and reactions|length > 0 %}
+          {% for r in reactions %}
+            <span class="forum-post-card__reaction">
+              <span class="forum-post-card__reaction-label">{{ r.label }}</span>
+              <span class="forum-post-card__reaction-count">{{ r.count }}</span>
+            </span>
+          {% endfor %}
+        {% endif %}
+      </div>
+      {% if actions %}
+        <div class="forum-post-card__actions">
+          {{ actions }}
+        </div>
+      {% endif %}
+    </footer>
+  </div>
+</article>

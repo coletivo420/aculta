@@ -13,13 +13,19 @@ use Drupal\webform\Entity\WebformSubmission;
 use PHPUnit\Framework\Attributes\Group as TestGroup;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
-/** Verifies Webform Score access against persisted submission ownership. */
+/**
+ * Verifies Webform Score access against persisted submission ownership. */
 #[TestGroup('aculta_lms')]
 #[RunTestsInSeparateProcesses]
 final class WebformScoreOwnershipTest extends KernelTestBase {
 
   use UserCreationTrait;
 
+  /**
+   * Módulos necessários para o teste.
+   *
+   * @var string[]
+   */
   protected static $modules = [
     'key',
     'system',
@@ -30,6 +36,9 @@ final class WebformScoreOwnershipTest extends KernelTestBase {
     'webform_score',
   ];
 
+  /**
+   * {@inheritdoc}
+   */
   protected function setUp(): void {
     parent::setUp();
     $this->installSchema('webform', ['webform']);
@@ -38,6 +47,9 @@ final class WebformScoreOwnershipTest extends KernelTestBase {
     $this->installEntitySchema('webform_submission');
   }
 
+  /**
+   * Verifica que só o dono com permissão vê a nota persistida.
+   */
   public function testOnlyOwnerWithPermissionCanViewPersistedSubmissionScore(): void {
     $owner = $this->createUser();
     $webform = Webform::create(['id' => 'score_ownership']);
@@ -70,6 +82,15 @@ final class WebformScoreOwnershipTest extends KernelTestBase {
     self::assertTrue($edit_access->isForbidden());
   }
 
+  /**
+   * Cria uma conta simulada com a permissão de ver a própria nota.
+   *
+   * @param int $id
+   *   ID da conta simulada.
+   *
+   * @return \Drupal\Core\Session\AccountInterface
+   *   Conta simulada.
+   */
   private function account(int $id): AccountInterface {
     $account = $this->createMock(AccountInterface::class);
     $account->method('id')->willReturn((string) $id);

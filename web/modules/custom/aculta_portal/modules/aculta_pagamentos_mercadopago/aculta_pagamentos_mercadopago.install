@@ -1,0 +1,83 @@
+<?php
+
+declare(strict_types=1);
+
+/**
+ * @file
+ */
+
+use Drupal\Core\Utility\UpdateException;
+
+/**
+ * @file
+ * Install and update hooks for the ACULTA Mercado Pago integration.
+ */
+
+/**
+ * Verifies Commerce credit card bundle field definitions.
+ */
+function aculta_pagamentos_mercadopago_update_10001(): string {
+  // Commerce defines card metadata as bundle fields on the credit_card payment
+  // method type. They are not base fields and must not be installed through
+  // EntityDefinitionUpdateManager::installFieldStorageDefinition().
+  $definitions = \Drupal::service('entity_field.manager')
+    ->getFieldDefinitions('commerce_payment_method', 'credit_card');
+  $required_fields = ['card_type', 'card_number', 'card_exp_month', 'card_exp_year'];
+  $missing_fields = array_diff($required_fields, array_keys($definitions));
+  if ($missing_fields) {
+    throw new UpdateException(sprintf(
+      'Commerce payment method type credit_card is missing expected bundle fields: %s.',
+      implode(', ', $missing_fields),
+    ));
+  }
+
+  return 'Verified Commerce credit_card bundle fields; no redundant base fields were installed.';
+}
+
+/**
+ * Installs Commerce credit-card bundle fields missing from the schema.
+ */
+function aculta_pagamentos_mercadopago_update_10002(): string {
+  $entity_type_id = 'commerce_payment_method';
+  $required_fields = ['card_type', 'card_number', 'card_exp_month', 'card_exp_year'];
+  $entity_type_manager = \Drupal::entityTypeManager();
+  $entity_type = $entity_type_manager->getDefinition($entity_type_id);
+  $bundle_handler = $entity_type_manager->getHandler($entity_type_id, 'bundle_plugin');
+  $bundle = 'aculta_mercadopago_checkout_pro';
+  $definitions = $bundle_handler->getFieldDefinitions($bundle);
+  foreach ($required_fields as $field_name) {
+    if (!isset($definitions[$field_name])) {
+      throw new UpdateException(sprintf(
+        'The Mercado Pago payment method bundle does not define the expected field %s.',
+        $field_name,
+      ));
+    }
+  }
+
+  $repository = \Drupal::service('entity.last_installed_schema.repository');
+  $installed = $repository->getLastInstalledFieldStorageDefinitions($entity_type_id);
+  $missing_fields = array_diff($required_fields, array_keys($installed));
+  if (!$missing_fields) {
+    return 'Mercado Pago payment method card fields were already installed.';
+  }
+
+  // The Entity module installs bundle fields through this installer. Its
+  // schema operations skip SQL columns that already exist, so this also
+  // recovers safely if a prior attempt completed only part of the metadata.
+  \Drupal::service('entity.bundle_plugin_installer')->installBundles(
+    $entity_type,
+    ['aculta_pagamentos_mercadopago'],
+  );
+  \Drupal::service('entity_field.manager')->clearCachedFieldDefinitions();
+  $installed = $repository->getLastInstalledFieldStorageDefinitions($entity_type_id);
+  $still_missing = array_diff($required_fields, array_keys($installed));
+  if ($still_missing) {
+    throw new UpdateException(sprintf(
+      'Failed to install Mercado Pago payment method fields: %s.',
+      implode(', ', $still_missing),
+    ));
+  }
+
+  sort($missing_fields);
+  return sprintf('Installed missing Mercado Pago payment method fields: %s.', implode(', ', $missing_fields));
+}

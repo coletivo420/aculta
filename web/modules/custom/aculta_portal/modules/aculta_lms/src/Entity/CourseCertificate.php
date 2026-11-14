@@ -32,6 +32,15 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
 )]
 final class CourseCertificate extends ContentEntityBase {
 
+  /**
+   * Define os campos base do certificado de curso.
+   *
+   * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
+   *   Definição do tipo de entidade.
+   *
+   * @return array
+   *   Campos base indexados pelo nome.
+   */
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type): array {
     $fields = parent::baseFieldDefinitions($entity_type);
     $fields['uid'] = BaseFieldDefinition::create('integer')

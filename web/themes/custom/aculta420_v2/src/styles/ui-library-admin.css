@@ -1,0 +1,252 @@
+/* Biblioteca de componentes no tema administrativo: duas colunas no desktop e uma no mobile. */
+
+.ui_patterns_component .htmx-indicator {
+  visibility: hidden;
+  opacity: 0;
+}
+
+.ui_patterns_component .htmx-request .htmx-indicator,
+.ui_patterns_component .htmx-request.htmx-indicator {
+  visibility: visible;
+  transition: opacity var(--motion-slow) ease-in;
+  opacity: 1;
+}
+
+/* O bloco "Componentes disponíveis" (atalhos) e a linha que o separa ocupam a largura toda, fora das colunas. */
+.ui_patterns_quicklinks,
+.ui_patterns_quicklinks + hr {
+  column-span: all;
+}
+
+/* Barra de ferramentas com título, busca e ações em lote */
+.aculta-component-library__toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  margin-block-end: var(--spacing-sm, .75rem);
+  gap: var(--spacing-sm, .75rem);
+}
+
+.aculta-component-library__toolbar-actions {
+  display: flex;
+  flex: 1 1 auto;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--spacing-sm, .75rem);
+}
+
+.aculta-component-library__search-box {
+  flex: 1 1 16rem;
+  max-inline-size: 22rem;
+}
+
+.aculta-component-library__search-box input {
+  inline-size: 100%;
+}
+
+/* Bloco/surface próprio para as ações em lote ("Exibir todas as prévias"), logo abaixo de Componentes disponíveis */
+.aculta-component-library__bulk-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-start;
+  margin-block-end: var(--spacing-lg, 1.5rem);
+  padding: var(--spacing-sm, .75rem) var(--spacing-md, 1rem);
+  column-span: all;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg, .75rem);
+  background: var(--color-surface);
+  gap: var(--spacing-md, 1rem);
+}
+
+.aculta-component-library__bulk-bar-action {
+  flex: 0 0 auto;
+}
+
+.aculta-btn-bulk-preview {
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+  gap: var(--spacing-xs, .5rem);
+}
+
+.aculta-btn-bulk-preview span {
+  display: inline;
+}
+
+.aculta-bulk-preview-status {
+  flex: 1 1 18rem;
+  word-break: break-word;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm, .875rem);
+  line-height: 1.4;
+}
+
+/* Cabeçalho de cada grupo também fica fora das colunas, e as abas aparecem no topo. */
+.aculta-component-library__group-title {
+  column-span: all;
+}
+
+/* Painel de cada aba: lista os subcomponentes do grupo. Fica oculto até a aba ser escolhida. */
+.aculta-component-library__panel {
+  margin-block-start: var(--spacing-sm);
+  padding: var(--spacing-base);
+  column-span: all;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+.aculta-component-library__panel-title {
+  margin: 0 0 var(--spacing-xs);
+  font-size: var(--font-size-base);
+}
+
+/* Painel "Todos": subtítulo de cada grupo listado. */
+.aculta-component-library__panel-subtitle {
+  margin: var(--spacing-sm) 0 var(--spacing-xs);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm, .875rem);
+}
+
+.aculta-component-library__panel-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-xs);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.aculta-component-library__panel-list .button {
+  white-space: nowrap;
+}
+
+/* Biblioteca de componentes: cartões em duas colunas quando há 60rem de largura útil. */
+body:has(.ui_patterns_quicklinks) {
+  --aculta-container-width: 1440px;
+}
+
+/* A moldura do cartão vem de component-library-mode.css; aqui fica só a
+   quebra de coluna do layout administrativo. */
+.ui_patterns_component {
+  break-inside: avoid;
+}
+
+.ui_patterns_component__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-sm, .5rem);
+}
+
+.ui_patterns_component__badge {
+  padding: .2rem .5rem;
+  color: var(--color-text-secondary);
+  border-radius: var(--radius-sm, .25rem);
+  background: var(--color-surface-raised);
+  font-size: var(--font-size-xs, .75rem);
+}
+
+.aculta-preview-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--spacing-xs, .5rem);
+  padding: var(--spacing-md, 1rem);
+  margin-block: var(--spacing-sm, .75rem);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-sm, .25rem);
+  background: var(--color-surface-subtle);
+}
+
+.aculta-load-preview-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+}
+
+:has(> .ui_patterns_component:not(.aculta-component-library__full)) {
+  column-gap: var(--spacing-xl);
+}
+
+/* As colunas dependem da largura do conteúdo, não do viewport. */
+main:has(.ui_patterns_component) {
+  container-type: inline-size;
+}
+
+@container (min-width: 60rem) {
+  /* Só os grupos em duas colunas; o container dos grupos não entra (os cards de largura total ficam nele). */
+  :has(> .ui_patterns_component:not(.aculta-component-library__full)) {
+    column-count: 2;
+  }
+}
+
+.aculta-ui-library-nav {
+  display: flex;
+  gap: var(--spacing-sm, .75rem);
+  margin-block-end: var(--spacing-md, 1.25rem);
+}
+
+/* Cartões de post do Fórum: largura total, uma coluna, na biblioteca de componentes. */
+/* Cards do Fórum (desktop e mobile): uma coluna no fim da lista; a versão mobile usa largura de celular. */
+.aculta-component-library__full-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--spacing-xl);
+  align-items: start;
+  margin-block-start: var(--spacing-lg);
+}
+
+
+
+/* Visualização em celular: todas as prévias ficam na largura de um celular (390 px), em uma coluna. */
+.aculta-component-library__viewport {
+  display: flex;
+  justify-content: flex-end;
+  margin-block: var(--spacing-sm) var(--spacing-md);
+}
+
+.aculta-btn-viewport {
+  padding: .375rem .875rem;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: var(--color-surface);
+  color: var(--color-text);
+  font: inherit;
+  cursor: pointer;
+}
+
+.aculta-btn-viewport[aria-pressed="true"] {
+  border-color: var(--color-brand-primary);
+  color: var(--color-brand-primary);
+}
+
+#aculta-components-container[data-viewport="mobile"] .aculta-preview-host {
+  display: block;
+  max-inline-size: 390px;
+  margin-inline: auto;
+}
+
+.aculta-preview-placeholder.is-loading {
+  opacity: .6;
+}
+
+.aculta-preview-placeholder.is-error {
+  color: var(--color-text-secondary);
+}
+
+.aculta-preview-host {
+  display: block;
+  min-inline-size: 0;
+  /* Cada prévia contém o próprio conteúdo: conteúdo mais largo rola dentro da prévia, sem invadir os vizinhos. */
+  contain: layout paint;
+  overflow: auto;
+}
+
+#aculta-components-container[data-viewport="mobile"] .aculta-component-library__group-wrapper,
+#aculta-components-container[data-viewport="mobile"] .aculta-component-library__full-grid {
+  display: block;
+  column-count: 1;
+}

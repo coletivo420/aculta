@@ -13,7 +13,8 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Drupal\aculta_user\Entity\AcultaFriendshipInterface;
 use Drupal\user\UserInterface;
 
-/** Implements the ACULTA member friendship workflow. */
+/**
+ * Implements the ACULTA member friendship workflow. */
 final class FriendshipManager implements FriendshipManagerInterface {
 
   public function __construct(
@@ -24,6 +25,22 @@ final class FriendshipManager implements FriendshipManagerInterface {
     private readonly EventDispatcherInterface $eventDispatcher,
   ) {}
 
+  /**
+   * Envia um pedido de amizade ao membro informado.
+   *
+   * @param \Drupal\user\UserInterface $target
+   *   Membro que receberá o pedido.
+   *
+   * @return \Drupal\aculta_user\Entity\AcultaFriendshipInterface
+   *   Relacionamento criado ou já existente para o par.
+   *
+   * @throws \InvalidArgumentException
+   *   Quando o destino não é um membro ativo distinto.
+   * @throws \RuntimeException
+   *   Quando o par já está em atualização.
+   * @throws \DomainException
+   *   Quando já existe pedido pendente ou o limite de pedidos foi atingido.
+   */
   public function request(UserInterface $target): AcultaFriendshipInterface {
     $requesterId = $this->activeCurrentUid();
     $targetId = (int) $target->id();
@@ -65,6 +82,9 @@ final class FriendshipManager implements FriendshipManagerInterface {
       if (!$this->flood->isAllowed('aculta_user.friendship_request', 10, 3600, (string) $requesterId)) {
         throw new \DomainException('The friendship request rate limit has been reached.');
       }
+      if (!$relationship instanceof AcultaFriendshipInterface) {
+        throw new \LogicException('The friendship storage returned an unexpected entity.');
+      }
       $relationship->save();
       $this->flood->register('aculta_user.friendship_request', 3600, (string) $requesterId);
       $this->dispatchChange(FriendshipChangedEvent::REQUESTED, $relationship);
@@ -75,26 +95,68 @@ final class FriendshipManager implements FriendshipManagerInterface {
     }
   }
 
+  /**
+   * Aceita um pedido de amizade pendente.
+   *
+   * @param \Drupal\aculta_user\Entity\AcultaFriendshipInterface $friendship
+   *   Relacionamento pendente a aceitar.
+   */
   public function accept(AcultaFriendshipInterface $friendship): void {
     $this->transition($friendship, FriendshipStatus::Pending, FriendshipStatus::Accepted, 'recipient');
   }
 
+  /**
+   * Recusa um pedido de amizade pendente.
+   *
+   * @param \Drupal\aculta_user\Entity\AcultaFriendshipInterface $friendship
+   *   Relacionamento pendente a recusar.
+   */
   public function decline(AcultaFriendshipInterface $friendship): void {
     $this->transition($friendship, FriendshipStatus::Pending, FriendshipStatus::Declined, 'recipient');
   }
 
+  /**
+   * Cancela um pedido de amizade enviado pelo membro atual.
+   *
+   * @param \Drupal\aculta_user\Entity\AcultaFriendshipInterface $friendship
+   *   Relacionamento pendente a cancelar.
+   */
   public function cancel(AcultaFriendshipInterface $friendship): void {
     $this->transition($friendship, FriendshipStatus::Pending, FriendshipStatus::Cancelled, 'requester');
   }
 
+  /**
+   * Desfaz uma amizade aceita.
+   *
+   * @param \Drupal\aculta_user\Entity\AcultaFriendshipInterface $friendship
+   *   Relacionamento aceito a remover.
+   */
   public function remove(AcultaFriendshipInterface $friendship): void {
     $this->transition($friendship, FriendshipStatus::Accepted, FriendshipStatus::Removed, 'participant');
   }
 
+  /**
+   * Informa se o membro atual tem amizade aceita com o destino.
+   *
+   * @param int $targetUid
+   *   Identificador do membro de destino.
+   *
+   * @return bool
+   *   TRUE quando existe amizade aceita.
+   */
   public function areFriendsWith(int $targetUid): bool {
     return $this->getRelationshipWith($targetUid)?->getStatus() === FriendshipStatus::Accepted->value;
   }
 
+  /**
+   * Carrega o relacionamento entre o membro atual e o destino.
+   *
+   * @param int $targetUid
+   *   Identificador do membro de destino.
+   *
+   * @return \Drupal\aculta_user\Entity\AcultaFriendshipInterface|null
+   *   Relacionamento entre os membros, ou NULL quando não existe.
+   */
   public function getRelationshipWith(int $targetUid): ?AcultaFriendshipInterface {
     $currentUid = $this->activeCurrentUid();
     if ($targetUid < 1 || $targetUid === $currentUid) {
@@ -104,6 +166,12 @@ final class FriendshipManager implements FriendshipManagerInterface {
     return $this->loadPair($low, $high);
   }
 
+  /**
+   * Lista os pedidos de amizade pendentes recebidos pelo membro atual.
+   *
+   * @return \Drupal\aculta_user\Entity\AcultaFriendshipInterface[]
+   *   Pedidos pendentes endereçados ao membro atual.
+   */
   public function getIncomingRequests(): array {
     $uid = $this->activeCurrentUid();
     $storage = $this->entityTypeManager->getStorage('aculta_friendship');
@@ -138,6 +206,15 @@ final class FriendshipManager implements FriendshipManagerInterface {
     return $requests;
   }
 
+  /**
+   * Retorna o identificador do membro autenticado e ativo.
+   *
+   * @return int
+   *   Identificador do membro atual.
+   *
+   * @throws \DomainException
+   *   Quando não há membro autenticado e ativo.
+   */
   private function activeCurrentUid(): int {
     $uid = (int) $this->currentUser->id();
     $account = $uid > 0 ? $this->entityTypeManager->getStorage('user')->load($uid) : NULL;
@@ -147,6 +224,23 @@ final class FriendshipManager implements FriendshipManagerInterface {
     return $uid;
   }
 
+  /**
+   * Executa uma transição de estado do relacionamento.
+   *
+   * @param \Drupal\aculta_user\Entity\AcultaFriendshipInterface $candidate
+   *   Relacionamento recebido para a transição.
+   * @param \Drupal\aculta_user\Social\FriendshipStatus $from
+   *   Estado de origem exigido.
+   * @param \Drupal\aculta_user\Social\FriendshipStatus $to
+   *   Estado de destino.
+   * @param string $actorField
+   *   Campo que identifica o autor permitido para a ação.
+   *
+   * @throws \DomainException
+   *   Quando o relacionamento não está disponível para a ação.
+   * @throws \RuntimeException
+   *   Quando o par já está em atualização.
+   */
   private function transition(AcultaFriendshipInterface $candidate, FriendshipStatus $from, FriendshipStatus $to, string $actorField): void {
     $uid = $this->activeCurrentUid();
     if (!$candidate->access('update', $this->currentUser, TRUE)->isAllowed()) {
@@ -180,7 +274,8 @@ final class FriendshipManager implements FriendshipManagerInterface {
     }
   }
 
-  /** Notifica a transição para quem integra (ver FriendshipChangedEvent). */
+  /**
+   * Notifica a transição para quem integra (ver FriendshipChangedEvent). */
   private function dispatchChange(string $transition, AcultaFriendshipInterface $friendship): void {
     $this->eventDispatcher->dispatch(new FriendshipChangedEvent(
       $transition,
@@ -191,6 +286,17 @@ final class FriendshipManager implements FriendshipManagerInterface {
     ), FriendshipChangedEvent::NAME);
   }
 
+  /**
+   * Carrega o relacionamento do par ordenado de membros.
+   *
+   * @param int $low
+   *   Identificador do menor membro do par.
+   * @param int $high
+   *   Identificador do maior membro do par.
+   *
+   * @return \Drupal\aculta_user\Entity\AcultaFriendshipInterface|null
+   *   Relacionamento do par, ou NULL quando ausente ou sem acesso.
+   */
   private function loadPair(int $low, int $high): ?AcultaFriendshipInterface {
     $storage = $this->entityTypeManager->getStorage('aculta_friendship');
     $entity = $storage->load("$low:$high");
@@ -200,7 +306,17 @@ final class FriendshipManager implements FriendshipManagerInterface {
       : NULL;
   }
 
-  /** @return array{int, int} */
+  /**
+   * Ordena o par de identificadores do menor para o maior.
+   *
+   * @param int $first
+   *   Primeiro identificador.
+   * @param int $second
+   *   Segundo identificador.
+   *
+   * @return array{int, int}
+   *   Par de identificadores ordenado.
+   */
   private function orderedPair(int $first, int $second): array {
     return $first < $second ? [$first, $second] : [$second, $first];
   }

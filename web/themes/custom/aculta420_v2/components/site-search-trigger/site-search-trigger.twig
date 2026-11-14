@@ -1,0 +1,12 @@
+{#
+/**
+ * @file
+ * Gatilho de busca do site: link acessível com ícone, que abre o popup de busca.
+ */
+#}
+<a href="{{ url }}"{{ attributes|default(create_attribute()).addClass('aculta-utility-trigger') }} aria-label="{{ label }}">
+  <span class="aculta-utility-trigger__icon" aria-hidden="true">
+    {{ include('aculta420_v2:icon', { name: 'magnifying-glass', variant: 'duotone', size: 'xl' }, with_context = false) }}
+  </span>
+  <span class="visually-hidden">{{ label }}</span>
+</a>

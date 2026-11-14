@@ -1,0 +1,7 @@
+name: Título H3 com barra lateral
+description: Subseção com barra lateral colorida à esquerda, padrão da referência para H3.
+component: aculta420_v2:heading
+props:
+  text: Eventos e Atividades
+  level: 3
+  accent: green

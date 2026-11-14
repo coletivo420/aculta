@@ -1,0 +1,53 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Superfície com destaque
+description: Moldura e superfície de destaque com faixas laterais (verde, amarela, vermelha) ou topo contínuo tricolor e neutro institucional, fiel aos modelos visuais do ACULTA420.
+status: stable
+group: Superfícies
+props:
+  type: object
+  additionalProperties: false
+  properties:
+    accent:
+      type: string
+      enum: [green, yellow, red, tricolor, neutral]
+      default: tricolor
+      title: Cor ou estilo de destaque
+      description: '`green`, `yellow`, `red` aplicam faixa lateral; `tricolor` aplica faixa contínua verde/amarela/vermelha; `neutral` aplica a faixa tricolor superior fina.'
+    position:
+      type: string
+      enum: [start, end, top, full]
+      default: top
+      title: Posição do destaque
+      description: Posição geométrica do destaque (lateral início/esquerda, lateral fim/direita ou faixa superior).
+    tone:
+      type: string
+      enum: [canvas, raised, subtle, institution, green-soft]
+      default: green-soft
+      title: Tom da superfície
+      description: Fundo da área de conteúdo.
+    radius:
+      type: string
+      enum: [sm, md, lg, xl]
+      default: lg
+      title: Raio dos cantos
+      description: Curvatura dos cantos da moldura.
+    spacing:
+      type: string
+      enum: [none, compact, normal, spacious]
+      default: normal
+      title: Espaçamento interno
+      description: Padding interno da área de conteúdo.
+    elevation:
+      type: string
+      enum: [none, subtle, raised, floating]
+      default: subtle
+      title: Elevação
+      description: Sombra da moldura.
+slots:
+  content:
+    title: Conteúdo da superfície
+    description: Conteúdo interno da moldura.
+assets:
+  css:
+    component:
+      surface-accent.css: {}

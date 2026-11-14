@@ -1,9 +1,9 @@
 name: ACULTA Eventos
 type: module
-version: '0.2.0-dev.9'
+version: '0.2.0-dev.11'
 description: 'Eventos, datas e locais do purpose eventos. Modelo em docs/MODELO-DE-DADOS.md. Recorrência via aculta_calendar.'
 package: 'ACULTA Portal'
-core_version_requirement: ^11.3
+core_version_requirement: ^11 || ^12
 dependencies:
   - drupal:block
   - drupal:datetime
@@ -13,6 +13,7 @@ dependencies:
   - drupal:taxonomy
   - drupal:text
   - drupal:views
+  - ui_patterns:ui_patterns_views
   - address:address
   - key:key
   - geofield:geofield
@@ -20,4 +21,4 @@ dependencies:
   - aculta_portal:aculta_calendar
   - aculta_portal:aculta_maps
   - aculta_portal:aculta_user
-  - aculta_portal:aculta_contributions
+  - aculta_portal:aculta_cgu

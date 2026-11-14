@@ -183,7 +183,7 @@ Entrada: F2 concluída.
 - [x] Página `/eventos/{slug}` com datas, local, tipo e organizador. Rascunho e inexistente: 404.
 - [x] Slugs em português, sem alias temporário (`EventSlugGenerator`: transliteração, hífen, sufixo -2 para repetido, estável depois de criado).
 
-Saída: catálogo e página do evento navegáveis. Cartão em SDC e validação com ACULTA420 e Olivero ficam para a etapa visual.
+Saída: catálogo e página do evento navegáveis. Cartão em SDC e validação no tema ACULTA ativo ficam para a etapa visual.
 
 ## Fase F4 — Locais com mapa
 
@@ -322,7 +322,7 @@ Saída: lista de ajustes aprovada.
 
 Entrada: F0–F8 concluídas.
 
-- [ ] Gates verdes; testes Kernel, Unit e navegador com ACULTA420 e Olivero.
+- [ ] Gates verdes; testes Kernel, Unit e navegador no tema ACULTA ativo.
 - [ ] Changelogs e `docs/operations/status/` atualizados pelo fluxo do projeto.
 - [ ] `ORIGEM-OPENCULTURAS.md` revisado (avisos de licença).
 - [ ] DNS e certificado de `eventos.aculta.org` planejados (fora do repositório).
@@ -375,7 +375,7 @@ Origem: `docs/architecture/OPENCULTURAS-COMPARATIVO.md`.
 | OC-EV2 / P0 | desempenho do catálogo | `EventCatalogue::busca()` carrega eventos + datas e expande em PHP | paginação efetiva, benchmark de recorrência extensa, limites e cache |
 | OC-EV3 / P1 | eventos híbridos e informação | OpenCulturas: `field_attendance_mode`, `field_location_virtual`, `field_min_age`, `field_safety_info`, `field_door_time_relative`, `field_event_status` | modelo/tipos acordados, update idempotente, Form API, ACL e tests |
 | OC-EV4 / P1 | horário estruturado e acessibilidade | hoje `field_horario` é texto; `accessibility-badges` não recebe dados reais | tipagem, exceções, safe markup, consumer evento/local e busca |
-| OC-EV5 / P1 | página real com layout SDC | `EventPageController` usa `#theme=aculta_event_page` e o Twig próprio contém H1; `event-page-five-regions` é candidato | consumidor real, eliminar H1 duplicado sem perder título acessível, desktop/320/zoom/teclado |
+| OC-EV5 / P1 | página real com layout SDC | `EventPageController::page()` compõe `aculta420_v2:event-page-layout` por render array; hook/template próprio removido; `event-page-layout` continua candidato a cinco regiões | validar evento publicado/cancelado, mapa com acesso/cache, H1, desktop/320/zoom/teclado no Runtime |
 | OC-EV6 / P2 | imprensa, apoiadores e pessoas | campos/consumidores ausentes ou parciais | vínculos verificados, autorização de marca e pipeline de imagem |
 | OC-EV7 / P2 | geodados | mapa atual é de pontos; `MapController` valida coordenadas numericamente e aceita `0`/`0.0`. | Kernel `MapControllerKernelTest`: 3 testes/57 assertions PASS em 2026-11-01. Polígonos seguem ideia exploratória, não paridade comprovada 3.1.5. |
 
@@ -441,7 +441,7 @@ A conclusão técnica de E4 não fecha esta experiência editorial. O gate de co
 
 **Decisão do responsável:** todo `/painel-administrativo/` responde somente no MAIN. O purpose `eventos` serve as páginas públicas e o calendário; os demais domínios exibem o bloco somente leitura.
 
-- [x] Todo `/painel-administrativo/` (Eventos, Datas, Locais) declara purpose `main` e é negado no host de Eventos com **404** (nunca 302), inclusive POST. (`_admin_route` + `_aculta_domain_purpose: main`; `DomainPurposeRequestSubscriber`.)
+- [x] Todo `/painel-administrativo/` (Eventos, Datas, Locais) declara purpose `main` e é negado no host de Eventos com **404** (nunca 302), inclusive POST. (`_admin_route` + `_aculta_domain_purpose: main`; `DomainSiteRequestSubscriber`.)
 - [x] Subdomínios não renderizam o toolbar do Navigation nem ações editoriais. (`AppearanceHooks` remove `navigation`/`top_bar`; catálogo e página do Evento não expõem criar/editar.)
 - [x] A integração OpenStreetMap também pertence ao MAIN, junto da área administrativa. (Rotas OSM com purpose `main`.)
 - [x] Datas e Locais seguem o Evento proprietário; `EventDateRouteAccess` valida o vínculo e o acesso ao Evento.

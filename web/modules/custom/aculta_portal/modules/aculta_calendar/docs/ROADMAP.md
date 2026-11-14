@@ -67,7 +67,6 @@ Decisão do responsável em 2026-10-28; detalhes, origem e hashes em `DHTMLX.md`
 - [x] DH-F — plano de saída documentado em `DHTMLX.md`.
 - [x] Tamanho medido: JS 151.259 B gzip; CSS 13.040 B gzip; HTML 5.106 B.
 - [x] Alto contraste: botão com `aria-pressed`; `contrast-black` em 11.94:1 (texto/fundo) e 7.28:1 (evento).
-- [x] Olivero: 13/13 no Firefox ESR; tema restaurado.
 - [x] Leitor de tela (Orca): contêiner `application`, foco nas seções de dia com `Notify: True`, botão `toggle`.
 
 ## Importação revisável de arquivos iCalendar
@@ -89,7 +88,7 @@ Decisão do responsável em 2026-10-28; detalhes, origem e hashes em `DHTMLX.md`
 - Suíte completa: 117 testes / 398 assertions PASS, 2 depreciações Core/contrib.
   PHP lint: 60 arquivos PASS. PHPCS Drupal restrito aos PHP: 261 erros e 35
   warnings em 44 arquivos; gate vermelho, sem correção de baseline nesta fase.
-- Firefox ESR anterior cobre agenda/mês/interativo, Olivero e leitor de tela;
+- Firefox ESR anterior cobre agenda/mês/interativo, e leitor de tela;
   a nova página administrativa ADM8 ainda requer revisão visual autenticada.
   A conta/credencial com `administer aculta calendar embedding` não está
   configurada em `secrets/`; a pergunta ao responsável permanece aberta.

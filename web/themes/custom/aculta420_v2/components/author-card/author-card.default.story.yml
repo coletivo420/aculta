@@ -1,0 +1,14 @@
+name: Cartão editorial de autoria
+description: Cartão de autoria da Revista com dados públicos, avatar fornecido pelo Portal e ações opcionais.
+component: aculta420_v2:author-card
+props:
+  variant: author_editorial
+  size: md
+  display_name: Coletiva de Cultura
+  profile_url: /u/coletiva-de-cultura
+  has_avatar: true
+  designation: Autora
+slots:
+  avatar:
+    type: inline_template
+    template: '<img src="/themes/custom/aculta420_v2/assets/avatars/pirates-002-polvo-pirata.png" alt="Retrato ilustrativo do autor" width="128" height="128">'

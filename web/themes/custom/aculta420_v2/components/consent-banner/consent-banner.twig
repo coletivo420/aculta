@@ -1,0 +1,18 @@
+<section{{ attributes.addClass('aculta-consent') }} hidden data-consent-banner role="region" aria-labelledby="aculta-consent-title">
+  <div class="aculta-consent__message">
+    <h2 id="aculta-consent-title">{{ 'Métricas de uso'|t }}</h2>
+    <p>{{ 'Você pode permitir métricas anônimas para ajudar a melhorar os conteúdos. Consulte a'|t }} <a href="{{ privacy_url }}" data-consent-privacy>{{ 'Política de Privacidade'|t }}</a>.</p>
+  </div>
+  <div class="aculta-consent__actions">
+    {{ include('aculta420_v2:button', {
+      text: 'Permitir métricas'|t,
+      variant: 'primary',
+      attributes: create_attribute({'data-consent-action': 'accept'}),
+    }, with_context = false) }}
+    {{ include('aculta420_v2:button', {
+      text: 'Continuar sem métricas'|t,
+      variant: 'secondary',
+      attributes: create_attribute({'data-consent-action': 'deny'}),
+    }, with_context = false) }}
+  </div>
+</section>

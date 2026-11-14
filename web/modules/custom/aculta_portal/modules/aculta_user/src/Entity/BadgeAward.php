@@ -24,6 +24,15 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
 )]
 final class BadgeAward extends ContentEntityBase {
 
+  /**
+   * Define os campos base da concessão de conquista.
+   *
+   * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
+   *   Definição do tipo de entidade.
+   *
+   * @return array
+   *   Campos base indexados pelo nome.
+   */
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type): array {
     $fields = parent::baseFieldDefinitions($entity_type);
     $fields['uid'] = BaseFieldDefinition::create('entity_reference')

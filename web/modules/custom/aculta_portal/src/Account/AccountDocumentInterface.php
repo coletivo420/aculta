@@ -15,21 +15,27 @@ use Drupal\user\UserInterface;
  */
 interface AccountDocumentInterface {
 
-  /** TRUE quando é possível ler um documento salvo de forma cifrada neste ambiente. */
+  /**
+   * TRUE quando é possível ler um documento salvo de forma cifrada neste ambiente. */
   public function isAvailable(): bool;
 
-  /** TRUE quando as chaves e os campos necessários para uma nova gravação estão disponíveis. */
+  /**
+   * TRUE quando as chaves e os campos necessários para uma nova gravação estão disponíveis. */
   public function canSave(): bool;
 
   /**
-   * Valida a entrada (com ou sem pontuação) e devolve o valor canônico, ou NULL quando é inválida.
+   * Valida a entrada e devolve o valor canônico.
+   *
+   * Aceita entrada com ou sem pontuação e devolve NULL quando é inválida.
    * Nunca inclui a entrada em mensagens.
    */
   public function canonicalize(string $input): ?string;
 
   /**
-   * Documento salvo do titular, mascarado (5 primeiros caracteres e '*' no restante), ou NULL quando não há nada salvo.
-   * O valor completo nunca sai do serviço.
+   * Documento salvo do titular, mascarado.
+   *
+   * Mostra os 5 primeiros caracteres e '*' no restante, ou NULL quando não há
+   * nada salvo. O valor completo nunca sai do serviço.
    *
    * @throws \RuntimeException
    *   Quando o valor salvo não pode ser lido neste ambiente.

@@ -15,17 +15,21 @@ use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\user\UserInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-/** POST form for requesting a new registration email confirmation. */
+/**
+ * POST form for requesting a new registration email confirmation. */
 final class EmailResendForm extends FormBase {
 
   public function __construct(
-    private readonly EmailConfirmationRequester $requester,
-    private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly AccountProxyInterface $currentUser,
-    private readonly MessengerInterface $portalMessenger,
-    private readonly TranslationInterface $translation,
+    protected readonly EmailConfirmationRequester $requester,
+    protected readonly EntityTypeManagerInterface $entityTypeManager,
+    protected readonly AccountProxyInterface $currentUser,
+    protected readonly MessengerInterface $portalMessenger,
+    protected readonly TranslationInterface $translation,
   ) {}
 
+  /**
+   * {@inheritdoc}
+   */
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('aculta_portal.email_confirmation_requester'),
@@ -36,10 +40,16 @@ final class EmailResendForm extends FormBase {
     );
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function getFormId(): string {
     return 'aculta_portal_email_resend_form';
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $form['description'] = [
       '#type' => 'item',
@@ -52,6 +62,9 @@ final class EmailResendForm extends FormBase {
     return $form;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $account = $this->entityTypeManager->getStorage('user')->load($this->currentUser->id());
     $result = $account instanceof UserInterface

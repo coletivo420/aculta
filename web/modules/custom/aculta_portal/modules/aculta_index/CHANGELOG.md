@@ -1,3 +1,18 @@
+## 0.1.0-dev.182 — integra provider file:file ao aculta_index
+
+- O submódulo `aculta_index_file` deixa de existir como submódulo independente
+  e tem sua função integrada diretamente como provider `FileContentIndexProvider`
+  (serviço `aculta_index.file_provider`) em `aculta_index`.
+- Unit e Kernel atualizados: Unit 53/286 e Kernel `ContentIndexStatisticsBridgeKernelTest` 3/55 PASS.
+
+## 0.1.0-dev.181 — valida boot dos providers owner
+
+- A integração de owners inclui o schema real da configuração Portal e deriva
+  a relação `course_document` depois de registrar o bundle Media, alinhando a
+  fixture ao comportamento do plugin owner.
+- Kernel de integração do Index junto à política de upload Portal: 8 testes /
+  162 assertions PASS; 216 depreciações Core/contrib.
+
 ## 0.1.0-dev.180 — consulta paginada de relações recebidas (2026-11-01)
 
 - `ContentIndexRelationQuery::queryIncoming()` descobre origens por uma relação

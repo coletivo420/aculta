@@ -3,6 +3,7 @@ langcode: pt-br
 status: true
 dependencies:
   module:
+    - aculta_editor
     - aculta_image
     - editor
     - entity_embed
@@ -47,7 +48,7 @@ filters:
     status: true
     weight: -10
     settings:
-      allowed_html: '<p> <br> <h2 id> <h3 id> <h4 id> <strong> <em> <u> <s> <ul> <ol> <li> <a href hreflang title id target rel class> <blockquote cite> <mark class> <span> <hr> <div class> <table> <caption> <colgroup> <col> <thead> <tbody> <tfoot> <tr> <td colspan rowspan> <th colspan rowspan scope> <oembed url> <drupal-media data-entity-type data-entity-uuid alt data-caption data-align>'
+      allowed_html: '<p class> <br> <h2 id class> <h3 id class> <h4 id class> <strong> <em> <u> <s> <ul class> <ol type reversed start class> <li class> <a href hreflang title id target rel class> <blockquote cite class> <mark class> <span> <hr> <div class> <section class> <table class> <caption class> <colgroup class> <col class> <thead class> <tbody class> <tfoot class> <tr class> <td colspan rowspan class> <th colspan rowspan scope class> <oembed url> <drupal-media data-entity-type data-entity-uuid alt data-caption data-align>'
       filter_html_help: true
       filter_html_nofollow: false
   filter_htmlcorrector:
@@ -62,6 +63,12 @@ filters:
     status: true
     weight: 15
     settings: {  }
+  fluent_emoji:
+    id: fluent_emoji
+    provider: aculta_editor
+    status: true
+    weight: 25
+    settings: {  }
   media_embed:
     id: media_embed
     provider: media
@@ -74,4 +81,3 @@ filters:
         image: image
         document: document
         remote_video: remote_video
-

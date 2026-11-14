@@ -4,22 +4,24 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_events\Kernel;
 
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\aculta_events\Entity\Event;
 use Drupal\aculta_events\Entity\EventDate;
 use Drupal\aculta_events\Entity\EventLocation;
 use Drupal\aculta_events\Controller\EventOrganizerDashboardController;
-use Drupal\Core\Entity\EntityInterface;
-use Drupal\Core\Session\AccountInterface;
+use Drupal\aculta_user\Organization\OrganizationAccessService;
+use Drupal\aculta_user\Organization\OrganizationMembershipManager;
 use Drupal\user\Entity\User;
 use Drupal\user\Entity\Role;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
+use Symfony\Component\DependencyInjection\Reference;
 use Drupal\aculta_events\Plugin\Block\UpcomingEventsBlock;
-use Drupal\aculta_portal\Domain\ContentPurposeResolver;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\ContentSiteKeyResolver;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\DomainSiteManagerInterface;
 use Drupal\aculta_portal\Domain\DomainRoutePolicy;
 use Drupal\Core\Session\AnonymousUserSession;
-use Drupal\Core\Url;
 use Drupal\domain\DomainNegotiatorInterface;
 use Drupal\KernelTests\KernelTestBase;
 use PHPUnit\Framework\Attributes\Group;
@@ -104,9 +106,19 @@ final class EventDomainBoundaryKernelTest extends KernelTestBase {
     parent::register($container);
     // Keep this domain-boundary test isolated from the complete user module
     // graph while preserving entity-specific editor scoping for its fixture.
+    $container->register(DomainSiteManagerInterface::class)->setSynthetic(TRUE)->setPublic(TRUE);
+    $container->setDefinition(
+      'aculta_user.organization_membership_manager',
+      (new Definition(OrganizationMembershipManager::class, [
+        new Reference('entity_type.manager'),
+        new Reference('datetime.time'),
+      ]))->setPublic(TRUE),
+    );
     $container->setDefinition(
       'aculta_user.organization_access_service',
-      (new Definition(EventDomainBoundaryTestOrganizationAccessService::class))->setPublic(TRUE),
+      (new Definition(OrganizationAccessService::class, [
+        new Reference('aculta_user.organization_membership_manager'),
+      ]))->setPublic(TRUE),
     );
   }
 
@@ -123,6 +135,9 @@ final class EventDomainBoundaryKernelTest extends KernelTestBase {
     $this->installEntitySchema('aculta_event_location');
     $this->installEntitySchema('aculta_event_organization');
     $this->installEntitySchema('domain');
+    $siteManager = $this->createMock(DomainSiteManagerInterface::class);
+    $siteManager->method('getSiteKeyForDomainId')->willReturn(SiteKey::Eventos);
+    $this->container->set(DomainSiteManagerInterface::class, $siteManager);
     $this->container->get('current_user')->setAccount(new AnonymousUserSession());
   }
 
@@ -133,10 +148,10 @@ final class EventDomainBoundaryKernelTest extends KernelTestBase {
     $routeProvider = $this->container->get('router.route_provider');
     foreach (self::EDITORIAL_ROUTES as $name) {
       $route = $routeProvider->getRouteByName($name);
-      self::assertSame('main', $route->getOption('_aculta_domain_purpose'), $name);
+      self::assertSame('main', $route->getOption('_aculta_site_key'), $name);
       self::assertTrue((bool) $route->getOption('_admin_route'), $name);
-      self::assertFalse(DomainRoutePolicy::allowsSharedPurpose($route, 'main', 'eventos'), $name);
-      self::assertTrue(DomainRoutePolicy::allowsSharedPurpose($route, 'main', 'main'), $name);
+      self::assertFalse(DomainRoutePolicy::allowsSharedSite($route, 'main', 'eventos'), $name);
+      self::assertTrue(DomainRoutePolicy::allowsSharedSite($route, 'main', 'main'), $name);
     }
   }
 
@@ -147,10 +162,10 @@ final class EventDomainBoundaryKernelTest extends KernelTestBase {
     $routeProvider = $this->container->get('router.route_provider');
     foreach (self::ORGANIZER_ROUTES as $name) {
       $route = $routeProvider->getRouteByName($name);
-      self::assertSame('eventos', $route->getOption('_aculta_domain_purpose'), $name);
+      self::assertSame('eventos', $route->getOption('_aculta_site_key'), $name);
       self::assertFalse((bool) $route->getOption('_admin_route'), $name);
-      self::assertTrue(DomainRoutePolicy::allowsSharedPurpose($route, 'eventos', 'eventos'), $name);
-      self::assertFalse(DomainRoutePolicy::allowsSharedPurpose($route, 'eventos', 'main'), $name);
+      self::assertTrue(DomainRoutePolicy::allowsSharedSite($route, 'eventos', 'eventos'), $name);
+      self::assertFalse(DomainRoutePolicy::allowsSharedSite($route, 'eventos', 'main'), $name);
       self::assertTrue((bool) $route->getOption('no_cache'), $name);
     }
     self::assertSame('/culturas', $routeProvider->getRouteByName('aculta_events.organizer_dashboard')->getPath());
@@ -180,7 +195,7 @@ final class EventDomainBoundaryKernelTest extends KernelTestBase {
     self::assertContains('url.query_args', $build['#cache']['contexts']);
     self::assertArrayHasKey('guide', $build);
     self::assertContains('Minhas propostas', array_map(
-      static fn(array $item): string => (string) ($item['#title'] ?? ''),
+      static fn(array $item): string => (string) ($item['#title'] ?? $item['#props']['text'] ?? ''),
       $build['actions']['items'],
     ));
     self::assertSame('details', $build['guide']['#type']);
@@ -326,10 +341,6 @@ final class EventDomainBoundaryKernelTest extends KernelTestBase {
       'field_quando' => ['value' => '2026-11-20T20:00:00', 'end_value' => '2026-11-20T22:00:00'],
     ])->save();
 
-    $this->container->set(
-      'aculta_user.organization_access_service',
-      new EventDomainBoundaryTestOrganizationAccessService(),
-    );
     $this->container->get('current_user')->setAccount($organizer);
     self::assertTrue($event->access('update', $organizer));
     self::assertFalse($privateLocation->access('view', $organizer));
@@ -351,16 +362,16 @@ final class EventDomainBoundaryKernelTest extends KernelTestBase {
 
     foreach (['aculta_events_openstreetmap.status', 'aculta_events_openstreetmap.import'] as $name) {
       $route = $routeProvider->getRouteByName($name);
-      self::assertSame('main', $route->getOption('_aculta_domain_purpose'), $name);
-      self::assertFalse(DomainRoutePolicy::allowsSharedPurpose($route, 'main', 'eventos'), $name);
-      self::assertTrue(DomainRoutePolicy::allowsSharedPurpose($route, 'main', 'main'), $name);
+      self::assertSame('main', $route->getOption('_aculta_site_key'), $name);
+      self::assertFalse(DomainRoutePolicy::allowsSharedSite($route, 'main', 'eventos'), $name);
+      self::assertTrue(DomainRoutePolicy::allowsSharedSite($route, 'main', 'main'), $name);
     }
 
     foreach (['aculta_events_openstreetmap.oauth_authorize', 'aculta_events_openstreetmap.oauth_callback'] as $name) {
       $route = $routeProvider->getRouteByName($name);
-      self::assertSame('main', $route->getOption('_aculta_domain_purpose'), $name);
-      self::assertFalse(DomainRoutePolicy::allowsSharedPurpose($route, 'main', 'eventos'), $name);
-      self::assertTrue(DomainRoutePolicy::allowsSharedPurpose($route, 'main', 'main'), $name);
+      self::assertSame('main', $route->getOption('_aculta_site_key'), $name);
+      self::assertFalse(DomainRoutePolicy::allowsSharedSite($route, 'main', 'eventos'), $name);
+      self::assertTrue(DomainRoutePolicy::allowsSharedSite($route, 'main', 'main'), $name);
     }
   }
 
@@ -368,20 +379,20 @@ final class EventDomainBoundaryKernelTest extends KernelTestBase {
    * Administrative routes resolve to MAIN; public event routes to eventos.
    */
   public function testResolverKeepsAdministrativeRoutesOnMain(): void {
-    $resolver = new ContentPurposeResolver(
+    $resolver = new ContentSiteKeyResolver(
       $this->container->get('entity_type.manager'),
-      $this->purposes(),
+      $this->container->get(DomainSiteManagerInterface::class),
     );
     $routeProvider = $this->container->get('router.route_provider');
 
     $admin = $routeProvider->getRouteByName('aculta_events.event_add');
-    self::assertSame('main', $resolver->requiredPurpose($admin, 'aculta_events.event_add', new Request()));
+    self::assertSame('main', $resolver->requiredSiteKey($admin, 'aculta_events.event_add', new Request()));
 
     $public = $routeProvider->getRouteByName('aculta_events.page');
-    self::assertSame('eventos', $resolver->requiredPurpose($public, 'aculta_events.page', new Request()));
+    self::assertSame('eventos', $resolver->requiredSiteKey($public, 'aculta_events.page', new Request()));
 
     $plainAdmin = new Route('/painel-administrativo/exemplo', [], [], ['_admin_route' => TRUE]);
-    self::assertSame('main', $resolver->requiredPurpose($plainAdmin, 'exemplo', new Request()));
+    self::assertSame('main', $resolver->requiredSiteKey($plainAdmin, 'exemplo', new Request()));
   }
 
   /**
@@ -408,7 +419,7 @@ final class EventDomainBoundaryKernelTest extends KernelTestBase {
     $build = $this->block()->build();
 
     self::assertCount(1, $build['#items']);
-    self::assertStringContainsString('Evento público', (string) $build['#items'][0]['#title']);
+    self::assertStringContainsString('Evento público', (string) $build['#items'][0]['title']);
     self::assertContains('aculta_event_list', $build['#cache']['tags']);
     self::assertContains('user', $build['#cache']['contexts']);
     self::assertContains('url.site', $build['#cache']['contexts']);
@@ -423,7 +434,7 @@ final class EventDomainBoundaryKernelTest extends KernelTestBase {
     $this->date($event, '2026-12-03T19:00:00');
 
     $build = $this->block()->build();
-    $links = $this->collectLinks($build);
+    $links = array_column($build['#items'], 'url');
 
     $forbiddenRoutes = [
       'aculta_events.event_edit',
@@ -435,16 +446,15 @@ final class EventDomainBoundaryKernelTest extends KernelTestBase {
     foreach ($forbiddenRoutes as $forbidden) {
       self::assertNotContains($forbidden, $links, 'O bloco não deve oferecer ' . $forbidden);
     }
-    $hasEventLink = in_array('aculta_events.page', $links, TRUE)
-      || array_filter($links, static fn (string $link): bool => str_contains($link, '/eventos/')) !== [];
+    $hasEventLink = array_filter($links, static fn (string $link): bool => str_contains($link, '/eventos/')) !== [];
     self::assertTrue($hasEventLink, 'O bloco deve apontar para a página pública do Evento.');
   }
 
   /**
    * Builds the domain purpose manager without enabling all of aculta_portal.
    */
-  private function purposes(): DomainPurposeManager {
-    return new DomainPurposeManager(
+  private function purposes(): DomainSiteManager {
+    return new DomainSiteManager(
       $this->container->get('entity_type.manager'),
       $this->container->get(DomainNegotiatorInterface::class),
       $this->container->get('config.factory'),
@@ -481,43 +491,6 @@ final class EventDomainBoundaryKernelTest extends KernelTestBase {
       'field_evento' => $event->id(),
       'field_quando' => ['value' => $start, 'end_value' => $end],
     ])->save();
-  }
-
-  /**
-   * Recursively collects route names or URIs used by links.
-   *
-   * @return string[]
-   *   Route names (for route URLs) or absolute URIs (for external URLs).
-   */
-  private function collectLinks(array $element): array {
-    $links = [];
-    if (isset($element['#url']) && $element['#url'] instanceof Url) {
-      $links[] = $element['#url']->isExternal()
-        ? (string) $element['#url']->getUri()
-        : (string) $element['#url']->getRouteName();
-    }
-    foreach ($element as $child) {
-      if (is_array($child)) {
-        $links = array_merge($links, $this->collectLinks($child));
-      }
-    }
-    return $links;
-  }
-
-}
-
-/**
- * Minimal scoped access collaborator for the dashboard privacy fixture.
- */
-final class EventDomainBoundaryTestOrganizationAccessService {
-
-  /**
-   * Limits fixture edit access to an Event owned by the test editor.
-   */
-  public function isContentEditorScoped(EntityInterface $entity, AccountInterface $account): bool {
-    return $entity->getEntityTypeId() === 'aculta_event'
-      && $entity->hasField('field_organizador')
-      && (int) $entity->get('field_organizador')->target_id === (int) $account->id();
   }
 
 }

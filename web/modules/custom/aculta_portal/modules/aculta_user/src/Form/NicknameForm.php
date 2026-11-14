@@ -21,9 +21,9 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 final class NicknameForm extends FormBase {
 
   public function __construct(
-    private readonly EntityTypeManagerInterface $entities,
-    private readonly AccountProxyInterface $currentAccount,
-    private readonly NicknamePolicy $nicknamePolicy,
+    protected readonly EntityTypeManagerInterface $entities,
+    protected readonly AccountProxyInterface $currentAccount,
+    protected readonly NicknamePolicy $nicknamePolicy,
   ) {}
 
   /**

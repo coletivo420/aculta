@@ -97,7 +97,7 @@ remover autor da entidade nem alterar o fluxo de revisão/moderação.
 ## Verificação
 
 Em checkout local com host da Wiki mapeado para 127.0.0.1 (simulação local, não
-o servidor de testes), a home e o verbete responderam HTTP 200; a busca GET foi
+o servidor de desenvolvimento), a home e o verbete responderam HTTP 200; a busca GET foi
 renderizada no Domain Header junto à marca, e o menu primário não apareceu
 nesse shell. A Institution Bar permaneceu no markup global. O verbete exibiu um
 H1, seções, referências e nenhum metadado de autoria. O cache foi reconstruído.

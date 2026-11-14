@@ -1,0 +1,59 @@
+/* Barra de Respostas de Conteúdo: ícones Phosphor coloridos com tokens do tema.
+   Os tokens mudam sozinhos entre o modo claro e o escuro (data-theme). */
+.content-reply-bar {
+  --content-reply-size: 2.25rem;
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.content-reply-bar__action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: var(--content-reply-size);
+  block-size: var(--content-reply-size);
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: var(--color-surface);
+  text-decoration: none;
+  transition: transform 120ms ease, border-color 120ms ease;
+}
+
+.content-reply-bar .content-reply-bar__action {
+  color: var(--content-reply-color, var(--color-text-secondary));
+}
+
+.content-reply-bar__action .aculta-icon {
+  inline-size: 1.25rem;
+  block-size: 1.25rem;
+}
+
+/* Traço mais grosso: o Phosphor é preenchido, então o contorno usa a mesma cor (currentColor). */
+.content-reply-bar__action .aculta-icon svg {
+  stroke: currentColor;
+  stroke-width: 10;
+  stroke-linejoin: round;
+  paint-order: stroke fill;
+}
+
+.content-reply-bar__action:hover,
+.content-reply-bar__action:focus-visible {
+  border-color: var(--content-reply-color, var(--color-brand-primary));
+  transform: translateY(-1px);
+}
+
+.content-reply-bar__action:focus-visible {
+  outline: 2px solid var(--content-reply-color, var(--color-brand-primary));
+  outline-offset: 2px;
+}
+
+/* Cor por ação: marca (responder), acento verde (citar), amarelo (editar) e vermelho (excluir). */
+.content-reply-bar__action--link { --content-reply-color: var(--color-text-secondary); }
+.content-reply-bar__action--reply { --content-reply-color: var(--color-brand-primary); }
+.content-reply-bar__action--quote { --content-reply-color: var(--accent-green-stripe); }
+.content-reply-bar__action--edit { --content-reply-color: color-mix(in srgb, var(--accent-yellow-stripe) 60%, #000); }
+[data-theme="dark"] .content-reply-bar__action--edit { --content-reply-color: var(--accent-yellow-stripe); }
+.content-reply-bar__action--delete { --content-reply-color: var(--accent-red-stripe); }
+.content-reply-bar__action--admin { --content-reply-color: var(--color-brand-primary); }

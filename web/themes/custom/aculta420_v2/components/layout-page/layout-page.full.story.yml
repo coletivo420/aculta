@@ -1,0 +1,12 @@
+name: Layout em largura total
+description: Conteúdo sem coluna lateral, usando toda a largura disponível do contêiner.
+component: aculta420_v2:layout-page
+props:
+  variant: full
+slots:
+  title:
+    type: inline_template
+    template: '<h1>Revista</h1>'
+  content:
+    type: inline_template
+    template: '<p>Conteúdo editorial em largura total.</p>'

@@ -1,0 +1,37 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Emoji de Reação Brócolis
+variants:
+  flat:
+    title: Plano
+  color:
+    title: Colorido
+description: Ícone de emoji vetorial do Microsoft Fluent Emoji para reações da comunidade.
+status: stable
+group: Comunidade
+props:
+  type: object
+  additionalProperties: false
+  required: [name]
+  properties:
+    name:
+      type: string
+      title: Nome do emoji
+      pattern: '^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$'
+      description: Identificador permitido do arquivo SVG de reação fornecido pelo catálogo do Fórum.
+    variant:
+      type: string
+      title: Estilo visual
+      enum: [flat, color]
+      default: flat
+      description: Variante visual do desenho do emoji.
+    size:
+      type: string
+      title: Tamanho
+      enum: [xs, sm, md, lg]
+      default: sm
+      description: Tamanho de apresentação do ícone dentro do controle ou conteúdo que o contém.
+    label:
+      type: [string, 'null']
+      title: Rótulo textual alternativo
+      default: null
+      description: Nome acessível opcional; quando ausente o emoji é decorativo, quando definido recebe papel de imagem com esse rótulo.

@@ -36,7 +36,8 @@ final class AcultaUserAgreementLedger {
     private readonly EventDispatcherInterface $dispatcher,
   ) {}
 
-  /** Records a new event; document metadata must identify the accepted text. */
+  /**
+   * Records a new event; document metadata must identify the accepted text. */
   public function recordAcultaUserAgreement(int $uid, string $agreementType, string $action, array $documents = [], bool $legacy = FALSE, ?int $created = NULL): int {
     if ($uid < 1 || !in_array($action, ['accepted', 'revoked'], TRUE)) {
       throw new \InvalidArgumentException('A valid account and consent action are required.');
@@ -44,7 +45,7 @@ final class AcultaUserAgreementLedger {
     if ($agreementType !== self::AGREEMENT_TYPE) {
       throw new \InvalidArgumentException('Apenas o aceite único (aculta_user_agreement_terms) pode ser gravado.');
     }
-    if (!$legacy && $action === 'accepted' && $agreementType === 'aculta_user_agreement_terms' && $documents === []) {
+    if (!$legacy && $action === 'accepted' && $documents === []) {
       $documents = $this->currentTermsEvidence();
     }
     $request = $this->requestStack->getCurrentRequest();
@@ -74,7 +75,8 @@ final class AcultaUserAgreementLedger {
     return $id;
   }
 
-  /** Captures stable revision references and content hashes for the current legal documents. */
+  /**
+   * Captures stable revision references and content hashes for the current legal documents. */
   private function currentTermsEvidence(): array {
     $evidence = [];
     foreach (['/sobre/termos-de-uso', '/sobre/politica-de-privacidade'] as $alias) {
@@ -102,7 +104,8 @@ final class AcultaUserAgreementLedger {
     return $evidence;
   }
 
-  /** Returns whether the latest event for an agreement is an acceptance. */
+  /**
+   * Returns whether the latest event for an agreement is an acceptance. */
   public function hasAcceptedAcultaUserAgreement(int $uid, string $agreementType): bool {
     if ($agreementType !== self::AGREEMENT_TYPE) {
       return FALSE;
@@ -113,7 +116,8 @@ final class AcultaUserAgreementLedger {
     return $action === 'accepted';
   }
 
-  /** Verifies the per-account chain and HMACs, returning FALSE on any alteration. */
+  /**
+   * Verifies the per-account chain and HMACs, returning FALSE on any alteration. */
   public function verify(int $uid): bool {
     $previous = '';
     foreach ($this->database->select('aculta_user_agreement', 'c')->fields('c')->condition('uid', $uid)->orderBy('id')->execute() as $row) {

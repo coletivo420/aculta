@@ -18,10 +18,18 @@ use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
  */
 #[Group('aculta_index')]
 #[Group('performance')]
-#[Group('aculta_index')]
-#[Group('performance')]
 #[RunTestsInSeparateProcesses]
 final class ContentIndexForumAccessBenchmarkTest extends ForumAccessKernelTestBase {
+
+  /**
+   * Skips before the parent installs the kernel and the database.
+   */
+  protected function setUp(): void {
+    if (getenv('ACULTA_INDEX_FORUM_ACCESS_BENCHMARK') !== '1') {
+      self::markTestSkipped('Set ACULTA_INDEX_FORUM_ACCESS_BENCHMARK=1 to measure Forum Entity Access.');
+    }
+    parent::setUp();
+  }
 
   /**
    * Measures authorized and denied Forum pages at fixed candidate sizes.
@@ -69,11 +77,11 @@ final class ContentIndexForumAccessBenchmarkTest extends ForumAccessKernelTestBa
     self::assertInstanceOf(Domain::class, $mainDomain);
     $negotiator = $this->container->get(DomainNegotiatorInterface::class);
     $negotiator->getActiveDomain();
-    $negotiator->setActiveDomain($mainDomain);
+    $negotiator->getContext()->setDomain($mainDomain);
     $filter = new ContentIndexAccessFilter(
       $this->container->get('entity_type.manager'),
       $this->container->get('aculta_index.provider_registry'),
-      $this->container->get('aculta_portal.domain_purpose'),
+      $this->container->get('aculta_portal.domain_site'),
     );
     $outputDirectory = rtrim(sys_get_temp_dir(), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
     $outputFile = getenv('ACULTA_INDEX_FORUM_ACCESS_BENCHMARK_OUTPUT')
@@ -109,7 +117,7 @@ final class ContentIndexForumAccessBenchmarkTest extends ForumAccessKernelTestBa
     }
 
     self::assertFileExists($outputFile);
-    self::assertSame('main', $this->container->get('aculta_portal.domain_purpose')->getCurrentPurpose());
+    self::assertSame('main', $this->container->get('aculta_portal.domain_site')->getCurrentSiteKey()?->value);
   }
 
   /**

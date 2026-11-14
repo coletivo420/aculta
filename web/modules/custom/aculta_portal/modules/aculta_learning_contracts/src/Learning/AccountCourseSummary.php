@@ -9,11 +9,9 @@ use Drupal\Core\Url;
 /**
  * Authorized course data for the account's learning section.
  *
- * The status is normalized by the provider to one of the ACULTA status
- * constants below. Description remains source text and format metadata so the
- * presentation layer can render it through Drupal's processed_text element.
+ * Providers return this neutral DTO (or a subclass) with normalized status.
  */
-final readonly class AccountCourseSummary {
+readonly class AccountCourseSummary {
 
   public const STATUS_NOT_STARTED = 'not_started';
 
@@ -25,10 +23,6 @@ final readonly class AccountCourseSummary {
 
   public const STATUS_AWAITING_EVALUATION = 'awaiting_evaluation';
 
-  /**
-   * @param list<string> $cacheTags
-   *   Cache tags for the authorized course projection.
-   */
   public function __construct(
     public string $id,
     public string $label,

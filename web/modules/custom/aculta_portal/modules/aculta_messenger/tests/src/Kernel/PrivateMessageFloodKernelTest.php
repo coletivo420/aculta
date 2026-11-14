@@ -31,6 +31,12 @@ final class PrivateMessageFloodKernelTest extends KernelTestBase {
   protected static $modules = [
     'system',
     'user',
+    'aculta_file_uploader',
+    'file',
+    'token',
+    'image',
+    'crop',
+    'image_widget_crop',
   ];
 
   /**

@@ -27,7 +27,7 @@ final class StatisticsDashboardKernelTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['system', 'user', 'aculta_statistics'];
+  protected static $modules = ['system', 'user', 'aculta_statistics', 'aculta_file_uploader', 'file' ];
 
   /**
    * {@inheritdoc}
@@ -35,6 +35,20 @@ final class StatisticsDashboardKernelTest extends KernelTestBase {
   protected function setUp(): void {
     parent::setUp();
     $this->installSchema('aculta_statistics', [DailyAggregateStorage::TABLE]);
+  }
+
+  /**
+   * O container instancia coleta e reconciliação com o contrato de provedores.
+   */
+  public function testProviderServicesInstantiate(): void {
+    self::assertInstanceOf(
+      \Drupal\aculta_statistics\Provider\MetricProviderCollector::class,
+      $this->container->get('aculta_statistics.provider_collector'),
+    );
+    self::assertInstanceOf(
+      \Drupal\aculta_statistics\Provider\SnapshotReconciliation::class,
+      $this->container->get('aculta_statistics.snapshot_reconciliation'),
+    );
   }
 
   /**

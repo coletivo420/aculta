@@ -2,4 +2,4 @@ name: 'ACULTA Messenger Wiki Cron test fixture'
 type: module
 description: 'Provides the Wiki queue worker plugin for the real Core Cron Kernel test.'
 package: Testing
-core_version_requirement: ^11.3
+core_version_requirement: ^11 || ^12

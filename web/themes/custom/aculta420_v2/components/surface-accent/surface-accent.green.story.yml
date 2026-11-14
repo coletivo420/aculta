@@ -1,0 +1,14 @@
+name: Moldura com faixa lateral verde
+description: Superfície com ênfase lateral esquerda verde, fiel à referência 01_bloco_verde.
+component: aculta420_v2:surface-accent
+props:
+  accent: green
+  position: start
+  tone: raised
+  radius: lg
+  spacing: normal
+  elevation: subtle
+slots:
+  content:
+    type: inline_template
+    template: '<p>Superfície com destaque verde na lateral esquerda.</p>'

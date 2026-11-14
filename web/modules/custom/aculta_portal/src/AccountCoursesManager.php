@@ -6,7 +6,8 @@ namespace Drupal\aculta_portal;
 
 use Drupal\aculta_learning_contracts\Learning\AccountCourseSummary;
 use Drupal\aculta_learning_contracts\Learning\AccountCoursesReaderInterface;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 
@@ -21,7 +22,7 @@ final class AccountCoursesManager {
 
   public function __construct(
     private readonly ?AccountCoursesReaderInterface $reader,
-    private readonly DomainPurposeManager $domainPurposeManager,
+    private readonly DomainSiteManager $siteManager,
   ) {}
 
   /**
@@ -33,9 +34,6 @@ final class AccountCoursesManager {
   public function getCourses(AccountInterface $account): array {
     $items = [];
     foreach ($this->reader?->getAccountCourses($account) ?? [] as $course) {
-      if (!$course instanceof AccountCourseSummary) {
-        continue;
-      }
       $description = [];
       if ($course->description !== '' && $course->descriptionFormat !== '') {
         $description = [
@@ -59,12 +57,27 @@ final class AccountCoursesManager {
     return $items;
   }
 
+  /**
+   * Conta os cursos autorizados da conta.
+   *
+   * @param \Drupal\Core\Session\AccountInterface $account
+   *   Conta consultada.
+   *
+   * @return int
+   *   Quantidade de cursos.
+   */
   public function countCourses(AccountInterface $account): int {
     return count($this->getCourses($account));
   }
 
+  /**
+   * URL do catálogo de cursos, quando o domínio de cursos existe.
+   *
+   * @return \Drupal\Core\Url|null
+   *   URL do catálogo ou NULL quando não disponível.
+   */
   public function catalogUrl(): ?Url {
-    return $this->domainPurposeManager->routeUrl('courses', 'aculta_portal.courses_home');
+    return $this->siteManager->routeUrl(SiteKey::Courses, 'aculta_portal.courses_home');
   }
 
 }

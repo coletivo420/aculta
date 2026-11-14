@@ -77,7 +77,10 @@ final class ClassActivityDeadlineTest extends KernelTestBase {
       'core.entity_view_display.group_relationship.lms_class-lms_class_activity_due.default',
     ] as $config_id) {
       $path = DRUPAL_ROOT . '/../config/sync/' . $config_id . '.yml';
-      $this->container->get('config.storage')->write($config_id, Yaml::decode(file_get_contents($path)));
+      $data = Yaml::decode(file_get_contents($path));
+      // Group 4 no longer defines creator_wizard in its GroupType schema.
+      unset($data['creator_wizard']);
+      $this->container->get('config.storage')->write($config_id, $data);
     }
     // The deadline test does not exercise memberships. Keep the Group types
     // independent from the contrib membership relation while retaining the

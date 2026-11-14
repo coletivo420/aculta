@@ -178,7 +178,7 @@ final class AvisoServiceForumNoticeTransferTest extends UnitTestCase {
  */
 final class TransferTestFieldItemList extends FieldItemList {
 
-  public function __construct(private readonly mixed $testValue) {}
+  public function __construct(protected readonly mixed $testValue) {}
 
   /**
    * {@inheritdoc}

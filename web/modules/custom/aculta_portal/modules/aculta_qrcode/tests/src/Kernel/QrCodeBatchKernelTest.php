@@ -104,9 +104,10 @@ final class QrCodeBatchKernelTest extends KernelTestBase {
   }
 
   /**
-   * Sem URL pública (o domínio do purpose links vem do aculta_portal, fora deste Kernel), o lote recusa com 503
-   * e não entrega ZIP parcial. O caminho de sucesso (ZIP com um arquivo por código) fica para o teste de integração
-   * com aculta_portal habilitado.
+   * Lote sem URL pública é recusado com 503, sem entregar ZIP parcial.
+   *
+   * O domínio do purpose links vem do aculta_portal, fora deste Kernel. O caminho de sucesso (ZIP com um arquivo por
+   * código) fica para o teste de integração com aculta_portal habilitado.
    */
   public function testBatchWithoutPublicUrlIsUnavailable(): void {
     $manager = $this->container->get('aculta_qrcode.manager');

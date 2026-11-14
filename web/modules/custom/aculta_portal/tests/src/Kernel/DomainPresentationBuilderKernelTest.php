@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_portal\Kernel;
 
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\aculta_portal\Presentation\DomainPresentationBuilder;
 use Drupal\domain\Entity\Domain;
 use Drupal\domain\DomainNegotiatorInterface;
@@ -21,7 +21,7 @@ use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 final class DomainPresentationBuilderKernelTest extends KernelTestBase {
 
   /**
-   * Canonical domains resolved by DomainPurposeManager.
+   * Canonical domains resolved by DomainSiteManager.
    *
    * @var array<string, string>
    */
@@ -67,7 +67,7 @@ final class DomainPresentationBuilderKernelTest extends KernelTestBase {
       ])->save();
     }
 
-    $purposeManager = new DomainPurposeManager(
+    $siteManager = new DomainSiteManager(
       $this->container->get('entity_type.manager'),
       $this->container->get(DomainNegotiatorInterface::class),
       $this->container->get('config.factory'),
@@ -76,7 +76,7 @@ final class DomainPresentationBuilderKernelTest extends KernelTestBase {
     $pathMatcher = $this->createMock(PathMatcherInterface::class);
     $pathMatcher->method('isFrontPage')->willReturn(FALSE);
     $builder = new DomainPresentationBuilder(
-      $purposeManager,
+      $siteManager,
       $this->container->get('string_translation'),
       NULL,
       $pathMatcher,
@@ -86,7 +86,12 @@ final class DomainPresentationBuilderKernelTest extends KernelTestBase {
       $presentation = $builder->build($purpose);
       $this->assertNotNull($presentation, "O purpose $purpose deve ter apresentação.");
       $data = $presentation->toThemeArray();
-      $this->assertTrue($data['layout']['show_site_header'], "O purpose $purpose deve mostrar Domain Header.");
+      $this->assertSame(
+        in_array($purpose, ['main', 'wiki'], TRUE),
+        $data['layout']['show_site_header'],
+        "Domain Header só no purpose principal e na Wiki (purpose $purpose).",
+      );
+      $this->assertSame($purpose === 'main', $data['layout']['show_site_menu']);
       $this->assertStringStartsWith(
         'https://' . $purpose . '.example.invalid/',
         $data['identity']['home_url'],
@@ -97,8 +102,27 @@ final class DomainPresentationBuilderKernelTest extends KernelTestBase {
         $presentation->getCacheTags(),
         "A apresentação de $purpose deve variar com a configuração de seu Domain.",
       );
-      $this->assertSame($purpose, $data['identity']['purpose']);
-      $this->assertSame($domainId, self::DOMAINS[$data['identity']['purpose']]);
+      $this->assertSame($purpose, $data['identity']['site_key']);
+      $this->assertSame($domainId, self::DOMAINS[$data['identity']['site_key']]);
+      $sites = $data['domain_sites'];
+      $this->assertCount(count(self::DOMAINS), $sites);
+      $this->assertSame($purpose, $sites[array_search(TRUE, array_column($sites, 'current'), TRUE)]['site_key']);
+      $this->assertSame(
+        array_keys(self::DOMAINS),
+        array_column($sites, 'site_key'),
+        'Sites devem permanecer na ordem neutra e estável do mapa de purposes.',
+      );
+      foreach ($sites as $site) {
+        $this->assertSame($site['site_key'] === $purpose, $site['current']);
+        $this->assertSame(
+          'https://' . $site['site_key'] . '.example.invalid/',
+          $site['url'],
+        );
+        $this->assertContains(
+          'config:domain.record.' . self::DOMAINS[$site['site_key']],
+          $presentation->getCacheTags(),
+        );
+      }
     }
 
     $cacheContexts = $presentation->getCacheContexts();
@@ -109,7 +133,7 @@ final class DomainPresentationBuilderKernelTest extends KernelTestBase {
     $links = $builder->build('links')?->toThemeArray();
     $this->assertNotNull($links);
     $this->assertTrue($links['layout']['links_page']);
-    $this->assertTrue($links['layout']['show_site_header']);
+    $this->assertFalse($links['layout']['show_site_header']);
   }
 
   /**
@@ -127,7 +151,7 @@ final class DomainPresentationBuilderKernelTest extends KernelTestBase {
       ])->save();
     }
 
-    $purposeManager = new DomainPurposeManager(
+    $siteManager = new DomainSiteManager(
       $this->container->get('entity_type.manager'),
       $this->container->get(DomainNegotiatorInterface::class),
       $this->container->get('config.factory'),
@@ -136,7 +160,7 @@ final class DomainPresentationBuilderKernelTest extends KernelTestBase {
     $pathMatcher = $this->createMock(PathMatcherInterface::class);
     $pathMatcher->method('isFrontPage')->willReturn(TRUE);
     $builder = new DomainPresentationBuilder(
-      $purposeManager,
+      $siteManager,
       $this->container->get('string_translation'),
       NULL,
       $pathMatcher,
@@ -146,23 +170,23 @@ final class DomainPresentationBuilderKernelTest extends KernelTestBase {
     $this->assertNotNull($presentation);
     $data = $presentation->toThemeArray();
     $showcase = $data['regions']['showcase'];
-    $expectedPurposes = array_values(array_diff(array_keys(self::DOMAINS), ['main']));
-    $this->assertSame($expectedPurposes, array_column($showcase, 'purpose'));
+    $expectedSiteKeys = array_values(array_diff(array_keys(self::DOMAINS), ['main']));
+    $this->assertSame($expectedSiteKeys, array_column($showcase, 'site_key'));
 
     foreach ($showcase as $item) {
       $this->assertSame(
-        'https://' . $item['purpose'] . '.example.invalid/',
+        'https://' . $item['site_key'] . '.example.invalid/',
         $item['url'],
-        "O link de {$item['purpose']} deve usar o Domain configurado para este ambiente.",
+        "O link de {$item['site_key']} deve usar o Domain configurado para este ambiente.",
       );
       $this->assertContains(
-        'config:domain.record.' . self::DOMAINS[$item['purpose']],
+        'config:domain.record.' . self::DOMAINS[$item['site_key']],
         $presentation->getCacheTags(),
-        "A vitrine deve invalidar quando o Domain de {$item['purpose']} mudar.",
+        "A vitrine deve invalidar quando o Domain de {$item['site_key']} mudar.",
       );
     }
 
-    $magazine = array_values(array_filter($showcase, static fn (array $item): bool => $item['purpose'] === 'magazine'));
+    $magazine = array_values(array_filter($showcase, static fn (array $item): bool => $item['site_key'] === 'magazine'));
     $this->assertCount(1, $magazine);
     $this->assertSame('Revista 420', $magazine[0]['title']);
   }
@@ -171,14 +195,14 @@ final class DomainPresentationBuilderKernelTest extends KernelTestBase {
    * Unknown purposes do not receive a presentation contract.
    */
   public function testUnknownPurposeHasNoPresentation(): void {
-    $purposeManager = new DomainPurposeManager(
+    $siteManager = new DomainSiteManager(
       $this->container->get('entity_type.manager'),
       $this->container->get(DomainNegotiatorInterface::class),
       $this->container->get('config.factory'),
       $this->container->get('request_stack'),
     );
     $builder = new DomainPresentationBuilder(
-      $purposeManager,
+      $siteManager,
       $this->container->get('string_translation'),
       NULL,
       $this->createMock(PathMatcherInterface::class),

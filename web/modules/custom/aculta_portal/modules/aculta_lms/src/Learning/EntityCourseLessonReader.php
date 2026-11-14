@@ -7,20 +7,25 @@ namespace Drupal\aculta_lms\Learning;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 
-/** Reads course lessons from ACULTA-owned entities. */
+/**
+ * Reads course lessons from ACULTA-owned entities. */
 final class EntityCourseLessonReader implements CourseLessonReaderInterface {
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
   ) {}
 
-  /** {@inheritdoc} */
+  /**
+   * {@inheritdoc} */
   public function forCourse(int $courseId): array {
     $entities = $this->entityTypeManager
       ->getStorage('aculta_lms_lesson')
       ->loadByProperties(['course_id' => $courseId]);
     $lessons = [];
     foreach ($entities as $entity) {
+      if (!$entity instanceof ContentEntityInterface) {
+        continue;
+      }
       $lessons[] = new CourseLesson(
         id: (int) $entity->id(),
         courseId: (int) self::fieldValue($entity, 'course_id'),
@@ -34,6 +39,17 @@ final class EntityCourseLessonReader implements CourseLessonReaderInterface {
     return $lessons;
   }
 
+  /**
+   * Extrai o primeiro valor de um campo da entidade.
+   *
+   * @param \Drupal\Core\Entity\ContentEntityInterface $entity
+   *   Entidade a consultar.
+   * @param string $field
+   *   Nome do campo.
+   *
+   * @return mixed
+   *   Primeiro valor do campo, ou NULL quando ausente.
+   */
   private static function fieldValue(ContentEntityInterface $entity, string $field): mixed {
     $values = $entity->get($field)->getValue();
     return $values[0]['value'] ?? NULL;

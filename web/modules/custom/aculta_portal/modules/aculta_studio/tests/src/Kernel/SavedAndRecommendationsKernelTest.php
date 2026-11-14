@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_studio\Kernel;
 
+use Drupal\Core\Cache\Cache;
 use Drupal\Core\Session\AnonymousUserSession;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
@@ -51,6 +52,7 @@ final class SavedAndRecommendationsKernelTest extends KernelTestBase {
     'taxonomy',
     'flag',
     'aculta_studio',
+      'aculta_calendar',
   ];
 
   /**
@@ -74,7 +76,7 @@ final class SavedAndRecommendationsKernelTest extends KernelTestBase {
     $loader->addPsr4('Drupal\\aculta_portal\\', $root . '/web/modules/custom/aculta_portal/src');
 
     // Supply dummy domain_purpose service required by MarleyListingBuilder.
-    $container->register('aculta_portal.domain_purpose', \stdClass::class);
+    $container->register('aculta_portal.domain_site', \stdClass::class);
 
     // Register transversal saved content query.
     $container->register('aculta_portal.saved_content_query', SavedContentQuery::class)
@@ -93,7 +95,6 @@ final class SavedAndRecommendationsKernelTest extends KernelTestBase {
     $this->installEntitySchema('taxonomy_vocabulary');
     $this->installEntitySchema('taxonomy_term');
     $this->installEntitySchema('flagging');
-    $this->installSchema('system', ['sequences']);
     $this->installSchema('flag', ['flag_counts']);
     $this->installSchema('node', ['node_access']);
     $this->installConfig(['system', 'filter', 'node', 'flag']);
@@ -336,14 +337,15 @@ final class SavedAndRecommendationsKernelTest extends KernelTestBase {
     $controller = $this->container->get('aculta_studio.saved_controller');
     $build = $controller->page();
 
-    $this->assertSame('container', $build['#type']);
-    $this->assertSame('studio-saved-content', $build['#attributes']['data-portal-ui']);
+    $this->assertSame('component', $build['#type']);
+    $this->assertSame('aculta420_v2:saved-content-page', $build['#component']);
+    $this->assertArrayHasKey('content', $build['#slots']);
     $this->assertContains('user', $build['#cache']['contexts']);
     $this->assertContains('url.query_args:tab', $build['#cache']['contexts']);
     $this->assertContains('flagging_list', $build['#cache']['tags']);
     $this->assertContains('user.permissions', $build['#cache']['contexts']);
     $this->assertContains('url.query_args:purpose', $build['#cache']['contexts']);
-    $this->assertSame(\Drupal\Core\Cache\Cache::PERMANENT, $build['#cache']['max-age']);
+    $this->assertSame(Cache::PERMANENT, $build['#cache']['max-age']);
   }
 
   /**

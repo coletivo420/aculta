@@ -15,6 +15,16 @@ temporária dos arquivos alvo e gera `patches-aculta.json` e os arquivos em
 só então Composer aplica os patches como parte do build. `--check` valida sem
 escrever arquivos.
 
+A coleção importa automaticamente patches locais ainda não cadastrados no
+`patches-aculta.json` quando é aberta. Cada patch descoberto passa a ter um
+registro editável; o hash de origem permite atualizar registros ainda intactos
+sem substituir alterações feitas pelo Patcher. `patches-aculta.json` é a fonte
+única dos patches Composer administrados pelo ACULTA.
+
+Na coleção, o dropdown de operações permite editar o registro e habilitar ou
+desabilitar o patch com confirmação. O estado é usado na próxima exportação;
+nenhuma ação do formulário executa Composer ou altera o build em execução.
+
 O exportador recusa `patches/` ou `patches/aculta_patcher/` quando forem
 symlinks, para manter os artefatos dentro da raiz do projeto. Também valida os
 ancestrais dos arquivos fonte e faz preflight dos destinos do manifesto e dos

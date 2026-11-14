@@ -62,6 +62,44 @@ final class MapRendererTest extends UnitTestCase {
     $this->assertSame(-49.26, $build['#attached']['drupalSettings']['acultaMaps']['event-map']['markers'][0]['lng']);
     $this->assertCount(1, $build['#attached']['drupalSettings']['acultaMaps']['event-map']['markers']);
     $this->assertSame('https://www.google.com/maps/dir/?destination=Goi%C3%A2nia', $build['#attached']['drupalSettings']['acultaMaps']['event-map']['markers'][0]['routeUrl']);
+    $marker = $build['#attached']['drupalSettings']['acultaMaps']['event-map']['markers'][0];
+    $this->assertSame('event-map-popup-0', $marker['popupId']);
+    $this->assertSame('event-map-icon-0', $marker['iconTemplateId']);
+    $this->assertSame('primary', $marker['categoryColorClass']);
+    $this->assertSame('aculta_maps_popup_template', $build['popup_templates'][$marker['popupId']]['#theme']);
+    $this->assertSame('Local aproximado', $build['popup_templates'][$marker['popupId']]['#popup']['#title']);
+    $iconTemplate = $build['icon_templates'][$marker['iconTemplateId']];
+    $this->assertSame('inline_template', $iconTemplate['#type']);
+    $this->assertStringContainsString('data-aculta-map-marker-icon-template', $iconTemplate['#template']);
+    $this->assertSame('aculta420_v2:icon', $iconTemplate['#context']['icon']['#component']);
+    $this->assertSame('map-pin', $iconTemplate['#context']['icon']['#props']['name']);
+  }
+
+  /**
+   * Rejects unsafe schemes before URLs reach theme-rendered popup links.
+   */
+  public function testPopupUrlsRejectUnsafeSchemes(): void {
+    $settings = $this->createMock(ImmutableConfig::class);
+    $settings->method('get')->willReturnMap([
+      ['center_lat', -14.235],
+      ['center_lng', -51.9253],
+      ['zoom_initial', 4],
+    ]);
+    $configFactory = $this->createMock(ConfigFactoryInterface::class);
+    $configFactory->method('get')->with('aculta_maps.settings')->willReturn($settings);
+    $renderer = new MapRenderer($configFactory, NULL, $this->createMock(AccountProxyInterface::class));
+    $build = $renderer->build([
+      'markers' => [[
+        'lat' => 0,
+        'lng' => 0,
+        'label' => 'Unsafe URL',
+        'url' => 'javascript:alert(1)',
+        'routeUrl' => '//attacker.example/path',
+      ]],
+    ]);
+    $marker = $build['#attached']['drupalSettings']['acultaMaps']['aculta-map']['markers'][0];
+    $this->assertSame('', $marker['url']);
+    $this->assertSame('', $marker['routeUrl']);
   }
 
   /**

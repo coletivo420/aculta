@@ -7,6 +7,7 @@ dependencies:
   module:
     - taxonomy
     - user
+    - ui_patterns_views
 id: aculta_forum_categories
 label: 'Categorias do ACULTA Forum'
 module: views
@@ -260,7 +261,39 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
+      row:
+        type: ui_patterns
+        options:
+          hide_empty: false
+          ui_patterns:
+            component_id: 'aculta420_v2:forum-category'
+            variant_id: null
+            props:
+              title_level:
+                source_id: select
+                source:
+                  value: h2
+            slots:
+              parent:
+                sources:
+                  -
+                    source_id: view_field
+                    source:
+                      ui_patterns_views_field: parent_name
+              title:
+                sources:
+                  -
+                    source_id: view_field
+                    source:
+                      ui_patterns_views_field: name
+              description:
+                sources:
+                  -
+                    source_id: view_field
+                    source:
+                      ui_patterns_views_field: description__value
       defaults:
+        row: false
         filters: false
         header: false
       header:
@@ -276,6 +309,46 @@ display:
           content: '<p><a href="/categorias">Ver todas as categorias</a></p>'
           tokenize: false
       display_extenders: {  }
+      ui_patterns:
+        component_id: 'aculta420_v2:views-display'
+        variant_id: null
+        slots:
+          attachment_before:
+            sources:
+              -
+                source_id: view_attachment_before
+          header:
+            sources:
+              -
+                source_id: view_header
+          exposed:
+            sources:
+              -
+                source_id: view_exposed
+          rows:
+            sources:
+              -
+                source_id: view_rows
+          empty:
+            sources:
+              -
+                source_id: view_empty
+          pager:
+            sources:
+              -
+                source_id: view_pager
+          more:
+            sources:
+              -
+                source_id: view_more
+          footer:
+            sources:
+              -
+                source_id: view_footer
+          attachment_after:
+            sources:
+              -
+                source_id: view_attachment_after
       block_description: 'Categorias da entrada do Growroom420'
       allow:
         items_per_page: true
@@ -346,6 +419,39 @@ display:
           hide_empty: false
           empty_zero: false
           group_rows: true
+        parent_card:
+          id: name
+          table: taxonomy_term_field_data
+          field: name
+          relationship: parent
+          group_type: group
+          admin_label: 'Categoria principal do cartão'
+          entity_type: taxonomy_term
+          entity_field: name
+          plugin_id: field
+          label: ''
+          exclude: false
+          alter:
+            alter_text: false
+            make_link: false
+            absolute: false
+            trim_whitespace: false
+            word_boundary: true
+            ellipsis: true
+            strip_tags: false
+            trim: false
+            html: false
+          element_type: h2
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          empty: 'Categoria raiz'
+          hide_empty: false
+          empty_zero: false
+          group_rows: true
         name:
           id: name
           table: taxonomy_term_field_data
@@ -365,7 +471,7 @@ display:
             strip_tags: false
             trim: false
             html: false
-          element_type: h3
+          element_type: ''
           element_class: ''
           element_label_type: ''
           element_label_class: ''
@@ -418,18 +524,62 @@ display:
             trim: false
             html: false
       style:
-        type: default
+        type: ui_patterns
         options:
-          grouping:
-            -
-              field: parent_name
-              rendered: false
-              rendered_strip: false
-          default_row_class: true
+          ui_patterns:
+            ui_patterns:
+              component_id: 'aculta420_v2:layout-grid'
+              variant_id: null
+              props: {  }
+              slots:
+                content:
+                  sources:
+                    -
+                      source_id: view_rows
+                      source: {  }
+      row:
+        type: ui_patterns
+        options:
+          hide_empty: false
+          ui_patterns:
+            component_id: 'aculta420_v2:forum-category'
+            variant_id: null
+            props:
+              title_level:
+                source_id: select
+                source:
+                  value: h3
+            slots:
+              parent:
+                sources:
+                  -
+                    source_id: view_field
+                    source:
+                      ui_patterns_views_field: parent_card
+              title:
+                sources:
+                  -
+                    source_id: view_field
+                    source:
+                      ui_patterns_views_field: name
+              description:
+                sources:
+                  -
+                    source_id: view_field
+                    source:
+                      ui_patterns_views_field: description__value
+              count:
+                sources:
+                  -
+                    source_id: view_field
+                    source:
+                      ui_patterns_views_field: aculta_forum_category_topic_count
       defaults:
         style: false
+        row: false
         fields: false
         header: false
+        ui_patterns: false
       header:
         area_text_custom:
           id: area_text_custom
@@ -443,6 +593,46 @@ display:
           content: '<p><a href="/">Discussões recentes</a></p>'
           tokenize: false
       display_extenders: {  }
+      ui_patterns:
+        component_id: 'aculta420_v2:views-display'
+        variant_id: null
+        slots:
+          attachment_before:
+            sources:
+              -
+                source_id: view_attachment_before
+          header:
+            sources:
+              -
+                source_id: view_header
+          exposed:
+            sources:
+              -
+                source_id: view_exposed
+          rows:
+            sources:
+              -
+                source_id: view_rows
+          empty:
+            sources:
+              -
+                source_id: view_empty
+          pager:
+            sources:
+              -
+                source_id: view_pager
+          more:
+            sources:
+              -
+                source_id: view_more
+          footer:
+            sources:
+              -
+                source_id: view_footer
+          attachment_after:
+            sources:
+              -
+                source_id: view_attachment_after
       path: categorias
       menu:
         type: none

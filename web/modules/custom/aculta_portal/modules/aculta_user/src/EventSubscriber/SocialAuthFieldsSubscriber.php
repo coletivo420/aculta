@@ -17,10 +17,19 @@ final class SocialAuthFieldsSubscriber implements EventSubscriberInterface {
 
   public function __construct(private readonly EntityTypeManagerInterface $entityTypeManager) {}
 
+  /**
+   * {@inheritdoc}
+   */
   public static function getSubscribedEvents(): array {
     return [SocialAuthEvents::USER_FIELDS => 'onUserFields'];
   }
 
+  /**
+   * Define o nome de usuário a partir da parte local do e-mail recebido.
+   *
+   * @param \Drupal\social_auth\Event\UserFieldsEvent $event
+   *   Evento com os campos do usuário em criação.
+   */
   public function onUserFields(UserFieldsEvent $event): void {
     $fields = $event->getUserFields();
     $email = (string) ($fields['mail'] ?? '');
@@ -31,7 +40,8 @@ final class SocialAuthFieldsSubscriber implements EventSubscriberInterface {
     $event->setUserFields($fields);
   }
 
-  /** Acrescenta sufixo numérico quando o nome já existe. */
+  /**
+   * Acrescenta sufixo numérico quando o nome já existe. */
   private function uniqueName(string $base): string {
     $storage = $this->entityTypeManager->getStorage('user');
     $candidate = $base;

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_mailer\Monitor;
 
-use Drupal\aculta_file_uploader\IngestionLimits;
 
 /**
  * Relatório agregado DMARC (RFC 7489, Apêndice C): anexo XML em texto, gzip ou zip, resumido em contagens.
@@ -34,7 +33,10 @@ final class DmarcReportParser {
    * Anexos vêm de remetentes externos. O tamanho declarado em ZIP ou GZIP pode
    * ser forjado, então o limite é medido ao ler, e não pelo cabeçalho.
    */
-  public function __construct(private readonly IngestionLimits $limits) {}
+  /**
+   * Teto próprio de tamanho de um relatório DMARC descompactado.
+   */
+  private const DMARC_MAX_REPORT_BYTES = 8 * 1024 * 1024;
 
   /**
    * Tamanho de leitura ao descompactar um anexo.
@@ -91,7 +93,7 @@ final class DmarcReportParser {
         return NULL;
       }
       $xml .= $piece;
-      if (strlen($xml) > $this->limits->bytes(IngestionLimits::DMARC_MAX_REPORT_MB)) {
+      if (strlen($xml) > self::DMARC_MAX_REPORT_BYTES) {
         return NULL;
       }
     }
@@ -126,7 +128,7 @@ final class DmarcReportParser {
             return NULL;
           }
           $xml .= $chunk;
-          if (strlen($xml) > $this->limits->bytes(IngestionLimits::DMARC_MAX_REPORT_MB)) {
+          if (strlen($xml) > self::DMARC_MAX_REPORT_BYTES) {
             return NULL;
           }
         }

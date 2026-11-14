@@ -1,4 +1,7 @@
 services:
+  Drupal\aculta_lms\Hook\CourseClassRelationHooks:
+    class: Drupal\aculta_lms\Hook\CourseClassRelationHooks
+
   Drupal\aculta_lms\Access\ClassPermissionCalculator:
     arguments: ['@config.factory', '@entity_type.manager']
     tags:
@@ -69,7 +72,12 @@ services:
   Drupal\aculta_lms\Learning\CourseAnswerReaderInterface: '@aculta_lms.course_answer_reader'
   aculta_lms.account_courses_reader:
     class: Drupal\aculta_lms\Account\AccountCoursesReader
-    arguments: ['@Drupal\aculta_lms\Learning\CourseProgressReaderInterface', '@group.membership_loader', '@aculta_portal.domain_purpose']
+    arguments: ['@Drupal\aculta_lms\Learning\CourseProgressReaderInterface', '@aculta_lms.group_membership_reader', '@aculta_portal.domain_site']
+  aculta_lms.group_membership_reader:
+    class: Drupal\aculta_lms\Group\GroupMembershipReader
+    arguments: ['@entity_type.manager']
+  Drupal\aculta_lms\Group\GroupMembershipReaderInterface: '@aculta_lms.group_membership_reader'
+  Drupal\aculta_lms\Learning\AccountCoursesReaderInterface: '@aculta_lms.account_courses_reader'
   Drupal\aculta_learning_contracts\Learning\AccountCoursesReaderInterface: '@aculta_lms.account_courses_reader'
   aculta_portal.lms_friendly_slugs:
     class: Drupal\aculta_lms\Routing\LmsFriendlySlugs
@@ -95,24 +103,36 @@ services:
       - { name: aculta_portal.implementation }
   aculta_lms.learning_dashboard:
     class: Drupal\aculta_lms\LearningDashboardManager
-    arguments: ['@?Drupal\aculta_learning_contracts\Learning\AccountCoursesReaderInterface', '@aculta_lms.course_certificate_manager', '@entity_type.manager', '@Drupal\aculta_lms\Learning\CourseProgressReaderInterface', '@Drupal\aculta_lms\Learning\CourseLessonReaderInterface']
+    arguments: ['@?Drupal\aculta_lms\Learning\AccountCoursesReaderInterface', '@aculta_lms.course_certificate_manager', '@entity_type.manager', '@Drupal\aculta_lms\Learning\CourseProgressReaderInterface', '@Drupal\aculta_lms\Learning\CourseLessonReaderInterface']
   aculta_lms.student_status_cron_hooks:
     class: Drupal\aculta_lms\Hook\StudentStatusSnapshotCronHooks
     arguments: ['@aculta_lms.learning_dashboard', '@entity_type.manager', '@event_dispatcher', '@?aculta_user.aculta_user_agreement_ledger']
 
   # Alias por classe: o hook de cron recebe o gerenciador por tipo.
   Drupal\aculta_lms\LearningDashboardManager: '@aculta_lms.learning_dashboard'
-  Drupal\aculta_learning_contracts\Learning\StudentLearningSummaryReaderInterface: '@aculta_lms.learning_dashboard'
+  Drupal\aculta_lms\Learning\StudentLearningSummaryReaderInterface: '@aculta_lms.learning_dashboard'
   # Contrato de leitura da jornada: o Studio depende da interface, não do LMS.
   aculta_lms.course_journey_reader:
     alias: aculta_lms.learning_dashboard
-  Drupal\aculta_learning_contracts\Learning\CourseJourneyReaderInterface: '@aculta_lms.course_journey_reader'
+  Drupal\aculta_lms\Learning\CourseJourneyReaderInterface: '@aculta_lms.course_journey_reader'
   aculta_lms.class_dashboard_access:
     class: Drupal\aculta_lms\Access\ClassDashboardAccessCheck
     arguments: ['@aculta_lms.learning_dashboard', '@current_user']
+  aculta_lms.course_authoring_access:
+    class: Drupal\aculta_lms\Access\CourseAuthoringAccessCheck
+    arguments: ['@current_user', '@entity_type.manager']
+  aculta_lms.course_structure_controller:
+    class: Drupal\aculta_lms\Controller\CourseStructureController
+    arguments: ['@entity_type.manager', '@string_translation', '@form_builder']
+  aculta_lms.course_structure_order:
+    class: Drupal\aculta_lms\Order\CourseStructureOrderManager
+    arguments: ['@entity_type.manager', '@database', '@lock']
   aculta_lms.learning_dashboard_controller:
     class: Drupal\aculta_lms\Controller\LearningDashboardController
-    arguments: ['@aculta_lms.learning_dashboard', '@aculta_lms.class_activity_deadline_manager', '@entity_type.manager', '@current_user', '@date.formatter', '@string_translation']
+    arguments: ['@aculta_lms.learning_dashboard', '@aculta_lms.class_activity_deadline_manager', '@entity_type.manager', '@current_user', '@date.formatter', '@string_translation', '@aculta_lms.class_status_history', '@request_stack']
+  aculta_lms.class_status_history:
+    class: Drupal\aculta_lms\Learning\ClassStatusHistory
+    arguments: ['@?aculta_statistics.storage']
   aculta_lms.class_activity_deadline_access:
     class: Drupal\aculta_lms\Access\ClassActivityDeadlineAccessCheck
     arguments: ['@entity_type.manager', '@current_user']
@@ -123,6 +143,18 @@ services:
   aculta_lms.answer_submission_access:
     class: Drupal\aculta_lms\Access\AnswerSubmissionAccessCheck
     arguments: ['@aculta_portal.lms_friendly_slugs', '@aculta_lms.notice_eligibility', '@current_user']
+  aculta_lms.lesson_view_access:
+    class: Drupal\aculta_lms\Access\LessonViewAccessCheck
+    arguments: ['@aculta_portal.lms_friendly_slugs', '@aculta_lms.notice_eligibility', '@current_user']
+  aculta_lms.course_lesson_controller:
+    class: Drupal\aculta_lms\Controller\CourseLessonController
+    arguments: ['@entity_type.manager', '@aculta_portal.lms_friendly_slugs', '@aculta_lms.notice_eligibility', '@string_translation']
+  aculta_lms.course_lesson_preview_access:
+    class: Drupal\aculta_lms\Access\CourseLessonPreviewAccessCheck
+    arguments: ['@aculta_lms.course_authoring_access']
+  aculta_lms.course_lesson_preview_controller:
+    class: Drupal\aculta_lms\Controller\CourseLessonPreviewController
+    arguments: ['@entity_type.manager', '@aculta_lms.course_lesson_preview_access', '@string_translation']
   Drupal\aculta_lms\Hook\ActivityDeadlineFormHooks:
     class: Drupal\aculta_lms\Hook\ActivityDeadlineFormHooks
     arguments: ['@aculta_lms.class_activity_deadline_manager', '@date.formatter', '@entity_type.manager', '@current_user', '@string_translation']
@@ -137,7 +169,7 @@ services:
     arguments: ['@aculta_lms.course_certificate_manager', '@?plugin.manager.entity_print.print_engine', '@date.formatter', '@string_translation', '@?aculta_lms.certificate_qr_code_provider']
   aculta_lms.certificate_qr_code_provider:
     class: Drupal\aculta_lms\Certificate\CertificateQrCodeProvider
-    arguments: ['@?aculta_qrcode.generator', '@?aculta_qrcode.payload_validator', '@?aculta_qrcode.preset_registry', '@?aculta_portal.domain_purpose']
+    arguments: ['@?aculta_qrcode.generator', '@?aculta_qrcode.payload_validator', '@?aculta_qrcode.preset_registry', '@?aculta_portal.domain_site']
   aculta_lms.submission_image_validator:
     class: Drupal\aculta_lms\Plugin\Validation\Constraint\LmsSubmissionImageValidator
     arguments: ['@aculta_file_uploader.consumer_policy']
@@ -146,10 +178,10 @@ services:
     arguments: ['@entity_type.manager', '@aculta_lms.notice_eligibility']
   aculta_lms.answer_review_access:
     class: Drupal\aculta_lms\Access\AnswerReviewAccessCheck
-    arguments: ['@aculta_lms.notice_eligibility', '@current_user']
+    arguments: ['@aculta_lms.notice_eligibility', '@current_user', '@aculta_lms.group_membership_reader']
   aculta_lms.answer_review_controller:
     class: Drupal\aculta_lms\Controller\AnswerReviewController
-    arguments: ['@entity_type.manager']
+    arguments: ['@entity_type.manager', '@aculta_lms.group_membership_reader', '@date.formatter']
   Drupal\aculta_lms\Controller\AcultaAnswerFileDownloadController:
     class: Drupal\aculta_lms\Controller\AcultaAnswerFileDownloadController
     autowire: true
@@ -206,3 +238,117 @@ services:
     arguments: ['@aculta_lms.notice_recipients', '@aculta_messenger.notice_event_publisher', '@logger.channel.aculta_messenger']
     tags:
       - { name: event_subscriber }
+
+  aculta_forum_lms.activity_discussion_resolver:
+    class: Drupal\aculta_lms\Context\LmsActivityDiscussionResolver
+    arguments: ['@entity_type.manager', '@aculta_lms.class_activity_deadline_manager', '@string_translation']
+  Drupal\aculta_lms\Context\LmsActivityDiscussionResolver: '@aculta_forum_lms.activity_discussion_resolver'
+
+  Drupal\aculta_lms\Hook\LmsActivityDiscussionHooks:
+    arguments: ['@aculta_forum_lms.activity_discussion_resolver', '@current_user', '@entity_type.manager']
+
+  aculta_forum_lms.moderation_manager:
+    class: Drupal\aculta_lms\Access\LmsForumModerationManager
+    arguments: ['@entity_type.manager', '@?Drupal\aculta_forum\Context\Provider\LmsDiscussionContextProvider']
+
+  aculta_lms.moderation_controller:
+    class: Drupal\aculta_lms\Controller\LmsForumModerationController
+    arguments: ['@aculta_forum_lms.moderation_manager', '@entity_type.manager', '@views.executable', '@current_user', '@string_translation']
+
+  Drupal\aculta_lms\Hook\LmsCommentModerationOperationsHooks:
+    arguments: ['@aculta_forum_lms.moderation_manager', '@current_user']
+
+  Drupal\aculta_lms\Hook\EventAccessHooks:
+    arguments: ['@aculta_lms.agenda_event_access']
+
+  aculta_lms.agenda_event_access:
+    class: Drupal\aculta_lms\Agenda\EventClassAccess
+    arguments: ['@aculta_lms.class_activity_deadline_access']
+  aculta_lms_agenda.event_access:
+    alias: aculta_lms.agenda_event_access
+
+  aculta_lms.agenda_event_route_access:
+    class: Drupal\aculta_lms\Agenda\EventRouteAccess
+    arguments: ['@entity_type.manager', '@current_user']
+  aculta_lms_agenda.event_route_access:
+    alias: aculta_lms.agenda_event_route_access
+
+  aculta_lms.agenda_event_route_subscriber:
+    class: Drupal\aculta_lms\Agenda\EventSubscriber\LmsEventRouteSubscriber
+    tags:
+      - { name: event_subscriber }
+
+  aculta_lms.agenda_entries:
+    class: Drupal\aculta_lms\Agenda\AgendaEntriesProvider
+    arguments: ['@entity_type.manager', '@aculta_lms.class_activity_deadline_manager', '@aculta_events.occurrences', '@datetime.time']
+  aculta_lms_agenda.entries:
+    alias: aculta_lms.agenda_entries
+
+  aculta_lms.agenda_calendar_provider:
+    class: Drupal\aculta_lms\Agenda\Calendar\LmsCalendarItemProvider
+    arguments: ['@aculta_lms.agenda_entries', '@current_user']
+    tags:
+      - { name: aculta_calendar.item_provider }
+  aculta_lms_agenda.calendar_provider:
+    alias: aculta_lms.agenda_calendar_provider
+
+  aculta_lms.agenda_tokens:
+    class: Drupal\aculta_lms\Agenda\Calendar\PersonalCalendarTokens
+    arguments: ['@state']
+  aculta_lms_agenda.tokens:
+    alias: aculta_lms.agenda_tokens
+
+  aculta_lms.agenda_mail_type_evento_turma:
+    class: Drupal\aculta_lms\Agenda\Mail\EventoTurmaMailType
+    arguments: ['@string_translation']
+    tags:
+      - { name: aculta_mailer.type }
+  aculta_lms_agenda.mail_type_evento_turma:
+    alias: aculta_lms.agenda_mail_type_evento_turma
+
+  aculta_lms.course_document_cleanup:
+    class: Drupal\aculta_lms\Resources\Cleanup\CourseDocumentCleanup
+    arguments: ['@entity_type.manager', '@aculta_portal.unused_media_cleaner', '@aculta_file_uploader.unused_file_cleaner']
+  aculta_lms_resources.course_document_cleanup:
+    alias: aculta_lms.course_document_cleanup
+
+  Drupal\aculta_lms\Hook\CourseDocumentCleanupHooks:
+    arguments: ['@aculta_lms.course_document_cleanup']
+
+  Drupal\aculta_lms\Hook\CourseDocumentFormHooks:
+    arguments: ['@current_route_match']
+
+  Drupal\aculta_lms\Hook\CourseResourcesHooks:
+    arguments: ['@aculta_lms.course_resource_builder', '@current_route_match']
+
+  Drupal\aculta_lms\Hook\GalleryCourseAccessHooks:
+    arguments: ['@entity_type.manager', '@aculta_portal.domain_site']
+
+  aculta_lms.course_document_access:
+    class: Drupal\aculta_lms\Resources\Access\CourseDocumentAccessCheck
+    arguments: ['@aculta_lms.course_authoring_access', '@group_relation_type.manager', '@current_user']
+  aculta_lms_resources.course_document_access:
+    alias: aculta_lms.course_document_access
+
+  aculta_lms.course_document_controller:
+    class: Drupal\aculta_lms\Resources\Controller\CourseDocumentController
+    arguments: ['@entity_type.manager', '@entity.form_builder', '@aculta_lms.course_document_access', '@current_route_match', '@string_translation']
+  aculta_lms_resources.course_document_controller:
+    alias: aculta_lms.course_document_controller
+
+  aculta_lms.course_content_index_provider:
+    class: Drupal\aculta_lms\Resources\ContentIndex\LmsCourseContentIndexProvider
+    arguments: ['@aculta_portal.domain_site', '@group_relation_type.manager']
+    tags:
+      - { name: aculta_index.provider }
+  aculta_lms_resources.course_content_index_provider:
+    alias: aculta_lms.course_content_index_provider
+
+  aculta_lms.course_resource_builder:
+    class: Drupal\aculta_lms\Resources\CourseResourceBuilder
+    arguments: ['@aculta_portal.domain_site', '@current_user', '@string_translation', '@group_relation_type.manager']
+  aculta_lms_resources.course_resource_builder:
+    alias: aculta_lms.course_resource_builder
+
+
+

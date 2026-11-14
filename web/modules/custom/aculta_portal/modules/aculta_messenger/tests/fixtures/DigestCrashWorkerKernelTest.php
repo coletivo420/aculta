@@ -42,6 +42,12 @@ final class DigestCrashWorkerKernelTest extends KernelTestBase {
     'aculta_forum_post_test',
     'aculta_messenger_aviso_test',
     'aculta_mailer',
+    'aculta_file_uploader',
+    'file',
+    'token',
+    'image',
+    'crop',
+    'image_widget_crop',
   ];
 
   /**

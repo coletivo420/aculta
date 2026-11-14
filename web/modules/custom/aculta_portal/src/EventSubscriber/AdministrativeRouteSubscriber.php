@@ -23,14 +23,18 @@ final class AdministrativeRouteSubscriber extends RouteSubscriberBase {
   private const PREFIXO = '/painel-administrativo';
 
   /**
-   * Árvore de configuração de pessoas, com slugs em português. Só esta árvore é traduzida: a área operacional de pessoas
+   * Árvore de configuração de pessoas, com slugs em português.
+   *
+   * Só esta árvore é traduzida: a área operacional de pessoas
    * (/painel-administrativo/pessoas) mantém os caminhos do Core.
    */
   private const RAIZ_CONFIGURACAO_PESSOAS = '/painel-administrativo/configuracoes/people';
 
   /**
-   * Ferramentas de administração de contas que saem de /pessoas (usuário individual) para Configurações > Pessoas.
-   * Cada entrada move o caminho e todas as subpáginas dele. OAuth e perfis individuais continuam em /pessoas.
+   * Ferramentas de contas que saem de /pessoas para Configurações > Pessoas.
+   *
+   * Cada entrada move o caminho e todas as subpáginas dele. OAuth e perfis
+   * individuais continuam em /pessoas.
    */
   /**
    * Caminhos de usuário individual que ficam em /pessoas, com o nome em português.
@@ -72,11 +76,15 @@ final class AdministrativeRouteSubscriber extends RouteSubscriberBase {
    * Roda por último: rotas registradas por outros alteradores (ex.: ui_patterns_library) também recebem a regra.
    */
   public static function getSubscribedEvents(): array {
-    // Roda depois da renomeação /admin -> /painel-administrativo (prioridade -2048): só assim a raiz do painel já existe
+    // Roda depois da renomeação /admin -> /painel-administrativo (prioridade -2048): só assim a raiz do painel
+    // já existe
     // no caminho quando a tradução dos segmentos olha para ela.
     return [RoutingEvents::ALTER => [['onAlterRoutes', -3000]]];
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function onAlterRoutes(RouteBuildEvent $event): void {
     $this->alterRoutes($event->getRouteCollection());
   }
@@ -102,6 +110,9 @@ final class AdministrativeRouteSubscriber extends RouteSubscriberBase {
     return implode('/', array_map(fn (string $segmento): string => self::SEGMENTOS[$segmento] ?? $segmento, explode('/', $caminho)));
   }
 
+  /**
+   * {@inheritdoc}
+   */
   protected function alterRoutes(RouteCollection $collection): void {
     // A página de papéis do Core (/painel-administrativo/pessoas/roles) é substituída pela página Papéis e perfis do
     // ACULTA: cadeia de papéis, operações de cada papel (mesmo menu do Core) e criação de papel.
@@ -139,7 +150,8 @@ final class AdministrativeRouteSubscriber extends RouteSubscriberBase {
         $collection->add($nome, new Route($traduzido, $route->getDefaults(), $route->getRequirements(), $route->getOptions(), $route->getHost(), $route->getSchemes(), $route->getMethods(), $route->getCondition()));
         $route = $collection->get($nome);
       }
-      // Só rotas sem decisão explícita: `FALSE` definido por um módulo (ex.: biblioteca de componentes do ui_patterns) é respeitado.
+      // Só rotas sem decisão explícita: `FALSE` definido por um módulo (ex.: biblioteca de componentes do
+      // ui_patterns) é respeitado.
       if (str_starts_with($route->getPath(), self::PREFIXO) && $route->getOption('_admin_route') === NULL) {
         $route->setOption('_admin_route', TRUE);
       }

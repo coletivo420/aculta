@@ -2,21 +2,36 @@
 
 /**
  * @file
- * Gate: regras de estado da foto de perfil (aculta_user). Ver web/modules/custom/aculta_portal/modules/aculta_user/docs/FOTO-PERFIL.md.
+ * Gate: regras de estado da foto de perfil (aculta_user).
+ *
+ * Ver web/modules/custom/aculta_portal/modules/aculta_user/docs/
+ * FOTO-PERFIL.md.
  *
  * Regras (invariantes INV-FOTO-*):
- * - INV-FOTO-1: avatar do sistema (acervo) não tem botão "Remover" (o campo de envio não recebe remove_button).
- * - INV-FOTO-2: "Sortear outro avatar" só existe quando a foto atual é do acervo (if ($isAcervo)).
- * - INV-FOTO-3: não existe link "Recortar foto" no popup; o recorte só abre logo após o envio (photo-flow.js).
- * - INV-FOTO-4: o recorte só aceita o arquivo recém-enviado: nada de fallback para a foto atual nem para o recorte pendente.
+ * - INV-FOTO-1: avatar do sistema (acervo) não tem botão "Remover" (o
+ *   campo de envio não recebe remove_button).
+ * - INV-FOTO-2: "Sortear outro avatar" só existe quando a foto atual é
+ *   do acervo (if ($isAcervo)).
+ * - INV-FOTO-3: não existe link "Recortar foto" no popup; o recorte só
+ *   abre logo após o envio (photo-flow.js).
+ * - INV-FOTO-4: o recorte só aceita o arquivo recém-enviado: nada de
+ *   fallback para a foto atual nem para o recorte pendente.
  * - INV-FOTO-5: o campo de recorte aparece uma única vez no modal.
- * - INV-FOTO-6: aplicar o recorte troca a foto da conta e recarrega o painel, sem reabrir o popup.
- * - INV-FOTO-8: sortear só troca a prévia do modal; a foto muda ao salvar; fechar sem salvar descarta a escolha.
- * - INV-FOTO-7: o popup não mostra nome nem link da foto atual; "Remover foto" (só personalizada) volta a um avatar sorteado do acervo.
- * - INV-FOTO-10: o acervo é componente obrigatório e o último fallback: catálogo válido e ao menos uma entrada ativa com arquivo.
- * - INV-FOTO-11: `user_picture` é a fonte única; perfil, autoria e memorial usam o resolver central, com cache da conta e sem fallback visual por inicial.
+ * - INV-FOTO-6: aplicar o recorte troca a foto da conta e recarrega o
+ *   painel, sem reabrir o popup.
+ * - INV-FOTO-8: sortear só troca a prévia do modal; a foto muda ao
+ *   salvar; fechar sem salvar descarta a escolha.
+ * - INV-FOTO-7: o popup não mostra nome nem link da foto atual;
+ *   "Remover foto" (só personalizada) volta a um avatar sorteado do
+ *   acervo.
+ * - INV-FOTO-10: o acervo é componente obrigatório e o último fallback:
+ *   catálogo válido e ao menos uma entrada ativa com arquivo.
+ * - INV-FOTO-11: `user_picture` é a fonte única; perfil, autoria e
+ *   memorial usam o resolver central, com cache da conta e sem fallback
+ *   visual por inicial.
  *
- * Verificação estática do código-fonte (não depende de servidor). A verificação de navegador está no roteiro do docs.
+ * Verificação estática do código-fonte (não depende de servidor). A
+ * verificação de navegador está no roteiro do docs.
  */
 
 declare(strict_types=1);
@@ -83,12 +98,15 @@ if (!str_contains($flow, 'openCrop(fid)')) {
   $errors[] = 'INV-FOTO-3: photo-flow.js não abre o recorte ao receber o envio (openCrop)';
 }
 
-// INV-FOTO-5: o recorte aparece uma única vez (o achatamento limpa o pre_render que reagrupa os filhos).
+// INV-FOTO-5: o recorte aparece uma única vez (o achatamento limpa o
+// pre_render que reagrupa os filhos).
 if (!str_contains($crop, "\$element[\$key]['#pre_render'] = [];") || !str_contains($crop, "\$element['#pre_render'] = [];")) {
   $errors[] = 'INV-FOTO-5: flattenElement não limpa #pre_render; o campo de recorte sai duplicado';
 }
 
-// INV-FOTO-7: o campo de envio não mostra a foto atual (nome e link); "Remover foto" é botão próprio, só para foto personalizada, e sorteia do acervo.
+// INV-FOTO-7: o campo de envio não mostra a foto atual (nome e link);
+// "Remover foto" é botão próprio, só para foto personalizada, e sorteia
+// do acervo.
 if (!str_contains($picture, "'#default_value' => NULL")) {
   $errors[] = 'INV-FOTO-7: o campo de envio tem valor padrão (mostra nome/link da foto atual)';
 }
@@ -99,7 +117,8 @@ if (!preg_match('/function removePersonal\(.*?avatarPool->reroll\(\$account\)/s'
   $errors[] = 'INV-FOTO-7: removePersonal não sorteia do acervo (AvatarPool::reroll)';
 }
 
-// INV-FOTO-8: sortear só troca a prévia do modal (escolha pendente); a foto só muda ao salvar. Fechar sem salvar não grava.
+// INV-FOTO-8: sortear só troca a prévia do modal (escolha pendente); a
+// foto só muda ao salvar. Fechar sem salvar não grava.
 $reroll = $read('src/Controller/AvatarRerollController.php');
 if (!str_contains($picture, "'.ui-dialog [data-aculta-user-avatar]'") || !str_contains($picture, 'avatarPool->preview(')) {
   $errors[] = 'INV-FOTO-8: o sorteio não se limita à prévia do modal (ReplaceCommand em .ui-dialog) ou não guarda escolha pendente';
@@ -111,13 +130,15 @@ if (!str_contains($picture, 'applyPending(')) {
   $errors[] = 'INV-FOTO-8: Salvar não aplica a escolha pendente do sorteio';
 }
 
-// INV-FOTO-9: foto importada por OAuth é personalizada: o presave de conta nova a torna permanente e fora do acervo.
+// INV-FOTO-9: foto importada por OAuth é personalizada: o presave de
+// conta nova a torna permanente e fora do acervo.
 $accountHooks = $read('src/Hook/AccountCreationHooks.php');
 if (!str_contains($accountHooks, 'setPermanent()') || !str_contains($accountHooks, 'AvatarPool::DIRECTORY')) {
   $errors[] = 'INV-FOTO-9: foto importada por OAuth não é tornada permanente/personalizada no presave da conta';
 }
 
-// INV-FOTO-6: aplicar o recorte troca a foto da conta e recarrega o painel; não há etapa de "Salvar" nem reabertura do popup.
+// INV-FOTO-6: aplicar o recorte troca a foto da conta e recarrega o
+// painel; não há etapa de "Salvar" nem reabertura do popup.
 if (str_contains($crop, 'PENDING_KEY') || str_contains($crop, 'aculta_recorte') || !str_contains($crop, "set('user_picture'")) {
   $errors[] = 'INV-FOTO-6: o recorte não troca a foto da conta, ou volta ao recorte pendente / reabertura do popup';
 }
@@ -141,7 +162,8 @@ else {
   }
 }
 
-// INV-FOTO-11: fonte única e resolução compartilhada, sem fallback concorrente do tema.
+// INV-FOTO-11: fonte única e resolução compartilhada, sem fallback
+// concorrente do tema.
 if (!str_contains($avatarResolver, "get('user_picture')") || !str_contains($avatarResolver, 'addCacheableDependency($account)')) {
   $errors[] = 'INV-FOTO-11: AvatarResolver não usa user_picture como fonte canônica com cache da conta';
 }
@@ -157,7 +179,8 @@ if (preg_match('/slice\s*\(\s*0\s*,\s*1\s*\)|profile-identity__avatar--initial/'
   $errors[] = 'INV-FOTO-11: tema mantém fallback visual por inicial ou token de avatar vazio';
 }
 
-// INV-FOTO-10: o acervo é componente obrigatório e o último fallback. Exige catálogo válido e ao menos uma entrada ativa com arquivo.
+// INV-FOTO-10: o acervo é componente obrigatório e o último fallback.
+// Exige catálogo válido e ao menos uma entrada ativa com arquivo.
 $catalogPath = $module . '/assets/avatars/meta/avatars.json';
 $catalog = is_file($catalogPath) ? json_decode((string) file_get_contents($catalogPath), TRUE) : NULL;
 if (!is_array($catalog)) {

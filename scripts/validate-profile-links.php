@@ -1,15 +1,24 @@
 <?php
 
+/**
+ * @file
+ */
+
 declare(strict_types=1);
 
 /**
- * Guardrail: links para o perfil público (/u/<apelido>) são gerados por rota e propósito, com slug minúsculo
- * derivado do apelido atual; a capitalização de exibição vem do campo original. Links registram cache.
+ * Guardrail: links do perfil público são gerados por rota e propósito.
+ *
+ * O slug é minúsculo, derivado do apelido atual; a capitalização de
+ * exibição vem do campo original. Links registram cache.
  *
  * Reprova:
- *  - caminho /u/ literal em código (src, templates, twig, js do tema) fora da definição de rota;
- *  - código que referencia a rota aculta_user.perfil_publico sem slug canônico ou sem registrar o perfil na cache;
- *  - controlador que renderiza o slug da rota em vez do apelido salvo para exibição.
+ *  - caminho /u/ literal em código (src, templates, twig, js do tema)
+ *    fora da definição de rota;
+ *  - código que referencia a rota aculta_user.perfil_publico sem slug
+ *    canônico ou sem registrar o perfil na cache;
+ *  - controlador que renderiza o slug da rota em vez do apelido salvo
+ *    para exibição.
  * Regra e motivo: docs/portal/GUARDRAILS.md (seção "Links de perfil").
  */
 
@@ -22,7 +31,8 @@ $scan = [
 $allowedLiteral = [
   $root . '/web/modules/custom/aculta_portal/modules/aculta_user/aculta_user.routing.yml',
 ];
-// Subscriber que responde 404 para slug não canônico: não gera link de perfil, então não há cache de perfil a registrar.
+// Subscriber que responde 404 para slug não canônico: não gera link de
+// perfil, então não há cache de perfil a registrar.
 // Justificativa no GUARDRAILS (Links de perfil).
 $semCacheDePerfil = [
   $root . '/web/modules/custom/aculta_portal/modules/aculta_user/src/EventSubscriber/PublicProfileNotCanonicalSubscriber.php',
@@ -49,7 +59,8 @@ foreach ($files as $path) {
   $code = file_get_contents($path) ?: '';
   $rel = substr($path, strlen($root) + 1);
 
-  // 1. Caminho /u/ literal: aceito apenas em comentários e texto de documentação dentro do código.
+  // 1. Caminho /u/ literal: aceito apenas em comentários e texto de
+  //    documentação dentro do código.
   $noComments = preg_replace('~/\*.*?\*/|//[^\n]*|#[^\n]*~s', '', $code) ?? $code;
   if (preg_match('~[\'"]/u/[^\'"]*[\'"]~', $noComments)) {
     $violations[] = "$rel: caminho /u/ escrito à mão; gere pela rota aculta_user.perfil_publico com o apelido atual.";

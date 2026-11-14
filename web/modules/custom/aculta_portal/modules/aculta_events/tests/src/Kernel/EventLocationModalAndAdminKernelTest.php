@@ -10,15 +10,15 @@ use Drupal\aculta_events\Entity\EventLocation;
 use Drupal\aculta_events\EventSubscriber\ActivityRetiredRouteSubscriber;
 use Drupal\aculta_events\Form\EventLocationModalForm;
 use Drupal\aculta_events\Hook\ActivityRetirementHooks;
-use Drupal\Core\Ajax\CloseModalDialogCommand;
-use Drupal\Core\Ajax\InvokeCommand;
-use Drupal\Core\Ajax\ReplaceCommand;
+use Drupal\aculta_user\Organization\OrganizationAccessService;
+use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\Form\FormState;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\user\Entity\User;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
@@ -68,8 +68,23 @@ final class EventLocationModalAndAdminKernelTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
+  public function register(ContainerBuilder $container): void {
+    parent::register($container);
+    // Isola o teste do grafo completo de serviços do módulo aculta_user.
+    $container->setDefinition(
+      'aculta_user.organization_access_service',
+      (new Definition(OrganizationAccessService::class))->setSynthetic(TRUE)->setPublic(TRUE),
+    );
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   protected function setUp(): void {
     parent::setUp();
+    $organizationAccess = (new \ReflectionClass(OrganizationAccessService::class))
+      ->newInstanceWithoutConstructor();
+    $this->container->set('aculta_user.organization_access_service', $organizationAccess);
 
     $this->installEntitySchema('user');
     $this->installEntitySchema('node');
@@ -77,7 +92,6 @@ final class EventLocationModalAndAdminKernelTest extends KernelTestBase {
     $this->installEntitySchema('aculta_event_date');
     $this->installEntitySchema('aculta_event_location');
     $this->installEntitySchema('aculta_event_organization');
-    $this->installSchema('system', ['sequences']);
     $this->installSchema('node', ['node_access']);
     $this->installConfig(['system']);
 
@@ -221,6 +235,8 @@ final class EventLocationModalAndAdminKernelTest extends KernelTestBase {
     $modalForm = new EventLocationModalForm(
       $this->container->get('entity_type.manager'),
       $this->container->get('aculta_events.permission_policy'),
+      $this->container->get('renderer'),
+      $this->container->get('aculta_events.route_context'),
     );
 
     // 1. Etapa de busca
@@ -260,27 +276,15 @@ final class EventLocationModalAndAdminKernelTest extends KernelTestBase {
     // Selecionar existente.
     $formStateSearch->set('selected_location_id', (int) $existing->id());
     $formStateSearch->set('field_name', 'field_event_location');
-    $ajaxResponse = $modalForm->ajaxSelectLocation($formSearch, $formStateSearch);
-
-    $commands = $ajaxResponse->getCommands();
-    self::assertNotEmpty($commands);
-    $closeFound = FALSE;
-    $replaceFound = FALSE;
-    $invokeFound = FALSE;
-    foreach ($commands as $cmd) {
-      if ($cmd instanceof CloseModalDialogCommand || ($cmd['command'] ?? '') === 'closeDialog') {
-        $closeFound = TRUE;
-      }
-      if ($cmd instanceof ReplaceCommand || ($cmd['command'] ?? '') === 'insert') {
-        $replaceFound = TRUE;
-      }
-      if ($cmd instanceof InvokeCommand || ($cmd['command'] ?? '') === 'invoke') {
-        $invokeFound = TRUE;
-      }
-    }
-    self::assertTrue($closeFound);
-    self::assertTrue($replaceFound);
-    self::assertTrue($invokeFound);
+    // HTMX closes the modal and returns the parent widget through OOB.
+    $htmxResponse = $modalForm->htmxUpdateParentResponse(
+      (int) $existing->id(),
+      'field_event_location',
+      'field-event-location-wrapper',
+    );
+    self::assertSame('aculta:close-dialog', $htmxResponse->headers->get('HX-Trigger'));
+    self::assertStringContainsString('hx-swap-oob', (string) $htmxResponse->getContent());
+    self::assertStringContainsString('field-event-location-wrapper', (string) $htmxResponse->getContent());
 
     // 2. Etapa de criação de novo local
     $formStateCreate = new FormState();

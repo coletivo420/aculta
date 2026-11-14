@@ -2,6 +2,8 @@
 
 namespace Drupal\aculta_donation\Plugin\Block;
 
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\aculta_donation\Form\DonationSettingsForm;
 use Drupal\Core\Block\Attribute\Block;
 use Drupal\Core\Block\BlockBase;
@@ -51,7 +53,7 @@ class DonateBlock extends BlockBase implements ContainerFactoryPluginInterface {
   /**
    * Gerenciador de domínio: o botão Doar aponta para o domínio de apoio.
    */
-  protected \Drupal\aculta_portal\Domain\DomainPurposeManager $purposes;
+  protected DomainSiteManager $purposes;
 
   // phpcs:disable Generic.CodeAnalysis.UselessOverridingMethod.Found
 
@@ -77,7 +79,7 @@ class DonateBlock extends BlockBase implements ContainerFactoryPluginInterface {
       $instance->aliasManager = $container->get('path_alias.manager');
     }
     $instance->configFactory = $container->get('config.factory');
-    $instance->purposes = $container->get('aculta_portal.domain_purpose');
+    $instance->purposes = $container->get('aculta_portal.domain_site');
     return $instance;
   }
 
@@ -85,9 +87,13 @@ class DonateBlock extends BlockBase implements ContainerFactoryPluginInterface {
    * URL do passo inicial da doação, no domínio de apoio, com a query de retorno quando houver.
    *
    * @param array<string, mixed> $options
+   *   Opções adicionais da URL, como a query de retorno.
+   *
+   * @return string
+   *   URL do passo inicial da doação.
    */
   private function urlDoacao(array $options): string {
-    $url = $this->purposes->routeUrl('support', 'aculta_donation.donation.default') ?? Url::fromRoute('aculta_donation.donation.default');
+    $url = $this->purposes->routeUrl(SiteKey::Support, 'aculta_donation.donation.default') ?? Url::fromRoute('aculta_donation.donation.default');
     if (isset($options['query'])) {
       $url->setOption('query', $options['query']);
     }

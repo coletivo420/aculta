@@ -9,4 +9,3 @@ sources:
   brasilapi:
     enabled: true
     weight: 2
-

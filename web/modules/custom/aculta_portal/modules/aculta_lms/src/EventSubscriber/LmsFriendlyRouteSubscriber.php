@@ -20,6 +20,15 @@ final class LmsFriendlyRouteSubscriber extends RouteSubscriberBase {
    * {@inheritdoc}
    */
   protected function alterRoutes(RouteCollection $collection): void {
+    $lesson_route = $collection->get('aculta_lms.lesson_view');
+    if ($lesson_route !== NULL) {
+      $lesson_route->setPath('/curso/{group}/{lesson_delta}');
+      $lesson_route->setOption('parameters', [
+        'group' => ['type' => LmsFriendlySlugConverter::TYPE_COURSE],
+        'lesson_delta' => ['type' => LmsFriendlySlugConverter::TYPE_LESSON],
+      ]);
+    }
+
     $route = $collection->get('aculta_lms.answer_submission');
     if ($route === NULL) {
       return;

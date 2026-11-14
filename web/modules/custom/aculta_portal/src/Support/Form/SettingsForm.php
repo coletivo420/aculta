@@ -14,20 +14,31 @@ use Drupal\Core\Form\FormStateInterface;
  */
 final class SettingsForm extends ConfigFormBase {
 
-  /** Valores padrão de instalação (R$). */
+  /**
+   * Valores padrão de instalação (R$). */
   public const VALORES_PADRAO = [5, 10, 20, 50, 100];
 
-  /** Limite de cartões de valor na página. */
+  /**
+   * Limite de cartões de valor na página. */
   public const MAXIMO_VALORES = 8;
 
+  /**
+   * {@inheritdoc}
+   */
   public function getFormId(): string {
     return 'aculta_support_settings';
   }
 
+  /**
+   * {@inheritdoc}
+   */
   protected function getEditableConfigNames(): array {
     return ['aculta_portal.support'];
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $config = $this->config('aculta_portal.support');
     $form['intro'] = [
@@ -50,6 +61,9 @@ final class SettingsForm extends ConfigFormBase {
     return parent::buildForm($form, $form_state);
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
     parent::validateForm($form, $form_state);
     $valores = $this->valoresDoTexto((string) $form_state->getValue('amounts'));
@@ -61,6 +75,9 @@ final class SettingsForm extends ConfigFormBase {
     }
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $this->config('aculta_portal.support')
       ->set('intro', (string) $form_state->getValue('intro'))
@@ -73,7 +90,11 @@ final class SettingsForm extends ConfigFormBase {
   /**
    * Lista de valores sem repetição, na ordem informada. NULL quando o texto não é uma lista válida.
    *
+   * @param string $texto
+   *   Texto com valores separados por vírgula.
+   *
    * @return int[]|null
+   *   Valores inteiros únicos na ordem informada, ou NULL se o texto for inválido.
    */
   public static function valoresDoTexto(string $texto): ?array {
     $partes = array_filter(array_map('trim', explode(',', $texto)), static fn (string $p): bool => $p !== '');

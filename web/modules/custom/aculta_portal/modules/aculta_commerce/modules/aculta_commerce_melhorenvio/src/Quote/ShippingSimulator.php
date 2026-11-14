@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_commerce_melhorenvio\Quote;
 
-use Drupal\aculta_commerce_melhorenvio\Address\ShipmentAddressBinder;
 use Drupal\aculta_commerce_melhorenvio\Http\MelhorEnvioClientInterface;
 use Drupal\aculta_commerce_melhorenvio\Http\MelhorEnvioException;
 use Drupal\aculta_portal_cep\Lookup\CepLookupInterface;
@@ -107,7 +106,10 @@ class ShippingSimulator {
     $result = $options === []
       ? new ShippingSimulation(ShippingSimulation::STATE_EMPTY)
       : new ShippingSimulation(ShippingSimulation::STATE_AVAILABLE, NULL, $options);
-    $this->cache->set($key, $result, $this->time->getRequestTime() + self::CACHE_TTL, [self::CACHE_TAG, 'config:' . self::SETTINGS]);
+    $this->cache->set($key, $result, $this->time->getRequestTime() + self::CACHE_TTL, [
+      self::CACHE_TAG,
+      'config:' . self::SETTINGS,
+    ]);
     return $result;
   }
 
@@ -142,9 +144,11 @@ class ShippingSimulator {
   }
 
   /**
-   * Pacote de uma variação, com regra de consolidação: cada medida é a da variação quando cadastrada, e nunca fica
-   * abaixo do padrão. Medida não cadastrada usa o padrão. Sem padrão configurado e sem medida da variação, não há
-   * pacote (NULL): nenhuma medida é presumida.
+   * Monta o pacote de uma variação com regra de consolidação de medidas.
+   *
+   * Cada medida é a da variação quando cadastrada, e nunca fica abaixo do
+   * padrão. Medida não cadastrada usa o padrão. Sem padrão configurado e sem
+   * medida da variação, não há pacote (NULL): nenhuma medida é presumida.
    */
   public function packageForVariation(ProductVariationInterface $variation): ?QuotePackage {
     $minimo = $this->packageFor();
@@ -176,10 +180,15 @@ class ShippingSimulator {
   }
 
   /**
-   * Simula o frete do carrinho a partir das linhas (variação, quantidade e valor). Cada variação entra com o próprio
-   * pacote (padrão como mínimo); variação sem pacote deixa o carrinho indisponível, sem chamar a API.
+   * Simula o frete do carrinho a partir das linhas informadas.
    *
+   * Cada variação entra com o próprio pacote (padrão como mínimo); variação
+   * sem pacote deixa o carrinho indisponível, sem chamar a API.
+   *
+   * @param string $postalCode
+   *   CEP de destino da simulação.
    * @param list<array{variation: \Drupal\commerce_product\Entity\ProductVariationInterface, quantity: int, total: float}> $lines
+   *   Linhas do carrinho com variação, quantidade e valor total.
    */
   public function simulateForCartLines(string $postalCode, array $lines): ShippingSimulation {
     $items = [];
@@ -196,6 +205,8 @@ class ShippingSimulator {
   /**
    * Simula o frete de um carrinho: cada item vai à API com a própria medida e quantidade (a API monta as caixas).
    *
+   * @param string $postalCode
+   *   CEP de destino da simulação.
    * @param list<\Drupal\aculta_commerce_melhorenvio\Quote\QuoteItem> $items
    *   Itens do carrinho, já com o pacote de cada variação.
    */
@@ -230,13 +241,18 @@ class ShippingSimulator {
     $result = $options === []
       ? new ShippingSimulation(ShippingSimulation::STATE_EMPTY)
       : new ShippingSimulation(ShippingSimulation::STATE_AVAILABLE, NULL, $options);
-    $this->cache->set($key, $result, $this->time->getRequestTime() + self::CACHE_TTL, [self::CACHE_TAG, 'config:' . self::SETTINGS]);
+    $this->cache->set($key, $result, $this->time->getRequestTime() + self::CACHE_TTL, [
+      self::CACHE_TAG,
+      'config:' . self::SETTINGS,
+    ]);
     return $result;
   }
 
   /**
-   * Pacote padrão da configuração, ou NULL quando algum valor não foi cadastrado (zero ou ausente). Não usa valor padrão
-   * inventado: sem medidas reais, não há cotação.
+   * Retorna o pacote padrão da configuração, ou NULL quando incompleto.
+   *
+   * Algum valor não cadastrado (zero ou ausente) torna o pacote inexistente.
+   * Não usa valor padrão inventado: sem medidas reais, não há cotação.
    */
   public function packageFor(): ?QuotePackage {
     $package = $this->configs->get(self::SETTINGS)->get('package');

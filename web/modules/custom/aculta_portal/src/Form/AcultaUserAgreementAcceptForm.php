@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace Drupal\aculta_portal\Form;
 
 use Drupal\aculta_portal\Account\AcultaUserAgreementPolicy;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
@@ -20,21 +21,30 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 final class AcultaUserAgreementAcceptForm extends FormBase {
 
   public function __construct(
-    private readonly AcultaUserAgreementPolicy $policy,
-    private readonly DomainPurposeManager $domainPurposeManager,
+    protected readonly AcultaUserAgreementPolicy $policy,
+    protected readonly DomainSiteManager $siteManager,
   ) {}
 
+  /**
+   * {@inheritdoc}
+   */
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('aculta_portal.aculta_user_agreement_policy'),
-      $container->get('aculta_portal.domain_purpose'),
+      $container->get('aculta_portal.domain_site'),
     );
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function getFormId(): string {
     return 'aculta_portal_aculta_user_agreement_accept';
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $form['#action'] = Url::fromRoute('aculta_portal.aculta_user_agreement.accept', [], [
       'query' => ['destination' => $this->destination()],
@@ -61,19 +71,24 @@ final class AcultaUserAgreementAcceptForm extends FormBase {
       '#button_type' => 'primary',
     ];
 
-    // Quando aparece como popup, o diálogo do Drupal envolve o formulário na hook page_bottom (AcultaUserAgreementHooks).
+    // Quando aparece como popup, o diálogo do Drupal envolve o formulário na hook page_bottom
+    // (AcultaUserAgreementHooks).
     $form['#cache'] = ['contexts' => ['user'], 'max-age' => 0];
 
     return $form;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $this->policy->record($this->currentUser());
     $destination = $this->destination();
     $form_state->setRedirectUrl(Url::fromUserInput($destination));
   }
 
-  /** Destino de retorno: caminho local da própria requisição (nunca outro host). */
+  /**
+   * Destino de retorno: caminho local da própria requisição (nunca outro host). */
   private function destination(): string {
     $request = $this->getRequest();
     $candidate = (string) ($request->query->get('destination') ?? '');
@@ -88,9 +103,10 @@ final class AcultaUserAgreementAcceptForm extends FormBase {
     return $candidate;
   }
 
-  /** Link para o documento no host principal, em nova aba (o popup continua aberto). */
+  /**
+   * Link para o documento no host principal, em nova aba (o popup continua aberto). */
   private function documentLink(string $path, $label): array {
-    $url = $this->domainPurposeManager->pathUrl('main', $path) ?? Url::fromUserInput($path);
+    $url = $this->siteManager->pathUrl(SiteKey::Main, $path) ?? Url::fromUserInput($path);
     return [
       '#type' => 'link',
       '#title' => $label,

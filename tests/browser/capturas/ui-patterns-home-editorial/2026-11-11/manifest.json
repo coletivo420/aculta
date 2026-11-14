@@ -1,0 +1,110 @@
+{
+  "purpose": "UI Patterns Views migration for the MAIN home editorial highlights",
+  "date": "2026-11-11",
+  "environment": "development Runtime, anonymous MAIN homepage",
+  "route": "/",
+  "owner": "Views home_editorial_highlights:block_1; three curated editorial nodes",
+  "before_runtime_snapshot": {
+    "sha256_json": "f951b0ab6ff5bde629872bd78ef47cb2513b5b9a0f5e3671566e28633eca15fc",
+    "sha256_rollback_yaml": "99427e58670c83d865d6f46ea68ccccd24fee971aced2807baaeab0011f46367",
+    "rollback_source": "The parent commit's config/sync/views.view.home_editorial_highlights.yml; its parsed data matched the Runtime snapshot exactly."
+  },
+  "after_runtime_snapshot_sha256_json": "ab2653fe3800c7c471cd1617ef66dd4d3f7f90b02c633583942ea111e067c01f",
+  "config_sync_sha256": "cd8abd0cafb71efd683c37038c9e538077d0ea6d8928397f9a01147fa45f091b",
+  "configuration_change": {
+    "only_config_imported": "views.view.home_editorial_highlights",
+    "style_before": "views_vvjb",
+    "style_after": "ui_patterns",
+    "component": "aculta420_v2:layout-grid",
+    "slot_source": "view_rows",
+    "row_plugin_preserved": "entity:node, view_mode default",
+    "entity_rendering_preserved": "existing UI Patterns Layout Builder layout-section with its original field blocks",
+    "VVJB_module": "still installed and enabled; not uninstalled"
+  },
+  "functional_parity": {
+    "http_status_before_after": [
+      200,
+      200
+    ],
+    "result_count_before_after": [
+      3,
+      3
+    ],
+    "node_ids_before_after": [
+      14,
+      15,
+      16
+    ],
+    "labels_and_order": "unchanged",
+    "anonymous_access": "allowed by native access content permission",
+    "filters_sorts_pager_row_query_header_and_block_display_options": "unchanged",
+    "cache_type": "tag",
+    "cache_contexts": [
+      "languages:language_interface",
+      "user.node_grants:view",
+      "user.permissions"
+    ],
+    "page_cache_observation": {
+      "requests": 2,
+      "http_status": [
+        200,
+        200
+      ],
+      "x_drupal_cache": [
+        "MISS",
+        "MISS"
+      ],
+      "x_drupal_dynamic_cache": [
+        "UNCACHEABLE (poor cacheability)",
+        "UNCACHEABLE (poor cacheability)"
+      ],
+      "cache_control": "must-revalidate, no-cache, private",
+      "stable_node_ids": [
+        14,
+        15,
+        16
+      ],
+      "variation_status": "DEFERRED: page remains private/no-cache and dynamic cache is uncacheable"
+    }
+  },
+  "browser": {
+    "method": "Visible Firefox ESR via WebDriver BiDi",
+    "viewports_css_px": [
+      320,
+      390,
+      768,
+      1024,
+      1440
+    ],
+    "modes": [
+      "light",
+      "dark"
+    ],
+    "result": "10/10 PASS before and 10/10 PASS after",
+    "assertions": [
+      "three editorial entities 14/15/16 and their visible labels remain in order",
+      "one H1 and one main landmark",
+      "visible keyboard focus inside the block",
+      "contrast ratio at least 8.80:1",
+      "zero horizontal overflow",
+      "layout-grid reflows from one to two to three columns as width permits",
+      "VVJB carousel markup is absent after cutover"
+    ],
+    "before_capture_directory": "before/",
+    "after_capture_directory": "after/"
+  },
+  "retirement": {
+    "classification": "LEGACY_OBSOLETE",
+    "legacy_visual": "VVJB View style on home_editorial_highlights",
+    "active_runtime_view_consumers": 0,
+    "active_config_sync_view_consumers": 0,
+    "operational_limit": "The extension stays installed; pm:uninstall requires its own explicit authorization."
+  },
+  "deferred": [
+    "real browser zoom 200%",
+    "cache-hit variation while the page remains uncacheable",
+    "broad authenticated/editor/admin and assistive technology acceptance"
+  ],
+  "rollback": "Restore only config/sync/views.view.home_editorial_highlights.yml from the parent commit and partial-import that single YAML, then rebuild caches. No content entities were modified.",
+  "tested_commit": "a67f665a26f9f9901e9f16d6da7a028f91461d32"
+}

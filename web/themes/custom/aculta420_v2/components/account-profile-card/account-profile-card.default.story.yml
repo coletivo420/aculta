@@ -1,0 +1,7 @@
+name: Cartão privado de biografia
+description: Cartão de perfil com o conteúdo e as ações preparados pelo módulo de Conta.
+component: aculta420_v2:account-profile-card
+slots:
+  content:
+    type: inline_template
+    template: '<article class="portal-account-bio"><h3>Sobre</h3><p>Biografia preparada pelo módulo proprietário.</p><ul class="portal-account-bio__actions"><li><a href="#editar">Editar</a></li></ul></article>'

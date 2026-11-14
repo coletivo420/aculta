@@ -10,6 +10,7 @@ use Drupal\aculta_commerce\Plugin\Commerce\CheckoutPane\AcultaShippingInformatio
 use Drupal\aculta_commerce\Shipping\ProposedShipment;
 use Drupal\aculta_commerce\Shipping\ShipmentItem;
 use Drupal\aculta_commerce\Shipping\ShipmentManagerInterface;
+use Drupal\aculta_events\Occurrence\EventDateOccurrences;
 use Drupal\commerce_checkout\Plugin\Commerce\CheckoutFlow\CheckoutFlowWithPanesInterface;
 use Drupal\commerce_order\Entity\Order;
 use Drupal\commerce_order\Entity\OrderItem;
@@ -29,6 +30,8 @@ use Drupal\profile\Entity\Profile;
 use Drupal\profile\Entity\ProfileInterface;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use PHPUnit\Framework\Attributes\Group;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Reference;
 
 /**
  * Validates the ACULTA shipping entity model and rate calculation.
@@ -41,6 +44,7 @@ use PHPUnit\Framework\Attributes\Group;
 #[RunTestsInSeparateProcesses]
 final class ShippingEngineKernelTest extends KernelTestBase {
 
+
   /**
    * {@inheritdoc}
    */
@@ -48,11 +52,13 @@ final class ShippingEngineKernelTest extends KernelTestBase {
     'aculta_commerce',
     'aculta_commerce_shipping_test',
     'aculta_document_viewer',
+    'aculta_lms',
+    'aculta_calendar',
+    'aculta_file_uploader',
     'aculta_forum',
     'aculta_gallery',
     'aculta_image',
     'aculta_mail_confirmer',
-    'aculta_mail_confirmer_user',
     'aculta_mailer',
     'aculta_messenger',
     'aculta_pagamentos_mercadopago',
@@ -102,7 +108,6 @@ final class ShippingEngineKernelTest extends KernelTestBase {
     'key',
     'language',
     'link',
-    'lms',
     'login_emailusername',
     'media',
     'media_duplicates',
@@ -152,6 +157,15 @@ final class ShippingEngineKernelTest extends KernelTestBase {
   ];
 
   /**
+   * {@inheritdoc}
+   */
+  public function register(ContainerBuilder $container): void {
+    parent::register($container);
+    $container->register('aculta_events.occurrences', EventDateOccurrences::class)
+      ->addArgument(new Reference('entity_type.manager'));
+  }
+
+  /**
    * The shipment manager.
    */
   protected ShipmentManagerInterface $shipmentManager;
@@ -187,6 +201,10 @@ final class ShippingEngineKernelTest extends KernelTestBase {
     $this->installSchema('entity_usage', ['entity_usage']);
     $this->installEntitySchema('aculta_shipment');
     $this->installEntitySchema('aculta_shipping_method');
+    $this->installEntitySchema('group');
+    $this->installEntitySchema('group_relationship');
+    $this->installEntitySchema('group_config_wrapper');
+    $this->installConfig(['group']);
     $this->installConfig(['commerce_store', 'commerce_order', 'profile', 'aculta_commerce']);
     $this->container->get('commerce_price.currency_importer')->import('BRL');
 
@@ -445,14 +463,12 @@ final class ShippingEngineKernelTest extends KernelTestBase {
     $complete_form = [];
     $this->assertTrue($pane->isVisible());
     $profile_method = new \ReflectionMethod($pane, 'getShippingProfile');
-    $profile_method->setAccessible(TRUE);
     $pane_profile = $profile_method->invoke($pane);
     $this->assertInstanceOf(ProfileInterface::class, $pane_profile);
     $this->assertNotNull($this->order->getBillingProfile());
     $this->assertFalse($this->order->getBillingProfile()->get('address')->isEmpty());
     $this->assertSame($this->profile->id(), $pane_profile->id());
     $can_calculate = new \ReflectionMethod($pane, 'canCalculateRates');
-    $can_calculate->setAccessible(TRUE);
     $this->assertCount(0, $pane_profile->get('address')->validate());
     $this->assertTrue($can_calculate->invoke($pane, $pane_profile));
     [$packed] = $this->container->get('aculta_commerce.packer_manager')->packToShipments($this->order, $this->profile, []);

@@ -1,0 +1,71 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Cartão de curso do estudante
+description: Curso matriculado com progresso, próximo passo e estados de avaliação.
+status: stable
+group: LMS
+props:
+  type: object
+  additionalProperties: false
+  required: [title, progress_id, progress_label, progress_text, has_lessons, finished, pending_evaluation, pending_text, finished_text]
+  properties:
+    title:
+      title: Título do curso
+      type: string
+      description: Nome do curso exibido no cabeçalho do cartão.
+      minLength: 1
+    progress_id:
+      title: Identificador da barra de progresso
+      type: string
+      description: ID único passado ao SDC progress para associar o indicador na página.
+      pattern: '^[A-Za-z][A-Za-z0-9_-]*$'
+    progress_label:
+      title: Nome acessível do progresso
+      type: string
+      description: Rótulo acessível fornecido à barra de progresso.
+      minLength: 1
+    progress_text:
+      title: Texto do progresso
+      type: string
+      description: Resumo textual do andamento ou da disponibilidade de aulas.
+    progress_value:
+      title: Progresso percentual
+      type: [number, 'null']
+      description: Percentual enviado ao indicador quando o curso tem aulas; null mantém a barra sem valor definido.
+      minimum: 0
+      maximum: 100
+    has_lessons:
+      title: Curso possui aulas
+      type: boolean
+      description: Quando false, omite a barra e mantém apenas o texto de progresso.
+    finished:
+      title: Curso concluído
+      type: boolean
+      description: Mostra o estado de conclusão e aplica data-state finished ao cartão.
+    pending_evaluation:
+      title: Há avaliação pendente
+      type: boolean
+      description: Controla a exibição da mensagem pending_text.
+    pending_text:
+      title: Texto de avaliação pendente
+      type: string
+      description: Mensagem exibida quando há avaliação pendente.
+    finished_text:
+      title: Texto de conclusão
+      type: string
+      description: Mensagem de conclusão exibida quando finished está ativo.
+    current_lesson:
+      title: Aula atual
+      type: string
+      description: Texto opcional sobre a próxima aula, mostrado acima do progresso.
+      default: ''
+slots:
+  journey_action:
+    title: Abrir jornada
+    description: Link canônico da jornada de curso.
+  continue_action:
+    title: Continuar curso
+    description: Link de início, retomada ou resultado, quando fornecido pelo LMS.
+assets:
+  css:
+    component:
+      lms-learning-course-card.css: {}

@@ -1,0 +1,26 @@
+{% set classes = ['revista-teaser'] %}
+{% if accent %}{% set classes = classes|merge(['revista-teaser--accent-' ~ accent]) %}{% endif %}
+<div class="{{ classes|join(' ') }}">
+  <div class="revista-teaser__media">
+    {% if has_cover %}
+      {% block image %}{% endblock %}
+    {% else %}
+      <span class="revista-teaser__cover-fallback" aria-hidden="true"></span>
+    {% endif %}
+  </div>
+  <header class="revista-teaser__header">
+    {% if has_category %}<div class="revista-teaser__category">{% block category %}{% endblock %}</div>{% endif %}
+    {% set title_markup %}<a href="{{ url }}" rel="bookmark">{{ title }}</a>{% endset %}
+    {{ include('aculta420_v2:heading', {
+      level: 5,
+      content: title_markup
+    }, with_context = false) }}
+  </header>
+  <div class="revista-teaser__body">
+    {% if has_subtitle %}<div class="revista-teaser__subtitle">{% block subtitle %}{% endblock %}</div>{% endif %}
+    {% if has_summary %}<div class="revista-teaser__summary">{% block summary %}{% endblock %}</div>{% endif %}
+  </div>
+  <div class="revista-teaser__actions">
+    <a href="{{ url }}" rel="bookmark">{{ read_label }}<span class="visually-hidden"> {{ title }}</span></a>
+  </div>
+</div>

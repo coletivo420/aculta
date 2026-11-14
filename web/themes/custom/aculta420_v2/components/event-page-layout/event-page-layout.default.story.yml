@@ -1,0 +1,16 @@
+name: Página pública de evento
+description: Detalhe de evento com informações essenciais, descrição e organização.
+component: aculta420_v2:event-page-layout
+slots:
+  title:
+    type: inline_template
+    template: '<h1>Festival de cultura e música</h1><p>Encontro de artistas e iniciativas locais.</p>'
+  essentials:
+    type: inline_template
+    template: '<p><strong>Tipo:</strong> Festival</p><h2>Datas</h2><ul><li>10/05/2030 19:00</li><li>11/05/2030 14:00</li></ul><p><a href="/eventos/festival">Site do evento</a></p>'
+  content:
+    type: inline_template
+    template: '<p>Descrição editorial do evento, com <a href="/sobre">links relacionados</a> e texto longo que deve refluír sem ampliar o viewport.</p>'
+  sidebar:
+    type: inline_template
+    template: '<h2>Organização</h2><p>Coletivo cultural local</p>'

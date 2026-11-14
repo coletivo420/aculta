@@ -6,7 +6,7 @@ Submódulo opt-in do `aculta_portal`, para controlar cada superfície pública d
 - escolher o modo: `subdominio`, `diretorio` ou `desativado`;
 - definir o slug em português, usado no modo `diretorio`.
 
-**Status:** Dev `0.1.0-dev.22`. Formulário, tabela, modal AJAX, validação de endereços e status DNS foram validados no Runtime com ACULTA420 e Olivero. A resolução de rotas continua atrás do interruptor `leitura_ativa`; `/slug` no MAIN segue DEFERRED.
+**Status:** Dev `0.1.0-dev.22`. Formulário, tabela, modal AJAX, validação de endereços e status DNS foram validados no Runtime com ACULTA420. A resolução de rotas continua atrás do interruptor `leitura_ativa`; `/slug` no MAIN segue DEFERRED.
 
 ## O que este submódulo faz
 
@@ -37,6 +37,16 @@ Estas superfícies não podem ser desativadas nem ter o modo alterado para `desa
 
 - `aculta_portal` (núcleo: resolvedor, configuração padrão e mapas de purpose).
 - `domain` (hosts, aliases de ambiente e registros de domínio).
+
+### Compatibilidade com Domain 4
+
+Revisado com Domain 4.0.0-alpha2: `DomainInterface::getHostname()` e
+`setHostname()` e a API de entidades usadas pelo formulário continuam
+disponíveis. O Domain 4 também permite vários registros no mesmo host usando
+`path_prefix`; `aculta_paths` não usa essa resolução. O modo Diretório continua
+sendo responsabilidade da camada do `aculta_portal`, conforme D3. A verificação
+de host repetido no formulário é intencional para superfícies em modo
+Subdomínio, cujo endereço deve identificar um único Domain neste modelo.
 
 ## Ordem de instalação (quando houver implementação)
 

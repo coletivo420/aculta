@@ -22,7 +22,12 @@ final class BadgeCatalog {
   public const AUTOMATICA = 'automatica';
   public const MANUAL = 'manual';
 
-  /** @return array<string, array{label: string, origem: string}> */
+  /**
+   * Retorna as conquistas existentes com rótulo e origem.
+   *
+   * @return array<string, array{label: string, origem: string}>
+   *   Conquistas indexadas pelo identificador estável.
+   */
   public static function all(): array {
     return [
       self::FUNDADORE => ['label' => 'Fundadore', 'origem' => self::MANUAL],
@@ -35,6 +40,15 @@ final class BadgeCatalog {
     ];
   }
 
+  /**
+   * Informa se a conquista é concedida e revogada manualmente.
+   *
+   * @param string $badge
+   *   Identificador da conquista.
+   *
+   * @return bool
+   *   VERDADEIRO se a conquista for manual.
+   */
   public static function isManual(string $badge): bool {
     return (self::all()[$badge]['origem'] ?? '') === self::MANUAL;
   }

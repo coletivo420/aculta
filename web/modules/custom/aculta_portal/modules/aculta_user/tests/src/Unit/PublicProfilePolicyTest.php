@@ -10,7 +10,6 @@ use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Regras de visibilidade do perfil público (plano aculta_user, seção B2).
- *
  */
 #[Group('aculta_user')]
 class PublicProfilePolicyTest extends UnitTestCase {
@@ -34,7 +33,14 @@ class PublicProfilePolicyTest extends UnitTestCase {
    */
   public function testPadraoMostraSomenteApelido(): void {
     $policy = new PublicProfilePolicy();
-    $perfil = ['publico' => TRUE, 'apelido' => 'maria-souza', 'exibir_foto' => FALSE, 'exibir_bio' => FALSE, 'exibir_email' => FALSE, 'exibir_redes' => FALSE];
+    $perfil = [
+      'publico' => TRUE,
+      'apelido' => 'maria-souza',
+      'exibir_foto' => FALSE,
+      'exibir_bio' => FALSE,
+      'exibir_email' => FALSE,
+      'exibir_redes' => FALSE,
+    ];
     $this->assertSame(['apelido' => TRUE], $policy->publicItems($perfil));
   }
 

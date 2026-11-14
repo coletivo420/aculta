@@ -6,16 +6,12 @@ namespace Drupal\aculta_magazine\Presentation;
 
 use Drupal\user\UserInterface;
 use Drupal\aculta_portal\Render\PortalLinkElement;
-use Drupal\aculta_user\Account\AccountNames;
 use Drupal\Core\Cache\CacheableMetadata;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
-use Drupal\aculta_user\PublicProfilePolicy;
+use Drupal\aculta_user\Identity\AuthorIdentityResolver;
 use Drupal\Core\Datetime\DateFormatterInterface;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Template\Attribute;
 use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
-use Drupal\aculta_portal\Profile\PerfilDoPapel;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
@@ -46,10 +42,8 @@ final class PostPresentation {
   public function __construct(
     #[Autowire(service: 'date.formatter')]
     private readonly DateFormatterInterface $dateFormatter,
-    #[Autowire(service: 'entity_type.manager')]
-    private readonly EntityTypeManagerInterface $entityTypeManager,
-    #[Autowire(service: 'aculta_portal.domain_purpose')]
-    private readonly DomainPurposeManager $purposeManager,
+    #[Autowire(service: 'aculta_user.author_identity_resolver')]
+    private readonly AuthorIdentityResolver $identities,
   ) {}
 
   /**
@@ -114,33 +108,20 @@ final class PostPresentation {
    * Retorna link para o perfil público quando ele estiver visível.
    */
   private function authorElement(?UserInterface $owner, array &$tags): array {
-    $name = $owner ? $owner->getDisplayName() : '';
-    if ($owner) {
-      $tags = array_merge($tags, $owner->getCacheTags());
-      $profile = PerfilDoPapel::principal($this->entityTypeManager->getStorage('profile'), $owner);
-      if ($profile) {
-        $tags = array_merge($tags, $profile->getCacheTags());
-      }
-      $nickname = $profile && $profile->hasField('field_nickname')
-        ? trim((string) $profile->get('field_nickname')->value)
-        : '';
-      $publico = $profile ? (bool) $profile->get('field_perfil_publico')->value : TRUE;
-      $publico = $publico || PublicProfilePolicy::isObrigatorioPublico($owner->getRoles());
-      $publicSlug = AccountNames::publicRouteSlug($nickname);
-      if ($publico && $publicSlug !== NULL) {
-        $url = $this->purposeManager->routeUrl(
-          'main',
-          'aculta_user.perfil_publico',
-          ['apelido' => $publicSlug],
-        );
-        if ($url !== NULL) {
-          return PortalLinkElement::build(
-            $nickname,
-            $url,
-            ['data-portal-ui' => 'post-meta-author'],
-          );
-        }
-      }
+    if ($owner === NULL) {
+      return $this->item('post-meta-author', '');
+    }
+    $identity = $this->identities->resolvePublic($owner);
+    $tags = array_merge($tags, $identity->getCacheTags());
+    $data = $identity->toArray();
+    $name = (string) ($data['display_name'] ?? '');
+    $profileUrl = $data['profile_url'] ?? NULL;
+    if ($name !== '' && is_string($profileUrl) && $profileUrl !== '') {
+      return PortalLinkElement::build(
+        $name,
+        Url::fromUri($profileUrl),
+        ['data-portal-ui' => 'post-meta-author'],
+      );
     }
     return $this->item('post-meta-author', $name);
   }

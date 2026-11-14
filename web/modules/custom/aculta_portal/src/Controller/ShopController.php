@@ -12,15 +12,19 @@ use Drupal\commerce_product\Entity\ProductInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /**
- * Página inicial da loja (SHOP). A raiz de loja.aculta serve esta rota, como a raiz de cada subdomínio serve a sua
+ * Página inicial da loja (SHOP).
+ *
+ * A raiz de loja.aculta serve esta rota, como a raiz de cada subdomínio serve a sua
  * (`/apoio`, `/wiki`, `/cursos`). Mostra o texto da página "Loja da Associação" (nó 372) e os produtos publicados.
  */
 final class ShopController extends ControllerBase {
 
-  /** Nó da página inicial da loja ("Loja da Associação"). */
+  /**
+   * Nó da página inicial da loja ("Loja da Associação"). */
   public const PAGINA_INICIAL_NODE = 372;
 
-  /** Tipo de produto vendido na loja. */
+  /**
+   * Tipo de produto vendido na loja. */
   private const TIPO_PRODUTO = 'produto_loja';
 
   public function __construct(
@@ -28,9 +32,15 @@ final class ShopController extends ControllerBase {
     private readonly EntityTypeManagerInterface $entities,
   ) {}
 
+  /**
+   * Monta a página inicial da loja com o texto editorial e a lista de produtos.
+   *
+   * @return array
+   *   Estrutura renderizável da página.
+   */
   public function home(): array {
     $cache = (new CacheableMetadata())->addCacheTags(['commerce_product_list']);
-    $build = [];
+    $build = ['#attached' => ['library' => ['aculta_portal/shop-presentation']]];
 
     $pagina = $this->entities->getStorage('node')->load(self::PAGINA_INICIAL_NODE);
     if ($pagina !== NULL) {
@@ -71,6 +81,7 @@ final class ShopController extends ControllerBase {
    * Produtos publicados da loja, do mais recente para o mais antigo.
    *
    * @return \Drupal\commerce_product\Entity\ProductInterface[]
+   *   Produtos publicados disponíveis na loja.
    */
   private function produtosDisponiveis(): array {
     $ids = $this->entities->getStorage('commerce_product')->getQuery()
@@ -79,10 +90,17 @@ final class ShopController extends ControllerBase {
       ->condition('type', self::TIPO_PRODUTO)
       ->sort('created', 'DESC')
       ->execute();
-    return $ids === [] ? [] : array_values($this->entities->getStorage('commerce_product')->loadMultiple($ids));
+    if ($ids === []) {
+      return [];
+    }
+    return array_values(array_filter(
+      $this->entities->getStorage('commerce_product')->loadMultiple($ids),
+      static fn ($product): bool => $product instanceof ProductInterface,
+    ));
   }
 
-  /** Menor preço entre as variações publicadas, formatado em reais; NULL se o produto não tiver variação vendável. */
+  /**
+   * Menor preço entre as variações publicadas, formatado em reais; NULL se o produto não tiver variação vendável. */
   private function menorPreco(ProductInterface $produto): ?string {
     $valores = [];
     foreach ($produto->getVariations() as $variacao) {

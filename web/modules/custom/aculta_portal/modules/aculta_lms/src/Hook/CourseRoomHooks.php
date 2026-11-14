@@ -11,7 +11,8 @@ use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\group\Entity\GroupInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
-/** Adds the course overview to the existing Group canonical page. */
+/**
+ * Adds the course overview to the existing Group canonical page. */
 final class CourseRoomHooks {
 
   public function __construct(

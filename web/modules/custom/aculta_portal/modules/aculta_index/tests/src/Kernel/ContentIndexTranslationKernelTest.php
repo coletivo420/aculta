@@ -12,7 +12,7 @@ use Drupal\KernelTests\KernelTestBase;
 use Drupal\node\Entity\Node;
 use Drupal\node\Entity\NodeType;
 use Drupal\aculta_index\Queue\ContentIndexWorkManager;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\domain\DomainNegotiatorInterface;
 use Drupal\Tests\content_translation\Traits\ContentTranslationTestTrait;
 use PHPUnit\Framework\Attributes\Group;
@@ -41,6 +41,10 @@ final class ContentIndexTranslationKernelTest extends KernelTestBase {
     'content_translation',
     'aculta_index',
     'aculta_index_test',
+    'aculta_calendar',
+    'aculta_file_uploader',
+    'filter',
+    'file',
   ];
 
   /**
@@ -48,7 +52,7 @@ final class ContentIndexTranslationKernelTest extends KernelTestBase {
    */
   public function register(ContainerBuilder $container): void {
     parent::register($container);
-    $container->set('aculta_portal.domain_purpose', new DomainPurposeManager(
+    $container->set('aculta_portal.domain_site', new DomainSiteManager(
       $this->createMock(EntityTypeManagerInterface::class),
       $this->createMock(DomainNegotiatorInterface::class),
       $this->createMock(ConfigFactoryInterface::class),
@@ -62,6 +66,7 @@ final class ContentIndexTranslationKernelTest extends KernelTestBase {
   protected function setUp(): void {
     parent::setUp();
     $this->installEntitySchema('user');
+    $this->installEntitySchema('file');
     $this->installEntitySchema('node');
     $this->installSchema('node', ['node_access']);
     $this->installSchema('aculta_index', [

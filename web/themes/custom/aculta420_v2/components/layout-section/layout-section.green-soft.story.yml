@@ -1,0 +1,14 @@
+name: Seção verde suave com cartão interno
+description: Layout Builder com superfície estrutural verde e conteúdo raised neutro, em claro e escuro.
+component: aculta420_v2:layout-section
+props:
+  tone: green-soft
+  section_variant: default
+  section_color: default
+slots:
+  header:
+    type: inline_template
+    template: '<h2>Atividades e conteúdos</h2>'
+  content:
+    type: inline_template
+    template: '{{ include("aculta420_v2:surface", { tone: "raised", radius: "md", spacing: "normal", elevation: "none", border: "subtle", content: "Conteúdo interno em superfície neutra para preservar a leitura." }, with_context = false) }}'

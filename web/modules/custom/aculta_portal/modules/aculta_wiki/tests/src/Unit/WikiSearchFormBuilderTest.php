@@ -81,11 +81,13 @@ final class WikiSearchFormBuilderTest extends UnitTestCase {
     $this->assertSame('search-preview-input', $build['q']['#attributes']['data-portal-ui']);
     $this->assertSame('/busca-wiki/previa', $build['q']['#attributes']['data-preview-url']);
     $this->assertSame((string) SearchPageController::MIN_CHARS, $build['q']['#attributes']['data-min-chars']);
-    $this->assertSame('aculta-wiki-search-preview', $build['preview']['#attributes']['id']);
-    $this->assertSame('region', $build['preview']['#attributes']['role']);
-    $this->assertSame('Prévia dos resultados da busca', $build['preview']['#attributes']['aria-label']);
-    $this->assertSame('polite', $build['preview']['#attributes']['aria-live']);
-    $this->assertTrue($build['preview']['#attributes']['hidden']);
+    $this->assertSame('aculta420_v2:hint', $build['preview']['#slots']['content']['hint']['#component']);
+    $attributes = $build['preview']['#props']['attributes'];
+    $this->assertSame('aculta-wiki-search-preview', $attributes['id']->value());
+    $this->assertSame('region', $attributes['role']->value());
+    $this->assertSame('Prévia dos resultados da busca', $attributes['aria-label']->value());
+    $this->assertSame('polite', $attributes['aria-live']->value());
+    $this->assertTrue($attributes['hidden']->value());
   }
 
   /**

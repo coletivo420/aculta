@@ -63,7 +63,7 @@ sendo responsável por validar o usuário e o vínculo OAuth existente.
 | Ambiente | URI de redirecionamento autorizado |
 | --- | --- |
 | Homelab | `https://conta.aculta.toca.net.br/oauth/google/retorno` |
-| Produção | `https://conta.aculta.org/oauth/google/retorno` |
+| Produção futura (sem host ainda) | `https://conta.aculta.org/oauth/google/retorno` |
 
 Se o cliente também usar APIs Google iniciadas diretamente por JavaScript,
 cadastre estas origens autorizadas (origem é somente esquema + host, sem
@@ -299,7 +299,7 @@ ledger.
   `downloadProfilePic`) para `public://pictures/[ano]-[mês]/` e grava em `user_picture`. A importação está ativa no código.
 - A foto importada é **foto personalizada**: `AccountCreationHooks::userPresave` a torna permanente e ela não é tratada
   como acervo. Por isso aparece com "Remover foto" e sem "Sortear novo avatar" (ver `aculta_user/docs/FOTO-PERFIL.md`).
-- Verificação (2026-10-13, servidor de testes): conta de teste criada pelo `UserManager` com URL de foto; arquivo baixado,
+- Verificação (2026-10-13, servidor de desenvolvimento): conta de teste criada pelo `UserManager` com URL de foto; arquivo baixado,
   permanente, fora do acervo. Conta e arquivo de teste removidos depois.
 - **Pendências de configuração (não resolvidas):**
   - `social_auth_google.settings:client_id` está vazio no runtime. O Social Auth lê o client ID só da configuração; a Key

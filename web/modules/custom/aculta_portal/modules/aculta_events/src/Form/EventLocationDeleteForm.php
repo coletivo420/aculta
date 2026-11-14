@@ -7,7 +7,9 @@ namespace Drupal\aculta_events\Form;
 use Drupal\Core\Entity\ContentEntityConfirmFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\aculta_events\Route\EventRouteContext;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Formulário de confirmação de exclusão de local de evento (LOC-02).
@@ -15,10 +17,24 @@ use Drupal\aculta_events\Route\EventRouteContext;
 final class EventLocationDeleteForm extends ContentEntityConfirmFormBase {
 
   /**
+   * Service for selecting the Events-purpose route.
+   */
+  protected EventRouteContext $eventRouteContext;
+
+  /**
    * {@inheritdoc}
    */
-  public function getQuestion(): string {
-    return (string) $this->t('Você tem certeza que deseja excluir o local %title?', [
+  public static function create(ContainerInterface $container): static {
+    $instance = parent::create($container);
+    $instance->eventRouteContext = $container->get('aculta_events.route_context');
+    return $instance;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getQuestion(): TranslatableMarkup {
+    return $this->t('Você tem certeza que deseja excluir o local %title?', [
       '%title' => $this->entity->label(),
     ]);
   }
@@ -40,8 +56,8 @@ final class EventLocationDeleteForm extends ContentEntityConfirmFormBase {
   /**
    * {@inheritdoc}
    */
-  public function getConfirmText(): string {
-    return (string) $this->t('Excluir');
+  public function getConfirmText(): TranslatableMarkup {
+    return $this->t('Excluir');
   }
 
   /**
@@ -67,10 +83,12 @@ final class EventLocationDeleteForm extends ContentEntityConfirmFormBase {
         'actions' => [
           '#type' => 'actions',
           'cancel' => [
-            '#type' => 'link',
-            '#title' => $this->t('Voltar'),
-            '#url' => $this->getCancelUrl(),
-            '#attributes' => ['data-portal-ui' => 'button'],
+            '#type' => 'aculta_portal_button',
+            '#props' => [
+              'text' => (string) $this->t('Voltar'),
+              'url' => $this->getCancelUrl()->toString(),
+              'variant' => 'secondary',
+            ],
           ],
         ],
       ];
@@ -105,7 +123,7 @@ final class EventLocationDeleteForm extends ContentEntityConfirmFormBase {
       '%title' => $title,
     ]));
 
-    $form_state->setRedirect(EventRouteContext::route('aculta_events.locations', 'aculta_events.organizer_dashboard'));
+    $form_state->setRedirect($this->eventRouteContext->route('aculta_events.locations', 'aculta_events.organizer_dashboard'));
   }
 
 }

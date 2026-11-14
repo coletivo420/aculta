@@ -1,0 +1,61 @@
+/* Estilo das classes do módulo aculta_events (Locais, widgets de Local e Organização,
+   painel administrativo). Movido de portal-ui-map.css do tema: só regras cujos seletores
+   são exclusivos deste módulo. Anexado por #attached nos pontos de renderização. */
+
+.badge--danger { color: var(--color-status-error-text); background: var(--color-status-error-surface); }
+
+.badge--info { color: var(--color-text-primary); background: var(--color-surface-highlight); }
+
+.badge--success { color: var(--color-status-ok-text); background: var(--color-status-ok-surface); }
+
+.badge--warning { color: var(--color-status-warning-text); background: var(--color-status-warning-surface); }
+
+.badge-location-type,
+.coorganizer-item__badge { display: inline-flex; align-items: center; padding: .125rem .5rem; border-radius: var(--radius-full); font-size: .875rem; }
+
+.badge-location-type,
+.coorganizer-item__badge { color: var(--color-text-primary); background: var(--color-surface-highlight); }
+
+.aculta-events-admin-overview,
+.aculta-locations-list-page,
+.aculta-location-page { display: grid; gap: 1rem; }
+
+.aculta-location-header,
+.aculta-location-summary-card { display: grid; gap: .5rem; }
+
+.aculta-location-summary-card {
+  padding: 1rem;
+  margin-block: .5rem;
+}
+
+.aculta-location-title { margin-block: 0 .25rem; font-family: var(--font-family-heading); font-size: 1.375rem; }
+
+.aculta-location-address,
+.aculta-location-empty,
+.aculta-location-target-id { color: var(--color-text-muted); }
+
+.aculta-location-address { margin-block: 0 .5rem; }
+
+.aculta-location-empty { margin-block: .5rem; }
+
+.aculta-location-fallback { margin-block-start: .25rem; }
+
+/* Espaçamentos que o mapa de tokens aplicava com utilitários aculta-u-*. */
+.aculta-location-actions { margin-block: .5rem 1rem; }
+
+.aculta-location-actions-bar { margin-block-end: 1rem; }
+
+.aculta-location-search {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .5rem;
+  margin-block-end: 1rem;
+}
+
+.aculta-location-badge { display: inline-flex; }
+
+/* Slug secundário na tabela de organizações (substitui .text-muted). */
+.aculta-events-organization-admin small { color: var(--color-text-muted); }
+
+.aculta-form--inline { display: flex; flex-wrap: wrap; align-items: flex-end; gap: .5rem; }

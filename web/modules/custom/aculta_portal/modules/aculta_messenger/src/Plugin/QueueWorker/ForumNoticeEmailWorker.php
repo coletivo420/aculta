@@ -16,10 +16,12 @@ use Drupal\aculta_messenger\Aviso\ForumNoticeCounterInterface;
 use Drupal\aculta_messenger\Mail\ForumNoticeMailType;
 use Drupal\aculta_messenger\Service\MessengerEmailLock;
 use Drupal\aculta_messenger\Service\MessengerMailDelivery;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\aculta_forum\Entity\ForumPost;
 use Drupal\comment\CommentInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\RevisionableStorageInterface;
 use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Queue\Attribute\QueueWorker;
@@ -46,16 +48,16 @@ final class ForumNoticeEmailWorker extends QueueWorkerBase implements ContainerF
     array $configuration,
     string $plugin_id,
     mixed $plugin_definition,
-    private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly ForumNoticeEmailOutboxInterface $outbox,
-    private readonly ForumNoticeCounterInterface $avisos,
-    private readonly AvisoPreferenciasInterface $preferences,
-    private readonly ForumNoticeAccessPolicyInterface $accessPolicy,
-    private readonly FlagServiceInterface $flagService,
-    private readonly EmailConfirmationPolicy $emailPolicy,
-    private readonly DomainPurposeManager $domainPurposes,
-    private readonly AcultaMailerInterface $mailer,
-    private readonly LockBackendInterface $lock,
+    protected readonly EntityTypeManagerInterface $entityTypeManager,
+    protected readonly ForumNoticeEmailOutboxInterface $outbox,
+    protected readonly ForumNoticeCounterInterface $avisos,
+    protected readonly AvisoPreferenciasInterface $preferences,
+    protected readonly ForumNoticeAccessPolicyInterface $accessPolicy,
+    protected readonly FlagServiceInterface $flagService,
+    protected readonly EmailConfirmationPolicy $emailPolicy,
+    protected readonly DomainSiteManager $siteManagers,
+    protected readonly AcultaMailerInterface $mailer,
+    protected readonly LockBackendInterface $lock,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }
@@ -74,7 +76,7 @@ final class ForumNoticeEmailWorker extends QueueWorkerBase implements ContainerF
       $container->get('aculta_messenger.forum_notice_access_policy'),
       $container->get('flag'),
       $container->get('aculta_portal.email_confirmation_policy'),
-      $container->get('aculta_portal.domain_purpose'),
+      $container->get('aculta_portal.domain_site'),
       $container->get('aculta_mailer.mailer'),
       $container->get('lock'),
     );
@@ -132,7 +134,7 @@ final class ForumNoticeEmailWorker extends QueueWorkerBase implements ContainerF
       $this->outbox->setStatus((int) $event['id'], ForumNoticeEmailOutbox::STATUS_CANCELLED);
       return;
     }
-    $url = $this->domainPurposes->routeUrl('forum', 'entity.node.canonical', ['node' => $topic->id()]);
+    $url = $this->siteManagers->routeUrl(SiteKey::Forum, 'entity.node.canonical', ['node' => $topic->id()]);
     if ($url === NULL) {
       $this->retryOrFail((int) $event['id'], (int) $event['email_attempts']);
       return;
@@ -201,7 +203,11 @@ final class ForumNoticeEmailWorker extends QueueWorkerBase implements ContainerF
         return $comment;
 
       case 'forum_post_revision':
-        $post = $this->entityTypeManager->getStorage('aculta_forum_post')->loadRevision($eventId);
+        $postStorage = $this->entityTypeManager->getStorage('aculta_forum_post');
+        if (!$postStorage instanceof RevisionableStorageInterface) {
+          return NULL;
+        }
+        $post = $postStorage->loadRevision($eventId);
         if (!$post instanceof ForumPost || (int) $post->getOwnerId() === $uid
           || !$post->hasField('topic') || (int) $post->get('topic')->target_id !== (int) $topic->id()
           || !$this->accessPolicy->canViewPost($post, $recipient)) {
@@ -212,7 +218,7 @@ final class ForumNoticeEmailWorker extends QueueWorkerBase implements ContainerF
       case 'topic_revision':
         $revision = $this->entityTypeManager->getStorage('node')->loadRevision($eventId);
         if (!$revision instanceof NodeInterface || (int) $revision->id() !== (int) $topic->id()
-          || (method_exists($revision, 'getRevisionUserId') && (int) $revision->getRevisionUserId() === $uid)
+          || ((int) $revision->getRevisionUserId() === $uid)
           || !$this->accessPolicy->canViewTopic($revision, $recipient)) {
           return NULL;
         }

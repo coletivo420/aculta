@@ -21,10 +21,10 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 final class GreenStashProductCreateForm extends FormBase {
 
   public function __construct(
-    private readonly EntityTypeManagerInterface $entities,
-    private readonly AccountInterface $account,
-    private readonly StudioExperienceManager $experiences,
-    private readonly GreenStashStoreResolver $storeResolver,
+    protected readonly EntityTypeManagerInterface $entities,
+    protected readonly AccountInterface $account,
+    protected readonly StudioExperienceManager $experiences,
+    protected readonly GreenStashStoreResolver $storeResolver,
   ) {}
 
   /**

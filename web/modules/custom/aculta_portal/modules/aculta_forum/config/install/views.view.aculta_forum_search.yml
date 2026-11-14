@@ -10,6 +10,7 @@ dependencies:
     - aculta_forum
     - node
     - search_api
+    - ui_patterns_views
     - user
 id: aculta_forum_search
 label: 'Pesquisar discussões do Growroom420'
@@ -217,7 +218,59 @@ display:
     display_plugin: page
     position: 1
     display_options:
-      display_extenders: {  }
+      ui_patterns:
+        component_id: 'aculta420_v2:forum-search-page'
+        variant_id: null
+        props: {  }
+        slots:
+          title:
+            sources:
+              -
+                source_id: view_title_markup
+          title_suffix:
+            sources:
+              -
+                source_id: view_contextual_links
+          header:
+            sources:
+              -
+                source_id: view_header
+          exposed:
+            sources:
+              -
+                source_id: view_exposed
+          attachment_before:
+            sources:
+              -
+                source_id: view_attachment_before
+          rows:
+            sources:
+              -
+                source_id: view_rows
+          empty:
+            sources:
+              -
+                source_id: view_empty
+          pager:
+            sources:
+              -
+                source_id: view_pager
+          attachment_after:
+            sources:
+              -
+                source_id: view_attachment_after
+          more:
+            sources:
+              -
+                source_id: view_more
+          footer:
+            sources:
+              -
+                source_id: view_footer
+          feed_icons:
+            sources:
+              -
+                source_id: view_feed_icons
       path: pesquisar
     cache_metadata:
       max-age: 0

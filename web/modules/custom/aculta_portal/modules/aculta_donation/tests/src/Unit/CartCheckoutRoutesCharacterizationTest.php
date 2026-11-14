@@ -32,6 +32,12 @@ use Symfony\Component\Routing\RouteCollection;
 #[Group('aculta_donation')]
 final class CartCheckoutRoutesCharacterizationTest extends UnitTestCase {
 
+  /**
+   * Monta a coleção com as três rotas do Commerce.
+   *
+   * @return \Symfony\Component\Routing\RouteCollection
+   *   Coleção de rotas simulada.
+   */
   private function colecao(): RouteCollection {
     $colecao = new RouteCollection();
     $colecao->add('commerce_cart.page', new Route('/cart', [], ['_access' => 'TRUE']));
@@ -44,6 +50,12 @@ final class CartCheckoutRoutesCharacterizationTest extends UnitTestCase {
    * Subscriber de disponibilidade do Portal, alimentado pelo provider do Donation.
    *
    * @param array<string, mixed> $settings
+   *   Configuração do módulo de doação.
+   * @param bool $donationRegistrado
+   *   Se o provider de doação está registrado.
+   *
+   * @return \Drupal\aculta_portal\EventSubscriber\CommerceCheckoutRouteSubscriber
+   *   Subscriber de disponibilidade configurado.
    */
   private function subscriber(array $settings, bool $donationRegistrado = TRUE): CommerceCheckoutRouteSubscriber {
     $providers = $donationRegistrado
@@ -59,7 +71,15 @@ final class CartCheckoutRoutesCharacterizationTest extends UnitTestCase {
   }
 
   /**
+   * Aplica os subscribers na ordem indicada e devolve a coleção.
+   *
    * @param array<string, mixed> $settings
+   *   Configuração do módulo de doação.
+   * @param bool $donationPrimeiro
+   *   Se o subscriber de doação roda antes do subscriber do Portal.
+   *
+   * @return \Symfony\Component\Routing\RouteCollection
+   *   Coleção de rotas alterada.
    */
   private function aplicar(array $settings, bool $donationPrimeiro): RouteCollection {
     $colecao = $this->colecao();
@@ -81,6 +101,7 @@ final class CartCheckoutRoutesCharacterizationTest extends UnitTestCase {
    * Resumo comparável das três rotas do Commerce.
    *
    * @return array<string, array<string, mixed>>
+   *   Caminho e requisitos de cada rota do Commerce.
    */
   private function resumo(RouteCollection $colecao): array {
     $resumo = [];
@@ -91,6 +112,12 @@ final class CartCheckoutRoutesCharacterizationTest extends UnitTestCase {
     return $resumo;
   }
 
+  /**
+   * Confirma que o resultado não depende da ordem dos subscribers.
+   *
+   * @param string $modo
+   *   Modo de rota de doação testado.
+   */
   #[DataProvider('modos')]
   public function testResultadoNaoDependeDaOrdemDosSubscribers(string $modo): void {
     $settings = ['donation_route' => $modo];
@@ -100,6 +127,12 @@ final class CartCheckoutRoutesCharacterizationTest extends UnitTestCase {
     );
   }
 
+  /**
+   * Fornece os três modos de rota de doação.
+   *
+   * @return array<string, array<int, string>>
+   *   Modos indexados por nome.
+   */
   public static function modos(): array {
     return [
       'donate' => [DonationSettingsForm::ROTA_DONATE],
@@ -108,6 +141,9 @@ final class CartCheckoutRoutesCharacterizationTest extends UnitTestCase {
     ];
   }
 
+  /**
+   * Confirma que o modo donate bloqueia carrinho e checkout e mantém o caminho.
+   */
   public function testDonateBloqueiaCarrinhoECheckoutMasMantemCaminho(): void {
     $resumo = $this->resumo($this->aplicar(['donation_route' => DonationSettingsForm::ROTA_DONATE], TRUE));
     $this->assertSame('/carrinho', $resumo['commerce_cart.page']['path']);
@@ -118,6 +154,12 @@ final class CartCheckoutRoutesCharacterizationTest extends UnitTestCase {
     }
   }
 
+  /**
+   * Confirma que os modos cart e both mantêm as rotas do Commerce intactas.
+   *
+   * @param string $modo
+   *   Modo de rota de doação testado.
+   */
   #[DataProvider('modosComCommerce')]
   public function testCartOuBothMantemCommerceIntacto(string $modo): void {
     $resumo = $this->resumo($this->aplicar(['donation_route' => $modo], TRUE));
@@ -129,6 +171,12 @@ final class CartCheckoutRoutesCharacterizationTest extends UnitTestCase {
     $this->assertArrayNotHasKey('_access', $resumo['commerce_checkout.form']['requirements']);
   }
 
+  /**
+   * Fornece os modos que preservam as rotas do Commerce.
+   *
+   * @return array<string, array<int, string>>
+   *   Modos indexados por nome.
+   */
   public static function modosComCommerce(): array {
     return [
       'cart' => [DonationSettingsForm::ROTA_CART],
@@ -136,6 +184,9 @@ final class CartCheckoutRoutesCharacterizationTest extends UnitTestCase {
     ];
   }
 
+  /**
+   * Confirma que os modos cart e both geram a mesma coleção.
+   */
   public function testCartOuBothGeramMesmaColecao(): void {
     $this->assertSame(
       $this->resumo($this->aplicar(['donation_route' => DonationSettingsForm::ROTA_CART], TRUE)),
@@ -143,12 +194,18 @@ final class CartCheckoutRoutesCharacterizationTest extends UnitTestCase {
     );
   }
 
+  /**
+   * Confirma que configuração ausente ou desconhecida se comporta como donate.
+   */
   public function testConfiguracaoAusenteOuDesconhecidaSeComportaComoDonate(): void {
     $donate = $this->resumo($this->aplicar(['donation_route' => DonationSettingsForm::ROTA_DONATE], TRUE));
     $this->assertSame($donate, $this->resumo($this->aplicar([], TRUE)));
     $this->assertSame($donate, $this->resumo($this->aplicar(['donation_route' => 'valor_invalido'], TRUE)));
   }
 
+  /**
+   * Confirma que uma coleção sem as rotas do Commerce não quebra.
+   */
   public function testColecaoSemRotasDoCommerceNaoQuebra(): void {
     $colecao = new RouteCollection();
     $colecao->add('outra.rota', new Route('/outra'));
@@ -156,6 +213,9 @@ final class CartCheckoutRoutesCharacterizationTest extends UnitTestCase {
     $this->assertCount(1, $colecao);
   }
 
+  /**
+   * Confirma que, sem o Donation registrado, as rotas do Commerce ficam intactas.
+   */
   public function testSemDonationRegistradoAsRotasDoCommerceFicamIntactas(): void {
     $colecao = $this->colecao();
     $antes = $this->resumo($colecao);

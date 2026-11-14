@@ -27,7 +27,8 @@ use Symfony\Component\HttpFoundation\RequestStack;
  */
 final class AcultaUserAgreementHooks {
 
-  /** Rotas de ação que só fazem sentido para usuário logado (criar, editar, responder). */
+  /**
+   * Rotas de ação que só fazem sentido para usuário logado (criar, editar, responder). */
   private const LOGGED_ONLY_ROUTES = [
     'node.add',
     'entity.node.edit_form',
@@ -36,7 +37,8 @@ final class AcultaUserAgreementHooks {
     'entity.comment.delete_form',
   ];
 
-  /** Rotas em que o popup nunca aparece: login, cadastro, recuperação e o próprio aceite. */
+  /**
+   * Rotas em que o popup nunca aparece: login, cadastro, recuperação e o próprio aceite. */
   private const EXEMPT_ROUTES = [
     'user.login', 'user.logout', 'user.register', 'user.pass', 'user.reset', 'user.reset.form', 'user.reset.login',
     'aculta_portal.aculta_user_agreement.accept', 'social_auth.network.redirect', 'social_auth.network.callback',
@@ -59,7 +61,8 @@ final class AcultaUserAgreementHooks {
     private readonly AccessManagerInterface $accessManager,
   ) {}
 
-  /** Adiciona o popup de aceite à região page_bottom quando o usuário logado ainda não aceitou a versão atual. */
+  /**
+ * Adiciona o popup de aceite à região page_bottom quando o usuário logado ainda não aceitou a versão atual. */
   #[Hook('page_bottom')]
   public function pageBottom(array &$page_bottom): void {
     $routeName = (string) $this->routeMatch->getRouteName();
@@ -71,9 +74,12 @@ final class AcultaUserAgreementHooks {
     }
     $form = $this->formBuilder->getForm(AcultaUserAgreementAcceptForm::class);
     $page_bottom['aculta_user_agreement_terms'] = [
-      '#theme' => 'aculta_portal_account_terms_modal',
-      '#title' => $this->translation->translate('Aceite dos termos'),
-      '#form' => $form,
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:account-terms-modal',
+      '#props' => [
+        'title' => (string) $this->translation->translate('Aceite dos termos'),
+      ],
+      '#slots' => ['content' => $form],
       '#attached' => ['library' => ['aculta_portal/account-terms-modal']],
       '#cache' => ['contexts' => ['user'], 'max-age' => 0],
     ];

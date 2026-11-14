@@ -7,6 +7,7 @@ namespace Drupal\aculta_events\Controller;
 use Drupal\aculta_calendar\Ics\CalendarIcsExporter;
 use Drupal\aculta_calendar\Item\CalendarQuery;
 use Drupal\aculta_events\Calendar\EventCalendarItemProvider;
+use Drupal\aculta_events\Entity\Event;
 use Drupal\aculta_events\Entity\EventDate;
 use Drupal\aculta_events\Entity\EventLocation;
 use Drupal\Component\Datetime\TimeInterface;
@@ -55,7 +56,7 @@ final class EventIcsController extends ControllerBase {
     $data = EventDate::load($id);
     $evento = $data?->get('field_evento')->entity;
     if (!$data instanceof EventDate
-      || $evento === NULL
+      || !$evento instanceof Event
       || (string) $evento->get('field_slug')->value !== $slug
       || !in_array((string) $evento->get('field_status')->value, ['publicado', 'cancelado'], TRUE)) {
       throw new NotFoundHttpException();

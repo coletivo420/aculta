@@ -1,0 +1,17 @@
+aculta_htmx_f0_test.page:
+  path: '/htmx-f0'
+  defaults:
+    _controller: '\Drupal\aculta_htmx_f0_test\Controller\HtmxF0Controller::page'
+    _title: 'HTMX F0 test'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+
+aculta_htmx_f0_test.form:
+  path: '/htmx-f0/form'
+  defaults:
+    _form: '\Drupal\aculta_htmx_f0_test\Form\HtmxF0Form'
+    _title: 'HTMX F0 form'
+  options:
+    _htmx_route: TRUE
+  requirements:
+    _user_is_logged_in: 'TRUE'

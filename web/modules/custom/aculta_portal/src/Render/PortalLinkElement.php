@@ -17,8 +17,17 @@ use Drupal\Core\Url;
 final class PortalLinkElement {
 
   /**
+   * Monta um link renderizado pelo template do tema.
+   *
+   * @param mixed $title
+   *   Texto ou conteúdo do link.
+   * @param \Drupal\Core\Url $url
+   *   URL de destino do link.
    * @param array<string, string> $attributes
    *   Atributos do link (data-portal-ui e outros). O href é gerado a partir de $url.
+   *
+   * @return array
+   *   Elemento de renderização do link com metadados de cache.
    */
   public static function build(mixed $title, Url $url, array $attributes): array {
     $generated = $url->toString(TRUE);

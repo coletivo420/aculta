@@ -13,4 +13,3 @@ roles:
   - lms_teacher
 allow_revisions: false
 new_revision: false
-

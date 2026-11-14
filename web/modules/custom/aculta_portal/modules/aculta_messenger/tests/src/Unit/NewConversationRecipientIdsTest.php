@@ -25,11 +25,12 @@ use Drupal\Tests\UnitTestCase;
 use Drupal\aculta_user\Social\FriendshipManagerInterface;
 use Drupal\user\UserInterface;
 use Drupal\user\UserDataInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
-use Psr\Container\ContainerInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
@@ -322,7 +323,7 @@ final class NewConversationRecipientIdsTest extends UnitTestCase {
     $sender = $this->user(42);
     $recipient = $this->user(84);
     $candidateThread = $this->createMock(PrivateMessageThreadInterface::class);
-    $candidateThread->method('getMembersId')->willReturn([42, 84]);
+    $candidateThread->method('getMemberIds')->willReturn([42, 84]);
     $state = (object) ['privacy' => NULL];
     $userData = $this->createMock(UserDataInterface::class);
     $userData->expects(self::exactly(2))->method('get')
@@ -359,7 +360,6 @@ final class NewConversationRecipientIdsTest extends UnitTestCase {
     );
     $formState = new FormState();
     $anyErrors = new \ReflectionProperty(FormState::class, 'anyErrors');
-    $anyErrors->setAccessible(TRUE);
     $anyErrors->setValue(NULL, FALSE);
     $formState->set('pmt_entity', $candidateThread);
     $initialForm = [];
@@ -394,7 +394,7 @@ final class NewConversationRecipientIdsTest extends UnitTestCase {
     $identity = $this->createMock(PublicMemberIdentityInterface::class);
     $identity->method('publicDisplayName')->willReturn('membro');
     $candidateThread = $this->createMock(PrivateMessageThreadInterface::class);
-    $candidateThread->method('getMembersId')->willReturn([42, 84]);
+    $candidateThread->method('getMemberIds')->willReturn([42, 84]);
     $state = (object) ['blocked' => FALSE];
     $banManager = $this->createMock(PrivateMessageBanManagerInterface::class);
     $banManager->method('isBanned')->willReturn(FALSE);
@@ -508,7 +508,6 @@ final class NewConversationRecipientIdsTest extends UnitTestCase {
    */
   private function formStateWithoutErrors(): FormState {
     $anyErrors = new \ReflectionProperty(FormState::class, 'anyErrors');
-    $anyErrors->setAccessible(TRUE);
     $anyErrors->setValue(NULL, FALSE);
     return new FormState();
   }
@@ -516,11 +515,12 @@ final class NewConversationRecipientIdsTest extends UnitTestCase {
   /**
    * Creates a member account stub.
    */
-  private function user(int $uid): UserInterface {
+  private function user(int $uid): UserInterface&MockObject {
     $user = $this->createMock(UserInterface::class);
     $user->method('id')->willReturn((string) $uid);
     return $user;
   }
+
 
   /**
    * Creates an account with controllable eligibility for private messages.

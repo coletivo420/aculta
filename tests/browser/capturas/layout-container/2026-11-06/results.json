@@ -1,0 +1,1129 @@
+{
+  "data": "2026-11-06",
+  "purposes": [
+    "main",
+    "account",
+    "support",
+    "magazine",
+    "wiki",
+    "shop",
+    "courses",
+    "forum",
+    "links",
+    "eventos"
+  ],
+  "widths": [
+    320,
+    1440
+  ],
+  "modes": [
+    "light",
+    "dark"
+  ],
+  "total_checks": 300,
+  "passed_checks": 300,
+  "failed_checks": 0,
+  "failures": [],
+  "records": [
+    {
+      "purpose": "main",
+      "mode": "light",
+      "viewport": 320,
+      "url": "https://aculta.toca.net.br/",
+      "checks": {
+        "purpose": true,
+        "mode": true,
+        "viewport": true,
+        "has_container_width_var": true,
+        "has_narrow_width_var": true,
+        "has_layout_attribute": true,
+        "no_horizontal_overflow": true,
+        "mobile_100_percent": true
+      },
+      "metrics": {
+        "purpose": "main",
+        "layout": "boxed",
+        "mode": "light",
+        "width": 320,
+        "documentWidth": 320,
+        "containerWidthVar": "1200px",
+        "narrowWidthVar": "750px",
+        "mainWidth": 320,
+        "navWidth": null,
+        "footerWidth": null
+      }
+    },
+    {
+      "purpose": "main",
+      "mode": "dark",
+      "viewport": 320,
+      "url": "https://aculta.toca.net.br/",
+      "checks": {
+        "purpose": true,
+        "mode": true,
+        "viewport": true,
+        "has_container_width_var": true,
+        "has_narrow_width_var": true,
+        "has_layout_attribute": true,
+        "no_horizontal_overflow": true,
+        "mobile_100_percent": true
+      },
+      "metrics": {
+        "purpose": "main",
+        "layout": "boxed",
+        "mode": "dark",
+        "width": 320,
+        "documentWidth": 320,
+        "containerWidthVar": "1200px",
+        "narrowWidthVar": "750px",
+        "mainWidth": 320,
+        "navWidth": null,
+        "footerWidth": null
+      }
+    },
+    {
+      "purpose": "main",
+      "mode": "light",
+      "viewport": 1440,
+      "url": "https://aculta.toca.net.br/",
+      "checks": {
+        "purpose": true,
+        "mode": true,
+        "viewport": true,
+        "has_container_width_var": true,
+        "has_narrow_width_var": true,
+        "has_layout_attribute": true,
+        "no_horizontal_overflow": true
+      },
+      "metrics": {
+        "purpose": "main",
+        "layout": "boxed",
+        "mode": "light",
+        "width": 1440,
+        "documentWidth": 1440,
+        "containerWidthVar": "1200px",
+        "narrowWidthVar": "750px",
+        "mainWidth": 1440,
+        "navWidth": null,
+        "footerWidth": null
+      }
+    },
+    {
+      "purpose": "main",
+      "mode": "dark",
+      "viewport": 1440,
+      "url": "https://aculta.toca.net.br/",
+      "checks": {
+        "purpose": true,
+        "mode": true,
+        "viewport": true,
+        "has_container_width_var": true,
+        "has_narrow_width_var": true,
+        "has_layout_attribute": true,
+        "no_horizontal_overflow": true
+      },
+      "metrics": {
+        "purpose": "main",
+        "layout": "boxed",
+        "mode": "dark",
+        "width": 1440,
+        "documentWidth": 1440,
+        "containerWidthVar": "1200px",
+        "narrowWidthVar": "750px",
+        "mainWidth": 1440,
+        "navWidth": null,
+        "footerWidth": null
+      }
+    },
+    {
+      "purpose": "account",
+      "mode": "light",
+      "viewport": 320,
+      "url": "https://conta.aculta.toca.net.br/",
+      "checks": {
+        "purpose": true,
+        "mode": true,
+        "viewport": true,
+        "has_container_width_var": true,
+        "has_narrow_width_var": true,
+        "has_layout_attribute": true,
+        "no_horizontal_overflow": true,
+        "mobile_100_percent": true
+      },
+      "metrics": {
+        "purpose": "account",
+        "layout": "boxed",
+        "mode": "light",
+        "width": 320,
+        "documentWidth": 320,
+        "containerWidthVar": "1200px",
+        "narrowWidthVar": "750px",
+        "mainWidth": 320,
+        "navWidth": null,
+        "footerWidth": null
+      }
+    },
+    {
+      "purpose": "account",
+      "mode": "dark",
+      "viewport": 320,
+      "url": "https://conta.aculta.toca.net.br/",
+      "checks": {
+        "purpose": true,
+        "mode": true,
+        "viewport": true,
+        "has_container_width_var": true,
+        "has_narrow_width_var": true,
+        "has_layout_attribute": true,
+        "no_horizontal_overflow": true,
+        "mobile_100_percent": true
+      },
+      "metrics": {
+        "purpose": "account",
+        "layout": "boxed",
+        "mode": "dark",
+        "width": 320,
+        "documentWidth": 320,
+        "containerWidthVar": "1200px",
+        "narrowWidthVar": "750px",
+        "mainWidth": 320,
+        "navWidth": null,
+        "footerWidth": null
+      }
+    },
+    {
+      "purpose": "account",
+      "mode": "light",
+      "viewport": 1440,
+      "url": "https://conta.aculta.toca.net.br/",
+      "checks": {
+        "purpose": true,
+        "mode": true,
+        "viewport": true,
+        "has_container_width_var": true,
+        "has_narrow_width_var": true,
+        "has_layout_attribute": true,
+        "no_horizontal_overflow": true
+      },
+      "metrics": {
+        "purpose": "account",
+        "layout": "boxed",
+        "mode": "light",
+        "width": 1440,
+        "documentWidth": 1440,
+        "containerWidthVar": "1200px",
+        "narrowWidthVar": "750px",
+        "mainWidth": 750,
+        "navWidth": null,
+        "footerWidth": null
+      }
+    },
+    {
+      "purpose": "account",
+      "mode": "dark",
+      "viewport": 1440,
+      "url": "https://conta.aculta.toca.net.br/",
+      "checks": {
+        "purpose": true,
+        "mode": true,
+        "viewport": true,
+        "has_container_width_var": true,
+        "has_narrow_width_var": true,
+        "has_layout_attribute": true,
+        "no_horizontal_overflow": true
+      },
+      "metrics": {
+        "purpose": "account",
+        "layout": "boxed",
+        "mode": "dark",
+        "width": 1440,
+        "documentWidth": 1440,
+        "containerWidthVar": "1200px",
+        "narrowWidthVar": "750px",
+        "mainWidth": 750,
+        "navWidth": null,
+        "footerWidth": null
+      }
+    },
+    {
+      "purpose": "support",
+      "mode": "light",
+      "viewport": 320,
+      "url": "https://apoio.aculta.toca.net.br/",
+      "checks": {
+        "purpose": true,
+        "mode": true,
+        "viewport": true,
+        "has_container_width_var": true,
+        "has_narrow_width_var": true,
+        "has_layout_attribute": true,
+        "no_horizontal_overflow": true,
+        "mobile_100_percent": true
+      },
+      "metrics": {
+        "purpose": "support",
+        "layout": "boxed",
+        "mode": "light",
+        "width": 320,
+        "documentWidth": 320,
+        "containerWidthVar": "1200px",
+        "narrowWidthVar": "750px",
+        "mainWidth": 320,
+        "navWidth": null,
+        "footerWidth": null
+      }
+    },
+    {
+      "purpose": "support",
+      "mode": "dark",
+      "viewport": 320,
+      "url": "https://apoio.aculta.toca.net.br/",
+      "checks": {
+        "purpose": true,
+        "mode": true,
+        "viewport": true,
+        "has_container_width_var": true,
+        "has_narrow_width_var": true,
+        "has_layout_attribute": true,
+        "no_horizontal_overflow": true,
+        "mobile_100_percent": true
+      },
+      "metrics": {
+        "purpose": "support",
+        "layout": "boxed",
+        "mode": "dark",
+        "width": 320,
+        "documentWidth": 320,
+        "containerWidthVar": "1200px",
+        "narrowWidthVar": "750px",
+        "mainWidth": 320,
+        "navWidth": null,
+        "footerWidth": null
+      }
+    },
+    {
+      "purpose": "support",
+      "mode": "light",
+      "viewport": 1440,
+      "url": "https://apoio.aculta.toca.net.br/",
+      "checks": {
+        "purpose": true,
+        "mode": true,
+        "viewport": true,
+        "has_container_width_var": true,
+        "has_narrow_width_var": true,
+        "has_layout_attribute": true,
+        "no_horizontal_overflow": true
+      },
+      "metrics": {
+        "purpose": "support",
+        "layout": "boxed",
+        "mode": "light",
+        "width": 1440,
+        "documentWidth": 1440,
+        "containerWidthVar": "1200px",
+        "narrowWidthVar": "750px",
+        "mainWidth": 1440,
+        "navWidth": null,
+        "footerWidth": null
+      }
+    },
+    {
+      "purpose": "support",
+      "mode": "dark",
+      "viewport": 1440,
+      "url": "https://apoio.aculta.toca.net.br/",
+      "checks": {
+        "purpose": true,
+        "mode": true,
+        "viewport": true,
+        "has_container_width_var": true,
+        "has_narrow_width_var": true,
+        "has_layout_attribute": true,
+        "no_horizontal_overflow": true
+      },
+      "metrics": {
+        "purpose": "support",
+        "layout": "boxed",
+        "mode": "dark",
+        "width": 1440,
+        "documentWidth": 1440,
+        "containerWidthVar": "1200px",
+        "narrowWidthVar": "750px",
+        "mainWidth": 1440,
+        "navWidth": null,
+        "footerWidth": null
+      }
+    },
+    {
+      "purpose": "magazine",
+      "mode": "light",
+      "viewport": 320,
+      "url": "https://revista.aculta.toca.net.br/",
+      "checks": {
+        "purpose": true,
+        "mode": true,
+        "viewport": true,
+        "has_container_width_var": true,
+        "has_narrow_width_var": true,
+        "has_layout_attribute": true,
+        "no_horizontal_overflow": true,
+        "mobile_100_percent": true
+      },
+      "metrics": {
+        "purpose": "magazine",
+        "layout": "boxed",
+        "mode": "light",
+        "width": 320,
+        "documentWidth": 320,
+        "containerWidthVar": "1200px",
+        "narrowWidthVar": "750px",
+        "mainWidth": 320,
+        "navWidth": null,
+        "footerWidth": null
+      }
+    },
+    {
+      "purpose": "magazine",
+      "mode": "dark",
+      "viewport": 320,
+      "url": "https://revista.aculta.toca.net.br/",
+      "checks": {
+        "purpose": true,
+        "mode": true,
+        "viewport": true,
+        "has_container_width_var": true,
+        "has_narrow_width_var": true,
+        "has_layout_attribute": true,
+        "no_horizontal_overflow": true,
+        "mobile_100_percent": true
+      },
+      "metrics": {
+        "purpose": "magazine",
+        "layout": "boxed",
+        "mode": "dark",
+        "width": 320,
+        "documentWidth": 320,
+        "containerWidthVar": "1200px",
+        "narrowWidthVar": "750px",
+        "mainWidth": 320,
+        "navWidth": null,
+        "footerWidth": null
+      }
+    },
+    {
+      "purpose": "magazine",
+      "mode": "light",
+      "viewport": 1440,
+      "url": "https://revista.aculta.toca.net.br/",
+      "checks": {
+        "purpose": true,
+        "mode": true,
+        "viewport": true,
+        "has_container_width_var": true,
+        "has_narrow_width_var": true,
+        "has_layout_attribute": true,
+        "no_horizontal_overflow": true
+      },
+      "metrics": {
+        "purpose": "magazine",
+        "layout": "boxed",
+        "mode": "light",
+        "width": 1440,
+        "documentWidth": 1440,
+        "containerWidthVar": "1200px",
+        "narrowWidthVar": "750px",
+        "mainWidth": 1440,
+        "navWidth": null,
+        "footerWidth": null
+      }
+    },
+    {
+      "purpose": "magazine",
+      "mode": "dark",
+      "viewport": 1440,
+      "url": "https://revista.aculta.toca.net.br/",
+      "checks": {
+        "purpose": true,
+        "mode": true,
+        "viewport": true,
+        "has_container_width_var": true,
+        "has_narrow_width_var": true,
+        "has_layout_attribute": true,
+        "no_horizontal_overflow": true
+      },
+      "metrics": {
+        "purpose": "magazine",
+        "layout": "boxed",
+        "mode": "dark",
+        "width": 1440,
+        "documentWidth": 1440,
+        "containerWidthVar": "1200px",
+        "narrowWidthVar": "750px",
+        "mainWidth": 1440,
+        "navWidth": null,
+        "footerWidth": null
+      }
+    },
+    {
+      "purpose": "wiki",
+      "mode": "light",
+      "viewport": 320,
+      "url": "https://wiki420.aculta.toca.net.br/",
+      "checks": {
+        "purpose": true,
+        "mode": true,
+        "viewport": true,
+        "has_container_width_var": true,
+        "has_narrow_width_var": true,
+        "has_layout_attribute": true,
+        "no_horizontal_overflow": true,
+        "mobile_100_percent": true
+      },
+      "metrics": {
+        "purpose": "wiki",
+        "layout": "boxed",
+        "mode": "light",
+        "width": 320,
+        "documentWidth": 320,
+        "containerWidthVar": "1200px",
+        "narrowWidthVar": "750px",
+        "mainWidth": 320,
+        "navWidth": null,
+        "footerWidth": null
+      }
+    },
+    {
+      "purpose": "wiki",
+      "mode": "dark",
+      "viewport": 320,
+      "url": "https://wiki420.aculta.toca.net.br/",
+      "checks": {
+        "purpose": true,
+        "mode": true,
+        "viewport": true,
+        "has_container_width_var": true,
+        "has_narrow_width_var": true,
+        "has_layout_attribute": true,
+        "no_horizontal_overflow": true,
+        "mobile_100_percent": true
+      },
+      "metrics": {
+        "purpose": "wiki",
+        "layout": "boxed",
+        "mode": "dark",
+        "width": 320,
+        "documentWidth": 320,
+        "containerWidthVar": "1200px",
+        "narrowWidthVar": "750px",
+        "mainWidth": 320,
+        "navWidth": null,
+        "footerWidth": null
+      }
+    },
+    {
+      "purpose": "wiki",
+      "mode": "light",
+      "viewport": 1440,
+      "url": "https://wiki420.aculta.toca.net.br/",
+      "checks": {
+        "purpose": true,
+        "mode": true,
+        "viewport": true,
+        "has_container_width_var": true,
+        "has_narrow_width_var": true,
+        "has_layout_attribute": true,
+        "no_horizontal_overflow": true
+      },
+      "metrics": {
+        "purpose": "wiki",
+        "layout": "boxed",
+        "mode": "light",
+        "width": 1440,
+        "documentWidth": 1440,
+        "containerWidthVar": "1200px",
+        "narrowWidthVar": "750px",
+        "mainWidth": 1440,
+        "navWidth": null,
+        "footerWidth": null
+      }
+    },
+    {
+      "purpose": "wiki",
+      "mode": "dark",
+      "viewport": 1440,
+      "url": "https://wiki420.aculta.toca.net.br/",
+      "checks": {
+        "purpose": true,
+        "mode": true,
+        "viewport": true,
+        "has_container_width_var": true,
+        "has_narrow_width_var": true,
+        "has_layout_attribute": true,
+        "no_horizontal_overflow": true
+      },
+      "metrics": {
+        "purpose": "wiki",
+        "layout": "boxed",
+        "mode": "dark",
+        "width": 1440,
+        "documentWidth": 1440,
+        "containerWidthVar": "1200px",
+        "narrowWidthVar": "750px",
+        "mainWidth": 1440,
+        "navWidth": null,
+        "footerWidth": null
+      }
+    },
+    {
+      "purpose": "shop",
+      "mode": "light",
+      "viewport": 320,
+      "url": "https://loja.aculta.toca.net.br/",
+      "checks": {
+        "purpose": true,
+        "mode": true,
+        "viewport": true,
+        "has_container_width_var": true,
+        "has_narrow_width_var": true,
+        "has_layout_attribute": true,
+        "no_horizontal_overflow": true,
+        "mobile_100_percent": true
+      },
+      "metrics": {
+        "purpose": "shop",
+        "layout": "boxed",
+        "mode": "light",
+        "width": 320,
+        "documentWidth": 320,
+        "containerWidthVar": "1200px",
+        "narrowWidthVar": "750px",
+        "mainWidth": 320,
+        "navWidth": null,
+        "footerWidth": null
+      }
+    },
+    {
+      "purpose": "shop",
+      "mode": "dark",
+      "viewport": 320,
+      "url": "https://loja.aculta.toca.net.br/",
+      "checks": {
+        "purpose": true,
+        "mode": true,
+        "viewport": true,
+        "has_container_width_var": true,
+        "has_narrow_width_var": true,
+        "has_layout_attribute": true,
+        "no_horizontal_overflow": true,
+        "mobile_100_percent": true
+      },
+      "metrics": {
+        "purpose": "shop",
+        "layout": "boxed",
+        "mode": "dark",
+        "width": 320,
+        "documentWidth": 320,
+        "containerWidthVar": "1200px",
+        "narrowWidthVar": "750px",
+        "mainWidth": 320,
+        "navWidth": null,
+        "footerWidth": null
+      }
+    },
+    {
+      "purpose": "shop",
+      "mode": "light",
+      "viewport": 1440,
+      "url": "https://loja.aculta.toca.net.br/",
+      "checks": {
+        "purpose": true,
+        "mode": true,
+        "viewport": true,
+        "has_container_width_var": true,
+        "has_narrow_width_var": true,
+        "has_layout_attribute": true,
+        "no_horizontal_overflow": true
+      },
+      "metrics": {
+        "purpose": "shop",
+        "layout": "boxed",
+        "mode": "light",
+        "width": 1440,
+        "documentWidth": 1440,
+        "containerWidthVar": "1200px",
+        "narrowWidthVar": "750px",
+        "mainWidth": 750,
+        "navWidth": null,
+        "footerWidth": null
+      }
+    },
+    {
+      "purpose": "shop",
+      "mode": "dark",
+      "viewport": 1440,
+      "url": "https://loja.aculta.toca.net.br/",
+      "checks": {
+        "purpose": true,
+        "mode": true,
+        "viewport": true,
+        "has_container_width_var": true,
+        "has_narrow_width_var": true,
+        "has_layout_attribute": true,
+        "no_horizontal_overflow": true
+      },
+      "metrics": {
+        "purpose": "shop",
+        "layout": "boxed",
+        "mode": "dark",
+        "width": 1440,
+        "documentWidth": 1440,
+        "containerWidthVar": "1200px",
+        "narrowWidthVar": "750px",
+        "mainWidth": 750,
+        "navWidth": null,
+        "footerWidth": null
+      }
+    },
+    {
+      "purpose": "courses",
+      "mode": "light",
+      "viewport": 320,
+      "url": "https://cursos.aculta.toca.net.br/",
+      "checks": {
+        "purpose": true,
+        "mode": true,
+        "viewport": true,
+        "has_container_width_var": true,
+        "has_narrow_width_var": true,
+        "has_layout_attribute": true,
+        "no_horizontal_overflow": true,
+        "mobile_100_percent": true
+      },
+      "metrics": {
+        "purpose": "courses",
+        "layout": "boxed",
+        "mode": "light",
+        "width": 320,
+        "documentWidth": 320,
+        "containerWidthVar": "1200px",
+        "narrowWidthVar": "750px",
+        "mainWidth": 320,
+        "navWidth": null,
+        "footerWidth": null
+      }
+    },
+    {
+      "purpose": "courses",
+      "mode": "dark",
+      "viewport": 320,
+      "url": "https://cursos.aculta.toca.net.br/",
+      "checks": {
+        "purpose": true,
+        "mode": true,
+        "viewport": true,
+        "has_container_width_var": true,
+        "has_narrow_width_var": true,
+        "has_layout_attribute": true,
+        "no_horizontal_overflow": true,
+        "mobile_100_percent": true
+      },
+      "metrics": {
+        "purpose": "courses",
+        "layout": "boxed",
+        "mode": "dark",
+        "width": 320,
+        "documentWidth": 320,
+        "containerWidthVar": "1200px",
+        "narrowWidthVar": "750px",
+        "mainWidth": 320,
+        "navWidth": null,
+        "footerWidth": null
+      }
+    },
+    {
+      "purpose": "courses",
+      "mode": "light",
+      "viewport": 1440,
+      "url": "https://cursos.aculta.toca.net.br/",
+      "checks": {
+        "purpose": true,
+        "mode": true,
+        "viewport": true,
+        "has_container_width_var": true,
+        "has_narrow_width_var": true,
+        "has_layout_attribute": true,
+        "no_horizontal_overflow": true
+      },
+      "metrics": {
+        "purpose": "courses",
+        "layout": "boxed",
+        "mode": "light",
+        "width": 1440,
+        "documentWidth": 1440,
+        "containerWidthVar": "1200px",
+        "narrowWidthVar": "750px",
+        "mainWidth": 1440,
+        "navWidth": null,
+        "footerWidth": null
+      }
+    },
+    {
+      "purpose": "courses",
+      "mode": "dark",
+      "viewport": 1440,
+      "url": "https://cursos.aculta.toca.net.br/",
+      "checks": {
+        "purpose": true,
+        "mode": true,
+        "viewport": true,
+        "has_container_width_var": true,
+        "has_narrow_width_var": true,
+        "has_layout_attribute": true,
+        "no_horizontal_overflow": true
+      },
+      "metrics": {
+        "purpose": "courses",
+        "layout": "boxed",
+        "mode": "dark",
+        "width": 1440,
+        "documentWidth": 1440,
+        "containerWidthVar": "1200px",
+        "narrowWidthVar": "750px",
+        "mainWidth": 1440,
+        "navWidth": null,
+        "footerWidth": null
+      }
+    },
+    {
+      "purpose": "forum",
+      "mode": "light",
+      "viewport": 320,
+      "url": "https://growroom420.aculta.toca.net.br/",
+      "checks": {
+        "purpose": true,
+        "mode": true,
+        "viewport": true,
+        "has_container_width_var": true,
+        "has_narrow_width_var": true,
+        "has_layout_attribute": true,
+        "no_horizontal_overflow": true,
+        "mobile_100_percent": true
+      },
+      "metrics": {
+        "purpose": "forum",
+        "layout": "boxed",
+        "mode": "light",
+        "width": 320,
+        "documentWidth": 320,
+        "containerWidthVar": "1200px",
+        "narrowWidthVar": "750px",
+        "mainWidth": 320,
+        "navWidth": null,
+        "footerWidth": null
+      }
+    },
+    {
+      "purpose": "forum",
+      "mode": "dark",
+      "viewport": 320,
+      "url": "https://growroom420.aculta.toca.net.br/",
+      "checks": {
+        "purpose": true,
+        "mode": true,
+        "viewport": true,
+        "has_container_width_var": true,
+        "has_narrow_width_var": true,
+        "has_layout_attribute": true,
+        "no_horizontal_overflow": true,
+        "mobile_100_percent": true
+      },
+      "metrics": {
+        "purpose": "forum",
+        "layout": "boxed",
+        "mode": "dark",
+        "width": 320,
+        "documentWidth": 320,
+        "containerWidthVar": "1200px",
+        "narrowWidthVar": "750px",
+        "mainWidth": 320,
+        "navWidth": null,
+        "footerWidth": null
+      }
+    },
+    {
+      "purpose": "forum",
+      "mode": "light",
+      "viewport": 1440,
+      "url": "https://growroom420.aculta.toca.net.br/",
+      "checks": {
+        "purpose": true,
+        "mode": true,
+        "viewport": true,
+        "has_container_width_var": true,
+        "has_narrow_width_var": true,
+        "has_layout_attribute": true,
+        "no_horizontal_overflow": true
+      },
+      "metrics": {
+        "purpose": "forum",
+        "layout": "boxed",
+        "mode": "light",
+        "width": 1440,
+        "documentWidth": 1440,
+        "containerWidthVar": "1200px",
+        "narrowWidthVar": "750px",
+        "mainWidth": 750,
+        "navWidth": null,
+        "footerWidth": null
+      }
+    },
+    {
+      "purpose": "forum",
+      "mode": "dark",
+      "viewport": 1440,
+      "url": "https://growroom420.aculta.toca.net.br/",
+      "checks": {
+        "purpose": true,
+        "mode": true,
+        "viewport": true,
+        "has_container_width_var": true,
+        "has_narrow_width_var": true,
+        "has_layout_attribute": true,
+        "no_horizontal_overflow": true
+      },
+      "metrics": {
+        "purpose": "forum",
+        "layout": "boxed",
+        "mode": "dark",
+        "width": 1440,
+        "documentWidth": 1440,
+        "containerWidthVar": "1200px",
+        "narrowWidthVar": "750px",
+        "mainWidth": 750,
+        "navWidth": null,
+        "footerWidth": null
+      }
+    },
+    {
+      "purpose": "links",
+      "mode": "light",
+      "viewport": 320,
+      "url": "https://links.aculta.toca.net.br/",
+      "checks": {
+        "purpose": true,
+        "mode": true,
+        "viewport": true,
+        "has_container_width_var": true,
+        "has_narrow_width_var": true,
+        "has_layout_attribute": true,
+        "no_horizontal_overflow": true,
+        "mobile_100_percent": true
+      },
+      "metrics": {
+        "purpose": "links",
+        "layout": "boxed",
+        "mode": "light",
+        "width": 320,
+        "documentWidth": 320,
+        "containerWidthVar": "1200px",
+        "narrowWidthVar": "750px",
+        "mainWidth": 320,
+        "navWidth": null,
+        "footerWidth": null
+      }
+    },
+    {
+      "purpose": "links",
+      "mode": "dark",
+      "viewport": 320,
+      "url": "https://links.aculta.toca.net.br/",
+      "checks": {
+        "purpose": true,
+        "mode": true,
+        "viewport": true,
+        "has_container_width_var": true,
+        "has_narrow_width_var": true,
+        "has_layout_attribute": true,
+        "no_horizontal_overflow": true,
+        "mobile_100_percent": true
+      },
+      "metrics": {
+        "purpose": "links",
+        "layout": "boxed",
+        "mode": "dark",
+        "width": 320,
+        "documentWidth": 320,
+        "containerWidthVar": "1200px",
+        "narrowWidthVar": "750px",
+        "mainWidth": 320,
+        "navWidth": null,
+        "footerWidth": null
+      }
+    },
+    {
+      "purpose": "links",
+      "mode": "light",
+      "viewport": 1440,
+      "url": "https://links.aculta.toca.net.br/",
+      "checks": {
+        "purpose": true,
+        "mode": true,
+        "viewport": true,
+        "has_container_width_var": true,
+        "has_narrow_width_var": true,
+        "has_layout_attribute": true,
+        "no_horizontal_overflow": true
+      },
+      "metrics": {
+        "purpose": "links",
+        "layout": "boxed",
+        "mode": "light",
+        "width": 1440,
+        "documentWidth": 1440,
+        "containerWidthVar": "1200px",
+        "narrowWidthVar": "750px",
+        "mainWidth": 1440,
+        "navWidth": null,
+        "footerWidth": null
+      }
+    },
+    {
+      "purpose": "links",
+      "mode": "dark",
+      "viewport": 1440,
+      "url": "https://links.aculta.toca.net.br/",
+      "checks": {
+        "purpose": true,
+        "mode": true,
+        "viewport": true,
+        "has_container_width_var": true,
+        "has_narrow_width_var": true,
+        "has_layout_attribute": true,
+        "no_horizontal_overflow": true
+      },
+      "metrics": {
+        "purpose": "links",
+        "layout": "boxed",
+        "mode": "dark",
+        "width": 1440,
+        "documentWidth": 1440,
+        "containerWidthVar": "1200px",
+        "narrowWidthVar": "750px",
+        "mainWidth": 1440,
+        "navWidth": null,
+        "footerWidth": null
+      }
+    },
+    {
+      "purpose": "eventos",
+      "mode": "light",
+      "viewport": 320,
+      "url": "https://eventos.aculta.toca.net.br/",
+      "checks": {
+        "purpose": true,
+        "mode": true,
+        "viewport": true,
+        "has_container_width_var": true,
+        "has_narrow_width_var": true,
+        "has_layout_attribute": true,
+        "no_horizontal_overflow": true,
+        "mobile_100_percent": true
+      },
+      "metrics": {
+        "purpose": "eventos",
+        "layout": "boxed",
+        "mode": "light",
+        "width": 320,
+        "documentWidth": 320,
+        "containerWidthVar": "1200px",
+        "narrowWidthVar": "750px",
+        "mainWidth": 320,
+        "navWidth": null,
+        "footerWidth": null
+      }
+    },
+    {
+      "purpose": "eventos",
+      "mode": "dark",
+      "viewport": 320,
+      "url": "https://eventos.aculta.toca.net.br/",
+      "checks": {
+        "purpose": true,
+        "mode": true,
+        "viewport": true,
+        "has_container_width_var": true,
+        "has_narrow_width_var": true,
+        "has_layout_attribute": true,
+        "no_horizontal_overflow": true,
+        "mobile_100_percent": true
+      },
+      "metrics": {
+        "purpose": "eventos",
+        "layout": "boxed",
+        "mode": "dark",
+        "width": 320,
+        "documentWidth": 320,
+        "containerWidthVar": "1200px",
+        "narrowWidthVar": "750px",
+        "mainWidth": 320,
+        "navWidth": null,
+        "footerWidth": null
+      }
+    },
+    {
+      "purpose": "eventos",
+      "mode": "light",
+      "viewport": 1440,
+      "url": "https://eventos.aculta.toca.net.br/",
+      "checks": {
+        "purpose": true,
+        "mode": true,
+        "viewport": true,
+        "has_container_width_var": true,
+        "has_narrow_width_var": true,
+        "has_layout_attribute": true,
+        "no_horizontal_overflow": true
+      },
+      "metrics": {
+        "purpose": "eventos",
+        "layout": "boxed",
+        "mode": "light",
+        "width": 1440,
+        "documentWidth": 1440,
+        "containerWidthVar": "1200px",
+        "narrowWidthVar": "750px",
+        "mainWidth": 1440,
+        "navWidth": null,
+        "footerWidth": null
+      }
+    },
+    {
+      "purpose": "eventos",
+      "mode": "dark",
+      "viewport": 1440,
+      "url": "https://eventos.aculta.toca.net.br/",
+      "checks": {
+        "purpose": true,
+        "mode": true,
+        "viewport": true,
+        "has_container_width_var": true,
+        "has_narrow_width_var": true,
+        "has_layout_attribute": true,
+        "no_horizontal_overflow": true
+      },
+      "metrics": {
+        "purpose": "eventos",
+        "layout": "boxed",
+        "mode": "dark",
+        "width": 1440,
+        "documentWidth": 1440,
+        "containerWidthVar": "1200px",
+        "narrowWidthVar": "750px",
+        "mainWidth": 1440,
+        "navWidth": null,
+        "footerWidth": null
+      }
+    }
+  ]
+}

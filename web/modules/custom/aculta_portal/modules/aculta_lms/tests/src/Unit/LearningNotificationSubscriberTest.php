@@ -9,7 +9,7 @@ use Drupal\aculta_lms\Event\AnswerSubmittedEvent;
 use Psr\Log\LoggerInterface;
 use Drupal\aculta_lms\Event\CertificateIssuedEvent;
 use Drupal\aculta_lms\Event\CourseEnrollmentEvent;
-use Drupal\aculta_learning_contracts\Event\CourseCompletedEvent;
+use Drupal\aculta_lms\Event\CourseCompletedEvent;
 use Drupal\aculta_lms\Event\CourseContentReleasedEvent;
 use Drupal\aculta_lms\Event\EducatorFeedbackPublishedEvent;
 use Drupal\aculta_lms\Event\ActivityDeadlineAssignedEvent;
@@ -171,7 +171,6 @@ final class LearningNotificationSubscriberTest extends UnitTestCase {
 
     $subscriber = new LearningNotificationSubscriber($manager, $publisher, $logger);
     $subscriber->certificateIssued(new CertificateIssuedEvent('certificate-uuid', '27'));
-    $this->addToAssertionCount(1);
   }
 
   /**

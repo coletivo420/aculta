@@ -226,7 +226,7 @@ aculta_messenger.communication_settings:
     _user_is_logged_in: 'TRUE'
   options:
     no_cache: true
-    _aculta_domain_purpose: account
+    _aculta_site_key: account
 
 aculta_messenger.new_conversation:
   path: '/mensagens/nova'
@@ -287,7 +287,7 @@ aculta_messenger.avisos:
     _permission: 'access aculta portal'
     aba: 'avisos|mensagens'
   options:
-    _aculta_domain_purpose: 'account'
+    _aculta_site_key: 'account'
 
 aculta_messenger.avisos_raiz:
   path: '/avisos-mensagens'
@@ -298,7 +298,7 @@ aculta_messenger.avisos_raiz:
   requirements:
     _permission: 'access aculta portal'
   options:
-    _aculta_domain_purpose: 'account'
+    _aculta_site_key: 'account'
 
 aculta_messenger.lms_notice_open:
   path: '/avisos/educacionais/{message}/abrir'
@@ -310,7 +310,7 @@ aculta_messenger.lms_notice_open:
     _custom_access: 'aculta_messenger.lms_notice_access:access'
     _user_is_logged_in: 'TRUE'
   options:
-    _aculta_domain_purpose: account
+    _aculta_site_key: account
     parameters:
       message:
         type: entity:message
@@ -325,7 +325,7 @@ aculta_messenger.wiki_notice_open:
     _custom_access: 'aculta_messenger.wiki_notice_access:access'
     _user_is_logged_in: 'TRUE'
   options:
-    _aculta_domain_purpose: account
+    _aculta_site_key: account
     parameters:
       message:
         type: entity:message
@@ -340,7 +340,7 @@ aculta_messenger.magazine_notice_open:
     _custom_access: 'aculta_messenger.magazine_notice_access:access'
     _user_is_logged_in: 'TRUE'
   options:
-    _aculta_domain_purpose: account
+    _aculta_site_key: account
     parameters:
       message:
         type: entity:message
@@ -355,7 +355,7 @@ aculta_messenger.events_contribution_notice_open:
     _custom_access: 'aculta_messenger.events_contribution_notice_access:access'
     _user_is_logged_in: 'TRUE'
   options:
-    _aculta_domain_purpose: account
+    _aculta_site_key: account
     no_cache: true
     parameters:
       message:
@@ -371,7 +371,7 @@ aculta_messenger.commerce_notice_open:
     _custom_access: 'aculta_messenger.commerce_notice_access:access'
     _user_is_logged_in: 'TRUE'
   options:
-    _aculta_domain_purpose: account
+    _aculta_site_key: account
     parameters:
       message:
         type: entity:message
@@ -386,7 +386,7 @@ aculta_messenger.donation_notice_open:
     _custom_access: 'aculta_messenger.donation_notice_access:access'
     _user_is_logged_in: 'TRUE'
   options:
-    _aculta_domain_purpose: account
+    _aculta_site_key: account
     parameters:
       message:
         type: entity:message

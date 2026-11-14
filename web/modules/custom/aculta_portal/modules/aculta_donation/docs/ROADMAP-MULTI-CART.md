@@ -63,4 +63,4 @@ Teste reversível por configuração e HTTP local (`curl --resolve` para 127.0.0
 | `both` | abertas | 200 | 302 |
 | `both` + `common_checkout_enabled: false` | `_access: FALSE` nas três | 403 | 302 (dedicado não depende da chave) |
 
-`loja.../carrinho` redireciona (302) ao domínio principal nos quatro cenários. **Limite:** a comparação é com o comportamento caracterizado pelos testes (asserções originais), não uma execução antes/depois no mesmo runtime. Continuam pendentes: DOM e contador do carrinho do cabeçalho, checkouts de Loja, LMS e Doações em navegador, anônimo e autenticado, webhooks, assinaturas, mobile e claro/escuro, sem JavaScript e Olivero.
+`loja.../carrinho` redireciona (302) ao domínio principal nos quatro cenários. **Limite:** a comparação é com o comportamento caracterizado pelos testes (asserções originais), não uma execução antes/depois no mesmo runtime. Continuam pendentes: DOM e contador do carrinho do cabeçalho, checkouts de Loja, LMS e Doações em navegador, anônimo e autenticado, webhooks, assinaturas, mobile e claro/escuro, sem JavaScript.

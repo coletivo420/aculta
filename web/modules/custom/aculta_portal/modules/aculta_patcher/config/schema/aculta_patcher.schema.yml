@@ -23,3 +23,9 @@ aculta_patcher.patch.*:
     patch:
       type: text
       label: 'Conteúdo unified diff'
+    source_url:
+      type: string
+      label: 'Arquivo de origem no manifesto Composer'
+    source_hash:
+      type: string
+      label: 'Hash da última importação do arquivo de origem'

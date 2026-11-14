@@ -1,0 +1,34 @@
+<div class="forum-opening-post">
+  {% set actions_markup %}
+    {{ include('aculta420_v2:content-reply-bar', {
+      permalink_url: permalink_url|default(null),
+      delete_url: delete_url|default(null),
+      edit_url: edit_url|default(null),
+      quote_url: quote_url|default(null),
+      reply_url: reply_url|default(null),
+      target_id: 'aculta-reply-dialog-body',
+    }, with_context = false) }}
+  {% endset %}
+  {% set card %}
+  {{ include('aculta420_v2:forum-post-card', {
+    stripe: 'brand',
+    density: density|default('default'),
+    accent_side: 'start',
+    accent_color: 'green',
+    badge: include('aculta420_v2:badge', { label: 'Abertura do tópico'|t, variant: 'highlight' }, with_context = false),
+    author_name: author_name,
+    author_role: null,
+    author_posts: author_posts|default(null),
+    timestamp: timestamp,
+    reactions: null,
+    reply_url: null,
+    avatar: avatar|default(null),
+    body: body,
+    actions: actions_markup,
+    reactions_received: reactions_received|default(null),
+    reactions_slot: reactions_slot|default(null),
+    reply: null,
+  }, with_context = false) }}
+  {% endset %}
+  {{ include('aculta420_v2:layout-grid', { min_item_width: '20rem', max_columns: 1, content: card }, with_context = false) }}
+</div>

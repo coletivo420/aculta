@@ -130,6 +130,7 @@ final class ForumAttachmentUploadDialogForm extends FormBase {
    * Resolve o arquivo escolhido: upload novo, ou envio recente do Studio do dono.
    *
    * @return array{file: ?FileInterface, is_image: bool, field: string, error: ?\Drupal\Core\StringTranslation\TranslatableMarkup}
+   *   Dados do arquivo resolvido e eventual mensagem de erro.
    */
   private function resolveSelection(FormStateInterface $form_state): array {
     $image_fids = array_values(array_filter(array_map('intval', (array) $form_state->getValue('image_file'))));
@@ -138,10 +139,20 @@ final class ForumAttachmentUploadDialogForm extends FormBase {
     $uploaded = count($image_fids) + count($document_fids);
 
     if ($uploaded > 1 || ($uploaded === 1 && $studio_fid > 0)) {
-      return ['file' => NULL, 'is_image' => FALSE, 'field' => 'image_file', 'error' => $this->t('Envie um arquivo por vez.')];
+      return [
+        'file' => NULL,
+        'is_image' => FALSE,
+        'field' => 'image_file',
+        'error' => $this->t('Envie um arquivo por vez.'),
+      ];
     }
     if ($uploaded === 0 && $studio_fid === 0) {
-      return ['file' => NULL, 'is_image' => FALSE, 'field' => 'image_file', 'error' => $this->t('Envie um arquivo ou escolha um envio recente.')];
+      return [
+        'file' => NULL,
+        'is_image' => FALSE,
+        'field' => 'image_file',
+        'error' => $this->t('Envie um arquivo ou escolha um envio recente.'),
+      ];
     }
 
     if ($uploaded === 1) {
@@ -150,7 +161,12 @@ final class ForumAttachmentUploadDialogForm extends FormBase {
       $field = $is_image ? 'image_file' : 'document_file';
       $file = $this->entityTypeManager->getStorage('file')->load($fid);
       if (!$file instanceof FileInterface) {
-        return ['file' => NULL, 'is_image' => $is_image, 'field' => $field, 'error' => $this->t('O arquivo enviado não está disponível. Envie-o novamente.')];
+        return [
+          'file' => NULL,
+          'is_image' => $is_image,
+          'field' => $field,
+          'error' => $this->t('O arquivo enviado não está disponível. Envie-o novamente.'),
+        ];
       }
       return ['file' => $file, 'is_image' => $is_image, 'field' => $field, 'error' => NULL];
     }
@@ -159,7 +175,12 @@ final class ForumAttachmentUploadDialogForm extends FormBase {
     $file = $this->entityTypeManager->getStorage('file')->load($studio_fid);
     $is_image = $file instanceof FileInterface && in_array(strtolower(pathinfo($file->getFilename(), PATHINFO_EXTENSION)), $this->uploadPolicy->imageExtensions('forum'), TRUE);
     if (!$file instanceof FileInterface || !$this->recentUploads->isOwnedBy($file, (int) $this->currentUser->id(), 'forum', $this->currentUser->hasPermission('administer site configuration'))) {
-      return ['file' => NULL, 'is_image' => FALSE, 'field' => 'studio_file', 'error' => $this->t('O arquivo escolhido não está disponível. Envie-o novamente.')];
+      return [
+        'file' => NULL,
+        'is_image' => FALSE,
+        'field' => 'studio_file',
+        'error' => $this->t('O arquivo escolhido não está disponível. Envie-o novamente.'),
+      ];
     }
     return ['file' => $file, 'is_image' => $is_image, 'field' => 'studio_file', 'error' => NULL];
   }
@@ -212,9 +233,6 @@ final class ForumAttachmentUploadDialogForm extends FormBase {
       'status' => FALSE,
       'field_media_forum_attachment' => ['target_id' => $file->id()],
     ]);
-    if (!$media instanceof MediaInterface) {
-      throw new \UnexpectedValueException('The Forum attachment Media bundle could not be created.');
-    }
     if ($is_image_upload) {
       $media->set('field_media_forum_image', [
         'target_id' => $file->id(),

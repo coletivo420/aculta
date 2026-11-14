@@ -52,7 +52,7 @@ final class PublicProfilePolicy {
    *   Mapa item => TRUE para os itens que podem aparecer. Vazio se não houver apelido.
    */
   public function publicItems(array $perfil): array {
-    if (trim((string) ($perfil['apelido'] ?? '')) === '') {
+    if (trim((string) $perfil['apelido']) === '') {
       return [];
     }
 

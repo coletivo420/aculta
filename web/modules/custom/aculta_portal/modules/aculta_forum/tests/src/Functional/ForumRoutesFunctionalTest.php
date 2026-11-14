@@ -17,7 +17,7 @@ use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 /**
  * Rotas do Fórum por HTTP: negação anônima, telas e formulário autenticados.
  *
- * A costura `aculta_domain_purpose_test_relaxed` permite exercitar todos os
+ * A costura `aculta_site_key_test_relaxed` permite exercitar todos os
  * propósitos em um único host de teste; ela nunca é definida em produção.
  */
 #[Group('aculta_forum')]
@@ -35,7 +35,7 @@ final class ForumRoutesFunctionalTest extends BrowserTestBase {
    * The standard profile ships the body field as text_with_summary, matching
    * the site configuration; the testing profile's text_long conflicts with it.
    */
-  protected $profile = 'standard';
+  protected $profile = 'aculta_forum_functional_test';
 
   /**
    * {@inheritdoc}
@@ -50,13 +50,17 @@ final class ForumRoutesFunctionalTest extends BrowserTestBase {
       $this->markTestSkipped('Sem SIMPLETEST_BASE_URL: teste funcional pulado.');
     }
     parent::setUp();
+    $base = (string) getenv('SIMPLETEST_BASE_URL');
+    $host = parse_url($base, PHP_URL_HOST) ?: '127.0.0.1';
+    $scheme = parse_url($base, PHP_URL_SCHEME) ?: 'http';
     Domain::create([
       'id' => 'forum_aculta_org',
-      'hostname' => '127.0.0.1',
+      'hostname' => $host,
       'name' => 'Fórum',
-      'scheme' => 'http',
+      'scheme' => $scheme,
       'status' => TRUE,
       'weight' => 0,
+      'is_default' => TRUE,
     ])->save();
     // Topic creation is gated by published-comment rules on the real site;
     // this suite exercises the routes and the form itself.
@@ -89,7 +93,7 @@ final class ForumRoutesFunctionalTest extends BrowserTestBase {
   protected function prepareSettings() {
     parent::prepareSettings();
     $file = DRUPAL_ROOT . '/' . $this->siteDirectory . '/settings.php';
-    file_put_contents($file, "\n\$settings['aculta_domain_purpose_test_relaxed'] = TRUE;\n", FILE_APPEND);
+    file_put_contents($file, "\n\$settings['aculta_site_key_test_relaxed'] = TRUE;\n", FILE_APPEND);
   }
 
   /**
@@ -99,8 +103,7 @@ final class ForumRoutesFunctionalTest extends BrowserTestBase {
     $statuses = [];
     foreach ([
       '/painel-administrativo/forum',
-      '/criar-topico',
-      '/publicacao/nova',
+      '/discussoes/novo-topico',
       '/discussoes/marcar-tudo-como-lido',
       '/painel-administrativo/forum/configuracoes',
       '/painel-administrativo/forum/publicacoes-revisionaveis',
@@ -123,7 +126,7 @@ final class ForumRoutesFunctionalTest extends BrowserTestBase {
     ]);
     $this->loginAs($editor);
 
-    $this->drupalGet('/criar-topico');
+    $this->drupalGet('/discussoes/novo-topico');
     $this->assertPageOk();
     $this->assertSession()->fieldExists('title[0][value]');
 
@@ -144,7 +147,7 @@ final class ForumRoutesFunctionalTest extends BrowserTestBase {
       'access content',
     ]);
     $this->loginAs($author);
-    $this->drupalGet('/criar-topico');
+    $this->drupalGet('/discussoes/novo-topico');
     $this->assertPageOk();
     $this->assertSession()->fieldExists('title[0][value]');
     $page = $this->getSession()->getPage();
@@ -200,7 +203,7 @@ final class ForumRoutesFunctionalTest extends BrowserTestBase {
   public function testAuthenticatedWithoutPermissionIsDenied(): void {
     $user = $this->drupalCreateUser(['access content']);
     $this->loginAs($user);
-    $this->drupalGet('/criar-topico');
+    $this->drupalGet('/discussoes/novo-topico');
     $this->assertSession()->statusCodeEquals(403);
     $this->drupalGet('/painel-administrativo/forum');
     $this->assertSession()->statusCodeEquals(403);
@@ -242,7 +245,7 @@ final class ForumRoutesFunctionalTest extends BrowserTestBase {
     $page = $this->getSession()->getPage();
     $page->fillField('name', $account->getAccountName());
     $page->fillField('pass', $account->passRaw);
-    $page->find('css', 'input[type="submit"]')->click();
+    $page->find('css', 'input[type="submit"], button[type="submit"]')->click();
     $this->loggedInUser = $account;
     $this->container->get('current_user')->setAccount($account);
     $url = $this->getSession()->getCurrentUrl();

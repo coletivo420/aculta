@@ -23,14 +23,14 @@
 
 ## Normas
 
-- [DRUPAL-11-STANDARDS.md](DRUPAL-11-STANDARDS.md) — padrão Drupal 11+ e regras de código.
+- [DRUPAL-12-STANDARDS.md](DRUPAL-12-STANDARDS.md) — padrão Drupal 11+ e regras de código.
 - [GUARDRAILS.md](GUARDRAILS.md) — regras de Fórum, Revista, Loja, Wiki, Conta e AJAX.
 - [COMPONENTES-PROPRIOS.md](COMPONENTES-PROPRIOS.md) — rótulo único "ACULTA Portal" para módulos próprios e gate de pacote.
 - [IMPLEMENTATIONS.md](IMPLEMENTATIONS.md) — inventário de implementações, helpers e integrações aplicadas pelo Portal.
 - [WEBFORM-BOOTSTRAP-AVALIACAO.md](WEBFORM-BOOTSTRAP-AVALIACAO.md) — avaliação de portabilidade do Webform Bootstrap (3.x, deprecado) para tema e Portal.
 - [LINKS-DE-USO-UNICO.md](LINKS-DE-USO-UNICO.md) — links de acesso único: 24 horas em todos os módulos, pedido novo substitui o anterior, reenvio não reaproveita link, e a única exceção (retentativa automática).
 - [ACEITE-UNICO.md](ACEITE-UNICO.md) — um único formulário de aceite (Termos e Política), sem novos aceites; funções descritas na política; gate `validate-single-acceptance.php`.
-- [EMAIL-TRANSPORT.md](EMAIL-TRANSPORT.md) — envio de e-mail pela camada de envio E-Mails ACULTA (M0 a M2 concluídas; validado no runtime de teste).
+- [EMAIL-TRANSPORT.md](EMAIL-TRANSPORT.md) — envio de e-mail pela camada de envio E-Mails ACULTA (M0 a M2 concluídas; validado no runtime de desenvolvimento).
 - [SOURCE-OF-TRUTH.md](SOURCE-OF-TRUTH.md) — fonte de verdade de cada dado.
 - [ARCHITECTURE.md](ARCHITECTURE.md) — papel do módulo e fronteiras.
 - [ACULTA-CONTENT-INDEX.md](ACULTA-CONTENT-INDEX.md) — catálogo transversal, fronteiras, estado e roadmap do `aculta_index`.
@@ -84,7 +84,7 @@
 
 - [ROADMAP.md](ROADMAP.md) — planejamento do Portal.
 - [Registro de dívidas](../operations/DEBT-REGISTER.md) — pendências com evidência e impacto.
-- [TESTES-NAVEGADOR.md](TESTES-NAVEGADOR.md) — procedimento e registro de rodadas no navegador.
+- [TESTES-NAVEGADOR.md](TESTES-NAVEGADOR.md) — regras e roteiro. Rodadas datadas em `../history/portal/TESTES-NAVEGADOR-RODADAS.md`.
 - [Histórico documental](historico/README.md) — snapshots preservados para consulta; não são o estado atual.
 
 O estado implementado de cada componente é registrado no CHANGELOG e no código.

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_lms\Unit;
 
 use Drupal\aculta_lms\Certificate\CertificateQrCodeProvider;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\aculta_qrcode\Service\QrCodeGenerator;
 use Drupal\aculta_qrcode\Service\QrCodePayloadValidator;
 use Drupal\aculta_qrcode\Service\QrCodePresetRegistry;
@@ -40,7 +40,7 @@ final class CertificateQrCodeProviderTest extends UnitTestCase {
     $entity_type_manager->expects(self::once())->method('getStorage')->with('domain')->willReturn($domain_storage);
     $negotiator = $this->createMock(DomainNegotiatorInterface::class);
     $negotiator->expects(self::once())->method('getActiveDomain')->willReturn(NULL);
-    $purpose = new DomainPurposeManager(
+    $purpose = new DomainSiteManager(
       $entity_type_manager,
       $negotiator,
       $this->createMock(ConfigFactoryInterface::class),
@@ -81,7 +81,7 @@ final class CertificateQrCodeProviderTest extends UnitTestCase {
     $domain_storage->expects(self::once())->method('load')->with('aculta_org')->willReturn(NULL);
     $entity_type_manager = $this->createMock(EntityTypeManagerInterface::class);
     $entity_type_manager->expects(self::once())->method('getStorage')->with('domain')->willReturn($domain_storage);
-    $purpose = new DomainPurposeManager(
+    $purpose = new DomainSiteManager(
       $entity_type_manager,
       $this->createMock(DomainNegotiatorInterface::class),
       $this->createMock(ConfigFactoryInterface::class),

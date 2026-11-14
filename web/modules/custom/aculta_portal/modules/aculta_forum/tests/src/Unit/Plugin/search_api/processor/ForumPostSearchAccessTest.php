@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_forum\Unit\Plugin\search_api\processor;
 
 use Drupal\aculta_forum\Plugin\search_api\processor\ForumPostSearchAccess;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -105,7 +105,7 @@ final class ForumPostSearchAccessTest extends TestCase {
   private function processor(array $grants): ForumPostSearchAccess {
     $helper = $this->createMock(NodeGrantsHelper::class);
     $helper->method('nodeAccessGrants')->willReturn($grants);
-    $purpose = new DomainPurposeManager(
+    $purpose = new DomainSiteManager(
       $this->createMock(EntityTypeManagerInterface::class),
       $this->createMock(DomainNegotiatorInterface::class),
       $this->createMock(ConfigFactoryInterface::class),

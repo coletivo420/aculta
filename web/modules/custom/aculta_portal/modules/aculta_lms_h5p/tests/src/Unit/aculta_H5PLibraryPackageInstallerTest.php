@@ -51,7 +51,7 @@ final class aculta_H5PLibraryPackageInstallerTest extends UnitTestCase {
     $path = tempnam(sys_get_temp_dir(), 'aculta-h5p-traversal-');
     self::assertNotFalse($path);
     $zip = new \ZipArchive();
-    self::assertSame(TRUE, $zip->open($path, \ZipArchive::OVERWRITE));
+    self::assertTrue($zip->open($path, \ZipArchive::OVERWRITE));
     self::assertTrue($zip->addFromString('../../escape.js', 'malicious'));
     self::assertTrue($zip->close());
     $package = $path . '.h5p';

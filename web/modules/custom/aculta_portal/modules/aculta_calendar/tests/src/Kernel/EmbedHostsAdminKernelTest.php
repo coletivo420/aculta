@@ -68,6 +68,7 @@ final class EmbedHostsAdminKernelTest extends KernelTestBase {
 
     $page = $this->container->get('class_resolver')->getInstanceFromDefinition('Drupal\\aculta_calendar\\Controller\\EmbedHostsController');
     $build = $page->page();
+    self::assertContains('aculta_calendar/embed-hosts', $build['#attached']['library']);
     $mappings = $this->container->get('aculta_calendar.embed_hosts')->mappings();
     self::assertCount(count($mappings), $build['hosts']['#rows']);
     self::assertSame($mappings[0]['test_host'], $build['hosts']['#rows'][0][1]);

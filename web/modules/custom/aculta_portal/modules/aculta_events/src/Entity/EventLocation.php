@@ -6,12 +6,12 @@ namespace Drupal\aculta_events\Entity;
 
 use Drupal\Core\Entity\Attribute\ContentEntityType;
 use Drupal\Core\Entity\ContentEntityBase;
-use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\user\EntityOwnerInterface;
 use Drupal\user\UserInterface;
 use Drupal\views\EntityViewsData;
@@ -55,15 +55,19 @@ final class EventLocation extends ContentEntityBase implements EntityOwnerInterf
    * {@inheritdoc}
    */
   public function getOwner(): ?UserInterface {
-    return $this->get('field_organizador')->entity;
+    $owner = $this->get('field_organizador')->entity;
+    return $owner instanceof UserInterface ? $owner : NULL;
   }
 
   /**
    * {@inheritdoc}
    */
   public function getOwnerId(): ?int {
+    if ($this->get('field_organizador')->isEmpty()) {
+      return NULL;
+    }
     $targetId = $this->get('field_organizador')->target_id;
-    return $targetId !== NULL && $targetId !== '' ? (int) $targetId : NULL;
+    return (int) $targetId;
   }
 
   /**
@@ -80,42 +84,6 @@ final class EventLocation extends ContentEntityBase implements EntityOwnerInterf
   public function setOwner(UserInterface $account): static {
     $this->set('field_organizador', $account->id());
     return $this;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function preSave(EntityStorageInterface $storage): void {
-    parent::preSave($storage);
-    // Força normalização do país para Brasil em qualquer persistência.
-    if ($this->hasField('field_endereco') && !$this->get('field_endereco')->isEmpty()) {
-      foreach ($this->get('field_endereco') as $item) {
-        if ($item->country_code !== 'BR') {
-          $item->country_code = 'BR';
-        }
-      }
-    }
-    // Geocodifica quando o endereço muda ou ainda não há coordenadas.
-    // Cada endereço é geocodificado uma vez.
-    $mudouEndereco = !$this->isNew() && $this->original !== NULL
-      && $this->original->get('field_endereco')->getValue() !== $this->get('field_endereco')->getValue();
-    // Geocode once when a location is created or its address changes.
-    $precisaGeocodificar = $mudouEndereco || ($this->isNew() && $this->get('field_coordenadas')->isEmpty());
-    if (\Drupal::hasService('aculta_maps.geocoding') && $precisaGeocodificar) {
-      $texto = $this->enderecoTexto();
-      $coordenadas = $texto !== '' ? \Drupal::service('aculta_maps.geocoding')->geocode($texto) : NULL;
-      if ($coordenadas !== NULL) {
-        $this->set('field_coordenadas', [
-          'lat' => $coordenadas['lat'],
-          'lon' => $coordenadas['lng'],
-          'value' => sprintf('POINT (%F %F)', $coordenadas['lng'], $coordenadas['lat']),
-          'geo_type' => 'Point',
-        ]);
-      }
-      elseif ($mudouEndereco) {
-        $this->set('field_coordenadas', NULL);
-      }
-    }
   }
 
   /**
@@ -143,9 +111,9 @@ final class EventLocation extends ContentEntityBase implements EntityOwnerInterf
   /**
    * Retorna a URL canônica absoluta no purpose/domínio de eventos.
    */
-  public function toCanonicalUrl(?DomainPurposeManager $purposes = NULL): Url {
+  public function toCanonicalUrl(?DomainSiteManager $purposes = NULL): Url {
     if ($purposes !== NULL && $this->id() !== NULL) {
-      $canonical = $purposes->canonicalRouteUrl('eventos', 'aculta_events.location_canonical', [
+      $canonical = $purposes->canonicalRouteUrl(SiteKey::Eventos, 'aculta_events.location_canonical', [
         'aculta_event_location' => (string) $this->id(),
       ]);
       if ($canonical !== NULL) {
@@ -153,24 +121,6 @@ final class EventLocation extends ContentEntityBase implements EntityOwnerInterf
       }
     }
     return $this->toUrl('canonical');
-  }
-
-  /**
-   * Endereço em texto para a geocodificação (sem CEP genérico quando há rua).
-   */
-  private function enderecoTexto(): string {
-    $item = $this->get('field_endereco')->first();
-    if ($item === NULL) {
-      return '';
-    }
-    $e = $item->getValue();
-    return trim(implode(', ', array_filter([
-      (string) ($e['address_line1'] ?? ''),
-      (string) ($e['locality'] ?? ''),
-      (string) ($e['administrative_area'] ?? ''),
-      (string) ($e['postal_code'] ?? ''),
-      'Brasil',
-    ])));
   }
 
   /**

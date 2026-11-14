@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "front": "ui-suite-library",
+  "date": "2026-11-11",
+  "environment": "development",
+  "path": "/painel-administrativo/aparencia/ui/components/aculta420_v2",
+  "runner": "tests/browser/transversal/aculta-visual/visual.py",
+  "authentication": "administrative test account via one-time Drush login",
+  "checks": {
+    "title": "aculta420_v2 | Associação Cultural Antiproibicionista",
+    "main_landmark": true,
+    "catalog": {
+      "groups": 16,
+      "components": 84,
+      "preview_links": 84,
+      "loaded_sdc_stories": 1
+    },
+    "horizontal_overflow": false,
+    "document_width_and_scroll": {
+      "1280px": [
+        1280,
+        0
+      ],
+      "320px": [
+        320,
+        0
+      ]
+    },
+    "320px_offscreen_elements": "Drawer Claro list may extend outside viewport; separated from catalogue content metric; document scroll remains zero.",
+    "dark_mode": "data-theme and data-bs-theme set to dark in browser DOM",
+    "blocked_error_page": false,
+    "anonymous_access": "403, as expected for protected admin route",
+    "blank_page_guard": "title, main and non-empty body required"
+  },
+  "artifacts": {
+    "storage": "$SUITE_OUT/ui-catalog-recheck-final-20261111",
+    "screenshots": [
+      {
+        "file": "ui-patterns-desktop.png",
+        "viewport_css_px": 1280,
+        "mode": "light",
+        "sha256": "fa960b04096cc2c41d147e2d1e0592cf1eebd9661d8cfcbdc8b6ef07dd89cccf"
+      },
+      {
+        "file": "ui-patterns-320.png",
+        "viewport_css_px": 320,
+        "mode": "light",
+        "sha256": "ac56d02da509485816799a6265cbbcc15a5d194b8793401244dba092a077cc31"
+      },
+      {
+        "file": "ui-patterns-dark.png",
+        "viewport_css_px": 1280,
+        "mode": "dark_dom_override",
+        "sha256": "527f80314c90b737151e3fb66661bdabae74971419ab74fd30d06fa136be5f6b"
+      }
+    ]
+  },
+  "notes": [
+    "Firefox ESR authenticated recheck loaded all 16 groups and 84 SDC components/previews; one on-demand story loaded.",
+    "Catalogue content has no overflow at 320px and 1280px. Administrative Claro drawer geometry is outside #aculta-components-container and is reported separately.",
+    "This does not claim zoom 200%, keyboard-only or full responsive acceptance for the administrative theme."
+  ]
+}

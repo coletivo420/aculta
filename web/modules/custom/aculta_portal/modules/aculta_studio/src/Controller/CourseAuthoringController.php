@@ -48,12 +48,28 @@ final class CourseAuthoringController {
       if (!$access->isAllowed()) {
         continue;
       }
-      $items[] = [
-        '#type' => 'link',
-        '#title' => $course->label(),
-        '#url' => $course->toUrl(),
-        '#cache' => ['contexts' => ['user', 'user.permissions']],
+      $item = [
+        '#type' => 'container',
+        '#attributes' => ['data-aculta-studio' => 'educator-course'],
+        'course' => [
+          '#type' => 'link',
+          '#title' => $course->label(),
+          '#url' => $course->toUrl(),
+        ],
+        '#cache' => ['contexts' => ['user', 'user.permissions', 'user.group_permissions']],
       ];
+      $structureUrl = Url::fromRoute('aculta_lms.course_structure', ['course' => $course->id()]);
+      if ($structureUrl->access($this->account)) {
+        $item['structure'] = PortalLinkElement::build(
+          $this->t('Editar estrutura'),
+          $structureUrl,
+          [
+            'data-aculta-studio' => 'course-structure',
+            'data-portal-ui' => 'studio-action',
+          ],
+        );
+      }
+      $items[] = $item;
     }
     $build = [
       '#type' => 'container',
@@ -71,14 +87,15 @@ final class CourseAuthoringController {
         '#plain_text' => $this->t('Crie e acompanhe cursos conforme suas permissões de educador.'),
         '#weight' => -90,
       ],
-      'create' => PortalLinkElement::build(
-        $this->t('Novo curso'),
-        Url::fromRoute('aculta_lms.course_create'),
-        [
-          'data-aculta-studio' => 'course-create',
-          'data-portal-ui' => 'button-primary',
+      'create' => [
+        '#type' => 'aculta_portal_button',
+        '#props' => [
+          'text' => (string) $this->t('Novo curso'),
+          'url' => Url::fromRoute('aculta_lms.course_create')->toString(),
+          'variant' => 'primary',
         ],
-      ),
+        '#attributes' => ['data-aculta-studio' => 'course-create'],
+      ],
       'courses' => ['#weight' => 0] + ($items ?: [
         '#plain_text' => $this->t('Nenhum curso disponível para gestão.'),
       ]),

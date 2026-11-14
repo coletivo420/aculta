@@ -22,9 +22,9 @@ final class MailImapSettingsForm extends ConfigFormBase {
   public function __construct(
     ConfigFactoryInterface $config_factory,
     TypedConfigManagerInterface $typedConfigManager,
-    private readonly MailMonitor $monitor,
-    private readonly ?SecretProviderInterface $secrets,
-    private readonly ?SecretWriterInterface $writer,
+    protected readonly MailMonitor $monitor,
+    protected readonly ?SecretProviderInterface $secrets,
+    protected readonly ?SecretWriterInterface $writer,
   ) {
     parent::__construct($config_factory, $typedConfigManager);
   }

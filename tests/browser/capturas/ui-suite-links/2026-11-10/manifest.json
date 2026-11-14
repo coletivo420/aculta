@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "front": "ui-suite-links",
+  "date": "2026-11-10",
+  "environment": "development",
+  "site_key": "links",
+  "path": "/",
+  "runner": "tests/browser/transversal/aculta-visual/visual.py",
+  "authentication": "administrative test account; screenshot includes the one-time-login status notice",
+  "checks": {
+    "http_status": 200,
+    "viewports_css_px": [1280, 320],
+    "horizontal_overflow": false,
+    "blocked_error_page": false,
+    "h1_and_main": "one each on Links and MAIN in anonymous A/B/A check",
+    "skin_sequence": ["ruderalis", "skunk", "ruderalis"],
+    "accent_light_sequence": ["#76a82c", "#5a8022", "#76a82c"],
+    "accent_dark_sequence": ["#89c72c", "#6c9e22", "#89c72c"],
+    "cacheability": "Pages reported X-Drupal-Dynamic-Cache: UNCACHEABLE; cache-hit variation remains unverified",
+    "dark_capture": "data-theme was set in the browser DOM; persisted user preference was not changed"
+  },
+  "artifacts": {
+    "storage": "$SUITE_OUT/links-layout-sdc-final-2026-11-10",
+    "screenshots": [
+      {
+        "file": "ui-patterns-desktop.png",
+        "viewport_css_px": 1280,
+        "mode": "light",
+        "sha256": "affee650348b3a05c973d864b0c29fe756115f0772d82168523f838d02dcbdb1"
+      },
+      {
+        "file": "ui-patterns-320.png",
+        "viewport_css_px": 320,
+        "mode": "light",
+        "sha256": "48893f2f686a4fb9724ac6edbfec0636c072c18aaa5d324acce822efb6eb1045"
+      },
+      {
+        "file": "ui-patterns-dark.png",
+        "viewport_css_px": 1280,
+        "mode": "dark_dom_override",
+        "sha256": "41efe5a2413465695713edd66b78bec619229583581033ec28c8ac6fe9c0399f"
+      }
+    ]
+  },
+  "notes": [
+    "node.page.default and node.page.full use the existing layout-section SDC through UI Patterns Layouts.",
+    "UI Skins variables were read from computed styles during the anonymous Links → MAIN → Links sequence.",
+    "This is a pilot rendering check, not final visual acceptance for all domains or user roles."
+  ]
+}

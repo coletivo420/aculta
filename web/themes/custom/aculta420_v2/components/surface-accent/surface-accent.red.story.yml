@@ -1,0 +1,14 @@
+name: Moldura com faixa lateral vermelha
+description: Superfície com ênfase lateral esquerda vermelha, fiel à referência 02_bloco_vermelho.
+component: aculta420_v2:surface-accent
+props:
+  accent: red
+  position: start
+  tone: raised
+  radius: lg
+  spacing: normal
+  elevation: subtle
+slots:
+  content:
+    type: inline_template
+    template: '<p>Superfície com destaque vermelho na lateral esquerda.</p>'

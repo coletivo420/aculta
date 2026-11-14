@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_forum\Hook;
 
 use Drupal\aculta_forum\Context\DiscussionContextResolver;
+use Drupal\aculta_forum\Service\DiscussionReplyUrlBuilder;
 use Drupal\aculta_forum\Service\ForumQuoteBuilder;
 use Drupal\comment\CommentInterface;
 use Drupal\Core\Cache\CacheableMetadata;
@@ -31,6 +32,8 @@ final class ForumQuoteHooks {
     private readonly ForumQuoteBuilder $quoteBuilder,
     private readonly RequestStack $requestStack,
     private readonly TranslationInterface $translation,
+    #[Autowire(service: 'aculta_forum.discussion_reply_url_builder')]
+    private readonly ?DiscussionReplyUrlBuilder $urlBuilder = NULL,
   ) {}
 
   /**
@@ -49,39 +52,62 @@ final class ForumQuoteHooks {
       return;
     }
     $discussion = $this->contextResolver->resolve($host, $this->currentUser);
-    if ($discussion === NULL || !$discussion->getReadAccess()->isAllowed()) {
+    // COM-09: Revalida leitura E escrita do contexto da discussão.
+    if ($discussion === NULL
+      || !$discussion->getReadAccess()->isAllowed()
+      || !$discussion->getWriteAccess()->isAllowed()) {
       return;
     }
 
-    $url = Url::fromRoute('comment.reply', [
-      'entity_type' => $comment->getCommentedEntityTypeId(),
-      'entity' => $comment->getCommentedEntityId(),
-      'field_name' => $comment->getFieldName(),
-      'pid' => $comment->id(),
+    $urlBuilder = $this->urlBuilder ?? new DiscussionReplyUrlBuilder();
+    $fallbackUrl = $urlBuilder->buildHostReplyUrl($host, (int) $comment->id(), 'citar');
+    $composerId = 'discussion-composer-' . $host->getEntityTypeId() . '-' . $host->id() . '-' . $comment->id();
+
+    // Endpoint for loading composer with quote prefilled via HTMX.
+    $endpointUrl = Url::fromRoute('aculta_forum.discussion_composer', [
+      'entity_type' => $host->getEntityTypeId(),
+      'entity_id' => $host->id(),
     ], [
-      'query' => ['quote' => (int) $comment->id()],
-      'fragment' => 'comment-form',
+      'query' => [
+        'resposta' => (int) $comment->id(),
+        'citacao' => (int) $comment->id(),
+        'modo' => 'citar',
+      ],
     ]);
 
-    $linkBuild = [
-      '#theme' => 'links__comment__comment',
-      '#links' => [
-        'aculta-forum-quote' => [
-          'title' => $this->translation->translate('Citar'),
-          'url' => $url,
-          'attributes' => ['data-portal-ui' => 'button-secondary'],
-        ],
+    // COM-08/COM-10/COM-11: Estrutura neutra de links Drupal, com atributos semânticos,
+    // inserida no grupo 'comment' para ser coletada por Link::preRenderLinks.
+    $quoteLink = [
+      'title' => $this->translation->translate('Citar'),
+      'url' => $fallbackUrl,
+      'attributes' => [
+        'class' => ['resposta-acao', 'resposta-acao--citar', 'use-htmx'],
+        'data-action' => 'resposta-citar',
+        'data-quote-id' => (string) $comment->id(),
+        'data-hx-get' => $endpointUrl->toString(),
+        'data-hx-target' => '#' . $composerId,
+        'data-hx-swap' => 'outerHTML',
+        'aria-label' => (string) $this->translation->translate('Citar comentário #@id', ['@id' => $comment->id()]),
       ],
     ];
-    (new CacheableMetadata())
+
+    $cacheability = (new CacheableMetadata())
       ->addCacheableDependency($comment)
       ->addCacheableDependency($commentAccess)
       ->addCacheableDependency($replyAccess)
       ->addCacheableDependency($discussion)
       ->addCacheableDependency($discussion->getReadAccess())
-      ->addCacheContexts(['user.permissions'])
-      ->applyTo($linkBuild);
-    $links['aculta_forum_quote'] = $linkBuild;
+      ->addCacheableDependency($discussion->getWriteAccess())
+      ->addCacheContexts(['user.permissions']);
+
+    if (isset($links['comment'])) {
+      $links['comment']['#links']['resposta-citar'] = $quoteLink;
+      $cacheability->applyTo($links['comment']);
+    }
+    else {
+      $links['#links']['resposta-citar'] = $quoteLink;
+      $cacheability->applyTo($links);
+    }
   }
 
   /**
@@ -90,10 +116,10 @@ final class ForumQuoteHooks {
   #[Hook('form_comment_form_alter')]
   public function commentFormAlter(array &$form, FormStateInterface $formState, string $formId): void {
     $request = $this->requestStack->getCurrentRequest();
-    if ($request === NULL || $request->attributes->get('_route') !== 'comment.reply') {
+    if ($request === NULL) {
       return;
     }
-    $quoteId = $request->query->get('quote');
+    $quoteId = $request->query->get('citacao') ?? $request->query->get('quote');
     if (!is_scalar($quoteId) || !ctype_digit((string) $quoteId) || (int) $quoteId < 1) {
       return;
     }
@@ -119,7 +145,11 @@ final class ForumQuoteHooks {
     }
     $discussion = $this->contextResolver->resolve($host, $this->currentUser);
     $sourceAccess = $parent->access('view', $this->currentUser, TRUE);
-    if ($discussion === NULL || !$discussion->getReadAccess()->isAllowed() || !$sourceAccess->isAllowed()) {
+    // COM-09: Revalida também escrita no formulário
+    if ($discussion === NULL
+      || !$discussion->getReadAccess()->isAllowed()
+      || !$discussion->getWriteAccess()->isAllowed()
+      || !$sourceAccess->isAllowed()) {
       return;
     }
 
@@ -140,7 +170,8 @@ final class ForumQuoteHooks {
     // Before processing, text_format keeps #default_value on the element
     // itself; the nested value/format children only exist afterwards.
     // #default_value is NULL for a new reply, so array_key_exists() is used.
-    if (isset($form['comment_body']['widget'][0]['value'])) {
+    $processed = isset($form['comment_body']['widget'][0]['value']);
+    if ($processed) {
       $body =& $form['comment_body']['widget'][0]['value'];
     }
     elseif (array_key_exists('#default_value', $form['comment_body']['widget'][0] ?? [])) {
@@ -149,19 +180,24 @@ final class ForumQuoteHooks {
     else {
       return;
     }
-    if (!empty($body['#default_value'])) {
+    if (!empty($body['#default_value']) || !empty($body['#value'])) {
       return;
     }
     $body['#default_value'] = $quote;
+    if ($processed) {
+      // A processed textarea renders #value, not #default_value.
+      $body['#value'] = $quote;
+    }
 
     (new CacheableMetadata())
       ->addCacheableDependency($parent)
       ->addCacheableDependency($host)
       ->addCacheableDependency($discussion)
       ->addCacheableDependency($discussion->getReadAccess())
+      ->addCacheableDependency($discussion->getWriteAccess())
       ->addCacheableDependency($sourceAccess)
       ->addCacheableDependency($processedBody)
-      ->addCacheContexts(['url.query_args:quote'])
+      ->addCacheContexts(['url.query_args:citacao', 'url.query_args:quote'])
       ->applyTo($form);
   }
 

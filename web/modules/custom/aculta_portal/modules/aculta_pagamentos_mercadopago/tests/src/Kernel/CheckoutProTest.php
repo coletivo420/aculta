@@ -35,6 +35,8 @@ class CheckoutProTest extends OrderKernelTestBase {
   protected static $modules = [
     'key',
     'commerce_payment',
+    'text',
+    'text_with_summary',
     'aculta_pagamentos_mercadopago',
   ];
 

@@ -24,7 +24,7 @@ Este documento é a fonte única da frente. Cada fase termina antes da próxima 
 
 - Tipo `wiki_entry`, fluxo `wiki_editorial` (rascunho, em revisão, publicado).
 - Views `wiki_entries` (`/verbetes`) e `wiki_categories`.
-- Domínio `wiki420` (produção `wiki420.aculta.org`).
+- Domínio `wiki420` (servidor de desenvolvimento `wiki420.aculta.toca.net.br`).
 - Formato de texto `wiki`, com mídia `document` no CKEditor.
 
 **Código** (fora de `aculta_wiki`, ainda sem submódulo):
@@ -171,7 +171,7 @@ Ordem sugerida, depois das Fases 1–4:
 
 ## Riscos
 
-- **Produção ativa:** `wiki420.aculta.org` está no ar. A mudança precisa ser invisível ao visitante.
+- **Ambiente:** a Wiki existe só no servidor de desenvolvimento; não há produção ativa. A mudança deve ser conferida lá antes de qualquer etapa futura.
 - **URLs:** nenhuma URL pode mudar. Redirecionamentos não são previstos nesta frente.
 - **Dependência circular:** `aculta_wiki` não depende de `aculta_statistics`, e o Statistics
   não importa classes do submódulo.
@@ -298,7 +298,7 @@ ao fim da sessão.
   `hidden` do formulário e a exibição `full` do `wiki_entry` existem apenas em
   `config/sync`, porque o `aculta_wiki` não tem `config/install`; a decisão
   sobre o dono dessa configuração continua aberta. O tema ACULTA420 recebe o
-  campo pelo slot `discussion` do SDC `aculta420:wiki-entry`, e o Olivero o
+  campo pelo slot `discussion` do SDC `aculta420:wiki-entry`, o
   renderiza pela exibição `full` sem alteração de tema. `aculta_forum_wiki`
   entrou em `config/sync/core.extension.yml` e continua desabilitado no Runtime.
 - **Histórico de edição por verbete (Fase 5, item 5).** O `aculta_statistics`
@@ -391,8 +391,8 @@ ao fim da sessão.
   incluiu `aculta_forum.post_created` sem atualizar o teste) foi corrigida
   nesta sessão, junto com um teste do evento de post.
 - **O que ficou faltando.** A Fase 5 do plano está completa em código e
-  documentação (itens 1 a 5). Falta a validação em navegador com ACULTA420 e
-  Olivero depois da ativação — a imagem do card, a aba de upload, a discussão do
+  documentação (itens 1 a 5). Falta a validação em navegador com ACULTA420
+  depois da ativação — a imagem do card, a aba de upload, a discussão do
   verbete, a tabela de revisões e a tela de aviso de revisão foram verificadas
   por configuração e testes, não renderizadas em navegador. Falta também a
   reindexação do `aculta_conteudo` no ambiente para que verbetes já publicados

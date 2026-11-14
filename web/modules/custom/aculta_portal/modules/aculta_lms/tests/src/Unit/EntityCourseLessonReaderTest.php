@@ -13,9 +13,15 @@ use Drupal\aculta_lms\Learning\EntityCourseLessonReader;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Group;
 
+/**
+ * Leitura das aulas de um curso a partir das entidades de conteúdo.
+ */
 #[Group('aculta_lms')]
 final class EntityCourseLessonReaderTest extends UnitTestCase {
 
+  /**
+   * Confirma que as aulas são mapeadas e ordenadas por peso e depois por ID.
+   */
   public function testMapsLessonsAndOrdersByWeightThenId(): void {
     $storage = $this->createMock(EntityStorageInterface::class);
     $storage->expects(self::once())
@@ -36,6 +42,9 @@ final class EntityCourseLessonReaderTest extends UnitTestCase {
     self::assertFalse($lessons[2]->published);
   }
 
+  /**
+   * Confirma que nenhuma aula é retornada quando o armazenamento está vazio.
+   */
   public function testReturnsNoLessonsWhenStorageIsEmpty(): void {
     $storage = $this->createMock(EntityStorageInterface::class);
     $storage->method('loadByProperties')->willReturn([]);
@@ -45,6 +54,23 @@ final class EntityCourseLessonReaderTest extends UnitTestCase {
     self::assertSame([], (new EntityCourseLessonReader($manager))->forCourse(42));
   }
 
+  /**
+   * Cria uma entidade de aula simulada com os campos informados.
+   *
+   * @param int $id
+   *   Identificador da aula.
+   * @param int $courseId
+   *   Identificador do curso da aula.
+   * @param string $title
+   *   Título da aula.
+   * @param bool $published
+   *   Se a aula está publicada.
+   * @param int $weight
+   *   Peso de ordenação da aula.
+   *
+   * @return \Drupal\Core\Entity\ContentEntityInterface
+   *   Entidade de aula simulada.
+   */
   private function lessonEntity(int $id, int $courseId, string $title, bool $published, int $weight): ContentEntityInterface {
     $entity = $this->createMock(ContentEntityInterface::class);
     $entity->method('id')->willReturn($id);
@@ -54,6 +80,7 @@ final class EntityCourseLessonReaderTest extends UnitTestCase {
         'title' => $title,
         'published' => $published,
         'weight' => $weight,
+        default => throw new \LogicException(sprintf('Unexpected lesson field "%s".', $field)),
       };
       $field_list = $this->createMock(FieldItemListInterface::class);
       $field_list->method('getValue')->willReturn([['value' => $value]]);

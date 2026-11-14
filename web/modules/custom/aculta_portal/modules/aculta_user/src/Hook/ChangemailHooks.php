@@ -29,11 +29,21 @@ final class ChangemailHooks {
     private readonly ModuleHandlerInterface $moduleHandler,
   ) {}
 
+  /**
+   * Entrega o formulário de troca de e-mail quando o envio está pronto.
+   *
+   * @param array $section
+   *   Seção de e-mail da página de segurança da conta.
+   * @param \Drupal\user\UserInterface $account
+   *   Conta exibida.
+   * @param bool $emailReady
+   *   Se o envio de e-mail está pronto.
+   */
   #[Hook('aculta_portal_changemail_alter')]
   public function changemailAlter(array &$section, UserInterface $account, bool $emailReady): void {
     if (!$emailReady
-      || !$this->moduleHandler->moduleExists('aculta_mail_confirmer_user')
-      || !$this->configFactory->get('aculta_mail_confirmer_user.settings')->get('user_email_change.enabled')) {
+      || !$this->moduleHandler->moduleExists('aculta_mail_confirmer')
+      || !$this->configFactory->get('aculta_mail_confirmer.settings')->get('user_email_change.enabled')) {
       return;
     }
     $section['change_form'] = $this->formBuilder->getForm(ChangemailForm::class, $account);

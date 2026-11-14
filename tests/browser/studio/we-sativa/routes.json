@@ -1,0 +1,9 @@
+{
+  "front": "aculta-we-sativa",
+  "purpose": "studio",
+  "origin_env": "WIKI_BASE",
+  "source": "tests/browser/studio/we-sativa/README.md",
+  "auth": { "account": "teste_comum" },
+  "public_routes": [],
+  "notes": "Sem rota pública: a suite WE SATIVA (/wesativa, /we-sativa/inicio) exige login de teste. Cobertura fica em we-sativa.py."
+}

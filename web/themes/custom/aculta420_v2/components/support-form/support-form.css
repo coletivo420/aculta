@@ -1,0 +1,88 @@
+.aculta-support {
+  max-width: 72ch;
+}
+
+.aculta-support .aculta-support-intro {
+  font-size: 1.125rem;
+}
+
+.aculta-support fieldset {
+  min-inline-size: 0;
+  padding: 1rem;
+  margin-block: 1rem;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface-raised);
+}
+
+.aculta-support legend {
+  font-family: Oswald, sans-serif;
+  font-size: 1.375rem;
+  font-weight: 600;
+}
+
+.aculta-support .form-radios {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 24px;
+  margin: 12px 0 20px;
+}
+
+.aculta-support .form-radios .form-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+}
+
+.aculta-support input[type="radio"] {
+  accent-color: var(--color-text-primary);
+}
+
+.aculta-support label {
+  color: var(--color-text-primary);
+}
+
+.aculta-support .form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.aculta-support .form-actions :is(button, input[type="submit"], input[type="button"]) {
+  inline-size: 100%;
+  max-inline-size: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.aculta-support .aculta-button:disabled {
+  cursor: not-allowed;
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border);
+  background: var(--color-canvas);
+}
+
+.aculta-support .aculta-support-other {
+  margin-block-start: 3rem;
+  padding-block-start: 2rem;
+  border-block-start: 1px solid var(--color-border);
+}
+
+@media (min-width: 30.0625rem) {
+  .aculta-support fieldset {
+    padding: 1.5rem;
+    margin-block: 1.5rem;
+  }
+
+  .aculta-support .form-actions :is(button, input[type="submit"], input[type="button"]) {
+    inline-size: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aculta-support * {
+    scroll-behavior: auto;
+    transition: none;
+    animation: none;
+  }
+}

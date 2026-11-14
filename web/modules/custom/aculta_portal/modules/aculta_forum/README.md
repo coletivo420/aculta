@@ -1,6 +1,14 @@
 # ACULTA Forum — Growroom420 e discussões contextuais
 
-**Estado: Dev `0.1.0-dev.332`.** O registro `0.1.0-rc.2` é histórico e foi
+**Ciclo atual: 0.2.0-dev.4 - integração analítica FST.** O novo ciclo consolida
+comentários e respostas na página atual para Revista, Wiki, LMS e Growroom420.
+Inclui registro central dos providers pelo aculta_forum (também o da Wiki),
+Form API/HTMX, SDC de resposta, citação, acesso/cache e URLs em português.
+Plano e critérios: [Comentários 0.2.0](docs/COMENTARIOS-0.2.0-PLANO.md).
+Implementação funcional e homologação permanecem pendentes; esta versão não
+declara o comportamento corrigido. Evidências 0.1 abaixo são históricas.
+
+**Baseline histórico: Dev `0.1.0-dev.332`.** O registro `0.1.0-rc.2` é histórico e foi
 reclassificado após auditorias posteriores. A migração cobre embeds Media e
 Gallery válidos e os preserva sem alteração no corpo. O dry-run atual não
 localizou Comments de origem; por isso não consultou avisos globalmente. Segue
@@ -30,7 +38,7 @@ são H2 e links de categoria, H3. Firefox/X11 confirma o reflow sem overflow em
 Firefox/X11 capturou `/categorias` em claro e escuro a 390, 768 e 1024 CSS px;
 as capturas inspecionadas confirmam cartões sem sobreposição em 390 px e em
 1024 px escuro. Em 2026-10-23 a suíte X11 reconfirmou 15/15 no servidor de testes
-(390/768/1024, claro/escuro e link de salto) e 8/8 com Olivero no ambiente local,
+(390/768/1024, claro/escuro e link de salto) e 8/8 no ambiente local,
 sem overflow nem assets do ACULTA420; o script fica em
 `tests/browser/aculta-forum/`. Cada cartão mostra a contagem de tópicos
 publicados e acessíveis à conta; a consulta adiciona `node_access`
@@ -138,12 +146,13 @@ por padrão).
 - [Fóruns restritos para associados ativos](docs/RESTRICTED-FORUMS.md)
 - [Decisões](docs/DECISOES.md)
 - [Roadmap](docs/ROADMAP.md)
+- [Integração analítica Fórum + Statistics (FST-00 a FST-11)](../aculta_statistics/docs/FORUM-ANALYTICS-PLANO-FST-00-11.md) - planejamento, sem mudança de Runtime.
 - [Reconstrução histórica](docs/RECONSTRUCAO.md) — histórico de pesquisa/importação, não autorização de exclusão.
 - [Changelog](CHANGELOG.md)
 
 O contrato de cartões, privacidade e API fica em
 [`aculta_user/docs/AUTHOR-CARDS.md`](../aculta_user/docs/AUTHOR-CARDS.md). Normas
-comuns: [Drupal 11+](../../../../../../docs/portal/DRUPAL-11-STANDARDS.md),
+comuns: [Drupal 11+](../../../../../../docs/portal/DRUPAL-12-STANDARDS.md),
 [guardrails](../../../../../../docs/portal/GUARDRAILS.md),
 [fronteira módulo-tema](../../../../../../docs/portal/FRONTEIRA-MODULO-TEMA.md),
 [mapa módulo-tema](../../../../../../docs/portal/MAPA-MODULO-TEMA.md),
@@ -176,7 +185,7 @@ da paginação: anônimo e suspenso veem só o tópico público; o ativo com
 membership vê os dois. O download privado do anexo também foi validado por
 HTTP. Ao mudar a relação de Group, o tópico e seus posts saem do índice
 imediatamente e voltam após a reindexação (fail closed), e o Page Cache da
-busca é invalidado; a matriz também passou com o tema Olivero. O Runtime de
+busca é invalidado. O Runtime de
 testes foi validado em janela controlada, com backup, e revertido ao estado
 inicial. Inventário, decisões, matriz de testes, riscos e a próxima fase estão
 em [`docs/RESTRICTED-FORUMS.md`](docs/RESTRICTED-FORUMS.md).

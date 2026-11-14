@@ -1,0 +1,77 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Cartão de Tópico do Fórum
+status: stable
+description: Variante do tópico em formato de cartão com miniatura (imagem ou ícone da categoria), metadados e contadores.
+group: Comunidade
+props:
+  type: object
+  additionalProperties: false
+  required: [pinned]
+  properties:
+    pinned:
+      type: boolean
+      title: Tópico fixado
+      description: Ativa a aparência visual reservada a tópicos fixados.
+      default: false
+    thumbnail_src:
+      type: [string, 'null']
+      title: URL da imagem de miniatura
+      description: URL pública da miniatura; null usa o ícone de categoria como fallback.
+      default: null
+    thumbnail_alt:
+      type: [string, 'null']
+      title: Texto alternativo da miniatura
+      description: Texto alternativo da imagem; use string vazia quando a imagem for decorativa.
+      default: null
+    category_icon:
+      type: [string, 'null']
+      title: Ícone Phosphor neutro da categoria para fallback
+      description: ID de ícone do pack do tema usado quando não há miniatura.
+      pattern: '^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$'
+      default: null
+    badges:
+      type: [array, 'null']
+      title: Pílulas de estado ou destaque
+      description: Lista opcional de badges com rótulo e tom semântico.
+      default: null
+      items:
+        type: object
+        description: Um badge com rótulo e variante visual.
+        additionalProperties: false
+        required: [label]
+        properties:
+          label:
+            type: string
+            title: Rótulo da pílula
+            description: Texto visível do badge.
+          tone:
+            type: string
+            title: Tom da pílula
+            description: Variante semântica que define a cor visual do badge.
+            enum: [neutral, highlight, success, official]
+            default: neutral
+    replies:
+      type: [string, integer, 'null']
+      title: Total de respostas
+      description: Contagem de respostas mostrada na primeira estatística do cartão.
+      default: null
+    views:
+      type: [string, integer, 'null']
+      title: Total de visualizações
+      description: Contagem de visualizações mostrada na segunda estatística do cartão.
+      default: null
+    last_activity:
+      type: [string, 'null']
+      title: Timestamp ou tempo relativo da última atividade
+      description: Data ou tempo relativo já formatado para a estatística de atividade.
+      default: null
+slots:
+  title:
+    title: Título do tópico
+    description: Link ou heading para o tópico.
+  meta:
+    title: Metadados
+    description: Categoria, autor e data.
+  preview:
+    title: Prévia do último post
+    description: Trecho resumido de texto.

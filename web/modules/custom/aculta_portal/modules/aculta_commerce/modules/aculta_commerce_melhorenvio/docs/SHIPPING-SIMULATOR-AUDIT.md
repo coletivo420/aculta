@@ -9,7 +9,7 @@ fontes consultadas e a decisão de licença antes de qualquer código ser portad
 | Fonte | O que confirmou | Limite |
 |---|---|---|
 | Documentação OpenAPI do Melhor Envio, servida pelo servidor MCP `melhorenvio` (consulta em 2026-10-27) | Caminho, método, cabeçalhos, corpo, exemplo 200 e erro 422 do cálculo de fretes; URLs base de sandbox e produção | Não lista os escopos OAuth2 |
-| `docs/operations/ACULTA-AGENT2-WORKLOG.md`, seção "ME-PEND-01 fechada" | Autorização real no sandbox; `expires_in` de 30 dias; `POST /api/v2/me/shipment/calculate` respondeu 200 com cotações; escopos efetivos | Evidência de sandbox do servidor de testes, não de produção |
+| `docs/history/operations/ACULTA-AGENT2-WORKLOG.md`, seção "ME-PEND-01 fechada" | Autorização real no sandbox; `expires_in` de 30 dias; `POST /api/v2/me/shipment/calculate` respondeu 200 com cotações; escopos efetivos | Evidência de sandbox do servidor de testes, não de produção |
 | Pesquisa web (2026-10-27) | Nada específico do Melhor Envio: os resultados eram sobre OAuth2 em geral | Não confirmou os nomes dos escopos; a confirmação vem do sandbox acima |
 | Código atual do submódulo (`src/Http`, `src/Quote`) | Fluxo de cotação, mapeamento de endereço e de erros já implementados | Não é fonte externa |
 

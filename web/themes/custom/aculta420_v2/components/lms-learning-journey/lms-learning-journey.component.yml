@@ -1,0 +1,16 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Jornada de aprendizagem LMS
+description: Casca visual para a jornada de curso autorizada pelo módulo LMS.
+status: stable
+group: LMS
+props:
+  type: object
+  additionalProperties: false
+slots:
+  content:
+    title: Jornada do curso
+    description: Render array com resumo, progresso e aulas já autorizados.
+assets:
+  css:
+    component:
+      lms-learning-journey.css: {}

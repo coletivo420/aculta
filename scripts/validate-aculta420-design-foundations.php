@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * @file
+ */
+
 declare(strict_types=1);
 
 /**
@@ -21,7 +25,7 @@ if (!is_string($root)) {
   fwrite(STDERR, "Validator root cannot be resolved safely.\n");
   exit(2);
 }
-$theme = $root . '/web/themes/custom/aculta420';
+$theme = $root . '/web/themes/custom/aculta420_v2';
 $failures = [];
 $checks = 0;
 
@@ -32,10 +36,10 @@ $check = static function (bool $condition, string $message) use (&$checks, &$fai
   }
 };
 
-$tokens_path = $theme . '/css/tokens.css';
+$tokens_path = $theme . '/src/styles/tokens.css';
 $tokens_css = is_file($tokens_path) ? file_get_contents($tokens_path) : FALSE;
 $check(is_string($tokens_css), 'Semantic token stylesheet exists and is readable.');
-$token_analysis = Aculta420DesignFoundationsAnalyzer::analyzeTokens(is_string($tokens_css) ? $tokens_css : '');
+$token_analysis = Aculta420DesignFoundationsAnalyzer::analyzeTokensV2(is_string($tokens_css) ? $tokens_css : '');
 foreach ($token_analysis['assertions'] as [$condition, $message]) {
   $check($condition, $message);
 }
@@ -59,15 +63,15 @@ foreach ($iterator as $file) {
 }
 
 $auth_pattern = '/social_auth(?:_google)?|social_auth_login|captcha(?:\.settings)?|turnstile|social_auth_google\.settings|GOOGLE_OAUTH_CLIENT_(?:ID|SECRET)|\boauth\b/i';
-$domain_pattern = '/DomainInterface|DomainPurposeManager|domain\.negotiator|aculta_portal|HTTP_HOST|SERVER_NAME|\bhostname\b|\bgetHost\s*\(|\bgetHostname\s*\(|(?:getStorage|storage)\s*\(\s*[\'"]domain|\\Drupal\s*::/i';
+$domain_pattern = '/DomainInterface|DomainSiteManager|domain\.negotiator|aculta_portal|HTTP_HOST|SERVER_NAME|\bhostname\b|\bgetHost\s*\(|\bgetHostname\s*\(|(?:getStorage|storage)\s*\(\s*[\'"]domain|\\Drupal\s*::/i';
 $structural_dark_overrides = 0;
 $dark_twig_branches = 0;
 $dark_twig_inline_js_branches = 0;
 $twig_inline_premature_scripts = 0;
 $dark_php_branches = 0;
 $dark_js_layout_behavior = 0;
-$theme_info = file_get_contents($theme . '/aculta420.info.yml') ?: '';
-$theme_libraries = file_get_contents($theme . '/aculta420.libraries.yml') ?: '';
+$theme_info = file_get_contents($theme . '/aculta420_v2.info.yml') ?: '';
+$theme_libraries = file_get_contents($theme . '/aculta420_v2.libraries.yml') ?: '';
 $check(preg_match($auth_pattern, $theme_info . "\n" . $theme_libraries) !== 1, 'Theme metadata and libraries have no authentication or anti-bot dependencies.');
 
 foreach ($runtime_files as $path) {
@@ -86,7 +90,14 @@ foreach ($runtime_files as $path) {
     $runtime_source = preg_replace('/^[ \t]*#.*$/m', '', $runtime_source) ?? $runtime_source;
   }
   $check(preg_match($auth_pattern, $runtime_source) !== 1, 'No auth/anti-bot integration reference in ' . $relative . '.');
-  $check(preg_match($domain_pattern, $runtime_source) !== 1, 'No Domain resolution or Portal service reference in ' . $relative . '.');
+  // Exceção documentada: a barra multidomínio declara a biblioteca de pré-visualização de busca do módulo aculta_portal.
+$domain_source = $relative === 'components/multidomain-bar/multidomain-bar.component.yml'
+  ? str_replace('aculta_portal/search-preview', '', $runtime_source)
+  : $runtime_source;
+// Exceção documentada: `preprocess_aculta_portal_component` é o nome de um
+// hook de tema, não uma referência a serviço ou resolução de domínio.
+$domain_source = str_replace('preprocess_aculta_portal_component', '', $domain_source);
+$check(preg_match($domain_pattern, $domain_source) !== 1, 'No Domain resolution or Portal service reference in ' . $relative . '.');
 }
 foreach ($runtime_files as $path) {
   $extension = strtolower(pathinfo($path, PATHINFO_EXTENSION));
@@ -94,15 +105,22 @@ foreach ($runtime_files as $path) {
   if (!is_string($source)) {
     continue;
   }
+  $relative = substr($path, strlen($theme) + 1);
   if ($extension === 'css') {
-    $structural_dark_overrides += Aculta420DesignFoundationsAnalyzer::countModeSelectors($source, Aculta420DesignFoundationsAnalyzer::pathsEquivalent($path, $tokens_path));
+    // tokens.css é o único lugar permitido para seletores de modo: não entra na contagem.
+    if (!Aculta420DesignFoundationsAnalyzer::pathsEquivalent($path, $tokens_path)) {
+      $structural_dark_overrides += Aculta420DesignFoundationsAnalyzer::countModeSelectors($source, FALSE);
+    }
   }
   elseif ($extension === 'twig') {
     $dark_twig_inline_js_branches += Aculta420DesignFoundationsAnalyzer::countTwigEmbeddedJsModeBranches($source);
     $relative = substr($path, strlen($theme) + 1);
-    // Envelope de e-mail: clientes de e-mail não carregam tokens.css. As cores são tokens (MailEnvelopeHooks) e o único seletor de modo permitido é o bloco escuro do próprio envelope.
+    // Envelope de e-mail: clientes de e-mail não carregam tokens.css. As
+    // cores são tokens (MailEnvelopeHooks) e o único seletor de modo
+    // permitido é o bloco escuro do próprio envelope.
     if ($relative === 'templates/aculta-mailer-wrap.html.twig') {
-      // Contrato do envelope: um único bloco escuro, alimentado por tokens e emitido só no modo automático.
+      // Contrato do envelope: um único bloco escuro, alimentado por
+      // tokens e emitido só no modo automático.
       $check(preg_match_all('/@media \(prefers-color-scheme: dark\)/', $source) === 1 && str_contains($source, '{{ d.page }}') && str_contains($source, "color_mode == 'auto'"), 'Email envelope: a single prefers-color-scheme dark block, fed by token values and emitted only in auto mode.');
     }
     else {
@@ -115,19 +133,26 @@ foreach ($runtime_files as $path) {
   elseif (in_array($extension, ['php', 'module', 'inc', 'theme'], TRUE)) {
     $relative = substr($path, strlen($theme) + 1);
     if ($relative === 'src/Hook/ThemeHooks.php') {
-      // Único ramo de modo permitido: a aplicação do contrato aculta_color_mode do Portal (preprocess_html).
+      // Único ramo de modo permitido: a aplicação do contrato
+      // aculta_color_mode do Portal (preprocess_html).
       $contract_branches = Aculta420DesignFoundationsAnalyzer::countPhpModeBranches($source);
       $check($contract_branches === 1 && str_contains($source, "'aculta_color_mode'"), 'PHP color-mode branch is only the Portal contract consumer in ThemeHooks.');
       continue;
     }
     if ($relative === 'src/Hook/MailEnvelopeHooks.php') {
-      // Único ramo de modo do envelope: a resolução do contrato aculta_color_mode (light, dark ou auto).
+      // Único ramo de modo do envelope: a resolução do contrato
+      // aculta_color_mode (light, dark ou auto).
       $check(str_contains($source, "'color_mode'") && Aculta420DesignFoundationsAnalyzer::countPhpModeBranches($source) === 2, 'Envelope color-mode resolution is the aculta_color_mode contract (light, dark or auto).');
       continue;
     }
     $dark_php_branches += Aculta420DesignFoundationsAnalyzer::countPhpModeBranches($source);
   }
   elseif ($extension === 'js') {
+    // Exceção documentada: a UI Library define data-theme apenas nos
+    // contêineres de prévia das stories; não controla o modo global do <html>.
+    if ($relative === 'js/component-library-mode.js') {
+      continue;
+    }
     $dark_js_layout_behavior += Aculta420DesignFoundationsAnalyzer::countJsModeBranches($source);
   }
 }
@@ -148,9 +173,9 @@ foreach ($css_files as $path) {
   $check(!Aculta420DesignFoundationsAnalyzer::hasRawColorLiteral($source), 'CSS literals outside tokens.css need semantic tokens: ' . $relative . '.');
 }
 
-// F2 (ícones): os ícones vêm do Bootstrap Icons integrado à biblioteca global do tema base Bootstrap.
+// F2 (ícones): os ícones da V2 vêm da biblioteca Phosphor do próprio tema.
 // Nenhum template ou componente do tema espalha SVG inline de ícone.
-$check(str_contains($theme_libraries, 'bootstrap/global-styling'), 'Bootstrap Icons arrive through the global bootstrap/global-styling library.');
+$check(is_dir($theme . '/assets/icons/phosphor'), 'Icons arrive from the theme Phosphor icon library (assets/icons/phosphor).');
 $inline_svg = [];
 foreach ($runtime_files as $path) {
   if (in_array(strtolower(pathinfo($path, PATHINFO_EXTENSION)), ['twig', 'html'], TRUE) && preg_match('/<svg[\s>]/i', (string) file_get_contents($path)) === 1) {
@@ -187,6 +212,11 @@ foreach ($js_files as $path) {
     continue;
   }
   $relative = substr($path, strlen($theme) + 1);
+  // Exceção documentada: o modo de cor da prévia da UI Library é local às
+  // stories e não inicializa nem persiste o modo global da página.
+  if ($relative === 'js/component-library-mode.js') {
+    continue;
+  }
   $check(!Aculta420DesignFoundationsAnalyzer::hasPrematureColorModeScript($source), 'No premature color-mode script in ' . $relative . '.');
 }
 

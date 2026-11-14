@@ -1,0 +1,13 @@
+component: aculta420_v2:studio-connections-page
+props:
+  connections_title: Suas conexões
+  search_title: Buscar novas conexões
+  filter_placeholder: Filtrar suas conexões...
+  search_input_placeholder: Digite o nome ou apelido...
+  search_hint: Digite pelo menos 3 caracteres para buscar.
+  empty_connections_message: Você ainda não tem conexões.
+slots:
+  connections_list:
+    markup: '<p>Lista de conexões</p>'
+  search_results:
+    markup: '<p>Resultados de busca</p>'

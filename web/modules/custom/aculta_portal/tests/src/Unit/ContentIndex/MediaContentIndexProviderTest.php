@@ -11,6 +11,9 @@ use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 
+/**
+ * Testa a projeção de mídia do índice de conteúdo.
+ */
 #[CoversClass(\Drupal\aculta_portal\ContentIndex\MediaContentIndexProvider::class)]
 #[Group('aculta_portal')]
 final class MediaContentIndexProviderTest extends UnitTestCase {
@@ -36,7 +39,7 @@ final class MediaContentIndexProviderTest extends UnitTestCase {
 
     self::assertSame('course_document', $provider->getProviderId());
     self::assertSame(['media' => ['course_document']], $provider->getSupportedEntityTypes());
-    self::assertSame('courses', $provider->getAccessPurpose($media));
+    self::assertSame('courses', $provider->getAccessSiteKey($media));
     self::assertSame('52', $projection?->entityId);
     self::assertSame('Apostila', $projection?->label);
     self::assertFalse($projection?->published);

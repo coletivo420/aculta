@@ -1,0 +1,41 @@
+.statistics-category-ranking {
+  padding: var(--spacing-base);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-control-card);
+  background: var(--color-surface-raised);
+}
+
+.statistics-category-ranking__table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.statistics-category-ranking__table caption {
+  padding-block-end: var(--spacing-sm);
+  text-align: start;
+  color: var(--color-text-primary);
+  font-weight: 700;
+}
+
+.statistics-category-ranking__table th,
+.statistics-category-ranking__table td {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  text-align: start;
+  border-block-end: 1px solid var(--color-border);
+}
+
+.statistics-category-ranking__table td:last-child {
+  font-variant-numeric: tabular-nums;
+  text-align: end;
+}
+
+@media (max-width: 30rem) {
+  .statistics-category-ranking {
+    overflow-x: auto;
+  }
+}
+
+.statistics-category-ranking__empty {
+  margin: 0;
+  color: var(--color-text-secondary);
+}

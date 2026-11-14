@@ -20,6 +20,15 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  */
 final class SurfaceEditController extends ControllerBase {
 
+  /**
+   * Cria a instância do controlador.
+   *
+   * @param \Symfony\Component\DependencyInjection\ContainerInterface $container
+   *   Container de serviços.
+   *
+   * @return static
+   *   Nova instância do controlador.
+   */
   public static function create(ContainerInterface $container): static {
     return new static();
   }
@@ -27,12 +36,12 @@ final class SurfaceEditController extends ControllerBase {
   /**
    * Rota aculta_paths.editar.
    */
-  public function abrir(string $purpose, Request $request): Response|array {
-    if (!array_key_exists($purpose, DomainSurfaceMap::DOMAIN_IDS)) {
+  public function abrir(string $site_key, Request $request): Response|array {
+    if (!array_key_exists($site_key, DomainSurfaceMap::DOMAIN_IDS)) {
       throw new NotFoundHttpException();
     }
-    $titulo = SurfaceConfigReader::TITULOS[$purpose] ?? $purpose;
-    $form = $this->formBuilder()->getForm(SurfaceEditForm::class, $purpose);
+    $titulo = SurfaceConfigReader::TITULOS[$site_key] ?? $site_key;
+    $form = $this->formBuilder()->getForm(SurfaceEditForm::class, $site_key);
     if (!$request->isXmlHttpRequest()) {
       return $form;
     }

@@ -1,0 +1,14 @@
+name: Editor de perfil (diálogo)
+props:
+  title: Editar perfil
+  subtitle: Atualize como seu perfil aparece na ACULTA.
+  show_accent_stripes: true
+slots:
+  intro:
+    '#markup': '<p>Mantenha seus dados atualizados para que a comunidade reconheça você.</p>'
+  identity:
+    '#markup': '<p><strong>Identidade:</strong> PiradoPirata</p>'
+  bio:
+    '#markup': '<p><strong>Biografia:</strong> Cultivo orgânico e cooperação.</p>'
+  social_links:
+    '#markup': '<p><strong>Redes:</strong> nenhuma informada.</p>'

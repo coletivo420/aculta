@@ -1,0 +1,6 @@
+name: Studio com navegação e formulário
+description: Escopo tipográfico e de formulários nas páginas do Studio.
+component: aculta420_v2:studio-shell
+slots:
+  content:
+    '#markup': '<div class="studio"><div class="studio__layout"><nav class="studio__sidebar"><a class="studio__link" href="#conteudo">Painel</a></nav><main class="studio__main" id="conteudo"><h1>Marley</h1><form><fieldset><legend>Editar</legend><label for="studio-title">Título</label><input id="studio-title"><div class="form-actions"><button class="form-submit">Salvar</button></div></fieldset></form></main></div></div>'

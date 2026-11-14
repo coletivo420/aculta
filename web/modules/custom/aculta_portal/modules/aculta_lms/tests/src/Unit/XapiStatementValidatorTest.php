@@ -25,7 +25,7 @@ final class XapiStatementValidatorTest extends UnitTestCase {
   }
 
   /**
-   * actor, verb e object são obrigatórios.
+   * Actor, verb e object são obrigatórios.
    */
   public function testRefusesMissingRequiredProperty(): void {
     $statement = $this->statement();
@@ -43,14 +43,14 @@ final class XapiStatementValidatorTest extends UnitTestCase {
   }
 
   /**
-   * id precisa ser UUID.
+   * Id precisa ser UUID.
    */
   public function testRefusesNonUuidId(): void {
     $this->refused($this->statement(['id' => 'abc']));
   }
 
   /**
-   * timestamp precisa ser ISO 8601.
+   * Timestamp precisa ser ISO 8601.
    */
   public function testRefusesBadTimestamp(): void {
     $this->refused($this->statement(['timestamp' => '02/11/2026']));
@@ -64,14 +64,14 @@ final class XapiStatementValidatorTest extends UnitTestCase {
   }
 
   /**
-   * mbox precisa ser mailto IRI.
+   * Mbox precisa ser mailto IRI.
    */
   public function testRefusesMboxWithoutMailto(): void {
     $this->refused($this->statement(['actor' => ['mbox' => 'ana@exemplo.invalid']]));
   }
 
   /**
-   * account exige homePage e name.
+   * Account exige homePage e name.
    */
   public function testRefusesAccountWithoutName(): void {
     $this->refused($this->statement(['actor' => ['account' => ['homePage' => 'https://exemplo.invalid']]]));
@@ -85,7 +85,7 @@ final class XapiStatementValidatorTest extends UnitTestCase {
   }
 
   /**
-   * verb.id precisa ser IRI com esquema.
+   * Verb.id precisa ser IRI com esquema.
    */
   public function testRefusesVerbWithoutScheme(): void {
     $this->refused($this->statement(['verb' => ['id' => 'completed']]));
@@ -119,28 +119,28 @@ final class XapiStatementValidatorTest extends UnitTestCase {
   }
 
   /**
-   * score.scaled fora de [-1, 1] é recusado.
+   * Score.scaled fora de [-1, 1] é recusado.
    */
   public function testRefusesScaledOutOfRange(): void {
     $this->refused($this->statement(['result' => ['score' => ['scaled' => 1.5]]]));
   }
 
   /**
-   * score.raw fora de [min, max] é recusado.
+   * Score.raw fora de [min, max] é recusado.
    */
   public function testRefusesRawOutsideBounds(): void {
     $this->refused($this->statement(['result' => ['score' => ['raw' => 12, 'min' => 0, 'max' => 10]]]));
   }
 
   /**
-   * min precisa ser menor que max.
+   * Min precisa ser menor que max.
    */
   public function testRefusesMinNotBelowMax(): void {
     $this->refused($this->statement(['result' => ['score' => ['min' => 5, 'max' => 5]]]));
   }
 
   /**
-   * duration precisa ser ISO 8601 de duração; PT1H30M é válido.
+   * Duration precisa ser ISO 8601 de duração; PT1H30M é válido.
    */
   public function testDurationFormat(): void {
     $this->refused($this->statement(['result' => ['duration' => '1 hora']]));
@@ -149,14 +149,14 @@ final class XapiStatementValidatorTest extends UnitTestCase {
   }
 
   /**
-   * success e completion são booleanos.
+   * Success e completion são booleanos.
    */
   public function testRefusesNonBooleanSuccess(): void {
     $this->refused($this->statement(['result' => ['success' => 'sim']]));
   }
 
   /**
-   * context aceita só as propriedades previstas.
+   * Context aceita só as propriedades previstas.
    */
   public function testRefusesUnknownContextProperty(): void {
     $this->refused($this->statement(['context' => ['platform' => 'web', 'ip' => '10.0.0.1']]));
@@ -173,8 +173,10 @@ final class XapiStatementValidatorTest extends UnitTestCase {
    * Declaração base, com sobrescritas.
    *
    * @param array<string, mixed> $overrides
+   *   Valores que sobrescrevem a declaração base.
    *
    * @return array<string, mixed>
+   *   Declaração de teste com as sobrescritas aplicadas.
    */
   private function statement(array $overrides = []): array {
     $base = [
@@ -185,25 +187,48 @@ final class XapiStatementValidatorTest extends UnitTestCase {
       'result' => ['success' => TRUE, 'score' => ['scaled' => 0.9]],
       'timestamp' => '2026-11-02T10:00:00Z',
     ];
-    return array_replace_recursive($base, $overrides);
+    $statement = array_replace_recursive($base, $overrides);
+    $this->assertStringKeyedMap($statement);
+    return $statement;
   }
 
   /**
    * Valida só o objeto da declaração e devolve o objeto normalizado.
    *
    * @param array<string, mixed> $object
+   *   Objeto da declaração a validar.
    *
    * @return array<string, mixed>
+   *   Objeto normalizado pelo validador.
    */
   private function validatedObject(array $object): array {
     $statement = $this->statement(['object' => $object]);
-    return (new XapiStatementValidator())->validate($statement)['object'];
+    $normalized = (new XapiStatementValidator())->validate($statement);
+    $normalizedObject = $normalized['object'] ?? NULL;
+    $this->assertIsArray($normalizedObject);
+    $this->assertStringKeyedMap($normalizedObject);
+    return $normalizedObject;
+  }
+
+  /**
+   * Ensures a JSON object fixture has string property names.
+   *
+   * @param array<array-key, mixed> $value
+   *   Object under test.
+   *
+   * @phpstan-assert array<string, mixed> $value
+   */
+  private function assertStringKeyedMap(array $value): void {
+    foreach (array_keys($value) as $key) {
+      $this->assertIsString($key);
+    }
   }
 
   /**
    * Afirma que a declaração foi recusada com exceção de validação.
    *
    * @param array<string, mixed> $statement
+   *   Declaração que deve ser recusada.
    */
   private function refused(array $statement): void {
     $accepted = TRUE;
@@ -213,7 +238,7 @@ final class XapiStatementValidatorTest extends UnitTestCase {
     catch (\UnexpectedValueException) {
       $accepted = FALSE;
     }
-    $this->assertSame(FALSE, $accepted);
+    $this->assertFalse($accepted);
   }
 
 }

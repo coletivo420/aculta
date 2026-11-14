@@ -1,0 +1,46 @@
+{
+  "frente": "aculta-dialogos",
+  "data": "2026-11-12",
+  "objetivo": "Homologar abertura, foco, fuga, fechamento e contraste dos diálogos e da gaveta de Mensagens.",
+  "ambiente": "servidor de desenvolvimento (*.aculta.toca.net.br)",
+  "metodo": "Firefox do Playwright headless; ativação por teclado (foco + Enter); claro/escuro; 320 e 1024 CSS px; axe color-contrast dentro do diálogo.",
+  "script": "tests/browser/transversal/aculta-dialogos/dialogos.mjs",
+  "casos": [
+    {
+      "nome": "carrinho",
+      "dialogo": "aculta-cart-dialog",
+      "url": "https://aculta.toca.net.br/"
+    },
+    {
+      "nome": "menu-da-conta",
+      "dialogo": "aculta-account-dialog",
+      "url": "https://aculta.toca.net.br/"
+    },
+    {
+      "nome": "mensagens",
+      "dialogo": "aculta-messenger-dialog",
+      "url": "https://conta.aculta.toca.net.br/conta",
+      "conta": "teste_administrativo"
+    }
+  ],
+  "resultado": {
+    "combinacoes": 12,
+    "falhas": 0
+  },
+  "criterios": [
+    "abre e recebe foco",
+    "20 Tabs mantêm o foco dentro",
+    "Escape fecha e devolve foco ao gatilho",
+    "sem overflow horizontal",
+    "axe color-contrast sem violação",
+    "elemento <dialog> com nome acessível (aria-label/aria-labelledby)",
+    "gatilho anuncia aria-expanded=true ao abrir e não fica true ao fechar"
+  ],
+  "limitacoes": [
+    "O modal de aceite dos termos não é testado porque exige gravar aceite na conta; a conta comum o mantém aberto e prende o foco por desenho.",
+    "Leitor de tela (Orca) não coberto.",
+    "Diálogos internos que dependem de dados (galeria, local de evento) ficam para a frente do componente.",
+    "Orca está instalado, mas o speech-dispatcher está inativo; a verificação de leitor de tela fica manual/DEFERRED. A estrutura foi coberta por nome acessível e aria-expanded."
+  ],
+  "evidencia_bruta": "/home/piradopirata/aculta-suite-out/dialogos-20261112/dialogos.json (fora do Git)"
+}

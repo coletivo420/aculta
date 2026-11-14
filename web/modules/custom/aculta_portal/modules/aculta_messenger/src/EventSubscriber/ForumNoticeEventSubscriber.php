@@ -14,6 +14,7 @@ use Drupal\aculta_messenger\Aviso\ForumNoticeRegistrarInterface;
 use Drupal\aculta_messenger\Event\MessengerNoticeEvent;
 use Drupal\comment\CommentInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\RevisionableStorageInterface;
 use Drupal\node\NodeInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -86,7 +87,11 @@ final class ForumNoticeEventSubscriber implements EventSubscriberInterface {
       || !ctype_digit($revisionId) || (int) $revisionId < 1) {
       return;
     }
-    $post = $this->entityTypeManager->getStorage('aculta_forum_post')->loadRevision((int) $revisionId);
+    $postStorage = $this->entityTypeManager->getStorage('aculta_forum_post');
+    if (!$postStorage instanceof RevisionableStorageInterface) {
+      return;
+    }
+    $post = $postStorage->loadRevision((int) $revisionId);
     if ($post instanceof ForumPost && $post->uuid() === $event->sourceEntityUuid()) {
       if ($this->avisos->registrarPost($post, $event->recipientUid()) > 0) {
         $this->queueDirectEmail($event, Aviso::TIPO_RESPOSTA, 'forum_post_revision', (int) $revisionId);

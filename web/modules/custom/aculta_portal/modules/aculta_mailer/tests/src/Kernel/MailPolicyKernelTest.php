@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_mailer\Kernel;
 
 use Drupal\aculta_mailer\Message\MailMessage;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\aculta_mailer\Policy\MailPolicyResolver;
 use Drupal\KernelTests\KernelTestBase;
 use PHPUnit\Framework\Attributes\Group;
@@ -22,7 +23,7 @@ final class MailPolicyKernelTest extends KernelTestBase {
    *
    * @var string[]
    */
-  protected static $modules = ['system', 'user', 'aculta_mailer', 'aculta_mailer_test'];
+  protected static $modules = ['system', 'user', 'aculta_mailer', 'aculta_mailer_test', 'aculta_file_uploader', 'file' ];
 
   /**
    * Correlation ID fixo usado nas mensagens de teste.
@@ -76,7 +77,9 @@ final class MailPolicyKernelTest extends KernelTestBase {
     $this->assertFalse($result->sent);
     $this->assertEmpty($this->container->get('state')->get('system.test_mail_collector', []));
     $logs = $this->container->get('entity_type.manager')->getStorage('aculta_mail_log')->loadByProperties(['correlation_id' => self::CORRELATION]);
-    $this->assertSame('cancelled', reset($logs)->get('status')->value);
+    $log = reset($logs);
+    $this->assertInstanceOf(ContentEntityInterface::class, $log);
+    $this->assertSame('cancelled', $log->get('status')->value);
   }
 
   /**

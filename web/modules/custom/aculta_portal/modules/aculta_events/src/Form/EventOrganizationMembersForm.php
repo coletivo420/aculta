@@ -21,11 +21,11 @@ final class EventOrganizationMembersForm extends FormBase {
 
   public function __construct(
     #[Autowire(service: 'entity_type.manager')]
-    private readonly EntityTypeManagerInterface $entityTypeManager,
+    protected readonly EntityTypeManagerInterface $entityTypeManager,
     #[Autowire(service: 'aculta_user.organization_membership_manager')]
-    private readonly ?OrganizationMembershipManager $memberManager = NULL,
+    protected readonly ?OrganizationMembershipManager $memberManager = NULL,
     #[Autowire(service: 'aculta_user.ownership_claim_service')]
-    private readonly ?OwnershipClaimService $claimService = NULL,
+    protected readonly ?OwnershipClaimService $claimService = NULL,
   ) {}
 
   /**
@@ -89,9 +89,12 @@ final class EventOrganizationMembersForm extends FormBase {
     if ($pendingOwnerUid > 0 && $pendingOwnerUid === $currentUid) {
       $form['transfer_invite'] = [
         '#type' => 'container',
-        '#attributes' => ['data-portal-ui' => 'notice-warning'],
         'notice' => [
-          '#markup' => '<p>' . $this->t('<strong>Convite de titularidade:</strong> Você foi convidado a assumir a titularidade desta organização.') . '</p>',
+          '#component' => 'aculta420_v2:status-messages',
+          '#props' => ['type' => 'warning'],
+          '#slots' => ['content' => [
+            '#markup' => '<p>' . $this->t('<strong>Convite de titularidade:</strong> Você foi convidado a assumir a titularidade desta organização.') . '</p>',
+          ]],
         ],
         'accept_transfer' => [
           '#type' => 'submit',
@@ -283,10 +286,12 @@ final class EventOrganizationMembersForm extends FormBase {
     $backRoute = $isAdmin ? 'aculta_events.admin_organizations' : 'aculta_events.organizer_dashboard';
     $backTitle = $isAdmin ? $this->t('Voltar às organizações') : $this->t('Voltar ao Studio Culturas');
     $form['back'] = [
-      '#type' => 'link',
-      '#title' => $backTitle,
-      '#url' => Url::fromRoute($backRoute),
-      '#attributes' => ['data-portal-ui' => 'button'],
+      '#type' => 'aculta_portal_button',
+      '#props' => [
+        'text' => (string) $backTitle,
+        'url' => Url::fromRoute($backRoute)->toString(),
+        'variant' => 'secondary',
+      ],
     ];
 
     return $form;

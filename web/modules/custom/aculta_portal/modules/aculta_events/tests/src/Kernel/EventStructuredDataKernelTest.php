@@ -30,7 +30,8 @@ final class EventStructuredDataKernelTest extends KernelTestBase {
    */
   protected static $modules = [
     'system', 'user', 'key', 'address', 'geofield', 'options', 'link', 'text',
-    'filter', 'taxonomy', 'datetime', 'datetime_range', 'aculta_calendar',
+    'filter', 'taxonomy', 'datetime', 'datetime_range', 'ui_patterns',
+    'ui_patterns_views', 'aculta_calendar',
     'aculta_events',
   ];
 
@@ -126,7 +127,7 @@ final class EventStructuredDataKernelTest extends KernelTestBase {
 
     $controller = EventPageController::create($this->container);
     $publicPage = $controller->page('evento-hibrido-publico');
-    $publicMarkup = (string) $publicPage['#datas'][0]['#markup'];
+    $publicMarkup = (string) $publicPage['#slots']['essentials']['dates']['items']['date_0']['#markup'];
     $publicJson = $this->extractJsonLd($publicPage['#attached']['html_head'], 'aculta_events_event_jsonld');
     $publicLocation = $publicJson['@graph'][0]['location'] ?? NULL;
 
@@ -141,7 +142,8 @@ final class EventStructuredDataKernelTest extends KernelTestBase {
     $ownerJson = $this->extractJsonLd($ownerPage['#attached']['html_head'], 'aculta_events_event_jsonld');
     $ownerLocations = $ownerJson['@graph'][0]['location'] ?? [];
 
-    $this->assertStringContainsString('Local de endereço reservado', (string) $ownerPage['#datas'][0]['#markup']);
+    $ownerMarkup = (string) $ownerPage['#slots']['essentials']['dates']['items']['date_0']['#markup'];
+    $this->assertStringContainsString('Local de endereço reservado', $ownerMarkup);
     $this->assertCount(2, $ownerLocations);
     $this->assertSame('Rua Reservada, 987', $ownerLocations[1]['address']['streetAddress'] ?? NULL);
     $this->assertSame('80000-987', $ownerLocations[1]['address']['postalCode'] ?? NULL);
@@ -258,9 +260,9 @@ final class EventStructuredDataKernelTest extends KernelTestBase {
   public function testUpdate10005Idempotence(): void {
     \Drupal::moduleHandler()->loadInclude('aculta_events', 'install');
     $resultado = aculta_events_update_10005();
-    $this->assertIsString($resultado);
     // Em execução subsequente, informa que já existiam sem lançar exceção.
     $resultado2 = aculta_events_update_10005();
+    $this->assertSame($resultado, $resultado2);
     $this->assertSame('Campos estruturados de ARQ-04 já existiam.', $resultado2);
   }
 
@@ -385,6 +387,41 @@ final class EventStructuredDataKernelTest extends KernelTestBase {
     $this->assertSame('PR', $orgJson['address']['addressRegion']);
     $this->assertContains('https://aculta.example.invalid', $orgJson['sameAs']);
     $this->assertContains('https://instagram.com/aculta', $orgJson['sameAs']);
+  }
+
+  /**
+   * Does not expose an organizer account without a public identity.
+   */
+  public function testPrivateOrganizerIdentityIsOmittedFromEventPresentation(): void {
+    $owner = User::create([
+      'name' => 'nome-cadastral-privado',
+      'status' => 1,
+    ]);
+    $owner->save();
+    $event = Event::create([
+      'title' => 'Evento sem organização pública',
+      'field_slug' => 'evento-sem-organizacao-publica',
+      'field_status' => 'publicado',
+      'field_organizador' => $owner->id(),
+    ]);
+    $event->save();
+    EventDate::create([
+      'title' => 'Sessão pública',
+      'field_evento' => $event->id(),
+      'field_quando' => [
+        'value' => '2026-11-15T19:00:00',
+        'end_value' => '2026-11-15T21:00:00',
+      ],
+    ])->save();
+
+    $page = EventPageController::create($this->container)->page('evento-sem-organizacao-publica');
+    $json = $this->extractJsonLd($page['#attached']['html_head'], 'aculta_events_event_jsonld');
+    $encoded = json_encode($json, JSON_UNESCAPED_UNICODE);
+
+    $this->assertArrayNotHasKey('sidebar', $page['#slots']);
+    $this->assertStringNotContainsString('nome-cadastral-privado', (string) $encoded);
+    $this->assertArrayNotHasKey('organizer', $json['@graph'][0]);
+    $this->assertContains('user:1', $page['#cache']['tags']);
   }
 
   /**

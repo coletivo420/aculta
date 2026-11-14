@@ -1,0 +1,40 @@
+.aculta-icon {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+  color: var(--icon-primary, currentColor);
+  line-height: 1;
+}
+
+.aculta-icon svg {
+  block-size: 100%;
+  display: block;
+  inline-size: 100%;
+}
+
+.aculta-icon--sm { block-size: 1rem; inline-size: 1rem; }
+.aculta-icon--md { block-size: 1.25rem; inline-size: 1.25rem; }
+.aculta-icon--lg { block-size: 1.5rem; inline-size: 1.5rem; }
+.aculta-icon--xl { block-size: 2rem; inline-size: 2rem; }
+.aculta-icon--bar { block-size: 30px; inline-size: 30px; }
+
+.aculta-icon--duotone svg path:first-child {
+  transition: opacity var(--motion-slow) ease, fill var(--motion-slow) ease;
+  opacity: .22;
+  fill: currentColor;
+}
+
+.aculta-icon--duotone svg path:last-child { fill: currentColor; }
+.aculta-icon--duotone:hover svg path:first-child { opacity: .4; }
+.aculta-icon--duotone:active svg path:first-child { opacity: .5; }
+
+@media (prefers-reduced-motion: reduce) {
+  .aculta-icon--duotone svg path:first-child { transition: none; }
+}
+
+/* Os contornos do Brócolis duotone não são preenchidos como o Phosphor. */
+.aculta-icon--brocolis.aculta-icon--duotone svg > path:last-child {
+  fill: none;
+}

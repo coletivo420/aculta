@@ -1,0 +1,11 @@
+name: Carrinho lateral
+description: Painel lateral de carrinho de compras.
+component: aculta420_v2:cart-offcanvas
+props:
+  count: 2
+  empty: false
+  url: /loja/carrinho
+  total: R$ 90,00
+  sites: []
+  checkout_url: /loja/checkout
+  banner: Compre na loja e apoie a luta antiproibicionista!

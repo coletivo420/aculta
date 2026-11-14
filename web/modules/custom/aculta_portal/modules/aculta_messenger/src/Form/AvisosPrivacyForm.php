@@ -9,7 +9,8 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\flag\FlagServiceInterface;
 use Drupal\flag\FlaggingInterface;
 use Drupal\flag\FlagInterface;
@@ -26,7 +27,7 @@ final class AvisosPrivacyForm {
     private readonly AccountProxyInterface $currentUser,
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly FlagServiceInterface $flagService,
-    private readonly DomainPurposeManager $domainPurposeManager,
+    private readonly DomainSiteManager $siteManager,
     private readonly MessengerInterface $messenger,
   ) {}
 
@@ -44,7 +45,7 @@ final class AvisosPrivacyForm {
       ],
       'assinaturas' => $this->subscriptionsBuild(),
     ];
-    $emailSettingsUrl = $this->domainPurposeManager->routeUrl('account', 'aculta_messenger.communication_settings');
+    $emailSettingsUrl = $this->siteManager->routeUrl(SiteKey::Account, 'aculta_messenger.communication_settings');
     if ($emailSettingsUrl !== NULL) {
       $form['avisos']['email_settings'] = [
         '#type' => 'link',
@@ -127,7 +128,7 @@ final class AvisosPrivacyForm {
           '#type' => 'checkbox',
           '#title' => new TranslatableMarkup('Parar de seguir @topic', ['@topic' => $title]),
         ],
-        'topic' => $access->isAllowed() && ($url = $this->domainPurposeManager->routeUrl('forum', 'entity.node.canonical', ['node' => $topic->id()])) !== NULL
+        'topic' => $access->isAllowed() && ($url = $this->siteManager->routeUrl(SiteKey::Forum, 'entity.node.canonical', ['node' => $topic->id()])) !== NULL
           ? ['#type' => 'link', '#title' => $title, '#url' => $url]
           : ['#plain_text' => $title],
       ];

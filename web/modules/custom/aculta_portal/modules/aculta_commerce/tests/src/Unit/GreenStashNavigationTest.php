@@ -27,7 +27,7 @@ final class GreenStashNavigationTest extends UnitTestCase {
     self::assertSame('/green-stash', $routes['aculta_commerce.green_stash']['path']);
     self::assertSame('/green-stash/{secao}', $routes['aculta_commerce.green_stash_area']['path']);
     self::assertSame('visao-geral|produtos|envios', $routes['aculta_commerce.green_stash_area']['requirements']['secao']);
-    self::assertSame('shop', $routes['aculta_commerce.green_stash']['options']['_aculta_domain_purpose']);
+    self::assertSame('shop', $routes['aculta_commerce.green_stash']['options']['_aculta_site_key']);
     self::assertSame('ACULTA STUDIO GREEN STASH', $routes['aculta_commerce.green_stash']['defaults']['_title']);
     self::assertSame('/green-stash/produtos/novo', $routes['aculta_commerce.green_stash_product_create']['path']);
     self::assertSame('/green-stash/produtos/{produto}', $routes['aculta_commerce.green_stash_product_detail']['path']);

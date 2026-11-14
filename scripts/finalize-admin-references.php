@@ -1,7 +1,14 @@
 <?php
-/** Ensure the inherited Portuguese block override does not mask its description. */
+
+/**
+ * @file
+ * Ensure the inherited Portuguese block override does not mask its description. */
+
 use Symfony\Component\Yaml\Yaml;
-if (!in_array(\Drupal::request()->getHost(), ['localhost', '127.0.0.1'], TRUE)) throw new RuntimeException('Local only.');
+
+if (!in_array(\Drupal::request()->getHost(), ['localhost', '127.0.0.1'], TRUE)) {
+  throw new RuntimeException('Local only.');
+}
 $description = 'Textos reutilizáveis das seções institucionais. Edite o conteúdo aqui; configure posição e visibilidade em Layout de blocos.';
 \Drupal::configFactory()->getEditable('block_content.type.basic')->set('label', 'Bloco editorial')->set('description', $description)->save();
 \Drupal::languageManager()->getLanguageConfigOverride('pt-br', 'block_content.type.basic')->clear('name')->set('label', 'Bloco editorial')->set('description', $description)->save();

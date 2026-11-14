@@ -172,7 +172,7 @@ final class AcultaMailerMail implements MailInterface, ContainerFactoryPluginInt
         (string) ($message['headers']['X-Aculta-Mail-ID'] ?? ''),
         $result['code'],
         $result['message'],
-        $result['error_class'] ?? NULL,
+        $result['error_class'],
       );
       // Transport exception text can contain a recipient or provider response.
       // Persisted diagnostics contain only the exception class and SMTP code.

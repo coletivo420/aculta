@@ -1,0 +1,8 @@
+name: Resposta nível 0
+description: Resposta raiz sem recuo ou seta.
+component: aculta420_v2:reply-indent
+props:
+  depth: 0
+slots:
+  content:
+    '#markup': '<p>Exemplo de resposta no nível 0 da conversa.</p>'

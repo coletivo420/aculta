@@ -1,0 +1,67 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: "Reply compacto: resposta"
+description: "Resposta compacta do fórum: autor, horário, texto e ações, com barra de reações no topo, barra de respostas abaixo do texto e faixa verde à esquerda."
+status: stable
+group: Comunidade
+props:
+  type: object
+  additionalProperties: false
+  required: [author_name]
+  properties:
+    author_url:
+      type: [string, 'null']
+      title: Link para a conta pública do autor
+      description: Destino público aplicado ao nome do autor; null deixa o nome sem link.
+      default: null
+    theme:
+      type: string
+      title: Tema
+      enum: [light, dark]
+      default: light
+      description: "dark aplica os tokens de modo escuro somente a este cartão."
+    density:
+      type: string
+      title: Densidade
+      enum: [default, compact]
+      default: default
+      description: "compact: versão para celular (menos espaçamento, estatísticas em grade)."
+    accent_side:
+      type: string
+      title: Lado da faixa de acento
+      enum: [start, end]
+      default: start
+      description: "start: padrão, faixa à esquerda. end: espelhado, faixa do lado oposto."
+    author_name:
+      type: string
+      title: Nome do autor
+      description: Nome público exibido na linha de autoria da resposta.
+      minLength: 1
+    timestamp:
+      type: [string, 'null']
+      title: Horário da resposta
+      description: Data pronta para exibição junto ao nome do autor.
+      default: null
+    reacted:
+      type: boolean
+      title: Usuário atual reagiu
+      description: Marca visualmente a resposta quando o usuário atual já reagiu a ela.
+      default: false
+slots:
+  avatar:
+    title: Avatar do autor
+    description: Conteúdo renderizável do avatar encaminhado ao slot do SDC forum-author-line; sem conteúdo, avatar mostra o quadro vazio.
+  content:
+    title: Conteúdo da resposta
+    description: Texto da resposta.
+  reactions_slot:
+    title: Barra de reações
+    description: aculta420_v2:discussion-reaction-bar, fornecida pelo módulo proprietário.
+  actions:
+    title: Barra de respostas
+    description: aculta420_v2:content-reply-bar, fornecida pelo módulo proprietário.
+  admin:
+    title: Controles administrativos
+    description: Botão de moderação ao lado direito do comentário, visível só para quem pode moderar.
+  received_slot:
+    title: Barra de reações recebidas
+    description: aculta420_v2:discussion-reactions-received, no topo à direita.

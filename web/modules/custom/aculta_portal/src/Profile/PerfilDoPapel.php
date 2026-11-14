@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Profile;
 
+use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\profile\Entity\ProfileInterface;
 use Drupal\profile\ProfileStorageInterface;
@@ -11,13 +12,15 @@ use Drupal\profile\ProfileStorageInterface;
 /**
  * Um tipo de perfil por papel: o perfil de uma conta é do tipo do papel mais alto que ela tem.
  *
- * Ordem de prioridade (do mais alto ao mais baixo): administrator, gerente_loja, lms_teacher, associado, email_confirmed,
- * authenticated. A hierarquia de papéis faz o papel superior herdar o inferior, então a prioridade segue a cadeia.
+ * Ordem de prioridade (do mais alto ao mais baixo): administrator, gerente_loja, lms_teacher,
+ * associado, email_confirmed, authenticated.
+ * A hierarquia de papéis faz o papel superior herdar o inferior, então a prioridade segue a cadeia.
  * Sem tipo fixo no código: quem precisa do perfil chama principal() ou obter(), com o EntityTypeManager injetado.
  */
 final class PerfilDoPapel {
 
-  /** Tipos de perfil, em ordem de prioridade. 'associado' é o tipo de dados da situação de associado (não é papel). */
+  /**
+   * Tipos de perfil, em ordem de prioridade. 'associado' é o tipo de dados da situação de associado (não é papel). */
   public const TIPOS = ['administrator', 'gerente_loja', 'lms_teacher', 'associado', 'email_confirmed', 'authenticated'];
 
   /**
@@ -34,10 +37,14 @@ final class PerfilDoPapel {
   }
 
   /**
-   * Perfil publicado da conta, procurando pelos tipos em ordem de prioridade. Preserva o perfil do papel anterior
-   * enquanto a conta não tem o novo tipo.
+   * Perfil publicado da conta, em ordem de prioridade dos tipos.
+   *
+   * Preserva o perfil do papel anterior enquanto a conta não tem o novo tipo.
    */
-  public static function principal(ProfileStorageInterface $storage, AccountInterface $conta): ?ProfileInterface {
+  public static function principal(EntityStorageInterface $storage, AccountInterface $conta): ?ProfileInterface {
+    if (!$storage instanceof ProfileStorageInterface) {
+      return NULL;
+    }
     foreach (self::TIPOS as $tipo) {
       $perfil = $storage->loadByUser($conta, $tipo);
       if ($perfil instanceof ProfileInterface) {
@@ -50,7 +57,10 @@ final class PerfilDoPapel {
   /**
    * Perfil principal da conta, ou um perfil novo (ainda não salvo) do tipo do papel atual.
    */
-  public static function obter(ProfileStorageInterface $storage, AccountInterface $conta): ProfileInterface {
+  public static function obter(EntityStorageInterface $storage, AccountInterface $conta): ProfileInterface {
+    if (!$storage instanceof ProfileStorageInterface) {
+      throw new \InvalidArgumentException('The profile storage is unavailable.');
+    }
     return self::principal($storage, $conta) ?? $storage->create([
       'type' => self::tipoDaConta($conta),
       'uid' => (int) $conta->id(),

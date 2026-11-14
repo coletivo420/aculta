@@ -46,7 +46,9 @@ final class MailPayloadCipher {
   }
 
   /**
-   * Decifra a mensagem guardada. Retorna NULL quando a chave não confere, o valor foi alterado ou o formato não é o atual.
+   * Decifra a mensagem guardada.
+   *
+   * Retorna NULL quando a chave não confere, o valor foi alterado ou o formato não é o atual.
    */
   public function decrypt(string $stored): ?array {
     $key = $this->key();

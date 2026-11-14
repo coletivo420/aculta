@@ -10,6 +10,7 @@ use Drupal\Core\Database\Connection;
 use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\user\UserInterface;
+use Drupal\aculta_user\Entity\BadgeAward;
 
 /**
  * Concede e revoga conquistas. Idempotente: não duplica concessão ativa.
@@ -25,7 +26,8 @@ final class BadgeService {
     private readonly AchievementDefinitions $definitions,
   ) {}
 
-  /** Concede a conquista se a pessoa ainda não a tem ativa. Retorna TRUE se concedeu agora. */
+  /**
+   * Concede a conquista se a pessoa ainda não a tem ativa. Retorna TRUE se concedeu agora. */
   public function award(int $uid, string $badge, ?int $grantedBy = NULL, string $reason = ''): bool {
     $definition = $this->definitions->all()[$badge] ?? NULL;
     if ($definition === NULL || empty($definition['enabled']) || !$this->isEligible($uid)
@@ -49,7 +51,8 @@ final class BadgeService {
     });
   }
 
-  /** Revoga a conquista manual ativa. Automáticas não são revogadas. Retorna TRUE se revogou. */
+  /**
+   * Revoga a conquista manual ativa. Automáticas não são revogadas. Retorna TRUE se revogou. */
   public function revoke(int $uid, string $badge, int $revokedBy, string $reason = ''): bool {
     if ($uid <= 0 || $revokedBy <= 0) {
       return FALSE;
@@ -70,12 +73,14 @@ final class BadgeService {
     });
   }
 
-  /** Critérios configurados, com defaults estáveis para conquistas existentes. */
+  /**
+   * Critérios configurados, com defaults estáveis para conquistas existentes. */
   public function definitions(): array {
     return $this->definitions->all();
   }
 
-  /** Cada evento já validado pelo dono da fonte chama a mesma API idempotente. */
+  /**
+   * Cada evento já validado pelo dono da fonte chama a mesma API idempotente. */
   public function awardForTrigger(int $uid, string $trigger): void {
     if ($trigger === 'manual' || !isset(AchievementDefinitions::TRIGGERS[$trigger])) {
       return;
@@ -87,7 +92,8 @@ final class BadgeService {
     }
   }
 
-  /** Contas históricas ou bloqueadas não participam de novas concessões. */
+  /**
+   * Contas históricas ou bloqueadas não participam de novas concessões. */
   public function isEligible(int $uid): bool {
     $user = $uid > 0 ? $this->entityTypeManager->getStorage('user')->load($uid) : NULL;
     return $user instanceof UserInterface && $user->isActive();
@@ -125,29 +131,67 @@ final class BadgeService {
     }
   }
 
+  /**
+   * Informa se a pessoa possui a conquista ativa.
+   *
+   * @param int $uid
+   *   ID da conta.
+   * @param string $badge
+   *   ID da conquista.
+   *
+   * @return bool
+   *   TRUE se houver concessão ativa.
+   */
   public function hasActive(int $uid, string $badge): bool {
     return $this->activeAwards($uid, $badge) !== [];
   }
 
-  /** Load one stored grant for an authorized integration to present or dismiss. */
+  /**
+   * Load one stored grant for an authorized integration to present or dismiss. */
   public function loadAward(int $awardId): ?BadgeAward {
     $award = $this->storage()->load($awardId);
     return $award instanceof BadgeAward ? $award : NULL;
   }
 
-  /** Conquistas ativas da pessoa, mais antigas primeiro. @return \Drupal\aculta_user\Entity\BadgeAward[] */
+  /**
+   * Conquistas ativas da pessoa, mais antigas primeiro.
+   *
+   * @param int $uid
+   *   ID da conta.
+   *
+   * @return \Drupal\aculta_user\Entity\BadgeAward[]
+   *   Concessões ativas.
+   */
   public function activeFor(int $uid): array {
     $ids = $this->storage()->getQuery()->accessCheck(FALSE)->condition('uid', $uid)->condition('revogado_em', NULL, 'IS NULL')->sort('concedido_em')->execute();
-    return array_values($this->storage()->loadMultiple($ids));
+    return array_values(array_filter($this->storage()->loadMultiple($ids), static fn ($award): bool => $award instanceof BadgeAward));
   }
 
-  /** @return \Drupal\aculta_user\Entity\BadgeAward[] */
+  /**
+   * Devolve as concessões ativas de uma conquista para a pessoa.
+   *
+   * @param int $uid
+   *   ID da conta.
+   * @param string $badge
+   *   ID da conquista.
+   *
+   * @return \Drupal\aculta_user\Entity\BadgeAward[]
+   *   Concessões ativas.
+   */
   private function activeAwards(int $uid, string $badge): array {
     $ids = $this->storage()->getQuery()->accessCheck(FALSE)
       ->condition('uid', $uid)->condition('badge', $badge)->condition('revogado_em', NULL, 'IS NULL')->execute();
-    return array_values($this->storage()->loadMultiple($ids));
+    /** @var \Drupal\aculta_user\Entity\BadgeAward[] $awards */
+    $awards = $this->storage()->loadMultiple($ids);
+    return array_values($awards);
   }
 
+  /**
+   * Devolve o storage das concessões de conquista.
+   *
+   * @return \Drupal\Core\Entity\EntityStorageInterface
+   *   Storage da entidade de concessão.
+   */
   private function storage() {
     return $this->entityTypeManager->getStorage('aculta_badge_award');
   }

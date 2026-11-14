@@ -7,7 +7,8 @@ namespace Drupal\aculta_mailer\Delivery;
 /**
  * Escolha do transporte disponível: um transporte esgotado (cota) ou desligado é ignorado, inclusive a contingência.
  *
- * Sem transporte disponível, mantém o pedido original: a falha segue com o erro real do provedor, sem trocar sem motivo.
+ * Sem transporte disponível, mantém o pedido original: a falha segue com o erro real do provedor,
+ * sem trocar sem motivo.
  */
 final class TransportChoice {
 

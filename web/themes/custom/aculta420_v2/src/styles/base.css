@@ -1,0 +1,122 @@
+/* ==========================================================================
+   Base Styles
+   ========================================================================== */
+
+/* Reset and base styles */
+* {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 100%;
+  line-height: 1.5;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  color: var(--color-text-primary);
+  background-color: var(--color-canvas);
+  font-family: var(--font-family-base);
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Placeholder fixo para os diálogos Drupal, sem style attribute criado pelo JS do Core. */
+#drupal-modal {
+  display: none;
+}
+
+/* Typography */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin-top: 0;
+  margin-bottom: .5rem;
+  font-family: var(--font-family-heading);
+  font-weight: 700;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+h1 {
+  font-size: clamp(var(--font-size-xxl), 6vw, var(--font-size-5xl));
+}
+
+h2 {
+  font-size: clamp(var(--font-size-xl), 4vw, var(--font-size-4xl));
+}
+
+h3 {
+  font-size: clamp(var(--font-size-lg), 3vw, var(--font-size-3xl));
+}
+
+p {
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
+/* Links da página (cabeçalho, conteúdo e rodapé), sem vazar para fora do contêiner .page. */
+.page a {
+  text-decoration: none;
+  color: var(--color-primary);
+}
+
+.page a:hover {
+  text-decoration: underline;
+}
+
+img,
+video,
+iframe {
+  max-inline-size: 100%;
+}
+
+img,
+video {
+  block-size: auto;
+}
+
+pre,
+code {
+  overflow-wrap: anywhere;
+}
+
+/* Forms */
+input,
+textarea,
+select {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  inline-size: 100%;
+  max-inline-size: 100%;
+  min-inline-size: 0;
+}
+
+fieldset {
+  min-inline-size: 0;
+  max-inline-size: 100%;
+}
+
+/* Accessibility */
+:focus-visible {
+  outline: var(--focus-ring-width) solid var(--color-focus-ring);
+  outline-offset: var(--focus-ring-offset);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: var(--motion-instant) !important;
+    animation-duration: var(--motion-instant) !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
+}

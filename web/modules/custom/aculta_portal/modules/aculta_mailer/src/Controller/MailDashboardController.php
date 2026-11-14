@@ -82,7 +82,7 @@ final class MailDashboardController extends ControllerBase {
       'falha' => [$this->t('Com falha'), '#c62828'],
     ];
     $perCategory = [];
-    foreach ($categories as $key => [$label, $color]) {
+    foreach (array_keys($categories) as $key) {
       $perCategory[$key] = $this->dashboard->dailyCounts($since, MailDashboard::FILTERS[$key]);
     }
     for ($day = $today - $days + 1; $day <= $today; $day++) {

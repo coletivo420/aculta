@@ -1,0 +1,25 @@
+{# Default neutral theme hook for discussion-reply-composer #}
+{% if component %}
+  {{ component }}
+{% else %}
+<div id="{{ target_id }}" class="discussion-reply-composer discussion-reply-composer--{{ status }}" data-discussion-reply-composer data-status="{{ status }}" data-parent-id="{{ parent_id|default('') }}">
+  {% if messages %}
+    <div class="discussion-reply-composer__messages" role="status" aria-live="polite">
+      {{ messages }}
+    </div>
+  {% endif %}
+
+  {% if parent_id and parent_author %}
+    <div class="discussion-reply-composer__parent-hint">
+      <span class="visually-hidden">{{ 'Respondendo a:'|t }}</span>
+      <strong>{{ parent_author }}</strong>{% if parent_subject %}: <em>{{ parent_subject }}</em>{% endif %}
+    </div>
+  {% endif %}
+
+  {% if form %}
+    <div class="discussion-reply-composer__form">
+      {{ form }}
+    </div>
+  {% endif %}
+</div>
+{% endif %}

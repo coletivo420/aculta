@@ -17,6 +17,7 @@ settings:
       - code
       - '|'
       - link
+      - acultaFluentEmoji
       - '|'
       - bulletedList
       - numberedList

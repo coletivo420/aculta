@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_lms\Unit;
 
-use DateTimeImmutable;
-use Drupal\aculta_learning_contracts\Event\CourseCompletedEvent;
+use Drupal\aculta_lms\Event\CourseCompletedEvent;
 use Drupal\aculta_lms\Event\CourseCompletionPublisher;
 use Drupal\aculta_lms\Learning\CourseProgress;
 use Drupal\Core\Entity\ContentEntityInterface;
@@ -15,10 +14,16 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 use Psr\EventDispatcher\EventDispatcherInterface;
 
+/**
+ * Testa a publicação do evento de curso concluído.
+ */
 #[CoversClass(CourseCompletionPublisher::class)]
 #[Group('aculta_lms')]
 final class CourseCompletionPublisherTest extends UnitTestCase {
 
+  /**
+   * Publica evento apenas para progresso aprovado e finalizado.
+   */
   public function testPublishesOnlyPassedAndFinishedProgress(): void {
     $dispatcher = $this->createMock(EventDispatcherInterface::class);
     $dispatcher->expects($this->once())
@@ -28,7 +33,7 @@ final class CourseCompletionPublisherTest extends UnitTestCase {
         && $event->sourceUuid === 'progress-uuid'
         && $event->courseId === '42'
         && $event->accountId === '7'
-        && $event->completedAt == new DateTimeImmutable('@1760000000')
+        && $event->completedAt == new \DateTimeImmutable('@1760000000')
       ));
 
     $event = (new CourseCompletionPublisher($dispatcher))->publish($this->progressEntity(
@@ -39,6 +44,9 @@ final class CourseCompletionPublisherTest extends UnitTestCase {
     self::assertInstanceOf(CourseCompletedEvent::class, $event);
   }
 
+  /**
+   * Não publica evento para progresso reprovado, não finalizado ou novo.
+   */
   public function testDoesNotPublishUnpassedUnfinishedOrNewProgress(): void {
     $dispatcher = $this->createMock(EventDispatcherInterface::class);
     $dispatcher->expects(self::never())->method('dispatch');
@@ -49,6 +57,19 @@ final class CourseCompletionPublisherTest extends UnitTestCase {
     self::assertNull($publisher->publish($this->progressEntity(CourseProgress::STATUS_PASSED, TRUE, TRUE)));
   }
 
+  /**
+   * Cria uma entidade de progresso simulada com os valores informados.
+   *
+   * @param string $status
+   *   Status do progresso.
+   * @param bool $finished
+   *   Indica se o progresso está finalizado.
+   * @param bool $new
+   *   Indica se a entidade ainda não foi salva.
+   *
+   * @return \Drupal\Core\Entity\ContentEntityInterface
+   *   Entidade simulada.
+   */
   private function progressEntity(string $status, bool $finished, bool $new = FALSE): ContentEntityInterface {
     $entity = $this->createMock(ContentEntityInterface::class);
     $entity->method('uuid')->willReturn('progress-uuid');
@@ -60,6 +81,7 @@ final class CourseCompletionPublisherTest extends UnitTestCase {
         'changed' => 1760000000,
         'course_id' => 42,
         'uid' => 7,
+        default => throw new \LogicException(sprintf('Unexpected progress field "%s".', $field)),
       };
       $field_list = $this->createMock(FieldItemListInterface::class);
       $field_list->method('getValue')->willReturn([['value' => $value]]);

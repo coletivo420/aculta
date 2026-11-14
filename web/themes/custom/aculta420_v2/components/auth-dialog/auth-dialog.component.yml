@@ -1,0 +1,67 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Diálogo de Autenticação
+status: experimental
+description: Modal de login completo da UI Library com listras tricolores e suporte a temas.
+group: Conta
+libraryOverrides:
+  dependencies:
+    - aculta420_v2/utility-drawers
+props:
+  type: object
+  additionalProperties: false
+  required: [id, title]
+  properties:
+    id:
+      type: string
+      title: ID único do diálogo
+      description: ID aplicado ao popup e usado pelo gatilho para apontar ao diálogo.
+      pattern: '^[A-Za-z][A-Za-z0-9_-]*$'
+    title:
+      type: string
+      title: Título principal
+      description: Título visível e acessível do popup de autenticação.
+      minLength: 1
+      default: "Entrar na ACULTA"
+    subtitle:
+      type: [string, 'null']
+      title: Subtítulo descritivo
+      description: Texto de apoio opcional exibido abaixo do título.
+      default: "Acesse sua conta e continue de onde parou."
+    header_variant:
+      type: string
+      title: Variante visual do cabeçalho
+      description: Seleciona a apresentação neutra ou institucional do cabeçalho.
+      enum: [neutral, institutional]
+      default: neutral
+    show_accent_stripes:
+      type: boolean
+      title: Exibir listras de acento tricolores
+      description: Controla a exibição das listras de acento no cabeçalho do popup.
+      default: true
+    close_label:
+      type: string
+      title: Rótulo do botão fechar
+      description: Nome acessível do botão que fecha o popup.
+      default: "Fechar janela de acesso"
+    google_auth_url:
+      type: [string, 'null']
+      title: URL de autenticação com o Google
+      description: Quando informada, exibe o link de autenticação Google e o divisor do formulário.
+      format: uri-reference
+    register_url:
+      type: [string, 'null']
+      title: URL de cadastro de nova conta
+      description: Quando informada, exibe o link de cadastro e o selo de autenticação no rodapé.
+      format: uri-reference
+    trigger_label:
+      type: [string, 'null']
+      title: Rótulo do disparador (opcional para preview/botão de abertura)
+      description: Texto que ativa a renderização de um gatilho SDC button antes do popup.
+    trigger_url:
+      type: [string, 'null']
+      title: URL de fallback do disparador
+      description: Destino do gatilho quando informado; sem URL o Twig usa uma referência local ao popup.
+slots:
+  content:
+    title: Conteúdo do Formulário
+    description: Elementos e campos do formulário renderizados pelo Form API ou submódulo.

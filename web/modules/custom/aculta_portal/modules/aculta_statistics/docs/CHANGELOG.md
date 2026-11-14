@@ -1,3 +1,33 @@
+# 0.9.0-dev.12 — integração analítica do Fórum (FST-00 a FST-11) (2026-11-10)
+
+- Escopo analítico centralizado no Fórum (`public_forum`, `restricted_forum`,
+  `publication`, `wiki`, `lms`, `unknown`) e reações públicas sem Group vazado.
+- Ledger de idempotência `aculta_forum_analytics_ledger`, catálogo com tipos
+  `counter`, `snapshot`, `distinct-window`, `ratio`, `distribution` e
+  `operational`, provedor do Fórum por tag opcional e coleta diária de retratos.
+- Indicadores de estoque, participação, primeira resposta, reações, moderação e
+  busca (coleta de busca desligada por padrão).
+- Reconciliação de reações e de retratos com dry-run, lock, lotes e comando
+  Drush; painel do Fórum com SDCs de estatísticas.
+- Moderação usa o owner `aculta_cgu` (`aculta_ugc_report`) para abertas,
+  resolvidas e mediana de resolução; busca agregada habilitada apenas no
+  desenvolvimento, com finalidade no inventário LGPD.
+- Unit 124/549, Kernel 55/600 e Kernel do painel 7/35 passaram; PHPStan focal e
+  PHPCS sem erros. Runtime: update `aculta_forum_update_9008` pendente de
+  autorização e sem homologação.
+
+# 0.9.0-dev.11 — consulta séries diárias de dimensões selecionadas (2026-11-04)
+
+- `AggregateStorageInterface` e `DailyAggregateStorage` oferecem uma consulta
+  agrupada por dia e dimensão, limitada a uma allowlist explícita de até 100
+  dimensões; o novo método não altera os dados gravados nem o schema.
+- A integração do LMS usa essa consulta para exibir a situação histórica da
+  turma sem buscar dimensões de outras turmas nem dados individuais.
+- Kernel `DailyAggregateStorageKernelTest` cobre agrupamento por dia/dimensão,
+  isolamento de métrica e turma e retorno vazio.
+- Unit 108/438 e Kernel focal 16/29 passaram; PHP lint, PHPCS focal e
+  `git diff --check` passaram.
+
 # 0.9.0-dev.10 — reflow responsivo do painel (2026-10-29)
 
 - Controles de período/métrica agora podem quebrar linha e limitam o `<select>`

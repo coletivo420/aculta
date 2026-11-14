@@ -1,0 +1,28 @@
+/* Public catalogue layout is composed by UI Patterns Views + layout-grid. */
+[data-portal-ui="event-catalogue-actions-bar"] {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+  min-inline-size: 0;
+  margin-block-end: var(--spacing-base);
+}
+
+/* Dashboard administrativo do organizador: carregado apenas nas rotas Events. */
+.aculta-events-organizer-dashboard {
+  display: grid;
+  min-width: 0;
+  gap: var(--page-gutter);
+}
+
+/* Apresentação compartilhada de catálogo e detalhe de evento. */
+.actions-bar,
+.aculta-event-date-actions,
+.aculta-event-date-order,
+.aculta-event-date-row,
+.aculta-event-location-widget,
+.aculta-event-organization-target-id,
+.location-actions,
+.location-admin-actions,
+.location-agenda { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; }
+.media-mentions { display: grid; gap: .75rem; }
+.aculta-event-catalogue__actions { margin-block: 1rem; }

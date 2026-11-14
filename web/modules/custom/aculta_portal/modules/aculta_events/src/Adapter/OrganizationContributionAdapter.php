@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_events\Adapter;
 
-use Drupal\aculta_contributions\Contract\ContributionAdapterInterface;
-use Drupal\aculta_contributions\Entity\Contribution;
+use Drupal\aculta_cgu\Contract\ContributionAdapterInterface;
+use Drupal\aculta_cgu\Entity\Contribution;
 use Drupal\aculta_events\Access\EventPermissionPolicy;
 use Drupal\aculta_events\Entity\EventOrganization;
 use Drupal\aculta_events\Event\OrganizationContributionOutcomeRecordedEvent;
 use Drupal\aculta_events\Slug\EventSlugGenerator;
 use Drupal\aculta_events\Service\OrganizationContributionEventQueue;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Database\Connection;
@@ -33,7 +33,7 @@ final class OrganizationContributionAdapter implements ContributionAdapterInterf
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly ?DomainPurposeManager $domainPurposes,
+    private readonly ?DomainSiteManager $siteManagers,
     private readonly EventPermissionPolicy $permissionPolicy,
     private readonly LockBackendInterface $lock,
     private readonly Connection $database,
@@ -87,7 +87,7 @@ final class OrganizationContributionAdapter implements ContributionAdapterInterf
   public function submitAccess(AccountInterface $account, string $intent, ?EntityInterface $target): bool {
     return $account->isAuthenticated()
       && (int) $account->id() > 0
-      && $this->domainPurposes?->getCurrentPurpose() === 'eventos'
+      && $this->siteManagers?->getCurrentSiteKey()?->value === 'eventos'
       && $this->permissionPolicy->canCreateEvent($account)
       && (($intent === 'organization_update' && $this->eligibleTarget($target))
         || ($intent === 'organization_create' && $target === NULL));
@@ -98,7 +98,7 @@ final class OrganizationContributionAdapter implements ContributionAdapterInterf
    */
   public function reviewAccess(AccountInterface $reviewer, string $intent, ?EntityInterface $target): bool {
     return in_array($intent, ['organization_update', 'organization_create'], TRUE)
-      && $this->domainPurposes?->getCurrentPurpose() === 'main'
+      && $this->siteManagers?->getCurrentSiteKey()?->value === 'main'
       && $reviewer->hasPermission('administer aculta events');
   }
 
@@ -265,12 +265,12 @@ final class OrganizationContributionAdapter implements ContributionAdapterInterf
     $transaction = NULL;
     try {
       $transaction = $this->database->startTransaction();
-      $this->database->select('aculta_event_organization', 'organization')
+      $select = $this->database->select('aculta_event_organization', 'organization');
+      $select
         ->fields('organization', ['id'])
         ->condition('id', $organizationId)
-        ->forUpdate()
-        ->execute()
-        ->fetchField();
+        ->forUpdate();
+      $select->execute()->fetchField();
       $fresh = $this->entityTypeManager->getStorage('aculta_event_organization')->loadUnchanged($organizationId);
       if (!$fresh instanceof EventOrganization || !$fresh->isUnclaimed()
         || !hash_equals($expectedVersion, $this->currentVersion($intent, $fresh))) {

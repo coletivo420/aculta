@@ -1,0 +1,24 @@
+uuid: 32114b29-5c3a-4e79-b63d-9f7130d61229
+langcode: pt-br
+status: true
+dependencies: {  }
+id: import_df2272996813077f2cf68f28
+label: 'Address 2.0.4 compatibility with Diff 2.x (Drupal.org issue 3589015)'
+package: drupal/address
+version: 2.0.4
+issue_url: ''
+patch: |
+  diff --git a/src/Plugin/diff/Field/AddressFieldBuilder.php b/src/Plugin/diff/Field/AddressFieldBuilder.php
+  --- a/src/Plugin/diff/Field/AddressFieldBuilder.php
+  +++ b/src/Plugin/diff/Field/AddressFieldBuilder.php
+  @@ -21,7 +21,7 @@
+     /**
+      * {@inheritdoc}
+      */
+  -  public function build(FieldItemListInterface $field_items) {
+  +  public function build(FieldItemListInterface $field_items): array {
+       $result = [];
+
+       foreach ($field_items as $field_key => $field_item) {
+source_url: patches/address-diff-2-compatibility.patch
+source_hash: d2a9358dab74343c5d8c747c6c8fcb96233f9e0cfdf0af55c2a69f78d0b09970

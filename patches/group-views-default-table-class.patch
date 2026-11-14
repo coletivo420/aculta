@@ -1,0 +1,20 @@
+--- a/config/optional/views.view.group_members.yml
++++ b/config/optional/views.view.group_members.yml
+@@ -589,6 +589,7 @@
+       style:
+         type: table
+         options:
++          class: ''
+           grouping: {  }
+           row_class: ''
+           default_row_class: true
+--- a/modules/gnode/config/optional/views.view.group_nodes.yml
++++ b/modules/gnode/config/optional/views.view.group_nodes.yml
+@@ -785,6 +785,7 @@
+       style:
+         type: table
+         options:
++          class: ''
+           grouping: {  }
+           row_class: ''
+           default_row_class: true

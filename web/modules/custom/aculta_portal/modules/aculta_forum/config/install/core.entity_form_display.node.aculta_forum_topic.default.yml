@@ -39,7 +39,7 @@ content:
       placeholder: ''
     third_party_settings: { }
 hidden:
-  co_authors: true
+  aculta_coauthors: true
   created: true
   field_aculta_discussion: true
   field_autor_legado: true

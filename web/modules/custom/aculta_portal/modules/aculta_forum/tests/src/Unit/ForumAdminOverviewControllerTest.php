@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_forum\Unit;
 
+use Drupal\aculta_forum\Analytics\ForumAnalyticsScopeResolver;
 use Drupal\aculta_forum\Controller\ForumAdminOverviewController;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
@@ -33,8 +34,8 @@ final class ForumAdminOverviewControllerTest extends UnitTestCase {
   public function testOverviewShowsPublicForumSummaryAndContextBoundaries(): void {
     [$controller, $topicQuery, $categoryQuery] = $this->controller();
     $controller->setStringTranslation($this->createMock(TranslationInterface::class));
-    $topicQuery->expects(self::once())->method('accessCheck')->with(TRUE)->willReturnSelf();
-    $categoryQuery->expects(self::once())->method('accessCheck')->with(TRUE)->willReturnSelf();
+    $topicQuery->expects(self::once())->method('accessCheck')->with(FALSE)->willReturnSelf();
+    $categoryQuery->expects(self::once())->method('accessCheck')->with(FALSE)->willReturnSelf();
     $topicQuery->expects(self::exactly(3))->method('condition')->willReturnCallback(
       function (string $field, mixed $value) use ($topicQuery): QueryInterface {
         $expected = [
@@ -106,13 +107,17 @@ final class ForumAdminOverviewControllerTest extends UnitTestCase {
 
     $negotiator = $this->createMock(DomainNegotiatorInterface::class);
     $negotiator->method('getActiveDomain')->willReturn(NULL);
-    $purposes = new DomainPurposeManager(
+    $purposes = new DomainSiteManager(
       $entities,
       $negotiator,
       $this->createMock(ConfigFactoryInterface::class),
       new RequestStack(),
     );
-    return [new ForumAdminOverviewController($entities, $purposes), $topicQuery, $categoryQuery];
+    $scopeResolver = $this->createMock(ForumAnalyticsScopeResolver::class);
+    $scopeResolver->method('restrictedTopicIds')->willReturn([]);
+    $scopeResolver->method('restrictedCategoryIds')->willReturn([]);
+
+    return [new ForumAdminOverviewController($entities, $purposes, $scopeResolver), $topicQuery, $categoryQuery];
   }
 
   /**

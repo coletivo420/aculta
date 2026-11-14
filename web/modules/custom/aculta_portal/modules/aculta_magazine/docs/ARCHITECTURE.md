@@ -63,7 +63,7 @@ Workflow `revista` (Content Moderation), estados e transições **exatamente** c
 | Classe | Hook | Responsabilidade |
 | --- | --- | --- |
 | `RevistaFormHooks` | `form_alter` em `node_revista_form` / `node_revista_edit_form` | agrupa propriedades secundárias em `details` fechado (`#weight 90`), anexa `aculta_magazine/revista-form` |
-| `ArticleAuthorsHooks` | `node_view` | injeta `article_authors` no display `full` publicado, no propósito `magazine` |
+| `ArticleAuthorsHooks` | `node_view` | injeta os render arrays cacheáveis `post_meta` e `article_authors` no display `full` publicado do propósito `magazine`; o tema os distribui nos slots do SDC ou do ComponentLayout |
 | `PublicationDiscussionHooks` | `node_load` | aplica o default de discussão em memória quando o campo vem ausente |
 | `MagazineNoticeEventPublisher` | `entity_insert`, `entity_update` | publica eventos habilitados de publicação/atualização para autor, coautores e seguidores elegíveis |
 
@@ -91,8 +91,10 @@ Rotas de conteúdo e administração continuam no Core e nas Views. Central, abe
 
 ## 7. Apresentação e tema
 
-- `node--revista--full.html.twig` do tema ACULTA420 consome `aculta420:revista-publication`
-  (`status: experimental`) e passa `meta`, `authors`, `discussion` pelos slots.
+- O tema ACULTA420 compõe `revista-publication` por `PagePresentationHooks::composeRevistaFull()`.
+  O ComponentLayout UI Patterns recebe `post_meta` e `article_authors` nos slots quando ativo;
+  o caminho de compatibilidade passa os render arrays formatados pelos slots do SDC.
+  O template Drupal específico foi removido; Core mantém o wrapper do node e os links contextuais.
 - O Magazine não possui template, CSS ou biblioteca de apresentação próprios além de `revista-form.js`.
 - O tema ainda mantém templates de `article`/`blog`; são obsoletos e pertencem ao ACULTA420.
 

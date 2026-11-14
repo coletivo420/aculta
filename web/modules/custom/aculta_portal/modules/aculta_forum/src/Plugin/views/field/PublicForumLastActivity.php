@@ -6,6 +6,7 @@ namespace Drupal\aculta_forum\Plugin\views\field;
 
 use Drupal\views\Attribute\ViewsField;
 use Drupal\views\Plugin\views\field\Date;
+use Drupal\views\Plugin\views\query\Sql;
 
 /**
  * Displays the latest activity among a topic, Comments, and ForumPosts.
@@ -17,6 +18,9 @@ final class PublicForumLastActivity extends Date {
    * {@inheritdoc}
    */
   public function query(): void {
+    if (!$this->query instanceof Sql) {
+      throw new \LogicException('Public Forum activity field requires a SQL Views query.');
+    }
     $this->ensureMyTable();
     $nodeTable = $this->query->ensureTable('node_field_data', $this->relationship);
     $formula = 'GREATEST(' . $nodeTable . '.changed, COALESCE(' . $this->tableAlias . '.last_comment_timestamp, 0), '

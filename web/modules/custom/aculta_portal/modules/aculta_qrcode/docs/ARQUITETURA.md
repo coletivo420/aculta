@@ -85,7 +85,7 @@ Nomes em `aculta_qrcode.services.yml`, com injeção de dependência e sem `\Dru
 
 - Testes Unit do `generator` e dos `presets` (contraste, margens, rejeição de protocolos).
 - Kernel do `manager`, `resolver` e `redirect`: destino, validade, desativação, Entity Access e cache.
-- Gate: `php scripts/validate-aculta-portal-drupal11.php` e `php scripts/validate-module-theme-boundary.php` quando houver código.
+- Gate: `php scripts/validate-aculta-portal-drupal12.php` e `php scripts/validate-module-theme-boundary.php` quando houver código.
 
 ## Decisão do responsável — personalização limitada (2026-10-31)
 

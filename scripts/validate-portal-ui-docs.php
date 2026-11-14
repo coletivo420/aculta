@@ -1,13 +1,17 @@
 <?php
 
 /**
- * Gate de documentação dos tokens e atributos do Portal (docs/portal/TOKENS-E-ATRIBUTOS.md).
+ * @file
+ * Gate de documentação dos tokens e atributos do Portal.
  *
+ * Documento: docs/portal/TOKENS-E-ATRIBUTOS.md.
  * Confere, no módulo aculta_portal (e submódulos) e no tema aculta420:
- * - todo token data-portal-ui usado no código existe no mapa PortalUiHooks::TOKENS ou em uma família dinâmica documentada;
+ * - todo token data-portal-ui usado no código existe no mapa
+ *   PortalUiHooks::TOKENS ou em uma família dinâmica documentada;
  * - todo token do mapa está documentado;
- * - todo atributo data-portal-*, data-aculta-* ou data-dialog-* usado no código está documentado (nome exato
- *   ou família com wildcard, ex.: `data-portal-account-*`).
+ * - todo atributo data-portal-*, data-aculta-* ou data-dialog-* usado no
+ *   código está documentado (nome exato ou família com wildcard, ex.:
+ *   `data-portal-account-*`).
  */
 
 declare(strict_types=1);
@@ -20,16 +24,22 @@ if ($doc === '') {
   exit(1);
 }
 
-$hooks = (string) file_get_contents($root . '/web/themes/custom/aculta420/src/Hook/PortalUiHooks.php');
-if (!preg_match('/TOKENS = \[(.*?)\n  \];/s', $hooks, $m)) {
-  fwrite(STDERR, "FAIL: PortalUiHooks::TOKENS não encontrado.\n");
-  exit(1);
+// Mapa de tokens: só o V2 (tema ativo). O V1 é referência e não entra no gate.
+$mapped = [];
+foreach (['/web/themes/custom/aculta420_v2/src/Hook/PortalUiHooks.php'] as $hookFile) {
+  $hooks = (string) file_get_contents($root . $hookFile);
+  if (!preg_match('/TOKENS = \[(.*?)\n  \];/s', $hooks, $m)) {
+    fwrite(STDERR, "FAIL: PortalUiHooks::TOKENS não encontrado em $hookFile.\n");
+    exit(1);
+  }
+  preg_match_all("/^\s*'([a-z0-9_-]+)'\s*=>/m", $m[1], $k);
+  $mapped = array_merge($mapped, $k[1]);
 }
-preg_match_all("/^\s*'([a-z0-9-]+)'\s*=>/m", $m[1], $k);
-$mapped = array_unique($k[1]);
+$mapped = array_values(array_unique($mapped));
 
 // Famílias dinâmicas e wildcards documentados: `prefixo-*`.
-preg_match_all('/`([a-z0-9-]+\*?)`/', $doc, $all);
+// Aceita "_" porque tokens BEM do código usam "__" (mesmo critério do mapa).
+preg_match_all('/`([a-z0-9_-]+\*?)`/', $doc, $all);
 $documented = array_unique($all[1]);
 $wildcards = array_values(array_map(static fn(string $w) => rtrim($w, '*'), array_filter($documented, static fn(string $w) => str_ends_with($w, '*'))));
 
@@ -38,7 +48,12 @@ $placeholders = ['token', 'token2'];
 
 $tokensUsed = [];
 $attrsUsed = [];
-$base = [$root . '/web/modules/custom/aculta_portal', $root . '/web/themes/custom/aculta420'];
+// O tema V1 `aculta420` é referência e pode não existir no checkout;
+// varre apenas diretórios presentes para não derrubar o gate.
+$base = array_values(array_filter(
+  [$root . '/web/modules/custom/aculta_portal', $root . '/web/themes/custom/aculta420'],
+  static fn(string $dir): bool => is_dir($dir),
+));
 foreach ($base as $dir) {
   $it = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dir, FilesystemIterator::SKIP_DOTS));
   foreach ($it as $file) {
@@ -62,13 +77,13 @@ foreach ($base as $dir) {
 
 $errors = [];
 foreach ($tokensUsed as $token => $files) {
-  if (in_array($token, $placeholders, true) || in_array($token, $mapped, true)) {
+  if (in_array($token, $placeholders, TRUE) || in_array($token, $mapped, TRUE)) {
     continue;
   }
-  $family = false;
+  $family = FALSE;
   foreach ($wildcards as $w) {
     if (str_starts_with($token, $w)) {
-      $family = true;
+      $family = TRUE;
     }
   }
   if (!$family) {
@@ -76,7 +91,7 @@ foreach ($tokensUsed as $token => $files) {
   }
 }
 foreach ($mapped as $token) {
-  if (!in_array("`$token`", array_map(static fn(string $d) => "`$d`", $documented), true) && !in_array($token, $documented, true)) {
+  if (!in_array("`$token`", array_map(static fn(string $d) => "`$d`", $documented), TRUE) && !in_array($token, $documented, TRUE)) {
     $errors[] = "token \"$token\" do mapa não está documentado em TOKENS-E-ATRIBUTOS.md.";
   }
 }
@@ -84,10 +99,10 @@ foreach ($attrsUsed as $attr => $files) {
   if (str_ends_with($attr, '-')) {
     continue;
   }
-  $ok = in_array($attr, $documented, true);
+  $ok = in_array($attr, $documented, TRUE);
   foreach ($wildcards as $w) {
     if (str_starts_with($attr, $w)) {
-      $ok = true;
+      $ok = TRUE;
     }
   }
   if (!$ok) {

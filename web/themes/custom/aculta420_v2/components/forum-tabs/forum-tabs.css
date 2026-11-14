@@ -1,0 +1,98 @@
+.forum-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  margin-block-end: var(--spacing-lg);
+  border-block-end: 1px solid var(--color-border);
+  gap: var(--spacing-base);
+  min-inline-size: 0;
+}
+
+.forum-tabs__bar {
+  display: flex;
+  overflow-x: auto;
+  overflow-y: hidden;
+  max-inline-size: 100%;
+  scrollbar-width: thin;
+  -webkit-overflow-scrolling: touch;
+}
+
+.forum-tabs__list {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  gap: var(--spacing-md);
+  white-space: nowrap;
+}
+
+.forum-tabs__item {
+  display: flex;
+  align-items: center;
+  min-block-size: 44px;
+}
+
+.forum-tabs__link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  transition: color var(--motion-slow) ease, border-color var(--motion-slow) ease;
+  text-decoration: none;
+  color: var(--color-text-secondary);
+  border-block-end: 3px solid transparent;
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  min-block-size: 44px;
+  padding-block: var(--spacing-sm);
+  padding-inline: var(--spacing-xs);
+  gap: var(--spacing-xs);
+}
+
+.forum-tabs__link:hover {
+  color: var(--color-text-primary);
+}
+
+.forum-tabs__link.is-active {
+  color: var(--color-brand-primary);
+  border-block-end-color: var(--color-status);
+}
+
+.forum-tabs__link:focus-visible {
+  border-radius: var(--radius-sm);
+  outline: var(--focus-ring-width) solid var(--color-focus-ring);
+  outline-offset: var(--focus-ring-offset);
+}
+
+.forum-tabs__count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-on-brand);
+  border-radius: var(--radius-full);
+  background: var(--color-link-editorial);
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  line-height: 1;
+  min-inline-size: 1.25rem;
+  block-size: 1.25rem;
+  padding-inline: .25rem;
+}
+
+.forum-tabs__filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.forum-tabs__filters select {
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-base);
+  background-color: var(--color-surface-raised);
+  font-size: var(--font-size-sm);
+  min-block-size: 44px;
+  padding-inline: var(--spacing-md);
+}

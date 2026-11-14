@@ -4,63 +4,90 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_forum\Controller;
 
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_forum\Analytics\ForumAnalyticsScopeResolver;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\aculta_statistics\Storage\AggregateStorageInterface;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\node\NodeInterface;
 use Drupal\Core\Url;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Builds the central administration page for the public ACULTA Forum.
  */
-final class ForumAdminOverviewController extends ControllerBase {
+final class ForumAdminOverviewController extends ControllerBase implements ContainerInjectionInterface {
 
   public function __construct(
-    #[Autowire(service: 'entity_type.manager')]
     private readonly EntityTypeManagerInterface $entities,
-    #[Autowire(service: 'aculta_portal.domain_purpose')]
-    private readonly DomainPurposeManager $domainPurposeManager,
-    #[Autowire(service: 'aculta_statistics.storage')]
+    private readonly DomainSiteManager $siteManager,
+    private readonly ForumAnalyticsScopeResolver $scopeResolver,
     private readonly ?AggregateStorageInterface $statisticsStorage = NULL,
   ) {}
 
   /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container): static {
+    return new static(
+      $container->get('entity_type.manager'),
+      $container->get('aculta_portal.domain_site'),
+      $container->get('aculta_forum.analytics_scope_resolver'),
+      $container->has('aculta_statistics.storage') ? $container->get('aculta_statistics.storage') : NULL,
+    );
+  }
+
+  /**
    * Renders an informative overview of the Growroom420 public Forum.
    *
-   * The statistics are limited to the Forum topic bundle and its canonical
-   * Domain. Other discussion hosts, including Magazine, LMS, and Wiki, are not
-   * queried or included in this page.
+   * The counts are public-scope only: a topic restricted by a Group, directly
+   * or through its category, never enters the public indicator even when the
+   * account viewing this page is an administrator. Other discussion hosts,
+   * including Magazine, LMS, and Wiki, are not queried.
    */
   public function overview(): array {
-    $forumDomain = $this->domainPurposeManager->getDomain('forum');
+    $forumDomain = $this->siteManager->getDomain(SiteKey::Forum);
     $topicCount = NULL;
     $categoryCount = NULL;
 
     if ($forumDomain !== NULL) {
-      $topicCount = (int) $this->entities->getStorage('node')->getQuery()
-        ->accessCheck(TRUE)
-        ->condition('type', 'aculta_forum_topic')
-        ->condition('status', NodeInterface::PUBLISHED)
-        ->condition('field_domain_source.target_id', $forumDomain->id())
-        ->count()
-        ->execute();
-      $categoryCount = (int) $this->entities->getStorage('taxonomy_term')->getQuery()
-        ->accessCheck(TRUE)
-        ->condition('vid', 'aculta_forum_categories')
-        ->count()
-        ->execute();
+      $restrictedTopics = $this->scopeResolver->restrictedTopicIds();
+      if ($restrictedTopics !== NULL) {
+        $topicQuery = $this->entities->getStorage('node')->getQuery()
+          ->accessCheck(FALSE)
+          ->condition('type', 'aculta_forum_topic')
+          ->condition('status', NodeInterface::PUBLISHED)
+          ->condition('field_domain_source.target_id', $forumDomain->id());
+        if ($restrictedTopics !== []) {
+          $topicQuery->condition('nid', $restrictedTopics, 'NOT IN');
+        }
+        $topicCount = (int) $topicQuery->count()->execute();
+      }
+
+      $restrictedCategories = $this->scopeResolver->restrictedCategoryIds();
+      if ($restrictedCategories !== NULL) {
+        $categoryQuery = $this->entities->getStorage('taxonomy_term')->getQuery()
+          ->accessCheck(FALSE)
+          ->condition('vid', 'aculta_forum_categories');
+        if ($restrictedCategories !== []) {
+          $categoryQuery->condition('tid', $restrictedCategories, 'NOT IN');
+        }
+        $categoryCount = (int) $categoryQuery->count()->execute();
+      }
     }
 
     $build = [
       '#type' => 'container',
       '#cache' => [
-        'contexts' => ['domain', 'languages:language_interface', 'user.node_grants:view', 'user.permissions'],
+        'contexts' => ['domain', 'languages:language_interface', 'user.permissions'],
         'tags' => [
           'node_list:aculta_forum_topic',
           'taxonomy_term_list:aculta_forum_categories',
+          'group_relationship_list',
+          'config:aculta_forum.settings',
         ],
         'max-age' => 60,
       ],
@@ -88,17 +115,24 @@ final class ForumAdminOverviewController extends ControllerBase {
       $build['public_links']['#items'][] = [
         '#type' => 'link',
         '#title' => $this->t('Abrir Growroom420'),
-        '#url' => $this->domainPurposeManager->pathUrl('forum', '/'),
+        '#url' => $this->siteManager->pathUrl(SiteKey::Forum, '/'),
       ];
       $build['public_links']['#items'][] = [
         '#type' => 'link',
         '#title' => $this->t('Ver categorias públicas'),
-        '#url' => $this->domainPurposeManager->pathUrl('forum', '/categorias'),
+        '#url' => $this->siteManager->pathUrl(SiteKey::Forum, '/categorias'),
       ];
       $account = $this->currentUser();
+      if ($account->hasPermission('administer aculta_statistics')) {
+        $build['public_links']['#items'][] = [
+          '#type' => 'link',
+          '#title' => $this->t('Relatório analítico do Fórum'),
+          '#url' => Url::fromRoute('aculta_statistics.area', ['area' => 'forum']),
+        ];
+      }
       if ($account->hasPermission('moderar denuncias do forum')
-        || $account->hasPermission('moderar denuncias ugc')
-        || $account->hasPermission('moderar denuncias ugc: forum')) {
+        || $account->hasPermission('moderar denuncias cgu')
+        || $account->hasPermission('moderar denuncias cgu: forum')) {
         $build['public_links']['#items'][] = [
           '#type' => 'link',
           '#title' => $this->t('Fila de denúncias do Fórum'),
@@ -153,14 +187,14 @@ final class ForumAdminOverviewController extends ControllerBase {
   }
 
   /**
-   * Builds safe metric rows, omitting counts when the Forum domain is absent.
+   * Builds safe metric rows, omitting counts when they cannot be proven.
    */
   private function statisticsRows(?int $categoryCount, ?int $topicCount): array {
     if ($categoryCount === NULL || $topicCount === NULL) {
       return [];
     }
 
-    return [
+    $rows = [
       [
         'data' => [
           $this->t('Categorias públicas'),
@@ -174,6 +208,29 @@ final class ForumAdminOverviewController extends ControllerBase {
         ],
       ],
     ];
+
+    // Retratos do Statistics, quando a coleta já gravou o dia. São estoque
+    // atual, não soma histórica.
+    if ($this->statisticsStorage !== NULL) {
+      $today = $this->statisticsStorage->currentDay();
+      $snapshots = [
+        'forum.replies.published_current' => $this->t('Respostas públicas publicadas'),
+        'forum.topics.unanswered' => $this->t('Tópicos sem resposta'),
+        'forum.reactions.active' => $this->t('Reações vigentes'),
+      ];
+      foreach ($snapshots as $metric => $label) {
+        if ($this->statisticsStorage->hasDay($metric, $today)) {
+          $rows[] = [
+            'data' => [
+              $label,
+              ['data' => ['#plain_text' => (string) $this->statisticsStorage->total($metric, $today, $today)]],
+            ],
+          ];
+        }
+      }
+    }
+
+    return $rows;
   }
 
 }

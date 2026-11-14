@@ -8,7 +8,6 @@ use Drupal\commerce_checkout\CheckoutOrderManagerInterface;
 use Drupal\aculta_donation\Form\DonationSettingsForm;
 use Drupal\aculta_donation\NewOrder;
 use Drupal\aculta_donation\Plugin\Commerce\CheckoutFlow\DonationCheckoutFlow;
-use Drupal\aculta_donation\Routing\DonationSecuredRedirectResponse;
 use Drupal\commerce_store\CurrentStoreInterface;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Config\ConfigFactoryInterface;
@@ -19,7 +18,8 @@ use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\Core\Routing\TrustedRedirectResponse;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -87,7 +87,7 @@ class DonationController implements ContainerInjectionInterface {
   /**
    * Gerenciador de domínio: as etapas de checkout ficam no domínio principal (rotas do Commerce).
    */
-  protected DomainPurposeManager $purposes;
+  protected DomainSiteManager $purposes;
 
   /**
    * Injected service.
@@ -117,6 +117,8 @@ class DonationController implements ContainerInjectionInterface {
    *   Injected service.
    * @param \Drupal\aculta_donation\NewOrder $newOrder
    *   Injected service.
+   * @param \Drupal\aculta_portal\Domain\DomainSiteManager $purposes
+   *   Gerenciador de domínio usado no checkout.
    */
   final public function __construct(
     FormBuilderInterface $form_builder,
@@ -128,7 +130,7 @@ class DonationController implements ContainerInjectionInterface {
     EntityTypeManagerInterface $entity_type_manager,
     ConfigFactoryInterface $configFactory,
     NewOrder $newOrder,
-    DomainPurposeManager $purposes,
+    DomainSiteManager $purposes,
   ) {
     $this->formBuilder = $form_builder;
     $this->currentUser = $current_user;
@@ -156,7 +158,7 @@ class DonationController implements ContainerInjectionInterface {
       $container->get('entity_type.manager'),
       $container->get('config.factory'),
       $container->get('aculta_donation.new_order'),
-      $container->get('aculta_portal.domain_purpose'),
+      $container->get('aculta_portal.domain_site'),
     );
   }
 
@@ -337,7 +339,7 @@ class DonationController implements ContainerInjectionInterface {
    */
   protected function constructStepRedirect(array $parameters) {
     // Etapas de checkout (Commerce) no domínio principal; o apoio só escolhe o valor.
-    $url = $this->purposes->routeUrl('main', 'aculta_donation.donation_controller_formPage', $parameters)
+    $url = $this->purposes->routeUrl(SiteKey::Main, 'aculta_donation.donation_controller_formPage', $parameters)
       ?? Url::fromRoute('aculta_donation.donation_controller_formPage', $parameters);
     $query = $this->requestStack->getCurrentRequest()->query;
     if ($query->has('donate_return')) {

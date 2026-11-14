@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_linkweed\Controller;
 
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\aculta_linkweed\Service\SocialLinksPagePresenter;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -25,7 +26,7 @@ final class LinksLandingController {
     private readonly AccountProxyInterface $currentUser,
     private readonly AliasManagerInterface $aliasManager,
     private readonly LanguageManagerInterface $languageManager,
-    private readonly DomainPurposeManager $domainPurpose,
+    private readonly DomainSiteManager $siteManager,
     private readonly SocialLinksPagePresenter $pagePresenter,
   ) {}
 
@@ -33,7 +34,7 @@ final class LinksLandingController {
    * Builds the editorial page when available, or a safe configured fallback.
    */
   public function view(): array {
-    $domain = $this->domainPurpose->getDomain('links');
+    $domain = $this->siteManager->getDomain(SiteKey::Links);
     if ($domain === NULL) {
       throw new NotFoundHttpException();
     }

@@ -1,0 +1,24 @@
+uuid: 5cf76947-b166-477b-a48a-347d06b03b9e
+langcode: pt-br
+status: true
+dependencies: {  }
+id: import_510ccfe2e06a59191779bc83
+label: 'PHP 8.4 explicit nullable request type (Drupal.org issue 3593752, MR !17)'
+package: drupal/social_api
+version: 4.0.2
+issue_url: ''
+patch: |
+  diff --git a/src/AuthManager/OAuth2Manager.php b/src/AuthManager/OAuth2Manager.php
+  --- a/src/AuthManager/OAuth2Manager.php
+  +++ b/src/AuthManager/OAuth2Manager.php
+  @@ -73,7 +73,7 @@
+      */
+     public function __construct(ImmutableConfig $settings,
+                                 LoggerChannelFactoryInterface $logger_factory,
+  -                              Request $request = NULL) {
+  +                              ?Request $request = NULL) {
+   
+       $this->settings = $settings;
+       $this->loggerFactory = $logger_factory;
+source_url: patches/social-api-php84-nullable-request.patch
+source_hash: 347b1c893339c2a896f452056b801295a9058d83d0c11bfe77c55aee343ad29f

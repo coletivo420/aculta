@@ -7,8 +7,6 @@ dependencies:
     - node.type.aculta_forum_topic
   module:
     - text
-_core:
-  default_config_hash: jen6NQ7gH_NQdNJ-CIyENpVOPijNiDjmLBamiVInPsA
 id: node.aculta_forum_topic.body
 field_name: body
 entity_type: node
@@ -22,6 +20,6 @@ default_value_callback: ''
 settings:
   display_summary: true
   required_summary: false
-  allowed_formats: {  }
+  allowed_formats:
+    forum: forum
 field_type: text_with_summary
-

@@ -23,4 +23,3 @@ settings:
       field: weight
       direction: ASC
 field_type: entity_reference
-

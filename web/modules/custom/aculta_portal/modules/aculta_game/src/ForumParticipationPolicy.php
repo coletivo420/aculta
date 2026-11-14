@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_game;
 
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\comment\CommentInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityPublishedInterface;
@@ -20,7 +20,7 @@ use Drupal\user\EntityOwnerInterface;
 final class ForumParticipationPolicy {
 
   public function __construct(
-    private readonly ?DomainPurposeManager $domainPurposeManager = NULL,
+    private readonly ?DomainSiteManager $siteManager = NULL,
   ) {}
 
   /**
@@ -70,7 +70,7 @@ final class ForumParticipationPolicy {
       || !$topic->isPublished()
       || !$topic->hasField('field_domain_source')
       || $topic->get('field_domain_source')->isEmpty()
-      || $this->domainPurposeManager?->getPurposeForDomainId((string) $topic->get('field_domain_source')->target_id) !== 'forum'
+      || $this->siteManager?->getSiteKeyValueForDomainId((string) $topic->get('field_domain_source')->target_id) !== 'forum'
       || !$this->isLive($topic)
       || $this->hasLegacyAuthor($topic)) {
       return FALSE;

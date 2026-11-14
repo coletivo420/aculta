@@ -1,0 +1,93 @@
+{
+  "frozen_at": "2026-11-14T17:52:22+00:00",
+  "source_sha": "c9fa42b42",
+  "level": 10,
+  "canonical_baseline": "phpstan-baseline.neon",
+  "baseline_sha256": "9102346a70b269da3b278ae53b3119b503e8413b0868af14c5dae3a69ef0e962",
+  "entries": 15599,
+  "occurrences": 26848,
+  "production": 15816,
+  "tests": 11032,
+  "top_modules": {
+    "aculta_forum": 3096,
+    "scripts": 3056,
+    "aculta_lms": 2184,
+    "aculta_messenger": 2073,
+    "aculta_portal": 2020,
+    "aculta_events": 1792,
+    "aculta_wiki": 1461,
+    "aculta_lms_h5p": 1299,
+    "aculta_index": 1112,
+    "aculta_user": 899
+  },
+  "top_identifiers": {
+    "offsetAccess.nonOffsetAccessible": 8234,
+    "argument.type": 4649,
+    "method.nonObject": 3059,
+    "missingType.iterableValue": 2820,
+    "cast.string": 2094,
+    "cast.int": 1350,
+    "method.notFound": 1004,
+    "property.nonObject": 673,
+    "return.type": 371,
+    "foreach.nonIterable": 356
+  },
+  "policy": {
+    "new_inline_ignores_forbidden": true,
+    "touched_file_min_reduction": 1,
+    "touched_module_min_reduction": 1,
+    "automatic_regeneration_allowed": false,
+    "report_unmatched_ignored_errors": true
+  },
+  "previous_baseline": {
+    "level": 5,
+    "commit": "2e631809619d0fecd56ca73c5193c0106b7f0c38",
+    "sha256": "3fa97bbe8ec817f06e189344e529076d9c6f408bb5b99da331c23bbaae52f8b1",
+    "entries": 1413,
+    "occurrences": 2245
+  },
+  "environment": {
+    "php_generation": "8.4.27",
+    "php_local_check": "8.5.12",
+    "phpstan": "2.3.5",
+    "drupal_extension": "mglaman/phpstan-drupal 2.2.2",
+    "scope": [
+      "web/modules/custom",
+      "web/themes/custom",
+      "scripts"
+    ],
+    "bleeding_edge": true
+  },
+  "generation_command": "vendor/bin/phpstan analyse --configuration=.phpstan-audit.neon --level=10 --generate-baseline=phpstan-baseline.neon --memory-limit=5G",
+  "post_freeze_reductions": {
+    "date": "2026-11-14",
+    "entries_removed": 403,
+    "occurrences_removed": 888,
+    "current_entries": 15196,
+    "current_occurrences": 25960,
+    "current_production": 15674,
+    "current_tests": 10286,
+    "current_baseline_sha256": "29fd7c4ca0bc006b61627b5209ce470c8e56fd4abd916e5a4705c0184d2ecfa0",
+    "reason": "Correções em aculta_studio, no carregador do curso piloto, na tipagem e validação de testes do LMS, na validação do envio de respostas, no teste de materiais do curso, na tipagem das fixtures de exclusão de conteúdo, nos render arrays de materiais do curso, nas fixtures dos testes de acesso a anexos e revisão de respostas, na fixture de pedido de matrícula, na validação da configuração de Views, nas estruturas do render array de discussões, nas fixtures de limpeza e acesso a documentos e nos contratos de declarações xAPI e uploads de respostas; sem regeneração automática do baseline, além da tipagem dos testes de ordenação do editor, autoria de cursos e índice de conteúdo do LMS e nos testes unitários de seleção de turma, painel de aprendizagem e disponibilidade de matrícula no LMS e nas fixtures do índice de conteúdo, acesso a notas Webform, slugs de curso e tour de estudantes do LMS e nas fixtures de arquivamento de tentativas, prazos de atividades, autorização de autoria e etapas dos wizards do LMS e na fixture de movimentação de tópicos públicos do Fórum e nos testes unitários restantes de prazos, acesso a recursos, tentativas, jornadas, salas, ordenação, xAPI e progresso do LMS; também nas fronteiras de ingestão xAPI, ownership do progresso e fixtures unitárias restantes do LMS."
+  },
+  "gates": {
+    "check": "php scripts/phpstan-debt-guard.php check --baseline=phpstan-baseline.neon --config=phpstan.neon --git-base=origin/dev --analysis=artifacts/phpstan.json",
+    "diff": "php scripts/phpstan-debt-guard.php diff --baseline=phpstan-baseline.neon --git-base=origin/dev",
+    "report": "php scripts/phpstan-debt-report.php --baseline=phpstan-baseline.neon --analysis=artifacts/phpstan.json --out=docs/operations/testing/phpstan-debt.md",
+    "guard_tests": "bats tests/shell/phpstan-debt-guard.bats"
+  },
+  "ci_verification": {
+    "sha": "bb3e7f061fce2c83d6cf20b81ea954616ad7fc42",
+    "push_run": 43624002407,
+    "pr_run": 43624010341,
+    "phpstan_job": "success",
+    "stable_gate": "success",
+    "artifact": "phpstan-debt",
+    "php": "8.4.27",
+    "verified_totals": {
+      "frozen": 26848,
+      "uncovered": 0,
+      "entries": 15599
+    }
+  }
+}

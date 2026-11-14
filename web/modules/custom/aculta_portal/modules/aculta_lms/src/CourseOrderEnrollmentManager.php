@@ -6,8 +6,9 @@ namespace Drupal\aculta_lms;
 
 use Drupal\aculta_portal\Checkout\CheckoutSettings;
 use Drupal\commerce_order\Entity\OrderInterface;
-use Drupal\commerce_order\Entity\OrderItemInterface;
 use Drupal\commerce_payment\Entity\PaymentInterface;
+use Drupal\commerce_order\Entity\OrderItemInterface;
+use Drupal\commerce_payment\PaymentStorageInterface;
 use Drupal\commerce_product\Entity\ProductVariationInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\group\Entity\GroupInterface;
@@ -24,7 +25,8 @@ final class CourseOrderEnrollmentManager implements CourseOrderEnrollmentManager
     private readonly ?CheckoutSettings $checkoutSettings = NULL,
   ) {}
 
-  /** Whether the order is a course purchase: the configured course order type or the legacy `curso`. */
+  /**
+   * Whether the order is a course purchase: the configured course order type or the legacy `curso`. */
   public function isCourseOrder(OrderInterface $order): bool {
     return in_array($order->bundle(), $this->checkoutSettings?->lmsOrderTypes() ?? [CheckoutSettings::LEGACY_LMS_ORDER_TYPE], TRUE);
   }
@@ -57,10 +59,11 @@ final class CourseOrderEnrollmentManager implements CourseOrderEnrollmentManager
       return TRUE;
     }
 
-    $payments = $this->entityTypeManager->getStorage('commerce_payment')->loadMultipleByOrder($order);
-    foreach ($payments as $payment) {
-      if ($payment instanceof PaymentInterface
-        && in_array($payment->getState()->getId(), ['completed', 'partially_refunded'], TRUE)
+    foreach ($this->paymentsForOrder($order) as $payment) {
+      if (!$payment instanceof PaymentInterface) {
+        continue;
+      }
+      if (in_array($payment->getState()->getId(), ['completed', 'partially_refunded'], TRUE)
         && $payment->getBalance() !== NULL
         && !$payment->getBalance()->isZero()) {
         // A partial refund leaves the order's remaining paid balance active.
@@ -68,6 +71,23 @@ final class CourseOrderEnrollmentManager implements CourseOrderEnrollmentManager
       }
     }
     return FALSE;
+  }
+
+  /**
+   * Loads the payments of an order, failing closed on an unexpected storage.
+   *
+   * The return type stays untyped per item because a broken or replaced
+   * payment storage must never make an entitlement look paid.
+   *
+   * @return array<mixed>
+   *   Payment records, or an empty list when the storage is unavailable.
+   */
+  private function paymentsForOrder(OrderInterface $order): array {
+    $storage = $this->entityTypeManager->getStorage('commerce_payment');
+    if (!$storage instanceof PaymentStorageInterface) {
+      return [];
+    }
+    return $storage->loadMultipleByOrder($order);
   }
 
   /**
@@ -140,7 +160,7 @@ final class CourseOrderEnrollmentManager implements CourseOrderEnrollmentManager
       }
       $class = $membership->getGroup();
       $account = $membership->getEntity();
-      if (!$class instanceof GroupInterface || !$account instanceof UserInterface) {
+      if (!$account instanceof UserInterface) {
         continue;
       }
       if ((string) $account->id() === (string) $order->getCustomerId()
@@ -217,7 +237,7 @@ final class CourseOrderEnrollmentManager implements CourseOrderEnrollmentManager
       return FALSE;
     }
     foreach ($course->getRelationships('lms_classes') as $relationship) {
-      $courseClass = $relationship instanceof GroupRelationshipInterface ? $relationship->getEntity() : NULL;
+      $courseClass = $relationship->getEntity();
       if ($courseClass instanceof GroupInterface && (string) $courseClass->id() === (string) $class->id()) {
         return TRUE;
       }

@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * Instalação e atualização do módulo aculta_calendar.
+ *
+ * @file
+ */
+
 declare(strict_types=1);
 
 /**
@@ -42,4 +48,17 @@ function aculta_calendar_update_10002(): string {
     $definitions[$field_name],
   );
   return 'Installed calendar import source presence field.';
+}
+
+/**
+ * Installs the configuration entity type used to manage calendar sources.
+ */
+function aculta_calendar_update_10004(): string {
+  $entity_type_id = 'aculta_calendar_import_source';
+  $manager = \Drupal::entityDefinitionUpdateManager();
+  if ($manager->getEntityType($entity_type_id) === NULL) {
+    $manager->installEntityType(\Drupal::entityTypeManager()->getDefinition($entity_type_id));
+  }
+
+  return 'Installed the ACULTA Calendar import-source entity type.';
 }

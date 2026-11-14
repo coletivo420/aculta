@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_forum\Plugin\migrate\source;
 
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\comment\CommentInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Query\QueryInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\flag\FlaggingInterface;
 use Drupal\migrate\Attribute\MigrateSource;
 use Drupal\migrate\Plugin\MigrationInterface;
 use Drupal\migrate\Plugin\MigrateSourceInterface;
@@ -33,8 +34,8 @@ final class ForumCommentFlagging extends SourcePluginBase implements ContainerFa
     string $plugin_id,
     array $plugin_definition,
     MigrationInterface $migration,
-    private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly DomainPurposeManager $domainPurposeManager,
+    protected readonly EntityTypeManagerInterface $entityTypeManager,
+    protected readonly DomainSiteManager $siteManager,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $migration);
   }
@@ -49,7 +50,7 @@ final class ForumCommentFlagging extends SourcePluginBase implements ContainerFa
       $plugin_definition,
       $migration,
       $container->get('entity_type.manager'),
-      $container->get('aculta_portal.domain_purpose'),
+      $container->get('aculta_portal.domain_site'),
     );
   }
 
@@ -79,6 +80,9 @@ final class ForumCommentFlagging extends SourcePluginBase implements ContainerFa
       $last_id = (int) end($ids);
 
       foreach ($storage->loadMultiple($ids) as $flagging) {
+        if (!$flagging instanceof FlaggingInterface) {
+          continue;
+        }
         $comment = $this->entityTypeManager->getStorage('comment')->load($flagging->getFlaggableId());
         $topic = $comment instanceof CommentInterface ? $comment->getCommentedEntity() : NULL;
         if (!$this->isEligibleComment($comment, $topic)) {
@@ -87,8 +91,8 @@ final class ForumCommentFlagging extends SourcePluginBase implements ContainerFa
         yield [
           'fid' => (int) $flagging->id(),
           'cid' => (int) $comment->id(),
-          'uid' => (int) ($flagging->getOwnerId() ?? 0),
-          'session_id' => (string) ($flagging->get('session_id')->value ?? ''),
+          'uid' => (int) $flagging->getOwnerId(),
+          'session_id' => (string) $flagging->get('session_id')->value,
           'global' => (int) $flagging->get('global')->value,
           'created' => (int) $flagging->getCreatedTime(),
         ];
@@ -151,7 +155,7 @@ final class ForumCommentFlagging extends SourcePluginBase implements ContainerFa
       || !$topic->hasField('field_domain_source') || $topic->get('field_domain_source')->isEmpty()) {
       return FALSE;
     }
-    return $this->domainPurposeManager->getPurposeForDomainId((string) $topic->get('field_domain_source')->target_id) === 'forum';
+    return $this->siteManager->getSiteKeyValueForDomainId((string) $topic->get('field_domain_source')->target_id) === 'forum';
   }
 
 }

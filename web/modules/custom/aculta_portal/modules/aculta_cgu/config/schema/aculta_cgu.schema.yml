@@ -1,0 +1,26 @@
+aculta_cgu.settings:
+  type: config_object
+  label: 'ACULTA CGU settings'
+  mapping:
+    flood_limit:
+      type: integer
+      label: 'Maximum submissions per account'
+    flood_window:
+      type: integer
+      label: 'Submission limit window in seconds'
+
+aculta_cgu.recipients.*:
+  type: config_entity
+  label: 'Destinatários de notificação de denúncia por purpose'
+  mapping:
+    id:
+      type: string
+      label: 'Identificador do purpose'
+    label:
+      type: label
+      label: 'Rótulo'
+    emails:
+      type: sequence
+      label: 'E-mails dos moderadores'
+      sequence:
+        type: email

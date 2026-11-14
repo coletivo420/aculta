@@ -1,0 +1,9 @@
+name: Popup de local
+description: Popup compacto usado pelos marcadores dos mapas ACULTA.
+component: aculta420_v2:map-popup
+props:
+  title: Espaço de exemplo
+  url: /locais/exemplo
+  category: Espaço cultural
+  address: Endereço de demonstração
+  route_url: https://www.openstreetmap.org/directions?to=place

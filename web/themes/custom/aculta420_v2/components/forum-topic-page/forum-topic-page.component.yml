@@ -1,0 +1,26 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Página de tópico do Fórum
+description: Composição da página completa de tópico com dados e conteúdo renderizados pelo Drupal.
+status: experimental
+group: Comunidade
+props:
+  type: object
+  additionalProperties: false
+  required: [category_label, author_name, created]
+  properties:
+    category_label:
+      type: string
+      title: Categoria
+      description: Nome público da categoria do tópico ou traço quando não houver categoria.
+    author_name:
+      type: string
+      title: Autoria
+      description: Nome público do autor fornecido pelo nó do Fórum.
+    created:
+      type: integer
+      title: Data de criação
+      description: Timestamp Unix da criação do tópico, formatado conforme o idioma e fuso do Drupal.
+slots:
+  topic:
+    title: Conteúdo do tópico
+    description: SDC de apresentação contendo campos, autoria, reações e ações já preparados pelo Drupal e pelo módulo Fórum.

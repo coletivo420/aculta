@@ -1,0 +1,97 @@
+/* ACULTA busca (portado do V1 em 2026-11-05). Estado: DEFERRED (sem captura visual). */
+
+.aculta-search {
+  max-width: 48rem;
+  margin-block: var(--spacing-section);
+  color: var(--color-text-primary);
+}
+
+.aculta-search form[role="search"] {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .75rem;
+  align-items: end;
+}
+
+.aculta-search form[role="search"] > div:first-child {
+  flex: 1 1 18rem;
+}
+
+.aculta-search input[type="search"] {
+  overflow-y: auto;
+  max-height: 40vh;
+}
+
+.aculta-search input[type="search"]:focus-visible {
+  outline: 3px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+.aculta-search form[role="search"] .form-submit,
+.aculta-search form[role="search"] button[type="submit"] {
+  min-height: 2.75rem;
+  padding: .625rem 1.25rem;
+  transition: color var(--motion-base) ease, background-color var(--motion-base) ease;
+  color: var(--color-on-highlight);
+  border: 1px solid var(--color-brand-highlight);
+  border-radius: var(--radius-base);
+  background: var(--color-brand-highlight);
+  font-family: var(--font-family-heading);
+  font-weight: 600;
+}
+
+.aculta-search form[role="search"] .form-submit:is(:hover, :focus-visible),
+.aculta-search form[role="search"] button[type="submit"]:is(:hover, :focus-visible) {
+  color: var(--color-on-primary);
+  border-color: var(--color-primary);
+  background: var(--color-primary);
+}
+
+.aculta-search__results {
+  margin-top: 2rem;
+}
+
+.aculta-search__results > p {
+  color: var(--color-text-secondary);
+  font-weight: 600;
+}
+
+.aculta-search__results .item-list ul {
+  margin: 0;
+  padding-inline-start: 0;
+  list-style: none;
+  border-top: 1px solid var(--color-border);
+}
+
+.aculta-search__results .item-list li {
+  margin: 0;
+  padding-block: .875rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.aculta-search__results a {
+  color: var(--color-text-primary);
+  font-weight: 600;
+  text-underline-offset: .2em;
+}
+
+.aculta-search__results a:is(:hover, :focus-visible) {
+  color: var(--color-link-editorial-hover);
+}
+
+.aculta-search__results a:focus-visible {
+  outline: 3px solid var(--color-focus-ring);
+  outline-offset: 3px;
+}
+
+@media (min-width: 768px) {
+  .aculta-search-utility + .ajax-progress-throbber {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aculta-search form[role="search"] .form-submit {
+    transition: none;
+  }
+}

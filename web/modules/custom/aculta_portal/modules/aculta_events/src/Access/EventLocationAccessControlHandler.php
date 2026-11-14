@@ -4,10 +4,17 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_events\Access;
 
+use Drupal\aculta_user\Organization\OrganizationAccessService;
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Access\AccessResultInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityAccessControlHandler;
+use Drupal\Core\Entity\EntityHandlerInterface;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Controle de acesso a locais de evento (aculta_event_location).
@@ -15,12 +22,39 @@ use Drupal\Core\Session\AccountInterface;
  * Locais são públicos para visualização por padrão, mas respeitam hooks
  * de acesso, purposes do portal e permissão administrativa para mutações.
  */
-final class EventLocationAccessControlHandler extends EntityAccessControlHandler {
+final class EventLocationAccessControlHandler extends EntityAccessControlHandler implements EntityHandlerInterface {
+
+  public function __construct(
+    EntityTypeInterface $entity_type,
+    protected readonly EntityTypeManagerInterface $entityTypeManager,
+    protected readonly ?OrganizationAccessService $organizationAccess,
+    protected readonly EventPermissionPolicy $permissionPolicy,
+  ) {
+    parent::__construct($entity_type);
+  }
 
   /**
    * {@inheritdoc}
    */
-  protected function checkAccess(EntityInterface $entity, $operation, AccountInterface $account): AccessResult {
+  public static function createInstance(ContainerInterface $container, EntityTypeInterface $entity_type): static {
+    return new static(
+      $entity_type,
+      $container->get('entity_type.manager'),
+      $container->has('aculta_user.organization_access_service')
+        ? $container->get('aculta_user.organization_access_service')
+        : NULL,
+      $container->get('aculta_events.permission_policy'),
+    );
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function checkAccess(EntityInterface $entity, $operation, AccountInterface $account): AccessResultInterface {
+    if (!$entity instanceof ContentEntityInterface) {
+      return AccessResult::forbidden();
+    }
+
     $status = $entity->hasField('field_status') && !$entity->get('field_status')->isEmpty()
       ? (string) $entity->get('field_status')->value
       : 'rascunho';
@@ -39,14 +73,9 @@ final class EventLocationAccessControlHandler extends EntityAccessControlHandler
         return AccessResult::allowed()->cachePerUser()->addCacheableDependency($entity);
       }
 
-      if (in_array('content_editor', $account->getRoles(), TRUE)) {
-        if (\Drupal::hasService('aculta_user.organization_access_service')) {
-          /** @var \Drupal\aculta_user\Organization\OrganizationAccessService $orgAccess */
-          $orgAccess = \Drupal::service('aculta_user.organization_access_service');
-          if ($orgAccess->isContentEditorScoped($entity, $account)) {
-            return AccessResult::allowed()->cachePerUser()->addCacheableDependency($entity);
-          }
-        }
+      if (in_array('content_editor', $account->getRoles(), TRUE)
+        && $this->organizationAccess?->isContentEditorScoped($entity, $account)) {
+        return AccessResult::allowed()->cachePerUser()->addCacheableDependency($entity);
       }
 
       return AccessResult::forbidden('Local em rascunho ou privado não é visível publicamente.')
@@ -55,19 +84,18 @@ final class EventLocationAccessControlHandler extends EntityAccessControlHandler
     }
 
     if ($operation === 'update' || $operation === 'delete') {
-      if ($operation === 'delete') {
+      if ($operation === 'delete'
+        && $this->entityTypeManager->hasDefinition('aculta_event_date')) {
         // Bloqueia exclusão de local associado a datas de evento (LOC-01/02).
-        if (\Drupal::hasService('entity_type.manager') && \Drupal::entityTypeManager()->hasDefinition('aculta_event_date')) {
-          $inUse = count(\Drupal::entityTypeManager()->getStorage('aculta_event_date')
-            ->getQuery()
-            ->accessCheck(FALSE)
-            ->condition('field_local', (int) $entity->id())
-            ->execute());
-          if ($inUse > 0) {
-            return AccessResult::forbidden('Local em uso por datas de eventos não pode ser excluído.')
-              ->addCacheableDependency($entity)
-              ->addCacheTags(['aculta_event_date_list']);
-          }
+        $inUse = count($this->entityTypeManager->getStorage('aculta_event_date')
+          ->getQuery()
+          ->accessCheck(FALSE)
+          ->condition('field_local', (int) $entity->id())
+          ->execute());
+        if ($inUse > 0) {
+          return AccessResult::forbidden('Local em uso por datas de eventos não pode ser excluído.')
+            ->addCacheableDependency($entity)
+            ->addCacheTags(['aculta_event_date_list']);
         }
       }
 
@@ -81,12 +109,8 @@ final class EventLocationAccessControlHandler extends EntityAccessControlHandler
       }
 
       if (in_array('content_editor', $account->getRoles(), TRUE)) {
-        if (\Drupal::hasService('aculta_user.organization_access_service')) {
-          /** @var \Drupal\aculta_user\Organization\OrganizationAccessService $orgAccess */
-          $orgAccess = \Drupal::service('aculta_user.organization_access_service');
-          if ($orgAccess->isContentEditorScoped($entity, $account)) {
-            return AccessResult::allowed()->cachePerUser()->addCacheableDependency($entity);
-          }
+        if ($this->organizationAccess?->isContentEditorScoped($entity, $account)) {
+          return AccessResult::allowed()->cachePerUser()->addCacheableDependency($entity);
         }
         return AccessResult::forbidden('Editor sem vínculo comprovado com a organização do local.')
           ->cachePerUser()
@@ -100,8 +124,8 @@ final class EventLocationAccessControlHandler extends EntityAccessControlHandler
   /**
    * {@inheritdoc}
    */
-  protected function checkCreateAccess(AccountInterface $account, array $context, $entity_bundle = NULL): AccessResult {
-    return \Drupal::service('aculta_events.permission_policy')->createLocationAccessResult($account);
+  protected function checkCreateAccess(AccountInterface $account, array $context, $entity_bundle = NULL): AccessResultInterface {
+    return $this->permissionPolicy->createLocationAccessResult($account);
   }
 
 }

@@ -1,0 +1,8 @@
+name: Hero banner
+description: Destaque de abertura com chamada e botão de ação.
+component: aculta420_v2:hero-banner
+props:
+  title: ACULTA — Cultura, Ciência e Antiproibicionismo
+  tagline: Construindo coletivamente informação, acolhimento e autonomia.
+  cta_text: Conheça nossas atividades
+  cta_url: /atividades

@@ -1,5 +1,41 @@
 # Changelog — aculta_patcher
 
+## 0.1.0-rc.4 — correção do formulário de status — 2026-11-03
+
+- Corrigido o HTTP 500 nas confirmações: `getQuestion()` já não depende de
+  `routeMatch`, que está nulo no ciclo do `ConfirmFormBase`; o rótulo e a ação
+  são preparados em `buildForm()`.
+- Renderização das confirmações de habilitar/desabilitar, lint e PHPCS PASS;
+  status persistido do patch H5P permaneceu ativo. Runtime sem updates de banco
+  ou diferenças de configuração.
+
+## 0.1.0-rc.3 — operações de status na coleção — 2026-11-03
+
+- O dropdown de operações usa o rótulo `Editar` e oferece `Habilitar` para
+  patches desabilitados e `Desabilitar` para patches habilitados.
+- Habilitar/desabilitar abre confirmação POST protegida por permissão; o estado
+  vale para a próxima exportação/build Composer.
+- Cache rebuild e rotas de confirmação PASS no Runtime; renderização das
+  operações confirmou `Editar, Desabilitar` no ativo e `Editar, Habilitar` no
+  desabilitado. PHP lint e PHPCS Drupal/DrupalPractice PASS. `updatedb:status`
+  sem pendências; `config:status` sem diferenças. Navegador e testes não foram
+  executados.
+
+## 0.1.0-rc.2 — descoberta automática dos patches Composer — 2026-11-03
+
+- A coleção administrativa importa de forma idempotente os patches locais ainda
+  não registrados em `patches-aculta.json`, preservando edições feitas no
+  Patcher. Novas entradas passam a aparecer automaticamente ao abrir a coleção.
+- Centralizados no `patches-aculta.json` os cinco patches Composer atuais; a UI
+  passa a controlar todos eles pelo mesmo cadastro e exportador.
+- O hash de origem evita sobrescrever diffs editados na UI; hashes inválidos,
+  caminhos externos e pacotes ausentes no lock são ignorados e registrados.
+- Runtime `aculta_runtime`: coleção montada por Drush mostrou 5 registros; nova
+  importação criou 0 duplicatas; `aculta:patcher-export --check` validou 5/5.
+  `updatedb:status` sem pendências e `config:status` limpo. PHP lint e
+  `composer patches-repatch` PASS; testes automatizados e navegador não foram
+  executados nesta entrega.
+
 ## 0.1.0-rc.1 — candidato a RC: validação responsiva no checkout servido — 2026-10-29
 
 - Promovido a `0.1.0-rc.1` em `aculta_patcher.info.yml`, `README.md` e status.

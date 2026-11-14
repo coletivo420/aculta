@@ -44,7 +44,7 @@ A decisão amplia e consolida o comportamento aprovado em 2026-10-18. Qualquer m
 - Em formulários de endereços de locais/eventos, configure o país como `BR` e não renderize seletor de país. Busca/preenchimento por CEP deve anexar `aculta_portal_cep/cep-address` por meio do adaptador central. Restrição de busca geográfica do mapa e formato de importação OSM não substituem nem duplicam a captura de endereço.
 - Perfis de equipe (`administrator`, `associado`, `gerente_loja`, `lms_teacher`) exibem `field_address` com o widget padrão `address_default`, igual ao perfil `authenticated` (configuração em `core.entity_form_display.profile.*.default.yml`). Antes estava oculto.
 - O checkout anexa a biblioteca `cep-address` ao formulário da página (`$complete_form`), não ao `#attached` do pane, que o Commerce não leva à página.
-- Verificação no Runtime de teste (2026-10-18): loja e equipe montam com país oculto, biblioteca do CEP e Número/S/N; checkout renderiza o formulário padrão e carrega a biblioteca do CEP. Teste de navegador da Minha conta 30/30 na entrega anterior; conferência visual e teste de navegador do checkout pendentes (ver CHANGELOG 0.4.0-dev.147).
+- Verificação no Runtime de desenvolvimento (2026-10-18): loja e equipe montam com país oculto, biblioteca do CEP e Número/S/N; checkout renderiza o formulário padrão e carrega a biblioteca do CEP. Teste de navegador da Minha conta 30/30 na entrega anterior; conferência visual e teste de navegador do checkout pendentes (ver CHANGELOG 0.4.0-dev.147).
 
 ## Lacunas registradas para implementação futura
 
@@ -68,7 +68,7 @@ A decisão amplia e consolida o comportamento aprovado em 2026-10-18. Qualquer m
 2. Navegador (Firefox pelo X11, `DISPLAY=:0`, conta de teste `teste.comum`): gerar o link de login de uso único e rodar
 
        php vendor/drush/drush/drush.php -l conta.aculta.toca.net.br uli --uid=5 > link.txt
-       DISPLAY=:0 python3 -I scripts/test-account-address-browser.py link.txt
+       DISPLAY=:0 python3 -I tests/browser/aculta-portal-cep/test-account-address-browser.py link.txt
 
    Deve terminar com `RESULTADO: 17/17 verificações OK`. Gerar o link antes de cada execução (é de uso único).
 

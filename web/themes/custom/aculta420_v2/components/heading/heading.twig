@@ -1,0 +1,56 @@
+{#
+/**
+ * @file
+ * Título semântico do ACULTA420 V2 (aculta420_v2:heading).
+ *
+ * A escala, a superfície e o destaque vêm dos tokens do tema. O nível
+ * semântico é escolha explícita do chamador; o estilo `auto` segue a
+ * referência visual (tricolor em H1/H2, barra lateral em H3–H6).
+ */
+#}
+{% set level = level|default(2) %}
+{% if level not in [1, 2, 3, 4, 5, 6] %}
+  {% set level = 2 %}
+{% endif %}
+
+{% set style = style|default('auto') %}
+{% if style not in ['auto', 'plain', 'bar', 'stripe'] %}
+  {% set style = 'auto' %}
+{% endif %}
+{% if style == 'auto' %}
+  {% set style = level <= 2 ? 'stripe' : 'bar' %}
+{% endif %}
+
+{% set accent = accent|default('green') %}
+{% if accent not in ['green', 'yellow', 'red', 'dark-green'] %}
+  {% set accent = 'green' %}
+{% endif %}
+
+{% set surface = surface|default('none') %}
+{% if surface not in ['none', 'canvas', 'raised', 'institution', 'highlight'] %}
+  {% set surface = 'none' %}
+{% endif %}
+
+{% set align = align|default('start') %}
+{% if align not in ['start', 'center'] %}
+  {% set align = 'start' %}
+{% endif %}
+
+{% set classes = [
+  'aculta-heading',
+  'aculta-heading--level-' ~ level,
+  'aculta-heading--' ~ style,
+  'aculta-heading--accent-' ~ accent,
+  'aculta-heading--surface-' ~ surface,
+  'aculta-heading--align-' ~ align,
+] %}
+
+{#- O slot pode chegar como string, Markup ou render array; `is not empty`
+    evita o filtro trim, que só aceita string. -#}
+<h{{ level }}{{ attributes.addClass(classes) }}>
+  {%- if content is defined and content is not empty -%}
+    {{ content }}
+  {%- elseif text -%}
+    {{ text }}
+  {%- endif -%}
+</h{{ level }}>

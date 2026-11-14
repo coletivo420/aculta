@@ -22,7 +22,7 @@ $assert(str_contains($plugin, "const INDEXABLE_PURPOSES = ['main', 'support', 'm
 $assert(str_contains($plugin, "const ROOT_PURPOSES = ['main', 'support', 'magazine', 'wiki', 'courses', 'links', 'eventos'];"), 'raiz de cada purpose indexável é URL própria (rota, não nó)');
 $assert(str_contains($plugin, 'isPurposeFrontNode'), 'página inicial de domínio excluída do conjunto de nós (sem redirect)');
 $assert(str_contains($plugin, "'main' => ['/contato']"), 'contato (webform) incluído no MAIN, como no sitemap institucional anterior');
-$assert(str_contains($plugin, 'runInPurpose'), 'acesso avaliado no contexto do purpose de origem (verbetes da WIKI)');
+$assert(str_contains($plugin, 'runInSite'), 'acesso avaliado no contexto do purpose de origem (verbetes da WIKI)');
 $assert(str_contains($plugin, 'DomainConfigCollectionUtils'), 'página inicial lida pela coleção de configuração do domínio');
 $assert(str_contains($plugin, "'page', 'activity', 'document', 'wiki_entry', 'revista'"), 'bundles elegíveis conforme a matriz da ADR-009');
 $assert(!str_contains($plugin, "'article'") && !str_contains($plugin, "'blog'"), 'bundles editoriais aposentados não entram na allowlist');

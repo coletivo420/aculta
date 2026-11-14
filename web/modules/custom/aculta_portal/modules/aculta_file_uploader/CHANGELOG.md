@@ -1,5 +1,14 @@
 # Changelog — aculta_file_uploader
 
+## 0.1.0-dev.34 — referências de relacionamento Group na limpeza
+
+- `FileReferenceInspector` inclui os campos `group_relationship_target` por
+  bundle ao procurar referências. O Group configura o destino em cada tipo de
+  relacionamento; ignorar isso podia apagar Media ainda vinculada a outro
+  curso.
+- Unit cobre o tipo de campo customizado. O Kernel do LMS confirma a retenção
+  após o primeiro detach e a remoção segura após o último.
+
 ## 0.1.0-dev.33 — zona de soltar ativa no diálogo do Fórum
 
 - `UploadDropZone` marca `data-aculta-dropzone` em `#attributes` (campo) e em `#wrapper_attributes` (contêiner do managed_file). Sem isso o JS da zona não era anexado: sem `.is-dragover` e sem área de status.

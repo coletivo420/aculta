@@ -1,0 +1,12 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Valores rápidos de doação
+description: Lista semântica de opções que levam ao fluxo de doação.
+status: stable
+group: Doações
+props:
+  type: object
+  additionalProperties: false
+slots:
+  items:
+    title: Opções de doação
+    description: Itens de lista com valores e destinos preparados pelo módulo de doação.

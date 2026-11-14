@@ -32,7 +32,7 @@ final class DownloadWithMetaFormatter extends FormatterBase implements Container
     $label,
     $view_mode,
     array $third_party_settings,
-    private readonly ReadableMime $readableMime,
+    protected readonly ReadableMime $readableMime,
   ) {
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $label, $view_mode, $third_party_settings);
   }
@@ -76,28 +76,25 @@ final class DownloadWithMetaFormatter extends FormatterBase implements Container
       $url = $file->createFileUrl(FALSE);
 
       $elements[$delta] = [
-        '#type' => 'container',
-        '#attributes' => [
-          'data-portal-ui' => 'document-download-item',
-          'data-download-format' => strtolower($formatBadge),
+        '#type' => 'component',
+        '#component' => 'aculta420_v2:document-download',
+        '#props' => [
+          'format' => $formatBadge,
+          'size' => $sizeFormatted,
+          'format_token' => strtolower($formatBadge),
         ],
-        'link' => [
+        '#slots' => [
+          'link' => [
           '#type' => 'link',
           '#title' => $filename,
           '#url' => Url::fromUri($url, [
             'attributes' => [
               'download' => '',
               'aria-label' => $accessibleLabel,
-              'data-portal-ui' => 'document-download-link',
+              'class' => ['document-download__link'],
             ],
           ]),
-        ],
-        'meta' => [
-          '#markup' => sprintf(
-            '<span data-portal-ui="document-download-format" aria-hidden="true">%s</span> <span data-portal-ui="document-download-size" aria-hidden="true">%s</span>',
-            htmlspecialchars($formatBadge, ENT_QUOTES, 'UTF-8'),
-            htmlspecialchars($sizeFormatted, ENT_QUOTES, 'UTF-8')
-          ),
+          ],
         ],
       ];
     }

@@ -72,7 +72,7 @@ final class EventPermissionPolicy {
     $roles = $this->entityTypeManager->getStorage('user_role')->loadMultiple();
     $options = [];
     foreach ($roles as $role) {
-      if ($role instanceof RoleInterface && $role->id() !== RoleInterface::ANONYMOUS_ID) {
+      if ($role->id() !== RoleInterface::ANONYMOUS_ID) {
         $options[$role->id()] = (string) $role->label();
       }
     }

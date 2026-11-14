@@ -9,7 +9,8 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Logger\LoggerChannelInterface;
 use Drupal\Core\State\StateInterface;
 
-/** Removes expired raw statements in bounded monthly cron batches. */
+/**
+ * Removes expired raw statements in bounded monthly cron batches. */
 final class XapiStatementRetentionPurger {
 
   private const LAST_MONTH_STATE = 'aculta_lms.xapi.last_completed_retention_month';
@@ -22,7 +23,8 @@ final class XapiStatementRetentionPurger {
     private readonly LoggerChannelInterface $logger,
   ) {}
 
-  /** Purges a bounded batch; another cron run continues an unfinished month. */
+  /**
+   * Purges a bounded batch; another cron run continues an unfinished month. */
   public function purge(int $retentionMonths): int {
     $now = $this->time->getRequestTime();
     $month = gmdate('Y-m', $now);

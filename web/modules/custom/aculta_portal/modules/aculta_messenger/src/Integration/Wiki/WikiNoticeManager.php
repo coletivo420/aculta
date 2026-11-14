@@ -12,8 +12,11 @@ use Drupal\aculta_messenger\Aviso\EligibleNoticePage;
 use Drupal\aculta_messenger\Event\MessengerNoticeEvent;
 use Drupal\aculta_messenger\Service\NoticeListFilter;
 use Drupal\aculta_messenger\Service\NoticeRelatedGrouper;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\aculta_portal\Render\PortalLinkElement;
+use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\user\EntityOwnerInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\RevisionableStorageInterface;
 use Drupal\Core\Lock\LockBackendInterface;
@@ -59,7 +62,7 @@ final class WikiNoticeManager implements WikiNoticeManagerInterface, AvisoDigest
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly DomainPurposeManager $domainPurposes,
+    private readonly DomainSiteManager $siteManagers,
     private readonly AvisoPreferenciasInterface $preferences,
     private readonly QueueFactory $queueFactory,
     private readonly LockBackendInterface $lock,
@@ -115,7 +118,7 @@ final class WikiNoticeManager implements WikiNoticeManagerInterface, AvisoDigest
       $mode = $this->preferences->emailMode($event->recipientUid(), 'wiki');
       $digest = $mode === 'digest' ? 0 : 1;
       $direct = $mode === 'immediate';
-      $message = $storage->create([
+      $created = $storage->create([
         'template' => self::TEMPLATE,
         'uid' => $event->recipientUid(),
         self::EVENT_FIELD => $event->metadata()['notice_type'],
@@ -126,6 +129,10 @@ final class WikiNoticeManager implements WikiNoticeManagerInterface, AvisoDigest
         self::DELIVERY_FIELD => $direct ? 'pending' : 'sent',
         self::ATTEMPTS_FIELD => 0,
       ]);
+      if (!$created instanceof MessageInterface) {
+        throw new \LogicException('The message storage returned an unexpected entity.');
+      }
+      $message = $created;
       $message->save();
       if ($direct) {
         try {
@@ -163,23 +170,23 @@ final class WikiNoticeManager implements WikiNoticeManagerInterface, AvisoDigest
       return FALSE;
     }
     $storage = $this->entityTypeManager->getStorage('message');
-    $resolved = [];
+    $resolved = new \ArrayObject();
     $page = EligibleNoticePage::collect(
       function (int $scanOffset, int $batchSize) use ($storage, $account, $filters): array {
         $query = $storage->getQuery()->accessCheck(FALSE)
           ->condition('template', self::TEMPLATE)
           ->condition('uid', (int) $account->id());
         NoticeListFilter::applyReadCondition($query, self::READ_FIELD, $filters);
-        return $query->sort('created', 'DESC')->sort('id', 'DESC')
+        return $query->sort('created', 'DESC')->sort('mid', 'DESC')
           ->range($scanOffset, $batchSize)->execute();
       },
-      function (array $ids) use ($storage, $account, &$resolved): array {
+      function (array $ids) use ($storage, $account, $resolved): array {
         $messages = array_values($storage->loadMultiple($ids));
-        $resolved = $this->resolveMessages($messages, $account);
+        $resolved->exchangeArray($this->resolveMessages($messages, $account));
         return $messages;
       },
-      function (mixed $message) use (&$resolved): ?array {
-        return $message instanceof MessageInterface ? ($resolved[(int) $message->id()] ?? NULL) : NULL;
+      function (mixed $message) use ($resolved): ?array {
+        return $message instanceof MessageInterface ? ($resolved->offsetExists((int) $message->id()) ? $resolved->offsetGet((int) $message->id()) : NULL) : NULL;
       },
       $limit,
       $offset,
@@ -287,12 +294,12 @@ final class WikiNoticeManager implements WikiNoticeManagerInterface, AvisoDigest
   /**
    * Resolves a set of notice Messages with batched source and revision loads.
    *
-   * @param \Drupal\message\MessageInterface[] $messages
-   *   Candidate notices owned by the account.
+   * @param \Drupal\Core\Entity\EntityInterface[] $messages
+   *   Candidate notices owned by the account; non-message records are ignored.
    * @param \Drupal\Core\Session\AccountInterface $account
    *   Current recipient whose access and ownership are revalidated.
    *
-   * @return array<int, array{title: string, summary: string, email_summary: string, url: \Drupal\Core\Url}>
+   * @return array<int, array{title: \Drupal\Core\StringTranslation\TranslatableMarkup, summary: \Drupal\Core\StringTranslation\TranslatableMarkup, email_summary: \Drupal\Core\StringTranslation\TranslatableMarkup, url: \Drupal\Core\Url}>
    *   Resolved notice data keyed by Message ID.
    */
   private function resolveMessages(array $messages, AccountInterface $account): array {
@@ -332,10 +339,10 @@ final class WikiNoticeManager implements WikiNoticeManagerInterface, AvisoDigest
    *
    * @param array<string, array{uuid: string, revision_id: int}> $targets
    *   Review targets keyed by UUID and revision ID.
-   * @param \Drupal\user\UserInterface $account
+   * @param \Drupal\Core\Session\AccountInterface $account
    *   Active recipient whose reviewer permissions and access must be checked.
    *
-   * @return array<string, array{title: string, summary: string, email_summary: string, url: \Drupal\Core\Url}>
+   * @return array<string, array{title: \Drupal\Core\StringTranslation\TranslatableMarkup, summary: \Drupal\Core\StringTranslation\TranslatableMarkup, email_summary: \Drupal\Core\StringTranslation\TranslatableMarkup, url: \Drupal\Core\Url}>
    *   Accessible review target display data keyed by UUID and revision.
    */
   private function resolveReviewTargets(array $targets, AccountInterface $account): array {
@@ -344,11 +351,8 @@ final class WikiNoticeManager implements WikiNoticeManagerInterface, AvisoDigest
         && !$account->hasPermission('use wiki_editorial transition review_to_published'))) {
       return [];
     }
-    $resolved = $this->domainPurposes->runInPurpose('wiki', function () use ($targets, $account): array {
+    $resolved = $this->siteManagers->runInSite('wiki', function () use ($targets, $account): array {
       $storage = $this->entityTypeManager->getStorage('node');
-      if (!$storage instanceof RevisionableStorageInterface) {
-        return [];
-      }
       $query = $storage->getQuery()->accessCheck(FALSE)
         ->condition('uuid', array_values(array_unique(array_column($targets, 'uuid'))), 'IN')
         ->condition('type', 'wiki_entry');
@@ -367,14 +371,14 @@ final class WikiNoticeManager implements WikiNoticeManagerInterface, AvisoDigest
       $resolved = [];
       foreach ($targets as $key => $target) {
         $node = $revisions[$target['revision_id']] ?? NULL;
-        if (!$node || $node->uuid() !== $target['uuid'] || (int) $node->getRevisionId() !== $target['revision_id']
+        if (!$node instanceof ContentEntityInterface || $node->uuid() !== $target['uuid'] || (int) $node->getRevisionId() !== $target['revision_id']
           || !$node->isDefaultRevision() || !$node->hasField('moderation_state')
           || $node->get('moderation_state')->value !== 'review'
           || !$node->access('view', $account, TRUE)->isAllowed()
           || !$node->access('view revision', $account, TRUE)->isAllowed()) {
           continue;
         }
-        $url = $this->domainPurposes->routeUrl('wiki', 'entity.node.canonical', ['node' => $node->id()]);
+        $url = $this->siteManagers->routeUrl(SiteKey::Wiki, 'entity.node.canonical', ['node' => $node->id()]);
         if ($url !== NULL) {
           $resolved[$key] = [
             'title' => $this->t('Verbete aguardando revisão'),
@@ -394,10 +398,10 @@ final class WikiNoticeManager implements WikiNoticeManagerInterface, AvisoDigest
    *
    * @param array<string, array{uuid: string, revision_id: int}> $targets
    *   Proposal targets keyed by UUID and revision ID.
-   * @param \Drupal\user\UserInterface $account
+   * @param \Drupal\Core\Session\AccountInterface $account
    *   Active recipient whose authorship and access must be checked.
    *
-   * @return array<string, array{title: string, summary: string, email_summary: string, url: \Drupal\Core\Url}>
+   * @return array<string, array{title: \Drupal\Core\StringTranslation\TranslatableMarkup, summary: \Drupal\Core\StringTranslation\TranslatableMarkup, email_summary: \Drupal\Core\StringTranslation\TranslatableMarkup, url: \Drupal\Core\Url}>
    *   Accessible proposal target display data keyed by UUID and revision.
    */
   private function resolveProposalTargets(array $targets, AccountInterface $account): array {
@@ -435,13 +439,17 @@ final class WikiNoticeManager implements WikiNoticeManagerInterface, AvisoDigest
           continue;
         }
         $proposal = $revisions[$target['revision_id']] ?? NULL;
-        if (!$account->isAuthenticated() || !$proposal || $proposal->uuid() !== $target['uuid']
+        if (!$account->isAuthenticated() || !$proposal instanceof ContentEntityInterface) {
+          continue;
+        }
+        $ownerId = $proposal instanceof EntityOwnerInterface ? (int) $proposal->getOwnerId() : 0;
+        if ($proposal->uuid() !== $target['uuid']
           || (int) $proposal->getRevisionId() !== $target['revision_id'] || !$proposal->isDefaultRevision()
-          || (int) $proposal->getOwnerId() !== (int) $account->id()
+          || $ownerId !== (int) $account->id()
           || !$proposal->access('view', $account, TRUE)->isAllowed()) {
           continue;
         }
-        $url = $this->domainPurposes->canonicalRouteUrl('wiki', 'aculta_wiki.proposal_status', ['proposal' => $proposal->id()]);
+        $url = $this->siteManagers->canonicalRouteUrl(SiteKey::Wiki, 'aculta_wiki.proposal_status', ['proposal' => $proposal->id()]);
         if ($url !== NULL) {
           $resolved[$key] = [
             'title' => $this->t('Atualização de proposta editorial'),
@@ -504,7 +512,7 @@ final class WikiNoticeManager implements WikiNoticeManagerInterface, AvisoDigest
       }
       $rows[] = [
         'tipo' => 'wiki',
-        'titulo' => $notice['email_summary'],
+        'titulo' => (string) $notice['email_summary'],
         'quantidade' => 1,
         'delivery_id' => (int) $message->id(),
       ];

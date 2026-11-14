@@ -7,7 +7,7 @@ namespace Drupal\Tests\aculta_forum\Kernel;
 use Drupal\language\Entity\ConfigurableLanguage;
 use Drupal\aculta_forum\Plugin\migrate\source\ForumComment;
 use Drupal\aculta_forum\Plugin\migrate\source\ForumCommentFlagging;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\comment\CommentInterface;
 use Drupal\comment\Entity\Comment;
 use Drupal\comment\Entity\CommentType;
@@ -308,7 +308,7 @@ final class ForumCommentMigrationSourceKernelTest extends KernelTestBase {
       [],
       $this->createMock(MigrationInterface::class),
       $this->container->get('entity_type.manager'),
-      new DomainPurposeManager(
+      new DomainSiteManager(
         $this->container->get('entity_type.manager'),
         $this->container->get('domain.negotiator'),
         $this->container->get('config.factory'),
@@ -316,7 +316,6 @@ final class ForumCommentMigrationSourceKernelTest extends KernelTestBase {
       ),
     );
     $method = new \ReflectionMethod($source, 'initializeIterator');
-    $method->setAccessible(TRUE);
     return iterator_to_array($method->invoke($source), FALSE);
   }
 
@@ -333,7 +332,7 @@ final class ForumCommentMigrationSourceKernelTest extends KernelTestBase {
       [],
       $this->createMock(MigrationInterface::class),
       $this->container->get('entity_type.manager'),
-      new DomainPurposeManager(
+      new DomainSiteManager(
         $this->container->get('entity_type.manager'),
         $this->container->get('domain.negotiator'),
         $this->container->get('config.factory'),
@@ -341,7 +340,6 @@ final class ForumCommentMigrationSourceKernelTest extends KernelTestBase {
       ),
     );
     $method = new \ReflectionMethod($source, 'initializeIterator');
-    $method->setAccessible(TRUE);
     return iterator_to_array($method->invoke($source), FALSE);
   }
 

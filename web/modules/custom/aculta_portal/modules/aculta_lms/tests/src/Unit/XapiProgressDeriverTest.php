@@ -42,7 +42,7 @@ final class XapiProgressDeriverTest extends UnitTestCase {
   }
 
   /**
-   * min ausente vale 0: raw 15 de max 20 dá 75, como no Opigno.
+   * Min ausente vale 0: raw 15 de max 20 dá 75, como no Opigno.
    */
   public function testMissingMinDefaultsToZero(): void {
     $statements = [$this->statement(self::VERB_COMPLETED, ['score' => ['raw' => 15, 'max' => 20]], 'reg-1', '2026-11-02T10:00:00Z')];
@@ -55,32 +55,49 @@ final class XapiProgressDeriverTest extends UnitTestCase {
    * Quando há scaled e raw, o scaled vale.
    */
   public function testScaledWinsOverRaw(): void {
-    $statements = [$this->statement(self::VERB_COMPLETED, ['score' => ['scaled' => 0.5, 'raw' => 90, 'min' => 0, 'max' => 100]], 'reg-1', '2026-11-02T10:00:00Z')];
+    $statements = [
+      $this->statement(self::VERB_COMPLETED, [
+        'score' => [
+          'scaled' => 0.5,
+          'raw' => 90,
+          'min' => 0,
+          'max' => 100,
+        ],
+      ], 'reg-1', '2026-11-02T10:00:00Z'),
+    ];
     $result = (new XapiProgressDeriver())->result($statements, AttemptRule::KEEP_LATEST, 0.0);
 
     $this->assertSame(50.0, $result['score']);
   }
 
   /**
-   * scaled negativo é tratado como zero; raw fora do intervalo é limitado.
+   * Scaled negativo é tratado como zero; raw fora do intervalo é limitado.
    */
   public function testOutOfRangeScoresAreClamped(): void {
     $deriver = new XapiProgressDeriver();
     $negative = $deriver->result([$this->statement(self::VERB_COMPLETED, ['score' => ['scaled' => -0.4]], 'reg-1', '2026-11-02T10:00:00Z')], AttemptRule::KEEP_LATEST, 0.0);
     $this->assertSame(0.0, $negative['score']);
 
-    $above = $deriver->result([$this->statement(self::VERB_COMPLETED, ['score' => ['raw' => 150, 'min' => 0, 'max' => 100]], 'reg-1', '2026-11-02T10:00:00Z')], AttemptRule::KEEP_LATEST, 0.0);
+    $above = $deriver->result([
+      $this->statement(self::VERB_COMPLETED, [
+        'score' => [
+          'raw' => 150,
+          'min' => 0,
+          'max' => 100,
+        ],
+      ], 'reg-1', '2026-11-02T10:00:00Z'),
+    ], AttemptRule::KEEP_LATEST, 0.0);
     $this->assertSame(100.0, $above['score']);
   }
 
   /**
-   * min igual a max não define percentual: não há nota.
+   * Min igual a max não define percentual: não há nota.
    */
   public function testZeroRangeGivesNoScore(): void {
     $statements = [$this->statement(self::VERB_COMPLETED, ['score' => ['raw' => 5, 'min' => 5, 'max' => 5]], 'reg-1', '2026-11-02T10:00:00Z')];
     $result = (new XapiProgressDeriver())->result($statements, AttemptRule::KEEP_LATEST, 0.0);
 
-    $this->assertSame(NULL, $result['score']);
+    $this->assertNull($result['score']);
     $this->assertSame(AttemptRule::PENDING, $result['status']);
   }
 
@@ -91,20 +108,20 @@ final class XapiProgressDeriverTest extends UnitTestCase {
     $statements = [$this->statement(self::VERB_ANSWERED, ['score' => ['scaled' => 1.0]], 'reg-1', '2026-11-02T10:00:00Z')];
     $result = (new XapiProgressDeriver())->result($statements, AttemptRule::KEEP_LATEST, 70.0);
 
-    $this->assertSame(NULL, $result['score']);
+    $this->assertNull($result['score']);
     $this->assertSame(AttemptRule::PENDING, $result['status']);
-    $this->assertSame(FALSE, $result['attempts'][0]['completed']);
+    $this->assertFalse($result['attempts'][0]['completed']);
   }
 
   /**
-   * result.completion verdadeiro conclui, mesmo com verbo que não é de conclusão.
+   * Result.completion verdadeiro conclui, mesmo com verbo que não é de conclusão.
    */
   public function testCompletionFlagCompletesTheAttempt(): void {
     $statements = [$this->statement(self::VERB_ANSWERED, ['completion' => TRUE, 'score' => ['scaled' => 0.9]], 'reg-1', '2026-11-02T10:00:00Z')];
     $result = (new XapiProgressDeriver())->result($statements, AttemptRule::KEEP_LATEST, 70.0);
 
     $this->assertSame(AttemptRule::PASSED, $result['status']);
-    $this->assertSame(TRUE, $result['attempts'][0]['completed']);
+    $this->assertTrue($result['attempts'][0]['completed']);
   }
 
   /**
@@ -113,11 +130,11 @@ final class XapiProgressDeriverTest extends UnitTestCase {
   public function testPassedAndFailedVerbsSetSuccess(): void {
     $deriver = new XapiProgressDeriver();
     $passed = $deriver->attempts([$this->statement(self::VERB_PASSED, [], 'reg-1', '2026-11-02T10:00:00Z')]);
-    $this->assertSame(TRUE, $passed[0]['success']);
-    $this->assertSame(TRUE, $passed[0]['completed']);
+    $this->assertTrue($passed[0]['success']);
+    $this->assertTrue($passed[0]['completed']);
 
     $failed = $deriver->attempts([$this->statement(self::VERB_FAILED, [], 'reg-1', '2026-11-02T10:00:00Z')]);
-    $this->assertSame(FALSE, $failed[0]['success']);
+    $this->assertFalse($failed[0]['success']);
   }
 
   /**
@@ -127,7 +144,7 @@ final class XapiProgressDeriverTest extends UnitTestCase {
     $statements = [$this->statement(self::VERB_PASSED, ['success' => FALSE], 'reg-1', '2026-11-02T10:00:00Z')];
     $attempts = (new XapiProgressDeriver())->attempts($statements);
 
-    $this->assertSame(FALSE, $attempts[0]['success']);
+    $this->assertFalse($attempts[0]['success']);
   }
 
   /**
@@ -154,7 +171,7 @@ final class XapiProgressDeriverTest extends UnitTestCase {
     $attempts = (new XapiProgressDeriver())->attempts($statements);
 
     $this->assertSame(60.0, $attempts[0]['score']);
-    $this->assertSame(TRUE, $attempts[0]['completed']);
+    $this->assertTrue($attempts[0]['completed']);
   }
 
   /**
@@ -167,7 +184,7 @@ final class XapiProgressDeriverTest extends UnitTestCase {
     ];
     $attempts = (new XapiProgressDeriver())->attempts($statements);
 
-    $this->assertSame(2, count($attempts));
+    $this->assertCount(2, $attempts);
     $this->assertSame('reg-1', $attempts[0]['registration']);
     $this->assertSame('reg-2', $attempts[1]['registration']);
   }
@@ -206,7 +223,7 @@ final class XapiProgressDeriverTest extends UnitTestCase {
     $result = (new XapiProgressDeriver())->result([], AttemptRule::KEEP_LATEST, 70.0);
 
     $this->assertSame(AttemptRule::PENDING, $result['status']);
-    $this->assertSame(NULL, $result['score']);
+    $this->assertNull($result['score']);
     $this->assertSame([], $result['attempts']);
   }
 
@@ -221,7 +238,17 @@ final class XapiProgressDeriverTest extends UnitTestCase {
   /**
    * Monta uma declaração já validada, com o mínimo de campos usados pelo deriver.
    *
+   * @param string $verb
+   *   Identificador do verbo da declaração.
    * @param array<string, mixed> $result
+   *   Resultado da declaração, quando houver.
+   * @param string $registration
+   *   Identificador de registro da declaração.
+   * @param string $timestamp
+   *   Data e hora da declaração.
+   *
+   * @return array<string, mixed>
+   *   Declaração xAPI montada.
    */
   private function statement(string $verb, array $result, string $registration, string $timestamp): array {
     $statement = [

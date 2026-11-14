@@ -6,6 +6,7 @@ namespace Drupal\Tests\aculta_activity\Unit\Hook;
 
 use Drupal\aculta_activity\Hook\ActivityHooks;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\node\NodeInterface;
 use Drupal\Tests\UnitTestCase;
@@ -53,7 +54,7 @@ final class ActivityHooksTest extends UnitTestCase {
       'author' => [],
       'options' => [],
     ];
-    $hooks = new ActivityHooks($translation);
+    $hooks = new ActivityHooks($translation, $this->createMock(AccountProxyInterface::class));
     $hooks->formNodeFormAlter($form, $formState, 'node_activity_form');
 
     self::assertSame('editorial_content', $form['title']['#group']);
@@ -87,7 +88,7 @@ final class ActivityHooksTest extends UnitTestCase {
     $translation = $this->createMock(TranslationInterface::class);
 
     $form = ['title' => []];
-    (new ActivityHooks($translation))->formNodeFormAlter($form, $formState, 'node_revisa_form');
+    (new ActivityHooks($translation, $this->createMock(AccountProxyInterface::class)))->formNodeFormAlter($form, $formState, 'node_revisa_form');
 
     self::assertSame(['title' => []], $form);
   }

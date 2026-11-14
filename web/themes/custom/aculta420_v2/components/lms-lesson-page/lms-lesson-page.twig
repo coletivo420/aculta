@@ -1,0 +1,6 @@
+{% set page_content %}
+  <article{{ attributes.addClass('lms-lesson-page') }}>
+    {{ content }}
+  </article>
+{% endset %}
+{{ include('aculta420_v2:layout-narrow', { content: page_content }, with_context = false) }}

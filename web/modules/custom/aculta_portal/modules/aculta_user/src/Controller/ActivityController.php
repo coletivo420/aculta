@@ -11,13 +11,14 @@ use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Entity\EntityPublishedInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\RevisionableInterface;
-use Drupal\Core\Field\FieldableEntityInterface;
+use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\aculta_portal\Render\PortalLinkElement;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -30,7 +31,8 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  */
 final class ActivityController implements ContainerInjectionInterface {
 
-  /** Rótulos das abas, na ordem do menu. */
+  /**
+   * Rótulos das abas, na ordem do menu. */
   public const TABS = [
     'wiki' => 'Wiki',
     'forum' => 'Fórum',
@@ -42,7 +44,7 @@ final class ActivityController implements ContainerInjectionInterface {
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly AccountInterface $currentUser,
-    private readonly DomainPurposeManager $purposeManager,
+    private readonly DomainSiteManager $siteManager,
     private readonly ModuleHandlerInterface $modules,
     private readonly TranslationInterface $stringTranslation,
   ) {}
@@ -54,15 +56,16 @@ final class ActivityController implements ContainerInjectionInterface {
     return new static(
       $container->get('entity_type.manager'),
       $container->get('current_user'),
-      $container->get('aculta_portal.domain_purpose'),
+      $container->get('aculta_portal.domain_site'),
       $container->get('module_handler'),
       $container->get('string_translation'),
     );
   }
 
-  /** Renderiza a aba pedida. */
+  /**
+   * Renderiza a aba pedida. */
   public function view(string $aba): array {
-    if ($this->purposeManager->getCurrentPurpose() !== 'account' || !isset(self::TABS[$aba])) {
+    if ($this->siteManager->getCurrentSiteKey()?->value !== 'account' || !isset(self::TABS[$aba])) {
       throw new NotFoundHttpException();
     }
     $uid = (int) $this->currentUser->id();
@@ -77,32 +80,49 @@ final class ActivityController implements ContainerInjectionInterface {
       'forum' => $this->forum($uid),
       'revista' => $this->revista($uid),
       'comentarios' => $this->comentarios($uid),
-      default => ['#markup' => (string) t('Nenhuma conquista ainda. As conquistas chegam em uma etapa futura.')],
+      default => ['#markup' => (string) $this->stringTranslation->translate('Nenhuma conquista ainda. As conquistas chegam em uma etapa futura.')],
     };
     $this->modules->alter('aculta_user_activity_content', $conteudo, $aba, $uid);
     // Mesmo padrão de Meus Dados e Segurança: descrição, abas (links com URL própria) e o conteúdo da aba.
     return [
       '#cache' => ['contexts' => $cache->getCacheContexts(), 'tags' => $cache->getCacheTags(), 'max-age' => 0],
-      'description' => ['#plain_text' => t('Veja o que você fez no site: verbetes, tópicos, publicações e comentários.')],
+      'description' => ['#plain_text' => $this->stringTranslation->translate('Veja o que você fez no site: verbetes, tópicos, publicações e comentários.')],
       'tabs' => [
         '#type' => 'container',
-        '#attributes' => ['data-portal-ui' => 'account-data-nav', 'aria-label' => t('Seções de atividade'), 'data-portal-account-data-nav' => 'true'],
+        '#attributes' => [
+          'data-portal-ui' => 'account-data-nav',
+          'aria-label' => $this->stringTranslation->translate('Seções de atividade'),
+          'data-portal-account-data-nav' => 'true',
+        ],
         'links' => $this->tabLinks($aba),
       ],
       'content' => [
         '#type' => 'container',
-        '#attributes' => ['data-portal-ui' => 'account-data-content', 'data-portal-account-data-content' => 'true', 'aria-busy' => 'false'],
-        'heading' => ['#theme' => 'aculta_portal_element', '#tag' => 'h3', '#value' => t(self::TABS[$aba]), '#element_attributes' => new Attribute(['tabindex' => '-1'])],
+        '#attributes' => [
+          'data-portal-ui' => 'account-data-content',
+          'data-portal-account-data-content' => 'true',
+          'aria-busy' => 'false',
+        ],
+        'heading' => [
+          '#theme' => 'aculta_portal_element',
+          '#tag' => 'h3',
+          '#value' => $this->stringTranslation->translate(self::TABS[$aba]),
+          '#element_attributes' => new Attribute(['tabindex' => '-1']),
+        ],
         'list' => $conteudo,
       ],
     ];
   }
 
-  /** Links das abas, com a aba atual marcada (aria-current e is-active), como em Meus Dados e Segurança. */
+  /**
+   * Links das abas, com a aba atual marcada (aria-current e is-active), como em Meus Dados e Segurança. */
   private function tabLinks(string $atual): array {
     $links = [];
     foreach (self::TABS as $id => $label) {
-      $link = PortalLinkElement::build(t($label), Url::fromRoute('aculta_user.atividade', ['aba' => $id]), ['data-portal-account-data-link' => 'true', 'data-portal-ui' => 'account-data-link']);
+      $link = PortalLinkElement::build($this->stringTranslation->translate($label), Url::fromRoute('aculta_user.atividade', ['aba' => $id]), [
+        'data-portal-account-data-link' => 'true',
+        'data-portal-ui' => 'account-data-link',
+      ]);
       if ($id === $atual) {
         $link['#element_attributes']->setAttribute('aria-current', 'page');
         $link['#element_attributes']->addClass('is-active');
@@ -112,7 +132,8 @@ final class ActivityController implements ContainerInjectionInterface {
     return $links;
   }
 
-  /** Verbetes publicados em que a pessoa criou pelo menos uma revisão, com link para o histórico público. */
+  /**
+   * Verbetes publicados em que a pessoa criou pelo menos uma revisão, com link para o histórico público. */
   private function wiki(int $uid): array {
     $revisions = $this->entityTypeManager->getStorage('node')->getQuery()
       ->accessCheck(FALSE)
@@ -124,7 +145,8 @@ final class ActivityController implements ContainerInjectionInterface {
     return $this->nodeList($nids, 'wiki_entry', 'Você ainda não revisou verbetes publicados.', TRUE);
   }
 
-  /** Tópicos de Fórum criados pela pessoa que continuam publicados. */
+  /**
+   * Tópicos de Fórum criados pela pessoa que continuam publicados. */
   private function forum(int $uid): array {
     $query = $this->entityTypeManager->getStorage('node')->getQuery();
     $nids = $query
@@ -143,14 +165,16 @@ final class ActivityController implements ContainerInjectionInterface {
     );
   }
 
-  /** Publicações da Revista de autoria da pessoa, publicadas. */
+  /**
+   * Publicações da Revista de autoria da pessoa, publicadas. */
   private function revista(int $uid): array {
     $nids = $this->entityTypeManager->getStorage('node')->getQuery()
       ->accessCheck(FALSE)->condition('type', 'revista')->condition('uid', $uid)->condition('status', 1)->execute();
     return $this->nodeList(array_values($nids), 'revista', 'Você ainda não tem publicações na Revista.', FALSE);
   }
 
-  /** Respostas publicadas pela pessoa, em Comments ou posts revisionáveis do Fórum. */
+  /**
+   * Respostas publicadas pela pessoa, em Comments ou posts revisionáveis do Fórum. */
   private function comentarios(int $uid): array {
     $ids = $this->entityTypeManager->getStorage('comment')->getQuery()
       ->accessCheck(FALSE)
@@ -166,16 +190,13 @@ final class ActivityController implements ContainerInjectionInterface {
     $entries = [];
     $comments = $this->entityTypeManager->getStorage('comment')->loadMultiple($ids);
     foreach ($comments as $comment) {
-      if (!($comment instanceof CommentInterface)) {
-        continue;
-      }
       $topic = $comment->getCommentedEntity();
       if (!($topic instanceof NodeInterface)
         || $topic->bundle() !== 'aculta_forum_topic'
         || !$topic->isPublished()) {
         continue;
       }
-      $access = $this->purposeManager->runInPurpose('forum', function () use (
+      $access = $this->siteManager->runInSite('forum', function () use (
         $comment,
         $topic,
       ): bool {
@@ -186,8 +207,7 @@ final class ActivityController implements ContainerInjectionInterface {
       if ($access !== TRUE) {
         continue;
       }
-      $url = $this->purposeManager->routeUrl(
-        'forum',
+      $url = $this->siteManager->routeUrl(SiteKey::Forum,
         'entity.node.canonical',
         ['node' => $topic->id()],
       );
@@ -230,15 +250,14 @@ final class ActivityController implements ContainerInjectionInterface {
           || !$topic->isPublished()) {
           continue;
         }
-        $access = $this->purposeManager->runInPurpose('forum', fn (): bool =>
+        $access = $this->siteManager->runInSite('forum', fn (): bool =>
           $topic->access('view', $this->currentUser, TRUE)->isAllowed()
           && $post->access('view', $this->currentUser, TRUE)->isAllowed()
         );
         if ($access !== TRUE) {
           continue;
         }
-        $url = $this->purposeManager->routeUrl(
-          'forum',
+        $url = $this->siteManager->routeUrl(SiteKey::Forum,
           'entity.node.canonical',
           ['node' => $topic->id()],
         );
@@ -262,7 +281,7 @@ final class ActivityController implements ContainerInjectionInterface {
     }
 
     if ($entries === []) {
-      return ['#markup' => (string) t('Você ainda não comentou nas discussões do Fórum.')];
+      return ['#markup' => (string) $this->stringTranslation->translate('Você ainda não comentou nas discussões do Fórum.')];
     }
     usort($entries, static fn (array $left, array $right): int =>
       ($right['created'] <=> $left['created']) ?: strcmp($left['sort_id'], $right['sort_id'])
@@ -270,7 +289,8 @@ final class ActivityController implements ContainerInjectionInterface {
     return ['#theme' => 'item_list', '#items' => array_column(array_slice($entries, 0, 50), 'link')];
   }
 
-  /** Mantém os nós publicados do tipo indicado. */
+  /**
+   * Mantém os nós publicados do tipo indicado. */
   private function publishedNodeIds(array $nids, string $bundle): array {
     if ($nids === []) {
       return [];
@@ -285,7 +305,8 @@ final class ActivityController implements ContainerInjectionInterface {
     return array_values(array_unique($ids));
   }
 
-  /** Lista de nós com link, ou mensagem de vazio com link para a área. */
+  /**
+   * Lista de nós com link, ou mensagem de vazio com link para a área. */
   private function nodeList(
     array $nids,
     string $bundle,
@@ -294,11 +315,11 @@ final class ActivityController implements ContainerInjectionInterface {
     bool $showReplies = FALSE,
   ): array {
     if ($nids === []) {
-      return ['#markup' => (string) t($vazio)];
+      return ['#markup' => (string) $this->stringTranslation->translate($vazio)];
     }
     $items = [];
     foreach ($this->entityTypeManager->getStorage('node')->loadMultiple($nids) as $node) {
-      if (!$node instanceof NodeInterface || !$node->isPublished()) {
+      if (!$node->isPublished()) {
         continue;
       }
       $title = $node->label();
@@ -315,13 +336,12 @@ final class ActivityController implements ContainerInjectionInterface {
       }
       $url = $history ? Url::fromRoute('entity.node.version_history', ['node' => $node->id()]) : $node->toUrl();
       if ($bundle === 'aculta_forum_topic') {
-        $access = $this->purposeManager->runInPurpose(
+        $access = $this->siteManager->runInSite(
           'forum',
           fn () => $node->access('view', $this->currentUser, TRUE)->isAllowed(),
         );
         $url = $access
-          ? $this->purposeManager->routeUrl(
-            'forum',
+          ? $this->siteManager->routeUrl(SiteKey::Forum,
             'entity.node.canonical',
             ['node' => $node->id()],
           )

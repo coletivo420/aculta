@@ -10,11 +10,15 @@ use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 
+/**
+ * Testa a resolução e a sugestão de endereço a partir do CEP.
+ */
 #[CoversClass(ShippingAddressAdapter::class)]
 #[Group('aculta_commerce_melhorenvio')]
 class ShippingAddressAdapterTest extends UnitTestCase {
 
-  /** Endereço completo que não deve gerar consulta. */
+  /**
+   * Endereço completo que não deve gerar consulta. */
   private const COMPLETE = [
     'country_code' => 'BR',
     'postal_code' => '01310-100',
@@ -39,6 +43,7 @@ class ShippingAddressAdapterTest extends UnitTestCase {
   ];
 
   /**
+   * Confirma que um CEP inválido não dispara consulta.
    */
   public function testInvalidPostalCodeDoesNotLookUp(): void {
     $lookup = new FakeCepLookup();
@@ -50,6 +55,7 @@ class ShippingAddressAdapterTest extends UnitTestCase {
   }
 
   /**
+   * Confirma que a ausência de CEP é tratada como inválida.
    */
   public function testMissingPostalCodeIsInvalid(): void {
     $result = (new ShippingAddressAdapter(new FakeCepLookup()))->resolve([]);
@@ -132,19 +138,52 @@ class ShippingAddressAdapterTest extends UnitTestCase {
  */
 final class FakeCepLookup implements CepLookupInterface {
 
+  /**
+   * Contador de chamadas de consulta.
+   *
+   * @var int
+   */
   public int $calls = 0;
 
-  /** @param array<string, string>|null $found */
+  /**
+   * Cria o dublê de consulta de CEP.
+   *
+   * @param array<string, string>|null $found
+   *   Resultado devolvido pela consulta, ou NULL.
+   * @param bool $throw
+   *   Se a consulta deve lançar exceção.
+   */
   public function __construct(
     private readonly ?array $found = NULL,
     private readonly bool $throw = FALSE,
   ) {}
 
+  /**
+   * Normaliza o CEP para oito dígitos.
+   *
+   * @param string $cep
+   *   CEP informado, possivelmente com máscara.
+   *
+   * @return string|null
+   *   CEP com oito dígitos, ou NULL se inválido.
+   */
   public function normalize(string $cep): ?string {
     $digits = preg_replace('/\D+/', '', $cep) ?? '';
     return strlen($digits) === 8 ? $digits : NULL;
   }
 
+  /**
+   * Devolve o resultado configurado para a consulta.
+   *
+   * @param string $cep
+   *   CEP consultado.
+   *
+   * @return array|null
+   *   Resultado configurado.
+   *
+   * @throws \RuntimeException
+   *   Quando o dublê está configurado para falhar.
+   */
   public function lookup(string $cep): ?array {
     $this->calls++;
     if ($this->throw) {

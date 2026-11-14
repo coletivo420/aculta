@@ -28,6 +28,10 @@ final class AuthorizedEntityMetricAggregator implements ContentEntityMetricAggre
     'wiki.entries.published' => ['entity_type' => 'node', 'bundle' => 'wiki_entry'],
     'wiki.entries.updated' => ['entity_type' => 'node', 'bundle' => 'wiki_entry'],
     'media.files.requests' => ['entity_type' => 'file', 'bundle' => 'file'],
+    'forum.replies.created' => [
+      'entity_type' => 'node',
+      'bundle' => 'aculta_forum_topic',
+    ],
   ];
 
   public function __construct(
@@ -69,10 +73,8 @@ final class AuthorizedEntityMetricAggregator implements ContentEntityMetricAggre
 
     $dimensions = [];
     foreach ($entities as $entity) {
-      if (!is_array($entity)
-        || ($entity['entity_type'] ?? NULL) !== $expected['entity_type']
-        || ($entity['bundle'] ?? NULL) !== $expected['bundle']
-        || !is_string($entity['entity_id'] ?? NULL)
+      if ($entity['entity_type'] !== $expected['entity_type']
+        || $entity['bundle'] !== $expected['bundle']
         || $entity['entity_id'] === ''
         || strlen($entity['entity_id']) > 128) {
         throw new \InvalidArgumentException('Authorized entity identities do not match this Statistics metric.');

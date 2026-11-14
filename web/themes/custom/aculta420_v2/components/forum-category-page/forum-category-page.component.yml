@@ -1,0 +1,31 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Página de categoria do Fórum
+description: Composição da página pública de categoria, preservando linhas, paginação e blocos renderizados pela View.
+status: stable
+group: Comunidade
+props:
+  type: object
+  additionalProperties: false
+slots:
+  header:
+    title: Cabeçalho
+    description: Cabeçalho SDC com título e indicadores da categoria.
+  navigation:
+    title: Navegação
+    description: Abas e filtros de navegação da lista.
+  topics:
+    title: Tópicos
+    description: Linhas renderizadas pela View.
+  empty:
+    title: Estado vazio
+    description: Mensagem exibida quando a View não retorna tópicos.
+  pager:
+    title: Paginação
+    description: Paginação renderizada pela View.
+  sidebar:
+    title: Painel lateral
+    description: Estatísticas, regras e conteúdo complementar da categoria.
+assets:
+  css:
+    component:
+      forum-category-page.css: {}

@@ -1,0 +1,16 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Relatório de requisitos do Portal
+description: Apresenta seções técnicas e tabelas calculadas pelo controller do Portal.
+status: stable
+group: Administração
+props:
+  type: object
+  additionalProperties: false
+slots:
+  content:
+    title: Requisitos e estado do sistema
+    description: Render arrays de seções, requisitos, integrações e avisos.
+assets:
+  css:
+    component:
+      portal-requirements.css: {}

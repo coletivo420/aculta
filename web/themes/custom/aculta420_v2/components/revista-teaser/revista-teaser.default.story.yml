@@ -1,0 +1,20 @@
+name: Publicação da Revista
+description: Cartão editorial responsivo com capa, categoria, chamada, resumo e link acessível.
+component: aculta420_v2:revista-teaser
+props:
+  title: Cultura de bairro
+  url: /editorial/cultura-de-bairro
+  has_category: true
+  has_subtitle: true
+  has_summary: true
+  has_cover: false
+slots:
+  category:
+    type: inline_template
+    template: '<span>Território e memória</span>'
+  subtitle:
+    type: inline_template
+    template: '<span>Histórias e práticas culturais nos bairros.</span>'
+  summary:
+    type: inline_template
+    template: '<p>Uma publicação sobre cultura, território e memória.</p>'

@@ -8,6 +8,7 @@ use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\EntityAccessControlHandler;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\user\EntityOwnerInterface;
 
 /**
  * Restricts Wiki proposals to their author and authorized editorial staff.
@@ -24,7 +25,8 @@ final class WikiProposalAccessControlHandler extends EntityAccessControlHandler 
 
     if (in_array($operation, ['view', 'view label', 'view revision'], TRUE)) {
       $canViewAny = AccessResult::allowedIfHasPermission($account, 'view any wiki proposals');
-      $isOwner = (int) $entity->getOwnerId() === (int) $account->id();
+      $isOwner = $entity instanceof EntityOwnerInterface
+        && (int) $entity->getOwnerId() === (int) $account->id();
       $canViewOwn = AccessResult::allowedIf($isOwner)
         ->andIf(AccessResult::allowedIfHasPermission($account, 'view own wiki proposals'))
         ->cachePerUser();

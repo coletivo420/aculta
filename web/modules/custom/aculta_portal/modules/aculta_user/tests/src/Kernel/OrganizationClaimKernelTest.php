@@ -4,10 +4,15 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_user\Kernel;
 
+use Drupal\Core\Form\FormState;
+use Drupal\aculta_user\Form\OwnershipClaimDecisionForm;
+use Symfony\Component\HttpFoundation\Request;
+use Drupal\aculta_user\Controller\OwnershipClaimAdminController;
+use Drupal\aculta_image\FileRemover;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\aculta_events\Entity\Event;
 use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\aculta_user\Entity\OwnershipClaim;
 use Drupal\aculta_user\Organization\ClaimNotAllowedException;
 use Drupal\Core\Config\ConfigFactoryInterface;
@@ -33,6 +38,11 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 #[RunTestsInSeparateProcesses]
 final class OrganizationClaimKernelTest extends KernelTestBase {
 
+  /**
+   * Módulos necessários para o teste.
+   *
+   * @var string[]
+   */
   protected static $modules = [
     'system',
     'user',
@@ -51,10 +61,30 @@ final class OrganizationClaimKernelTest extends KernelTestBase {
     'aculta_user',
   ];
 
+  /**
+   * Usuário com papel de administrador de reivindicações.
+   *
+   * @var \Drupal\user\Entity\User
+   */
   private User $adminUser;
+
+  /**
+   * Usuário com papel de editor de conteúdo.
+   *
+   * @var \Drupal\user\Entity\User
+   */
   private User $editorUser;
+
+  /**
+   * Usuário comum, sem papéis especiais.
+   *
+   * @var \Drupal\user\Entity\User
+   */
   private User $commonUser;
 
+  /**
+   * {@inheritdoc}
+   */
   public function register(ContainerBuilder $container): void {
     parent::register($container);
 
@@ -64,14 +94,14 @@ final class OrganizationClaimKernelTest extends KernelTestBase {
     $loader->addPsr4('Drupal\\aculta_user\\', dirname(__DIR__, 3) . '/src', TRUE);
     $loader->addPsr4('Drupal\\aculta_events\\', dirname(__DIR__, 5) . '/modules/aculta_events/src', TRUE);
 
-    $container->register('aculta_portal.domain_purpose', DomainPurposeManager::class)
+    $container->register('aculta_portal.domain_site', DomainSiteManager::class)
       ->addArgument($this->createMock(EntityTypeManagerInterface::class))
       ->addArgument($this->createMock(DomainNegotiatorInterface::class))
       ->addArgument($this->createMock(ConfigFactoryInterface::class))
       ->addArgument(new RequestStack());
 
     $container->register('aculta_image.render', \stdClass::class);
-    $container->register('aculta_image.file_remover', \Drupal\aculta_image\FileRemover::class)
+    $container->register('aculta_image.file_remover', FileRemover::class)
       ->addArgument(new Reference('file.usage'))
       ->addArgument(new Reference('entity_type.manager'))
       ->addArgument(new Reference('database'))
@@ -84,11 +114,15 @@ final class OrganizationClaimKernelTest extends KernelTestBase {
     $container->register('aculta_file_uploader.unused_file_cleaner', \stdClass::class);
   }
 
+  /**
+   * {@inheritdoc}
+   */
   protected function setUp(): void {
     parent::setUp();
 
     $this->installEntitySchema('user');
     $this->installEntitySchema('profile');
+    $this->installEntitySchema('path_alias');
     $this->installSchema('user', ['users_data']);
     $this->installSchema('file', ['file_usage']);
     $this->installSchema('aculta_user', ['aculta_user_nickname']);
@@ -134,6 +168,9 @@ final class OrganizationClaimKernelTest extends KernelTestBase {
     $this->commonUser->save();
   }
 
+  /**
+   * Verifica que a reivindicação de posse é fechada por padrão.
+   */
   public function testOwnershipClaimClosedByDefault(): void {
     /** @var \Drupal\aculta_user\Organization\OwnershipClaimService $claimService */
     $claimService = $this->container->get('aculta_user.ownership_claim_service');
@@ -151,6 +188,9 @@ final class OrganizationClaimKernelTest extends KernelTestBase {
     $claimService->submitClaim($event, $this->commonUser, 'Quero gerenciar este evento');
   }
 
+  /**
+   * Verifica o ciclo de vida e a aprovação de uma reivindicação.
+   */
   public function testOwnershipClaimLifecycleAndApproval(): void {
     /** @var \Drupal\aculta_user\Organization\OwnershipClaimService $claimService */
     $claimService = $this->container->get('aculta_user.ownership_claim_service');
@@ -204,6 +244,9 @@ final class OrganizationClaimKernelTest extends KernelTestBase {
     $claimService->decideClaim($claim, $this->adminUser, FALSE, 'Tentativa de reabrir');
   }
 
+  /**
+   * Verifica a recusa de uma reivindicação.
+   */
   public function testOwnershipClaimRejection(): void {
     /** @var \Drupal\aculta_user\Organization\OwnershipClaimService $claimService */
     $claimService = $this->container->get('aculta_user.ownership_claim_service');
@@ -227,6 +270,9 @@ final class OrganizationClaimKernelTest extends KernelTestBase {
     $this->assertSame((int) $this->editorUser->id(), (int) $reloadedEvent->get('field_organizador')->target_id);
   }
 
+  /**
+   * Verifica vínculo de organização e atuação em nome dela.
+   */
   public function testOrganizationMembershipAndBehalf(): void {
     /** @var \Drupal\aculta_user\Organization\OrganizationMembershipManager $memberManager */
     $memberManager = $this->container->get('aculta_user.organization_membership_manager');
@@ -247,6 +293,9 @@ final class OrganizationClaimKernelTest extends KernelTestBase {
     $this->assertFalse($accessService->canActOnBehalf($this->commonUser, $orgId));
   }
 
+  /**
+   * Verifica o acesso restrito ao escopo do editor de conteúdo.
+   */
   public function testContentEditorScopedAccess(): void {
     $eventOwn = Event::create([
       'title' => 'Evento Próprio do Editor',
@@ -272,6 +321,9 @@ final class OrganizationClaimKernelTest extends KernelTestBase {
     $this->assertFalse($eventOther->access('update', $this->commonUser));
   }
 
+  /**
+   * Verifica o controlador administrativo e o formulário de decisão.
+   */
   public function testOwnershipClaimAdminControllerAndDecisionForm(): void {
     $event = Event::create([
       'title' => 'Festival Comunitário Reivindicável',
@@ -285,16 +337,16 @@ final class OrganizationClaimKernelTest extends KernelTestBase {
     $claim = $claimService->submitClaim($event, $this->commonUser, 'Sou o produtor executivo do festival.');
 
     // 1. Controller overview.
-    $controller = \Drupal\aculta_user\Controller\OwnershipClaimAdminController::create($this->container);
-    $request = \Symfony\Component\HttpFoundation\Request::create('/painel-administrativo/pessoas/reivindicacoes');
+    $controller = OwnershipClaimAdminController::create($this->container);
+    $request = Request::create('/painel-administrativo/pessoas/reivindicacoes');
     $build = $controller->overview($request);
     $this->assertArrayHasKey('table', $build);
     $this->assertCount(1, $build['table']['#rows']);
     $this->assertSame($claim->id(), $build['table']['#rows'][0]['id']);
 
     // 2. Decision form build & submission.
-    $formObject = \Drupal\aculta_user\Form\OwnershipClaimDecisionForm::create($this->container);
-    $formState = new \Drupal\Core\Form\FormState();
+    $formObject = OwnershipClaimDecisionForm::create($this->container);
+    $formState = new FormState();
     $form = $formObject->buildForm([], $formState, $claim);
     $this->assertArrayHasKey('decision', $form);
 

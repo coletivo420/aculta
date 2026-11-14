@@ -92,6 +92,13 @@
 
 # Changelog: ACULTA Superfícies
 
+## 0.1.0-dev.23 — revisão de compatibilidade com Domain 4
+
+- Confirmada a compatibilidade das chamadas de hostname e entidade usadas pelo formulário com Domain 4.0.0-alpha2.
+- Documentado que `path_prefix` pode representar múltiplos domínios no mesmo host no Domain 4, mas não é usado por `aculta_paths`; o modo Diretório segue a decisão D3.
+- A fotografia do plano referente ao Domain 3.0.1 foi identificada explicitamente como histórica.
+- Revisão estática; testes não executados.
+
 ## 0.1.0-dev.1 — esqueleto e planejamento
 
 - Pasta do submódulo criada com `info.yml`, `README.md` e este changelog.

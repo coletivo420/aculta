@@ -20,6 +20,17 @@ use PHPUnit\Framework\Attributes\Group;
 #[Group('aculta_donation')]
 final class DonationCheckoutProviderTest extends UnitTestCase {
 
+  /**
+   * Cria o provider de doação com as dependências simuladas.
+   *
+   * @param array $settings
+   *   Configurações do módulo de doação.
+   * @param string|null $subscriptionFlow
+   *   Flow de checkout da assinatura, ou NULL se não houver.
+   *
+   * @return \Drupal\aculta_donation\Checkout\DonationCheckoutProvider
+   *   Provider configurado.
+   */
   private function provider(array $settings, ?string $subscriptionFlow = 'assinatura_flow'): DonationCheckoutProvider {
     $type = NULL;
     if ($subscriptionFlow !== NULL) {
@@ -37,11 +48,25 @@ final class DonationCheckoutProviderTest extends UnitTestCase {
     );
   }
 
+  /**
+   * Verifica a tradução de donation_route para o modo neutro.
+   *
+   * @param string|null $route
+   *   Valor configurado de donation_route.
+   * @param \Drupal\aculta_portal\Checkout\CheckoutMode $esperado
+   *   Modo neutro esperado.
+   */
   #[DataProvider('modos')]
   public function testTraduzDonationRouteParaModoNeutro(?string $route, CheckoutMode $esperado): void {
     $this->assertSame($esperado, $this->provider(['donation_route' => $route])->configuration()->mode);
   }
 
+  /**
+   * Fornece valores de donation_route e o modo esperado.
+   *
+   * @return array<string, array{string|null, \Drupal\aculta_portal\Checkout\CheckoutMode}>
+   *   Casos de teste indexados por descrição.
+   */
   public static function modos(): array {
     return [
       'donate' => ['donate', CheckoutMode::Dedicated],
@@ -52,6 +77,9 @@ final class DonationCheckoutProviderTest extends UnitTestCase {
     ];
   }
 
+  /**
+   * Verifica os tipos de pedido e fluxos da configuração mais a assinatura.
+   */
   public function testDeclaraTiposDePedidoEFluxosDaConfiguracaoMaisAssinatura(): void {
     $config = $this->provider([
       'donation_route' => 'both',
@@ -65,6 +93,9 @@ final class DonationCheckoutProviderTest extends UnitTestCase {
     $this->assertSame(['assinatura_flow', 'doacao'], $config->checkoutFlowIds);
   }
 
+  /**
+   * Verifica que, sem fluxo de assinatura no Commerce, nenhum é inventado.
+   */
   public function testSemFluxoDeAssinaturaNoCommerceNaoInventaUm(): void {
     $config = $this->provider(['donation_route' => 'donate', 'donate_checkout_flow' => 'doacao'], NULL)->configuration();
     $this->assertSame(['doacao'], $config->checkoutFlowIds);

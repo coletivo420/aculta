@@ -1,0 +1,248 @@
+/**
+ * SDC: Superfície com destaque (aculta420_v2:surface-accent)
+ * Fiel às referências das 4 molduras (verde, vermelha, amarela, tricolor)
+ * e superfícies neutras claras/escuras.
+ */
+.aculta-surface-accent {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  box-sizing: border-box;
+  transition:
+    background-color var(--motion-base) ease,
+    border-color var(--motion-base) ease,
+    box-shadow var(--motion-base) ease;
+  border: 1px solid var(--color-alpha-border-75, var(--color-border));
+  inline-size: 100%;
+  max-inline-size: 100%;
+}
+
+/* Fundo semântico */
+.aculta-surface-accent--tone-canvas {
+  color: var(--color-text-primary);
+  background-color: var(--color-canvas);
+}
+
+.aculta-surface-accent--tone-raised {
+  color: var(--color-text-primary);
+  background-color: var(--color-surface-raised);
+}
+
+.aculta-surface-accent--tone-subtle {
+  color: var(--color-text-primary);
+  background-color: var(--color-surface-subtle);
+}
+
+.aculta-surface-accent--tone-institution {
+  color: var(--color-text-primary);
+  background-color: var(--color-surface-institution);
+}
+
+/* Structural green tone with accessible border in both color modes. */
+.aculta-surface-accent--tone-green-soft {
+  color: var(--color-text-primary);
+  border-color: var(--color-surface-green-border);
+  background-color: var(--color-surface-green-soft);
+}
+
+/* Raio dos cantos */
+.aculta-surface-accent--radius-sm {
+  border-radius: var(--radius-sm, .25rem);
+}
+
+.aculta-surface-accent--radius-md {
+  border-radius: var(--radius-base, .5rem);
+}
+
+.aculta-surface-accent--radius-lg {
+  border-radius: var(--radius-lg, 1rem);
+}
+
+.aculta-surface-accent--radius-xl {
+  border-radius: var(--border-radius-xl, 1.5rem);
+}
+
+/* Elevação e sombra */
+.aculta-surface-accent--elevation-none {
+  box-shadow: none;
+}
+
+.aculta-surface-accent--elevation-subtle {
+  box-shadow: var(--surface-shadow-subtle);
+}
+
+.aculta-surface-accent--elevation-raised {
+  box-shadow: var(--surface-shadow-raised);
+}
+
+.aculta-surface-accent--elevation-floating {
+  box-shadow: var(--surface-shadow-floating);
+}
+
+/* Área de conteúdo e padding */
+.aculta-surface-accent__content {
+  box-sizing: border-box;
+  inline-size: 100%;
+  overflow-wrap: break-word;
+}
+
+.aculta-surface-accent--spacing-none .aculta-surface-accent__content {
+  padding: 0;
+}
+
+.aculta-surface-accent--spacing-compact .aculta-surface-accent__content {
+  padding: var(--spacing-sm, .5rem);
+}
+
+.aculta-surface-accent--spacing-normal .aculta-surface-accent__content {
+  padding: var(--spacing-base, 1rem);
+}
+
+.aculta-surface-accent--spacing-spacious .aculta-surface-accent__content {
+  padding: var(--spacing-lg, 1.5rem);
+}
+
+@media (min-width: 48rem) {
+  .aculta-surface-accent--spacing-normal .aculta-surface-accent__content {
+    padding: var(--spacing-lg, 1.5rem);
+  }
+  .aculta-surface-accent--spacing-spacious .aculta-surface-accent__content {
+    padding: var(--spacing-xl, 2rem);
+  }
+}
+
+/* ========================================================
+   GEOMETRIA DAS FAIXAS E DESTAQUES CONFORME MODELOS VISUAIS
+   ======================================================== */
+
+.aculta-surface-accent__stripe {
+  position: absolute;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* 1. Molduras unitárias com ênfase na lateral esquerda (start) ou direita (end) */
+.aculta-surface-accent--pos-start {
+  display: flex;
+}
+
+.aculta-surface-accent--pos-start .aculta-surface-accent__stripe {
+  position: static;
+  flex: 0 0 1.25rem; /* ~20px de faixa destacada conforme referências */
+  inline-size: 1.25rem;
+  align-self: stretch;
+}
+
+.aculta-surface-accent--pos-end {
+  display: flex;
+  flex-direction: row-reverse;
+}
+
+.aculta-surface-accent--pos-end .aculta-surface-accent__stripe {
+  position: static;
+  flex: 0 0 1.25rem; /* ~20px de faixa destacada na lateral direita */
+  inline-size: 1.25rem;
+  align-self: stretch;
+}
+
+/* Moldura tricolor na lateral esquerda (03_bloco_tricolor_esquerda.png) */
+.aculta-surface-accent--tricolor.aculta-surface-accent--pos-start .aculta-surface-accent__stripe {
+  position: static;
+  flex: 0 0 1.25rem;
+  inline-size: 1.25rem;
+  align-self: stretch;
+  background:
+    linear-gradient(
+      to bottom,
+      var(--surface-accent-red) 0%,
+      var(--surface-accent-red) 16%,
+      var(--surface-accent-yellow) 16%,
+      var(--surface-accent-yellow) 34%,
+      var(--surface-accent-green) 34%,
+      var(--surface-accent-green) 100%
+    );
+}
+
+/* Moldura tricolor na lateral direita (03_bloco_tricolor_direita.png) */
+.aculta-surface-accent--tricolor.aculta-surface-accent--pos-end .aculta-surface-accent__stripe {
+  position: static;
+  flex: 0 0 1.25rem;
+  inline-size: 1.25rem;
+  align-self: stretch;
+  background:
+    linear-gradient(
+      to bottom,
+      var(--surface-accent-red) 0%,
+      var(--surface-accent-red) 16%,
+      var(--surface-accent-yellow) 16%,
+      var(--surface-accent-yellow) 34%,
+      var(--surface-accent-green) 34%,
+      var(--surface-accent-green) 100%
+    );
+}
+
+/* Cores das molduras unitárias */
+.aculta-surface-accent--green .aculta-surface-accent__stripe {
+  background-color: var(--surface-accent-green);
+}
+
+.aculta-surface-accent--yellow .aculta-surface-accent__stripe {
+  background-color: var(--surface-accent-yellow);
+}
+
+.aculta-surface-accent--red .aculta-surface-accent__stripe {
+  background-color: var(--surface-accent-red);
+}
+
+/* Modo escuro para molduras unitárias */
+
+/* 2. Moldura tricolor contínua no topo (03_bloco_tricolor.png) */
+/* Topo com faixa verde predominante, seguida de amarelo e vermelho,
+   e contorno lateral esquerdo com continuidade verde */
+.aculta-surface-accent--tricolor.aculta-surface-accent--pos-top,
+.aculta-surface-accent--tricolor.aculta-surface-accent--pos-full {
+  border-inline-start-width: .75rem; /* Continuidade da borda esquerda verde */
+  border-inline-start-color: var(--surface-accent-green);
+}
+
+.aculta-surface-accent--tricolor.aculta-surface-accent--pos-top .aculta-surface-accent__stripe,
+.aculta-surface-accent--tricolor.aculta-surface-accent--pos-full .aculta-surface-accent__stripe {
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  inset-inline-end: 0;
+  block-size: .5rem; /* ~8px de altura no topo */
+  background:
+    linear-gradient(
+      to right,
+      var(--surface-accent-green) 0%,
+      var(--surface-accent-green) 64%,
+      var(--surface-accent-yellow) 64%,
+      var(--surface-accent-yellow) 82%,
+      var(--surface-accent-red) 82%,
+      var(--surface-accent-red) 100%
+    );
+}
+
+/* 3. Superfície neutra institucional (01 a 04 neutra claro/escuro) */
+/* Fina faixa superior de 4px verde, amarela e vermelha */
+.aculta-surface-accent--neutral .aculta-surface-accent__stripe {
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  inset-inline-end: 0;
+  block-size: 4px;
+  background:
+    linear-gradient(
+      to right,
+      var(--surface-accent-green) 0%,
+      var(--surface-accent-green) 68%,
+      var(--surface-accent-yellow) 68%,
+      var(--surface-accent-yellow) 84%,
+      var(--surface-accent-red) 84%,
+      var(--surface-accent-red) 100%
+    );
+}
+
+/* Se position for top em neutra ou tricolor, garantir que o conteúdo não cole na faixa */
+.aculta-surface-accent--pos-top .aculta-surface-accent__content {
+  padding-block-start: calc(var(--spacing-base, 1rem) + 4px);
+}

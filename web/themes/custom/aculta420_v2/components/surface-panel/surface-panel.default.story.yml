@@ -1,0 +1,17 @@
+name: Painel institucional com cabeçalho
+description: Painel institucional com cabeçalho verde ocupando toda a largura superior, fiel às referências 05 e 06.
+component: aculta420_v2:surface-panel
+props:
+  header_variant: institutional
+  tone: green-soft
+  radius: lg
+  spacing: normal
+  elevation: subtle
+  show_header_placeholder: false
+slots:
+  header:
+    type: inline_template
+    template: '<h3 style="margin:0;font-size:1.25rem;">Cabeçalho Institucional</h3>'
+  content:
+    type: inline_template
+    template: '<p>Corpo de conteúdo do painel institucional.</p>'

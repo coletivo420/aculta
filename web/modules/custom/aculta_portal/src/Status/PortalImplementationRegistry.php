@@ -30,7 +30,7 @@ final class PortalImplementationRegistry {
       'summary' => 'Integra mudanças de estado do usuário ao fluxo de confirmação.',
       'docs' => 'docs/portal/SOURCE-OF-TRUTH.md',
     ],
-    'aculta_portal.purpose_front_path_processor' => [
+    'aculta_portal.site_front_path_processor' => [
       'label' => 'Página inicial por purpose',
       'summary' => 'Resolve o caminho inicial conforme o Domain purpose ativo.',
       'docs' => 'docs/portal/DOMAIN-PRESENTATION-CONTRACT.md',
@@ -60,9 +60,9 @@ final class PortalImplementationRegistry {
       'summary' => 'Aplica restrições e decisões de rota no limite entre purposes.',
       'docs' => 'docs/portal/CROSS-DOMAIN-REQUEST-POLICY.md',
     ],
-    'aculta_portal.domain_purpose_subscriber' => [
-      'label' => 'Proteção de purpose',
-      'summary' => 'Aplica acesso, canonicalização e destino conforme Domain purpose.',
+    'aculta_portal.domain_site_subscriber' => [
+      'label' => 'Política de site key',
+      'summary' => 'Aplica acesso, canonicalização e destino conforme o site key do Domain.',
       'docs' => 'docs/portal/DOMAIN-PRESENTATION-CONTRACT.md',
     ],
     'aculta_portal.account_route_subscriber' => [

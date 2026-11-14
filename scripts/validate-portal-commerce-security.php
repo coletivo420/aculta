@@ -50,8 +50,9 @@ $assert($modules->moduleExists('aculta_pagamentos_mercadopago'), 'The project-ow
 $assert(!$modules->moduleExists('aculta_apoio'), 'Former standalone aculta_apoio is not enabled.');
 $assert(!$modules->moduleExists('aculta_editorial'), 'Consolidated aculta_editorial is not enabled.');
 $assert(!is_dir(DRUPAL_ROOT . '/modules/custom/aculta_editorial'), 'Consolidated aculta_editorial directory has been removed.');
-$assert(!\Drupal::entityTypeManager()->hasDefinition('aculta_contribution'), 'Legacy aculta_contribution entity definition is absent.');
-$assert(!\Drupal::database()->schema()->tableExists('aculta_contribution'), 'Legacy contribution storage table is absent.');
+$contribution_definition = \Drupal::entityTypeManager()->getDefinition('aculta_contribution', FALSE);
+$assert($modules->moduleExists('aculta_cgu') && $contribution_definition !== NULL && $contribution_definition->getProvider() === 'aculta_cgu', 'The consolidated CGU module owns the contribution entity.');
+$assert($contribution_definition !== NULL && $contribution_definition->isRevisionable() && \Drupal::database()->schema()->tableExists($contribution_definition->getBaseTable()) && \Drupal::database()->schema()->tableExists($contribution_definition->getRevisionTable()), 'The consolidated contribution entity keeps its revisionable storage.');
 $assert(!\Drupal::database()->schema()->tableExists('aculta_apoio_webhook'), 'Legacy webhook receipt table is absent.');
 $assert(!is_dir(DRUPAL_ROOT . '/modules/custom/aculta_apoio'), 'No duplicate standalone support module remains in custom code.');
 $assert(!is_dir(DRUPAL_ROOT . '/modules/custom/aculta_mercadopago'), 'No custom Mercado Pago gateway module exists.');
@@ -64,9 +65,9 @@ $assert(!$modules->moduleExists('user_registrationpassword'), 'Incompatible user
 $assert($modules->moduleExists('username_enumeration_prevention'), 'Username Enumeration Prevention remains enabled.');
 $assert(!$modules->moduleExists('honeypot'), 'Honeypot is not enabled.');
 $assert($modules->moduleExists('login_emailusername'), 'The existing Login Email or Username module is enabled.');
-$assert($modules->moduleExists('aculta_mail_confirmer') && $modules->moduleExists('aculta_mail_confirmer_user'), 'ACULTA Mail Confirmer and its user integration are enabled.');
+$assert($modules->moduleExists('aculta_mail_confirmer'), 'ACULTA Mail Confirmer is enabled.');
 $assert($modules->moduleExists('aculta_user') && !$modules->moduleExists('change_mail_page'), 'ACULTA User supplies the canonical new-address form; the contrib Change Mail Page is retired.');
-$assert(\Drupal::config('aculta_mail_confirmer_user.settings')->get('user_email_change.enabled') === TRUE, 'ACULTA Mail Confirmer intercepts user email changes.');
+$assert(\Drupal::config('aculta_mail_confirmer.settings')->get('user_email_change.enabled') === TRUE, 'ACULTA Mail Confirmer intercepts user email changes.');
 // A camada de envio E-Mails ACULTA controla o envio: o transporte padrão
 // (smtp_hostinger) precisa de usuário e de
 // senha, e a senha tem de estar no arquivo de segredos (nenhuma Key, nenhuma
@@ -129,8 +130,8 @@ $account_switcher->switchTo($route_current);
 try {
   $own_edit_event = $make_account_event('entity.user.edit_form', $route_current);
   $account_route_subscriber->onKernelRequest($own_edit_event);
-  $domain_purpose = \Drupal::service('aculta_portal.domain_purpose');
-  $security_url = $domain_purpose->routeUrl('account', 'aculta_portal.security')?->toString();
+  $domain_site = \Drupal::service('aculta_portal.domain_site');
+  $security_url = $domain_site->routeUrl('account', 'aculta_portal.security')?->toString();
   $assert($own_edit_event->hasResponse() && $own_edit_event->getResponse()->getStatusCode() === 302 && $own_edit_event->getResponse()->headers->get('Location') === $security_url, 'A regular user is redirected from own generic user edit to Portal Security.');
   $raw_edit_event = $make_account_event('entity.user.edit_form');
   $raw_edit_event->getRequest()->attributes->set('_raw_variables', new ParameterBag(['user' => '999991']));
@@ -138,7 +139,7 @@ try {
   $assert($raw_edit_event->hasResponse() && $raw_edit_event->getResponse()->getStatusCode() === 302, 'The route guard redirects the own edit page when the ID is still in Drupal raw route parameters.');
   $own_profile_event = $make_account_event('entity.user.canonical', $route_current);
   $account_route_subscriber->onKernelRequest($own_profile_event);
-  $account_home_url = $domain_purpose->pathUrl('account', '/')?->toString();
+  $account_home_url = $domain_site->pathUrl('account', '/')?->toString();
   $assert($own_profile_event->hasResponse() && $own_profile_event->getResponse()->headers->get('Location') === $account_home_url, 'A regular user is redirected from a public own-account profile to the Account Domain root.');
   $other_profile_event = $make_account_event('entity.user.canonical', $route_other);
   $account_route_subscriber->onKernelRequest($other_profile_event);

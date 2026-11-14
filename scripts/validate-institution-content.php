@@ -1,14 +1,20 @@
 <?php
 
+/**
+ * @file
+ */
+
 declare(strict_types=1);
 
 /**
  * Gate for the versioned home content (DT-T10).
  *
- * Checks that scripts/content/institution/home-content.json is complete for the configuration
- * that depends on it: every block_content UUID referenced by a block placement in config/sync
- * is declared in the JSON, UUIDs are unique, and the content is in the SDC shape (no legacy
- * section or hero markup left in bodies). Run: php scripts/validate-institution-content.php
+ * Checks that scripts/content/institution/home-content.json is complete for
+ * the configuration that depends on it: every block_content UUID referenced
+ * by a block placement in config/sync is declared in the JSON, UUIDs are
+ * unique, and the content is in the SDC shape (no legacy section or hero
+ * markup left in bodies). Run: php
+ * scripts/validate-institution-content.php.
  */
 
 $root = dirname(__DIR__);
@@ -50,9 +56,11 @@ foreach ($heroes as $hero) {
   $uuids[$hero['uuid'] ?? ''] = TRUE;
 }
 
-// Every home and projects-header placement that points at a block_content must find its content in
-// the JSON. Institutional data (aculta_institution) is created by scripts/install-institution.php and
-// is out of this scope (DT-T10): its placements are listed in the output, not checked here.
+// Every home and projects-header placement that points at a block_content
+// must find its content in the JSON. Institutional data
+// (aculta_institution) is created by scripts/install-institution.php and
+// is out of this scope (DT-T10): its placements are listed in the output,
+// not checked here.
 $scope = '/^block\.block\.(aculta_home_|aculta_projects_header_)/';
 $outOfScope = [];
 foreach (glob($root . '/config/sync/block.block.*.yml') ?: [] as $file) {

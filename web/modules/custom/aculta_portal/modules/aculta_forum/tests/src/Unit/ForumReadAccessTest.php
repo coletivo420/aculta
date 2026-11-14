@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_forum\Unit;
 
 use Drupal\aculta_forum\Access\ForumReadAccess;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -30,7 +30,7 @@ final class ForumReadAccessTest extends TestCase {
     $otherDomain = $this->createMock(DomainInterface::class);
     $otherDomain->method('id')->willReturn('aculta_org');
     $negotiator->method('getActiveDomain')->willReturnOnConsecutiveCalls($forumDomain, $otherDomain);
-    $manager = new DomainPurposeManager(
+    $manager = new DomainSiteManager(
       $this->createMock(EntityTypeManagerInterface::class),
       $negotiator,
       $this->createMock(ConfigFactoryInterface::class),

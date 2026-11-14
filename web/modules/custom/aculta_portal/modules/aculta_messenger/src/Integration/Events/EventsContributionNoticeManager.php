@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_messenger\Integration\Events;
 
-use Drupal\aculta_contributions\Entity\Contribution;
+use Drupal\aculta_cgu\Entity\Contribution;
 use Drupal\aculta_messenger\Aviso\EligibleNoticePage;
 use Drupal\aculta_messenger\Aviso\AvisoPreferencias;
 use Drupal\aculta_messenger\Aviso\AvisoPreferenciasInterface;
 use Drupal\aculta_messenger\Event\MessengerNoticeEvent;
 use Drupal\aculta_messenger\Service\NoticeListFilter;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\aculta_portal\Render\PortalLinkElement;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Lock\LockBackendInterface;
@@ -56,7 +57,7 @@ final class EventsContributionNoticeManager implements EventsContributionNoticeM
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly DomainPurposeManager $domainPurposes,
+    private readonly DomainSiteManager $siteManagers,
     private readonly LockBackendInterface $lock,
     private readonly AvisoPreferenciasInterface $preferences,
     private readonly QueueFactory $queueFactory,
@@ -129,7 +130,11 @@ final class EventsContributionNoticeManager implements EventsContributionNoticeM
         $values[self::DELIVERY_FIELD] = $mode === AvisoPreferencias::EMAIL_IMMEDIATE ? 'pending' : 'sent';
         $values[self::ATTEMPTS_FIELD] = 0;
       }
-      $message = $storage->create($values);
+      $created = $storage->create($values);
+      if (!$created instanceof MessageInterface) {
+        throw new \LogicException('The message storage returned an unexpected entity.');
+      }
+      $message = $created;
       $message->save();
       if ($mode === AvisoPreferencias::EMAIL_IMMEDIATE) {
         try {
@@ -140,7 +145,7 @@ final class EventsContributionNoticeManager implements EventsContributionNoticeM
           throw $exception;
         }
       }
-      return $message instanceof MessageInterface ? $message : NULL;
+      return $message;
     }
     finally {
       $this->lock->release($lockName);
@@ -161,10 +166,10 @@ final class EventsContributionNoticeManager implements EventsContributionNoticeM
     if ($proposal === NULL) {
       return NULL;
     }
-    $url = $this->domainPurposes->routeUrl('eventos', 'aculta_events.organizer_contribution_status', [
+    $url = $this->siteManagers->routeUrl(SiteKey::Eventos, 'aculta_events.organizer_contribution_status', [
       'proposal_uuid' => $proposal->uuid(),
     ]);
-    if ($url === NULL || !$this->domainPurposes->runInPurpose('eventos', static fn(): bool => $url->access($account, TRUE)->isAllowed())) {
+    if ($url === NULL || !$this->siteManagers->runInSite('eventos', static fn(): bool => $url->access($account, TRUE)->isAllowed())) {
       return NULL;
     }
     return [
@@ -190,19 +195,19 @@ final class EventsContributionNoticeManager implements EventsContributionNoticeM
       return FALSE;
     }
     $storage = $this->entityTypeManager->getStorage('message');
-    $resolved = [];
+    $resolved = new \ArrayObject();
     $page = EligibleNoticePage::collect(
       function (int $scanOffset, int $batchSize) use ($storage, $account, $filters): array {
         $query = $storage->getQuery()->accessCheck(FALSE)
           ->condition('template', self::TEMPLATE)->condition('uid', (int) $account->id());
         NoticeListFilter::applyReadCondition($query, self::READ_FIELD, $filters);
-        return $query->sort('created', 'DESC')->sort('id', 'DESC')->range($scanOffset, $batchSize)->execute();
+        return $query->sort('created', 'DESC')->sort('mid', 'DESC')->range($scanOffset, $batchSize)->execute();
       },
-      function (array $ids) use ($storage, $account, &$resolved): array {
+      function (array $ids) use ($storage, $account, $resolved): array {
         $messages = array_values($storage->loadMultiple($ids));
         foreach ($messages as $message) {
           if ($message instanceof MessageInterface && ($notice = $this->resolve($message, $account)) !== NULL) {
-            $resolved[(int) $message->id()] = $notice;
+            $resolved->offsetSet((int) $message->id(), $notice);
           }
         }
         return $messages;
@@ -357,7 +362,7 @@ final class EventsContributionNoticeManager implements EventsContributionNoticeM
       || !in_array($proposal->get('source')->value, ['events_organization', 'events_location', 'events_event'], TRUE)) {
       return NULL;
     }
-    $allowed = $this->domainPurposes->runInPurpose('eventos', static fn(): bool => $proposal->access('view', $recipient, TRUE)->isAllowed());
+    $allowed = $this->siteManagers->runInSite('eventos', static fn(): bool => $proposal->access('view', $recipient, TRUE)->isAllowed());
     return $allowed ? $proposal : NULL;
   }
 

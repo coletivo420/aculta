@@ -11,7 +11,8 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\aculta_linkweed\Entity\LinkPage;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -23,9 +24,9 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 final class LinkPageEditorForm extends FormBase {
 
   public function __construct(
-    private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly AccountProxyInterface $currentUser,
-    private readonly DomainPurposeManager $domainPurpose,
+    protected readonly EntityTypeManagerInterface $entityTypeManager,
+    protected readonly AccountProxyInterface $currentUser,
+    protected readonly DomainSiteManager $siteManager,
   ) {}
 
   /**
@@ -34,7 +35,7 @@ final class LinkPageEditorForm extends FormBase {
     return new static(
       $container->get('entity_type.manager'),
       $container->get('current_user'),
-      $container->get('aculta_portal.domain_purpose'),
+      $container->get('aculta_portal.domain_site'),
     );
   }
 
@@ -70,10 +71,10 @@ final class LinkPageEditorForm extends FormBase {
     ];
     $slug = (string) $aculta_linkweed_page->get('slug')->value;
     $preview_url = preg_match('/^[a-z0-9]+(?:-[a-z0-9]+)*$/D', $slug)
-      ? $this->domainPurpose->pathUrl('links', '/pagina/' . $slug . '/previa')
+      ? $this->siteManager->pathUrl(SiteKey::Links, '/pagina/' . $slug . '/previa')
       : NULL;
     $links_domain = $preview_url !== NULL
-      ? $this->domainPurpose->getDomain('links')
+      ? $this->siteManager->getDomain(SiteKey::Links)
       : NULL;
     if ($preview_url !== NULL && $links_domain !== NULL) {
       $form['preview'] = [

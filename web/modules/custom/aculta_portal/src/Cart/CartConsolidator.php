@@ -13,13 +13,15 @@ use Drupal\commerce_store\CurrentStoreInterface;
 use Drupal\Core\Session\AccountInterface;
 
 /**
- * Une o carrinho em um pedido só, com o fluxo de checkout mais exigente entre as categorias presentes
- * (decisão do responsável, 2026-10-17): LMS (curso) > loja (default) > doação (doacao). A assinatura fica de fora:
- * tem checkout próprio.
+ * Une os carrinhos em um pedido só conforme o fluxo de checkout mais exigente.
+ *
+ * Decisão do responsável, 2026-10-17: LMS (curso) > loja (default) > doação
+ * (doacao). A assinatura fica de fora: tem checkout próprio.
  */
 final class CartConsolidator {
 
-  /** Tipo de pedido de assinatura: fora do carrinho unificado. */
+  /**
+   * Tipo de pedido de assinatura: fora do carrinho unificado. */
   public const TIPO_ASSINATURA = 'assinatura';
 
   public function __construct(
@@ -31,10 +33,12 @@ final class CartConsolidator {
   ) {}
 
   /**
-   * Categorias do carrinho, da mais exigente para a mais simples: LMS (tipo configurado e histórico `curso`),
-   * Loja e doação.
+   * Lista as categorias do carrinho, da mais exigente para a mais simples.
+   *
+   * LMS (tipo configurado e histórico `curso`), loja e doação.
    *
    * @return list<string>
+   *   Tipos de pedido, do mais exigente ao mais simples.
    */
   private function prioridade(): array {
     return [
@@ -94,7 +98,8 @@ final class CartConsolidator {
     return $destino;
   }
 
-  /** Categoria final: a mais exigente entre as presentes. */
+  /**
+   * Categoria final: a mais exigente entre as presentes. */
   private function tipoFinal(array $carrinhos): string {
     $presentes = array_map(static fn(OrderInterface $c): string => $c->bundle(), $carrinhos);
     foreach ($this->prioridade() as $tipo) {

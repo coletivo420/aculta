@@ -16,6 +16,14 @@ use PHPUnit\Framework\Attributes\Group;
 final class RevistaFormHooksTest extends UnitTestCase {
 
   /**
+   * Clears the static FormState error flag so it does not leak to other tests.
+   */
+  protected function tearDown(): void {
+    (new FormState())->clearErrors();
+    parent::tearDown();
+  }
+
+  /**
    * Builds a minimal publication form with the secondary fields of the bundle.
    */
   private function form(): array {

@@ -4,19 +4,22 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_lms\Learning;
 
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\aculta_lms\Entity\ProgressEntity;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\group\Entity\GroupInterface;
 
-/** Reads a learner's course progress from the ACULTA-owned entity. */
+/**
+ * Reads a learner's course progress from the ACULTA-owned entity. */
 final class EntityCourseProgressReader implements CourseProgressReaderInterface {
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
   ) {}
 
-  /** {@inheritdoc} */
+  /**
+   * {@inheritdoc} */
   public function current(GroupInterface $course, AccountInterface $account): ?CourseProgress {
     $matches = $this->entityTypeManager
       ->getStorage('aculta_lms_progress')
@@ -25,7 +28,7 @@ final class EntityCourseProgressReader implements CourseProgressReaderInterface 
         'uid' => (int) $account->id(),
       ]);
     $progress = reset($matches);
-    if ($progress === FALSE) {
+    if (!$progress instanceof ContentEntityInterface) {
       return NULL;
     }
 
@@ -42,8 +45,9 @@ final class EntityCourseProgressReader implements CourseProgressReaderInterface 
     );
   }
 
-  /** Returns the first scalar value of an entity field. */
-  private static function fieldValue(\Drupal\Core\Entity\ContentEntityInterface $entity, string $field): mixed {
+  /**
+   * Returns the first scalar value of an entity field. */
+  private static function fieldValue(ContentEntityInterface $entity, string $field): mixed {
     $values = $entity->get($field)->getValue();
     return $values[0]['value'] ?? NULL;
   }

@@ -1,0 +1,111 @@
+<?php
+
+/**
+ * @file
+ * Hooks do módulo aculta_lms.
+ */
+
+declare(strict_types=1);
+
+use Drupal\Component\Utility\DeprecationHelper;
+use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\simple_sitemap\Entity\SimpleSitemapInterface;
+use Drupal\Core\Field\BaseFieldDefinition;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
+
+/**
+ * Implements hook_entity_base_field_info().
+ */
+function aculta_lms_entity_base_field_info(EntityTypeInterface $entity_type): array {
+  if ($entity_type->id() !== 'aculta_event') {
+    return [];
+  }
+  $fields['field_turma'] = BaseFieldDefinition::create('entity_reference')
+    ->setLabel(new TranslatableMarkup('Turma'))
+    ->setDescription(new TranslatableMarkup('Turma do LMS a que o evento pertence. Vazio = evento público do purpose eventos; preenchido = visível só aos matriculados.'))
+    ->setSetting('target_type', 'group')
+    ->setSetting('handler', 'default:group')
+    ->setSetting('handler_settings', ['target_bundles' => ['lms_class' => 'lms_class']]);
+  return $fields;
+}
+
+/**
+ * Implements hook_simple_sitemap_links_alter().
+ *
+ * The public sitemap must not advertise events that the public cannot view.
+ */
+function aculta_lms_simple_sitemap_links_alter(array &$links, SimpleSitemapInterface $sitemap): void {
+  // The hook contract requires the sitemap argument even when unused here.
+  unset($sitemap);
+  $slugsByKey = [];
+  foreach ($links as $key => $link) {
+    $path = $link['meta']['path'] ?? NULL;
+    if (!is_string($path)) {
+      continue;
+    }
+    $path = trim($path, '/');
+    if (preg_match('/^eventos\/([a-z0-9]+(?:-[a-z0-9]+)*)$/', $path, $matches) === 1) {
+      $slugsByKey[$key] = $matches[1];
+    }
+  }
+  if ($slugsByKey === []) {
+    return;
+  }
+
+  $ids = \Drupal::entityTypeManager()->getStorage('aculta_event')->getQuery()
+    ->condition('field_slug', array_values(array_unique($slugsByKey)), 'IN')
+    ->accessCheck(FALSE)
+    ->execute();
+  $restrictedSlugs = [];
+  foreach (\Drupal::entityTypeManager()->getStorage('aculta_event')->loadMultiple($ids) as $event) {
+    if (!$event instanceof ContentEntityInterface) {
+      continue;
+    }
+    if ($event->hasField('field_turma') && !$event->get('field_turma')->isEmpty()) {
+      $restrictedSlugs[(string) $event->get('field_slug')->value] = TRUE;
+    }
+  }
+
+  foreach ($slugsByKey as $key => $slug) {
+    if (isset($restrictedSlugs[$slug])) {
+      unset($links[$key]);
+    }
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_insert() for aculta_event.
+ */
+function aculta_lms_aculta_event_insert(EntityInterface $evento): void {
+  if (!$evento instanceof ContentEntityInterface) {
+    return;
+  }
+  _aculta_lms_avisa_turma($evento, NULL);
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_update() for aculta_event.
+ */
+function aculta_lms_aculta_event_update(EntityInterface $evento): void {
+  if (!$evento instanceof ContentEntityInterface) {
+    return;
+  }
+  $original = DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.2.0', fn() => $evento->getOriginal(), fn() => $evento->original);
+  _aculta_lms_avisa_turma($evento, $original instanceof ContentEntityInterface ? $original : NULL);
+}
+
+/**
+ * Enfileira o aviso quando o evento de turma passa a publicado.
+ */
+function _aculta_lms_avisa_turma(ContentEntityInterface $evento, ?ContentEntityInterface $anterior): void {
+  if (!$evento->hasField('field_turma') || $evento->get('field_turma')->isEmpty() || (string) $evento->get('field_status')->value !== 'publicado') {
+    return;
+  }
+  $jaPublicado = $anterior !== NULL && (string) $anterior->get('field_status')->value === 'publicado';
+  if ($jaPublicado) {
+    return;
+  }
+  \Drupal::queue('aculta_lms_agenda_evento_turma')->createItem(['event_id' => (int) $evento->id()]);
+}

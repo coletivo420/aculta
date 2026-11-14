@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal;
 
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Menu\MenuLinkManagerInterface;
 use Drupal\Core\Routing\CurrentRouteMatch;
@@ -19,7 +20,8 @@ use Drupal\Core\Url;
  */
 final class AccountShellBuilder {
 
-  /** Subrotas da conta e a seção do menu que as contém. */
+  /**
+   * Subrotas da conta e a seção do menu que as contém. */
   private const PARENT_SECTION = [
     'aculta_portal.my_data_address' => 'aculta_portal.my_data',
     'aculta_portal.my_data_other' => 'aculta_portal.my_data',
@@ -32,7 +34,7 @@ final class AccountShellBuilder {
     private readonly CurrentRouteMatch $routeMatch,
     private readonly MenuLinkManagerInterface $menuLinkManager,
     private readonly TranslationInterface $translation,
-    private readonly DomainPurposeManager $domainPurposeManager,
+    private readonly DomainSiteManager $siteManager,
     private readonly ?RouteProviderInterface $routeProvider = NULL,
     private readonly ?ModuleHandlerInterface $moduleHandler = NULL,
     private readonly ?AccountInterface $currentUser = NULL,
@@ -43,7 +45,7 @@ final class AccountShellBuilder {
    */
   private function sectionUrl(string $route, string $sectionRoute): string {
     if ($sectionRoute === 'aculta_portal.dashboard') {
-      return ($this->domainPurposeManager->routeUrl('account', 'aculta_portal.dashboard') ?? Url::fromRoute('aculta_portal.dashboard'))->toString();
+      return ($this->siteManager->routeUrl(SiteKey::Account, 'aculta_portal.dashboard') ?? Url::fromRoute('aculta_portal.dashboard'))->toString();
     }
     return Url::fromRoute($route)->toString();
   }
@@ -53,17 +55,67 @@ final class AccountShellBuilder {
    */
   public function build(array &$variables): void {
     $route = $this->routeMatch->getRouteName();
+    // The LMS dashboard is linked from the account navigation but owns a
+    // standalone page on the Courses purpose. Do not wrap it in the legacy
+    // account shell when it is visited on that subdomain.
+    if ($route === 'aculta_lms.student_dashboard') {
+      return;
+    }
     $sections = [
-      'aculta_portal.dashboard' => ['title' => $this->translation->translate('Visão geral'), 'route' => 'aculta_portal.dashboard', 'icon' => 'grid'],
-      'aculta_portal.support_my' => ['title' => $this->translation->translate('Meu Apoio'), 'route' => 'aculta_portal.support_my', 'icon' => 'heart'],
-      'aculta_portal.account_courses' => ['title' => $this->translation->translate('Cursos'), 'route' => 'aculta_portal.account_courses', 'icon' => 'mortarboard'],
-      ...($this->routeExists('aculta_user.atividade') ? ['aculta_user.atividade' => ['title' => $this->translation->translate('Atividade'), 'route' => 'aculta_user.atividade', 'icon' => 'activity']] : []),
-      ...($this->routeExists('aculta_user.associado_pedido') ? ['aculta_user.associado_pedido' => ['title' => $this->translation->translate('Associado'), 'route' => 'aculta_user.associado_pedido', 'icon' => 'person-badge']] : []),
-      'view.commerce_user_orders.order_page' => ['title' => $this->translation->translate('Meus pedidos'), 'route' => 'view.commerce_user_orders.order_page', 'icon' => 'bag'],
-      'aculta_portal.my_data' => ['title' => $this->translation->translate('Meus Dados'), 'route' => 'aculta_portal.my_data', 'icon' => 'person-vcard'],
-      'aculta_portal.connections' => ['title' => $this->translation->translate('Conexões'), 'route' => 'aculta_portal.connections', 'icon' => 'link-45deg'],
-      'aculta_portal.security' => ['title' => $this->translation->translate('Segurança'), 'route' => 'aculta_portal.security', 'icon' => 'shield-lock'],
-      'aculta_portal.account_settings' => ['title' => $this->translation->translate('Configurações'), 'route' => 'aculta_portal.account_settings', 'icon' => 'sliders'],
+      'aculta_portal.dashboard' => [
+        'title' => $this->translation->translate('Visão geral'),
+        'route' => 'aculta_portal.dashboard',
+        'icon' => 'grid',
+      ],
+      'aculta_portal.support_my' => [
+        'title' => $this->translation->translate('Meu Apoio'),
+        'route' => 'aculta_portal.support_my',
+        'icon' => 'heart',
+      ],
+      'aculta_portal.account_courses' => [
+        'title' => $this->translation->translate('Cursos'),
+        'route' => 'aculta_portal.account_courses',
+        'icon' => 'mortarboard',
+      ],
+      ...($this->routeExists('aculta_user.atividade') ? [
+        'aculta_user.atividade' => [
+          'title' => $this->translation->translate('Atividade'),
+          'route' => 'aculta_user.atividade',
+          'icon' => 'activity',
+        ],
+      ] : []),
+      ...($this->routeExists('aculta_user.associado_pedido') ? [
+        'aculta_user.associado_pedido' => [
+          'title' => $this->translation->translate('Associado'),
+          'route' => 'aculta_user.associado_pedido',
+          'icon' => 'person-badge',
+        ],
+      ] : []),
+      'view.commerce_user_orders.order_page' => [
+        'title' => $this->translation->translate('Meus pedidos'),
+        'route' => 'view.commerce_user_orders.order_page',
+        'icon' => 'bag',
+      ],
+      'aculta_portal.my_data' => [
+        'title' => $this->translation->translate('Meus Dados'),
+        'route' => 'aculta_portal.my_data',
+        'icon' => 'person-vcard',
+      ],
+      'aculta_portal.connections' => [
+        'title' => $this->translation->translate('Conexões'),
+        'route' => 'aculta_portal.connections',
+        'icon' => 'link-45deg',
+      ],
+      'aculta_portal.security' => [
+        'title' => $this->translation->translate('Segurança'),
+        'route' => 'aculta_portal.security',
+        'icon' => 'shield-lock',
+      ],
+      'aculta_portal.account_settings' => [
+        'title' => $this->translation->translate('Configurações'),
+        'route' => 'aculta_portal.account_settings',
+        'icon' => 'sliders',
+      ],
     ];
     $currentUser = $this->currentUser;
     $this->moduleHandler?->alter('aculta_portal_account_sections', $sections, $currentUser);
@@ -103,7 +155,7 @@ final class AccountShellBuilder {
 
     $variables['page']['content'] = [
       '#theme' => 'aculta_portal_shell',
-      // Todo shell da conta carrega o comportamento (navegação AJAX, sanfona do celular), inclusive pedidos.
+      // @todo shell da conta carrega o comportamento (navegação AJAX, sanfona do celular), inclusive pedidos.
       '#attached' => ['library' => ['aculta_portal/account-navigation']],
       '#section_title' => $sections[$route]['title'],
       '#menu_items' => $menuItems,
@@ -117,11 +169,11 @@ final class AccountShellBuilder {
     ];
     // The shell owns the only H1. Keep account actions in its sidebar.
     $variables['aculta_page_title'] = [];
-    $variables['aculta_account_menu'] = [];
+    $variables['aculta_portal_menu'] = [];
   }
 
-
-  /** Verdadeiro quando a rota existe (módulo opcional ativo). O Portal não depende do submódulo. */
+  /**
+   * Verdadeiro quando a rota existe (módulo opcional ativo). O Portal não depende do submódulo. */
   private function routeExists(string $name): bool {
     if ($this->routeProvider === NULL) {
       return FALSE;

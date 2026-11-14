@@ -1,0 +1,8 @@
+/* Controles administrativos: botão no lado direito do comentário, fora do fluxo do texto. */
+.comment--discussion { position: relative; }
+.forum-comment__admin {
+  position: absolute;
+  inset-block-start: var(--spacing-xs);
+  inset-inline-end: var(--spacing-xs);
+  z-index: 1;
+}

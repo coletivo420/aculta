@@ -8,6 +8,7 @@ use Drupal\comment\CommentingStatus;
 use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -58,7 +59,7 @@ final class ForumModerationHooks {
       return NULL;
     }
     $autor = $entity->getOwner();
-    $moderando = $autor === NULL || (int) $autor->id() !== (int) $account->id();
+    $moderando = (int) $autor->id() !== (int) $account->id();
     $editor = in_array('content_editor', $account->getRoles(), TRUE);
     if ($moderando && $editor && !$this->emailConfirmationPolicy->isConfirmed($account)) {
       return AccessResult::forbidden('Moderação exige e-mail confirmado.')
@@ -69,8 +70,8 @@ final class ForumModerationHooks {
     // "delete any" permissions to content_editor. Grant moderation here only
     // after checking the canonical confirmation marker. Own-topic permissions
     // continue through the normal Node access handler.
-    if ($topicoNovo && $moderando && $editor) {
-      return AccessResult::allowed('Editor confirmado pode moderar tópicos públicos.')
+    if ($moderando && $editor) {
+      return AccessResult::allowed()
         ->addCacheableDependency($entity)
         ->addCacheContexts(['user.roles']);
     }
@@ -132,11 +133,11 @@ final class ForumModerationHooks {
     }
     $comments = $this->entityTypeManager->getStorage('comment')->loadMultiple($ids);
     foreach ($comments as $comment) {
-      if ($comment instanceof CommentInterface && $this->isImportedHistoric($comment)) {
+      if ($this->isImportedHistoric($comment)) {
         $form_state->setErrorByName('comments', 'O acervo histórico do Growroom não pode ser moderado.');
         return;
       }
-      if ($comment instanceof CommentInterface && $this->isContextManagedComment($comment)) {
+      if ($this->isContextManagedComment($comment)) {
         $form_state->setErrorByName('comments', 'Comentários de discussões devem ser gerenciados na área própria do contexto.');
         return;
       }
@@ -181,7 +182,8 @@ final class ForumModerationHooks {
    * Checks the existing field that identifies non-account historic authors.
    */
   private function hasHistoricAuthor(EntityInterface $entity): bool {
-    return $entity->hasField('field_autor_legado')
+    return $entity instanceof ContentEntityInterface
+      && $entity->hasField('field_autor_legado')
       && !$entity->get('field_autor_legado')->isEmpty();
   }
 

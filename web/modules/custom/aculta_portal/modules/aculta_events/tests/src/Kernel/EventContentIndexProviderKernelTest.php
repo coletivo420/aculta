@@ -10,8 +10,9 @@ use Drupal\aculta_events\Entity\EventLocation;
 use Drupal\aculta_events\Form\EventDateCreateForm;
 use Drupal\aculta_events\Hook\EventDateHooks;
 use Drupal\aculta_index\Queue\ContentIndexWorkManager;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Form\FormState;
 use Drupal\Core\Session\AnonymousUserSession;
 use Drupal\domain\Entity\Domain;
@@ -46,7 +47,7 @@ final class EventContentIndexProviderKernelTest extends KernelTestBase {
    */
   public function register(ContainerBuilder $container): void {
     parent::register($container);
-    $container->setDefinition('aculta_portal.domain_purpose', (new Definition(DomainPurposeManager::class, [
+    $container->setDefinition('aculta_portal.domain_site', (new Definition(DomainSiteManager::class, [
       new Reference('entity_type.manager'),
       new Reference('domain.negotiator'),
       new Reference('config.factory'),
@@ -150,12 +151,12 @@ final class EventContentIndexProviderKernelTest extends KernelTestBase {
     $locDeleteUrl = $location->toUrl('delete-form');
     $this->assertSame('aculta_events.location_delete', $locDeleteUrl->getRouteName());
 
-    // toCanonicalUrl com e sem DomainPurposeManager.
+    // toCanonicalUrl com e sem DomainSiteManager.
     $this->assertSame('aculta_events.page', $event->toCanonicalUrl(NULL)->getRouteName());
     $this->assertSame('aculta_events.location_canonical', $location->toCanonicalUrl(NULL)->getRouteName());
 
-    /** @var \Drupal\aculta_portal\Domain\DomainPurposeManager $purposes */
-    $purposes = $this->container->get('aculta_portal.domain_purpose');
+    /** @var \Drupal\aculta_portal\Domain\DomainSiteManager $purposes */
+    $purposes = $this->container->get('aculta_portal.domain_site');
     $canonicalEventAbs = $event->toCanonicalUrl($purposes);
     $this->assertStringContainsString('/eventos/' . $event->get('field_slug')->value, $canonicalEventAbs->toString());
 
@@ -258,7 +259,7 @@ final class EventContentIndexProviderKernelTest extends KernelTestBase {
     $date2->save();
 
     // Data 3 em local B (deve acrescentar o local B).
-    $date3 = $dateStorage->create([
+    $date3 = EventDate::create([
       'title' => 'Sessão 3',
       'field_evento' => $event->id(),
       'field_local' => $locB->id(),
@@ -507,7 +508,7 @@ final class EventContentIndexProviderKernelTest extends KernelTestBase {
       10,
     );
     self::assertCount(2, $result->entities, 'Three dates must resolve to two distinct Event entities.');
-    $eventIds = array_map(static fn (Event $event): string => (string) $event->id(), $result->entities);
+    $eventIds = array_map(static fn (ContentEntityInterface $event): string => (string) $event->id(), $result->entities);
     sort($eventIds);
     $expectedIds = [(string) $eventA->id(), (string) $eventB->id()];
     sort($expectedIds);
@@ -668,7 +669,6 @@ final class EventContentIndexProviderKernelTest extends KernelTestBase {
       NULL,
     );
     $hooks->invalidarLista($loc);
-    $this->assertTrue(TRUE);
   }
 
   /**
@@ -733,7 +733,7 @@ final class EventContentIndexProviderKernelTest extends KernelTestBase {
    * Constrói e ativa uma geração usando os providers do container.
    */
   private function buildAndActivateGeneration(): void {
-    /** @var \Drupal\aculta_index\Maintenance\ContentIndexRebuilder $rebuilder */
+    /** @var \Drupal\aculta_index\Rebuild\ContentIndexRebuilder $rebuilder */
     $rebuilder = $this->container->get('aculta_index.rebuilder');
     $generationId = $rebuilder->start();
     $complete = FALSE;

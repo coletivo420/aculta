@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_wiki\ParamConverter;
 
-use Drupal\aculta_contributions\Entity\Contribution;
+use Drupal\aculta_cgu\Entity\Contribution;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\ParamConverter\ParamConverterInterface;
 use Drupal\aculta_wiki\Entity\WikiProposal;

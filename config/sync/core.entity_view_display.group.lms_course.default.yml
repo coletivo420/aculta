@@ -14,7 +14,7 @@ dependencies:
     - image.style.aculta_destaque_16x9
   module:
     - image
-    - aculta_lms_resources
+    - aculta_lms
     - text
 id: group.lms_course.default
 targetEntityType: group

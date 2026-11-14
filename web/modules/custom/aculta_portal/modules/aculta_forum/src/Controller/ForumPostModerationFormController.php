@@ -7,6 +7,7 @@ namespace Drupal\aculta_forum\Controller;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityFormBuilderInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\RevisionableStorageInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
@@ -23,7 +24,11 @@ final class ForumPostModerationFormController extends ControllerBase {
    * Returns the moderation form for the route's revision identifier.
    */
   public function form(string $revision_id): array {
-    $post = $this->forumEntityTypeManager->getStorage('aculta_forum_post')->loadRevision($revision_id);
+    $storage = $this->forumEntityTypeManager->getStorage('aculta_forum_post');
+    if (!$storage instanceof RevisionableStorageInterface) {
+      throw new NotFoundHttpException();
+    }
+    $post = $storage->loadRevision($revision_id);
     if ($post === NULL) {
       throw new NotFoundHttpException();
     }

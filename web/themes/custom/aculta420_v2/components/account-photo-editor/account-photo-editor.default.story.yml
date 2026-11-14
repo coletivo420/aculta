@@ -1,0 +1,27 @@
+name: Editor de foto
+description: Avatar abre o popup de alteração; os controles ilustram o fluxo da conta.
+component: aculta420_v2:account-photo-editor
+props:
+  id: story-account-photo-popup
+  title: Alterar foto do perfil
+  trigger_aria_label: Alterar foto de perfil
+slots:
+  trigger:
+    type: inline_template
+    template: '{{ render_var(aculta_avatar_sample("Avatar de exemplo")) }}'
+  content:
+    type: inline_template
+    template: |
+      <div class="account-photo-editor__preview" data-portal-ui="account-photo-preview">
+        <span data-aculta-user-avatar>{{ include('aculta420_v2:avatar', { size: 'xl', media: render_var(aculta_avatar_sample("Foto de perfil de exemplo")) }, with_context = false) }}</span>
+      </div>
+      <p>Escolha uma imagem e ajuste o enquadramento antes de salvar.</p>
+      <div class="form-item form-type-managed-file">
+        <label for="story-account-photo-file">Foto</label>
+        <input id="story-account-photo-file" type="file" accept="image/png,image/jpeg,image/gif,image/webp">
+        <div class="description">Envie uma imagem PNG, JPG, GIF ou WebP de até 10 MB.</div>
+      </div>
+      <div data-portal-ui="account-photo-actions">
+        {{ include('aculta420_v2:button', { text: 'Sortear novo avatar', variant: 'secondary', icon_before: 'arrows-clockwise' }, with_context = false) }}
+        {{ include('aculta420_v2:button', { text: 'Salvar foto do perfil', variant: 'primary', icon_before: 'floppy-disk' }, with_context = false) }}
+      </div>

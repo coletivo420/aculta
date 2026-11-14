@@ -1,0 +1,18 @@
+.calendar-interactive {
+  display: grid;
+  gap: .75rem;
+}
+
+.calendar-interactive [data-portal-ui~="calendar-interactive-notice"] {
+  color: var(--color-text-muted);
+  font-size: .9375rem;
+}
+
+.calendar-interactive [data-portal-ui~="calendar-interactive-controls"],
+.calendar-interactive [data-portal-ui~="calendar-interactive-alternative"],
+.calendar-interactive [data-portal-ui~="calendar-interactive-agenda"] {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .5rem;
+}

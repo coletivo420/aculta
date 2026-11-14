@@ -28,8 +28,14 @@ final class RegistrationExistingAccountMailType implements MailTypeInterface {
    */
   public function variables(): array {
     return [
-      'login_url' => ['label' => (string) $this->translation->translate('Endereço de login'), 'sample' => 'https://example.invalid/user/login'],
-      'recovery_url' => ['label' => (string) $this->translation->translate('Endereço para recuperar a senha'), 'sample' => 'https://example.invalid/user/password'],
+      'login_url' => [
+        'label' => (string) $this->translation->translate('Endereço de login'),
+        'sample' => 'https://example.invalid/user/login',
+      ],
+      'recovery_url' => [
+        'label' => (string) $this->translation->translate('Endereço para recuperar a senha'),
+        'sample' => 'https://example.invalid/user/password',
+      ],
     ];
   }
 

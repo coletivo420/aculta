@@ -18,6 +18,15 @@ final class GreenStashAccessPolicy {
 
   public const ACCESS = 'access aculta green stash';
 
+  /**
+   * Verifica a permissão de acesso ao Green Stash.
+   *
+   * @param \Drupal\Core\Session\AccountInterface $account
+   *   Conta verificada.
+   *
+   * @return \Drupal\Core\Access\AccessResultInterface
+   *   Resultado permitido quando a conta tem a permissão exigida.
+   */
   public function access(AccountInterface $account): AccessResultInterface {
     return AccessResult::allowedIfHasPermission($account, self::ACCESS);
   }

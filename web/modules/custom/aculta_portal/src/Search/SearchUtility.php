@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Search;
 
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Core\Template\Attribute;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
@@ -12,34 +11,45 @@ use Drupal\Component\Serialization\Json;
 use Drupal\Core\Url;
 
 /**
- * Ícone de busca da barra multidomínio. Abre o popup da busca por AJAX (modal do Core), no host atual.
+ * Ícone de busca da barra multidomínio. Abre o popup da busca no host atual.
+ *
+ * O trigger mantém o contrato Drupal AJAX (modal do Core) como fallback da V1;
+ * no ACULTA420 V2 o tema substitui esses atributos por HTMX antes da interação
+ * (ADR-050, F1). O Portal não depende do tema para renderizar o link.
  */
 final class SearchUtility {
 
   use StringTranslationTrait;
 
   public function __construct(
-    private readonly DomainPurposeManager $domainPurposeManager,
     TranslationInterface $translation,
   ) {
     $this->setStringTranslation($translation);
   }
 
-  /** @return array<string, mixed> */
+  /**
+   * Monta o ícone de busca da barra multidomínio.
+   *
+   * @return array<string, mixed>
+   *   Estrutura renderizável do ícone de busca.
+   */
   public function build(): array {
     return [
-      '#theme' => 'aculta_portal_search_trigger',
-      '#label' => $this->t('Buscar no site'),
-      '#url' => Url::fromRoute('aculta_portal.search_popup')->toString(),
-      // Atributos do gatilho: use-ajax (comportamento do Drupal) e o token de design do tema.
-      '#trigger_attributes' => new Attribute([
-        'class' => ['use-ajax'], 'data-portal-ui' => 'search-utility',
-        'data-dialog-type' => 'modal',
-        'data-dialog-options' => Json::encode([
-          'closeText' => (string) $this->t('Fechar'),
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:site-search-trigger',
+      '#props' => [
+        'label' => (string) $this->t('Buscar no site'),
+        'url' => Url::fromRoute('aculta_portal.search_popup')->toString(),
+        // Fallback para temas que não aprimoram o link para o diálogo HTMX.
+        'attributes' => new Attribute([
+          'class' => ['use-ajax'], 'data-portal-ui' => 'search-utility',
+          'data-dialog-type' => 'modal',
+          'data-dialog-options' => Json::encode([
+            'closeText' => (string) $this->t('Fechar'),
+          ]),
+          'title' => (string) $this->t('Buscar no site'),
         ]),
-        'title' => (string) $this->t('Buscar no site'),
-      ]),
+      ],
       '#attached' => ['library' => ['core/drupal.dialog.ajax']],
       '#cache' => ['contexts' => ['domain', 'url.path']],
     ];

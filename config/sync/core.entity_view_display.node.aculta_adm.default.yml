@@ -7,32 +7,65 @@ dependencies:
     - field.field.node.aculta_adm.field_domain_source
     - node.type.aculta_adm
   module:
+    - layout_builder
     - text
     - user
+third_party_settings:
+  layout_builder:
+    enabled: true
+    allow_custom: false
+    sections:
+      -
+        layout_id: 'ui_patterns:aculta420_v2:layout_section'
+        layout_settings:
+          label: ''
+          context_mapping:
+            entity: layout_builder.entity
+          ui_patterns:
+            component_id: 'aculta420_v2:layout-section'
+            variant_id: null
+            props: {  }
+            slots: {  }
+        components:
+          d1e00bd9-7f27-43e0-ae71-7f45a045f044:
+            uuid: d1e00bd9-7f27-43e0-ae71-7f45a045f044
+            region: content
+            configuration:
+              id: 'extra_field_block:node:aculta_adm:links'
+              label_display: '0'
+              context_mapping:
+                entity: layout_builder.entity
+            weight: 0
+            additional: {  }
+          15b485db-9aae-4816-8852-8752980757ad:
+            uuid: 15b485db-9aae-4816-8852-8752980757ad
+            region: content
+            configuration:
+              id: 'field_block:node:aculta_adm:body'
+              label_display: '0'
+              context_mapping:
+                entity: layout_builder.entity
+              formatter:
+                type: text_default
+                label: hidden
+                settings: {  }
+                third_party_settings: {  }
+            weight: 1
+            additional: {  }
+        third_party_settings: {  }
 id: node.aculta_adm.default
 targetEntityType: node
 bundle: aculta_adm
 mode: default
-content:
-  body:
-    type: text_default
-    label: hidden
-    settings: {  }
-    third_party_settings: {  }
-    weight: 101
-    region: content
-  links:
-    settings: {  }
-    third_party_settings: {  }
-    weight: 100
-    region: content
+content: {  }
 hidden:
-  co_authors: true
+  aculta_coauthors: true
+  body: true
   entity_print_view_epub: true
   entity_print_view_pdf: true
   entity_print_view_word_docx: true
   field_domain_source: true
   langcode: true
+  links: true
   private_message_link: true
   search_api_excerpt: true
-

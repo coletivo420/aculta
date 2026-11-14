@@ -1,0 +1,48 @@
+<div id="aculta-cart-offcanvas-body" class="aculta-utility-dialog__body aculta-cart-offcanvas__body"{% if htmx_oob %} hx-swap-oob="outerHTML"{% endif %}>
+  {% if empty %}
+    <p class="aculta-cart-offcanvas__empty">{{ 'Sem produto(s) no carrinho.'|t }}</p>
+  {% else %}
+    <div class="aculta-cart-offcanvas__lista" role="list">
+      {% for site in sites %}
+        {% if site.key != 'assinatura' %}
+          <div class="aculta-cart-offcanvas__separador" role="separator">
+            <span class="aculta-cart-offcanvas__separador-nome">{{ site.label }}</span>
+            <span class="aculta-cart-offcanvas__separador-total">{{ site.total }}</span>
+          </div>
+          {% for item in site.items %}
+            <div class="aculta-cart-offcanvas__caixa" role="listitem">
+              <span class="aculta-cart-offcanvas__title">{{ item.title }}</span>
+              <span class="aculta-cart-offcanvas__meta">{{ item.quantity }} × {{ item.total }}</span>
+            </div>
+          {% endfor %}
+        {% endif %}
+      {% endfor %}
+    </div>
+    {% if checkout_url %}
+      <a class="aculta-cart-offcanvas__action" href="{{ checkout_url }}">{{ 'Finalizar carrinho'|t }}</a>
+    {% endif %}
+    {% for site in sites %}
+      {% if site.key == 'assinatura' %}
+        <section class="aculta-cart-offcanvas__assinatura">
+          <div class="aculta-cart-offcanvas__separador" role="separator">
+            <span class="aculta-cart-offcanvas__separador-nome">{{ site.label }}</span>
+            <span class="aculta-cart-offcanvas__separador-total">{{ site.total }}</span>
+          </div>
+          {% for item in site.items %}
+            <div class="aculta-cart-offcanvas__caixa" role="listitem">
+              <span class="aculta-cart-offcanvas__title">{{ item.title }}</span>
+              <span class="aculta-cart-offcanvas__meta">{{ item.quantity }} × {{ item.total }}</span>
+            </div>
+          {% endfor %}
+          {% if site.checkout_url %}
+            <a class="aculta-cart-offcanvas__action aculta-cart-offcanvas__action--outline" href="{{ site.checkout_url }}">{{ 'Finalizar assinatura'|t }}</a>
+          {% endif %}
+        </section>
+      {% endif %}
+    {% endfor %}
+    <p class="aculta-cart-offcanvas__total"><strong>{{ 'Total geral:'|t }}</strong> {{ total }}</p>
+    {% if url %}
+      <a class="aculta-cart-offcanvas__cart-link" href="{{ url }}">{{ 'Ver carrinho completo'|t }}</a>
+    {% endif %}
+  {% endif %}
+</div>

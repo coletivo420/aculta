@@ -7,9 +7,21 @@ namespace Drupal\aculta_lms\Entity;
 use Drupal\Core\Entity\ContentEntityTypeInterface;
 use Drupal\Core\Entity\Sql\SqlContentEntityStorageSchema;
 
-/** Adds indexes spanning fields on the internal learning entity tables. */
+/**
+ * Adds indexes spanning fields on the internal learning entity tables. */
 final class LearningEntityStorageSchema extends SqlContentEntityStorageSchema {
 
+  /**
+   * Acrescenta índices que abrangem campos das entidades de aprendizagem.
+   *
+   * @param \Drupal\Core\Entity\ContentEntityTypeInterface $entity_type
+   *   Definição do tipo de entidade.
+   * @param bool $reset
+   *   Quando TRUE, descarta o esquema em cache.
+   *
+   * @return array
+   *   Esquema da entidade, com os índices extras.
+   */
   protected function getEntitySchema(ContentEntityTypeInterface $entity_type, $reset = FALSE) {
     $schema = parent::getEntitySchema($entity_type, $reset);
     $table = $entity_type->getBaseTable() ?? '';

@@ -4,11 +4,15 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Hook;
 
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\File\FileUrlGeneratorInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Hook\Attribute\Hook;
+use Drupal\file\FileInterface;
+use Drupal\media\MediaInterface;
 use Drupal\aculta_portal\Environment\DeployerEnvironment;
 use Drupal\aculta_mail_confirmer\AcultaMailConfirmerManagerInterface;
 use Drupal\Core\Render\BubbleableMetadata;
@@ -25,14 +29,14 @@ use Symfony\Component\HttpFoundation\RequestStack;
 final class TokenHooks {
 
   public function __construct(
-    #[Autowire('%app.root%')]
+    #[Autowire(param: 'app.root')]
     private readonly string $appRoot,
     #[Autowire(service: 'config.factory')]
     private readonly ConfigFactoryInterface $configFactory,
     #[Autowire(service: 'entity_type.manager')]
     private readonly EntityTypeManagerInterface $entityTypeManager,
-    #[Autowire(service: 'aculta_portal.domain_purpose')]
-    private readonly DomainPurposeManager $domainPurposeManager,
+    #[Autowire(service: 'aculta_portal.domain_site')]
+    private readonly DomainSiteManager $siteManager,
     #[Autowire(service: 'domain.negotiator')]
     private readonly DomainNegotiatorInterface $domainNegotiator,
     #[Autowire(service: 'request_stack')]
@@ -45,7 +49,8 @@ final class TokenHooks {
     private readonly AcultaMailConfirmerManagerInterface $confirmationManager,
   ) {}
 
-  /** Declares institutional and editorial tokens. */
+  /**
+ * Declares institutional and editorial tokens. */
   #[Hook('token_info')]
   public function tokenInfo(): array {
     $tokens = [];
@@ -122,7 +127,7 @@ final class TokenHooks {
       return;
     }
     $confirmation = $context['data']['aculta_mail_confirmer'];
-    $url = $this->domainPurposeManager->routeUrl('account', 'entity.aculta_mail_confirmer.response_form', [
+    $url = $this->siteManager->routeUrl(SiteKey::Account, 'entity.aculta_mail_confirmer.response_form', [
       'aculta_mail_confirmer' => $confirmation->uuid(),
       'hash' => $this->confirmationManager->getHash($confirmation),
     ]);
@@ -134,7 +139,8 @@ final class TokenHooks {
     $metadata->setCacheMaxAge(0);
   }
 
-  /** Replaces institutional/editorial tokens while preserving cacheability. */
+  /**
+ * Replaces institutional/editorial tokens while preserving cacheability. */
   #[Hook('tokens')]
   public function tokens(
     string $type,
@@ -179,7 +185,8 @@ final class TokenHooks {
 
       foreach ($tokens as $name => $original) {
         if ($name === 'url') {
-          // Endereço principal do ambiente (mapeamento de endereços por ambiente); o campo do bloco guarda o endereço de produção.
+          // Endereço principal do ambiente (mapeamento de endereços por ambiente); o campo do bloco
+          // guarda o endereço de produção.
           $result[$original] = DeployerEnvironment::siteUrl(dirname($this->appRoot)) ?? (string) ($block->get('field_site')->uri ?? '');
         }
         elseif (isset($fields[$name]) && $block->hasField($fields[$name])) {
@@ -195,9 +202,9 @@ final class TokenHooks {
     $node = $data['node'];
     $metadata->addCacheableDependency($node);
 
-    $domainPurpose = 'main';
+    $siteManager = 'main';
     if ($node->hasField('field_domain_source') && !$node->get('field_domain_source')->isEmpty()) {
-      $domainPurpose = $this->domainPurposeManager->getPurposeForDomainId(
+      $siteManager = $this->siteManager->getSiteKeyValueForDomainId(
         (string) $node->get('field_domain_source')->target_id,
       ) ?? 'main';
     }
@@ -305,7 +312,7 @@ final class TokenHooks {
           $author = $node->hasField('field_editorial_author')
             ? $node->get('field_editorial_author')->entity
             : NULL;
-          if ($author !== NULL) {
+          if ($author instanceof ContentEntityInterface) {
             $metadata->addCacheableDependency($author);
             $value = $name === 'author-name'
               ? $author->label()
@@ -320,23 +327,23 @@ final class TokenHooks {
           $media = $node->hasField('field_media_image')
             ? $node->get('field_media_image')->entity
             : NULL;
-          $file = $media && $media->hasField('field_media_image')
+          $file = $media instanceof MediaInterface && $media->hasField('field_media_image')
             ? $media->get('field_media_image')->entity
             : NULL;
           $value = '';
-          if ($file !== NULL && $media->isPublished()) {
+          if ($file instanceof FileInterface && $media->isPublished()) {
             $metadata
               ->addCacheableDependency($media)
               ->addCacheableDependency($file);
             $relative = $this->fileUrlGenerator->generateString($file->getFileUri());
             $imageUrl = str_starts_with($relative, '/')
-              ? $this->domainPurposeManager->pathUrl($domainPurpose, $relative)
+              ? $this->siteManager->pathUrl($siteManager, $relative)
               : NULL;
-            // pathUrl() is built from the purpose Domain entity and the active
+            // pathUrl() is built from the site Domain entity and the active
             // alias environment, and it returns a plain Url without metadata.
-            $purposeDomain = $this->domainPurposeManager->getDomain($domainPurpose);
-            if ($purposeDomain !== NULL) {
-              $metadata->addCacheableDependency($purposeDomain);
+            $imageDomain = $this->siteManager->getDomain($siteManager);
+            if ($imageDomain !== NULL) {
+              $metadata->addCacheableDependency($imageDomain);
             }
             $metadata->addCacheContexts(['url.site', 'domain']);
             $value = $imageUrl?->toString() ?? $relative;

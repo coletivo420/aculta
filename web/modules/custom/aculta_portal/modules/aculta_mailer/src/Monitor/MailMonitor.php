@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_mailer\Monitor;
 
-use Drupal\aculta_file_uploader\IngestionLimits;
 use Drupal\aculta_mailer\Alert\MailAlerts;
 use Drupal\aculta_mailer\Policy\QuotaSignal;
 use Drupal\aculta_mailer\Transport\SecretProviderInterface;
@@ -72,8 +71,12 @@ final class MailMonitor {
     private readonly ?SecretProviderInterface $secrets,
     private readonly MailAlerts $alerts,
     private readonly QuotaSignal $quotaSignal,
-    private readonly IngestionLimits $ingestionLimits,
   ) {}
+
+  /**
+   * Teto próprio de download de uma mensagem IMAP.
+   */
+  private const IMAP_MAX_MESSAGE_BYTES = 25 * 1024 * 1024;
 
   /**
    * Monitoramento ativo na configuração.
@@ -116,7 +119,7 @@ final class MailMonitor {
       $user,
       $password,
       $mailbox !== '' ? $mailbox : 'INBOX',
-      $this->ingestionLimits->bytes(IngestionLimits::IMAP_MAX_MESSAGE_MB),
+      self::IMAP_MAX_MESSAGE_BYTES,
     );
   }
 

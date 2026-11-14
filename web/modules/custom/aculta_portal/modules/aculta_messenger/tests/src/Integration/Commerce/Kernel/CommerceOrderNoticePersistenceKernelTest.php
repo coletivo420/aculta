@@ -10,7 +10,7 @@ use Drupal\aculta_messenger\Aviso\AvisoPreferencias;
 use Drupal\aculta_messenger\Aviso\AvisoPreferenciasInterface;
 use Drupal\aculta_messenger\Event\MessengerNoticeEvent;
 use Drupal\aculta_portal\Checkout\CheckoutSettings;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\commerce_order\Entity\OrderInterface;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Config\ConfigFactoryInterface;
@@ -25,6 +25,7 @@ use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\message\Entity\Message;
 use Drupal\message\Entity\MessageTemplate;
+use Drupal\message\MessageInterface;
 use Drupal\user\Entity\User;
 use Drupal\domain\DomainInterface;
 use Drupal\domain\DomainNegotiatorInterface;
@@ -89,7 +90,9 @@ final class CommerceOrderNoticePersistenceKernelTest extends KernelTestBase {
 
     $storage = $this->container->get('entity_type.manager')->getStorage('message');
     self::assertSame(1, (int) $storage->getQuery()->accessCheck(FALSE)->count()->execute());
-    $message = $storage->load(reset($storage->getQuery()->accessCheck(FALSE)->execute()));
+    $ids = $storage->getQuery()->accessCheck(FALSE)->execute();
+    $message = $storage->load(reset($ids));
+    self::assertInstanceOf(MessageInterface::class, $message);
     self::assertSame(1, (int) $message->get('field_aculta_commerce_digest')->value);
     self::assertSame('sent', $message->get('field_aculta_msg_delivery')->value);
   }
@@ -112,7 +115,9 @@ final class CommerceOrderNoticePersistenceKernelTest extends KernelTestBase {
 
     $storage = $this->container->get('entity_type.manager')->getStorage('message');
     self::assertSame(1, (int) $storage->getQuery()->accessCheck(FALSE)->count()->execute());
-    $message = $storage->load(reset($storage->getQuery()->accessCheck(FALSE)->execute()));
+    $ids = $storage->getQuery()->accessCheck(FALSE)->execute();
+    $message = $storage->load(reset($ids));
+    self::assertInstanceOf(MessageInterface::class, $message);
     self::assertSame(1, (int) $message->get('field_aculta_commerce_digest')->value);
     self::assertSame('pending', $message->get('field_aculta_msg_delivery')->value);
   }
@@ -147,7 +152,7 @@ final class CommerceOrderNoticePersistenceKernelTest extends KernelTestBase {
     self::assertCount(2, $rows);
     self::assertSame('loja', $rows[0]['tipo']);
     self::assertGreaterThan(0, $rows[0]['delivery_id']);
-    self::assertSame(1, count(array_unique(array_column($rows, 'titulo'))));
+    self::assertCount(1, array_unique(array_column($rows, 'titulo')));
     self::assertSame(
       array_column($rows, 'delivery_id'),
       array_column($manager->digestRowsFor($uid), 'delivery_id'),
@@ -169,15 +174,23 @@ final class CommerceOrderNoticePersistenceKernelTest extends KernelTestBase {
     (new CommerceOrderNoticeConsumer($manager))->consume($this->event((int) $user->id()));
 
     $storage = $this->container->get('entity_type.manager')->getStorage('message');
-    $message = $storage->load(reset($storage->getQuery()->accessCheck(FALSE)->execute()));
+    $ids = $storage->getQuery()->accessCheck(FALSE)->execute();
+    $message = $storage->load(reset($ids));
+    self::assertInstanceOf(MessageInterface::class, $message);
     self::assertTrue($manager->setRead($message, $user, TRUE));
-    self::assertSame(1, (int) $storage->load($message->id())->get('field_aculta_commerce_read')->value);
+    $storedMessage = $storage->load($message->id());
+    self::assertInstanceOf(MessageInterface::class, $storedMessage);
+    self::assertSame(1, (int) $storedMessage->get('field_aculta_commerce_read')->value);
 
     $other = $this->createUser('another_store_reader');
     self::assertFalse($manager->setRead($message, $other, FALSE));
-    self::assertSame(1, (int) $storage->load($message->id())->get('field_aculta_commerce_read')->value);
+    $storedMessage = $storage->load($message->id());
+    self::assertInstanceOf(MessageInterface::class, $storedMessage);
+    self::assertSame(1, (int) $storedMessage->get('field_aculta_commerce_read')->value);
     self::assertTrue($manager->setRead($message, $user, FALSE));
-    self::assertSame(0, (int) $storage->load($message->id())->get('field_aculta_commerce_read')->value);
+    $storedMessage = $storage->load($message->id());
+    self::assertInstanceOf(MessageInterface::class, $storedMessage);
+    self::assertSame(0, (int) $storedMessage->get('field_aculta_commerce_read')->value);
   }
 
   /**
@@ -225,7 +238,7 @@ final class CommerceOrderNoticePersistenceKernelTest extends KernelTestBase {
     if ($orderCustomer === NULL) {
       return new CommerceOrderNoticeManager(
         $this->container->get('entity_type.manager'),
-        (new \ReflectionClass(DomainPurposeManager::class))->newInstanceWithoutConstructor(),
+        (new \ReflectionClass(DomainSiteManager::class))->newInstanceWithoutConstructor(),
         (new \ReflectionClass(CheckoutSettings::class))->newInstanceWithoutConstructor(),
         $preferences,
         $queueFactory,
@@ -264,7 +277,7 @@ final class CommerceOrderNoticePersistenceKernelTest extends KernelTestBase {
     });
     return new CommerceOrderNoticeManager(
       $entityTypeManager,
-      new DomainPurposeManager(
+      new DomainSiteManager(
         $entityTypeManager,
         $this->createMock(DomainNegotiatorInterface::class),
         $configFactory,

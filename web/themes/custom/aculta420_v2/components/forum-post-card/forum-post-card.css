@@ -1,0 +1,711 @@
+.forum-post-card {
+  position: relative;
+  display: flex;
+  overflow: visible;
+  flex-direction: column;
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--border-radius-lg);
+  background-color: var(--color-surface-raised);
+  box-shadow: var(--shadow-sm);
+}
+
+.forum-post-card__stripe {
+  inline-size: 100%;
+  block-size: 4px;
+  flex-shrink: 0;
+  border-start-start-radius: var(--border-radius-lg);
+  border-start-end-radius: var(--border-radius-lg);
+}
+
+.forum-post-card--stripe-brand .forum-post-card__stripe {
+  background-color: var(--color-brand-primary);
+}
+
+.forum-post-card--stripe-highlight .forum-post-card__stripe {
+  background-color: var(--color-brand-accent);
+}
+
+.forum-post-card--stripe-member .forum-post-card__stripe {
+  background-color: var(--color-border-subtle);
+}
+
+.forum-post-card__inner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md);
+  min-inline-size: 0;
+}
+
+.forum-post-card__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--spacing-sm);
+  min-inline-size: 0;
+}
+
+.forum-post-card__author {
+  display: flex;
+  align-items: center;
+  /* Painel do autor com a superfície de canvas (clara e escura pelos tokens do tema). */
+  padding: var(--spacing-sm);
+  /* Só a barra superior de destaque: --color-border-highlight (tom escuro no claro, amarelo no escuro). */
+  border-block-start: 4px solid var(--color-border-highlight);
+  border-radius: var(--radius-sm);
+  background: var(--color-reference-author-panel);
+  gap: var(--spacing-sm);
+  min-inline-size: 0;
+}
+
+.forum-post-card__avatar {
+  display: flex;
+  overflow: hidden;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--border-radius-full);
+  background-color: var(--color-surface-subtle);
+  inline-size: 2.75rem;
+  block-size: 2.75rem;
+}
+
+.forum-post-card__avatar img {
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+}
+
+.forum-post-card__avatar-fallback {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-secondary);
+  border-radius: var(--border-radius-full);
+  background-color: var(--color-surface-subtle);
+  inline-size: 2.75rem;
+  block-size: 2.75rem;
+}
+
+.forum-post-card__avatar-fallback .aculta-icon {
+  inline-size: 60%;
+  block-size: 60%;
+}
+
+.forum-post-card__author-info {
+  display: flex;
+  flex-direction: column;
+  gap: .125rem;
+  min-inline-size: 0;
+}
+
+.forum-post-card__author-name-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--spacing-xs);
+}
+
+.forum-post-card__author-name {
+  color: var(--color-text-primary);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-tight);
+}
+
+.forum-post-card__author-role {
+  color: var(--color-brand-primary);
+  border-radius: var(--border-radius-sm);
+  background-color: var(--color-surface-subtle);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  padding-inline: var(--spacing-xs);
+  padding-block: .0625rem;
+}
+
+.forum-post-card__author-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-xs);
+  gap: var(--spacing-xs);
+}
+
+.forum-post-card__reaction-stat {
+  display: inline-flex;
+  align-items: center;
+  gap: .25rem;
+  color: var(--color-text-secondary);
+}
+
+.forum-post-card__reply-link {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  color: var(--color-brand-primary);
+  border-radius: var(--border-radius-md);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  gap: var(--spacing-xs);
+  padding-inline: var(--spacing-sm);
+  padding-block: var(--spacing-xs);
+  min-block-size: 2.75rem;
+}
+
+.forum-post-card__reply-link:hover {
+  background-color: var(--color-surface-subtle);
+}
+
+.forum-post-card__body {
+  word-break: break-word;
+  color: var(--color-text-primary);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-normal);
+  overflow-wrap: break-word;
+}
+
+.forum-post-card__body > :first-child {
+  margin-block-start: 0;
+}
+
+.forum-post-card__body > :last-child {
+  margin-block-end: 0;
+}
+
+.forum-post-card__footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  margin-block-start: var(--spacing-xs);
+  padding-block-start: var(--spacing-xs);
+  /* Barra separadora entre o corpo do post e as reações/ações. */
+  border-block-start: .8px solid var(--color-link-editorial);
+  gap: var(--spacing-sm);
+  min-inline-size: 0;
+}
+
+.forum-post-card__reactions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.forum-post-card__reaction {
+  display: inline-flex;
+  align-items: center;
+  color: var(--color-text-secondary);
+  border-radius: var(--border-radius-full);
+  background-color: var(--color-surface-subtle);
+  font-size: var(--font-size-xs);
+  gap: .25rem;
+  padding-inline: var(--spacing-xs);
+  padding-block: .125rem;
+}
+
+.forum-post-card__reaction-count {
+  font-weight: var(--font-weight-medium);
+}
+
+/* Telas médias e grandes: layout de duas colunas (autor à esquerda, corpo à direita). */
+@media (min-width: 48rem) {
+  .forum-post-card__inner {
+    display: grid;
+    grid-template-areas:
+      "author body"
+      "author body"
+      "author footer";
+    grid-template-rows: auto 1fr auto;
+    grid-template-columns: 14rem 1fr;
+    padding: var(--spacing-lg);
+    gap: var(--spacing-lg);
+  }
+
+  .forum-post-card__header {
+    flex-direction: column;
+    grid-area: author;
+    align-items: flex-start;
+    padding-inline-end: var(--spacing-lg);
+    border-inline-end: 1px solid var(--color-border-subtle);
+    gap: var(--spacing-sm);
+  }
+
+  .forum-post-card__author {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-sm);
+    inline-size: 100%;
+  }
+
+  .forum-post-card__avatar {
+    inline-size: 4rem;
+    block-size: 4rem;
+  }
+
+  .forum-post-card__avatar-fallback {
+    inline-size: 4rem;
+    block-size: 4rem;
+  }
+
+  .forum-post-card__author-meta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: .125rem;
+  }
+
+  .forum-post-card__body {
+    grid-area: body;
+  }
+
+  .forum-post-card__footer {
+    grid-area: footer;
+  }
+}
+
+/* Modos de contraste / reduced motion. */
+@media (prefers-reduced-motion: reduce) {
+  .forum-post-card,
+  .forum-post-card__reply-link {
+    transition: none;
+  }
+}
+
+/* Links de operação de comentário (permalink, citar, editar, excluir) */
+.forum-post-card .forum-post-card__actions {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.forum-post-card ul.links {
+  display: inline-flex;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  gap: var(--spacing-xs);
+}
+
+.forum-post-card ul.links li {
+  display: inline-flex;
+  align-items: center;
+}
+
+/* Ações com atributos semânticos ou seletores acessíveis */
+.forum-post-card a.permalink,
+.forum-post-card a[data-action="permalink"],
+.forum-post-card a[href*="#resposta-"] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  color: var(--color-brand-primary);
+  min-block-size: 2.75rem;
+  min-inline-size: 2.75rem;
+}
+
+.forum-post-card a[data-action="resposta-citar"],
+.forum-post-card a.resposta-acao--citar {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  color: var(--color-link-editorial);
+  min-block-size: 2.75rem;
+  padding-inline: var(--spacing-sm);
+}
+
+.forum-post-card a[data-action="edit"],
+.forum-post-card a[href$="/editar"] {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  color: var(--color-brand-primary);
+  min-block-size: 2.75rem;
+  padding-inline: var(--spacing-sm);
+}
+
+.forum-post-card a[data-action="delete"],
+.forum-post-card a[href$="/apagar"] {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  color: var(--color-status-error-text);
+  min-block-size: 2.75rem;
+  padding-inline: var(--spacing-sm);
+}
+
+.forum-post-card a.resposta-acao:hover,
+.forum-post-card a.permalink:hover {
+  border-radius: var(--border-radius-md);
+  background-color: var(--color-surface-subtle);
+}
+
+/* Discussion consumers wrap this SDC in Drupal comment articles. Keep card-only
+   alternation here so Forum and LMS share the same post presentation. */
+:is(.field--name-field-aculta-discussion, [data-aculta-discussion-thread]) article.js-comment > .forum-post-card > .forum-post-card__stripe {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0;
+  inline-size: .25rem;
+  block-size: auto;
+}
+
+:is(.field--name-field-aculta-discussion, [data-aculta-discussion-thread]) article.js-comment > .forum-post-card--side-end > .forum-post-card__stripe {
+  inset-inline-start: auto;
+  inset-inline-end: 0;
+  background-color: var(--button-danger-bg);
+}
+
+@media (min-width: 48rem) {
+  :is(.field--name-field-aculta-discussion, [data-aculta-discussion-thread]) article.js-comment > .forum-post-card--side-end > .forum-post-card__inner {
+    grid-template-areas: "body author" "body author" "footer author";
+    grid-template-columns: minmax(0, 1fr) 14rem;
+  }
+
+  :is(.field--name-field-aculta-discussion, [data-aculta-discussion-thread]) article.js-comment > .forum-post-card--side-end > .forum-post-card__inner > .forum-post-card__header {
+    padding-inline-start: var(--spacing-lg);
+    padding-inline-end: 0;
+    border-inline-end: 0;
+    border-inline-start: 1px solid var(--color-border-subtle);
+  }
+
+  :is(.field--name-field-aculta-discussion, [data-aculta-discussion-thread]) article.js-comment > .forum-post-card--side-end > .forum-post-card__inner > .forum-post-card__footer {
+    flex-direction: row-reverse;
+    border-block-start-color: var(--color-brand-primary);
+  }
+}
+
+:is(.field--name-field-aculta-discussion, [data-aculta-discussion-thread]) article.js-comment > .forum-post-card--side-end > .forum-post-card__inner > .forum-post-card__footer {
+  border-block-start-color: var(--color-brand-primary);
+}
+
+/* Ações de comentário com ícones Phosphor (ícone e texto em aria-label; cor e hover do tema). */
+.aculta-resposta-acao {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: color var(--motion-fast) ease, transform var(--motion-fast) ease;
+  text-decoration: none;
+  color: var(--color-text-secondary);
+  border-radius: var(--radius-sm);
+  min-inline-size: var(--tap-target-min, 2.75rem);
+  min-block-size: var(--tap-target-min, 2.75rem);
+}
+
+.aculta-resposta-acao__icon {
+  display: inline-flex;
+  inline-size: 1.25rem;
+  block-size: 1.25rem;
+}
+
+.aculta-resposta-acao__icon svg {
+  inline-size: 100%;
+  block-size: 100%;
+  fill: currentColor;
+  /* Peso "negrito": o tema tem só o peso regular; o contorno engrossa o traço. */
+  stroke: currentColor;
+  stroke-width: 12;
+  stroke-linejoin: round;
+}
+
+.aculta-resposta-acao:hover,
+.aculta-resposta-acao:focus-visible {
+  transform: translateY(-1px);
+  color: var(--color-brand-primary);
+}
+
+.aculta-resposta-acao--apagar {
+  color: var(--button-danger-bg);
+}
+
+.aculta-resposta-acao--apagar:hover,
+.aculta-resposta-acao--apagar:focus-visible {
+  color: var(--button-danger-bg-hover);
+}
+
+.aculta-resposta-acao:focus-visible {
+  outline: 3px solid var(--color-brand-highlight);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aculta-resposta-acao {
+    transition: none;
+  }
+  .aculta-resposta-acao:hover,
+  .aculta-resposta-acao:focus-visible {
+    transform: none;
+  }
+}
+.discussion-comment-thread {
+  display: grid;
+  gap: .75rem;
+  row-gap: 10px;
+  margin-block: 10px 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+:is(.field--name-field-aculta-discussion, .field--name-comments, .discussion-comment-thread) .indented { display: contents; }
+:is(.field--name-field-aculta-discussion, .field--name-comments, .discussion-comment-thread) article.js-comment:is([data-comment-depth="0"], .discussion-comment-depth-0) { margin-inline-start: 0; }
+:is(.field--name-field-aculta-discussion, .field--name-comments, .discussion-comment-thread) article.js-comment:is([data-comment-depth="1"], .discussion-comment-depth-1) { margin-inline-start: 1rem; }
+:is(.field--name-field-aculta-discussion, .field--name-comments, .discussion-comment-thread) article.js-comment:is([data-comment-depth="2"], .discussion-comment-depth-2) { margin-inline-start: 2rem; }
+:is(.field--name-field-aculta-discussion, .field--name-comments, .discussion-comment-thread) article.js-comment:is([data-comment-depth="3"], .discussion-comment-depth-3) { margin-inline-start: 3rem; }
+
+@media (min-width: 48rem) {
+  :is(.field--name-field-aculta-discussion, .field--name-comments, .discussion-comment-thread) article.js-comment:is([data-comment-depth="1"], .discussion-comment-depth-1) { margin-inline-start: 2.5rem; }
+  :is(.field--name-field-aculta-discussion, .field--name-comments, .discussion-comment-thread) article.js-comment:is([data-comment-depth="2"], .discussion-comment-depth-2) { margin-inline-start: 5rem; }
+  :is(.field--name-field-aculta-discussion, .field--name-comments, .discussion-comment-thread) article.js-comment:is([data-comment-depth="3"], .discussion-comment-depth-3) { margin-inline-start: 7.5rem; }
+}
+
+:is(.field--name-field-aculta-discussion, .field--name-comments, .discussion-comment-thread) :is(a, button, input, select, textarea):focus-visible {
+  outline: var(--focus-ring-width) solid var(--color-focus-ring);
+  outline-offset: var(--focus-ring-offset);
+}
+:is(.field--name-field-aculta-discussion, .field--name-comments, .discussion-comment-thread) article.js-comment { scroll-margin-block-start: 5rem; }
+:is(.field--name-field-aculta-discussion, .field--name-comments, .discussion-comment-thread) .comment__in-reply-to { margin: 0 0 var(--spacing-xs); color: var(--color-text-secondary); font-size: var(--font-size-sm); }
+:is(.field--name-field-aculta-discussion, .field--name-comments, .discussion-comment-thread) .comment__in-reply-to-author { color: var(--color-text-primary); }
+
+/* Faixa lateral de acento da UI Library (surface-accent): esquerda (start) ou direita (end). */
+.forum-post-card--side-start,
+.forum-post-card--side-end {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+}
+
+.forum-post-card__side-stripe {
+  flex: 0 0 1.25rem;
+  inline-size: 1.25rem;
+  align-self: stretch;
+  border-start-start-radius: var(--border-radius-lg);
+  border-end-start-radius: var(--border-radius-lg);
+}
+
+.forum-post-card--side-end .forum-post-card__side-stripe {
+  order: 2;
+  border-start-start-radius: 0;
+  border-end-start-radius: 0;
+  border-start-end-radius: var(--border-radius-lg);
+  border-end-end-radius: var(--border-radius-lg);
+}
+
+.forum-post-card--accent-green .forum-post-card__side-stripe { background-color: var(--accent-green-stripe); }
+.forum-post-card--accent-yellow .forum-post-card__side-stripe { background-color: var(--accent-yellow-stripe); }
+.forum-post-card--accent-red .forum-post-card__side-stripe { background-color: var(--accent-red-stripe); }
+
+.forum-post-card--side-start .forum-post-card__stripe,
+.forum-post-card--side-end .forum-post-card__stripe {
+  display: none;
+}
+
+.forum-post-card--side-start > .forum-post-card__inner,
+.forum-post-card--side-end > .forum-post-card__inner {
+  flex: 1 1 auto;
+  min-inline-size: 0;
+}
+
+/* Densidade compacta (modelo mobile): menos espaçamento, cabeçalho e rodapé empilhados, ações menores. */
+/* Versão mobile: autoria em cima, corpo embaixo, em uma coluna, também na tela desktop
+   (a grade de duas colunas do @media 48rem não se aplica a ela). */
+.forum-post-card--density-compact .forum-post-card__inner {
+  display: flex;
+  flex-direction: column;
+  grid-template-areas: none;
+  grid-template-columns: none;
+  padding: var(--spacing-sm);
+  gap: var(--spacing-xs);
+}
+
+.forum-post-card--density-compact .forum-post-card__header,
+.forum-post-card--density-compact .forum-post-card__footer {
+  flex-wrap: wrap;
+  gap: var(--spacing-xs);
+}
+
+.forum-post-card--density-compact .forum-post-card__avatar,
+.forum-post-card--density-compact .forum-post-card__avatar-fallback {
+  inline-size: 2rem;
+  block-size: 2rem;
+}
+
+.forum-post-card--density-compact .forum-post-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-xs);
+}
+
+/* Em telas pequenas, o cartão usa o modelo compacto automaticamente. */
+@media (max-width: 36rem) {
+  .forum-post-card__inner {
+    padding: var(--spacing-sm);
+    gap: var(--spacing-xs);
+  }
+
+  .forum-post-card__header,
+  .forum-post-card__footer {
+    flex-wrap: wrap;
+    gap: var(--spacing-xs);
+  }
+
+  .forum-post-card__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-xs);
+  }
+}
+
+/* Autoria lateral (author_position: side): corpo à esquerda, autoria em coluna à direita, rodapé na largura toda.
+   Só no desktop; no celular o cartão empilha como antes. */
+@media (min-width: 48rem) {
+  .forum-post-card--author-side > .forum-post-card__inner {
+    display: grid;
+    grid-template-areas: "body header" "footer footer";
+    grid-template-columns: minmax(0, 1fr) minmax(12rem, 16rem);
+    column-gap: var(--spacing-lg);
+  }
+  .forum-post-card--author-side > .forum-post-card__inner > .forum-post-card__header {
+    flex-direction: column;
+    grid-area: header;
+    align-items: stretch;
+    padding: var(--spacing-md);
+    border-radius: var(--border-radius-md, .5rem);
+    background: var(--color-surface-subtle);
+  }
+  .forum-post-card--author-side .forum-post-card__body { grid-area: body; }
+  .forum-post-card--author-side .forum-post-card__footer { grid-area: footer; }
+}
+
+/* Versão mobile: autor no topo, à direita, na mesma linha do avatar; avatar menor e proporcional. */
+.forum-post-card--density-compact .forum-post-card__author {
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+/* Nome do autor sempre alinhado à esquerda, em qualquer modo (topo, lateral ou compacto). */
+.forum-post-card__author,
+.forum-post-card__author .forum-author-line,
+.forum-post-card__author .forum-author-line__identity {
+  justify-content: flex-start;
+  text-align: start;
+}
+
+.forum-post-card--density-compact .forum-author-line {
+  --avatar-size: 2.25rem;
+}
+
+/* Quantidade de posts e data do autor em uma só linha, em qualquer largura. */
+.forum-post-card .forum-post-card__author-meta {
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  white-space: nowrap;
+}
+
+/* Desktop: avatar, nome e linha de posts e data alinhados à esquerda; espaçamento menor entre avatar e nome. */
+@media (min-width: 48rem) {
+  .forum-post-card .forum-post-card__author-info {
+    flex: 1 1 auto;
+    inline-size: 100%;
+    text-align: start;
+  }
+
+  .forum-post-card .forum-post-card__author-meta {
+    justify-content: flex-start;
+    margin-inline-start: 0;
+  }
+
+  .forum-post-card .forum-post-card__author .forum-author-line__identity {
+    gap: .125rem;
+  }
+}
+
+/* Cartão compacto (respostas): nome com mais respiro entre as linhas; posts e data no canto inferior direito, logo abaixo do nome. */
+/* Nome do autor sempre em uma linha; se não couber, reticências. */
+.forum-post-card .forum-author-line__name {
+  min-inline-size: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.forum-post-card--density-compact .forum-post-card__author {
+  align-items: stretch;
+}
+
+.forum-post-card--density-compact .forum-post-card__author-info {
+  align-self: flex-end;
+  margin-inline-start: auto;
+  text-align: end;
+}
+
+.forum-post-card--density-compact .forum-post-card__author-meta {
+  justify-content: flex-end;
+  margin-block-start: .125rem;
+}
+
+/* Cartão compacto: o nome sobe, alinhado ao topo do avatar. */
+.forum-post-card--density-compact .forum-post-card__author > .forum-author-line {
+  align-self: flex-start;
+}
+
+/* Nome do autor encolhe dentro do bloco (reticências); posts e data não encolhem. */
+.forum-post-card .forum-post-card__author {
+  min-inline-size: 0;
+}
+
+.forum-post-card .forum-post-card__author > .forum-author-line,
+.forum-post-card .forum-author-line__identity {
+  min-inline-size: 0;
+  max-inline-size: 100%;
+}
+
+.forum-post-card .forum-author-line__name {
+  flex: 0 1 auto;
+  min-inline-size: 0;
+}
+
+.forum-post-card .forum-post-card__author-info {
+  flex-shrink: 0;
+}
+
+/* Cartão compacto: a identidade (avatar e nome) ocupa o espaço que sobra; posts e data mantêm o tamanho natural. */
+.forum-post-card--density-compact .forum-post-card__author > .forum-author-line {
+  flex: 1 1 0;
+  min-inline-size: 0;
+}
+
+.forum-post-card--density-compact .forum-post-card__author-info {
+  flex: 0 1 auto;
+  inline-size: auto;
+  max-inline-size: 55%;
+}
+
+/* Nome do autor alinhado ao topo do avatar, em qualquer modo. */
+.forum-post-card .forum-author-line,
+.forum-post-card .forum-author-line__identity {
+  align-items: flex-start;
+}
+
+.forum-post-card .forum-author-line__name {
+  line-height: 1.2;
+}
+
+/* Reações recebidas: dentro do corpo, acima da linha divisória do rodapé, alinhadas à esquerda. */
+.forum-post-card__reactions-received {
+  display: flex;
+  justify-content: flex-start;
+  margin-block-start: var(--spacing-sm);
+}
+
+/* Espaço entre as respostas da conversa. */
+:is(.field--name-field-aculta-discussion, [data-aculta-discussion-thread]) article.js-comment {
+  margin-block: var(--spacing-lg);
+}

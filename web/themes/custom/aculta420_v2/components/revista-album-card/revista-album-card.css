@@ -1,0 +1,59 @@
+.revista-album-card {
+  display: grid;
+  overflow: hidden;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--spacing-base);
+  min-width: 0;
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-base);
+  background: var(--color-surface);
+}
+
+.revista-album-card__cover,
+.revista-album-card__body,
+.revista-album-card__metadata {
+  min-width: 0;
+}
+
+.revista-album-card__cover img {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+.revista-album-card__body {
+  display: grid;
+  align-content: start;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-base);
+}
+
+.revista-album-card__title {
+  overflow-wrap: anywhere;
+  font-family: var(--font-family-heading);
+  font-size: var(--font-size-lg);
+}
+
+.revista-album-card__title a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap-target-min);
+  text-decoration: underline;
+  color: var(--color-brand-primary);
+  text-underline-offset: .15em;
+}
+
+.revista-album-card__metadata {
+  display: grid;
+  gap: var(--spacing-xs);
+  font-size: var(--font-size-sm);
+}
+
+@media (min-width: 48rem) {
+  .revista-album-card {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: center;
+  }
+}

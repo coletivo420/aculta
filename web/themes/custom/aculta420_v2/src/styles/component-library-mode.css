@@ -1,0 +1,229 @@
+/* Seletor Claro/Escuro da UI Library (só pré-visualizações). Alvo de toque 44 px. */
+.aculta-library-mode {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+  margin-block: 1rem;
+}
+
+.aculta-library-mode__option {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  white-space: nowrap;
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: var(--color-surface);
+  gap: .5rem;
+  min-block-size: 44px;
+  min-inline-size: 44px;
+  padding-inline: 1rem;
+}
+
+.aculta-library-mode__option:has(input:checked) {
+  color: var(--color-on-brand);
+  background: var(--color-brand-primary);
+}
+
+.aculta-library-mode__option:has(input:focus-visible) {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+.ui_patterns_story__preview[data-theme],
+.ui_patterns_story__story[data-theme] {
+  padding: 1rem;
+  color: var(--color-text-primary);
+  border-radius: .75rem;
+  background: var(--color-canvas);
+}
+
+/* Cor e fundo no próprio contêiner de modo. O body define color com o token claro,
+   e os filhos herdam esse valor já calculado; resolver aqui faz o modo escuro valer. */
+.layout-page__content[data-theme],
+.ui_patterns_story__preview[data-theme],
+.ui_patterns_story__story[data-theme] {
+  color: var(--color-text-primary);
+  background-color: var(--color-canvas);
+}
+/* Keep dashboard-only positioning from displacing previews in the component library. */
+.aculta-component-library-page .aculta-studio-calendar,
+.aculta-component-library-page .aculta-studio-connections-block {
+  position: static;
+  inset: auto;
+  inline-size: 100%;
+  max-inline-size: 100%;
+  margin-block: 0;
+  z-index: auto;
+}
+
+.aculta-component-library-page .ui_patterns_component .aculta-institution-bar {
+  position: static;
+  inset: auto;
+  inline-size: 100%;
+  z-index: auto;
+}
+
+.aculta-component-library-page .aculta-studio-topbar {
+  block-size: auto;
+  margin-block: 0;
+}
+
+.aculta-component-library-page .aculta-studio-topbar__title {
+  position: static;
+  white-space: normal;
+}
+
+.aculta-component-library-page .aculta-studio-menu__trigger {
+  display: inline-flex;
+}
+
+.aculta-component-library-page .aculta-studio-sidebar {
+  position: static;
+  z-index: auto;
+  display: block;
+  inline-size: 100%;
+  margin-block-start: var(--spacing-sm);
+}
+
+.aculta-component-library-page .aculta-studio-menu-dialog {
+  position: fixed;
+}
+
+/* Layout e cartões da UI Patterns Library (extraídos de layout.css). */
+/* UI Patterns is an administrative documentation page, not a content purpose. */
+body.aculta-component-library-page {
+  overflow-x: clip;
+}
+
+.aculta-component-library-page .page__header,
+.aculta-component-library-page .page__navigation {
+  display: none;
+}
+
+.aculta-component-library-page .layout-page {
+  inline-size: 100%;
+  max-inline-size: var(--aculta-container-width, 1200px);
+  margin-inline: auto;
+  padding-inline: clamp(var(--spacing-sm), 2.5vw, var(--spacing-xxl));
+  border: 0;
+  background: transparent;
+}
+
+.aculta-component-library-page .layout-page__content {
+  inline-size: 100%;
+  max-inline-size: none;
+  margin-inline: 0;
+}
+
+.aculta-component-library-page .ui_patterns_quicklinks {
+  overflow: auto;
+  margin-block-end: var(--spacing-xl);
+  padding: var(--spacing-base);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  max-block-size: min(24rem, 45vh);
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+}
+
+.aculta-component-library-page .ui_patterns_quicklinks__title {
+  margin-block: 0 var(--spacing-sm);
+  font-size: var(--font-size-lg);
+}
+
+.aculta-component-library-page .ui_patterns_component {
+  display: block;
+  inline-size: 100%;
+  margin-block: var(--spacing-lg);
+  padding: clamp(var(--spacing-base), 2.5vw, var(--spacing-xl));
+  border: 1px solid var(--color-border);
+  border-inline-start: 4px solid var(--color-brand-secondary);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-raised);
+  contain: layout;
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
+}
+
+.aculta-component-library-page .ui_patterns_component__title {
+  margin-block: 0 var(--spacing-sm);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-xl);
+  line-height: 1.25;
+}
+
+.aculta-component-library-page .ui_patterns_story__name {
+  margin-block: 0 var(--spacing-sm);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-lg);
+}
+
+.aculta-component-library-page .ui_patterns_variant {
+  display: block;
+  margin-block: var(--spacing-base);
+  min-inline-size: 0;
+}
+
+.aculta-component-library-page .ui_patterns_variant__title {
+  margin-block: 0 var(--spacing-sm);
+  font-size: var(--font-size-base);
+}
+
+.aculta-component-library-page .aculta-component-library__details {
+  margin-block-start: var(--spacing-lg);
+  border-block-start: 1px solid var(--color-border);
+}
+
+.aculta-component-library-page .aculta-component-library__details > summary {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  color: var(--color-link-editorial);
+  font-weight: 600;
+  min-block-size: var(--tap-target-min);
+}
+
+.aculta-component-library-page .ui_patterns_component__title a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.aculta-component-library-page .ui_patterns_component__title a:is(:hover, :focus-visible) {
+  text-decoration: underline;
+  color: var(--color-link-editorial);
+  text-underline-offset: .15em;
+}
+
+.aculta-component-library-page .ui_patterns_component__stories,
+.aculta-component-library-page .ui_patterns_story {
+  display: block;
+  min-inline-size: 0;
+}
+
+.aculta-component-library-page .ui_patterns_story {
+  margin-block-start: var(--spacing-base);
+  padding-block-start: var(--spacing-base);
+  border-block-start: 1px solid var(--color-border);
+}
+
+.aculta-component-library__group-title {
+  margin-block: var(--spacing-xl) var(--spacing-base);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-xl);
+}
+
+.ui_patterns_story__description,
+.ui_patterns_variant__description {
+  max-inline-size: 80ch;
+  color: var(--color-text-secondary);
+  overflow-wrap: anywhere;
+}
+
+.aculta-component-library__details-content {
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
+}

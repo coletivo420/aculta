@@ -1,0 +1,33 @@
+uuid: c5c7bd1f-f784-463f-9928-e369129d7027
+langcode: pt-br
+status: true
+dependencies:
+  content:
+    - 'block_content:basic:70773914-c529-4bf7-869b-8fc198b780ad'
+  module:
+    - aculta_portal
+    - block_content
+    - system
+  theme:
+    - aculta420_v2
+id: aculta420_v2_aculta_home_transparency
+theme: aculta420_v2
+region: content
+weight: 80
+provider: null
+plugin: 'block_content:70773914-c529-4bf7-869b-8fc198b780ad'
+settings:
+  id: 'block_content:70773914-c529-4bf7-869b-8fc198b780ad'
+  label: 'Home — Transparência'
+  label_display: '0'
+  provider: block_content
+  view_mode: full
+visibility:
+  request_path:
+    id: request_path
+    negate: false
+    pages: '<front>'
+  aculta_domain_site:
+    id: aculta_domain_site
+    site_key: main
+    negate: false

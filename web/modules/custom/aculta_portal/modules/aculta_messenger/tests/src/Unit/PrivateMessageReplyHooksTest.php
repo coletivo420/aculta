@@ -27,7 +27,7 @@ final class PrivateMessageReplyHooksTest extends UnitTestCase {
     $currentUser = $this->createMock(AccountProxyInterface::class);
     $currentUser->method('id')->willReturn(42);
     $thread = $this->createMock(PrivateMessageThreadInterface::class);
-    $thread->method('getMembersId')->willReturn([42, 84, 85]);
+    $thread->method('getMemberIds')->willReturn([42, 84, 85]);
     $banManager = $this->createMock(PrivateMessageBanManagerInterface::class);
     $banManager->method('isBanned')->willReturnCallback(static fn(int $uid): bool => $uid === 84);
     $state = new ConversationMessagingState($currentUser, $banManager);
@@ -51,7 +51,7 @@ final class PrivateMessageReplyHooksTest extends UnitTestCase {
     $currentUser = $this->createMock(AccountProxyInterface::class);
     $currentUser->method('id')->willReturn(42);
     $thread = $this->createMock(PrivateMessageThreadInterface::class);
-    $thread->method('getMembersId')->willReturn([42, 84, 85]);
+    $thread->method('getMemberIds')->willReturn([42, 84, 85]);
     $banManager = $this->createMock(PrivateMessageBanManagerInterface::class);
     $banManager->method('isBanned')->willReturn(FALSE);
     $banManager->method('isCurrentUserBannedByUser')->willReturnCallback(static fn(int $uid): bool => $uid === 85);

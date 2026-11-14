@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace Drupal\aculta_forum\Form;
 
 use Drupal\aculta_forum\Service\ForumReadMarker;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\Core\Form\ConfirmFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -18,9 +20,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 final class ForumMarkAllReadForm extends ConfirmFormBase {
 
   public function __construct(
-    private readonly ForumReadMarker $readMarker,
-    private readonly AccountProxyInterface $currentUser,
-    private readonly DomainPurposeManager $domainPurposeManager,
+    protected readonly ForumReadMarker $readMarker,
+    protected readonly AccountProxyInterface $currentUser,
+    protected readonly DomainSiteManager $siteManager,
   ) {}
 
   /**
@@ -29,7 +31,7 @@ final class ForumMarkAllReadForm extends ConfirmFormBase {
     return new static(
       $container->get('aculta_forum.read_marker'),
       $container->get('current_user'),
-      $container->get('aculta_portal.domain_purpose'),
+      $container->get('aculta_portal.domain_site'),
     );
   }
 
@@ -41,20 +43,20 @@ final class ForumMarkAllReadForm extends ConfirmFormBase {
 
   /**
    * {@inheritdoc} */
-  public function getQuestion(): string {
-    return (string) $this->t('Marcar todas as discussões públicas acessíveis como lidas?');
+  public function getQuestion(): TranslatableMarkup {
+    return $this->t('Marcar todas as discussões públicas acessíveis como lidas?');
   }
 
   /**
    * {@inheritdoc} */
-  public function getDescription(): string {
-    return (string) $this->t('Esta ação atualiza somente seu histórico de leitura. Tópicos e comentários não serão alterados.');
+  public function getDescription(): TranslatableMarkup {
+    return $this->t('Esta ação atualiza somente seu histórico de leitura. Tópicos e comentários não serão alterados.');
   }
 
   /**
    * {@inheritdoc} */
-  public function getConfirmText(): string {
-    return (string) $this->t('Marcar tudo como lido');
+  public function getConfirmText(): TranslatableMarkup {
+    return $this->t('Marcar tudo como lido');
   }
 
   /**
@@ -90,7 +92,7 @@ final class ForumMarkAllReadForm extends ConfirmFormBase {
   /**
    * Returns the public topic list on the Forum purpose domain. */
   private function forumTopicsUrl(): Url {
-    return $this->domainPurposeManager->pathUrl('forum', '/')
+    return $this->siteManager->pathUrl(SiteKey::Forum, '/')
       ?? throw new \UnexpectedValueException('O domínio do Fórum não está configurado.');
   }
 

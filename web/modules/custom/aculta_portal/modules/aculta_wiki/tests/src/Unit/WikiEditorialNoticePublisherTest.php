@@ -7,7 +7,8 @@ namespace Drupal\Tests\aculta_wiki\Unit;
 use Drupal\aculta_messenger\Event\MessengerNoticeEvent;
 use Drupal\aculta_messenger\Integration\Wiki\EditorialReviewNoticeInterface;
 use Drupal\aculta_messenger\Service\MessengerNoticePublisherInterface;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKeyRegistry;
 use Drupal\aculta_wiki\Event\WikiEntryReviewRequestedEvent;
 use Drupal\aculta_wiki\EventSubscriber\WikiEditorialNoticePublisher;
 use Drupal\Component\Datetime\TimeInterface;
@@ -53,11 +54,12 @@ final class WikiEditorialNoticePublisherTest extends TestCase {
 
     $subscriber = new WikiEditorialNoticePublisher(
       $entityTypeManager,
-      new DomainPurposeManager(
+      new DomainSiteManager(
         $entityTypeManager,
         $this->createMock(DomainNegotiatorInterface::class),
         $this->createMock(ConfigFactoryInterface::class),
         new RequestStack(),
+        new SiteKeyRegistry(),
       ),
       $publisher,
       $editorial,
@@ -178,18 +180,19 @@ final class WikiEditorialNoticePublisherTest extends TestCase {
     $domainManager->method('getStorage')->with('domain')->willReturn($domainStorage);
     $negotiator = $this->createMock(DomainNegotiatorInterface::class);
     $negotiator->method('getActiveDomain')->willReturn(NULL);
-    $domainPurposes = new DomainPurposeManager(
+    $siteManagers = new DomainSiteManager(
       $domainManager,
       $negotiator,
       $this->createMock(ConfigFactoryInterface::class),
       new RequestStack(),
+      new SiteKeyRegistry(),
     );
     $time = $this->createMock(TimeInterface::class);
     $time->method('getRequestTime')->willReturn(1_793_520_000);
 
     return new WikiEditorialNoticePublisher(
       $entityTypeManager,
-      $domainPurposes,
+      $siteManagers,
       $publisher,
       $this->createMock(EditorialReviewNoticeInterface::class),
       $time,

@@ -1,0 +1,9 @@
+.aculta-hint {
+  margin-block: 0;
+  color: var(--color-text-secondary);
+  font-size: .875em;
+}
+
+.aculta-hint--muted {
+  color: var(--color-text-muted);
+}

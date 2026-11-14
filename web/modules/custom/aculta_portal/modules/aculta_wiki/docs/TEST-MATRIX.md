@@ -49,13 +49,13 @@ Cobertura planejada e executada do submódulo. Os cenários abaixo listados como
 | Decisão da proposta pelo Form API | Kernel | `FormBuilder` preserva modos selecionados individualmente e a aplicação oficial usa append/replace configurados | aprovado (dev.59; focal: 1/154; classe: 21/939, 291 depreciações) |
 | Escolha explícita do modo de lista | Kernel MariaDB | Campo aprovado sem `replace`/`append` escolhido gera erro; modos válidos são enviados ao serviço e aplicados | aprovado (dev.91; focal 1/183; 202 depreciações upstream, 2 PHPUnit) |
 | Composição da revisão no GanjaLab | Kernel | SDCs apresentam contexto/contribuição e links autorizados; controles seguem no Form API | aprovado (dev.60; focal: 1/156; classe: 21/941, 291 depreciações) |
-| Workspace WE SATIVA visual/autoria | Browser Firefox ESR visível | ACULTA420 e Olivero em oito larguras (320/360/390/640/768/1024/1280/1440), rota de criação e retorno do formulário | Kernel 2/200; Runtime UID 5 Firefox ESR/X11 61/61: workspace e formulário verificados em 1440/1280/1024/768/640/390/360/320; título/corpo disponíveis, retorno e sem overflow, sem submissão. UID 257 sem e-mail confirmado mostra estado bloqueado. Capturas 320/1440 px revisadas. Olivero dev.117 31/31. Leitor de tela e WCAG 2.2 AA completa pendentes |
-| Páginas públicas e reflow Wiki | Browser Firefox ESR visível | Home, listagem, busca e `/wiki` interno em oito larguras, claro e escuro | aprovado dev.117: ACULTA420 130/130, Olivero 130/130 e modo escuro 114/114; zoom real do navegador pendente |
+| Workspace WE SATIVA visual/autoria | Browser Firefox ESR visível | ACULTA420 em oito larguras (320/360/390/640/768/1024/1280/1440), rota de criação e retorno do formulário | Kernel 2/200; Runtime UID 5 Firefox ESR/X11 61/61: workspace e formulário verificados em 1440/1280/1024/768/640/390/360/320; título/corpo disponíveis, retorno e sem overflow, sem submissão. UID 257 sem e-mail confirmado mostra estado bloqueado. Capturas 320/1440 px revisadas. Leitor de tela e WCAG 2.2 AA completa pendentes |
+| Páginas públicas e reflow Wiki | Browser Firefox ESR visível | Home, listagem, busca e `/wiki` interno em oito larguras, claro e escuro | aprovado dev.117: ACULTA420 130/130 e modo escuro 114/114; zoom real do navegador pendente |
 | Página pública do verbete | Browser + Kernel | HTTP 200, um `h1` com título, sem overflow/erro nas oito larguras | aprovado dev.117: 6 URLs 200 com `h1` titulado; Kernel 29/1.642 renderiza o tema com um único `h1`; smoke 130/130 |
-| Prévia e teclado da busca | Browser Firefox ESR visível | Searchbox nativo, região viva nomeada, resultados por Tab, foco/nome WebDriver-computed, 1280/320 px | aprovado dev.117: ACULTA420 49/49 e Olivero 50/50 (`keyboard.py`); leitor de tela e contraste automático pendentes |
-| Busca sem JavaScript e um único H1 | Browser Firefox ESR sem JS + HTML | Home, listagem, busca e verbete servidos pelo Drupal | aprovado dev.117 (16/16 em ACULTA420 e Olivero, `no-js.py`) |
-| Fila de moderação e decisão no Studio | Browser Firefox ESR visível, sessão autenticada | Listing compartilhado, estado vazio, formulário de decisão, oito larguras | aprovado dev.117: fila 22/22 (ACULTA420) e 20/20 (Olivero); decisão 41/41 com proposta temporária, removida ao final. A fila para `content_editor` depende da divergência RBAC de permissões no Runtime |
-| Layout sem-JS, teclado e WCAG 2.2 AA | Browser Firefox ESR visível | ACULTA420 e Olivero, 320px+, foco/leitor de tela/contraste | parcial dev.117: teclado, sem-JS, claro/escuro e um H1 aprovados; leitor de tela, zoom real e auditoria WCAG completa pendentes |
+| Prévia e teclado da busca | Browser Firefox ESR visível | Searchbox nativo, região viva nomeada, resultados por Tab, foco/nome WebDriver-computed, 1280/320 px | aprovado dev.117: ACULTA420 49/49 50/50 (`keyboard.py`); leitor de tela e contraste automático pendentes |
+| Busca sem JavaScript e um único H1 | Browser Firefox ESR sem JS + HTML | Home, listagem, busca e verbete servidos pelo Drupal | aprovado dev.117 (16/16 em ACULTA420, `no-js.py`) |
+| Fila de moderação e decisão no Studio | Browser Firefox ESR visível, sessão autenticada | Listing compartilhado, estado vazio, formulário de decisão, oito larguras | aprovado dev.117: fila 22/22 (ACULTA420); decisão 41/41 com proposta temporária, removida ao final. A fila para `content_editor` depende da divergência RBAC de permissões no Runtime |
+| Layout sem-JS, teclado e WCAG 2.2 AA | Browser Firefox ESR visível | tema ACULTA ativo, 320px+, foco/leitor de tela/contraste | parcial dev.117: teclado, sem-JS, claro/escuro e um H1 aprovados; leitor de tela, zoom real e auditoria WCAG completa pendentes |
 | Content Index no Runtime | Drush + consulta anônima | Geração ativa, auditoria válida, exclusão de rascunho, sem autoria, Search API | aprovado dev.117: 145 entradas/110 relações, Wiki 7/15, audit `valid`, 6 verbetes publicados na consulta, Search API localiza o verbete |
 
 ## Regressão Content Index — dev.61
@@ -400,7 +400,7 @@ Kernel MariaDB da classe completa: 8 testes / 301 assertions, sem warnings;
 | Fila de revisões Wiki | Kernel | Usa revisão atual e exibe apenas ação de formulário cujo route access passa no purpose Wiki | aprovado |
 | Usuário sem gate editorial | Kernel | Sem seção de moderação | aprovado |
 | Owner Wiki desabilitado com bundle retido | Unit Studio | WikiTab indisponível sem módulo `aculta_wiki`, mesmo se `wiki_entry` continuar configurado | aprovado (Studio dev.4; focal 3/10; suíte Unit 13/41) |
-| Visual no Firefox ESR/X11 e WCAG | Browser | Form/filas mobile-first em ACULTA420 e Olivero, foco, teclado e reflow | pendente; Runtime ainda não habilitado |
+| Visual no Firefox ESR/X11 e WCAG | Browser | Form/filas mobile-first no tema ACULTA ativo, foco, teclado e reflow | pendente; Runtime ainda não habilitado |
 
 ## Controller — cache e acesso (dev.11)
 
@@ -459,6 +459,6 @@ ou banco persistente foi alterado.
 
 ## Navegador
 
-Revisão visual com Firefox ESR visível em `DISPLAY=:0` via geckodriver, nos temas
-ACULTA420 e Olivero, em claro e escuro, a 390, 768 e 1024 CSS px, depois que o
+Revisão visual com Firefox ESR visível em `DISPLAY=:0` via geckodriver, no tema
+ACULTA ativo, em claro e escuro, a 390, 768 e 1024 CSS px, depois que o
 módulo estiver habilitado no servidor de testes.

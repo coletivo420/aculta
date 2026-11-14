@@ -1,0 +1,20 @@
+name: Curso matriculado
+description: Cartão LMS com progresso, avaliação pendente e destinos canônicos.
+component: aculta420_v2:lms-learning-course-card
+props:
+  title: Cultivo responsável
+  progress_id: lms-course-progress-story
+  progress_label: Progresso do curso Cultivo responsável
+  progress_text: 3 de 8 aulas concluídas
+  progress_value: 38
+  has_lessons: true
+  finished: false
+  pending_evaluation: true
+  pending_text: Avaliação pendente
+  finished_text: Curso concluído
+  current_lesson: Próxima aula — Preparação do ambiente
+slots:
+  journey_action:
+    '#markup': <a class="button button--outline" href="#jornada">Ver jornada</a>
+  continue_action:
+    '#markup': <a class="button button--primary" href="#aula">Continuar aula</a>

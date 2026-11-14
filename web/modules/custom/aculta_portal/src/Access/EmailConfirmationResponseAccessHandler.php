@@ -27,7 +27,7 @@ final class EmailConfirmationResponseAccessHandler extends AcultaMailConfirmatio
   /**
    * Creates the handler with the confirmation service.
    */
-  public function __construct(EntityTypeInterface $entity_type, ConfigFactoryInterface $config_factory, RequestStack $request_stack, private readonly AcultaMailConfirmerManagerInterface $confirmationManager) {
+  public function __construct(EntityTypeInterface $entity_type, ConfigFactoryInterface $config_factory, RequestStack $request_stack, protected readonly AcultaMailConfirmerManagerInterface $confirmationManager) {
     parent::__construct($entity_type, $config_factory, $request_stack);
   }
 
@@ -38,6 +38,9 @@ final class EmailConfirmationResponseAccessHandler extends AcultaMailConfirmatio
     return new static($entity_type, $container->get('config.factory'), $container->get('request_stack'), $container->get('aculta_mail_confirmer'));
   }
 
+  /**
+   * {@inheritdoc}
+   */
   protected function checkAccess(EntityInterface $entity, $operation, AccountInterface $account) {
     if ($operation === 'response' && $this->confirmationManager->isPending($entity) && !$this->confirmationManager->isExpired($entity)) {
       return AccessResult::allowed()->addCacheableDependency($entity)->setCacheMaxAge(0);

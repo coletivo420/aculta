@@ -52,7 +52,6 @@ final class SecretsRoutesKernelTest extends KernelTestBase {
     'aculta_mailer',
     'aculta_user',
     'aculta_mail_confirmer',
-    'aculta_mail_confirmer_user',
     'commerce_price',
     'commerce_product',
     'commerce_store',
@@ -69,7 +68,6 @@ final class SecretsRoutesKernelTest extends KernelTestBase {
     'login_emailusername',
     'social_auth',
     'group',
-    'lms',
     'commerce',
     'aculta_pagamentos_mercadopago',
     'schema_metatag',
@@ -80,6 +78,7 @@ final class SecretsRoutesKernelTest extends KernelTestBase {
     'schema_product',
     'schema_web_site',
     'schema_web_page',
+      'aculta_file_uploader',
   ];
 
   /**

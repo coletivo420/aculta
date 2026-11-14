@@ -20,14 +20,16 @@ final class MessagePrivacyForm {
     private readonly UserDataInterface $userData,
   ) {}
 
-  /** Current preference of the signed-in member; defaults to all members. */
+  /**
+   * Current preference of the signed-in member; defaults to all members. */
   public function currentPreference(): string {
     return $this->userData->get('aculta_messenger', (int) $this->currentUser->id(), 'message_privacy') === 'friends'
       ? 'friends'
       : 'all';
   }
 
-  /** Submit callback added to the Privacidade form. */
+  /**
+   * Submit callback added to the Privacidade form. */
   public function submit(array &$form, FormStateInterface $formState): void {
     $preference = $formState->getValue('message_privacy') === 'friends' ? 'friends' : 'all';
     $this->userData->set('aculta_messenger', (int) $this->currentUser->id(), 'message_privacy', $preference);

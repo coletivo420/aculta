@@ -1,0 +1,69 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Postagem de abertura do tópico
+description: Primeiro post do tópico, no mesmo cartão dos comentários, com o destaque do tópico fixado.
+status: stable
+group: Comunidade
+props:
+  type: object
+  additionalProperties: false
+  required: [author_name]
+  properties:
+    density:
+      type: string
+      title: Densidade do cartão
+      description: "default ou compact (mobile: menos espaçamento e ações em linha)."
+      enum: [default, compact]
+      default: default
+    author_name:
+      type: string
+      title: Nome do autor
+      description: Nome público exibido no cartão da postagem inicial.
+      minLength: 1
+    author_posts:
+      type: [string, integer, 'null']
+      title: Contagem de posts do autor
+      description: Total formatado de posts do autor; null omite essa estatística.
+      default: null
+    timestamp:
+      type: [string, 'null']
+      title: Data de publicação formatada
+      description: Data pronta para exibição junto à identidade do autor.
+      default: null
+    permalink_url:
+      type: [string, 'null']
+      title: Link permanente do tópico
+      description: Destino público da ação que abre o permalink da postagem.
+      default: null
+    delete_url:
+      type: [string, 'null']
+      title: Destino do fluxo de exclusão
+      description: URL do fluxo de exclusão ou solicitação fornecida pelo chamador após aplicar a política de acesso.
+      default: null
+    edit_url:
+      type: [string, 'null']
+      title: Destino de edição
+      description: URL de edição fornecida pelo chamador depois de validar se a edição deve ser oferecida.
+      default: null
+    quote_url:
+      type: [string, 'null']
+      title: Link de citar abertura (somente com acesso)
+      description: URL de citação fornecida pelo chamador depois de validar se a ação deve ser oferecida.
+      default: null
+    reply_url:
+      type: [string, 'null']
+      title: Endereço do compositor de resposta ao tópico
+      description: URL do fluxo de resposta fornecida pelo chamador quando a ação está disponível.
+      default: null
+slots:
+  avatar:
+    title: Avatar ou cartão de autor
+    description: Avatar ou bloco de autoria do criador do tópico.
+  body:
+    title: Corpo da postagem
+    description: Corpo do tópico renderizado pelo Drupal.
+  reactions_received:
+    title: Reações recebidas
+    description: Barra somente leitura (discussion-reactions-received), acima da linha do rodapé.
+  reactions_slot:
+    title: Barra de reações interativas
+    description: Barra de reações por emojis renderizada pelo aculta_forum.

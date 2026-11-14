@@ -1,0 +1,9 @@
+name: Pilha sem título
+description: Uma coluna sem região de título e sem barra lateral.
+component: aculta420_v2:layout-page
+props:
+  variant: stack
+slots:
+  content:
+    type: inline_template
+    template: '<p>Conteúdo principal em uma coluna, sem título.</p>'

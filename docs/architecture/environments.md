@@ -29,7 +29,7 @@ são acessados por symlinks no topo do projeto, fora da árvore pública.
 - O repositório git é o próprio `/home/aculta/`, que resolve para o checkout
   `/home/piradopirata/projetos/aculta`. Não há uma subpasta `aculta-site` nem uma
   segunda cópia de trabalho: edite pelo caminho canônico e confirme com
-  `git status`. O remoto é `https://github.com/coletivo420/aculta-site`.
+  `git status`. O Runtime Sync v2 utiliza `coletivo420/aculta` em `origin/dev`. Confira `git remote -v` no servidor: referências históricas a `aculta-site` não autorizam troca automática de remoto.
 - Drush e operações de runtime devem ser executados a partir de `/home/aculta/`
   (`php vendor/drush/drush/drush.php status`), porque o bootstrap lê
   `web/sites/default/settings.php` e `settings.local.php`.
@@ -38,7 +38,7 @@ são acessados por symlinks no topo do projeto, fora da árvore pública.
   permissão, o `drush status` não mostra banco nem site URI. Não relaxe o modo dos arquivos
   de configuração nem copie segredos para fora da instalação para contornar isso.
 - Estado verificado em 2026-10-22: o checkout em `/home/piradopirata/projetos/aculta`
-  está no servidor de desenvolvimento (`hostname: toca`) e o Drush alcança o Runtime de teste
+  está no servidor de desenvolvimento (`hostname: toca`) e o Drush alcança o Runtime de desenvolvimento
   `aculta_runtime`. Neste servidor, `Site URI: http://default` é uma saída esperada quando o Drush
   roda sem `--uri`; não indica produção nem conexão errada por si só. Para comandos que dependem do
   purpose/domínio, informe `--uri` com um host de teste listado em

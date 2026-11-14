@@ -12,8 +12,10 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 
 /**
- * Fórum moderation entry. aculta_forum owns discussions and access; the
- * report workflow remains with aculta_user. Marley exposes moderation only.
+ * Aba de moderação do fórum na Marley.
+ *
+ * O aculta_forum é dono das discussões e do acesso; o fluxo de denúncia
+ * permanece com o aculta_user. A Marley expõe apenas a moderação.
  */
 #[MarleyTab(
   id: 'forum',
@@ -56,4 +58,5 @@ final class ForumTab extends MarleyTabBase {
       ],
     ];
   }
+
 }

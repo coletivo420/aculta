@@ -42,15 +42,24 @@ final class DomainPresentationContractTest extends UnitTestCase {
         'show_utility_bar' => TRUE,
         'links_page' => FALSE,
         'show_site_header' => TRUE,
+        'show_site_menu' => FALSE,
+      ],
+      [
+        [
+          'purpose' => 'main',
+          'title' => 'Portal ACULTA',
+          'url' => 'https://aculta.example.invalid/',
+          'current' => FALSE,
+        ],
       ],
     );
   }
 
   /**
-   * Ensures the neutral contract exposes only its three top-level sections.
+   * Ensures the neutral contract exposes only its four top-level sections.
    */
   public function testThemeArrayContainsOnlyIdentityRegionsAndLayout(): void {
-    $this->assertSame(['identity', 'regions', 'layout'], array_keys($this->presentation()->toThemeArray()));
+    $this->assertSame(['identity', 'regions', 'layout', 'domain_sites'], array_keys($this->presentation()->toThemeArray()));
   }
 
   /**
@@ -59,7 +68,7 @@ final class DomainPresentationContractTest extends UnitTestCase {
   public function testLayoutFlagsAreBooleanVisibilityOnly(): void {
     $layout = $this->presentation()->toThemeArray()['layout'];
     $this->assertSame(
-      ['institution_bar_account', 'show_utility_bar', 'links_page', 'show_site_header'],
+      ['institution_bar_account', 'show_utility_bar', 'links_page', 'show_site_header', 'show_site_menu'],
       array_keys($layout),
     );
     foreach ($layout as $flag) {

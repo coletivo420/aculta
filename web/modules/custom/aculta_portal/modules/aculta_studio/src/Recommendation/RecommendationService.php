@@ -37,7 +37,7 @@ class RecommendationService {
    *   entity_id: string|int,
    *   reason: string,
    *   score: int
-   * }>
+   *   }>
    *   List of recommended items with an explicit, human-readable reason.
    */
   public function getRecommendations(AccountInterface $account, int $limit = 10): array {

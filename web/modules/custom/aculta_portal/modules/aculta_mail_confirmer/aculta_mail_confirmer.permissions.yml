@@ -6,3 +6,7 @@ administer email confirmations:
 access aculta mail confirmer:
   title: 'Access email confirmation'
   description: 'Use the email confirmation service.'
+
+aculta mail confirmer user bypass email change:
+  title: 'Bypass user email change confirmation'
+  description: 'Update users email address without confirming the new address.'

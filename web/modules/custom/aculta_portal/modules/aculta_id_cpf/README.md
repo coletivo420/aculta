@@ -117,7 +117,7 @@ Na raiz do repositório:
 php web/modules/custom/aculta_portal/modules/aculta_id_cpf/tests/run.php
 vendor/bin/phpunit -c web/core/phpunit.xml.dist web/modules/custom/aculta_portal/modules/aculta_id_cpf/tests/src/Unit
 vendor/bin/phpunit -c web/core/phpunit.xml.dist web/modules/custom/aculta_portal/modules/aculta_id_cpf/tests/src/Kernel
-php scripts/validate-aculta-portal-drupal11.php
+php scripts/validate-aculta-portal-drupal12.php
 ```
 
 Na validação M-1 com o autoloader isolado da branch: Runner de domínio 248 checks

@@ -32,7 +32,7 @@ exceções de compatibilidade para novas rotas de projeto.
 
 
 Referência única do comportamento de raiz (`/`), de redirecionamento e de 404 em cada host do Portal.
-Medida no servidor de testes em 2026-10-11. Atualize esta tabela ao mudar qualquer regra.
+Medida no servidor de desenvolvimento em 2026-10-11. Atualize esta tabela ao mudar qualquer regra.
 
 ## Regras vigentes
 
@@ -63,7 +63,7 @@ Medida no servidor de testes em 2026-10-11. Atualize esta tabela ao mudar qualqu
 | cursos.aculta.toca.net.br (COURSES) | 200 (`/cursos` por `FRONT_PATHS`) | 404 | 404 | 404 | 404 | Página inicial dos cursos |
 | growroom420.aculta.toca.net.br (FORUM) | 200 (`/discussoes` por `FRONT_PATHS`) | 404 | 404 | 404 | 404 | View `aculta_forum_public_topics`; caminho direto interno |
 
-Nenhuma regra de redirecionamento do módulo `redirect` está cadastrada (zero registros no Runtime de teste).
+Nenhuma regra de redirecionamento do módulo `redirect` está cadastrada (zero registros no Runtime de desenvolvimento).
 
 Nota de ambiente (2026-10-28): o host de teste da Revista foi renomeado para
 `revista.aculta.toca.net.br`. A matriz acima registra a medição histórica de

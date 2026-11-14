@@ -11,50 +11,121 @@ dependencies:
     - node.type.document
   module:
     - aculta_document_viewer
-    - file
+    - layout_builder
     - text
     - user
+third_party_settings:
+  layout_builder:
+    enabled: true
+    allow_custom: false
+    sections:
+      -
+        layout_id: 'ui_patterns:aculta420_v2:layout_section'
+        layout_settings:
+          label: ''
+          context_mapping:
+            entity: layout_builder.entity
+          ui_patterns:
+            component_id: 'aculta420_v2:layout-section'
+            variant_id: null
+            props: {  }
+            slots: {  }
+        components:
+          2996a93f-659d-49ca-af8b-b3eb95b691a5:
+            uuid: 2996a93f-659d-49ca-af8b-b3eb95b691a5
+            region: content
+            configuration:
+              id: 'field_block:node:document:field_category'
+              label_display: '0'
+              context_mapping:
+                entity: layout_builder.entity
+              formatter:
+                type: string
+                label: hidden
+                settings:
+                  link_to_entity: false
+                  link_rel: canonical
+                third_party_settings: {  }
+            weight: 0
+            additional: {  }
+          2b0ca092-b847-4550-8e81-1dce708955c8:
+            uuid: 2b0ca092-b847-4550-8e81-1dce708955c8
+            region: content
+            configuration:
+              id: 'field_block:node:document:body'
+              label_display: '0'
+              context_mapping:
+                entity: layout_builder.entity
+              formatter:
+                type: text_default
+                label: hidden
+                settings: {  }
+                third_party_settings: {  }
+            weight: 1
+            additional: {  }
+          07765d11-9fda-473b-aa0f-d0673ee00b54:
+            uuid: 07765d11-9fda-473b-aa0f-d0673ee00b54
+            region: content
+            configuration:
+              id: 'field_block:node:document:field_document'
+              label_display: '0'
+              context_mapping:
+                entity: layout_builder.entity
+              formatter:
+                type: aculta_document_viewer_pdf_file
+                label: above
+                settings:
+                  show_download: true
+                  show_print: true
+                  show_zoom: true
+                  show_rotation: true
+                  show_outline: true
+                  show_page_thumbnails: true
+                  show_fullscreen: true
+                  show_search: true
+                  show_page_navigation: true
+                  show_full_viewer: true
+                  use_site_settings: true
+                  default_zoom: fit-width
+                  default_scroll: vertical
+                  double_page: false
+                  double_page_mobile: false
+                  language: pt-BR
+                  embed_title: ''
+                  link_text: ''
+                  link_target: _blank
+                  css_class: ''
+                third_party_settings: {  }
+            weight: 2
+            additional: {  }
+          783c3527-0f75-4f37-9dca-910da0e09f1d:
+            uuid: 783c3527-0f75-4f37-9dca-910da0e09f1d
+            region: content
+            configuration:
+              id: 'extra_field_block:node:document:links'
+              label_display: '0'
+              context_mapping:
+                entity: layout_builder.entity
+            weight: 3
+            additional: {  }
+        third_party_settings: {  }
 id: node.document.default
 targetEntityType: node
 bundle: document
 mode: default
-content:
-  body:
-    type: text_default
-    label: hidden
-    settings: {  }
-    third_party_settings: {  }
-    weight: 5
-    region: content
-  field_category:
-    type: string
-    label: hidden
-    settings:
-      link_to_entity: false
-      link_rel: canonical
-    third_party_settings: {  }
-    weight: -5
-    region: content
-  field_document:
-    type: aculta_document_viewer_pdf_file
-    label: above
-    settings: {  }
-    third_party_settings: {  }
-    weight: 10
-    region: content
-  links:
-    settings: {  }
-    third_party_settings: {  }
-    weight: 100
-    region: content
+content: {  }
 hidden:
-  co_authors: true
+  aculta_coauthors: true
+  body: true
   entity_print_view_epub: true
   entity_print_view_pdf: true
   entity_print_view_word_docx: true
+  field_category: true
   field_discussao: true
+  field_document: true
   field_domain_source: true
   field_meta_tags: true
   langcode: true
+  links: true
   private_message_link: true
   search_api_excerpt: true

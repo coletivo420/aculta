@@ -46,6 +46,46 @@ final class AuthorizedEntityMetricAggregatorTest extends TestCase {
   }
 
   /**
+   * Tópicos públicos do Fórum usam o ID do nó como dimensão autorizada.
+   */
+  public function testForumRepliesAggregateForAuthorizedTopics(): void {
+    $storage = $this->createMock(AggregateStorageInterface::class);
+    $storage->expects($this->once())
+      ->method('dimensionTotalsForDimensions')
+      ->with('forum.replies.created', 100, 102, ['77'])
+      ->willReturn([77 => 4]);
+    $account = $this->account(['view content-level statistics']);
+
+    $result = $this->aggregator($storage)->aggregateForAuthorizedEntities(
+      'forum.replies.created',
+      100,
+      102,
+      [['entity_type' => 'node', 'bundle' => 'aculta_forum_topic', 'entity_id' => '77']],
+      $account,
+    );
+
+    $this->assertSame([77 => 4], $result);
+  }
+
+  /**
+   * Bundle incompatível é recusado, em vez de omitido em silêncio.
+   */
+  public function testForumRepliesRejectsOtherBundles(): void {
+    $storage = $this->createMock(AggregateStorageInterface::class);
+    $storage->expects($this->never())->method('dimensionTotalsForDimensions');
+    $account = $this->account(['view content-level statistics']);
+
+    $this->expectException(\InvalidArgumentException::class);
+    $this->aggregator($storage)->aggregateForAuthorizedEntities(
+      'forum.replies.created',
+      100,
+      102,
+      [['entity_type' => 'node', 'bundle' => 'wiki_entry', 'entity_id' => '77']],
+      $account,
+    );
+  }
+
+  /**
    * Granular permission cannot read internal file activity metrics.
    */
   public function testContentPermissionCannotReadInternalMetrics(): void {

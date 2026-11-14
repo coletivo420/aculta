@@ -7,10 +7,13 @@ namespace Drupal\aculta_messenger\Support;
 use Drupal\Component\Render\MarkupInterface;
 
 /**
- * An action that asks first: a menu button opens the Drupal modal (Drupal.dialog), and its "Sim" button runs the action.
+ * An action that asks first.
  *
- * The question is a hidden container identified by data-aculta-dialog. The theme's script opens it with Drupal.dialog and
- * keeps it inside the form, so "Sim" still submits. No presentation classes or dialog size are set in this module.
+ * A menu button opens the Drupal modal (Drupal.dialog), and its "Sim" button runs the action.
+ *
+ * The question is a hidden container identified by data-aculta-dialog. The theme's script opens it
+ * with Drupal.dialog and keeps it inside the form, so "Sim" still submits.
+ * No presentation classes or dialog size are set in this module.
  */
 final class ConfirmDialog {
 

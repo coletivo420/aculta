@@ -1,0 +1,6 @@
+props:
+  title: Meu Perfil
+  url: /conta/perfil
+  current: true
+  icon: user
+  show_icon: true

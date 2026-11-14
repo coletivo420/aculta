@@ -1,0 +1,57 @@
+.aculta-tabs {
+  max-inline-size: 100%;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  scrollbar-width: thin;
+}
+
+.aculta-tabs > .item-list,
+.aculta-tabs > ul {
+  inline-size: max-content;
+  max-inline-size: 100%;
+  min-inline-size: 100%;
+}
+
+.aculta-tabs :is(.item-list__items, ul) {
+  display: flex;
+  flex-wrap: nowrap;
+  margin: 0;
+  padding: 2px;
+  list-style: none;
+  gap: var(--spacing-xs);
+  inline-size: max-content;
+  min-inline-size: 100%;
+}
+
+.aculta-tabs li {
+  flex: 0 0 auto;
+}
+
+.aculta-tabs a {
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+  text-decoration: none;
+  color: var(--color-text-primary);
+  border: 1px solid transparent;
+  border-radius: var(--radius-control-button);
+  gap: var(--spacing-xs);
+  min-block-size: var(--tap-target-min);
+  padding-inline: var(--spacing-base);
+}
+
+.aculta-tabs a[aria-current="page"] {
+  color: var(--color-on-highlight);
+  border-color: var(--color-brand-highlight);
+  background: var(--color-brand-highlight);
+  font-weight: 700;
+}
+
+.aculta-tabs a:is(:hover, :focus-visible) {
+  border-color: var(--color-brand-primary);
+}
+
+.aculta-tabs a:focus-visible {
+  outline: 3px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}

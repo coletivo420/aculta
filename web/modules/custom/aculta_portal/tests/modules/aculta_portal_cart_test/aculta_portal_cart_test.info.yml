@@ -2,7 +2,7 @@ name: 'ACULTA Portal cart test support'
 type: module
 description: 'Registra a rota pública do carrinho para os testes de caracterização em Kernel.'
 package: 'ACULTA Portal'
-core_version_requirement: ^11.3
+core_version_requirement: ^11 || ^12
 dependencies:
   - drupal:system
 hidden: true

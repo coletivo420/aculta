@@ -57,6 +57,7 @@ final class AcultaDocumentMediaEmbedTest extends KernelTestBase {
    */
   protected function setUp(): void {
     parent::setUp();
+    $this->installEntitySchema('group_relationship');
 
     $this->installConfig([
       'system', 'language', 'user', 'media', 'filter', 'image', 'node',

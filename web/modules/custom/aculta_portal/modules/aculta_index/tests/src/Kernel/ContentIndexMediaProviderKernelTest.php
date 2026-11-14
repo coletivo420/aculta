@@ -9,7 +9,7 @@ use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\aculta_index\Queue\ContentIndexWorkManager;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\domain\DomainNegotiatorInterface;
 use Drupal\file\Entity\File;
 use Drupal\media\Entity\Media;
@@ -41,6 +41,9 @@ final class ContentIndexMediaProviderKernelTest extends KernelTestBase {
     'image',
     'media',
     'aculta_index',
+    'aculta_calendar',
+    'aculta_file_uploader',
+    'filter',
   ];
 
   /**
@@ -48,7 +51,7 @@ final class ContentIndexMediaProviderKernelTest extends KernelTestBase {
    */
   public function register(ContainerBuilder $container): void {
     parent::register($container);
-    $container->set('aculta_portal.domain_purpose', new DomainPurposeManager(
+    $container->set('aculta_portal.domain_site', new DomainSiteManager(
       $this->createMock(EntityTypeManagerInterface::class),
       $this->createMock(DomainNegotiatorInterface::class),
       $this->createMock(ConfigFactoryInterface::class),
@@ -127,7 +130,7 @@ final class ContentIndexMediaProviderKernelTest extends KernelTestBase {
     $media = $this->createImageMedia('First image name');
     $registry = $this->container->get('aculta_index.provider_registry');
     self::assertSame('image', $registry->findProviderIdForBundle('media', 'image'));
-    self::assertNull($registry->get('image')->getAccessPurpose($media));
+    self::assertNull($registry->access('image')->getAccessSiteKey($media));
 
     $rebuilder = $this->container->get('aculta_index.rebuilder');
     $generationId = $rebuilder->start();
@@ -165,7 +168,7 @@ final class ContentIndexMediaProviderKernelTest extends KernelTestBase {
     $media = $this->createDocumentMedia('First document name');
     $registry = $this->container->get('aculta_index.provider_registry');
     self::assertSame('document', $registry->findProviderIdForBundle('media', 'document'));
-    self::assertNull($registry->get('document')->getAccessPurpose($media));
+    self::assertNull($registry->access('document')->getAccessSiteKey($media));
 
     $generationId = $this->buildAndActivateGeneration();
     self::assertSame('First document name', $this->entryLabel($generationId, (string) $media->id(), 'document'));
@@ -202,7 +205,7 @@ final class ContentIndexMediaProviderKernelTest extends KernelTestBase {
 
     $registry = $this->container->get('aculta_index.provider_registry');
     self::assertSame('remote_video', $registry->findProviderIdForBundle('media', 'remote_video'));
-    self::assertNull($registry->get('remote_video')->getAccessPurpose($media));
+    self::assertNull($registry->access('remote_video')->getAccessSiteKey($media));
 
     $generationId = $this->buildAndActivateGeneration();
     self::assertSame('Remote lecture', $this->entryLabel($generationId, (string) $media->id(), 'remote_video'));
@@ -245,7 +248,7 @@ final class ContentIndexMediaProviderKernelTest extends KernelTestBase {
 
     $registry = $this->container->get('aculta_index.provider_registry');
     self::assertSame('course_document', $registry->findProviderIdForBundle('media', 'course_document'));
-    self::assertSame('courses', $registry->get('course_document')->getAccessPurpose($media));
+    self::assertSame('courses', $registry->access('course_document')->getAccessSiteKey($media));
 
     $generationId = $this->buildAndActivateGeneration();
     self::assertSame('Course reading', $this->entryLabel($generationId, (string) $media->id(), 'course_document'));
@@ -279,7 +282,7 @@ final class ContentIndexMediaProviderKernelTest extends KernelTestBase {
 
     $registry = $this->container->get('aculta_index.provider_registry');
     self::assertSame('forum_attachment', $registry->findProviderIdForBundle('media', 'forum_attachment'));
-    self::assertSame('forum', $registry->get('forum_attachment')->getAccessPurpose($media));
+    self::assertSame('forum', $registry->access('forum_attachment')->getAccessSiteKey($media));
 
     $generationId = $this->buildAndActivateGeneration();
     self::assertSame('Forum attachment', $this->entryLabel($generationId, (string) $media->id(), 'forum_attachment'));
@@ -383,17 +386,23 @@ final class ContentIndexMediaProviderKernelTest extends KernelTestBase {
    */
   private function processProviderWork(string $providerId): void {
     $database = $this->container->get('database');
-    $ids = $database->select('aculta_index_work', 'work')
-      ->fields('work', ['work_id'])
-      ->condition('provider_id', $providerId)
-      ->condition('status', 'queued')
-      ->execute()
-      ->fetchCol();
     $worker = $this->container->get('plugin.manager.queue_worker')
       ->createInstance(ContentIndexWorkManager::QUEUE_ID);
-    foreach ($ids as $id) {
-      $worker->processItem(['work_id' => (int) $id]);
+    for ($pass = 0; $pass < 20; $pass++) {
+      $ids = $database->select('aculta_index_work', 'work')
+        ->fields('work', ['work_id'])
+        ->condition('provider_id', $providerId)
+        ->condition('status', 'queued')
+        ->execute()
+        ->fetchCol();
+      if ($ids === []) {
+        return;
+      }
+      foreach ($ids as $id) {
+        $worker->processItem(['work_id' => (int) $id]);
+      }
     }
+    self::fail(sprintf('Index work for provider %s did not drain after 20 passes.', $providerId));
   }
 
   /**

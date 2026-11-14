@@ -5,10 +5,13 @@ declare(strict_types=1);
 namespace Drupal\aculta_forum\Controller;
 
 use Drupal\aculta_forum\Entity\ForumPost;
+use Drupal\aculta_forum\Form\ForumPostRevisionSelectionForm;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Datetime\DateFormatterInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\RevisionLogInterface;
 use Drupal\Core\Entity\RevisionableStorageInterface;
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Link;
@@ -84,6 +87,9 @@ final class ForumPostRevisionHistoryController extends ControllerBase {
 
     foreach ($revisionIds as $index => $revisionId) {
       $revision = $revisions[$revisionId];
+      if (!$revision instanceof ContentEntityInterface || !$revision instanceof RevisionLogInterface) {
+        continue;
+      }
       $cacheability->addCacheableDependency($revision);
       $revisionUser = $revision->getRevisionUser();
       if ($revisionUser instanceof UserInterface) {

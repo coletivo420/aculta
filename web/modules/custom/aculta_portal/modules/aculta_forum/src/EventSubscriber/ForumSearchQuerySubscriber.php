@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_forum\EventSubscriber;
 
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\search_api\Event\QueryPreExecuteEvent;
 use Drupal\search_api\Event\SearchApiEvents;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -15,7 +16,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 final class ForumSearchQuerySubscriber implements EventSubscriberInterface {
 
   public function __construct(
-    private readonly DomainPurposeManager $domainPurposeManager,
+    private readonly DomainSiteManager $siteManager,
   ) {}
 
   /**
@@ -34,8 +35,8 @@ final class ForumSearchQuerySubscriber implements EventSubscriberInterface {
       return;
     }
 
-    $domain = $this->domainPurposeManager->getDomain('forum');
-    if ($domain === NULL || $this->domainPurposeManager->getCurrentPurpose() !== 'forum') {
+    $domain = $this->siteManager->getDomain(SiteKey::Forum);
+    if ($domain === NULL || $this->siteManager->getCurrentSiteKey()?->value !== 'forum') {
       $query->addCondition('forum_search_domain', '__forum_scope_denied__');
       return;
     }

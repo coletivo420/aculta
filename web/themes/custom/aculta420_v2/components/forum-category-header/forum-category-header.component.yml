@@ -1,0 +1,57 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Cabeçalho de Categoria do Fórum
+status: stable
+description: Eyebrow, título, descrição e estatísticas em faixa com borda vermelha no topo.
+group: Comunidade
+props:
+  type: object
+  additionalProperties: false
+  required: [title]
+  properties:
+    title:
+      type: string
+      title: Título da categoria
+      description: Nome principal da categoria, renderizado como o heading da faixa.
+      minLength: 1
+    title_level:
+      type: string
+      enum: [h1, h2]
+      default: h1
+      title: Nível do título
+      description: A listagem do fórum usa h1 porque a rota não renderiza outro título; use h2 quando um H1 já existir na página.
+    description:
+      type: [string, 'null']
+      title: Descrição explicativa
+      description: Texto introdutório opcional exibido abaixo do título.
+      default: null
+    icon:
+      type: [string, 'null']
+      title: Nome do ícone Phosphor opcional
+      description: ID de ícone existente no pack do tema; null omite o ícone.
+      pattern: '^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$'
+      default: null
+    actions:
+      type: [string, 'null']
+      title: Ação principal opcional (markup de link ou botão)
+      description: Markup renderizado e confiável para a ação principal; o componente não sanitiza nem valida esse conteúdo.
+      default: null
+    stats:
+      type: [array, 'null']
+      title: Lista de estatísticas
+      description: Pares de rótulo e valor mostrados como lista de definições; valores vazios exibem o estado indisponível.
+      default: null
+      items:
+        type: object
+        description: Um indicador composto por rótulo e valor.
+        additionalProperties: false
+        required: [label]
+        properties:
+          label:
+            type: string
+            title: Rótulo da estatística
+            description: Nome curto mostrado antes do valor, como tópicos ou respostas.
+          value:
+            type: [string, integer, 'null']
+            title: Valor numérico ou textual da estatística
+            description: Valor pronto para exibição; null mostra o marcador de dado indisponível.
+            default: null

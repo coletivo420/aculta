@@ -42,7 +42,7 @@ Versão do `info.yml` e do CHANGELOG: `0.1.2-rc.1`. Runner estático 13/13 PASS;
 
 ## Dependências
 
-`aculta_portal` (serviço `aculta_portal.domain_purpose`), `simple_sitemap` 4.x e `domain`.
+`aculta_portal` (serviço `aculta_portal.domain_purpose`), `simple_sitemap` 5.x e `domain`.
 
 ## Homologação (0.1.0-J)
 

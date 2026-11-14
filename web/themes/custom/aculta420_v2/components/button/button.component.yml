@@ -1,0 +1,81 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Button
+variants:
+  primary:
+    title: Principal
+  secondary:
+    title: Secundário
+  outline:
+    title: Contorno
+  ghost:
+    title: Discreto
+  danger:
+    title: Destrutivo
+status: stable
+description: Controle de ação ou link com estados acessíveis.
+group: Botões
+props:
+  type: object
+  additionalProperties: false
+  properties:
+    attributes:
+      type: Drupal\Core\Template\Attribute
+      title: Atributos HTML opcionais
+      description: Atributos adicionais aplicados ao link, botão ou span que envolve o controle.
+      default: null
+    text:
+      type: string
+      title: Texto visível. Opcional quando houver aria_label (botão só com ícone).
+      description: Rótulo visível do controle; pode ser omitido quando aria_label fornece seu nome acessível.
+    aria_label:
+      type: string
+      minLength: 1
+      title: Nome acessível. Obrigatório quando text não existir.
+      description: Nome acessível aplicado como aria-label, necessário quando o controle não tem texto visível.
+    url:
+      title: Endereço de destino
+      type: [string, 'null']
+      format: uri-reference
+      description: Quando informado, renderiza um link; desativado, o destino vira um span sem interação.
+    variant:
+      title: Estilo do botão
+      type: string
+      enum: [primary, secondary, outline, ghost, danger]
+      default: primary
+      description: Variante visual que expressa a ênfase ou o estado da ação.
+    size:
+      type: string
+      title: Tamanho (só altera espaçamento e fonte; alvo de toque mínimo de 44 px)
+      enum: [default, small]
+      default: default
+      description: Tamanho visual do controle; ambas as opções preservam o alvo de toque mínimo do componente.
+    is_submit:
+      title: Enviar formulário ao ativar
+      type: boolean
+      default: false
+      description: Sem URL, define o type do elemento button como submit ou button; com URL, não altera o link renderizado.
+    disabled:
+      title: Desativar o botão
+      type: boolean
+      default: false
+      description: Impede a ativação; um link desativado é renderizado como span com aria-disabled.
+    icon_before:
+      type: [string, 'null']
+      title: Ícone anterior ao texto
+      description: Nome opcional de ícone do componente icon do tema, exibido antes do texto.
+      pattern: '^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$'
+      default: null
+    icon_after:
+      type: [string, 'null']
+      title: Ícone posterior ao texto
+      description: Nome opcional de ícone do componente icon do tema, exibido após o texto.
+      pattern: '^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$'
+      default: null
+    leading_icon:
+      title: Ícone anterior estruturado (UI Icons)
+      description: Ícone renderizável selecionado pela integração UI Icons; tem precedência sobre icon_before.
+      $ref: 'ui-patterns://icon'
+    trailing_icon:
+      title: Ícone posterior estruturado (UI Icons)
+      description: Ícone renderizável selecionado pela integração UI Icons; tem precedência sobre icon_after.
+      $ref: 'ui-patterns://icon'

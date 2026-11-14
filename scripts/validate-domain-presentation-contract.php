@@ -26,10 +26,10 @@ $assert($container->has('aculta_portal.presentation.domain'), 'Domain presentati
 
 $builder = $container->get('aculta_portal.presentation.domain');
 $assert($builder instanceof DomainPresentationBuilder, 'Domain presentation service uses the canonical builder.');
-$domainPurpose = $container->get('aculta_portal.domain_purpose');
+$domainSite = $container->get('aculta_portal.domain_site');
 $isMainFrontPage = $container->get('path.matcher')->isFrontPage();
 $assert(
-  $domainPurpose->getCurrentPurpose() === 'main',
+  $domainSite->getCurrentSiteKey()?->value === 'main',
   'Run this gate with a MAIN purpose URI.',
 );
 
@@ -65,7 +65,11 @@ foreach ($expected as $purpose => [$title, $shortTitle]) {
   $assert($presentation !== NULL, 'Presentation builds for purpose: ' . $purpose);
 
   $theme = $presentation->toThemeArray();
-  $assert(array_keys($theme) === ['identity', 'regions', 'layout'], 'Theme contract has only identity, regions and layout: ' . $purpose);
+  $assert(
+    array_keys($theme) === ['identity', 'regions', 'layout', 'domain_sites'],
+    'Theme contract has identity, regions, layout and domain_sites: ' . $purpose,
+  );
+  $assert(is_array($theme['domain_sites']), 'Domain sites are a neutral list: ' . $purpose);
   $layout = $theme['layout'];
   $assert(
     array_keys($layout) === ['institution_bar_account', 'show_utility_bar', 'links_page', 'show_site_header'],
@@ -131,12 +135,12 @@ foreach ($expected as $purpose => [$title, $shortTitle]) {
   );
   if ($purpose === 'main' && $isMainFrontPage && is_array($showcase)) {
     foreach ($showcase as $item) {
-      $rootUrl = $domainPurpose->pathUrl($item['purpose'], '/');
+      $rootUrl = $domainSite->pathUrl($item['purpose'], '/');
       $assert(
         $rootUrl !== NULL && $rootUrl->toString() === $item['url'],
         'Showcase URL is resolved for the configured environment: ' . $item['purpose'],
       );
-      $targetDomain = $domainPurpose->getDomain($item['purpose']);
+      $targetDomain = $domainSite->getDomain($item['purpose']);
       $assert(
         $targetDomain !== NULL
           && array_diff($targetDomain->getCacheTags(), $presentation->getCacheTags()) === [],
@@ -151,7 +155,7 @@ foreach ($expected as $purpose => [$title, $shortTitle]) {
   foreach (['domain', 'languages:language_interface', 'url.site', 'url.path.is_front'] as $context) {
     $assert(in_array($context, $contexts, TRUE), 'Presentation carries cache context ' . $context . ': ' . $purpose);
   }
-  $domain = $domainPurpose->getDomain($purpose);
+  $domain = $domainSite->getDomain($purpose);
   $assert($domain !== NULL, 'Configured Domain entity exists for purpose: ' . $purpose);
   $domainTags = $domain->getCacheTags();
   $assert($domainTags !== [], 'Domain entity exposes cache tags: ' . $purpose);

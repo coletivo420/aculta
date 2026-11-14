@@ -7,7 +7,6 @@ namespace Drupal\aculta_commerce_melhorenvio\Controller;
 use Drupal\aculta_commerce_melhorenvio\Http\MelhorEnvioConfig;
 use Drupal\aculta_commerce_melhorenvio\Http\MelhorEnvioEnvironment;
 use Drupal\aculta_commerce_melhorenvio\Http\MelhorEnvioTokenStoreInterface;
-use Drupal\aculta_portal\Render\PortalLinkElement;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
@@ -60,14 +59,15 @@ final class MelhorEnvioStatusController {
       : $this->t('Sandbox (testes)');
     $scopes = $this->config->scopes() !== '' ? $this->config->scopes() : $this->t('Nenhuma');
 
-    $connect = PortalLinkElement::build(
-      $hasToken ? $this->t('Reconectar ao Melhor Envio') : $this->t('Conectar ao Melhor Envio'),
-      Url::fromRoute('aculta_commerce_melhorenvio.oauth_authorize'),
-      [
-        'data-aculta-popup' => 'melhorenvio_autorizacao',
-        'data-portal-ui' => 'button-primary',
+    $connect = [
+      '#type' => 'aculta_portal_button',
+      '#props' => [
+        'text' => (string) ($hasToken ? $this->t('Reconectar ao Melhor Envio') : $this->t('Conectar ao Melhor Envio')),
+        'url' => Url::fromRoute('aculta_commerce_melhorenvio.oauth_authorize')->toString(),
+        'variant' => 'primary',
       ],
-    );
+      '#attributes' => ['data-aculta-popup' => 'melhorenvio_autorizacao'],
+    ];
     $connect['#attached']['library'][] = 'aculta_portal/integration-popup';
 
     return [

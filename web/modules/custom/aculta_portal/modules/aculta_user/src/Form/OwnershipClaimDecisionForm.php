@@ -22,15 +22,15 @@ final class OwnershipClaimDecisionForm extends FormBase {
   /**
    * Reivindicação sob avaliação.
    */
-  private ?OwnershipClaim $claim = NULL;
+  protected ?OwnershipClaim $claim = NULL;
 
   /**
    * Construtor do formulário.
    */
   public function __construct(
-    private readonly OwnershipClaimService $claimService,
-    private readonly EntityTypeManagerInterface $entityTypeMgr,
-    private readonly DateFormatterInterface $dateFormatter,
+    protected readonly OwnershipClaimService $claimService,
+    protected readonly EntityTypeManagerInterface $entityTypeMgr,
+    protected readonly DateFormatterInterface $dateFormatter,
   ) {}
 
   /**
@@ -119,10 +119,12 @@ final class OwnershipClaimDecisionForm extends FormBase {
       $form['actions'] = [
         '#type' => 'actions',
         'back' => [
-          '#type' => 'link',
-          '#title' => $this->t('Voltar para a lista'),
-          '#url' => Url::fromRoute('aculta_user.ownership_claims'),
-          '#attributes' => ['data-portal-ui' => 'button'],
+          '#type' => 'aculta_portal_button',
+          '#props' => [
+            'text' => $this->t('Voltar para a lista'),
+            'url' => Url::fromRoute('aculta_user.ownership_claims')->toString(),
+            'variant' => 'secondary',
+          ],
         ],
       ];
       return $form;
@@ -155,10 +157,12 @@ final class OwnershipClaimDecisionForm extends FormBase {
         '#button_type' => 'primary',
       ],
       'cancel' => [
-        '#type' => 'link',
-        '#title' => $this->t('Cancelar'),
-        '#url' => Url::fromRoute('aculta_user.ownership_claims'),
-        '#attributes' => ['data-portal-ui' => 'button'],
+        '#type' => 'aculta_portal_button',
+        '#props' => [
+          'text' => $this->t('Cancelar'),
+          'url' => Url::fromRoute('aculta_user.ownership_claims')->toString(),
+          'variant' => 'secondary',
+        ],
       ],
     ];
 

@@ -18,7 +18,7 @@ final class DomainRouteSubscriber extends RouteSubscriberBase {
    */
   public static function getSubscribedEvents(): array {
     // Executa antes da passagem de purpose do portal (-2049). Essa passagem
-    // respeita _aculta_domain_purpose_authoritative e mantém o purpose daqui.
+    // respeita _aculta_site_key_authoritative e mantém o purpose daqui.
     return [RoutingEvents::ALTER => [['onAlterRoutes', -2048]]];
   }
 
@@ -32,8 +32,8 @@ final class DomainRouteSubscriber extends RouteSubscriberBase {
     }
 
     $route->setPath('/integracoes/mcp');
-    $route->setOption('_aculta_domain_purpose', 'main');
-    $route->setOption('_aculta_domain_purpose_authoritative', TRUE);
+    $route->setOption('_aculta_site_key', 'main');
+    $route->setOption('_aculta_site_key_authoritative', TRUE);
 
     // MCP Server OAuth builds this metadata route using its own container
     // parameter, which may be reset by module service ordering. Keep discovery
@@ -41,8 +41,8 @@ final class DomainRouteSubscriber extends RouteSubscriberBase {
     $metadata_route = $collection->get('mcp_server_oauth.resource_metadata');
     if ($metadata_route !== NULL) {
       $metadata_route->setPath('/.well-known/oauth-protected-resource/integracoes/mcp');
-      $metadata_route->setOption('_aculta_domain_purpose', 'main');
-      $metadata_route->setOption('_aculta_domain_purpose_authoritative', TRUE);
+      $metadata_route->setOption('_aculta_site_key', 'main');
+      $metadata_route->setOption('_aculta_site_key_authoritative', TRUE);
     }
   }
 

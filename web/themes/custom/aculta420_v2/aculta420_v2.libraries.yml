@@ -1,0 +1,173 @@
+topic-dialog:
+  version: 1.0.0
+  css:
+    component:
+      components/dialog/dialog.css: {}
+
+unpublished-preview:
+  version: 0.1.0
+  css:
+    theme:
+      src/styles/unpublished-preview.css: {}
+
+events:
+  version: 0.1.0
+  css:
+    theme:
+      src/styles/events.css: {}
+  dependencies:
+    - aculta420_v2/global-styling
+
+login-page:
+  version: 0.1.0
+  css:
+    theme:
+      src/styles/login-page.css: {}
+  dependencies:
+    - aculta420_v2/global-styling
+
+search-page:
+  version: 0.1.0
+  css:
+    theme:
+      src/styles/search.css: {}
+  dependencies:
+    - aculta420_v2/global-styling
+
+linkweed-admin:
+  version: 0.1.0
+  css:
+    theme:
+      src/styles/linkweed-admin.css: {}
+  dependencies:
+    - aculta420_v2/global-styling
+
+secrets-admin:
+  version: 0.1.0
+  css:
+    theme:
+      src/styles/secrets-admin.css: {}
+  dependencies:
+    - aculta420_v2/global-styling
+
+address-fields:
+  version: 0.1.0
+  css:
+    theme:
+      src/styles/address-fields.css: {}
+  dependencies:
+    - aculta420_v2/global-styling
+
+account-dialogs:
+  version: 0.1.0
+  css:
+    theme:
+      src/styles/account-dialogs.css: {}
+  dependencies:
+    - aculta420_v2/global-styling
+
+wiki:
+  version: 0.1.0
+  css:
+    theme:
+      src/styles/wiki.css: {}
+  dependencies:
+    - aculta420_v2/global-styling
+
+event-organization:
+  version: 0.1.0
+  css:
+    theme:
+      src/styles/event-organization.css: {}
+  dependencies:
+    - aculta420_v2/global-styling
+
+portal-account:
+  version: 0.1.0
+  css:
+    theme:
+      src/styles/portal-account.css: {}
+  dependencies:
+    - aculta420_v2/global-styling
+
+statistics:
+  version: 0.2.0
+  css:
+    theme:
+      src/styles/statistics.css: {}
+      components/statistics-metric-card/statistics-metric-card.css: {}
+      components/statistics-trend-chart/statistics-trend-chart.css: {}
+      components/statistics-category-ranking/statistics-category-ranking.css: {}
+      components/statistics-activity-summary/statistics-activity-summary.css: {}
+      components/statistics-empty-state/statistics-empty-state.css: {}
+  dependencies:
+    - aculta420_v2/global-styling
+
+global-styling:
+  version: 1.2.0-dev.3
+  css:
+    theme:
+      'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Oswald:wght@400;500;600;700&display=swap': { type: external, minified: true }
+      src/styles/tokens.css: {}
+      src/styles/base.css: {}
+      src/styles/layout.css: {}
+      src/styles/mobile-frame.css: {}
+      components/avatar/avatar.css: {}
+      src/styles/buttons.css: {}
+      components/button/button.css: {}
+      components/surface/surface.css: {}
+      components/surface-accent/surface-accent.css: {}
+      components/heading/heading.css: {}
+  dependencies:
+    - system/base
+
+
+studio-htmx:
+  js:
+    js/studio-htmx.js: { attributes: { defer: true } }
+  dependencies:
+    - core/drupal
+    - core/once
+    - core/drupal.htmx
+
+htmx-dialogs:
+  js:
+    js/htmx-dialogs.js: { attributes: { defer: true } }
+  dependencies:
+    - core/drupal
+    - core/once
+
+component-library-mode:
+  css:
+    component:
+      src/styles/component-library-mode.css: {}
+      src/styles/color-mode-dark.css: {}
+  js:
+    js/component-library-mode.js: { attributes: { defer: true } }
+  dependencies:
+    - core/drupal
+
+ui-library-admin:
+  css:
+    theme:
+      src/styles/ui-library-admin.css: {}
+  js:
+    js/ui-library-tabs.js: { attributes: { defer: true } }
+    js/ui-library-bulk-preview.js: { attributes: { defer: true } }
+  dependencies:
+    - aculta420_v2/global-styling
+    - core/drupal
+    - core/once
+    - core/drupal.htmx
+
+utility-drawers:
+  js:
+    js/utility-dialogs.js: { attributes: { defer: true } }
+    js/messenger-drawers.js: { attributes: { defer: true } }
+    js/counters.js: { attributes: { defer: true } }
+    js/alerts-dismiss.js: { attributes: { defer: true } }
+  dependencies:
+    - aculta420_v2/studio-htmx
+    - core/drupal
+    - core/once
+    - core/drupalSettings

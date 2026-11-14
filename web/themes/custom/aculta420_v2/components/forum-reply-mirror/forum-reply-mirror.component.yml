@@ -1,0 +1,47 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Cartão do Post do Fórum Espelhado
+description: "Cartão de post do fórum no layout espelhado (comentários pares). Desktop: autor, faixa e reações à direita; ações à esquerda. Mobile: só a faixa muda de lado. Faixa vermelha e linha verde acima das ações."
+status: stable
+group: Comunidade
+props:
+  type: object
+  additionalProperties: false
+  required: [author_name]
+  properties:
+    density:
+      type: string
+      title: Densidade do cartão
+      description: "default ou compact (mobile: menos espaçamento e ações em linha)."
+      enum: [default, compact]
+      default: default
+    author_name:
+      type: string
+      title: Nome do autor
+      description: Nome público exibido no cartão espelhado da resposta.
+      minLength: 1
+    timestamp:
+      type: [string, 'null']
+      title: Data de publicação formatada
+      description: Data pronta para exibição no cabeçalho do cartão.
+      default: null
+    author_posts:
+      type: [string, integer, 'null']
+      title: Contagem de posts do autor
+      description: Número de posts do autor mostrado como metadado opcional.
+      default: null
+slots:
+  avatar:
+    title: Avatar ou cartão de autor
+    description: Identificação visual do autor da resposta.
+  body:
+    title: Corpo da resposta
+    description: Conteúdo renderizado da resposta.
+  actions:
+    title: Ações (link, editar, citar, responder)
+    description: Markup das ações, à esquerda no layout espelhado.
+  reactions_received:
+    title: Reações recebidas
+    description: Barra somente leitura (discussion-reactions-received), acima da linha do rodapé.
+  reactions_slot:
+    title: Barra de reações
+    description: Controles de reação autorizados para a resposta.

@@ -7,11 +7,11 @@ dependencies:
   module:
     - media
     - user
-    - vvjs
+    - ui_patterns_views
 id: galeria_produto
-label: 'Galeria do produto (VVJS)'
+label: 'Galeria do produto (UI Patterns)'
 module: views
-description: 'Slideshow VVJS das imagens de um produto. Recebe os IDs das mídias como argumento (separados por +).'
+description: 'Grade SDC das imagens de um produto. Recebe os IDs das mídias como argumento (separados por +).'
 tag: ''
 base_table: media_field_data
 base_field: mid
@@ -84,27 +84,23 @@ display:
           value:
             image: image
       style:
-        type: views_vvjs
+        type: ui_patterns
         options:
-          grouping: {  }
-          time_in_seconds: 0
-          navigation: none
-          animation: none
-          arrows: arrows-sides
-          hero_slideshow: false
-          available_breakpoints: '768'
-          enable_css: true
-          show_total_slides: false
-          show_slide_progress: false
-          show_play_pause: false
-          pause_on_hover: true
-          enable_swipe: true
-          enable_keyboard: true
-          enable_looping: false
-          start_index: 1
-          transition_type: crossfade-classic
-          transition_duration: 400
-          scrollable_dots_width: 0
+          ui_patterns:
+            ui_patterns:
+              component_id: 'aculta420_v2:layout-grid'
+              variant_id: null
+              props:
+                min_item_width:
+                  source_id: select
+                  source:
+                    value: 12rem
+              slots:
+                content:
+                  sources:
+                    -
+                      source_id: view_rows
+                      source: {  }
       row:
         type: 'entity:media'
         options:
@@ -112,4 +108,4 @@ display:
       query:
         type: views_query
         options: {  }
-      css_class: aculta-galeria-produto
+      css_class: ''

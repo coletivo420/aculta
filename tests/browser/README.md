@@ -1,237 +1,217 @@
-# Testes visuais de navegador — projeto ACULTA
+# Testes de navegador
 
-Esta é a infraestrutura compartilhada de navegador para **todo o projeto
-ACULTA**: todos os módulos, produtos, domínios/purposes e consumidores, incluindo
-interfaces Drupal e integrações frontend. O harness genérico não pertence ao
-tema nem ao Studio. Informe as URLs da área sob teste; escolha a suíte específica
-somente quando precisar validar contratos que uma medição genérica não alcança.
-Essa regra vale para as instruções, scripts, evidências e manutenção deste
-catálogo: qualquer frente deve primeiro adaptar a execução genérica passando suas
-URLs e só adicionar código específico quando houver uma necessidade técnica que
-o harness comum não cubra.
+Esta pasta é o projeto Node dos testes de navegador do ACULTA, com Playwright. Os comandos abaixo são de shell e valem para qualquer agente ou pessoa (Claude, Codex, AGY ou outro). A ordem de preferência está em `docs/operations/NAVEGADOR-TESTES.md`: Playwright com Firefox, Chromium e WebKit (mesmo runner), navegador embutido e X11 com Gecko/Firefox ESR visível. Todos são permitidos; prefira o de menor custo de tokens e declare o método usado no relatório.
 
-Esta pasta guarda os scripts de teste visual do projeto — navegador, captura de
-tela e medição de renderização — para que outras sessões reaproveitem o que já
-existe em vez de reescrever a descoberta de seletores e o fluxo.
+## Instalação
 
-## Ambiente de execução
+Pré-requisito: Node 22 e npm. Versões fixadas no `package-lock.json`: `@playwright/test` 1.56.1.
 
-- Os testes visuais X11 rodam com `DISPLAY=:0` contra o servidor de desenvolvimento `aculta.toca.net.br`, cujo docroot
-  `/home/aculta/public_html` é o checkout `/home/piradopirata/projetos/aculta`.
-- O código testado é o do commit que está nesse checkout. Confira antes com `git rev-parse --short HEAD` no checkout.
-- Trocar o commit desse checkout exige autorização do responsável, backup de alterações não commitadas e `drush cr`.
+```bash
+cd tests/browser
+npm ci
+npx playwright install firefox chromium webkit
+```
 
-## Regra
+- Use `npx playwright install` sem `--with-deps`. Dependências do sistema exigem decisão e instalação com administrador.
+- Se o WebKit reclamar de biblioteca do sistema, rode `npx playwright install-deps --dry-run webkit`. O comando imprime a lista de pacotes `apt` (não executa nada). Peça a um administrador para instalar, ou instale apenas se estiver autorizado.
+- Para instalar só um motor, troque a lista: `npx playwright install firefox`, `npx playwright install chromium` ou `npx playwright install webkit`.
 
-Todo script de teste visual que um agente criar deve ser salvo **no
-repositório**, em `tests/browser/<frente>/`, com um `README.md` na própria
-pasta. Script em `/tmp` ou em diretório pessoal não conta: some quando a
-sessão termina e o trabalho se perde.
+## Scripts por motor
 
-- **Uma pasta por frente**, nomeada pelo assunto (`aculta-cpf-checkout`), não
-  pelo agente nem pela data.
-- **O `README.md` local** diz o que o script cobre, o ambiente em que roda
-  (servidor de desenvolvimento ou local), as variáveis de ambiente, como executar e
-  quais são as limitações conhecidas.
-- **Artefatos ficam fora do repositório**: PNG, HTML e logs vão para
-  `$SUITE_OUT`, que deve ser informado e ficar em armazenamento persistente.
-  Não use `/tmp` nem o próprio checkout. O repositório guarda o script, não a
-  evidência — evidência com dado de conta não deve ser versionada.
-- **Sem segredos no script**: credenciais vêm do ambiente (`secrets/*.env`);
-  nada de senha, token ou link de uso único hardcoded ou impresso.
-- **Reaproveite antes de criar**: procure aqui a frente mais próxima e reuse
-  `wdlib.py` (WebDriver W3C do projeto) em vez de reescrever a camada de
-  driver.
-- **Ambiente declarado**: o script deve dizer se fala com o servidor de desenvolvimento
-  (`*.aculta.toca.net.br`) ou com o ambiente local (`127.0.0.1` com os hosts
-  resolvidos no perfil do Firefox). Não confunda os dois.
-- **Mudança global exige restauração**: se o teste troca tema, configuração ou
-  qualquer estado compartilhado, o comando de execução deve restaurar o estado
-  com `trap`, no mesmo comando, e o README deve mostrar como.
+Os três scripts usam o mesmo runner (`run-playwright.mjs`) e o motor vem de `ACULTA_BROWSER_ENGINE`:
 
-Algumas instruções históricas de suítes ainda mostram `/tmp` como saída. Use o
-armazenamento persistente `/home/piradopirata/aculta-suite-out/<nome-da-suite>`
-no servidor, e configure
-`ACULTA_FF_PROFILE_ROOT="$SUITE_OUT/profiles"`. O `wdlib` atual rejeita perfis
-sob `/tmp`.
+| Script | Motor | Equivale a |
+| --- | --- | --- |
+| `npm run test:firefox` | Firefox Playwright (padrão) | `ACULTA_BROWSER_ENGINE=firefox` |
+| `npm run test:chromium` | Chromium Playwright | `ACULTA_BROWSER_ENGINE=chromium` |
+| `npm run test:webkit` | WebKit Playwright | `ACULTA_BROWSER_ENGINE=webkit` |
 
-Firefox ESR visível em `DISPLAY=:0` é usado para revisão humana, capturas de
-aceite e zoom real. Por autorização do responsável em 2026-10-31, o Firefox ESR
-headless executa matrizes automatizadas repetitivas quando reduz setup/tempo;
-Chrome/Chromium headless são motores complementares, com driver compatível e
-resultado registrado. Declare browser/headless explicitamente e mantenha a
-revisão X11. Consulte `docs/operations/NAVEGADOR-TESTES.md` e `AGENTS.md`.
+Se `ACULTA_BROWSER_ENGINE` não for definido, o padrão é `firefox`. Valores fora de `firefox`, `chromium` e `webkit` encerram com código `2`. `test:front` continua apontando para o runner com o motor padrão.
 
-## Scripts salvos hoje
+## Execução e ambientes
 
-### Harness genérico para qualquer módulo/produto/purpose: `aculta-smoke/`
+Declare sempre o ambiente e os artefatos. `SUITE_OUT` é um diretório externo ao repositório, onde ficam relatórios, traces, capturas e logs:
 
-`smoke-page.py` executa smoke GET reutilizável de uma ou mais URLs de qualquer
-área do projeto; `page-matrix.py` faz matriz de larguras, modos de cor e axe
-opcional em qualquer módulo, produto, domínio/purpose ou consumer que possa ser
-aberto no navegador.
-Executam Firefox visível/X11 ou Firefox/Chrome/Chromium headless, com perfil
-temporário e artefatos privados em `$SUITE_OUT`. A sessão prévia opcional aceita
-uma URL de início sem escrevê-la aos logs. Não provam ACL nem submissão de
-formulário, persistência, processamento de dados no servidor, cache Drupal ou
-autorização entre contas/lojas. Instruções completas e comandos genéricos:
-[README local](aculta-smoke/README.md). Para contratos específicos, escolha a
-suíte dona listada abaixo e complemente o harness genérico em vez de tratá-lo
-como substituto.
+```bash
+SUITE_OUT=/caminho/externo ACULTA_BROWSER_ENV=desenvolvimento \
+ACULTA_SITE_ORIGIN=https://aculta.toca.net.br/ npm run test:firefox
 
-### `aculta-cpf-checkout/`
+SUITE_OUT=/caminho/externo ACULTA_BROWSER_ENV=local \
+ACULTA_SITE_ORIGIN=https://aculta.toca.net.br/ npm run test:chromium
+```
 
-Frente CPF ID + checkout compartilhado Loja/LMS. Detalhes no `README.md` da
-pasta.
+- Hosts `*.aculta.toca.net.br` são servidor de desenvolvimento; `127.0.0.1` é local. Não misture os ambientes.
+- `ACULTA_BROWSER_ENV` define o ambiente declarado e, em `local`, ignora erro de certificado. Se não for definido, o runner assume `desenvolvimento`.
+- A origem vem de `ACULTA_SITE_ORIGIN` ou de `ACULTA_BROWSER_URLS` (lista separada por vírgula). Pelo menos uma das duas é obrigatória (código `2` se faltarem).
+- O runner usa headless, locators, `expect` e espera por condição. Nunca use `sleep` fixo.
 
-| Script | Cobre | Ambiente |
-|---|---|---|
-| `wdlib.py` | biblioteca WebDriver W3C: sessão, `get`, `js`, `find`, `click`, `type`, abas, screenshot | qualquer |
-| `login-probe.py` | descoberta de seletores do login, `/dados` e página de produto da Loja | servidor de desenvolvimento |
-| `login-captcha.py` | login com espera do token do Cloudflare Turnstile | servidor de desenvolvimento |
-| `multi-tab-checkout.py` | carrinho e checkout em múltiplas abas, cookies sem valor, LMS (`/group/1`) | servidor de desenvolvimento |
-| `olivero-smoke.py` | tema Olivero no Portal, Fórum e Revista; assets do tema, erros visíveis, screenshot | ambiente local |
+No ambiente local, o Apache usa os VirtualHosts HTTPS do ACULTA. Os hosts de teste devem resolver para `127.0.0.1` no `/etc/hosts`. O URL mantém o hostname para preservar SNI e o VirtualHost correto.
 
-### `aculta-wiki/`
+## Teste mínimo de sanidade
 
-| Script | Cobre | Ambiente |
-|---|---|---|
-| `visual.py`, `keyboard.py` | páginas públicas, reflow e teclado da busca | servidor de desenvolvimento |
-| `we-sativa.py` | workspace autenticado em `/we-sativa`, reflow, ação nativa e retorno | servidor de desenvolvimento; login Drush da conta de teste |
+Para verificar um motor sem fixture de conta, use uma página estática local, fora do repositório. Não use `about:blank`: a página vazia tem `body` sem tamanho e o `expect` de visibilidade falha. Não use `data:` (a vírgula da URL quebra o separador de `ACULTA_BROWSER_URLS`).
 
-### `aculta-conta-raiz/`
+```bash
+mkdir -p "$SUITE_OUT"
+printf '<!doctype html><html><body><p>ACULTA smoke</p></body></html>\n' > "$SUITE_OUT/smoke.html"
+SUITE_OUT="$SUITE_OUT" ACULTA_BROWSER_URLS="file://$SUITE_OUT/smoke.html" \
+ACULTA_BROWSER_FRONTS=aculta-avatar npm run test:chromium
+```
 
-Raiz da Conta (Domain ACCOUNT) sem sessão: `/` e `/conta-legada` levam ao login, `/minha-conta` e `/studio` dão 404, e o login não tem rolagem horizontal em 390 px e 1280 px. Servidor de desenvolvimento, Firefox ESR em `DISPLAY=:0`. Não cobre o estado logado. Ver `aculta-conta-raiz/README.md`.
+Troque `test:chromium` por `test:firefox` ou `test:webkit`. Código de saída `0` e um teste aprovado indicam o motor pronto.
 
-### `aculta-qrcode/`
+## Método X11 com Firefox ESR visível (método 5)
 
-`visual.py` valida painel, prévia SVG, downloads SVG/PNG/WebP/PDF, redirecionamento
-público e reflow 1280/390/320 px usando uma entidade temporária `[TESTE]` no
-Runtime de desenvolvimento. Requer uma sessão administrativa efêmera. Ver o
-README local para criação e limpeza da fixture.
+Para aceite visual humano ou quando os métodos Playwright não reproduzem o caso. Não há script no repositório: o comando é executado diretamente, com um display X ativo. Em uma máquina com sessão gráfica, use o display existente (normalmente `:0`) e não suba outro servidor X.
 
-### `aculta-portal-cep/`
+```bash
+mkdir -p "$SUITE_OUT/ff-profile"
+DISPLAY=:0 firefox-esr --no-remote --profile "$SUITE_OUT/ff-profile" --new-instance "file://$SUITE_OUT/smoke.html"
+```
 
-`olivero.py` verifica o formulário autenticado de endereço, o preenchimento
-assíncrono do CEP, campos bloqueados e reflow 1280/390/320 px com o tema Olivero.
-Usa conta descartável e link ULI; não submete o formulário. A ativação temporária
-do tema deve ser restaurada pelo `trap` documentado no README local. Capturas e
-link ULI ficam em `$SUITE_OUT`.
+- `DISPLAY` aponta para o display X visível; `SUITE_OUT` guarda o perfil temporário, que não deve ser o perfil pessoal do usuário.
+- Sem sessão gráfica, suba um servidor virtual apenas se estiver autorizado: `Xvfb :99 -screen 0 1440x900x24 &`, registre o PID (`echo $!`) e encerre-o ao final com `kill <PID>`. Para isso, use `DISPLAY=:99`.
 
-### `aculta-image-admin/`
+## Frentes inventariadas
 
-`visual.py` abre as opções de processamento de imagens com Firefox ESR, verifica
-compressão, WebP, formatos de entrada/saída, detecção de bibliotecas e reflow
-em 1280/390/320 px. Cria e remove conta/papel temporários com permissão restrita;
-não salva configuração nem altera arquivos. Servidor de desenvolvimento; ver o
-README local para execução e limitações.
+Estão listadas abaixo as pastas reais, com o caminho completo. A convenção é `tests/browser/<purpose>/<frente>/` (purpose: `account`, `courses`, `eventos`, `forum`, `gallery`, `links`, `magazine`, `shop`, `studio`, `support`, `transversal`, `wiki`). Frentes antigas na raiz (`aculta-avatar`, `aculta-game`, etc.) continuam válidas. Antes de criar um script, procure a frente nesta tabela.
 
-### `aculta-forum-lms/`
+**Manutenção do índice.** `tests/browser/INDICE.md`, a tabela abaixo e os `README.md` das pastas agrupadoras são gerados por `python3 tests/browser/gerar-indice.py`. Depois de criar, mover ou remover uma frente, rode o script. `php scripts/validate-browser-index.php` é o gate: confere o `--check` e se algum documento cita caminho inexistente. Regras de criação, alteração e correção de testes: `docs/operations/NAVEGADOR-TESTES.md`, seção "Manutenção".
 
-`h5p-discussions.py` prepara um curso LMS, uma conta Educadora temporária e um
-tópico ligado a um conteúdo H5P existente, e verifica o link de discussão em
-1280/390/320 px no Firefox ESR. A fixture é removida no `finally`. A execução
-atual no Runtime de desenvolvimento foi bloqueada antes do navegador porque
-`private://h5p` não permite escrita ao Drush; ver o README local. Não altere
-permissões para contornar esse bloqueio sem autorização.
+<!-- INDICE:INICIO -->
 
-### `aculta-game/`
+Índice completo, com contagem de scripts e `routes.json`: [`INDICE.md`](./INDICE.md).
 
-`smoke.mjs` verifica a área de conta, perfil público e alternativas de texto das
-imagens de conquistas. Reutiliza a sessão WebDriver do Messenger, usa a conta
-descartável `teste.comum` (UID 5) do Runtime de desenvolvimento e não submete
-formulários. O trecho administrativo só roda com `GAME_ADMIN_ACCOUNT` apontando
-para uma conta ativa com `administer aculta game`. O layout responsivo pode ser
-omitido com `GAME_SKIP_RESPONSIVE=1` quando o CSS do candidato não está servido;
-nesse modo não há evidência móvel. Ver `aculta-game/README.md`.
+| Pasta | Frente |
+|---|---|
+| `tests/browser/account/aculta-conta-raiz/` | Raiz da Conta (Domain ACCOUNT): verificação anônima no navegador |
+| `tests/browser/aculta-avatar/` | Teste visual — avatar padrão |
+| `tests/browser/aculta-game/` | Smoke visual do ACULTA Game |
+| `tests/browser/aculta-maps/` | ACULTA Maps — visual smoke |
+| `tests/browser/aculta-messenger/` | Suíte de navegador do ACULTA Messenger |
+| `tests/browser/aculta-patcher/` | Revisão visual do ACULTA Patcher |
+| `tests/browser/aculta-portal-cep/` | Testes do Portal CEP |
+| `tests/browser/aculta-qrcode/` | Validação visual do ACULTA QR Code |
+| `tests/browser/aculta-secrets-manager/` | Painel de credenciais (aculta_secrets_manager) |
+| `tests/browser/aculta-statistics/` | Revisão visual do painel de estatísticas |
+| `tests/browser/courses/aculta-forum-lms/` | ACULTA Forum LMS — diálogo sob conteúdo H5P |
+| `tests/browser/courses/aculta-lms/` | Revisão visual do formulário de resposta com arquivo (LMS) |
+| `tests/browser/courses/aculta-lms-resources/` | Revisão visual do campo de vídeos do curso |
+| `tests/browser/eventos/` | Navegador — eventos (agenda e incorporação) |
+| `tests/browser/eventos/aculta-calendar-admin/` | Revisão visual de ADM8 — hosts de incorporação do calendário |
+| `tests/browser/eventos/aculta-calendar-interactive/` | Calendário interativo — revisão visual servida |
+| `tests/browser/eventos/aculta-calendar-piloto/` | Piloto isolado — DHTMLX Scheduler (edição GPL) |
+| `tests/browser/eventos/aculta-events/` | Firefox checks for ACULTA Studio Culturas organization layouts |
+| `tests/browser/forum/aculta-forum/` | Suíte visual X11 do ACULTA Forum |
+| `tests/browser/forum/aculta420-v2-forum/` | Firefox ESR visual smoke — Fórum V2 |
+| `tests/browser/gallery/aculta-gallery/` | Galeria ACULTA |
+| `tests/browser/links/aculta-links/` | Micropágina pública: layout mobile no navegador |
+| `tests/browser/magazine/aculta-gallery-ui-patterns/` | Galeria editorial — UI Patterns Views |
+| `tests/browser/magazine/aculta-news-ui-patterns/` | UI Patterns Views — listagem da Revista |
+| `tests/browser/magazine/revista-color/` | Revista — rótulos de categoria |
+| `tests/browser/magazine/revista-editorial/` | Revista — fluxo editorial (ARQ-08) |
+| `tests/browser/shop/aculta-cpf-checkout/` | Navegador — CPF/checkout compartilhado Loja/LMS |
+| `tests/browser/shop/aculta-frete/` | Navegador — simulador de frete na página do produto |
+| `tests/browser/shop/aculta-mercadopago/` | Mercado Pago — login sandbox do comprador |
+| `tests/browser/shop/aculta-shop-catalog-ui-patterns/` | Catálogo da Loja — UI Patterns Views |
+| `tests/browser/studio/` | Testes do ACULTA Studio, por subcategoria |
+| `tests/browser/studio/culturas/` | Studio · Culturas |
+| `tests/browser/studio/ganjalab/` | Experiência educacional ACULTA Studio Ganjalab |
+| `tests/browser/studio/geral/` | Revisão visual e de navegação do ACULTA Studio |
+| `tests/browser/studio/green-stash/` | Studio · Green Stash |
+| `tests/browser/studio/marley/` | Studio · Marley |
+| `tests/browser/studio/we-sativa/` | Studio · WE SATIVA |
+| `tests/browser/support/aculta-faq/` | Revisão visual do ACULTA FAQ |
+| `tests/browser/transversal/aculta-botoes-a11y/` | Leitor de tela (Orca) — botões em estados autenticados |
+| `tests/browser/transversal/aculta-content-admin/` | Revisão visual do Painel de conteúdo |
+| `tests/browser/transversal/aculta-contraste/` | ACULTA — contraste de UI Skins |
+| `tests/browser/transversal/aculta-dialogos/` | ACULTA — diálogos e gaveta de Mensagens |
+| `tests/browser/transversal/aculta-document-viewer/` | Revisão visual do ACULTA Document Viewer |
+| `tests/browser/transversal/aculta-editor/` | ACULTA Editor — acesso anônimo, editor e administrador |
+| `tests/browser/transversal/aculta-home-editorial-ui-patterns/` | Home editorial — UI Patterns Views |
+| `tests/browser/transversal/aculta-htmx-f1/` | ACULTA420 V2 — HTMX F1 (busca e login) |
+| `tests/browser/transversal/aculta-image-admin/` | Revisão visual das opções administrativas do ACULTA Image |
+| `tests/browser/transversal/aculta-teclado-foco/` | ACULTA — teclado e foco visível |
+| `tests/browser/transversal/aculta-theme-mobile-first/` | ACULTA420 — SDC responsivos do tema |
+| `tests/browser/transversal/aculta-uploader/` | Smoke do aculta_file_uploader (navegador) |
+| `tests/browser/transversal/aculta-visual/` | Revisão visual da Frente B |
+| `tests/browser/transversal/aculta420-v2-account-menu/` | ACULTA420 V2 — account menu |
+| `tests/browser/transversal/aculta420-v2-audit-2026-11/` | Homologação visual do aculta420_v2 — auditoria 2026-11-11 |
+| `tests/browser/transversal/aculta420-v2-card-accent/` | ACULTA420 V2 — faixa de acento do cartão (DRAFT) |
+| `tests/browser/transversal/aculta420-v2-component-library/` | ACULTA420 V2 — biblioteca de componentes |
+| `tests/browser/transversal/aculta420-v2-data-table/` | ACULTA420 V2 — Data table |
+| `tests/browser/transversal/aculta420-v2-empty-state/` | ACULTA420 V2 — Empty state |
+| `tests/browser/transversal/aculta420-v2-footer/` | ACULTA420 V2 — rodapé e regions do shell |
+| `tests/browser/transversal/aculta420-v2-navigation/` | Navegação SDC do ACULTA420 V2 |
+| `tests/browser/transversal/ui-styles-block/` | UI Styles Block — bloco de Documentos institucionais |
+| `tests/browser/wiki/aculta-wiki/` | ACULTA Wiki — visual smoke test |
+| `tests/browser/wiki/aculta420-v2-wiki/` | ACULTA420 V2 — visual Wiki |
+<!-- INDICE:FIM -->
 
-### Fora da convenção de pasta
+Cada README local é a fonte dos URLs, critérios, fixtures e variáveis da frente. O runner comum cobre carregamento, visibilidade do corpo, URL final, timeout, artefatos e os códigos de saída; critérios específicos devem ser expressos em testes Playwright da própria frente.
 
-Scripts de teste visual anteriores à regra, mantidos onde a frente dona os
-deixou. Servem de referência de fluxo; ao evoluí-los, considere movê-los para
-`tests/browser/<frente>/`.
+**Cobertura real por frente.** O `playwright.spec.mjs` faz só smoke: abre a origem (`ACULTA_SITE_ORIGIN` ou `ACULTA_BROWSER_URLS`) em cada frente e confirma carregamento. Ele não percorre as rotas da frente. A cobertura funcional fica no script da própria frente (`visual.py`, `*.mjs` ou similar) descrito no README local, que define suas rotas, login e ambiente. Uma frente que precise de rotas específicas roda o script dela, não o runner comum.
 
-| Script | Cobre | Situação |
-|---|---|---|
-| `scripts/check-browser-hosts.sh` | carregamento de hosts de teste, tabela URL/código/bytes/título e HTML por URL | documentado em `docs/operations/NAVEGADOR-TESTES.md` |
-| `scripts/test-account-address-browser.py` | formulário de endereço e CEP em Minha conta, via link único de login | da frente `aculta_portal_cep` |
+**Reuso.** Antes de escrever teste novo, procure `tests/browser/<purpose>/<frente>/` e rode o script que já existe, seguindo o README local. Crie script novo só se a frente não tiver um, salvando-o na mesma pasta com README, para o próximo agente reutilizar. Regras em `docs/operations/NAVEGADOR-TESTES.md`, seção "Reuso de scripts por frente". Não há URL por frente no runner, de propósito: as frentes têm ambientes e pré-requisitos diferentes, e um mapa único ficaria falso.
 
-## Evidência das últimas rodadas
+## Códigos
 
-- CPF/checkout, servidor de desenvolvimento: `docs/portal/CPF-CONSOLIDACAO-E-CHECKOUT.md`, seção 9.6.
-- Olivero, ambiente local: mesma seção, subseção "Tema Olivero no ambiente local".
+`0` passou; `124` timeout; `1` erro do Playwright/asserção; `2` pré-requisito ausente ou motor inválido. Não versionar PNG, HTML, trace, vídeo, log ou credencial.
 
-## Registro transversal do projeto — 2026-10-31
+## Cobertura por frente (routes.json)
 
-O runner genérico foi usado em todas as dez raízes públicas atuais listadas no
-manifesto de deploy, não apenas em páginas do tema ou Studio. Após as correções
-de hierarquia de títulos em Eventos e do nome acessível em Cursos, Firefox ESR
-headless passou 180/180 combinações (10 raízes × 9 larguras × claro/escuro),
-com HTTP 200 e sem overflow. Axe não encontrou violações; quatro resultados
-`incomplete` (H1 da Conta e select de categoria do Growroom, nos dois modos)
-continuam para revisão manual e não são reportados como aprovação de contraste.
-Chrome headless passou 36/36 combinações focais de Eventos e Cursos; Firefox
-ESR/X11 passou 16/16 nas mesmas rotas, em quatro larguras e dois modos. No
-consumer Cursos, Firefox/X11 também passou 17/17 checks com JavaScript e 17/17
-sem JavaScript, incluindo zoom nativo de 400%, foco e alcance de todos os cards
-da faixa horizontal. A captura com parte do próximo card visível é o desenho
-intencional da faixa; os cards continuam alcançáveis por teclado e rolagem.
+Cada frente com rotas públicas declaradas ganha um `routes.json` na sua pasta (`tests/browser/<purpose>/<frente>/routes.json`, ou `tests/browser/<purpose>/routes.json` quando a frente é a própria pasta do purpose). O `playwright.routes.spec.mjs` descobre todos e testa só `public_routes`: status abaixo de 400 e `body` visível.
 
-Evidências privadas não versionadas em `$SUITE_OUT`:
+```json
+{
+  "front": "eventos",
+  "purpose": "eventos",
+  "origin_env": "EVENTOS_BASE",
+  "source": "README da frente, seção de rotas",
+  "public_routes": [{ "path": "/" }, { "path": "/mapa" }],
+  "notes": "rotas dinâmicas e de login ficam fora"
+}
+```
 
-- `project-roots-firefox-matrix-3648c50db/`
-- `course-event-chrome-matrix-3648c50db/`
-- `course-event-x11-3648c50db/`
-- `courses-rail-served-3648c50db/` e `courses-rail-nojs-served-3648c50db/`
+- `origin_env` aponta para a variável com o host da frente. Sem ela, o teste é pulado com motivo.
+- Rotas que exigem login, dados ou data específica não entram em `public_routes`; ficam em `notes` e no script da frente.
+- Para rodar só uma frente: `ACULTA_BROWSER_FRONTS=<frente>` com a variável de host definida.
 
-Este registro demonstra reutilização do harness em múltiplos componentes e
-purposes. As rotas de Eventos/Cursos e a faixa de Cursos são validações focais;
-essa rodada não cobre todos os fluxos autenticados, componentes, ACLs, leitor de
-tela ou critérios WCAG 2.2 AA e não fecha THEME-MF3/OCS-F11.
+### Login de teste por frente (campo `auth`)
 
-O parâmetro `AXE_SCRIPT` desacopla a matriz da instalação npm do tema. Validado
-em 2026-10-31 na capa da Revista com Firefox ESR headless, dois viewports e dois
-modos: 4/4 checks, zero overflow, zero violações e zero `incomplete`; artefatos
-em `/home/piradopirata/aculta-suite-out/project-generic-runner-revista-20261031/`.
+Frentes que precisam de sessão declaram `"auth": { "account": "teste_comum" }` (ou `teste_administrativo`). O `auth-login.mjs` lê as credenciais de `secrets/` na raiz do checkout principal, em tempo de execução, e entra pelo `/entrar` do host de conta (`CONTA_HOST`). Nenhum valor é impresso. O runner gera um teste de login por frente; `auth_routes` lista as rotas autenticadas que a frente testa depois do login.
 
-### `aculta-mercadopago/`
+Frentes sem decisão de login (rota pública ou privada ainda não confirmada) são classificadas pelo agente que roda o teste: ele verifica por categoria quais páginas são públicas e quais exigem sessão, e cria testes mistos (visualização pública e privada) quando a frente mistura as duas.
 
-`buyer-login.py` abre Mercado Pago em Firefox ESR visível e tenta autenticar
-somente o comprador sandbox autorizado. Lê as credenciais ignoradas pelo Git em
-memória; não salva HTML/screenshot, não cria pedido e não inicia pagamento. Em
-2026-10-27 o login não foi confirmado e os domínios Mercado Pago responderam
-HTTP 403 na sessão de teste. Ver o README da pasta para execução e limitações.
+## Referências da regressão visual (Playwright)
 
-`checkout-smoke.py` abre um produto em `loja.aculta.toca.net.br`, adiciona ao
-carrinho e segue o checkout central em `aculta.toca.net.br`. Em 2026-10-27
-chegou ao login/cadastro Drupal antes da preferência Mercado Pago. Usa produto
-de teste e pode deixar carrinho anônimo no Runtime; não submete cadastro nem
-pagamento. Ver `aculta-mercadopago/README.md`.
+Em 2026-11-12, as referências de `playwright.visual.spec.mjs` foram geradas do
+servidor de desenvolvimento (`ACULTA_VISUAL_BASELINE=1`, `SUITE_OUT` novo) e
+aprovadas por revisão humana antes de entrar em `__snapshots__/`. São 14 frentes
+com 10 PNGs cada (claro e escuro, 320 a 1440 px):
 
-### `aculta-theme-mobile-first/`
+- `aculta420-v2-navigation`, `aculta420-v2-empty-state`, `aculta420-v2-audit-2026-11`,
+  `aculta420-v2-card-accent`, `aculta420-v2-data-table`, `aculta-document-viewer`,
+  `aculta-editor`, `aculta-faq`, `aculta-frete`, `aculta-gallery`,
+  `aculta-portal-cep`, `aculta-qrcode`, `aculta-visual`, `aculta-patcher`.
 
-`author-card.py` valida o breakpoint do cartão de autoria no consumer público do
-Fórum (`/discussoes/novas`), alvos sociais candidatos e overflow horizontal em
-320–1440 px. `events-catalogue.py` verifica os cartões reais de `/eventos`, seus
-links de título com alvos mínimos de 44px e overflow na mesma grade. Ambos rodam
-no servidor de desenvolvimento, Firefox ESR visível, por GET e sem escrita.
-`account-shell.py`
-confere a navegação autenticada da Conta por GET com link Drush efêmero e compara
-o CSS servido com a folha candidata opcional. Consulte o README local para
-variáveis e limitações. `support-form.py` registra o baseline do formulário de
-apoio e do SDC `donation-quick`; `navigation.py` compara o shell de navegação
-global no MAIN, incluindo fallback sem JavaScript. Ambos usam Firefox ESR
-visível e gravam capturas em `$SUITE_OUT` sem submeter formulários.
-`institution-bar.py` compara a Institution Bar mobile-first nos dez purposes
-atuais, inclusive Revista, lendo os hosts do manifesto de transição para
-acompanhar Alpha. Inclui o `ul.nav` realmente renderizado e overflow; veja o
-README local para execução e limites.
-`account-address.py` verifica por GET o formulário unificado da Conta, sua
-navegação legada, a biblioteca CEP executada, os campos e o reflow com e sem
-JavaScript; não submete dados. Veja o README local para variáveis e limites.
-`purpose-shell-keyboard.py` percorre o shell público dos dez purposes com
-Firefox ESR, Tab/Shift+Tab em 320/390/768/1280px, foco visível e overflow. É
-anônimo, somente leitura e registra separadamente o fim da sequência e o foco
-delegado ao CAPTCHA externo; veja o README local para status e limitações.
-`maps-events-address.py` valida o widget de endereço na revisão do importador OSM, Brasil fixo, CEP e reflow; para antes de salvar/enviar. Execução dependente de Firefox ESR visível e permissão de integração; ver README local e estado DEFERRED quando DISPLAY/runtime não estiver disponível. `account-orders.py` verifica a tabela de pedidos em Conta no estado real disponível e uma linha sintética sem dados pessoais, comparando o CSS local candidato e restaurando as métricas desktop. A execução atual não teve pedido não-rascunho na conta autorizada; a validação de linha real está documentada como DEFERRED.
-`institutional-layout.py` compara regras mobile-first de CTA/grade/detalhes com o CSS anterior em fixture no Firefox visível; não acessa Runtime nem substitui a inspeção de páginas reais.
+Estado: a verificação de estabilidade (segunda execução contra o mesmo servidor)
+foi feita só para `aculta420-v2-navigation`. Para as demais frentes ela está
+pendente. `aculta-faq` e `aculta-gallery` precisam de conferência: se a rota exigir
+sessão, a referência mostra tela de login e deve ser substituída.
+
+Frentes com `routes.json` que não têm referência: `aculta-theme-mobile-first`
+(exige `REVISTA_HOST`), e as frentes com origem própria (`CONTA_HOST`,
+`EVENTOS_BASE`, `FORUM_BASE`, `LINKS_HOST`, `REVISTA_HOST`, `BASE`, `LMS_PAGE`,
+`GANJA_HOME`, `CALENDAR_HOST`).
+
+Regra: não usar `--update-snapshots`. Nova candidata exige `ACULTA_VISUAL_BASELINE=1`
+com `SUITE_OUT` novo e revisão humana antes de copiar.
+
+## Autenticação de teste
+
+No runtime `test`, os testes autenticados usam as credenciais locais documentadas em `secrets/` (ignoradas pelo Git). Antes da rodada, confirme que o ambiente é `test` e que `captcha.settings:enable_globally=0`; esse estado representa o bypass operacional de `skip CAPTCHA` exclusivo do servidor de testes. Não registre credenciais, tokens ou senhas nos artefatos e não use esse bypass em produção.
+
+## Capturas
+
+As capturas ficam dentro do projeto, em `tests/browser/capturas/<frente>/<AAAA-MM-DD>/`, com caminho relativo. Os PNG e JPG ficam fora do Git pelo `.gitignore` deste diretório. Cada pasta de data tem um `manifest.json` versionado com método, motor, viewport, modo de cor, URL relativa, resultado das asserções e hash do commit testado. Comparações usam `before/` e `after/`. A regra completa está em `docs/operations/NAVEGADOR-TESTES.md`.

@@ -1,0 +1,9 @@
+{
+  "front": "aculta-lms",
+  "purpose": "courses",
+  "origin_env": "LMS_PAGE",
+  "source": "tests/browser/courses/aculta-lms/README.md",
+  "auth": { "account": "teste_comum" },
+  "public_routes": [],
+  "notes": "Sem rota pública declarada. A suíte precisa de curso, aula e atividade reais (LMS_PAGE) e de login de teste (LMS_LOGIN_URI). Cobertura fica no script da frente."
+}

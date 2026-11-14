@@ -16,6 +16,8 @@ final readonly class StudentStatusSnapshotEvent {
   public const NAME = 'aculta_lms.student_status_snapshot';
 
   /**
+   * Constrói o evento com as linhas de situação por aluno.
+   *
    * @param list<array{course: int, uid: int, situation: string}> $rows
    *   Uma linha por aluno e curso.
    */

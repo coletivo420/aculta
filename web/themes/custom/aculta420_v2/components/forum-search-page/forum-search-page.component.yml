@@ -1,0 +1,58 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Página de busca do Fórum
+description: Casca visual da View de busca, sem alterar filtros, acesso ou paginação.
+status: stable
+group: Comunidade
+props:
+  type: object
+  additionalProperties: false
+  properties:
+    attributes:
+      type: Drupal\Core\Template\Attribute
+      title: Atributos da View
+      description: Atributos Drupal preservados no wrapper da busca.
+      default: null
+slots:
+  title_prefix:
+    title: Prefixo do título
+    description: Links contextuais e controles fornecidos pelo bloco de título.
+  title:
+    title: Título
+    description: Título renderizado da View.
+  title_suffix:
+    title: Sufixo do título
+    description: Links contextuais e controles após o título.
+  header:
+    title: Cabeçalho
+    description: Conteúdo auxiliar da View antes dos filtros.
+  exposed:
+    title: Filtros
+    description: Formulário exposto de pesquisa e categoria.
+  attachment_before:
+    title: Anexo anterior
+    description: Anexo renderizado antes dos resultados.
+  rows:
+    title: Resultados
+    description: Resultados nativos renderizados pelo Search API.
+  empty:
+    title: Estado vazio
+    description: Mensagem da View quando não há resultados.
+  pager:
+    title: Paginação
+    description: Paginação renderizada pela View.
+  attachment_after:
+    title: Anexo posterior
+    description: Anexo renderizado após os resultados.
+  more:
+    title: Mais resultados
+    description: Link de continuação da View.
+  footer:
+    title: Rodapé
+    description: Rodapé renderizado pela View.
+  feed_icons:
+    title: Ícones de feed
+    description: Links de feed disponibilizados pela View.
+assets:
+  css:
+    component:
+      forum-search-page.css: {}

@@ -8,7 +8,7 @@ use Drupal\aculta_portal\Cart\CartSite;
 use Drupal\aculta_portal\Cart\CartUtility;
 use Drupal\aculta_portal\Checkout\CheckoutSettings;
 use Drupal\aculta_portal\Checkout\CheckoutStepResolver;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\commerce_order\Entity\OrderInterface;
 use Drupal\commerce_order\Entity\OrderItem;
 use Drupal\commerce_order\Entity\OrderType;
@@ -36,7 +36,7 @@ final class CartUtilityCaracterizacaoKernelTest extends OrderKernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['commerce_cart', 'commerce_checkout', 'domain', 'aculta_portal_cart_test'];
+  protected static $modules = ['commerce_cart', 'commerce_checkout', 'domain', 'aculta_portal_cart_test', 'text', 'text_with_summary'];
 
   /**
    * Conta compradora dos carrinhos.
@@ -51,7 +51,7 @@ final class CartUtilityCaracterizacaoKernelTest extends OrderKernelTestBase {
   /**
    * Gerenciador de domínios usado pelo serviço.
    */
-  private DomainPurposeManager $purposeManager;
+  private DomainSiteManager $siteManager;
 
   /**
    * {@inheritdoc}
@@ -87,7 +87,7 @@ final class CartUtilityCaracterizacaoKernelTest extends OrderKernelTestBase {
       }
     }
 
-    $this->purposeManager = new DomainPurposeManager(
+    $this->siteManager = new DomainSiteManager(
       $this->container->get('entity_type.manager'),
       $this->container->get(DomainNegotiatorInterface::class),
       $this->container->get('config.factory'),
@@ -103,7 +103,7 @@ final class CartUtilityCaracterizacaoKernelTest extends OrderKernelTestBase {
   private function criarUtility(CheckoutSettings $settings): CartUtility {
     return new CartUtility(
       $this->container->get('commerce_cart.cart_provider'),
-      $this->purposeManager,
+      $this->siteManager,
       $this->container->get('string_translation'),
       $settings,
       new CheckoutStepResolver($this->container->get('commerce_checkout.chain_checkout_flow_resolver')),

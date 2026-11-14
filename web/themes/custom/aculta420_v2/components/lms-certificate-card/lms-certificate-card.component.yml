@@ -1,0 +1,38 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Certificado do estudante
+description: Certificado do curso com situação, data e link público de verificação.
+status: stable
+group: LMS
+props:
+  type: object
+  additionalProperties: false
+  required: [title, status, status_text, issued_text]
+  properties:
+    title:
+      title: Título do certificado
+      type: string
+      description: Nome do curso ou certificado exibido como cabeçalho do cartão.
+      minLength: 1
+    status:
+      title: Estado do certificado
+      type: string
+      description: Estado estruturado usado como atributo data-status no cartão.
+      enum: [active, revoked]
+    status_text:
+      title: Texto do estado do certificado
+      type: string
+      description: Rótulo visível do estado, preparado pelo LMS.
+      minLength: 1
+    issued_text:
+      title: Texto da data de emissão
+      type: string
+      description: Data de emissão já formatada para exibição pelo LMS.
+      minLength: 1
+slots:
+  verification_action:
+    title: Verificar certificado
+    description: Link público de verificação emitido pelo LMS.
+assets:
+  css:
+    component:
+      lms-certificate-card.css: {}

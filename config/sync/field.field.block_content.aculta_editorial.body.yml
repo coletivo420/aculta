@@ -7,7 +7,7 @@ dependencies:
     - field.storage.block_content.body
     - filter.format.aculta_editorial
   module:
-    - text
+    - text_with_summary
 _core:
   default_config_hash: u1knnsHRNv8ArrgAMyvbji7MgMPFuj-b6SIFByh9MXc
 id: block_content.aculta_editorial.body

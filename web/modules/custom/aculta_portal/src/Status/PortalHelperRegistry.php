@@ -36,7 +36,7 @@ final class PortalHelperRegistry {
     'aculta_user.author_card_variant_resolver' => [
       'label' => 'Variantes contextuais de autoria',
       'summary' => 'Seleciona a variante do cartão pelo host sem conceder acesso ou misturar '
-      . 'Fórum, Revista, LMS e Wiki.',
+        . 'Fórum, Revista, LMS e Wiki.',
       'docs' => 'web/modules/custom/aculta_portal/modules/aculta_user/docs/AUTHOR-CARD-VARIANTS.md',
     ],
     'aculta_game.mission_progress' => [
@@ -99,10 +99,15 @@ final class PortalHelperRegistry {
       'summary' => 'Revalida referências e remove Media não publicado submetido pelo módulo dono.',
       'docs' => 'docs/portal/CONTENT-CLEANUP-POLICY.md',
     ],
+    'aculta_portal.domain_skin_resolver' => [
+      'label' => 'Resolução visual de Skin por domínio',
+      'summary' => 'Resolve a skin visual do Domain atual sem alterar a configuração global do tema por requisição.',
+      'docs' => 'docs/architecture/ACULTA-UI-SUITE-MIGRACAO-LEGADO-SKINS.md',
+    ],
     'aculta_portal.content_cleanup_preview' => [
       'label' => 'Prévia de limpeza de anexos',
       'summary' => 'Avalia IDs explícitos de File e Media em modo somente leitura; '
-      . 'não inclui nomes, URIs ou conteúdo no relatório.',
+        . 'não inclui nomes, URIs ou conteúdo no relatório.',
       'docs' => 'docs/portal/CONTENT-CLEANUP-POLICY.md',
     ],
     'aculta_file_uploader.cleanup' => [
@@ -175,17 +180,17 @@ final class PortalHelperRegistry {
       'summary' => 'Lê e grava a preferência individual de modo de cor usando User Data.',
       'docs' => 'docs/portal/IMPLEMENTATIONS.md',
     ],
-    'aculta_portal.content_purpose_resolver' => [
+    'aculta_portal.content_site_key_resolver' => [
       'label' => 'Propósito do conteúdo',
-      'summary' => 'Resolve o Domain purpose responsável por apresentar uma entidade de conteúdo.',
+      'summary' => 'Resolve o site-key responsável por apresentar uma entidade de conteúdo.',
       'docs' => 'docs/portal/DOMAIN-PRESENTATION-CONTRACT.md',
     ],
     'aculta_portal.deployer_status_reader' => [
-      'label' => 'Leitura do estado do Deployer',
-      'summary' => 'Lê o relatório neutro publicado pelo ACULTA Deployer sem executar sua CLI.',
+      'label' => 'Leitura do estado do Deployer e Runtime Sync',
+      'summary' => 'Lê os relatórios neutros publicados pelo ACULTA Deployer e pelo Runtime Sync v2 sem executar CLI.',
       'docs' => 'docs/architecture/environments.md',
     ],
-    'aculta_portal.domain_purpose' => [
+    'aculta_portal.domain_site' => [
       'label' => 'Domain Purpose Manager',
       'summary' => 'Resolve propósito atual e URLs canônicas entre Domains.',
       'docs' => 'docs/portal/DOMAIN-PRESENTATION-CONTRACT.md',
@@ -242,7 +247,7 @@ final class PortalHelperRegistry {
     ],
     'aculta_portal.search_utility' => [
       'label' => 'Utilitários de busca',
-      'summary' => 'Prepara links e rótulos da busca respeitando o Domain purpose.',
+      'summary' => 'Prepara links e rótulos da busca respeitando o site-key.',
       'docs' => 'web/modules/custom/aculta_portal/README.md',
     ],
     'aculta_portal.secrets_manager' => [

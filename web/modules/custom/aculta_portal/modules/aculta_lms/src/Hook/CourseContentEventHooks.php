@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_lms\Hook;
 
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\Core\Entity\EntityPublishedInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\group\Entity\GroupInterface;
@@ -59,14 +59,17 @@ final class CourseContentEventHooks {
    */
   private function isContentAvailable(EntityInterface $entity): bool {
     if ($entity instanceof GroupInterface && $entity->bundle() === 'lms_course') {
-      return $entity instanceof EntityPublishedInterface && $entity->isPublished();
+      return $entity->isPublished();
+    }
+    if (!$entity instanceof ContentEntityInterface) {
+      return FALSE;
     }
     if ($entity->getEntityTypeId() === 'aculta_lms_lesson') {
       return (bool) $entity->get('published')->value;
     }
     if ($entity->getEntityTypeId() === 'aculta_lms_activity') {
       $lesson = $this->entityTypeManager->getStorage('aculta_lms_lesson')->load((int) $entity->get('lesson_id')->value);
-      return $lesson instanceof EntityInterface && (bool) $lesson->get('published')->value;
+      return $lesson instanceof ContentEntityInterface && (bool) $lesson->get('published')->value;
     }
     return FALSE;
   }

@@ -15,6 +15,12 @@ use PHPUnit\Framework\Attributes\Group;
 #[Group('aculta_paths')]
 final class EnderecoValidatorTest extends UnitTestCase {
 
+  /**
+   * Fornece valores considerados válidos.
+   *
+   * @return array<string, array<int, mixed>>
+   *   Casos indexados por descrição.
+   */
   public static function validos(): array {
     return [
       'slug simples' => ['loja', FALSE],
@@ -25,11 +31,25 @@ final class EnderecoValidatorTest extends UnitTestCase {
     ];
   }
 
+  /**
+   * Confirma que os valores válidos passam sem motivo de recusa.
+   *
+   * @param string $valor
+   *   Slug ou host validado.
+   * @param bool $host
+   *   Se o valor é um host.
+   */
   #[DataProvider('validos')]
   public function testValoresCertosPassam(string $valor, bool $host): void {
     $this->assertNull(EnderecoValidator::motivo($valor, $host));
   }
 
+  /**
+   * Fornece valores inválidos com o motivo esperado.
+   *
+   * @return array<string, array<int, mixed>>
+   *   Casos indexados por descrição.
+   */
   public static function invalidos(): array {
     return [
       'slug com espaço' => ['loja sativa', FALSE, 'caracteres', '«espaço»'],
@@ -48,6 +68,18 @@ final class EnderecoValidatorTest extends UnitTestCase {
     ];
   }
 
+  /**
+   * Confirma que os valores inválidos são recusados com o motivo esperado.
+   *
+   * @param string $valor
+   *   Slug ou host validado.
+   * @param bool $host
+   *   Se o valor é um host.
+   * @param string $codigo
+   *   Código de motivo esperado.
+   * @param string|null $caractere
+   *   Caractere esperado na lista de argumentos, ou NULL.
+   */
   #[DataProvider('invalidos')]
   public function testValoresErradosSaoRecusadosComMotivo(string $valor, bool $host, string $codigo, ?string $caractere): void {
     $motivo = EnderecoValidator::motivo($valor, $host);
@@ -58,6 +90,9 @@ final class EnderecoValidatorTest extends UnitTestCase {
     }
   }
 
+  /**
+   * Confirma que um valor vazio é recusado.
+   */
   public function testVazioEhRecusado(): void {
     $this->assertSame('vazio', EnderecoValidator::motivo('', FALSE)['codigo']);
   }

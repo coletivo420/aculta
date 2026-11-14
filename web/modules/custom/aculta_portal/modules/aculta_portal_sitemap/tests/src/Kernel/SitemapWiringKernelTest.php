@@ -3,9 +3,11 @@
 declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_portal_sitemap\Kernel;
+use Drupal\aculta_portal\Domain\SiteKey;
+use Drupal\aculta_portal\Domain\SiteKeyRegistry;
 
 use Drupal\aculta_portal_sitemap\Plugin\simple_sitemap\UrlGenerator\PurposeNodeUrlGenerator;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\domain\Entity\Domain;
 use Drupal\domain\DomainNegotiatorInterface;
 use Drupal\domain_config\Config\DomainConfigCollectionUtils;
@@ -34,8 +36,8 @@ final class SitemapWiringKernelTest extends KernelTestBase {
     'system',
     'aculta_commerce_melhorenvio',
     'aculta_image',
+    'aculta_file_uploader',
     'aculta_mail_confirmer',
-    'aculta_mail_confirmer_user',
     'aculta_mailer',
     'aculta_pagamentos_mercadopago',
     'aculta_portal',
@@ -55,6 +57,7 @@ final class SitemapWiringKernelTest extends KernelTestBase {
     'commerce_store',
     'ctools',
     'ctools_views',
+    'crop',
     'datetime',
     'domain',
     'domain_alias',
@@ -69,10 +72,10 @@ final class SitemapWiringKernelTest extends KernelTestBase {
     'flexible_permissions',
     'group',
     'image',
+    'image_widget_crop',
     'inline_entity_form',
     'key',
     'language',
-    'lms',
     'login_emailusername',
     'media',
     'media_duplicates',
@@ -154,7 +157,8 @@ final class SitemapWiringKernelTest extends KernelTestBase {
 
     $negotiator = $this->container->get(DomainNegotiatorInterface::class);
     $negotiator->getActiveDomain();
-    $negotiator->setActiveDomain($main);
+    $negotiator->getContext()->setDomain($main);
+    $negotiator->getContext()->setNegotiated(TRUE);
     $aliasManager = $this->createMock(AliasManagerInterface::class);
     $aliasManager->expects(self::once())
       ->method('getAliasByPath')
@@ -170,11 +174,12 @@ final class SitemapWiringKernelTest extends KernelTestBase {
       [],
       $this->container->get('simple_sitemap.logger'),
       $this->container->get('simple_sitemap.settings'),
-      $this->container->get('aculta_portal.domain_purpose'),
+      $this->container->get('aculta_portal.domain_site'),
       $this->container->get('entity_type.manager'),
       $this->container->get('account_switcher'),
       $storage,
       $aliasManager,
+      $this->container->get('aculta_portal.surface_config_reader'),
     );
     $node = $this->createMock(NodeInterface::class);
     $node->method('id')->willReturn(7);
@@ -224,11 +229,12 @@ final class SitemapWiringKernelTest extends KernelTestBase {
       'environment' => 'test',
       'site' => 'https://site.example.invalid',
     ], JSON_THROW_ON_ERROR));
-    $purposeManager = new DomainPurposeManager(
+    $siteManager = new DomainSiteManager(
       $this->container->get('entity_type.manager'),
       $this->container->get(DomainNegotiatorInterface::class),
       $this->container->get('config.factory'),
       $this->container->get('request_stack'),
+      new SiteKeyRegistry(),
       $projectRoot . '/web',
     );
     $generator = new PurposeNodeUrlGenerator(
@@ -237,18 +243,19 @@ final class SitemapWiringKernelTest extends KernelTestBase {
       [],
       $this->container->get('simple_sitemap.logger'),
       $this->container->get('simple_sitemap.settings'),
-      $purposeManager,
+      $siteManager,
       $entityTypeManager,
       $this->container->get('account_switcher'),
       $this->container->get('config.storage'),
       $this->container->get('path_alias.manager'),
+      $this->container->get('aculta_portal.surface_config_reader'),
     );
     $generator->setSitemap($sitemap);
 
     try {
       self::assertContains(['purpose' => 'wiki', 'path' => '/verbetes'], $generator->getDataSets());
       $generated = $generator->generate(['purpose' => 'wiki', 'path' => '/verbetes']);
-      $expectedUrl = $purposeManager->environmentPathUrl('wiki', '/verbetes');
+      $expectedUrl = $siteManager->environmentPathUrl(SiteKey::Wiki, '/verbetes');
       self::assertNotNull($expectedUrl);
       self::assertSame($expectedUrl->toString(), $generated[0]['url']);
     }

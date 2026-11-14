@@ -11,7 +11,8 @@ use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 
-/** Defines the private relationship record shared by a member pair. */
+/**
+ * Defines the private relationship record shared by a member pair. */
 #[ContentEntityType(
   id: 'aculta_friendship',
   label: new TranslatableMarkup('Relacionamento entre membros'),
@@ -30,6 +31,15 @@ final class AcultaFriendship extends ContentEntityBase implements AcultaFriendsh
 
   use EntityChangedTrait;
 
+  /**
+   * Define os campos base do relacionamento entre membros.
+   *
+   * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
+   *   Definição do tipo de entidade.
+   *
+   * @return \Drupal\Core\Field\FieldDefinitionInterface[]
+   *   Campos base indexados pelo nome.
+   */
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type): array {
     $fields = parent::baseFieldDefinitions($entity_type);
 
@@ -70,22 +80,37 @@ final class AcultaFriendship extends ContentEntityBase implements AcultaFriendsh
     return $fields;
   }
 
+  /**
+   * Retorna o ID do membro de menor identificador.
+   */
   public function getMemberLowId(): int {
     return (int) $this->get('member_low')->target_id;
   }
 
+  /**
+   * Retorna o ID do membro de maior identificador.
+   */
   public function getMemberHighId(): int {
     return (int) $this->get('member_high')->target_id;
   }
 
+  /**
+   * Retorna o ID de quem solicitou o relacionamento.
+   */
   public function getRequesterId(): int {
     return (int) $this->get('requester')->target_id;
   }
 
+  /**
+   * Retorna o ID de quem recebeu o pedido de relacionamento.
+   */
   public function getRecipientId(): int {
     return (int) $this->get('recipient')->target_id;
   }
 
+  /**
+   * Retorna o estado atual do relacionamento.
+   */
   public function getStatus(): string {
     return (string) $this->get('status')->value;
   }

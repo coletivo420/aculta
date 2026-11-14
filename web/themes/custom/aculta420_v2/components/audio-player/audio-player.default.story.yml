@@ -1,0 +1,7 @@
+name: Player de áudio
+description: Player de áudio nativo com título e artista.
+component: aculta420_v2:audio-player
+props:
+  src: https://example.org/audio.mp3
+  title: Episódio 1 - Podcast ACULTA
+  artist: Coletivo ACULTA

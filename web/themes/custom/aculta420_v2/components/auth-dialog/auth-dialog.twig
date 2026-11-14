@@ -1,0 +1,77 @@
+{#
+/**
+ * @file
+ * Diálogo de autenticação: monta o componente popup (casca comum do site) com o
+ * conteúdo de login. O gatilho continua aqui, com os atributos de login.
+ */
+#}
+{% if trigger_label %}
+  {{ include('aculta420_v2:button', {
+    text: trigger_label,
+    url: trigger_url|default('#' ~ id),
+    variant: 'secondary',
+    attributes: create_attribute({
+      class: ['aculta-dialog__trigger'],
+      'aria-controls': id,
+      'aria-expanded': 'false',
+      'aria-haspopup': 'dialog',
+      'data-aculta-dialog-trigger': '',
+      'data-aculta-auth-trigger': '',
+    }),
+  }, with_context = false) }}
+{% endif %}
+
+{% set auth_content %}
+  {% if google_auth_url %}
+    <div class="aculta-auth-dialog__social">
+      <a class="aculta-auth-dialog__google-btn" href="{{ google_auth_url }}">
+        <span class="aculta-auth-dialog__google-icon" aria-hidden="true"></span>
+        <span class="aculta-auth-dialog__google-text">Continuar com <strong>Google</strong></span>
+      </a>
+    </div>
+
+    <div class="aculta-auth-dialog__divider" role="separator" aria-label="{{ 'ou entre com sua conta'|t }}">
+      <span class="aculta-auth-dialog__divider-line"></span>
+      <span class="aculta-auth-dialog__divider-text">{{ 'ou entre com sua conta'|t }}</span>
+      <span class="aculta-auth-dialog__divider-line"></span>
+    </div>
+  {% endif %}
+
+  <div class="aculta-auth-dialog__content" id="aculta-login-content" data-aculta-login-content aria-live="polite" aria-busy="false">
+    {% block content %}
+      {{ content }}
+    {% endblock %}
+  </div>
+{% endset %}
+
+{% set auth_footer %}
+  {% if register_url %}
+    <p class="aculta-auth-dialog__register-prompt">
+      {{ 'Ainda não tem uma conta?'|t }}
+      <a class="aculta-auth-dialog__register-link" href="{{ register_url }}" data-portal-ui="button-secondary">
+        {{ 'Cadastre-se'|t }}
+      </a>
+    </p>
+    <p class="aculta-auth-dialog__trust-badge">
+      <span class="aculta-auth-dialog__trust-lock" aria-hidden="true">
+        {{ include('aculta420_v2:icon', { name: 'lock-simple', variant: 'duotone', size: 'sm' }, with_context = false) }}
+      </span>
+      {{ 'Autenticação segura · ACULTA'|t }}
+    </p>
+  {% endif %}
+{% endset %}
+
+{{ include('aculta420_v2:popup', {
+  id: id,
+  title: title,
+  subtitle: subtitle,
+  header_variant: header_variant|default('neutral'),
+  show_accent_stripes: show_accent_stripes|default(true),
+  close_label: close_label|default('Fechar janela de acesso'),
+  content: auth_content,
+  footer: auth_footer|trim is empty ? null : auth_footer,
+  attributes: attributes.addClass(['aculta-auth-dialog', 'aculta-auth-dialog--' ~ (header_variant|default('neutral'))])
+    .setAttribute('data-aculta-auth-dialog', '')
+    .setAttribute('data-aculta-login-dialog', ''),
+  close_attributes: create_attribute({ 'data-aculta-auth-close': '', 'data-aculta-login-close': '' }),
+}, with_context = false) }}

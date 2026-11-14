@@ -1,0 +1,28 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Linha de autor do fórum
+description: Avatar, nome e horário de quem escreveu uma mensagem do fórum. O avatar é o componente aculta420_v2:avatar, salvo quando o módulo envia uma imagem própria no slot.
+status: experimental
+group: Comunidade
+props:
+  type: object
+  additionalProperties: false
+  required: [author_name]
+  properties:
+    author_name:
+      type: string
+      title: Nome público
+      description: Nome de exibição aplicado ao rótulo acessível e à identidade do autor.
+    profile_url:
+      type: [string, 'null']
+      title: Link para a conta pública do autor
+      description: Quando informado, transforma a identidade em link para o perfil público; null mantém texto sem link.
+      default: null
+    timestamp:
+      type: [string, 'null']
+      title: Horário (texto já formatado)
+      description: Data ou horário pronto para exibição depois da identidade do autor.
+      default: null
+slots:
+  avatar:
+    title: Avatar
+    description: Conteúdo renderizável de avatar encaminhado ao slot media do SDC avatar; sem conteúdo, o quadro permanece vazio e não gera iniciais.

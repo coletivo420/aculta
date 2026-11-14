@@ -1,11 +1,15 @@
 map:
+  version: 0.1.0-dev.7
   css:
     component:
       assets/vendor/leaflet/leaflet.css: { minified: true }
       css/aculta-map.css: {}
+      css/map-fallback.css: {}
   js:
     assets/vendor/leaflet/leaflet.js: { minified: true }
     js/aculta-map.js: {}
+    js/aculta-map-story.js: {}
   dependencies:
     - core/drupal
     - core/drupalSettings
+    - core/once

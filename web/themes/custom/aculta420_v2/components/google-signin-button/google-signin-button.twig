@@ -1,0 +1,10 @@
+{% set attrs = attributes.addClass('google-signin-button') %}
+{% set content %}
+  <span class="google-signin-button__logo" aria-hidden="true"></span>
+  <span class="google-signin-button__label">{{ label|default('Continuar com Google') }}</span>
+{% endset %}
+{% if url %}
+  <a{{ attrs }} href="{{ url }}">{{ content }}</a>
+{% else %}
+  <button{{ attrs }} type="button">{{ content }}</button>
+{% endif %}

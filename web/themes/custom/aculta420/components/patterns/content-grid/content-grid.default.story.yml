@@ -1,9 +1,0 @@
-name: Padrão
-description: Uma coluna no mobile; duas colunas a partir de 576 CSS px.
-component: aculta420:content-grid
-props:
-  columns: 2
-slots:
-  items:
-    markup: <div class="card"><div class="card-body">Item um</div></div><div class="card"><div
-      class="card-body">Item dois</div></div>

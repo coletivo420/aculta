@@ -18,7 +18,16 @@ final class CourseProgress {
   public const STATUS_NEEDS_EVALUATION = 'evaluation';
 
   /**
+   * Constrói o progresso de um aluno em um curso.
+   *
+   * @param string $status
+   *   Status do progresso no vocabulário ACULTA.
+   * @param bool $finished
+   *   Indica se o curso foi concluído.
+   * @param float|null $score
+   *   Nota obtida, quando houver.
    * @param string[] $cacheTags
+   *   Cache tags associadas ao progresso.
    * @param int|null $changedTime
    *   Timestamp of the most recent progress update, when available.
    */

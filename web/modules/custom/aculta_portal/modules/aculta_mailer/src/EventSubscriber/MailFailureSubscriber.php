@@ -7,6 +7,7 @@ namespace Drupal\aculta_mailer\EventSubscriber;
 use Drupal\aculta_mailer\Delivery\SmtpFailureRegistry;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Mailer\Event\FailedMessageEvent;
+use Symfony\Component\Mime\Email;
 
 /**
  * Lê o código SMTP de falhas de transporte e o registra por correlação (ver SmtpFailureRegistry).
@@ -28,7 +29,11 @@ final class MailFailureSubscriber implements EventSubscriberInterface {
    * Registra o código de resposta (ex.: 550) quando a exceção o informa; 0 vira NULL.
    */
   public function onFailedMessage(FailedMessageEvent $event): void {
-    $correlation = $event->getMessage()->getHeaders()->getHeaderBody('X-Aculta-Mail-ID');
+    $message = $event->getMessage();
+    if (!$message instanceof Email) {
+      return;
+    }
+    $correlation = $message->getHeaders()->getHeaderBody('X-Aculta-Mail-ID');
     if (!is_string($correlation) || $correlation === '') {
       return;
     }

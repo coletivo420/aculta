@@ -1,0 +1,32 @@
+.accordion {
+  border-block-end: 1px solid var(--color-border);
+  min-inline-size: 0;
+}
+
+.accordion__summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  color: var(--color-text-primary);
+  font-weight: 600;
+  min-block-size: var(--tap-target-min);
+  padding-block: var(--spacing-sm);
+}
+
+.accordion__summary::marker {
+  color: var(--color-brand-primary);
+}
+
+.accordion__summary:focus-visible {
+  border-radius: var(--radius-sm);
+  outline: 3px solid var(--color-brand-highlight);
+  outline-offset: 2px;
+}
+
+.accordion__content {
+  color: var(--color-text-secondary);
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
+  padding-block: 0 var(--spacing-md);
+}

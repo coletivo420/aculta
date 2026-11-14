@@ -1,0 +1,16 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Página Green Stash
+description: Apresenta as áreas e operações do Green Stash preparadas pelo Commerce.
+status: stable
+group: Commerce
+props:
+  type: object
+  additionalProperties: false
+slots:
+  content:
+    title: Conteúdo da área
+    description: Render arrays de navegação, avisos, produtos e remessas do módulo Commerce.
+assets:
+  css:
+    component:
+      green-stash-page.css: {}

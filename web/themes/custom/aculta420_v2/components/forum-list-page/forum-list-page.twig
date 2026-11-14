@@ -1,0 +1,31 @@
+<div class="aculta-forum-list">
+  {{ header }}
+  <div class="aculta-forum-list__layout">
+    <aside class="aculta-forum-list__categories" aria-labelledby="forum-categories-title">
+      <h2 class="aculta-forum-list__aside-title" id="forum-categories-title">{{ 'Categorias'|t }}</h2>
+      {{ categories }}
+    </aside>
+    <section class="aculta-forum-list__panel" aria-label="{{ 'Lista de tópicos'|t }}">
+      {{ search }}
+      {{ navigation }}
+      {{ shortcuts }}
+      {% if topics %}
+        <div class="aculta-forum-list__topics-header" aria-hidden="true">
+          <span>{{ 'Tópico'|t }}</span>
+          <span class="aculta-forum-list__topics-header-cols">
+            <span>{{ 'Respostas'|t }}</span>
+            <span>{{ 'Visualizações'|t }}</span>
+            <span>{{ 'Última atividade'|t }}</span>
+          </span>
+        </div>
+        <div class="aculta-forum-list__rows">{{ topics }}</div>
+      {% elseif empty %}
+        <div class="aculta-forum-list__rows"><div class="view-empty">{{ empty }}</div></div>
+      {% endif %}
+      {% if pager %}
+        <div class="aculta-forum-list__pager">{{ pager }}</div>
+      {% endif %}
+    </section>
+    <aside class="aculta-forum-list__aside">{{ sidebar }}</aside>
+  </div>
+</div>

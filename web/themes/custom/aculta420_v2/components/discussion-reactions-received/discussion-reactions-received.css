@@ -1,0 +1,62 @@
+.discussion-reactions-received__list {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.discussion-reactions-received__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+.discussion-reactions-received__count {
+  font-weight: 600;
+}
+
+.discussion-reactions-received__more {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-inline-size: 1.75rem;
+  block-size: 1.75rem;
+  padding-inline: var(--spacing-xs);
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--color-text-secondary);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.discussion-reactions-received__popover[popover] {
+  margin: 0;
+  inset: auto;
+  top: anchor(bottom);
+  left: anchor(left);
+  margin-block-start: 6px;
+  position-try-fallbacks: flip-block;
+  padding: var(--spacing-xs);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-lg);
+  background: var(--color-surface);
+  box-shadow: 0 8px 24px rgb(0 0 0 / .18);
+  color: var(--color-text);
+}
+
+.discussion-reactions-received__popover-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-xs);
+  max-inline-size: 16rem;
+}
+
+.discussion-reactions-received__popover:not(:popover-open) {
+  display: none;
+}

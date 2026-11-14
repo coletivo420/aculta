@@ -1,0 +1,6 @@
+name: ACULTA Brócolis - Duotone
+description: Desenho original ACULTA Brócolis na variante duotone.
+props:
+  name: aculta-brocolis
+  variant: duotone
+  size: xl

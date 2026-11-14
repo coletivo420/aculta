@@ -17,10 +17,18 @@ final class SalesReportFilters {
   public const GRANULARIDADES = ['dia', 'semana', 'mes'];
 
   /**
+   * Constrói os filtros com o intervalo, a loja e a granularidade informados.
+   *
    * @param \DateTimeImmutable $inicio
    *   Início do intervalo, no fuso do site, às 00:00.
    * @param \DateTimeImmutable $fim
    *   Fim do intervalo, no fuso do site, às 00:00 do último dia (incluído).
+   * @param int|null $lojaId
+   *   Identificador da loja, ou NULL para não filtrar por loja.
+   * @param string $granularidade
+   *   Granularidade do agrupamento: dia, semana ou mês.
+   * @param array $erros
+   *   Erros encontrados na leitura da query string.
    */
   public function __construct(
     public readonly \DateTimeImmutable $inicio,
@@ -68,6 +76,7 @@ final class SalesReportFilters {
    * Timestamps inclusivos do intervalo (início do primeiro dia até o fim do último).
    *
    * @return array{0: int, 1: int}
+   *   Timestamp inicial e timestamp final, ambos inclusivos.
    */
   public function timestamps(): array {
     return [

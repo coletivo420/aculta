@@ -8,7 +8,7 @@ use Drupal\Core\Access\AccessResultInterface;
 use Drupal\aculta_messenger\Aviso\AvisoPreferencias;
 use Drupal\aculta_messenger\Aviso\AvisoPreferenciasInterface;
 use Drupal\aculta_messenger\Event\MessengerNoticeEvent;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\aculta_portal\Checkout\CheckoutSettings;
 use Drupal\aculta_messenger\Integration\Commerce\CommerceOrderNoticeManager;
 use Drupal\Core\Config\ConfigFactoryInterface;
@@ -200,7 +200,7 @@ final class CommerceOrderNoticeManagerTest extends UnitTestCase {
     AvisoPreferenciasInterface $preferences,
     QueueFactory $queueFactory,
   ): CommerceOrderNoticeManager {
-    $domainPurposes = new DomainPurposeManager(
+    $siteManagers = new DomainSiteManager(
       $entities,
       $this->createMock(DomainNegotiatorInterface::class),
       $this->createMock(ConfigFactoryInterface::class),
@@ -208,7 +208,7 @@ final class CommerceOrderNoticeManagerTest extends UnitTestCase {
     );
     return new CommerceOrderNoticeManager(
       $entities,
-      $domainPurposes,
+      $siteManagers,
       new CheckoutSettings($this->getConfigFactoryStub([CheckoutSettings::CONFIG => ['shop_order_type' => 'default']])),
       $preferences,
       $queueFactory,

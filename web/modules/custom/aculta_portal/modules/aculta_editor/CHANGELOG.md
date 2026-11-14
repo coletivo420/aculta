@@ -1,3 +1,10 @@
+## Não versionado — UI Styles CKEditor 5 editorial (2026-11-10)
+
+- `revista_editorial` oferece o plugin oficial de bloco com quatro grupos de
+  estilos SDC de superfície, classes limitadas ao catálogo e permitidas pelo
+  filtro HTML. UI Patterns CKEditor 5 não foi configurado. Runtime/browser
+  aguardam importação autorizada.
+
 ## 0.1.0-rc.1 — candidato a RC: revisão visual autenticada e conformidade PHPCS — 2026-10-29
 
 - Versão promovida a `0.1.0-rc.1` em `aculta_editor.info.yml`, `README.md` e status.

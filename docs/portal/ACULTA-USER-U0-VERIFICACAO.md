@@ -44,7 +44,7 @@ O que isso muda no plano:
 
 | Gate | Comando | Resultado |
 | --- | --- | --- |
-| Padrão Drupal 11+ do Portal | `php scripts/validate-aculta-portal-drupal11.php` | **PASS** (659 verificações; exit 0). |
+| Padrão Drupal 11+ do Portal | `php scripts/validate-aculta-portal-drupal12.php` | **PASS** (659 verificações; exit 0). |
 | Slugs públicos | `php scripts/validate-public-slugs.php` | **PASS** (338 rotas; 20 violações de contrib na linha de base DT-P20; exit 0). |
 
 Nenhum gate já falhava antes da verificação. Nenhuma correção foi feita.
@@ -81,7 +81,7 @@ Registradas no mesmo relatório para que ele não fique desatualizado.
 
 | Gate | Resultado |
 | --- | --- |
-| `validate-aculta-portal-drupal11.php` | PASS (659) |
+| `validate-aculta-portal-drupal12.php` | PASS (659) |
 | `validate-public-slugs.php` | PASS (338 rotas; 20 da linha de base DT-P20) |
 | `validate-module-theme-boundary.php` | PASS (704) |
 | `validate-environment-addresses.php` | PASS (1336 arquivos) |

@@ -1,0 +1,46 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Pagination
+status: stable
+description: Navegação acessível entre páginas de resultados.
+group: Navegação
+props:
+  type: object
+  additionalProperties: false
+  required: [current_page, links]
+  properties:
+    current_page:
+      title: Página atual
+      type: integer
+      minimum: 1
+      description: Número da página atual, exibido no resumo oculto para leitores de tela.
+    total_pages:
+      title: Total de páginas
+      type: [integer, 'null']
+      minimum: 1
+      description: Total conhecido de páginas para o resumo acessível; null omite essa parte do texto.
+    links:
+      title: Links de navegação entre páginas
+      type: array
+      description: Itens de navegação na ordem em que serão apresentados, incluindo páginas e controles anterior/próxima.
+      items:
+        type: object
+        description: Link ou controle de navegação para uma página da coleção paginada.
+        additionalProperties: false
+        required: [url, label]
+        properties:
+          url:
+            type: string
+            format: uri-reference
+            description: Destino do link de paginação quando o item está ativo.
+          label:
+            type: string
+            minLength: 1
+            description: Texto visível do controle ou número de página.
+          is_active:
+            type: boolean
+            default: true
+            description: Quando false, renderiza o item como texto desabilitado sem link.
+          is_current:
+            type: boolean
+            default: false
+            description: Quando true, marca o link da página atual com aria-current="page".

@@ -8,7 +8,7 @@ dependencies:
     - field.field.node.aculta_adm.field_domain_source
     - node.type.aculta_adm
   module:
-    - text
+    - text_with_summary
     - user
 id: node.aculta_adm.teaser
 targetEntityType: node
@@ -29,7 +29,7 @@ content:
     weight: 100
     region: content
 hidden:
-  co_authors: true
+  aculta_coauthors: true
   entity_print_view_epub: true
   entity_print_view_pdf: true
   entity_print_view_word_docx: true
@@ -37,4 +37,3 @@ hidden:
   langcode: true
   private_message_link: true
   search_api_excerpt: true
-

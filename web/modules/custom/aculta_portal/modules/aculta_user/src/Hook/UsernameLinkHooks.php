@@ -28,6 +28,12 @@ final class UsernameLinkHooks {
     private readonly PublicProfileLink $publicProfileLink,
   ) {}
 
+  /**
+   * Aplica o link do perfil público nas variáveis do nome de usuário.
+   *
+   * @param array $variables
+   *   Variáveis de preprocessamento, alteradas por referência.
+   */
   #[Hook('preprocess_username')]
   public function preprocessUsername(array &$variables): void {
     $account = $variables['account'] ?? NULL;
@@ -50,6 +56,12 @@ final class UsernameLinkHooks {
     $cache->applyTo($variables);
   }
 
+  /**
+   * Aplica o link do perfil público em campos de referência a usuário.
+   *
+   * @param array $variables
+   *   Variáveis de preprocessamento, alteradas por referência.
+   */
   #[Hook('preprocess_field')]
   public function preprocessField(array &$variables): void {
     $items = $variables['element']['#items'] ?? NULL;
@@ -57,9 +69,10 @@ final class UsernameLinkHooks {
       return;
     }
 
+    $referencedUsers = $items->referencedEntities();
     foreach ($variables['items'] ?? [] as $delta => $item) {
       $content = $item['content'] ?? NULL;
-      $user = $items->get($delta)?->entity;
+      $user = $referencedUsers[$delta] ?? NULL;
       // Só o link do rótulo é trocado; itens sem link ou sem usuário carregado ficam como estão.
       if (!is_array($content) || !isset($content['#url']) || !$user instanceof UserInterface) {
         continue;

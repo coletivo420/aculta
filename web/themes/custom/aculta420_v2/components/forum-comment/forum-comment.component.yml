@@ -1,0 +1,85 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Comentário do Fórum
+description: Apresentação reutilizável de comentários Drupal com autoria, conteúdo, ações e compositor de resposta.
+status: stable
+group: Comunidade
+props:
+  type: object
+  additionalProperties: false
+  required: [composer_target_id, author_name]
+  properties:
+    reply_first:
+      type: boolean
+      title: Primeira resposta do nível
+      default: false
+      description: Verdadeiro quando é a primeira resposta entre irmãos; mostra a seta de resposta.
+    reply_depth:
+      type: integer
+      title: Nível da resposta
+      minimum: 0
+      maximum: 3
+      default: 0
+      description: Nível real na conversa (0 = resposta raiz); o cartão é recuado pelo SDC reply-indent.
+    accent_side:
+      type: string
+      title: Lado do cartão
+      enum: [start, end]
+      default: start
+      description: start = normal (faixa à esquerda); end = espelhado (faixa e autoria à direita). Definido pelo módulo do fórum pela ordem da resposta.
+    attributes:
+      type: Drupal\Core\Template\Attribute
+      title: Atributos do comentário
+      description: Atributos Drupal preservados no elemento article.
+      default: null
+    status:
+      type: [string, 'null']
+      enum: [published, unpublished, preview, null]
+      title: Estado do comentário
+      description: Estado Drupal aplicado como classe modificadora.
+      default: null
+    composer_target_id:
+      type: string
+      pattern: '^[A-Za-z][A-Za-z0-9_:.-]*$'
+      minLength: 1
+      title: Destino do compositor
+      description: ID estável usado pela resposta HTMX para inserir o compositor.
+    author_name:
+      type: string
+      minLength: 1
+      title: Nome do autor
+      description: Nome público entregue pelo Comment API ou pelo cartão do autor.
+    author_posts:
+      type: [string, integer, 'null']
+      title: Contagem de publicações
+      description: Quantidade de publicações do autor ou null quando indisponível.
+      default: null
+    timestamp:
+      type: [string, 'null']
+      title: Data do comentário
+      description: Data pronta para apresentação no cartão.
+      default: null
+slots:
+  title_prefix:
+    title: Prefixo contextual
+    description: Links e controles contextuais fornecidos pelo Drupal antes do comentário.
+  context:
+    title: Contexto do comentário pai
+    description: Relação com o comentário respondido, renderizada pelo Comment API.
+  avatar:
+    title: Avatar do autor
+    description: Cartão de autor ou render array de avatar com os metadados autorizados.
+  body:
+    title: Conteúdo
+    description: Campos do comentário renderizados pelo Drupal, incluindo texto e mídia.
+  actions:
+    title: Ações
+    description: Permalink e links de ação renderizados e autorizados pelo Drupal.
+  admin:
+    title: Controles administrativos
+    description: Botão de moderação ao lado direito do comentário, visível só para quem pode moderar.
+  reactions_slot:
+    title: Barra de reações
+    description: Barra interativa construída pelo módulo proprietário após checagem de acesso.
+  title_suffix:
+    title: Sufixo contextual
+    description: Links e controles contextuais fornecidos pelo Drupal após o comentário.

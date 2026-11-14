@@ -4,26 +4,30 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Search;
 
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
 
 /**
- * Resultados do índice geral para a prévia (popup) e para a página de busca. O índice é do site inteiro,
- * então a consulta roda no host atual; cada resultado abre no host do próprio conteúdo.
+ * Resultados do índice geral para a prévia e para a página de busca.
+ *
+ * O índice é do site inteiro, então a consulta roda no host atual; cada
+ * resultado abre no host do próprio conteúdo.
  */
 final class SearchResults {
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly DomainPurposeManager $domainPurposeManager,
+    private readonly DomainSiteManager $siteManager,
   ) {}
 
   /**
    * Prévia: até $limit resultados e o total do índice para o termo (o total já vem filtrado por content_access).
    *
    * @return array{total: int, items: array<int, array{title: string, type: string, url: \Drupal\Core\Url}>}
+   *   Total de resultados e itens da prévia.
    */
   public function search(string $term, int $limit = 8): array {
     $index = $this->entityTypeManager->getStorage('search_api_index')->load(SearchPageController::INDEX_ID);
@@ -39,8 +43,13 @@ final class SearchResults {
   }
 
   /**
+   * Monta os itens de resultado a partir dos resultados do índice.
+   *
    * @param array<int, \Drupal\search_api\Item\ItemInterface> $resultItems
+   *   Resultados retornados pelo índice.
+   *
    * @return array<int, array{title: string, type: string, url: \Drupal\Core\Url}>
+   *   Itens de resultado já filtrados por acesso.
    */
   private function items(array $resultItems): array {
     $results = [];
@@ -59,12 +68,13 @@ final class SearchResults {
     return $results;
   }
 
-  /** Link do resultado no host do conteúdo (pelo purpose do nó). */
+  /**
+   * Link do resultado no host do conteúdo (pelo purpose do nó). */
   public function url(NodeInterface $node): Url {
     $relative = $node->toUrl();
     $domainId = $node->hasField('field_domain_source') ? $node->get('field_domain_source')->target_id : NULL;
-    $purpose = is_string($domainId) ? $this->domainPurposeManager->getPurposeForDomainId($domainId) : NULL;
-    $absolute = $purpose !== NULL ? $this->domainPurposeManager->canonicalPathUrl($purpose, $relative->toString()) : NULL;
+    $purpose = is_string($domainId) ? $this->siteManager->getSiteKeyValueForDomainId($domainId) : NULL;
+    $absolute = $purpose !== NULL ? $this->siteManager->canonicalPathUrl($purpose, $relative->toString()) : NULL;
     return $absolute ?? $relative;
   }
 

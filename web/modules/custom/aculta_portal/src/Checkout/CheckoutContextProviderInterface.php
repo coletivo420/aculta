@@ -13,16 +13,20 @@ namespace Drupal\aculta_portal\Checkout;
  */
 interface CheckoutContextProviderInterface {
 
-  /** ID estável e único do contexto (por exemplo, `shop`, `lms`, `donation`). */
+  /**
+   * ID estável e único do contexto (por exemplo, `shop`, `lms`, `donation`). */
   public function id(): string;
 
-  /** Rótulo para a administração. */
+  /**
+   * Rótulo para a administração. */
   public function label(): string|\Stringable;
 
-  /** Ordem de apresentação e de desempate; menor primeiro. */
+  /**
+   * Ordem de apresentação e de desempate; menor primeiro. */
   public function weight(): int;
 
-  /** Configuração efetiva atual, lida da configuração do módulo proprietário. */
+  /**
+   * Configuração efetiva atual, lida da configuração do módulo proprietário. */
   public function configuration(): CheckoutContextConfiguration;
 
 }

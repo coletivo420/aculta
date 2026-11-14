@@ -1,0 +1,7 @@
+name: Formulário de apoio
+component: aculta420_v2:support-form
+props: {}
+slots:
+  content:
+    type: inline_template
+    template: '<form class="aculta-support"><p class="aculta-support-intro">Sua contribuição fortalece iniciativas culturais.</p><fieldset><legend>Como deseja apoiar?</legend><div class="form-radios"><div class="form-item"><input type="radio" id="apoio-mensal" name="apoio"><label for="apoio-mensal">Mensalmente</label></div></div></fieldset><div class="form-actions"><button type="submit">Continuar</button></div><div class="aculta-support-other"><h2>Outras formas de apoio</h2></div></form>'

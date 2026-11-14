@@ -1,0 +1,99 @@
+.forum-category-header {
+  position: relative;
+  overflow: hidden;
+  margin-block-end: var(--spacing-lg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface-raised);
+}
+
+.forum-category-header__top-bar {
+  block-size: 4px;
+  background: var(--color-link-editorial);
+  inline-size: 100%;
+}
+
+.forum-category-header__inner {
+  padding: var(--spacing-lg);
+}
+
+.forum-category-header__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  margin-block-end: var(--spacing-xs);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--color-link-editorial);
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  gap: var(--spacing-xs);
+}
+
+.forum-category-header__description {
+  max-inline-size: 65ch;
+  margin-block-end: var(--spacing-md);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-base);
+  line-height: 1.5;
+}
+
+.forum-category-header__actions {
+  display: flex;
+  flex-wrap: wrap;
+  margin-block-end: var(--spacing-md);
+  gap: var(--spacing-sm);
+}
+
+.forum-category-header .forum-category-header__actions a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  color: var(--color-on-brand);
+  border-radius: var(--radius-base);
+  background: var(--color-brand-primary);
+  font-weight: 700;
+  min-block-size: 44px;
+  padding-inline: var(--spacing-base);
+}
+
+.forum-category-header .forum-category-header__actions a:hover {
+  background: var(--button-primary-bg-hover);
+}
+
+.forum-category-header .forum-category-header__actions a:focus-visible {
+  outline: 3px solid var(--color-brand-highlight);
+  outline-offset: 2px;
+}
+
+.forum-category-header__stats {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  margin: var(--spacing-md) 0 0;
+  padding-block-start: var(--spacing-md);
+  border-block-start: 1px solid var(--color-border);
+  gap: var(--spacing-lg);
+}
+
+.forum-category-header__stat {
+  display: flex;
+  flex-direction: column;
+  gap: .125rem;
+}
+
+.forum-category-header__stat-label {
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+}
+
+.forum-category-header__stat-value {
+  margin: 0;
+  color: var(--color-text-primary);
+  font-family: var(--font-family-heading);
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+}

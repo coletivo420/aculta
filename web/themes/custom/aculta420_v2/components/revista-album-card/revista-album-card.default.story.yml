@@ -1,0 +1,16 @@
+name: Cartão de álbum
+description: Capa, título, data e créditos da listagem de álbuns.
+component: aculta420_v2:revista-album-card
+slots:
+  cover:
+    type: inline_template
+    template: '<span role="img" aria-label="Registro fotográfico de exemplo">Imagem de capa de exemplo</span>'
+  title:
+    type: inline_template
+    template: '<h3><a href="/albuns/exemplo">Marcha da Maconha de Goiânia</a></h3>'
+  published_at:
+    type: inline_template
+    template: '<time datetime="2025-09-01">1 de setembro de 2025</time>'
+  credits:
+    type: inline_template
+    template: '<span>Fotografia: Equipe editorial</span>'

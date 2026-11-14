@@ -1,3 +1,24 @@
+## 0.4.0-dev.36 — alinha templates Twig registrados aos arquivos do módulo
+
+- Os hooks de tema agora apontam para `aculta-links-landing.html.twig` e
+  `aculta-links-page.html.twig`, nomes já existentes no módulo. Antes, a página
+  raiz do purpose `links` falhava com `Twig\\Error\\LoaderError` ao procurar
+  `aculta-linkweed-landing.html.twig`.
+- Adicionado teste Unit que confere a correspondência entre os nomes dos
+  templates registrados e os arquivos existentes.
+- `LinksThemeHooksTest`: 1 teste/4 assertions PASS; PHPCS e PHP lint PASS.
+  Após `drush cr` no purpose `links`, a raiz responde HTTP 200 e o caminho
+  interno `/redes-sociais` permanece HTTP 404, conforme o contrato vigente.
+
+## 0.4.0-dev.35 — reconcilia schemas de campos de micropágina
+
+- Update `10013` alinha o schema instalado dos campos revisionáveis `revision_uid`, `available_from` e `available_until` aos campos ativos, preservando os valores.
+
+## 0.4.0-dev.34 — repara definições instaladas após renomeação de entidades — 2026-11-03
+
+- A renomeação agora regrava os objetos de definição de entidade/campos pelos IDs ativos; as versões anteriores só atualizavam as chaves e os arrays do key-value, deixando IDs antigos dentro de objetos serializados.
+- O update `10011` repara instalações já afetadas antes de o Core calcular a lista de mudanças. Runtime `toca`: snapshot e aplicação do update ficam registrados no handoff operacional.
+
 ## 0.4.0-dev.33 — token de apresentação da micropágina — 2026-10-26
 
 - A classe visual do link público passa pelo token `links-page-link` do contrato Portal–tema, preservando a mesma classe no ACULTA420.

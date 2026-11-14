@@ -1,0 +1,8 @@
+name: Estado vazio com ação
+description: Mensagem neutra com link de exploração fornecido pelo consumer.
+component: aculta420_v2:empty-state
+slots:
+  message:
+    markup: '<p>Você ainda não está matriculado em nenhum curso. Quando se matricular, seus cursos aparecem aqui.</p>'
+  actions:
+    markup: '<a href="/catalogo">Explorar o catálogo de cursos</a>'

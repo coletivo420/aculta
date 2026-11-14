@@ -60,6 +60,26 @@ final class SurfaceRoutesKernelTest extends KernelTestBase {
     'aculta_studio',
     'aculta_commerce',
     'aculta_paths',
+    'aculta_calendar',
+    'aculta_events',
+    'aculta_lms',
+    'aculta_gallery',
+    'aculta_magazine',
+    'media',
+    'geofield',
+    'datetime_range',
+    'group',
+    'flexible_permissions',
+    'aculta_forum',
+    'entity_usage',
+    'migrate',
+    'comment',
+    'taxonomy',
+    'image',
+    'datetime',
+    'link',
+    'filter',
+    'field',
   ];
 
   /**
@@ -79,8 +99,8 @@ final class SurfaceRoutesKernelTest extends KernelTestBase {
     $provider = $this->container->get('router.route_provider');
     $this->assertSame('/we-sativa', $provider->getRouteByName('aculta_studio.we_sativa')->getPath());
     $this->assertSame('/green-stash', $provider->getRouteByName('aculta_commerce.green_stash')->getPath());
-    $this->assertSame('wiki', $provider->getRouteByName('aculta_studio.we_sativa')->getOption('_aculta_domain_purpose'));
-    $this->assertSame('shop', $provider->getRouteByName('aculta_commerce.green_stash')->getOption('_aculta_domain_purpose'));
+    $this->assertSame('wiki', $provider->getRouteByName('aculta_studio.we_sativa')->getOption('_aculta_site_key'));
+    $this->assertSame('shop', $provider->getRouteByName('aculta_commerce.green_stash')->getOption('_aculta_site_key'));
   }
 
   /**

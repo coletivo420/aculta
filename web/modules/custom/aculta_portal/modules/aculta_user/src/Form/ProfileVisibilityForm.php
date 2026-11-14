@@ -18,17 +18,18 @@ use Drupal\aculta_portal\Profile\PerfilDoPapel;
 /**
  * Minha conta > Configurações > Privacidade.
  *
- * Escolhas de visibilidade do perfil público. A seção "Mensagens privadas" é acrescentada pelo aculta_messenger (form_alter).
+ * Escolhas de visibilidade do perfil público. A seção "Mensagens privadas" é acrescentada pelo
+ * aculta_messenger (form_alter).
  * Apelido é editado em Meus dados; bio e redes sociais, na visão geral. Autores e editores têm o perfil
  * público obrigatório (PublicProfilePolicy).
  */
 final class ProfileVisibilityForm extends FormBase {
 
   public function __construct(
-    private readonly EntityTypeManagerInterface $entityTypeManagerService,
-    private readonly AccountProxyInterface $currentUserService,
-    private readonly SettingsTabs $settingsTabs,
-    private readonly ?RouteMatchInterface $currentRouteMatch = NULL,
+    protected readonly EntityTypeManagerInterface $entityTypeManagerService,
+    protected readonly AccountProxyInterface $currentUserService,
+    protected readonly SettingsTabs $settingsTabs,
+    protected readonly ?RouteMatchInterface $currentRouteMatch = NULL,
   ) {}
 
   /**
@@ -73,9 +74,21 @@ final class ProfileVisibilityForm extends FormBase {
       '#default_value' => $obrigatorio ? TRUE : $this->flag($profile, 'field_perfil_publico', TRUE),
       '#disabled' => $obrigatorio,
     ];
-    $form['exibir_bio'] = ['#type' => 'checkbox', '#title' => $this->t('Mostrar bio'), '#default_value' => $this->flag($profile, 'field_exibir_bio', FALSE)];
-    $form['exibir_redes'] = ['#type' => 'checkbox', '#title' => $this->t('Mostrar redes sociais'), '#default_value' => $this->flag($profile, 'field_exibir_redes', FALSE)];
-    $form['exibir_email'] = ['#type' => 'checkbox', '#title' => $this->t('Mostrar e-mail'), '#default_value' => $this->flag($profile, 'field_exibir_email', FALSE)];
+    $form['exibir_bio'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Mostrar bio'),
+      '#default_value' => $this->flag($profile, 'field_exibir_bio', FALSE),
+    ];
+    $form['exibir_redes'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Mostrar redes sociais'),
+      '#default_value' => $this->flag($profile, 'field_exibir_redes', FALSE),
+    ];
+    $form['exibir_email'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Mostrar e-mail'),
+      '#default_value' => $this->flag($profile, 'field_exibir_email', FALSE),
+    ];
 
     $form['actions'] = ['#type' => 'actions'];
     $form['actions']['submit'] = ['#type' => 'submit', '#value' => $this->t('Salvar')];

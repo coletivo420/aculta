@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_wiki\Controller;
 
-use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Database\Connection;
@@ -12,14 +11,13 @@ use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Link;
-use Drupal\Core\Template\Attribute;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\aculta_portal\Presentation\WikiSearchFormBuilderInterface;
 use Drupal\aculta_portal\Search\SearchPageController;
 use Drupal\domain\DomainInterface;
-use Drupal\node\NodeInterface;
 use Drupal\views\ViewExecutableFactory;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Request;
@@ -35,8 +33,8 @@ final class WikiController extends ControllerBase {
     private readonly EntityTypeManagerInterface $entities,
     #[Autowire(service: 'views.executable')]
     private readonly ViewExecutableFactory $viewExecutableFactory,
-    #[Autowire(service: 'aculta_portal.domain_purpose')]
-    private readonly DomainPurposeManager $domainPurposeManager,
+    #[Autowire(service: 'aculta_portal.domain_site')]
+    private readonly DomainSiteManager $siteManager,
     #[Autowire(service: 'database')]
     private readonly Connection $database,
     #[Autowire(service: 'date.formatter')]
@@ -57,10 +55,10 @@ final class WikiController extends ControllerBase {
       ->getAccessControlHandler('node')
       ->createAccess('wiki_entry', $this->account, [], TRUE);
     $collaborationUrl = Url::fromRoute('node.add', ['node_type' => 'wiki_entry']);
-    $startUrl = $this->domainPurposeManager->routeUrl('wiki', 'aculta_studio.we_sativa_start');
-    if ($collaborationAccess instanceof AccessResultInterface && $collaborationAccess->isAllowed() && $startUrl !== NULL) {
-      $startAccess = $this->domainPurposeManager->runInPurpose('wiki', fn () => $startUrl->access($this->account, TRUE));
-      if ($startAccess instanceof AccessResultInterface && $startAccess->isAllowed()) {
+    $startUrl = $this->siteManager->routeUrl(SiteKey::Wiki, 'aculta_studio.we_sativa_start');
+    if ($collaborationAccess->isAllowed() && $startUrl !== NULL) {
+      $startAccess = $this->siteManager->runInSite(SiteKey::Wiki, fn () => $startUrl->access($this->account, TRUE));
+      if ($startAccess->isAllowed()) {
         $collaborationUrl = $startUrl;
         $collaborationAccess = $collaborationAccess->andIf($startAccess);
       }
@@ -140,7 +138,7 @@ final class WikiController extends ControllerBase {
       return $build;
     }
     $term = mb_substr($term, 0, SearchPageController::MAX_CHARS);
-    $wikiDomain = $this->domainPurposeManager->getDomain('wiki');
+    $wikiDomain = $this->siteManager->getDomain(SiteKey::Wiki);
     if (!$wikiDomain) {
       $build['empty'] = [
         '#type' => 'item',
@@ -214,18 +212,17 @@ final class WikiController extends ControllerBase {
     $build = ['#cache' => ['max-age' => 0]];
     if (mb_strlen($term) < SearchPageController::MIN_CHARS) {
       $build['hint'] = [
-        '#theme' => 'aculta_portal_element',
-        '#tag' => 'p',
-        '#element_attributes' => new Attribute(['data-portal-ui' => 'hint']),
-        '#value' => $this->t(
+        '#type' => 'component',
+        '#component' => 'aculta420_v2:hint',
+        '#slots' => ['content' => ['#plain_text' => $this->t(
           'Digite pelo menos @n caracteres para ver resultados.',
           ['@n' => SearchPageController::MIN_CHARS],
-        ),
+        )]],
       ];
       return $this->previewResponse($build);
     }
 
-    $wikiDomain = $this->domainPurposeManager->getDomain('wiki');
+    $wikiDomain = $this->siteManager->getDomain(SiteKey::Wiki);
     if ($wikiDomain === NULL) {
       $build['empty'] = ['#plain_text' => $this->t('A busca da Wiki420 está indisponível no momento.')];
       return $this->previewResponse($build);
@@ -288,7 +285,7 @@ final class WikiController extends ControllerBase {
     $ids = $query->condition($matches)->execute();
     $nodes = [];
     foreach ($nodeStorage->loadMultiple($ids) as $node) {
-      if ($node instanceof NodeInterface && $node->access('view')) {
+      if ($node->access('view')) {
         $nodes[] = $node;
       }
     }
@@ -316,7 +313,7 @@ final class WikiController extends ControllerBase {
         'tags' => ['node_list:wiki_entry'],
       ],
     ];
-    $wikiDomain = $this->domainPurposeManager->getDomain('wiki');
+    $wikiDomain = $this->siteManager->getDomain(SiteKey::Wiki);
     if (!$wikiDomain) {
       return $build;
     }

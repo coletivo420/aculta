@@ -54,7 +54,8 @@ final class SocialNetworks implements SocialNetworksInterface {
       return $links;
     }
     foreach ($profile->get('field_redes_sociais') as $item) {
-      $uri = (string) $item->uri;
+      $itemValues = $item->getValue();
+      $uri = (string) ($itemValues['uri'] ?? '');
       $key = $uri !== '' ? $this->keyForUri($uri) : NULL;
       if ($key !== NULL && !isset($links[$key])) {
         $links[$key] = $uri;
@@ -99,11 +100,12 @@ final class SocialNetworks implements SocialNetworksInterface {
   public function setLink(ProfileInterface $profile, string $key, ?string $uri): void {
     $items = [];
     foreach ($profile->get('field_redes_sociais') as $item) {
-      $existing = (string) $item->uri;
+      $itemValues = $item->getValue();
+      $existing = (string) ($itemValues['uri'] ?? '');
       if ($existing !== '' && $this->keyForUri($existing) === $key) {
         continue;
       }
-      $items[] = ['uri' => $existing, 'title' => (string) $item->title];
+      $items[] = ['uri' => $existing, 'title' => (string) ($itemValues['title'] ?? '')];
     }
     if ($uri !== NULL) {
       $items[] = ['uri' => $uri, 'title' => ''];

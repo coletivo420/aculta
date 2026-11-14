@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_index\Performance;
 
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\domain\DomainNegotiatorInterface;
@@ -26,8 +26,6 @@ use Symfony\Component\DependencyInjection\Reference;
  */
 #[Group('aculta_index')]
 #[Group('performance')]
-#[Group('aculta_index')]
-#[Group('performance')]
 #[RunTestsInSeparateProcesses]
 final class ContentIndexAccessCacheBenchmarkTest extends KernelTestBase {
 
@@ -47,7 +45,7 @@ final class ContentIndexAccessCacheBenchmarkTest extends KernelTestBase {
    * {@inheritdoc} */
   public function register(ContainerBuilder $container): void {
     parent::register($container);
-    $container->setDefinition('aculta_portal.domain_purpose', (new Definition(DomainPurposeManager::class, [
+    $container->setDefinition('aculta_portal.domain_site', (new Definition(DomainSiteManager::class, [
       new Reference('entity_type.manager'),
       new Reference('domain.negotiator'),
       new Reference('config.factory'),
@@ -58,6 +56,11 @@ final class ContentIndexAccessCacheBenchmarkTest extends KernelTestBase {
   /**
    * {@inheritdoc} */
   protected function setUp(): void {
+    // Opt-in guard runs before the database check and parent::setUp() so a
+    // normal run never boots the kernel or touches the database.
+    if (getenv('ACULTA_INDEX_ACCESS_BENCHMARK') !== '1') {
+      self::markTestSkipped('Set ACULTA_INDEX_ACCESS_BENCHMARK=1 to measure Domain-aware Entity Access pages.');
+    }
     $databaseUrl = getenv('SIMPLETEST_DB') ?: '';
     $databaseParts = parse_url($databaseUrl);
     if (!is_array($databaseParts)
@@ -117,7 +120,7 @@ final class ContentIndexAccessCacheBenchmarkTest extends KernelTestBase {
     self::assertInstanceOf(Domain::class, $mainDomain);
     $negotiator = $this->container->get(DomainNegotiatorInterface::class);
     $negotiator->getActiveDomain();
-    $negotiator->setActiveDomain($mainDomain);
+    $negotiator->getContext()->setDomain($mainDomain);
     $this->container->get('state')->set('aculta_index.access_benchmark_account', (int) $account->id());
   }
 

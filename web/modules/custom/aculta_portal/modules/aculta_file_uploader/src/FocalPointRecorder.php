@@ -36,6 +36,7 @@ final class FocalPointRecorder {
    * Grava os recortes do ponto focal. Retorna, por tipo, se foi gravado.
    *
    * @return array<string, bool>
+   *   Indica, por tipo de recorte, se o registro foi gravado.
    */
   public function record(FileInterface $file, float $focalX, float $focalY): array {
     $result = [];

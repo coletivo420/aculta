@@ -1,0 +1,7 @@
+name: Perfil público
+component: aculta420_v2:public-profile-page
+props: {}
+slots:
+  content:
+    type: inline_template
+    template: '<section class="portal-profile"><header class="portal-profile__header"><div class="portal-profile__avatar" aria-hidden="true"></div><h2 class="portal-profile__name">Pessoa exemplo</h2></header><p class="portal-profile__bio">Biografia pública de exemplo.</p><ul class="portal-profile__links"><li><a class="portal-profile__link" href="mailto:pessoa@example.test">E-mail</a></li></ul></section>'

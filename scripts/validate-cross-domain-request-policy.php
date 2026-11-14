@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Validates cross-domain request and redirect policy.
+ */
+
 declare(strict_types=1);
 
 /**
@@ -15,7 +20,7 @@ $assert = static function (bool $condition, string $message) use (&$checks): voi
 };
 
 $root = DRUPAL_ROOT . '/modules/custom/aculta_portal';
-$domainSubscriber = file_get_contents($root . '/src/EventSubscriber/DomainPurposeRequestSubscriber.php');
+$domainSubscriber = file_get_contents($root . '/src/EventSubscriber/DomainSiteRequestSubscriber.php');
 $accountSubscriber = file_get_contents($root . '/src/EventSubscriber/AccountRouteSubscriber.php');
 $portalController = file_get_contents($root . '/src/Controller/PortalController.php');
 
@@ -36,17 +41,17 @@ $assert(
   str_contains($accountSubscriber, 'TrustedRedirectResponse')
     && str_contains($accountSubscriber, "routeUrl('account'")
     && str_contains($accountSubscriber, "pathUrl('account', '/')"),
-  'Account redirects use DomainPurposeManager and secured cross-host responses.',
+  'Account redirects use DomainSiteManager and secured cross-host responses.',
 );
 $assert(
   str_contains($accountSubscriber, "['GET', 'HEAD']")
-    && str_contains($accountSubscriber, "getCurrentPurpose() !== 'account'"),
+    && str_contains($accountSubscriber, "getCurrentSiteKey() !== 'account'"),
   'Account guard blocks mutating cross-domain replay.',
 );
 $paymentNotification = \Drupal::service('router.route_provider')->getRouteByName('commerce_payment.notify');
 $assert(
   $paymentNotification->getMethods() === ['POST']
-    && $paymentNotification->getOption('_aculta_domain_purpose') === 'main',
+    && $paymentNotification->getOption('_aculta_site_key') === 'main',
   'Commerce payment notification remains POST-only and belongs to MAIN.',
 );
 $assert(
@@ -89,8 +94,10 @@ $assert(
   'Portal AJAX explicitly uses same-origin credentials (search-preview.js).',
 );
 
-// Interceptação AJAX só para mesma origem: isInternalLink() compara a origem do link com a da página, e o handler de clique
-// sai antes de preventDefault() quando o link não é interno. Links de outra origem seguem a navegação normal.
+// Interceptação AJAX só para mesma origem: isInternalLink() compara a
+// origem do link com a da página, e o handler de clique sai antes de
+// preventDefault() quando o link não é interno. Links de outra origem
+// seguem a navegação normal.
 $navJs = file_get_contents($root . '/js/account-navigation.js');
 $assert(
   str_contains($navJs, 'target.origin === window.location.origin') && str_contains($navJs, 'if (!isInternalLink(anchor)'),

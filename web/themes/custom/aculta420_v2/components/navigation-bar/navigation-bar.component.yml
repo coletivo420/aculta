@@ -1,0 +1,69 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Navigation bar
+status: stable
+description: Cabeçalho de navegação responsivo e acessível por teclado.
+group: Navegação
+libraryOverrides:
+  dependencies:
+    - core/drupal
+    - core/once
+props:
+  type: object
+  additionalProperties: false
+  properties:
+    site_name:
+      title: Nome do site
+      type: [string, 'null']
+      default: null
+      description: Nome textual do site exibido quando não há logotipo de marca dedicado nem conteúdo no slot brand.
+    site_logo_url:
+      title: Endereço do logotipo do site
+      type: [string, 'null']
+      format: uri-reference
+      description: URL opcional do logotipo do site, mostrada ao lado de site_name com texto alternativo vazio por ser decorativa.
+    brand_home_url:
+      title: Endereço inicial da marca
+      type: string
+      format: uri-reference
+      default: /
+      description: Destino do link da marca, usado tanto para o logotipo dedicado quanto para o fallback com site_name.
+    brand_title:
+      title: Nome da marca
+      type: string
+      default: ACULTA
+      description: Nome acessível aplicado ao link quando brand_logo_url fornece um logotipo dedicado.
+    brand_logo_url:
+      title: Endereço do logotipo da marca
+      type: [string, 'null']
+      format: uri-reference
+      default: null
+      description: URL do logotipo responsivo dedicado; quando preenchida, tem precedência sobre o slot brand e site_name.
+    brand_logo_srcset:
+      title: Variações de tamanho do logotipo
+      type: string
+      default: ''
+      description: Fontes responsivas do logotipo dedicado, encaminhadas ao atributo srcset quando não vazias.
+    brand_logo_alt:
+      title: Texto alternativo do logotipo da marca
+      type: string
+      default: ''
+      description: Texto alternativo aplicado à imagem do logotipo dedicado.
+    menu_id:
+      title: Identificador do menu
+      type: string
+      pattern: '^[A-Za-z][A-Za-z0-9_-]*$'
+      default: aculta-primary-navigation
+      description: ID do painel nav referenciado pelo aria-controls do controle que abre o menu; precisa ser único na página.
+slots:
+  brand:
+    title: Marca do domínio
+    description: Bloco de identidade Drupal ou marca delegada pelo Portal.
+  menu_items:
+    title: Itens de navegação
+    description: Links do menu principal, renderizados por Menu API.
+  wiki_search:
+    title: Busca da Wiki
+    description: Formulário de busca da Wiki, exibido no cabeçalho apenas no domínio wiki.
+  utility_items:
+    title: Ações utilitárias
+    description: Links ou ações auxiliares do site.

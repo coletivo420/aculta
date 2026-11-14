@@ -47,7 +47,17 @@ final class XapiStatementValidator {
   /**
    * Propriedades permitidas em context.
    */
-  private const CONTEXT = ['registration', 'instructor', 'team', 'contextActivities', 'revision', 'platform', 'language', 'statement', 'extensions'];
+  private const CONTEXT = [
+    'registration',
+    'instructor',
+    'team',
+    'contextActivities',
+    'revision',
+    'platform',
+    'language',
+    'statement',
+    'extensions',
+  ];
 
   /**
    * Valida e devolve a declaração normalizada.
@@ -56,6 +66,7 @@ final class XapiStatementValidator {
    *   Declaração já decodificada do JSON recebido.
    *
    * @return array<string, mixed>
+   *   Declaração normalizada e validada.
    *
    * @throws \UnexpectedValueException
    *   Quando a declaração não atende à especificação ou aos limites.
@@ -96,6 +107,9 @@ final class XapiStatementValidator {
 
   /**
    * Actor: exatamente um identificador inverso funcional, e somente Agent.
+   *
+   * @return array<array-key, mixed>
+   *   Validated actor object.
    */
   private function actor(mixed $actor): array {
     if (!is_array($actor) || array_is_list($actor)) {
@@ -136,6 +150,9 @@ final class XapiStatementValidator {
 
   /**
    * Verb: id IRI obrigatório; display opcional.
+   *
+   * @return array<array-key, mixed>
+   *   Validated verb object.
    */
   private function verb(mixed $verb): array {
     if (!is_array($verb) || array_is_list($verb)) {
@@ -154,6 +171,9 @@ final class XapiStatementValidator {
 
   /**
    * Object: Activity ou StatementRef. Outros tipos são recusados nesta fase.
+   *
+   * @return array<array-key, mixed>
+   *   Validated object definition.
    */
   private function object(mixed $object): array {
     if (!is_array($object) || array_is_list($object)) {
@@ -183,6 +203,9 @@ final class XapiStatementValidator {
 
   /**
    * Result: score, success, completion, response, duration e extensions.
+   *
+   * @return array<array-key, mixed>
+   *   Validated result object.
    */
   private function result(mixed $result): array {
     if (!is_array($result) || array_is_list($result)) {
@@ -252,8 +275,12 @@ final class XapiStatementValidator {
   /**
    * Recusa chaves fora da lista permitida.
    *
-   * @param array<string, mixed> $data
-   * @param string[] $allowed
+   * @param array<array-key, mixed> $data
+   *   Estrutura a validar.
+   * @param list<string> $allowed
+   *   Chaves permitidas.
+   * @param string $where
+   *   Nome do contexto usado na mensagem de erro.
    */
   private function onlyAllowed(array $data, array $allowed, string $where): void {
     $unknown = array_diff(array_keys($data), $allowed);
@@ -262,22 +289,58 @@ final class XapiStatementValidator {
     }
   }
 
+  /**
+   * Indica se o valor é um UUID válido.
+   *
+   * @param mixed $value
+   *   Valor a verificar.
+   *
+   * @return bool
+   *   TRUE quando o valor é um UUID.
+   */
   private function isUuid(mixed $value): bool {
     return is_string($value) && preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i', $value) === 1;
   }
 
+  /**
+   * Indica se o valor é uma data ISO 8601 válida.
+   *
+   * @param mixed $value
+   *   Valor a verificar.
+   *
+   * @return bool
+   *   TRUE quando o valor é uma data ISO 8601.
+   */
   private function isIso8601(mixed $value): bool {
     return is_string($value)
       && preg_match('/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2}(\.\d+)?)?(Z|[+-]\d{2}:\d{2})$/', $value) === 1
       && strtotime($value) !== FALSE;
   }
 
+  /**
+   * Exige que o valor seja um IRI com esquema.
+   *
+   * @param mixed $value
+   *   Valor a validar.
+   * @param string $field
+   *   Nome do campo usado na mensagem de erro.
+   */
   private function requireIri(mixed $value, string $field): void {
     if (!is_string($value) || preg_match('/^[a-zA-Z][a-zA-Z0-9+.-]*:\S+$/', $value) !== 1) {
       throw new \UnexpectedValueException("{$field} deve ser um IRI com esquema.");
     }
   }
 
+  /**
+   * Exige que o valor corresponda ao padrão informado.
+   *
+   * @param mixed $value
+   *   Valor a validar.
+   * @param string $pattern
+   *   Expressão regular esperada.
+   * @param string $message
+   *   Mensagem base da exceção.
+   */
   private function requireMatch(mixed $value, string $pattern, string $message): void {
     if (!is_string($value) || preg_match($pattern, $value) !== 1) {
       throw new \UnexpectedValueException($message . '.');

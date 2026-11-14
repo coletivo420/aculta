@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_commerce\Entity;
 
 use Drupal\aculta_commerce\Shipping\PackageType;
+use Drupal\aculta_commerce\Shipping\PackageTypeManager;
 use Drupal\aculta_commerce\Shipping\ProposedShipment;
 use Drupal\aculta_commerce\Shipping\ShipmentItem as ShipmentItemValue;
 use Drupal\commerce_order\Entity\OrderInterface;
@@ -30,10 +31,9 @@ use Drupal\state_machine\Plugin\Field\FieldType\StateItemInterface;
  * lives inside aculta_commerce; the entity type, tables, field names and
  * plugin IDs are ACULTA-owned.
  *
- * Service locator: entity storage constructs content entities directly from
- * values and the entity type ID, so constructor injection is unavailable.
- * getPackageType() and the static postDelete() use \Drupal only for services
- * the entity lifecycle cannot receive.
+ * Entity storage constructs content entities directly from values and the
+ * entity type ID, so constructor injection is unavailable. Package types are
+ * resolved through their dependency-free built-in definitions.
  */
 #[ContentEntityType(
   id: 'aculta_shipment',
@@ -84,8 +84,7 @@ class Shipment extends ContentEntityBase implements ShipmentInterface {
     if ($package_type === '') {
       return NULL;
     }
-    // No DI entry point for an entity loaded by storage; see class docblock.
-    return \Drupal::service('aculta_commerce.package_type_manager')->getPackageType($package_type);
+    return PackageTypeManager::getBuiltInPackageType($package_type);
   }
 
   /**
@@ -439,26 +438,6 @@ class Shipment extends ContentEntityBase implements ShipmentInterface {
     $this->prepareFields();
     if ($this->get('order_id')->isEmpty()) {
       throw new EntityMalformedException('Required shipment field "order_id" is empty.');
-    }
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function postDelete(EntityStorageInterface $storage, array $entities): void {
-    parent::postDelete($storage, $entities);
-    $profiles_to_delete = [];
-    /** @var \Drupal\aculta_commerce\Entity\ShipmentInterface $shipment */
-    foreach ($entities as $shipment) {
-      $shipping_profile = $shipment->getShippingProfile();
-      if ($shipping_profile && !$shipping_profile->getOwnerId()) {
-        $profiles_to_delete[] = $shipping_profile;
-      }
-    }
-    if ($profiles_to_delete) {
-      // Static entity hook: only storage and entities are passed in, so the
-      // profile storage has to come from the container.
-      \Drupal::entityTypeManager()->getStorage('profile')->delete($profiles_to_delete);
     }
   }
 

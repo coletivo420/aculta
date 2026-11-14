@@ -16,6 +16,9 @@ use PHPUnit\Framework\Attributes\Group;
 #[Group('aculta_user')]
 final class RoleInheritanceHooksTest extends UnitTestCase {
 
+  /**
+   * Confirma que o carregamento adiciona os papéis herdados.
+   */
   public function testCarregarAdicionaOsHerdados(): void {
     $heranca = $this->createMock(HerancaDePapeis::class);
     $heranca->method('herdados')->willReturn(['associado', 'estudante']);
@@ -27,6 +30,9 @@ final class RoleInheritanceHooksTest extends UnitTestCase {
     (new RoleInheritanceHooks($heranca))->userLoad([$conta]);
   }
 
+  /**
+   * Confirma que o salvamento retira apenas o herdado não gravado.
+   */
   public function testSalvarRetiraSoOHerdadoNaoGravado(): void {
     $heranca = $this->createMock(HerancaDePapeis::class);
     $heranca->method('herdadosNaoGravados')->willReturn(['associado']);

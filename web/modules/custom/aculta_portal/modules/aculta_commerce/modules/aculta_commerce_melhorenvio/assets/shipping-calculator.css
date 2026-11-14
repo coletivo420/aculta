@@ -65,7 +65,7 @@
   .aculta-shipping-calculator__prazo { grid-column: 1 / -1; }
 }
 
-/* Botão e campo com a mesma aparência do Bootstrap, para temas sem Bootstrap (ex.: Olivero). */
+/* Botão e campo com apresentação própria, sem dependência de Bootstrap. */
 .aculta-shipping-calculator .input-group { display: flex; gap: 0.5rem; }
 .aculta-shipping-calculator .form-control {
   flex: 1 1 auto; min-width: 0; padding: 0.375rem 0.75rem; border: 1px solid var(--bs-border-color, currentColor);

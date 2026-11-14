@@ -71,13 +71,14 @@ final class ReportQueueControllerTest extends UnitTestCase {
     $build = (new ReportQueueController($queue))->view(Request::create('/forum/reports'));
 
     self::assertSame('forum-report-queue', $build['#attributes']['data-portal-ui']);
+    self::assertContains('aculta_user/report-queue', $build['#attached']['library']);
     self::assertArrayNotHasKey('class', $build['#attributes']);
     self::assertSame('forum-report-pager', $build['pager']['#attributes']['data-portal-ui']);
     self::assertArrayNotHasKey('class', $build['pager']['#attributes']);
     self::assertSame(Cache::PERMANENT, $build['#cache']['max-age']);
     self::assertContains('user.permissions', $build['#cache']['contexts']);
     self::assertContains('url.query_args:page', $build['#cache']['contexts']);
-    self::assertContains('aculta_ugc_report_list', $build['#cache']['tags']);
+    self::assertContains('aculta_cgu_report_list', $build['#cache']['tags']);
   }
 
 }

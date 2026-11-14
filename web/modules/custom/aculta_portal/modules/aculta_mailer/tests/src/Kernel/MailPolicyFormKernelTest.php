@@ -23,7 +23,7 @@ final class MailPolicyFormKernelTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['system', 'user', 'aculta_mailer', 'aculta_mailer_test'];
+  protected static $modules = ['system', 'user', 'aculta_mailer', 'aculta_mailer_test', 'aculta_file_uploader', 'file' ];
 
   /**
    * Recusa e-mail de resposta inválido e grava os níveis válidos.

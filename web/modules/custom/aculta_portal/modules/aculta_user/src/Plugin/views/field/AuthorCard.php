@@ -7,6 +7,7 @@ namespace Drupal\aculta_user\Plugin\views\field;
 use Drupal\aculta_portal\Profile\PerfilDoPapel;
 use Drupal\aculta_user\Identity\AuthorCardBuilder;
 use Drupal\aculta_user\Identity\AuthorIdentityResolver;
+use Drupal\Component\Render\MarkupInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
@@ -30,8 +31,8 @@ final class AuthorCard extends FieldPluginBase implements ContainerFactoryPlugin
     array $configuration,
     $plugin_id,
     $plugin_definition,
-    private readonly AuthorCardBuilder $cardBuilder,
-    private readonly EntityTypeManagerInterface $entityTypeManager,
+    protected readonly AuthorCardBuilder $cardBuilder,
+    protected readonly EntityTypeManagerInterface $entityTypeManager,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }
@@ -89,25 +90,26 @@ final class AuthorCard extends FieldPluginBase implements ContainerFactoryPlugin
   /**
    * {@inheritdoc}
    */
-  public function render(ResultRow $values): array {
+  public function render(ResultRow $values): string|MarkupInterface {
     $account = $this->getEntity($values);
     if (!$account instanceof UserInterface) {
       // Views cacheia o resultado da consulta sem as entidades carregadas; a
       // linha mantém o uid da tabela base e permite recompor a conta.
       $uid = $values->uid ?? NULL;
       if ($uid === NULL) {
-        return [];
+        return '';
       }
       $account = $this->entityTypeManager->getStorage('user')->load((int) $uid);
       if (!$account instanceof UserInterface) {
-        return [];
+        return '';
       }
     }
     $profile = PerfilDoPapel::principal($this->entityTypeManager->getStorage('profile'), $account);
     if ($profile === NULL || !$profile->hasField('field_perfil_publico') || $profile->get('field_perfil_publico')->isEmpty() || !(bool) $profile->get('field_perfil_publico')->value) {
-      return [];
+      return '';
     }
-    return $this->cardBuilder->build($account, (string) $this->options['variant'], [], NULL, (string) $this->options['size']) ?? [];
+    $build = $this->cardBuilder->build($account, (string) $this->options['variant'], [], NULL, (string) $this->options['size']);
+    return $build === NULL || $build === [] ? '' : $this->renderer->render($build);
   }
 
 }

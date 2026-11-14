@@ -1,0 +1,68 @@
+<article class="forum-topic-card{% if pinned %} forum-topic-card--pinned{% endif %}">
+  <div class="forum-topic-card__media">
+    {% if thumbnail_src %}
+      <img src="{{ thumbnail_src }}" alt="{{ thumbnail_alt|default('') }}" class="forum-topic-card__image" loading="lazy">
+    {% else %}
+      <div class="forum-topic-card__placeholder-icon" aria-hidden="true">
+        {{ include('aculta420_v2:icon', { name: category_icon|default('chat-circle-dots'), variant: 'duotone', size: 'lg' }, with_context = false) }}
+      </div>
+    {% endif %}
+  </div>
+  <div class="forum-topic-card__body">
+    <div class="forum-topic-card__header">
+      {% if badges and badges|length > 0 %}
+        <div class="forum-topic-card__badges">
+          {% for b in badges %}
+            <span class="forum-topic-card__badge forum-topic-card__badge--{{ b.tone|default('neutral') }}">{{ b.label }}</span>
+          {% endfor %}
+        </div>
+      {% endif %}
+      {{ include('aculta420_v2:heading', {
+        level: 6,
+        content: title
+      }, with_context = false) }}
+    </div>
+    {% if preview %}
+      <div class="forum-topic-card__preview">
+        {{ preview }}
+      </div>
+    {% endif %}
+    {% if meta %}
+      <div class="forum-topic-card__meta">
+        {{ meta }}
+      </div>
+    {% endif %}
+    <dl class="forum-topic-card__stats">
+      <div class="forum-topic-card__stat">
+        <dt class="forum-topic-card__stat-label">{{ 'Respostas'|t }}</dt>
+        <dd class="forum-topic-card__stat-value">
+          {% if replies is not null and replies is not empty %}
+            {{ replies }}
+          {% else %}
+            —<span class="visually-hidden">{{ 'Dado indisponível'|t }}</span>
+          {% endif %}
+        </dd>
+      </div>
+      <div class="forum-topic-card__stat">
+        <dt class="forum-topic-card__stat-label">{{ 'Visualizações'|t }}</dt>
+        <dd class="forum-topic-card__stat-value">
+          {% if views is not null and views is not empty %}
+            {{ views }}
+          {% else %}
+            —<span class="visually-hidden">{{ 'Dado indisponível'|t }}</span>
+          {% endif %}
+        </dd>
+      </div>
+      <div class="forum-topic-card__stat">
+        <dt class="forum-topic-card__stat-label">{{ 'Atividade'|t }}</dt>
+        <dd class="forum-topic-card__stat-value">
+          {% if last_activity is not null and last_activity is not empty %}
+            {{ last_activity }}
+          {% else %}
+            —<span class="visually-hidden">{{ 'Dado indisponível'|t }}</span>
+          {% endif %}
+        </dd>
+      </div>
+    </dl>
+  </div>
+</article>

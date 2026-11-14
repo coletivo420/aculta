@@ -4,15 +4,18 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_user\Form;
 
+use Drupal\Component\Utility\Html;
 use Drupal\Core\Access\CsrfTokenGenerator;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Htmx\Htmx;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Url;
 use Drupal\profile\Entity\ProfileInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\Response;
 use Drupal\aculta_portal\Profile\PerfilDoPapel;
 
 /**
@@ -30,10 +33,10 @@ final class AccountBioForm extends FormBase {
   public const MAX_LENGTH = 500;
 
   public function __construct(
-    private readonly EntityTypeManagerInterface $entityTypeManagerService,
-    private readonly AccountProxyInterface $currentUserService,
-    private readonly CsrfTokenGenerator $csrfToken,
-    private readonly ?RouteMatchInterface $currentRouteMatch = NULL,
+    protected readonly EntityTypeManagerInterface $entityTypeManagerService,
+    protected readonly AccountProxyInterface $currentUserService,
+    protected readonly CsrfTokenGenerator $csrfToken,
+    protected readonly ?RouteMatchInterface $currentRouteMatch = NULL,
   ) {}
 
   /**
@@ -61,11 +64,22 @@ final class AccountBioForm extends FormBase {
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $profile = $this->profile();
     $studio = $this->isStudioEditor();
+    $actionUrl = Url::fromRoute($studio ? 'aculta_studio.profile_bio' : 'aculta_user.bio_form');
     // Studio has a full-page Form API fallback. Existing Minha Conta modals
     // retain their owner AJAX/JSON behavior and unchanged submission route.
-    $form['#action'] = Url::fromRoute($studio ? 'aculta_studio.profile_bio' : 'aculta_user.bio_form')->toString();
-    $form['#attributes']['data-portal-ui'] = $studio ? 'studio-bio-form' : 'account-bio-dialog';
-    if (!$studio) {
+    $form['#action'] = $actionUrl->toString();
+    if ($studio) {
+      $form['#attributes']['data-portal-ui'] = 'studio-bio-form';
+    }
+    if ($this->isHtmxRequest()) {
+      (new Htmx())
+        ->post($actionUrl)
+        ->select('#' . Html::getId($this->getFormId()))
+        ->swap('outerHTML')
+        ->onlyMainContent()
+        ->applyTo($form);
+    }
+    elseif (!$studio) {
       $form['#attributes']['data-aculta-bio-form'] = '';
       $form['#attached']['library'][] = 'aculta_user/account-bio-form';
       $form['#attached']['drupalSettings']['acultaUser']['bioSave'] = [
@@ -85,9 +99,13 @@ final class AccountBioForm extends FormBase {
     // Limpar antes de Salvar bio. É do tipo botão: o JS só esvazia o campo, sem enviar.
     if (!$studio) {
       $form['actions']['clear'] = [
-        '#type' => 'button',
-        '#value' => $this->t('Limpar'),
-        '#attributes' => ['data-aculta-bio-clear' => '', 'data-portal-ui' => 'button-secondary'],
+        '#type' => 'aculta_portal_button',
+        '#props' => [
+          'text' => (string) $this->t('Limpar'),
+          'variant' => 'secondary',
+          'is_submit' => TRUE,
+        ],
+        '#attributes' => ['data-aculta-bio-clear' => ''],
         '#weight' => -1,
       ];
     }
@@ -116,9 +134,18 @@ final class AccountBioForm extends FormBase {
     $profile->set('field_bio', trim((string) $form_state->getValue('bio')));
     $profile->save();
     $this->messenger()->addStatus($this->t('Bio salva.'));
-    $form_state->setRedirect($this->isStudioEditor()
+
+    $targetRoute = $this->isStudioEditor()
       ? 'aculta_studio.profile'
-      : 'aculta_portal.dashboard');
+      : 'aculta_portal.dashboard';
+
+    if ($this->isHtmxRequest()) {
+      $redirectUrl = Url::fromRoute($targetRoute)->toString();
+      $form_state->setResponse(new Response('', Response::HTTP_OK, ['HX-Redirect' => $redirectUrl]));
+      return;
+    }
+
+    $form_state->setRedirect($targetRoute);
   }
 
   /**

@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_events\EventSubscriber;
 
-use Drupal\aculta_contributions\Entity\Contribution;
+use Drupal\aculta_cgu\Entity\Contribution;
 use Drupal\aculta_events\Event\OrganizationContributionOutcomeRecordedEvent;
 use Drupal\aculta_messenger\Event\MessengerNoticeEvent;
 use Drupal\aculta_messenger\Service\MessengerNoticePublisherInterface;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
-use Drupal\Core\Datetime\TimeInterface;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\RevisionableStorageInterface;
 use Drupal\user\UserInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -25,7 +26,7 @@ final class OrganizationContributionNoticePublisher implements EventSubscriberIn
    */
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly ?DomainPurposeManager $domainPurposes,
+    private readonly ?DomainSiteManager $siteManagers,
     private readonly ?MessengerNoticePublisherInterface $publisher,
     private readonly TimeInterface $time,
     private readonly LoggerInterface $logger,
@@ -42,14 +43,18 @@ final class OrganizationContributionNoticePublisher implements EventSubscriberIn
    * Revalidates the persisted proposal and recipient before publishing.
    */
   public function proposalOutcome(OrganizationContributionOutcomeRecordedEvent $event): void {
-    if ($this->publisher === NULL || $this->domainPurposes === NULL) {
+    if ($this->publisher === NULL || $this->siteManagers === NULL) {
       return;
     }
     $recipient = $this->entityTypeManager->getStorage('user')->loadUnchanged($event->recipientUid);
     if (!$recipient instanceof UserInterface || !$recipient->isActive()) {
       return;
     }
-    $proposal = $this->entityTypeManager->getStorage('aculta_contribution')->loadRevision($event->proposalRevisionId);
+    $storage = $this->entityTypeManager->getStorage('aculta_contribution');
+    if (!$storage instanceof RevisionableStorageInterface) {
+      return;
+    }
+    $proposal = $storage->loadRevision($event->proposalRevisionId);
     $allowedIntents = [
       'events_organization' => ['organization_update', 'organization_create'],
       'events_location' => ['location_update', 'location_create'],
@@ -63,7 +68,7 @@ final class OrganizationContributionNoticePublisher implements EventSubscriberIn
       || $proposal->get('state')->value !== $event->outcome) {
       return;
     }
-    $allowed = $this->domainPurposes->runInPurpose('eventos', static fn(): bool =>
+    $allowed = $this->siteManagers->runInSite('eventos', static fn(): bool =>
       $proposal->access('view', $recipient, TRUE)->isAllowed()
     );
     if (!$allowed) {

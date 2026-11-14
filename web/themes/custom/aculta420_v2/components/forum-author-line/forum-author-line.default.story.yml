@@ -1,0 +1,9 @@
+name: Linha de autor (padrão)
+description: Avatar, nome com link para a conta e horário.
+props:
+  author_name: PiradoPirata
+  timestamp: Há 1 hora
+  profile_url: /conta/piradopirata
+slots:
+  avatar:
+    '#markup': '<img src="/themes/custom/aculta420_v2/assets/avatars/pirates-002-polvo-pirata.png" alt="" width="128" height="128">'

@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_events\Adapter;
 
-use Drupal\aculta_contributions\Contract\ContributionAdapterInterface;
-use Drupal\aculta_contributions\Entity\Contribution;
+use Drupal\aculta_cgu\Contract\ContributionAdapterInterface;
+use Drupal\aculta_cgu\Entity\Contribution;
 use Drupal\aculta_events\Access\EventPermissionPolicy;
 use Drupal\aculta_events\Entity\Event;
 use Drupal\aculta_events\Entity\EventDate;
 use Drupal\aculta_events\Entity\EventLocation;
 use Drupal\aculta_events\Event\OrganizationContributionOutcomeRecordedEvent;
 use Drupal\aculta_events\Service\OrganizationContributionEventQueue;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Database\Connection;
@@ -43,7 +43,7 @@ final class LocationContributionAdapter implements ContributionAdapterInterface 
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly ?DomainPurposeManager $domainPurposes,
+    private readonly ?DomainSiteManager $siteManagers,
     private readonly EventPermissionPolicy $permissionPolicy,
     private readonly LockBackendInterface $lock,
     private readonly Connection $database,
@@ -91,7 +91,7 @@ final class LocationContributionAdapter implements ContributionAdapterInterface 
    * {@inheritdoc} */
   public function submitAccess(AccountInterface $account, string $intent, ?EntityInterface $target): bool {
     if (!$account->isAuthenticated() || (int) $account->id() < 1
-      || $this->domainPurposes?->getCurrentPurpose() !== 'eventos') {
+      || $this->siteManagers?->getCurrentSiteKey()?->value !== 'eventos') {
       return FALSE;
     }
     if ($intent === 'location_create') {
@@ -106,7 +106,7 @@ final class LocationContributionAdapter implements ContributionAdapterInterface 
    * {@inheritdoc} */
   public function reviewAccess(AccountInterface $reviewer, string $intent, ?EntityInterface $target): bool {
     return in_array($intent, ['location_update', 'location_create'], TRUE)
-      && $this->domainPurposes?->getCurrentPurpose() === 'main'
+      && $this->siteManagers?->getCurrentSiteKey()?->value === 'main'
       && $reviewer->hasPermission('administer aculta events');
   }
 
@@ -171,8 +171,13 @@ final class LocationContributionAdapter implements ContributionAdapterInterface 
         throw new UnprocessableEntityHttpException('Um dos campos propostos para o Local é inválido.');
       }
       $value = trim($value);
-      if ($field === 'field_site' && $value !== '' && filter_var($value, FILTER_VALIDATE_URL) === FALSE) {
-        throw new UnprocessableEntityHttpException('O site do Local precisa ser uma URL válida.');
+      if ($field === 'field_site' && $value !== '') {
+        $scheme = parse_url($value, PHP_URL_SCHEME);
+        if (!is_string($scheme) || !in_array(strtolower($scheme), ['http', 'https'], TRUE)
+          || preg_match('/[\x00-\x20<\x22\x3e\x7f]/', $value) === 1
+          || filter_var($value, FILTER_VALIDATE_URL) === FALSE) {
+          throw new UnprocessableEntityHttpException('O site do Local precisa ser uma URL HTTP ou HTTPS válida.');
+        }
       }
       if ($field === 'title' && $value === '') {
         throw new UnprocessableEntityHttpException('O nome do Local não pode ficar vazio.');
@@ -263,8 +268,9 @@ final class LocationContributionAdapter implements ContributionAdapterInterface 
     $transaction = NULL;
     try {
       $transaction = $this->database->startTransaction();
-      $this->database->select('aculta_event_location', 'location')->fields('location', ['id'])
-        ->condition('id', $locationId)->forUpdate()->execute()->fetchField();
+      $select = $this->database->select('aculta_event_location', 'location');
+      $select->fields('location', ['id'])->condition('id', $locationId)->forUpdate();
+      $select->execute()->fetchField();
       $fresh = $this->entityTypeManager->getStorage('aculta_event_location')->loadUnchanged($locationId);
       if (!$fresh instanceof EventLocation || !hash_equals($expectedVersion, $this->currentVersion($intent, $fresh))) {
         throw new ConflictHttpException('O Local mudou desde o envio da proposta.');
@@ -324,12 +330,16 @@ final class LocationContributionAdapter implements ContributionAdapterInterface 
     try {
       $transaction = $this->database->startTransaction();
       $this->assertNoDuplicate($normalized);
-      $location = $this->entityTypeManager->getStorage('aculta_event_location')->create([
+      $created = $this->entityTypeManager->getStorage('aculta_event_location')->create([
         'title' => $normalized['title'],
         'field_organizador' => $proponentUid,
         'field_status' => 'rascunho',
         'field_allow_claiming' => FALSE,
       ]);
+      if (!$created instanceof EventLocation) {
+        throw new \LogicException('The location storage returned an unexpected entity.');
+      }
+      $location = $created;
       $this->applyFields($location, $normalized);
       $location->set('field_status', 'rascunho');
       $location->save();

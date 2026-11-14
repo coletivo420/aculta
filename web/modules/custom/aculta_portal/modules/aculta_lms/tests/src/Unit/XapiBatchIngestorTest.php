@@ -26,8 +26,10 @@ final class XapiBatchIngestorTest extends UnitTestCase {
     $body = json_encode([$this->statement('a0000000-0000-4000-8000-000000000001')]);
     $result = $this->ingestor()->ingest((string) $body, $this->claims(), []);
 
-    $this->assertSame(1, count($result['accepted']));
-    $this->assertSame(self::REGISTRATION, $result['accepted'][0]['context']['registration']);
+    $this->assertCount(1, $result['accepted']);
+    $acceptedStatement = $result['accepted'][0];
+    $this->assertIsArray($acceptedStatement['context'] ?? NULL);
+    $this->assertSame(self::REGISTRATION, $acceptedStatement['context']['registration'] ?? NULL);
     $this->assertSame([], $result['refused']);
   }
 
@@ -77,24 +79,62 @@ final class XapiBatchIngestorTest extends UnitTestCase {
     ]);
     $result = $this->ingestor()->ingest((string) $body, $this->claims(), []);
 
-    $this->assertSame(1, count($result['accepted']));
+    $this->assertCount(1, $result['accepted']);
     $this->assertSame(0, $result['refused'][0]['index']);
   }
 
   /**
-   * statement_id repetido no mesmo lote: a segunda ocorrência é recusada.
+   * Malformed statements and contexts are refused at the decoded JSON boundary.
+   */
+  public function testRefusesMalformedDecodedStatementAndContextShapes(): void {
+    $ingestor = $this->ingestor();
+    $statementWithIntegerKey = $this->statement('a0000000-0000-4000-8000-000000000001');
+    $statementWithIntegerKey[0] = 'unexpected';
+    $statements = [
+      $statementWithIntegerKey,
+      array_replace($this->statement('a0000000-0000-4000-8000-000000000002'), ['context' => 'invalid']),
+      array_replace($this->statement('a0000000-0000-4000-8000-000000000003'), ['context' => ['registration' => 42]]),
+      array_replace($this->statement('a0000000-0000-4000-8000-000000000004'), ['id' => 42]),
+    ];
+
+    $result = $ingestor->ingestDecoded($statements, $this->claims(), []);
+
+    $this->assertSame([], $result['accepted']);
+    $this->assertCount(4, $result['refused']);
+    $this->assertSame('Declaração não é um objeto.', $result['refused'][0]['reason']);
+    $this->assertSame('context deve ser um objeto.', $result['refused'][1]['reason']);
+    $this->assertSame('Lançamento diferente do token.', $result['refused'][2]['reason']);
+    $this->assertSame('id deve ser um UUID.', $result['refused'][3]['reason']);
+  }
+
+  /**
+   * Claims with missing or unexpected values cannot enter the ingestion path.
+   */
+  public function testRejectsMalformedClaims(): void {
+    $claims = array_replace($this->claims(), ['uid' => '42']);
+
+    $this->expectException(\UnexpectedValueException::class);
+    $this->ingestor()->ingestDecoded(
+      [$this->statement('a0000000-0000-4000-8000-000000000001')],
+      $claims,
+      [],
+    );
+  }
+
+  /**
+   * Statement ID repetido no mesmo lote: a segunda ocorrência é recusada.
    */
   public function testRefusesDuplicateInsideBatch(): void {
     $id = 'a0000000-0000-4000-8000-000000000001';
     $body = json_encode([$this->statement($id), $this->statement($id)]);
     $result = $this->ingestor()->ingest((string) $body, $this->claims(), []);
 
-    $this->assertSame(1, count($result['accepted']));
+    $this->assertCount(1, $result['accepted']);
     $this->assertSame(1, $result['refused'][0]['index']);
   }
 
   /**
-   * statement_id já gravado é recusado como duplicata.
+   * Statement ID já gravado é recusado como duplicata.
    */
   public function testRefusesAlreadyStoredStatement(): void {
     $id = 'a0000000-0000-4000-8000-000000000001';
@@ -129,8 +169,12 @@ final class XapiBatchIngestorTest extends UnitTestCase {
     $this->assertSame('A declaração exige verb.', $result['refused'][0]['reason']);
   }
 
+  /**
+   * Declaração de conteúdo diferente é recusada.
+   */
   public function testRefusesStatementForDifferentContent(): void {
     $statement = $this->statement('a0000000-0000-4000-8000-000000000001');
+    $this->assertIsArray($statement['object'] ?? NULL);
     $statement['object']['id'] = 'https://teste.invalid/atividade/other';
     $result = $this->ingestor()->ingest((string) json_encode([$statement]), $this->claims(), []);
 
@@ -138,8 +182,12 @@ final class XapiBatchIngestorTest extends UnitTestCase {
     $this->assertSame('Conteúdo diferente do token.', $result['refused'][0]['reason']);
   }
 
+  /**
+   * Declaração de ator diferente é recusada.
+   */
   public function testRefusesStatementForDifferentActor(): void {
     $statement = $this->statement('a0000000-0000-4000-8000-000000000001');
+    $this->assertIsArray($statement['actor'] ?? NULL);
     $statement['actor']['mbox_sha1sum'] = str_repeat('f', 40);
     $result = $this->ingestor()->ingest((string) json_encode([$statement]), $this->claims(), []);
 
@@ -147,19 +195,34 @@ final class XapiBatchIngestorTest extends UnitTestCase {
     $this->assertSame('Ator diferente do token.', $result['refused'][0]['reason']);
   }
 
+  /**
+   * Creates the ingestor under test.
+   */
   private function ingestor(): XapiBatchIngestor {
     return new XapiBatchIngestor(new XapiStatementValidator());
   }
 
   /**
-   * @return array{uid: int, content: string, registration: string, lesson_status_id: int, actor_mbox_sha1sum: string}
+   * Monta as claims do token usadas nos testes.
+   *
+   * @return array{uid: int, content: string, registration: string,
+   *   lesson_status_id: int, actor_mbox_sha1sum: string}
    */
   private function claims(): array {
-    return ['uid' => 42, 'content' => 'https://exemplo.invalid/atividade/1', 'registration' => self::REGISTRATION, 'lesson_status_id' => 2468, 'actor_mbox_sha1sum' => self::ACTOR_SHA1];
+    return [
+      'uid' => 42,
+      'content' => 'https://exemplo.invalid/atividade/1',
+      'registration' => self::REGISTRATION,
+      'lesson_status_id' => 2468,
+      'actor_mbox_sha1sum' => self::ACTOR_SHA1,
+    ];
   }
 
   /**
+   * Monta um statement xAPI para o teste.
+   *
    * @return array<string, mixed>
+   *   Carga do statement.
    */
   private function statement(string $id, ?string $registration = NULL): array {
     $statement = [

@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_lms\Deadline;
 
-use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\aculta_lms\Access\ClassActivityDeadlineAccessCheck;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupMembership;
 use Drupal\group\Entity\GroupRelationshipInterface;
@@ -34,9 +34,7 @@ final class ClassActivityDeadlineManager {
     }
     $matches = [];
     foreach ($course->getRelationships('lms_classes') as $courseClassRelationship) {
-      $class = $courseClassRelationship instanceof GroupRelationshipInterface
-        ? $courseClassRelationship->getEntity()
-        : NULL;
+      $class = $courseClassRelationship->getEntity();
       if (!$class instanceof GroupInterface || $class->bundle() !== 'lms_class' || !$class->isPublished()) {
         continue;
       }
@@ -54,7 +52,7 @@ final class ClassActivityDeadlineManager {
         continue;
       }
       foreach ($class->getRelationshipsByEntity($activity, 'lms_class_activity_due') as $deadline) {
-        if (!$deadline instanceof GroupRelationshipInterface || $deadline->get('field_activity_due_at')->isEmpty()) {
+        if ($deadline->get('field_activity_due_at')->isEmpty()) {
           continue;
         }
         $matches[] = $deadline;

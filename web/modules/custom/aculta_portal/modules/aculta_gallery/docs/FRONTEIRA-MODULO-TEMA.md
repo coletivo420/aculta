@@ -1,18 +1,17 @@
 # ACULTA Gallery — fronteira entre submódulo, tema e configuração
 
-Documento de dono. Diz quem é dono de cada parte da galeria e por quê. A regra geral do
-Portal está em `docs/portal/FRONTEIRA-MODULO-TEMA.md`; aqui está a aplicação ao álbum e
-ao palco (versão 0.1.0-rc.2).
+Documento de dono. A regra geral do Portal está em `docs/portal/FRONTEIRA-MODULO-TEMA.md`;
+esta aplicação acompanha `aculta_gallery` 0.1.0-dev.24.
 
 ## 1. Três donos
 
 | Dono | Onde está | O que faz |
 | --- | --- | --- |
 | **Submódulo `aculta_gallery`** | `web/modules/custom/aculta_portal/modules/aculta_gallery/` | Dados, acesso, rotas, views de conteúdo, hooks, formulário de incorporação, coleção administrativa, *tamanho* das imagens (estilos) e *quais* fotos aparecem em que ordem. |
-| **Tema `aculta420`** | `web/themes/custom/aculta420/` | Aparência: cores (tokens), layout do palco, painel de miniaturas, botão do celular, comportamento visual do slideshow. Não conhece entidade, view nem regra de acesso. |
+| **Tema `aculta420_v2`** | `web/themes/custom/aculta420_v2/` | Fornece o SDC `layout-grid`; UI Patterns Views compõe a apresentação editorial. Não conhece entidade nem regra de acesso. |
 | **Configuração do site** | `config/sync/` | Views, estilos de imagem e campos exportados. Cada item tem um dono nomeado abaixo. |
 
-Contrib (`media_gallery`, `photoswipe`, `vvjs`/`views_vvjs`, `entity_embed`, `embed`) é dependência
+Contrib (`media_gallery`, `photoswipe`, `entity_embed`, `embed`) é dependência
 de terceiros: o submódulo a configura, o tema estiliza o markup dela, e nenhum dos dois o altera.
 
 ## 2. Quem é dono de cada peça
@@ -22,16 +21,13 @@ de terceiros: o submódulo a configura, o tema estiliza o markup dela, e nenhum 
 | Entidade `media_gallery`, campos, pathauto `/albuns/[title]` | submódulo | `config/install/*.yml` | Dados e URL pública pertencem ao domínio da galeria. |
 | Acesso público em todos os purposes | Core `media_gallery` + submódulo | permissões Core e publicação da entidade | Galerias são conteúdo transversal; consumidores controlam anexos contextuais por seus próprios fluxos. |
 | Coleção administrativa com alias em português | submódulo | `src/ListBuilder/AcultaGalleryListBuilder.php`, `src/Hook/GalleryListBuilderHooks.php` | Link usa o alias local; a edição continua no MAIN (política administrativa). |
-| View `aculta_album_fotos` (fotos do álbum, paginação, VVJS, PhotoSwipe) | submódulo (config) | `config/sync/views.view.aculta_album_fotos.yml` | Define o conteúdo do palco. |
+| View `aculta_album_fotos` (fotos do álbum, paginação, UI Patterns, PhotoSwipe) | submódulo (config) | `config/sync/views.view.aculta_album_fotos.yml` | `layout-grid` apresenta os render arrays de foto; o formatter PhotoSwipe mantém o lightbox. |
+| View `aculta_forum_gallery_slides` (imagens contextuais do Fórum) | submódulo (config) | `config/sync/views.view.aculta_forum_gallery_slides.yml` | UI Patterns `layout-grid` compõe as rows PhotoSwipe; Runtime sem galeria Fórum publicada, portanto sem aceite visual de conteúdo real. |
 | View `aculta_albuns` (listagem `/albuns`) | submódulo (config) | `config/sync/views.view.aculta_albuns.yml` | Lista de álbuns; filtro de purpose está no hook de listagem. |
-| Palco e miniaturas (marcação) | submódulo | `src/Hook/GalleryViewHooks.php` | Monta `data-aculta-album-stage`, `data-aculta-album-thumbs` e `data-aculta-album-thumb`. |
-| Estilo da foto grande no palco | submódulo (config) | `config/sync/image.style.media_gallery_stage.yml` | Largura do arquivo (1000 px) é decisão de conteúdo e peso. |
-| Estilo da miniatura | submódulo (config) | `config/sync/image.style.media_gallery_thumb.yml` | Recorte quadrado de 160 px. |
+| Wrapper PhotoSwipe editorial | submódulo | `src/Hook/GalleryViewHooks.php` | Agrupa os links acessíveis do formatter em `photoswipe-gallery` e propaga cache metadata. |
+| Wrapper PhotoSwipe das galerias | submódulo | `src/Hook/GalleryViewHooks.php` | Encapsula a saída das duas Views SDC e agrega cache metadata de álbum, Media, File e acesso. |
 | Estilo da imagem do lightbox | submódulo (config) | `config/sync/image.style.media_gallery_lightbox.yml` | Ampliação em 1600 px. |
-| Cor da moldura do palco | tema | `css/tokens.css`, token `--aculta-media-stage-bg` | Cor é token; claro e escuro têm valores próprios. |
-| Layout do palco, painel, botão do celular | tema | `css/components/album-slideshow.css` | Aparência. |
-| Comportamento: clique na miniatura, miniatura ativa, botão que recolhe o painel | tema | `js/album-slideshow.js` | Comportamento visual. Usa só os atributos `data-*` do módulo. |
-| Biblioteca do palco carregada em todas as páginas | tema | `aculta420.info.yml` (`aculta420/album-slideshow`) | Ver §4. |
+| Grade responsiva editorial | tema/UI Patterns | `components/layout-grid/` | SDC local; `view_rows` contém saída Drupal/PhotoSwipe. |
 
 ## 3. Contrato entre módulo e tema
 
@@ -39,36 +35,25 @@ O módulo entrega marcação com atributos `data-*` (comportamento). O tema esco
 
 | Atributo | Quem põe | Quem usa | Significado |
 | --- | --- | --- | --- |
-| `data-aculta-album-stage` | módulo (`GalleryViewHooks`) | tema (CSS e JS) | Contêiner que junta o slideshow e o painel. |
-| `data-aculta-album-thumbs` | módulo | tema (CSS) | Painel de miniaturas. |
-| `data-aculta-album-thumb="N"` | módulo | tema (JS e CSS) | Miniatura N (1 a total de fotos). Corresponde ao slide N do VVJS. |
-| `aria-current` na miniatura | tema (JS) | tema (CSS) | Miniatura do slide atual. |
-| `data-aculta-album-toggle` | tema (JS) | tema (CSS) | Botão do celular que recolhe o painel. Criado pelo JS; o módulo não o conhece. |
+| `photoswipe-gallery` | módulo (`GalleryViewHooks`) | PhotoSwipe contrib | Wrapper do álbum editorial e grupo do lightbox. |
+| `layout-grid` | UI Patterns Views | SDC `aculta420_v2:layout-grid` | Grade de fotos; não consulta entidades. |
+
 
 Regra: o módulo não põe classe de design (`bi-`, `btn`, `col-`, etc.) nem CSS/JS. O tema não consulta
 entidade, view, purpose nem nome de view do módulo.
 
 ## 4. Pontos de atenção (estado)
 
-- **Biblioteca global (aberto, aceito).** O palco usa `aculta420/album-slideshow`, declarada em
-  `aculta420.info.yml`, para não depender do nome da view do módulo. O CSS e o JS (poucos KB) carregam
-  em todas as páginas do tema; o JS só age onde há `data-aculta-album-stage`. Se o peso incomodar,
-  trocar por verificação no preprocess do tema (`#[Hook('preprocess_page')]`), sem nome de view.
-- **Acoplamento com o VVJS (mitigado por gate).** O CSS do palco usa a marcação do `views_vvjs`
-  (contrib). `scripts/validate-album-stage-contract.php` confere que seletores `.vvjs-*` existem no
-  VVJS instalado, que o elemento `vvjs-slideshow` conserva a API pública `goToSlide()` e
-  `getCurrentSlide()`, e que o evento VVJ Core `vvj:slideChanged` permanece disponível. Mudança
-  upstream incompatível deve falhar no gate, sem editar o módulo contrib.
-- **Altura e estabilidade no celular.** O palco VVJS usa moldura de altura estável e centraliza cada
-  foto com `object-fit: contain`; o painel móvel de miniaturas continua recolhível. O enquadramento
-  preserva a imagem, e a altura não salta ao mudar entre retrato e paisagem.
-- **Miniaturas de 66 fotos.** O módulo gera as miniaturas no HTML, com `loading="lazy"`. Medição em
-  `docs/ARQUITETURA.md` (fase 7).
-- **Contrato `data-*` (verificado).** Coberto pelo gate da seção 3. Novo atributo entra nesta tabela
-  antes do código.
+- **Álbum editorial migrado.** Runtime/Sync concordam; 63 imagens, ordenação, filtro de acesso, pager,
+  PhotoSwipe e cache foram preservados. Firefox ESR antes/depois passou cinco larguras e dois modos;
+  PhotoSwipe abre e fecha com Escape. Zoom 200%, cache-hit e perfis autenticados seguem pendentes.
+- **VVJS ainda tem uma configuração de exemplo upstream fora das galerias ACULTA.** O Fórum já usa UI Patterns, mas ainda não há
+  conteúdo real para aceite visual. A View de produto também foi migrada; não desinstalar VVJS sem prova de zero consumidores
+  (incluindo exemplos upstream) e autorização operacional.
+- **Gate de contrato.** `scripts/validate-album-stage-contract.php` valida UI Patterns/layout-grid,
+  formatter PhotoSwipe, pager, acesso/cache no hook e a separação da View do Fórum; não inspeciona contrib.
 
 ## 5. Versionamento
 
-- Módulo: `0.1.0-rc.2` (ver `CHANGELOG.md` do submódulo).
-- Tema: versão atual registrada em `aculta420.info.yml`, marcada também em `CHANGELOG.md`,
-  `docs/roadmap.md` e no gate de Foundation (regra em `web/themes/custom/aculta420/docs/versioning.md`).
+- Módulo: `0.1.0-dev.24` (ver `aculta_gallery.info.yml`).
+- Tema: `aculta420_v2`; a versão segue o registro em `aculta420_v2.info.yml` e o fluxo de versão do tema.

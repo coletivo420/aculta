@@ -15,18 +15,19 @@ use Drupal\aculta_events\Entity\Event;
 use Drupal\aculta_events\Entity\EventDate;
 use Drupal\aculta_events\Entity\EventOrganization;
 use Drupal\aculta_events\Entity\EventLocation;
+use Drupal\aculta_events\Entity\EventOrganizationSuggestion;
 use Drupal\aculta_events\Controller\EventOrganizationSuggestionAdminController;
 use Drupal\aculta_events\Form\EventOrganizationContributionReviewForm;
 use Drupal\aculta_events\Form\EventContributionRevisionForm;
 use Drupal\aculta_events\Form\EventContributionSubmissionForm;
 use Drupal\aculta_events\Form\EventUpdateContributionSubmissionForm;
 use Drupal\aculta_events\Form\EventLocationModalForm;
-use Drupal\aculta_contributions\Entity\Contribution;
+use Drupal\aculta_cgu\Entity\Contribution;
 use Drupal\aculta_image\FileRemover;
 use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
-use Drupal\aculta_ugc\Entity\UgcReport;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\aculta_user\Entity\OwnershipClaim;
+use Drupal\aculta_user\Entity\OrganizationMember;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -75,10 +76,9 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
     'aculta_calendar',
     'aculta_maps',
     'aculta_user',
-    'aculta_ugc',
+    'aculta_cgu',
     'aculta_index',
     'aculta_events',
-    'aculta_contributions',
   ];
 
   /**
@@ -117,11 +117,11 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
     $loader->addPsr4('Drupal\\aculta_portal\\', $customRoot . '/src', TRUE);
     $loader->addPsr4('Drupal\\aculta_image\\', $customRoot . '/modules/aculta_image/src', TRUE);
     $loader->addPsr4('Drupal\\aculta_user\\', $customRoot . '/modules/aculta_user/src', TRUE);
-    $loader->addPsr4('Drupal\\aculta_ugc\\', $customRoot . '/modules/aculta_ugc/src', TRUE);
+    $loader->addPsr4('Drupal\\aculta_cgu\\', $customRoot . '/modules/aculta_cgu/src', TRUE);
     $loader->addPsr4('Drupal\\aculta_index\\', $customRoot . '/modules/aculta_index/src', TRUE);
     $loader->addPsr4('Drupal\\aculta_events\\', $customRoot . '/modules/aculta_events/src', TRUE);
 
-    $container->register('aculta_portal.domain_purpose', DomainPurposeManager::class)
+    $container->register('aculta_portal.domain_site', DomainSiteManager::class)
       ->addArgument($this->createMock(EntityTypeManagerInterface::class))
       ->addArgument($this->createMock(DomainNegotiatorInterface::class))
       ->addArgument($this->createMock(ConfigFactoryInterface::class))
@@ -149,13 +149,14 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
 
     $this->installEntitySchema('user');
     $this->installEntitySchema('profile');
+    $this->installEntitySchema('path_alias');
     $this->installSchema('user', ['users_data']);
     $this->installSchema('file', ['file_usage']);
     $this->installSchema('aculta_user', ['aculta_user_nickname']);
     $this->installEntitySchema('taxonomy_term');
     $this->installEntitySchema('aculta_org_member');
     $this->installEntitySchema('aculta_ownership_claim');
-    $this->installEntitySchema('aculta_ugc_report');
+    $this->installEntitySchema('aculta_cgu_report');
     $this->installSchema('aculta_index', [
       'aculta_index_generation',
       'aculta_index_state',
@@ -169,7 +170,7 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
     $this->installEntitySchema('aculta_event_organization');
     $this->installEntitySchema('aculta_event_org_suggestion');
     $this->installEntitySchema('aculta_contribution');
-    $this->installConfig(['system', 'user', 'taxonomy', 'domain', 'aculta_contributions']);
+    $this->installConfig(['system', 'user', 'taxonomy', 'domain', 'aculta_cgu', 'aculta_events']);
 
     FieldStorageConfig::create([
       'entity_type' => 'profile',
@@ -190,7 +191,7 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
     ]);
     $roleAdmin->grantPermission('administer aculta events');
     $roleAdmin->grantPermission('administer aculta claims');
-    $roleAdmin->grantPermission('moderar denuncias ugc');
+    $roleAdmin->grantPermission('moderar denuncias cgu');
     $roleAdmin->save();
 
     $rootUser = User::create(['name' => 'root', 'mail' => 'root@example.com', 'status' => 1]);
@@ -248,6 +249,54 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
   }
 
   /**
+   * Respects the entity publication flag in addition to the editorial status.
+   */
+  public function testOrganizationViewRequiresPublicationOrDraftPermission(): void {
+    $publicada = EventOrganization::create([
+      'title' => 'Organização publicada',
+      'field_status' => 'publicado',
+      'status' => 1,
+    ]);
+    $publicada->save();
+
+    $despublicada = EventOrganization::create([
+      'title' => 'Organização despublicada',
+      'field_status' => 'publicado',
+      'status' => 0,
+    ]);
+    $despublicada->save();
+
+    $rascunho = EventOrganization::create([
+      'title' => 'Organização em rascunho',
+      'field_status' => 'rascunho',
+      'status' => 1,
+    ]);
+    $rascunho->save();
+
+    $draftRole = Role::create([
+      'id' => 'event_draft_viewer',
+      'label' => 'Leitor de rascunhos de eventos',
+    ]);
+    $draftRole->grantPermission('view aculta event drafts');
+    $draftRole->save();
+    $draftViewer = User::create([
+      'name' => 'event_draft_viewer',
+      'mail' => 'event-draft-viewer@example.com',
+      'status' => 1,
+    ]);
+    $draftViewer->addRole('event_draft_viewer');
+    $draftViewer->save();
+
+    $this->assertTrue($publicada->access('view', $this->commonUser));
+    $this->assertFalse($despublicada->access('view', $this->commonUser));
+    $this->assertFalse($rascunho->access('view', $this->commonUser));
+    $this->assertTrue($despublicada->access('view', $draftViewer));
+    $this->assertTrue($rascunho->access('view', $draftViewer));
+    $this->assertTrue($despublicada->access('view', $this->adminUser));
+    $this->assertTrue($rascunho->access('view', $this->adminUser));
+  }
+
+  /**
    * Verifies unclaimed organization edits remain pending until approved.
    */
   public function testUnclaimedOrganizationChangesRequireAdministrativeApproval(): void {
@@ -266,7 +315,7 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
 
     $this->usePurposeByCurrentAccount();
     $this->container->get('current_user')->setAccount($this->editorUser);
-    $adapter = $this->container->get('aculta_contributions.adapter_registry')->get('events_organization');
+    $adapter = $this->container->get('aculta_cgu.contribution_adapter_registry')->get('events_organization');
     $baseOrganization = $this->container->get('entity_type.manager')
       ->getStorage('aculta_event_organization')
       ->loadUnchanged($organization->id());
@@ -311,7 +360,7 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
     $review = $reviewForm->buildForm([], new FormState(), $proposal);
     $this->assertArrayHasKey('changes', $review);
     $this->assertArrayHasKey('accepted', $review['decision']['#options']);
-    $this->container->get('aculta_contributions.lifecycle')->decide(
+    $this->container->get('aculta_cgu.contribution_lifecycle')->decide(
       $proposal,
       'accepted',
       'Dados conferidos.',
@@ -323,10 +372,11 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
     $this->assertSame('Descrição proposta.', $updated->get('body')->value);
     $this->assertFalse($updated->isClaimed());
     $contributions->resetCache();
-    $decided = $contributions->loadUnchanged($proposal->id());
+    $decided = $this->typedEntity($contributions->loadUnchanged($proposal->id()), Contribution::class);
     $this->assertSame('accepted', $decided->get('state')->value);
-    $queueItem = $this->container->get('queue')->get('aculta_events_contribution_events')->claimItem();
-    $this->assertNotFalse($queueItem);
+    $queueItem = $this->queueItem(
+      $this->container->get('queue')->get('aculta_events_contribution_events')->claimItem(),
+    );
     $this->assertSame([
       'schema_version',
       'event',
@@ -360,7 +410,7 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
     $this->usePurposeByCurrentAccount();
 
     $this->container->get('current_user')->setAccount($this->editorUser);
-    $adapter = $this->container->get('aculta_contributions.adapter_registry')->get('events_organization');
+    $adapter = $this->container->get('aculta_cgu.contribution_adapter_registry')->get('events_organization');
     $freshOrganization = $this->container->get('entity_type.manager')
       ->getStorage('aculta_event_organization')
       ->loadUnchanged($organization->id());
@@ -369,7 +419,6 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
       self::fail('Ownership must not be an applicable contribution field.');
     }
     catch (UnprocessableEntityHttpException) {
-      self::assertTrue(TRUE);
     }
     $payload = $adapter->validatePayload('organization_update', [
       'title' => 'Nome proposto',
@@ -377,7 +426,7 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
     ], $freshOrganization);
     self::assertSame(['title' => 'Nome proposto', 'body' => 'Texto proposto.'], $payload);
 
-    $lifecycle = $this->container->get('aculta_contributions.lifecycle');
+    $lifecycle = $this->container->get('aculta_cgu.contribution_lifecycle');
     $proposal = $lifecycle->submit(
       'events_organization',
       'organization_update',
@@ -391,7 +440,7 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
     );
     $this->container->get('current_user')->setAccount($this->commonUser);
     self::assertFalse($proposal->access('view', $this->commonUser));
-    $unchanged = $this->container->get('entity_type.manager')->getStorage('aculta_event_organization')->loadUnchanged($organization->id());
+    $unchanged = $this->typedEntity($this->container->get('entity_type.manager')->getStorage('aculta_event_organization')->loadUnchanged($organization->id()), EventOrganization::class);
     self::assertSame('Perfil original', $unchanged->label());
     self::assertSame('Texto original.', $unchanged->get('body')->value);
 
@@ -404,7 +453,7 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
     $this->container->get('current_user')->setAccount($this->adminUser);
     $decided = $lifecycle->decide($proposal, 'accepted', 'Dados confirmados.', ['body'], (int) $proposal->getRevisionId());
     self::assertSame('accepted', $decided->get('state')->value);
-    $applied = $this->container->get('entity_type.manager')->getStorage('aculta_event_organization')->loadUnchanged($organization->id());
+    $applied = $this->typedEntity($this->container->get('entity_type.manager')->getStorage('aculta_event_organization')->loadUnchanged($organization->id()), EventOrganization::class);
     self::assertSame('Perfil original', $applied->label());
     self::assertSame('Texto proposto.', $applied->get('body')->value);
 
@@ -419,9 +468,9 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
     ]);
     $staleOrganization->save();
     $this->container->get('current_user')->setAccount($this->editorUser);
-    $staleTarget = $this->container->get('entity_type.manager')
+    $staleTarget = $this->typedEntity($this->container->get('entity_type.manager')
       ->getStorage('aculta_event_organization')
-      ->loadUnchanged($staleOrganization->id());
+      ->loadUnchanged($staleOrganization->id()), EventOrganization::class);
     $staleProposal = $lifecycle->submit(
       'events_organization',
       'organization_update',
@@ -440,14 +489,14 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
       self::fail('A aplicação deve detectar a alteração da origem.');
     }
     catch (ConflictHttpException) {
-      $conflicted = $this->container->get('entity_type.manager')
+      $conflicted = $this->typedEntity($this->container->get('entity_type.manager')
         ->getStorage('aculta_contribution')
-        ->load($staleProposal->id());
+        ->load($staleProposal->id()), Contribution::class);
       self::assertSame('conflict', $conflicted->get('state')->value);
     }
-    $staleReloaded = $this->container->get('entity_type.manager')
+    $staleReloaded = $this->typedEntity($this->container->get('entity_type.manager')
       ->getStorage('aculta_event_organization')
-      ->loadUnchanged($staleOrganization->id());
+      ->loadUnchanged($staleOrganization->id()), EventOrganization::class);
     self::assertSame('Alteração independente.', $staleReloaded->get('body')->value);
   }
 
@@ -468,7 +517,7 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
     $organization->save();
 
     $this->usePurposeByCurrentAccount();
-    $adapter = $this->container->get('aculta_contributions.adapter_registry')->get('events_organization');
+    $adapter = $this->container->get('aculta_cgu.contribution_adapter_registry')->get('events_organization');
     $this->container->get('current_user')->setAccount($this->editorUser);
     self::assertFalse($adapter->submitAccess($this->editorUser, 'organization_update', $organization));
 
@@ -483,14 +532,14 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
   public function testOrganizationCreateContributionWaitsForApproval(): void {
     $this->usePurposeByCurrentAccount();
     $this->container->get('current_user')->setAccount($this->editorUser);
-    $adapter = $this->container->get('aculta_contributions.adapter_registry')->get('events_organization');
+    $adapter = $this->container->get('aculta_cgu.contribution_adapter_registry')->get('events_organization');
     $payload = $adapter->validatePayload('organization_create', [
       'title' => 'Novo Coletivo Proposto',
       'body' => 'Apresentação proposta.',
       'localidade' => 'Natal',
       'uf' => 'RN',
     ]);
-    $lifecycle = $this->container->get('aculta_contributions.lifecycle');
+    $lifecycle = $this->container->get('aculta_cgu.contribution_lifecycle');
     $proposal = $lifecycle->submit(
       'events_organization',
       'organization_create',
@@ -522,7 +571,7 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
     $created = $this->container->get('entity_type.manager')->getStorage('aculta_event_organization')
       ->loadByProperties(['title' => 'Novo Coletivo Proposto']);
     self::assertCount(1, $created);
-    $organization = reset($created);
+    $organization = $this->typedEntity(reset($created), EventOrganization::class);
     self::assertTrue($organization->isUnclaimed());
     self::assertSame('nao_reivindicada', $organization->getClaimStatus());
     self::assertSame('Apresentação proposta.', $organization->get('body')->value);
@@ -533,7 +582,7 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
   public function testLocationCreateContributionWaitsForApproval(): void {
     $this->usePurposeByCurrentAccount();
     $this->container->get('current_user')->setAccount($this->editorUser);
-    $adapter = $this->container->get('aculta_contributions.adapter_registry')->get('events_location');
+    $adapter = $this->container->get('aculta_cgu.contribution_adapter_registry')->get('events_location');
     $address = [[
       'country_code' => 'BR',
       'address_line1' => 'Rua das Flores, 120',
@@ -555,17 +604,15 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
       self::fail('Non-Brazilian addresses must be rejected server-side.');
     }
     catch (UnprocessableEntityHttpException) {
-      self::assertTrue(TRUE);
     }
     try {
       $adapter->validatePayload('location_create', ['field_status' => 'publicado']);
       self::fail('Proponents cannot submit publication status.');
     }
     catch (UnprocessableEntityHttpException) {
-      self::assertTrue(TRUE);
     }
 
-    $lifecycle = $this->container->get('aculta_contributions.lifecycle');
+    $lifecycle = $this->container->get('aculta_cgu.contribution_lifecycle');
     $proposal = $lifecycle->submit(
       'events_location',
       'location_create',
@@ -627,8 +674,8 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
       self::fail('Duplicate locations must be rejected during application.');
     }
     catch (ConflictHttpException) {
-      self::assertSame('submitted', $this->container->get('entity_type.manager')
-        ->getStorage('aculta_contribution')->loadUnchanged($duplicateProposal->id())->get('state')->value);
+      self::assertSame('submitted', $this->typedEntity($this->container->get('entity_type.manager')
+        ->getStorage('aculta_contribution')->loadUnchanged($duplicateProposal->id()), Contribution::class)->get('state')->value);
     }
     self::assertCount(1, $this->container->get('entity_type.manager')->getStorage('aculta_event_location')
       ->loadByProperties(['title' => 'Espaço Cultural Proposto']));
@@ -640,7 +687,7 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
   public function testEventCreateContributionWaitsForApprovalAndCreatesDates(): void {
     $this->usePurposeByCurrentAccount();
     $this->container->get('current_user')->setAccount($this->editorUser);
-    $adapter = $this->container->get('aculta_contributions.adapter_registry')->get('events_event');
+    $adapter = $this->container->get('aculta_cgu.contribution_adapter_registry')->get('events_event');
     $payload = $adapter->validatePayload('event_create', [
       'title' => 'Mostra Comunitária Proposta',
       'body' => 'Descrição pública proposta.',
@@ -665,10 +712,9 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
       self::fail('Publication status must not be accepted from a proposal.');
     }
     catch (UnprocessableEntityHttpException) {
-      self::assertTrue(TRUE);
     }
 
-    $lifecycle = $this->container->get('aculta_contributions.lifecycle');
+    $lifecycle = $this->container->get('aculta_cgu.contribution_lifecycle');
     $proposal = $lifecycle->submit(
       'events_event',
       'event_create',
@@ -698,7 +744,6 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
       self::fail('Another account must not read a private Event proposal.');
     }
     catch (NotFoundHttpException) {
-      self::assertTrue(TRUE);
     }
 
     $this->container->get('current_user')->setAccount($this->adminUser);
@@ -720,8 +765,9 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
       (int) $proposal->getRevisionId(),
     );
     self::assertSame('accepted', $decided->get('state')->value);
-    $outcome = $this->container->get('queue')->get('aculta_events_contribution_events')->claimItem();
-    self::assertNotFalse($outcome);
+    $outcome = $this->queueItem(
+      $this->container->get('queue')->get('aculta_events_contribution_events')->claimItem(),
+    );
     self::assertSame('events_event', $outcome->data['source']);
     self::assertSame('accepted', $outcome->data['outcome']);
     self::assertSame((int) $proposal->getOwnerId(), $outcome->data['recipient_uid']);
@@ -730,7 +776,7 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
     $events = $this->container->get('entity_type.manager')->getStorage('aculta_event')
       ->loadByProperties(['title' => 'Mostra Comunitária Proposta']);
     self::assertCount(1, $events);
-    $event = reset($events);
+    $event = $this->typedEntity(reset($events), Event::class);
     self::assertSame('rascunho', $event->get('field_status')->value);
     self::assertSame((int) $this->editorUser->id(), (int) $event->getOwnerId());
     self::assertNull($eventProvider->project($event), 'An approved draft remains outside the public Index.');
@@ -739,7 +785,7 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
     self::assertCount(1, $dates);
     self::assertSame(
       (new \DateTimeImmutable('2027-01-10T21:00:00Z'))->getTimestamp(),
-      $dates[array_key_first($dates)]->get('field_quando')->start_date->getTimestamp(),
+      $this->typedEntity($dates[array_key_first($dates)], EventDate::class)->get('field_quando')->start_date->getTimestamp(),
     );
 
     $event->set('field_status', 'publicado')->save();
@@ -775,7 +821,7 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
 
     $this->usePurposeByCurrentAccount();
     $this->container->get('current_user')->setAccount($this->editorUser);
-    $adapter = $this->container->get('aculta_contributions.adapter_registry')->get('events_event');
+    $adapter = $this->container->get('aculta_cgu.contribution_adapter_registry')->get('events_event');
     $payload = $adapter->validatePayload('event_create', [
       'title' => 'mostra cultural existente',
       'dates' => [
@@ -786,7 +832,7 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
         ],
       ],
     ]);
-    $lifecycle = $this->container->get('aculta_contributions.lifecycle');
+    $lifecycle = $this->container->get('aculta_cgu.contribution_lifecycle');
     $proposal = $lifecycle->submit(
       'events_event',
       'event_create',
@@ -809,8 +855,8 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
       self::fail('An existing Event with the same title and date must conflict.');
     }
     catch (ConflictHttpException) {
-      $reloaded = $this->container->get('entity_type.manager')->getStorage('aculta_contribution')
-        ->loadUnchanged($proposal->id());
+      $reloaded = $this->typedEntity($this->container->get('entity_type.manager')->getStorage('aculta_contribution')
+        ->loadUnchanged($proposal->id()), Contribution::class);
       self::assertSame('submitted', $reloaded->get('state')->value);
     }
 
@@ -824,7 +870,7 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
   public function testEventContributionAuthorCanResubmitAfterRequestedChanges(): void {
     $this->usePurposeByCurrentAccount();
     $this->container->get('current_user')->setAccount($this->editorUser);
-    $adapter = $this->container->get('aculta_contributions.adapter_registry')->get('events_event');
+    $adapter = $this->container->get('aculta_cgu.contribution_adapter_registry')->get('events_event');
     $payload = $adapter->validatePayload('event_create', [
       'title' => 'Evento com ajustes',
       'dates' => [[
@@ -835,7 +881,7 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
       ],
       ],
     ]);
-    $lifecycle = $this->container->get('aculta_contributions.lifecycle');
+    $lifecycle = $this->container->get('aculta_cgu.contribution_lifecycle');
     $proposal = $lifecycle->submit(
       'events_event',
       'event_create',
@@ -881,8 +927,8 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
     self::assertFalse($formState->hasAnyErrors());
     $formObject->submitForm($form, $formState);
 
-    $revised = $this->container->get('entity_type.manager')
-      ->getStorage('aculta_contribution')->loadUnchanged($proposal->id());
+    $revised = $this->typedEntity($this->container->get('entity_type.manager')
+      ->getStorage('aculta_contribution')->loadUnchanged($proposal->id()), Contribution::class);
     self::assertSame('submitted', $revised->get('state')->value);
     self::assertSame('Evento com horário corrigido', $revised->getPayload()['title']);
     self::assertSame('2027-02-10T21:00:00', $revised->getPayload()['dates'][0]['ends_at']);
@@ -895,7 +941,6 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
       self::fail('Another account must not open the revision form.');
     }
     catch (NotFoundHttpException) {
-      self::assertTrue(TRUE);
     }
   }
 
@@ -905,7 +950,7 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
   public function testLocationContributionRevisionUsesCentralBrazilAddress(): void {
     $this->usePurposeByCurrentAccount();
     $this->container->get('current_user')->setAccount($this->editorUser);
-    $proposal = $this->container->get('entity_type.manager')
+    $proposal = $this->typedEntity($this->container->get('entity_type.manager')
       ->getStorage('aculta_contribution')->create([
         'uid' => (int) $this->editorUser->id(),
         'subject' => 'Ajustar endereço do Local',
@@ -931,7 +976,7 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
         ],
         'rationale' => 'Corrigir endereço informado.',
         'state' => 'needs_changes',
-      ]);
+      ]), Contribution::class);
     $proposal->setNewRevision(TRUE);
     $proposal->isDefaultRevision(TRUE);
     $proposal->save();
@@ -961,7 +1006,7 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
       'status' => 1,
     ]);
     $organization->save();
-    $adapter = $this->container->get('aculta_contributions.adapter_registry')->get('events_event');
+    $adapter = $this->container->get('aculta_cgu.contribution_adapter_registry')->get('events_event');
     try {
       $adapter->validatePayload('event_create', [
         'title' => 'Proposta com organização duplicada',
@@ -987,7 +1032,6 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
       self::fail('An account without Event create capability must not open proposal submission.');
     }
     catch (AccessDeniedHttpException) {
-      self::assertTrue(TRUE);
     }
     $this->container->get('current_user')->setAccount($this->editorUser);
     $formObject = $this->container->get('class_resolver')
@@ -1023,12 +1067,11 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
         'source' => 'events_event',
       ]);
     self::assertCount(1, $contributions);
-    $proposal = reset($contributions);
+    $proposal = $this->typedEntity(reset($contributions), Contribution::class);
     self::assertSame('submitted', $proposal->get('state')->value);
     self::assertSame('2027-05-10T21:00:00', $proposal->getPayload()['dates'][0]['starts_at']);
-    $queueItem = $this->container->get('queue')
-      ->get('aculta_events_contribution_events', TRUE)->claimItem();
-    self::assertNotFalse($queueItem);
+    $queueItem = $this->queueItem($this->container->get('queue')
+      ->get('aculta_events_contribution_events', TRUE)->claimItem());
     self::assertSame([
       'schema_version',
       'event',
@@ -1065,7 +1108,6 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
       self::fail('An account without Event update access must not open an update proposal.');
     }
     catch (NotFoundHttpException) {
-      self::assertTrue(TRUE);
     }
 
     $this->container->get('current_user')->setAccount($this->adminUser);
@@ -1073,7 +1115,7 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
       ->getInstanceFromDefinition(EventUpdateContributionSubmissionForm::class);
     $formState = new FormState();
     $form = $formObject->buildForm([], $formState, $event);
-    $adapter = $this->container->get('aculta_contributions.adapter_registry')->get('events_event');
+    $adapter = $this->container->get('aculta_cgu.contribution_adapter_registry')->get('events_event');
     $freshTarget = $adapter->loadTarget('event_update', (string) $event->uuid());
     self::assertSame(
       $formState->get('expected_version'),
@@ -1095,18 +1137,17 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
     $formObject->submitForm($form, $formState);
     self::assertFalse($formState->hasAnyErrors(), var_export($formState->getErrors(), TRUE));
 
-    $unchanged = $this->container->get('entity_type.manager')->getStorage('aculta_event')->loadUnchanged($event->id());
+    $unchanged = $this->typedEntity($this->container->get('entity_type.manager')->getStorage('aculta_event')->loadUnchanged($event->id()), Event::class);
     self::assertSame('Descrição oficial original.', $unchanged->get('body')->value);
     $proposals = $this->container->get('entity_type.manager')->getStorage('aculta_contribution')
       ->loadByProperties(['source' => 'events_event', 'intent' => 'event_update', 'target_uuid' => $event->uuid()]);
     self::assertCount(1, $proposals);
-    $proposal = reset($proposals);
+    $proposal = $this->typedEntity(reset($proposals), Contribution::class);
     self::assertSame('submitted', $proposal->get('state')->value);
     self::assertSame('Descrição proposta pela comunidade.', $proposal->getPayload()['body']);
     self::assertSame($event->uuid(), $proposal->get('target_uuid')->value);
-    $queueItem = $this->container->get('queue')
-      ->get('aculta_events_contribution_events', TRUE)->claimItem();
-    self::assertNotFalse($queueItem);
+    $queueItem = $this->queueItem($this->container->get('queue')
+      ->get('aculta_events_contribution_events', TRUE)->claimItem());
     self::assertSame('submitted', $queueItem->data['outcome']);
     $this->container->get('queue')->get('aculta_events_contribution_events', TRUE)->deleteItem($queueItem);
   }
@@ -1117,7 +1158,7 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
   public function testEventCreateContributionRevalidatesAuthorCapability(): void {
     $this->usePurposeByCurrentAccount();
     $this->container->get('current_user')->setAccount($this->editorUser);
-    $adapter = $this->container->get('aculta_contributions.adapter_registry')->get('events_event');
+    $adapter = $this->container->get('aculta_cgu.contribution_adapter_registry')->get('events_event');
     $payload = $adapter->validatePayload('event_create', [
       'title' => 'Mostra sem autorização atual',
       'dates' => [[
@@ -1127,7 +1168,7 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
       ],
       ],
     ]);
-    $lifecycle = $this->container->get('aculta_contributions.lifecycle');
+    $lifecycle = $this->container->get('aculta_cgu.contribution_lifecycle');
     $proposal = $lifecycle->submit(
       'events_event',
       'event_create',
@@ -1146,7 +1187,7 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
       self::fail('Revoked create capability must prevent Event creation.');
     }
     catch (ConflictHttpException) {
-      $reloaded = $this->container->get('entity_type.manager')->getStorage('aculta_contribution')->load($proposal->id());
+      $reloaded = $this->typedEntity($this->container->get('entity_type.manager')->getStorage('aculta_contribution')->load($proposal->id()), Contribution::class);
     }
 
     self::assertSame('submitted', $reloaded->get('state')->value);
@@ -1167,7 +1208,7 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
       'field_status' => 'publicado',
     ]);
     $event->save();
-    $adapter = $this->container->get('aculta_contributions.adapter_registry')->get('events_event');
+    $adapter = $this->container->get('aculta_cgu.contribution_adapter_registry')->get('events_event');
     $payload = $adapter->validatePayload('event_update', [
       'title' => 'Novo título proposto',
       'body' => 'Nova descrição proposta.',
@@ -1178,7 +1219,7 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
       ],
       ],
     ], $event);
-    $lifecycle = $this->container->get('aculta_contributions.lifecycle');
+    $lifecycle = $this->container->get('aculta_cgu.contribution_lifecycle');
     $proposal = $lifecycle->submit(
       'events_event',
       'event_update',
@@ -1190,7 +1231,7 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
     );
 
     $this->usePurposeByCurrentAccount();
-    self::assertSame('main', $this->container->get('aculta_portal.domain_purpose')->getCurrentPurpose());
+    self::assertSame('main', $this->container->get('aculta_portal.domain_site')->getCurrentSiteKey()?->value);
     self::assertTrue($adapter->reviewAccess($this->container->get('current_user'), 'event_update', $event));
     $accepted = $lifecycle->decide(
       $proposal,
@@ -1200,7 +1241,7 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
       (int) $proposal->getRevisionId(),
     );
     self::assertSame('accepted', $accepted->get('state')->value);
-    $reloaded = $this->container->get('entity_type.manager')->getStorage('aculta_event')->loadUnchanged($event->id());
+    $reloaded = $this->typedEntity($this->container->get('entity_type.manager')->getStorage('aculta_event')->loadUnchanged($event->id()), Event::class);
     self::assertSame('Evento original', $reloaded->label(), 'Unselected title is not applied.');
     self::assertSame('Nova descrição proposta.', $reloaded->get('body')->value);
     self::assertSame('publicado', $reloaded->get('field_status')->value, 'The adapter does not alter publication state.');
@@ -1220,9 +1261,9 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
       'field_status' => 'publicado',
     ]);
     $event->save();
-    $adapter = $this->container->get('aculta_contributions.adapter_registry')->get('events_event');
+    $adapter = $this->container->get('aculta_cgu.contribution_adapter_registry')->get('events_event');
     $payload = $adapter->validatePayload('event_update', ['body' => 'Texto proposto.'], $event);
-    $lifecycle = $this->container->get('aculta_contributions.lifecycle');
+    $lifecycle = $this->container->get('aculta_cgu.contribution_lifecycle');
     $proposal = $lifecycle->submit(
       'events_event',
       'event_update',
@@ -1241,11 +1282,11 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
       self::fail('Revoked update access must prevent Event changes.');
     }
     catch (ConflictHttpException) {
-      $reloaded = $this->container->get('entity_type.manager')->getStorage('aculta_contribution')->load($proposal->id());
+      $reloaded = $this->typedEntity($this->container->get('entity_type.manager')->getStorage('aculta_contribution')->load($proposal->id()), Contribution::class);
     }
 
     self::assertSame('submitted', $reloaded->get('state')->value);
-    $unchanged = $this->container->get('entity_type.manager')->getStorage('aculta_event')->loadUnchanged($event->id());
+    $unchanged = $this->typedEntity($this->container->get('entity_type.manager')->getStorage('aculta_event')->loadUnchanged($event->id()), Event::class);
     self::assertSame('', (string) $unchanged->get('body')->value);
   }
 
@@ -1271,9 +1312,9 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
     ]);
     $event->save();
     $this->container->get('current_user')->setAccount($this->editorUser);
-    $adapter = $this->container->get('aculta_contributions.adapter_registry')->get('events_event');
+    $adapter = $this->container->get('aculta_cgu.contribution_adapter_registry')->get('events_event');
     $payload = $adapter->validatePayload('event_update', ['body' => 'Texto proposto.'], $event);
-    $lifecycle = $this->container->get('aculta_contributions.lifecycle');
+    $lifecycle = $this->container->get('aculta_cgu.contribution_lifecycle');
     $proposal = $lifecycle->submit('events_event', 'event_update', (string) $event->uuid(), 'Atualização do Evento', 'Atualizar descrição.', $payload, str_repeat('f', 64));
 
     $memberManager->revokeMembership($member, $this->adminUser, 'Revogação para o teste.');
@@ -1284,11 +1325,11 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
       self::fail('A perda de vínculo com a Organização deve impedir a aplicação.');
     }
     catch (ConflictHttpException) {
-      self::assertSame('submitted', $this->container->get('entity_type.manager')->getStorage('aculta_contribution')
-        ->loadUnchanged($proposal->id())->get('state')->value);
+      self::assertSame('submitted', $this->typedEntity($this->container->get('entity_type.manager')->getStorage('aculta_contribution')
+        ->loadUnchanged($proposal->id()), Contribution::class)->get('state')->value);
     }
-    self::assertSame('', (string) $this->container->get('entity_type.manager')->getStorage('aculta_event')
-      ->loadUnchanged($event->id())->get('body')->value);
+    self::assertSame('', (string) $this->typedEntity($this->container->get('entity_type.manager')->getStorage('aculta_event')
+      ->loadUnchanged($event->id()), Event::class)->get('body')->value);
   }
 
   /**
@@ -1309,7 +1350,7 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
     ]);
     $event->save();
     $this->container->get('current_user')->setAccount($this->editorUser);
-    $adapter = $this->container->get('aculta_contributions.adapter_registry')->get('events_event');
+    $adapter = $this->container->get('aculta_cgu.contribution_adapter_registry')->get('events_event');
     $payload = $adapter->validatePayload('event_update', [
       'dates' => [[
         'title' => 'Data com Local',
@@ -1319,7 +1360,7 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
       ],
       ],
     ], $event);
-    $lifecycle = $this->container->get('aculta_contributions.lifecycle');
+    $lifecycle = $this->container->get('aculta_cgu.contribution_lifecycle');
     $proposal = $lifecycle->submit('events_event', 'event_update', (string) $event->uuid(), 'Adicionar Data', 'Usar o Local público.', $payload, str_repeat('1', 64));
 
     $location->set('field_status', 'privado')->save();
@@ -1332,8 +1373,8 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
       self::fail('O Local privado não pode ser associado à Data na aplicação.');
     }
     catch (ConflictHttpException) {
-      self::assertSame('submitted', $this->container->get('entity_type.manager')->getStorage('aculta_contribution')
-        ->loadUnchanged($proposal->id())->get('state')->value);
+      self::assertSame('submitted', $this->typedEntity($this->container->get('entity_type.manager')->getStorage('aculta_contribution')
+        ->loadUnchanged($proposal->id()), Contribution::class)->get('state')->value);
     }
     self::assertCount(0, $this->container->get('entity_type.manager')->getStorage('aculta_event_date')
       ->loadByProperties(['field_evento' => $event->id()]));
@@ -1352,9 +1393,9 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
       'field_status' => 'publicado',
     ]);
     $event->save();
-    $adapter = $this->container->get('aculta_contributions.adapter_registry')->get('events_event');
+    $adapter = $this->container->get('aculta_cgu.contribution_adapter_registry')->get('events_event');
     $payload = $adapter->validatePayload('event_update', ['body' => 'Texto da proposta.'], $event);
-    $lifecycle = $this->container->get('aculta_contributions.lifecycle');
+    $lifecycle = $this->container->get('aculta_cgu.contribution_lifecycle');
     $proposal = $lifecycle->submit(
       'events_event',
       'event_update',
@@ -1379,10 +1420,10 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
       self::fail('A changed source must report a conflict.');
     }
     catch (ConflictHttpException) {
-      $accepted = $this->container->get('entity_type.manager')->getStorage('aculta_contribution')->load($proposal->id());
+      $accepted = $this->typedEntity($this->container->get('entity_type.manager')->getStorage('aculta_contribution')->load($proposal->id()), Contribution::class);
     }
     self::assertSame('conflict', $accepted->get('state')->value);
-    $reloaded = $this->container->get('entity_type.manager')->getStorage('aculta_event')->loadUnchanged($event->id());
+    $reloaded = $this->typedEntity($this->container->get('entity_type.manager')->getStorage('aculta_event')->loadUnchanged($event->id()), Event::class);
     self::assertSame('Alteração independente mais recente.', $reloaded->get('body')->value);
   }
 
@@ -1405,10 +1446,10 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
     $location->save();
     $this->usePurposeByCurrentAccount();
     $this->container->get('current_user')->setAccount($this->editorUser);
-    $adapter = $this->container->get('aculta_contributions.adapter_registry')->get('events_location');
+    $adapter = $this->container->get('aculta_cgu.contribution_adapter_registry')->get('events_location');
     $fresh = $this->container->get('entity_type.manager')->getStorage('aculta_event_location')->loadUnchanged($location->id());
     $version = $adapter->currentVersion('location_update', $fresh);
-    $proposal = $this->container->get('aculta_contributions.lifecycle')->submit(
+    $proposal = $this->container->get('aculta_cgu.contribution_lifecycle')->submit(
       'events_location',
       'location_update',
       (string) $location->uuid(),
@@ -1431,7 +1472,7 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
     $location->set('field_descricao', 'Alteração administrativa concorrente.')->save();
     $this->container->get('current_user')->setAccount($this->adminUser);
     try {
-      $this->container->get('aculta_contributions.lifecycle')->decide(
+      $this->container->get('aculta_cgu.contribution_lifecycle')->decide(
         $proposal,
         'accepted',
         'Revisado.',
@@ -1441,11 +1482,11 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
       self::fail('A alteração concorrente deve produzir conflito.');
     }
     catch (ConflictHttpException) {
-      $freshProposal = $this->container->get('entity_type.manager')->getStorage('aculta_contribution')
-        ->load($proposal->id());
+      $freshProposal = $this->typedEntity($this->container->get('entity_type.manager')->getStorage('aculta_contribution')
+        ->load($proposal->id()), Contribution::class);
       self::assertSame('conflict', $freshProposal->get('state')->value);
     }
-    $unchanged = $this->container->get('entity_type.manager')->getStorage('aculta_event_location')->loadUnchanged($location->id());
+    $unchanged = $this->typedEntity($this->container->get('entity_type.manager')->getStorage('aculta_event_location')->loadUnchanged($location->id()), EventLocation::class);
     self::assertSame('Rua A, 10', $unchanged->get('field_endereco')->address_line1);
     self::assertSame('Alteração administrativa concorrente.', $unchanged->get('field_descricao')->value);
   }
@@ -1487,10 +1528,10 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
 
     $this->usePurposeByCurrentAccount();
     $this->container->get('current_user')->setAccount($this->editorUser);
-    $adapter = $this->container->get('aculta_contributions.adapter_registry')->get('events_location');
+    $adapter = $this->container->get('aculta_cgu.contribution_adapter_registry')->get('events_location');
     $freshLocation = $this->container->get('entity_type.manager')->getStorage('aculta_event_location')
       ->loadUnchanged($location->id());
-    $proposal = $this->container->get('aculta_contributions.lifecycle')->submit(
+    $proposal = $this->container->get('aculta_cgu.contribution_lifecycle')->submit(
       'events_location',
       'location_update',
       (string) $location->uuid(),
@@ -1517,7 +1558,7 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
     ])->save();
     $this->container->get('current_user')->setAccount($this->adminUser);
     try {
-      $this->container->get('aculta_contributions.lifecycle')->decide(
+      $this->container->get('aculta_cgu.contribution_lifecycle')->decide(
         $proposal,
         'accepted',
         'Endereço revisado.',
@@ -1527,12 +1568,12 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
       self::fail('A mudança na Data do Evento vinculado deve produzir conflito.');
     }
     catch (ConflictHttpException) {
-      $freshProposal = $this->container->get('entity_type.manager')->getStorage('aculta_contribution')
-        ->load($proposal->id());
+      $freshProposal = $this->typedEntity($this->container->get('entity_type.manager')->getStorage('aculta_contribution')
+        ->load($proposal->id()), Contribution::class);
       self::assertSame('conflict', $freshProposal->get('state')->value);
     }
-    $unchanged = $this->container->get('entity_type.manager')->getStorage('aculta_event_location')
-      ->loadUnchanged($location->id());
+    $unchanged = $this->typedEntity($this->container->get('entity_type.manager')->getStorage('aculta_event_location')
+      ->loadUnchanged($location->id()), EventLocation::class);
     self::assertSame('Rua A, 10', $unchanged->get('field_endereco')->address_line1);
   }
 
@@ -1567,7 +1608,7 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
     $proposals = $this->container->get('entity_type.manager')->getStorage('aculta_contribution')
       ->loadByProperties(['intent' => 'location_create']);
     self::assertCount(1, $proposals);
-    $proposal = reset($proposals);
+    $proposal = $this->typedEntity(reset($proposals), Contribution::class);
     self::assertSame('submitted', $proposal->get('state')->value);
     self::assertSame('O local precisa ser encontrado por organizadores.', $proposal->get('rationale')->value);
 
@@ -1619,7 +1660,7 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
     $this->assertFalse($updated->isClaimed());
     $suggestionStorage = $this->container->get('entity_type.manager')->getStorage('aculta_event_org_suggestion');
     $suggestionStorage->resetCache();
-    $suggestion = $suggestionStorage->loadUnchanged($suggestion->id());
+    $suggestion = $this->typedEntity($suggestionStorage->loadUnchanged($suggestion->id()), EventOrganizationSuggestion::class);
     $this->assertSame('stale', $suggestion->get('field_status')->value);
   }
 
@@ -1671,7 +1712,6 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
       'Sou o novo presidente eleito pela ata da assembleia de outubro.',
       'contato@artistas.org'
     );
-    $this->assertInstanceOf(OwnershipClaim::class, $claim);
     $this->assertSame('pending', $claim->get('status')->value);
 
     // Administrador aprova a reivindicação.
@@ -1685,7 +1725,7 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
 
     // Membro anterior foi suspenso preventivamente.
     $this->assertFalse($memberManager->hasApprovedMembership($this->anotherEditorUser, (string) $org->id()));
-    $reloadedMember = $this->container->get('entity_type.manager')->getStorage('aculta_org_member')->load($memberPrior->id());
+    $reloadedMember = $this->typedEntity($this->container->get('entity_type.manager')->getStorage('aculta_org_member')->load($memberPrior->id()), OrganizationMember::class);
     $this->assertSame('suspended', $reloadedMember->get('status')->value);
 
     // Titular revisa e confirma membro anterior como editor com poderes.
@@ -1806,7 +1846,7 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
     $claimService->acceptOwnershipTransfer($reloadedOrg, $coOwner);
     $finalOrg = EventOrganization::load($org->id());
     $this->assertSame((int) $coOwner->id(), $finalOrg->getOwnerId());
-    $this->assertNull($finalOrg->get('pending_owner_uid')->target_id);
+    $this->assertTrue($finalOrg->get('pending_owner_uid')->isEmpty());
 
     // O antigo titular foi rebaixado para coproprietário aprovado.
     $this->assertSame('co_owner', $memberManager->getMemberRole($this->editorUser, (string) $org->id()));
@@ -1872,9 +1912,9 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
   /**
    * Valida integração com denúncias e moderação UGC.
    */
-  public function testUgcReportIntegration(): void {
-    /** @var \Drupal\aculta_ugc\Service\ReportService $reportService */
-    $reportService = $this->container->get('aculta_ugc.report_service');
+  public function testCguReportIntegration(): void {
+    /** @var \Drupal\aculta_cgu\Service\ReportService $reportService */
+    $reportService = $this->container->get('aculta_cgu.report_service');
 
     $org = EventOrganization::create([
       'title' => 'Organização para Auditoria',
@@ -1892,7 +1932,6 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
       'conteudo_inadequado'
     );
 
-    $this->assertInstanceOf(UgcReport::class, $report);
     $this->assertSame('aculta_event_organization', $report->get('target_type')->value);
     $this->assertSame((int) $org->id(), (int) $report->get('target_id')->value);
 
@@ -2019,10 +2058,9 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
     $this->assertSame('approved', (string) $claimA->get('status')->value);
 
     // Pedido B concorrente foi automaticamente rejeitado/encerrado.
-    $reloadedClaimB = $this->container->get('entity_type.manager')
+    $reloadedClaimB = $this->typedEntity($this->container->get('entity_type.manager')
       ->getStorage('aculta_ownership_claim')
-      ->load($claimB->id());
-    $this->assertNotNull($reloadedClaimB);
+      ->load($claimB->id()), OwnershipClaim::class);
     $this->assertSame('rejected', (string) $reloadedClaimB->get('status')->value);
     $this->assertStringContainsString('Pedido concorrente encerrado', (string) $reloadedClaimB->get('decision_notes')->value);
 
@@ -2047,12 +2085,47 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
         ? $eventsDomain
         : $mainDomain;
     });
-    $this->container->set('aculta_portal.domain_purpose', new DomainPurposeManager(
+    $this->container->set('aculta_portal.domain_site', new DomainSiteManager(
       $this->createMock(EntityTypeManagerInterface::class),
       $negotiator,
       $this->createMock(ConfigFactoryInterface::class),
       new RequestStack(),
     ));
+  }
+
+  /**
+   * Narrows entities returned by generic storage APIs to their expected class.
+   *
+   * @template T of object
+   * @param mixed $entity
+   *   The entity returned by storage.
+   * @param class-string<T> $class
+   *   The entity class expected by this test.
+   * @return T
+   *   The entity after runtime type validation.
+   */
+  private function typedEntity(mixed $entity, string $class): object {
+    if (!$entity instanceof $class) {
+      throw new \UnexpectedValueException(sprintf('Expected %s.', $class));
+    }
+
+    return $entity;
+  }
+
+  /**
+   * Validates and returns the payload of a claimed queue item.
+   *
+   * @param mixed $item
+   *   The queue result, which can be false when no item was claimed.
+   * @return object{data: array<string, mixed>}
+   *   The validated queue item with its data payload.
+   */
+  private function queueItem(mixed $item): object {
+    if (!is_object($item) || !property_exists($item, 'data') || !is_array($item->data)) {
+      throw new \UnexpectedValueException('The queue did not return an item with an array payload.');
+    }
+
+    return $item;
   }
 
 }

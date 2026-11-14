@@ -1,5 +1,0 @@
-{% set direction_class = outgoing ? 'aculta-messenger-item--outgoing' : 'aculta-messenger-item--incoming' %}
-<article class="aculta-messenger-item {{ direction_class }}">
-  {% if avatar %}<div class="aculta-messenger-item__avatar" aria-hidden="true">{{ avatar }}</div>{% endif %}
-  <div class="aculta-messenger-item__bubble">{{ content }}</div>
-</article>

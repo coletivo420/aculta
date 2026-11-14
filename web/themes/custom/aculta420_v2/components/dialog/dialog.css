@@ -1,0 +1,118 @@
+.aculta-dialog__trigger,
+a.aculta-dialog__trigger,
+.button.aculta-dialog__trigger,
+a.aculta-dialog__trigger:is(a) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  color: var(--color-on-brand);
+  border: 1px solid var(--color-brand-primary);
+  border-radius: var(--radius-control-button);
+  background: var(--color-brand-primary);
+  min-block-size: var(--tap-target-min);
+  padding-inline: var(--spacing-base);
+}
+
+.aculta-dialog__trigger:focus-visible,
+.aculta-dialog__close:focus-visible,
+.aculta-dialog__actions :focus-visible {
+  outline: 3px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+.aculta-dialog__trigger:hover,
+a.aculta-dialog__trigger:hover,
+.button.aculta-dialog__trigger:hover,
+a.aculta-dialog__trigger:is(a):hover {
+  color: var(--button-primary-fg);
+  border-color: var(--button-primary-bg-hover);
+  background: var(--button-primary-bg-hover);
+}
+
+.aculta-dialog {
+  overflow: auto;
+  margin: auto;
+  padding: 0;
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-control-card);
+  background: var(--color-surface-raised);
+  box-shadow: var(--shadow-raised);
+  block-size: fit-content;
+  inline-size: min(36rem, calc(100vw - 2 * var(--spacing-base)));
+  max-block-size: min(80dvh, 48rem);
+  max-inline-size: calc(100vw - 2 * var(--spacing-base));
+}
+
+.aculta-dialog::backdrop {
+  background: var(--color-scrim);
+}
+
+.aculta-dialog__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-base);
+  border-block-end: 1px solid var(--color-border);
+  gap: var(--spacing-base);
+}
+
+.aculta-dialog__title {
+  margin: 0;
+  font-family: var(--font-family-heading);
+  font-size: var(--font-size-xl);
+  overflow-wrap: anywhere;
+}
+
+.aculta-dialog__close {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-control-button);
+  background: transparent;
+  inline-size: 2.75rem;
+  min-block-size: 2.75rem;
+}
+
+.aculta-dialog__content {
+  min-inline-size: 0;
+  padding: var(--spacing-base);
+}
+
+.aculta-dialog__actions {
+  display: flex;
+  flex-wrap: wrap;
+  padding: var(--spacing-base);
+  border-block-start: 1px solid var(--color-border);
+  gap: var(--spacing-sm);
+}
+
+.aculta-dialog--fullscreen {
+  block-size: 100dvh;
+  border: 0;
+  border-radius: 0;
+  inline-size: 100vw;
+  max-block-size: 100dvh;
+  max-inline-size: 100vw;
+}
+
+@media (min-width: 40rem) {
+  .aculta-dialog--fullscreen {
+    block-size: fit-content;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-control-card);
+    inline-size: min(36rem, calc(100vw - 2 * var(--spacing-base)));
+    max-block-size: min(80dvh, 48rem);
+    max-inline-size: calc(100vw - 2 * var(--spacing-base));
+  }
+}
+
+/* Diálogo fechado fica oculto: sem isso, a regra de display acima o mostra no fluxo da página. */
+.aculta-dialog:not([open]) {
+  display: none;
+}

@@ -22,10 +22,10 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 final class AchievementDefinitionForm extends FormBase {
 
   public function __construct(
-    private readonly AchievementDefinitions $definitions,
-    private readonly EntityTypeManagerInterface $entities,
-    private readonly ModuleExtensionList $modules,
-    private readonly LoggerInterface $audit,
+    protected readonly AchievementDefinitions $definitions,
+    protected readonly EntityTypeManagerInterface $entities,
+    protected readonly ModuleExtensionList $modules,
+    protected readonly LoggerInterface $audit,
   ) {}
 
   /**
@@ -108,9 +108,12 @@ final class AchievementDefinitionForm extends FormBase {
       ];
       if ($conquista !== NULL) {
         $form['image_section']['remove_link'] = [
-          '#type' => 'link',
-          '#title' => $this->t('Remover imagem atual'),
-          '#url' => Url::fromRoute('aculta_game.achievement_image_remove_confirm', ['conquista' => $conquista]),
+          '#type' => 'aculta_portal_button',
+          '#props' => [
+            'text' => (string) $this->t('Remover imagem atual'),
+            'url' => Url::fromRoute('aculta_game.achievement_image_remove_confirm', ['conquista' => $conquista])->toString(),
+            'variant' => 'danger',
+          ],
         ];
       }
     }

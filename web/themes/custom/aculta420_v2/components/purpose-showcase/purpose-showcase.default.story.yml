@@ -1,0 +1,12 @@
+name: Vitrine de portais
+status: stable
+component: aculta420_v2:purpose-showcase
+props:
+  heading: Ecossistema ACULTA
+  links:
+    - title: Apoio
+      url: /apoio
+    - title: Revista 420
+      url: /revista
+    - title: Wiki420
+      url: /wiki

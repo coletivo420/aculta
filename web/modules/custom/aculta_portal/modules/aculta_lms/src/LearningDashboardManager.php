@@ -6,26 +6,28 @@ namespace Drupal\aculta_lms;
 
 use Drupal\aculta_lms\Certificate\CourseCertificateManagerInterface;
 use Drupal\aculta_lms\Entity\CourseCertificate;
-use Drupal\aculta_learning_contracts\Learning\AccountCourseSummary;
-use Drupal\aculta_learning_contracts\Learning\AccountCoursesReaderInterface;
-use Drupal\aculta_learning_contracts\Learning\CourseJourney;
-use Drupal\aculta_learning_contracts\Learning\CourseJourneyLesson;
-use Drupal\aculta_learning_contracts\Learning\CourseJourneyReaderInterface;
-use Drupal\aculta_learning_contracts\Learning\StudentLearningCertificate;
-use Drupal\aculta_learning_contracts\Learning\StudentLearningCourse;
-use Drupal\aculta_learning_contracts\Learning\StudentLearningSummary;
-use Drupal\aculta_learning_contracts\Learning\StudentLearningSummaryReaderInterface;
+use Drupal\aculta_lms\Learning\AccountCourseSummary;
+use Drupal\aculta_lms\Learning\AccountCoursesReaderInterface;
+use Drupal\aculta_lms\Learning\CourseJourney;
+use Drupal\aculta_lms\Learning\CourseJourneyLesson;
+use Drupal\aculta_lms\Learning\CourseJourneyReaderInterface;
+use Drupal\aculta_lms\Learning\StudentLearningCertificate;
+use Drupal\aculta_lms\Learning\StudentLearningCourse;
+use Drupal\aculta_lms\Learning\StudentLearningSummary;
+use Drupal\aculta_lms\Learning\StudentLearningSummaryReaderInterface;
 use Drupal\aculta_lms\Learning\CourseLessonReaderInterface;
 use Drupal\aculta_lms\Learning\CourseProgress;
 use Drupal\aculta_lms\Learning\CourseProgressReaderInterface;
 use Drupal\aculta_lms\Learning\CourseLesson;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Cache\CacheableMetadata;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\group\Entity\GroupMembership;
 use Drupal\group\Entity\GroupInterface;
+use Drupal\group\Entity\GroupRelationshipInterface;
 use Drupal\user\UserInterface;
 
 /**
@@ -73,19 +75,19 @@ final class LearningDashboardManager implements CourseJourneyReaderInterface, St
       }
       $available_lessons = array_values(array_filter(
         $this->lessonReader->forCourse((int) $course->id()),
-        static fn($lesson): bool => $lesson instanceof CourseLesson && $lesson->published,
+        static fn($lesson): bool => $lesson->published,
       ));
       foreach ($available_lessons as $lesson) {
         $metadata->addCacheTags(['aculta_lms_lesson:' . $lesson->id]);
       }
       $progress = $this->progressReader->current($course, $account);
-      $metadata->addCacheTags($progress?->cacheTags ?? []);
+      $metadata->addCacheTags($progress === NULL ? [] : $progress->cacheTags);
       $total = count($available_lessons);
       // P2 stores course-level completion only. It has no lesson-status rows
       // or current-lesson pointer, so a detailed lesson count cannot be read.
       $completed = $progress?->finished ? $total : 0;
       $current_lesson = NULL;
-      $last_activity = $progress?->changedTime ?? 0;
+      $last_activity = $progress === NULL ? 0 : $progress->changedTime;
       $courses[] = [
         'id' => $course_data->id,
         'label' => $course_data->label,
@@ -121,7 +123,7 @@ final class LearningDashboardManager implements CourseJourneyReaderInterface, St
       if (empty($course['started']) || $course['finished'] || !$course['url'] instanceof Url) {
         continue;
       }
-      if ((int) ($course['last_activity'] ?? 0) <= 0) {
+      if ((int) $course['last_activity'] <= 0) {
         continue;
       }
       if ($continue === NULL || (int) $course['last_activity'] > (int) $continue['last_activity']) {
@@ -256,23 +258,28 @@ final class LearningDashboardManager implements CourseJourneyReaderInterface, St
     }
 
     $progress = $this->progressReader->current($course, $account);
-    $metadata->addCacheTags($progress?->cacheTags ?? []);
+    $metadata->addCacheTags($progress === NULL ? [] : $progress->cacheTags);
     $lessons = [];
     $total = 0;
+    $lesson_delta = 0;
     foreach ($this->lessonReader->forCourse((int) $course->id()) as $lesson) {
+      $source_delta = $lesson_delta++;
       if (!$lesson->published) {
         continue;
       }
       $metadata->addCacheTags(['aculta_lms_lesson:' . $lesson->id]);
-      $delta = $total++;
+      $total++;
       $lessons[] = new CourseJourneyLesson(
         id: (string) $lesson->id,
         label: $lesson->title,
-        delta: $delta,
+        delta: $source_delta,
         state: $progress?->finished ? 'finished' : 'not_started',
         isCurrent: FALSE,
         allowed: TRUE,
-        url: NULL,
+        url: Url::fromRoute('aculta_lms.lesson_view', [
+          'group' => $course->id(),
+          'lesson_delta' => $source_delta,
+        ]),
       );
     }
     $completed = $progress?->finished ? $total : 0;
@@ -288,7 +295,7 @@ final class LearningDashboardManager implements CourseJourneyReaderInterface, St
       courseLabel: (string) $course->label(),
       description: $description,
       started: $progress !== NULL,
-      finished: $progress?->finished ?? FALSE,
+      finished: $progress !== NULL && $progress->finished,
       pendingEvaluation: $pending_evaluation,
       currentLessonId: NULL,
       currentLessonLabel: NULL,
@@ -361,13 +368,15 @@ final class LearningDashboardManager implements CourseJourneyReaderInterface, St
   }
 
   /**
-   * Counts active learners of a class by situation, without checking the viewer's access.
+   * Counts active learners of a class by situation, without checking access.
    *
-   * The dashboard calls it after its access check. The daily class snapshot on cron calls it directly.
+   * The dashboard calls this after its access check. The daily class snapshot
+   * on cron calls it directly.
    *
    * @return array{students: int, not_started: int, in_progress: int, pending_evaluation: int, passed: int, failed: int, cache: \Drupal\Core\Cache\CacheableMetadata, by_student?: array<int, string>}
-   *   Counts by situation and the cache metadata of the membership and status data read. `by_student` (uid to
-   *   situation) só com `$perStudent`.
+   *   Counts by situation and cache metadata for membership and status data.
+   *   `by_student` (uid to situation) is only included when `$perStudent` is
+   *   TRUE.
    */
   public function countClassStatuses(GroupInterface $class, GroupInterface $course, bool $perStudent = FALSE): array {
     $members = [];
@@ -415,6 +424,9 @@ final class LearningDashboardManager implements CourseJourneyReaderInterface, St
     }
     $statuses_by_student = [];
     foreach ($statuses as $status) {
+      if (!$status instanceof ContentEntityInterface) {
+        continue;
+      }
       $uid = (int) $status->get('uid')->value;
       if (isset($members[$uid])) {
         $statuses_by_student[$uid] = $status;
@@ -441,7 +453,8 @@ final class LearningDashboardManager implements CourseJourneyReaderInterface, St
         $bySituation[(int) $member_id] = $key;
       }
     }
-    // Situação por aluno: só quando pedida (série por aluno, com consentimento pelo aceite único). O painel não pede.
+    // Include per-student status only when requested. The dashboard does not
+    // request it.
     if ($perStudent) {
       $result['by_student'] = $bySituation;
     }
@@ -449,22 +462,28 @@ final class LearningDashboardManager implements CourseJourneyReaderInterface, St
   }
 
   /**
-   * Finds the LMS course that owns a class relationship. */
+   * Finds the LMS course that owns a class relationship.
+   */
   public function courseForClass(GroupInterface $class): ?GroupInterface {
     $relationships = $this->entityTypeManager->getStorage('group_relationship')->loadByProperties([
       'entity_id' => $class->id(),
       'plugin_id' => 'lms_classes',
     ]);
     foreach ($relationships as $relationship) {
+      if (!$relationship instanceof GroupRelationshipInterface) {
+        continue;
+      }
       $course = $relationship->getGroup();
-      if ($course instanceof GroupInterface && $course->bundle() === 'lms_course') {
+      if ($course->bundle() === 'lms_course') {
         return $course;
       }
     }
     return NULL;
   }
 
-  /** Reproduces the course take-access policy using Group permissions alone. */
+  /**
+   * Reproduces the course take-access policy using Group permissions alone.
+   */
   private function courseTakeAccess(GroupInterface $course, AccountInterface $account): AccessResult {
     $allowed = $course->hasPermission('take course', $account);
     $contexts = ['user.group_permissions'];

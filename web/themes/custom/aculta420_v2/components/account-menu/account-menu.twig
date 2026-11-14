@@ -1,0 +1,53 @@
+<nav class="aculta-account-menu{{ authenticated ? ' aculta-account-menu--signed-in' }}" aria-label="{{ 'Menu'|t }}">
+  <button type="button" class="aculta-utility-trigger aculta-account-menu__trigger"
+    aria-controls="aculta-account-dialog" aria-expanded="false" aria-haspopup="dialog"
+    data-aculta-dialog-trigger>
+    <span class="aculta-account-menu__icon" aria-hidden="true"><span></span><span></span><span></span></span>
+    <span class="visually-hidden">{{ summary_label is not empty ? summary_label : 'Abrir menu'|t }}</span>
+  </button>
+
+  <dialog class="aculta-utility-dialog aculta-account-dialog" id="aculta-account-dialog"
+    aria-labelledby="aculta-account-dialog-title" data-aculta-utility-drawer>
+    <header class="aculta-utility-dialog__header">
+      <h2 class="aculta-utility-dialog__title visually-hidden" id="aculta-account-dialog-title">{{ 'Menu'|t }}</h2>
+      <button type="button" class="aculta-utility-dialog__close aculta-account-menu__close" data-aculta-dialog-close aria-label="{{ 'Fechar menu'|t }}">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </header>
+    <div class="aculta-utility-dialog__body aculta-account-menu__columns">
+      <section class="aculta-account-menu__col aculta-account-menu__col--account" aria-label="{{ 'Conta'|t }}">
+        {% if authenticated %}
+          <div class="aculta-account-menu__identity">
+            {{ include('aculta420_v2:avatar', { media: avatar, size: 'sm' }, with_context = false) }}
+            {% if account_name %}<span>{{ account_name }}</span>{% endif %}
+          </div>
+        {% endif %}
+        <div class="aculta-account-menu__actions">
+          {{ menu_items }}
+        </div>
+      </section>
+
+      <section class="aculta-account-menu__col aculta-account-menu__col--sites" aria-label="{{ 'Sites e informações legais'|t }}">
+        {% if sites is not empty %}
+          <div class="aculta-account-menu__group">
+            <h2>{{ 'Sites'|t }}</h2>
+            <ul>
+              {% for site in sites %}
+                <li><a href="{{ site.url }}"{% if site.current %} aria-current="page"{% endif %}>{{ site.title }}</a></li>
+              {% endfor %}
+            </ul>
+          </div>
+        {% endif %}
+        {% if legal_links is not empty %}
+          <div class="aculta-account-menu__group">
+            <ul>
+              {% for link in legal_links %}
+                <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+              {% endfor %}
+            </ul>
+          </div>
+        {% endif %}
+      </section>
+    </div>
+  </dialog>
+</nav>

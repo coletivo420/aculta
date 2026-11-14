@@ -1,0 +1,9 @@
+name: Largura total sem título
+description: Largura total sem região de título e sem barra lateral.
+component: aculta420_v2:layout-page
+props:
+  variant: full
+slots:
+  content:
+    type: inline_template
+    template: '<p>Conteúdo editorial em largura total, sem título.</p>'

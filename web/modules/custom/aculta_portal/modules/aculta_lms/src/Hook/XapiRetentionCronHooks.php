@@ -10,7 +10,8 @@ use Drupal\aculta_lms\Xapi\XapiTokenSettings;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 
-/** Runs the bounded monthly xAPI raw statement retention task. */
+/**
+ * Runs the bounded monthly xAPI raw statement retention task. */
 final class XapiRetentionCronHooks {
 
   public function __construct(
@@ -18,6 +19,9 @@ final class XapiRetentionCronHooks {
     private readonly ConfigFactoryInterface $configFactory,
   ) {}
 
+  /**
+   * Executa a tarefa mensal de retenção dos statements xAPI.
+   */
   #[Hook('cron')]
   public function cron(): void {
     $months = $this->configFactory->get(XapiTokenSettings::CONFIG_NAME)->get(XapiRetention::KEY_MONTHS);

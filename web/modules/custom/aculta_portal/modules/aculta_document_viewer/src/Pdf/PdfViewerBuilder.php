@@ -245,14 +245,13 @@ final class PdfViewerBuilder implements PdfViewerBuilderInterface {
       '#type' => 'container',
       '#attributes' => ['data-aculta-pdf-control' => 'toolbar'],
       'previous' => [
-        '#type' => 'html_tag',
-        '#tag' => 'button',
-        '#value' => new TranslatableMarkup('Página anterior'),
-        '#attributes' => [
-          'type' => 'button',
-          'data-aculta-pdf-control' => 'previous',
-          'disabled' => 'disabled',
+        '#type' => 'aculta_portal_button',
+        '#props' => [
+          'text' => new TranslatableMarkup('Página anterior'),
+          'variant' => 'ghost',
+          'disabled' => TRUE,
         ],
+        '#attributes' => ['data-aculta-pdf-control' => 'previous'],
       ],
       'status' => [
         '#type' => 'html_tag',
@@ -264,14 +263,13 @@ final class PdfViewerBuilder implements PdfViewerBuilderInterface {
         ],
       ],
       'next' => [
-        '#type' => 'html_tag',
-        '#tag' => 'button',
-        '#value' => new TranslatableMarkup('Próxima página'),
-        '#attributes' => [
-          'type' => 'button',
-          'data-aculta-pdf-control' => 'next',
-          'disabled' => 'disabled',
+        '#type' => 'aculta_portal_button',
+        '#props' => [
+          'text' => new TranslatableMarkup('Próxima página'),
+          'variant' => 'ghost',
+          'disabled' => TRUE,
         ],
+        '#attributes' => ['data-aculta-pdf-control' => 'next'],
       ],
     ];
   }
@@ -287,14 +285,12 @@ final class PdfViewerBuilder implements PdfViewerBuilderInterface {
         '#type' => 'container',
         '#attributes' => ['data-aculta-pdf-control' => 'zoom-controls'],
         'zoom_out' => [
-          '#type' => 'html_tag',
-          '#tag' => 'button',
-          '#value' => new TranslatableMarkup('Reduzir zoom'),
-          '#attributes' => [
-            'type' => 'button',
-            'data-aculta-pdf-control' => 'zoom-out',
-            'aria-label' => new TranslatableMarkup('Reduzir zoom'),
+          '#type' => 'aculta_portal_button',
+          '#props' => [
+            'text' => new TranslatableMarkup('Reduzir zoom'),
+            'variant' => 'ghost',
           ],
+          '#attributes' => ['data-aculta-pdf-control' => 'zoom-out'],
         ],
         'zoom_status' => [
           '#type' => 'html_tag',
@@ -303,43 +299,39 @@ final class PdfViewerBuilder implements PdfViewerBuilderInterface {
           '#attributes' => ['data-aculta-pdf-control' => 'zoom-status', 'aria-live' => 'polite'],
         ],
         'zoom_in' => [
-          '#type' => 'html_tag',
-          '#tag' => 'button',
-          '#value' => new TranslatableMarkup('Aumentar zoom'),
-          '#attributes' => [
-            'type' => 'button',
-            'data-aculta-pdf-control' => 'zoom-in',
-            'aria-label' => new TranslatableMarkup('Aumentar zoom'),
+          '#type' => 'aculta_portal_button',
+          '#props' => [
+            'text' => new TranslatableMarkup('Aumentar zoom'),
+            'variant' => 'ghost',
           ],
+          '#attributes' => ['data-aculta-pdf-control' => 'zoom-in'],
         ],
         'zoom_reset' => [
-          '#type' => 'html_tag',
-          '#tag' => 'button',
-          '#value' => new TranslatableMarkup('Restaurar zoom'),
-          '#attributes' => [
-            'type' => 'button',
-            'data-aculta-pdf-control' => 'zoom-reset',
+          '#type' => 'aculta_portal_button',
+          '#props' => [
+            'text' => new TranslatableMarkup('Restaurar zoom'),
+            'variant' => 'ghost',
           ],
+          '#attributes' => ['data-aculta-pdf-control' => 'zoom-reset'],
         ],
       ],
       'rotate' => [
-        '#type' => 'html_tag',
-        '#tag' => 'button',
-        '#value' => new TranslatableMarkup('Girar página 90 graus'),
-        '#attributes' => [
-          'type' => 'button',
-          'data-aculta-pdf-control' => 'rotate',
-          'aria-label' => new TranslatableMarkup('Girar página 90 graus'),
+        '#type' => 'aculta_portal_button',
+        '#props' => [
+          'text' => new TranslatableMarkup('Girar página 90 graus'),
+          'variant' => 'ghost',
         ],
+        '#attributes' => ['data-aculta-pdf-control' => 'rotate'],
       ],
       'fullscreen' => [
-        '#type' => 'html_tag',
-        '#tag' => 'button',
-        '#value' => new TranslatableMarkup('Tela cheia'),
+        '#type' => 'aculta_portal_button',
+        '#props' => [
+          'text' => new TranslatableMarkup('Tela cheia'),
+          'aria_label' => new TranslatableMarkup('Abrir leitor em tela cheia'),
+          'variant' => 'ghost',
+        ],
         '#attributes' => [
-          'type' => 'button',
           'data-aculta-pdf-control' => 'fullscreen',
-          'aria-label' => new TranslatableMarkup('Abrir leitor em tela cheia'),
           'aria-pressed' => 'false',
         ],
       ],
@@ -363,33 +355,30 @@ final class PdfViewerBuilder implements PdfViewerBuilderInterface {
         ],
       ],
       'submit' => [
-        '#type' => 'html_tag',
-        '#tag' => 'button',
-        '#value' => new TranslatableMarkup('Buscar'),
-        '#attributes' => [
-          'type' => 'button',
-          'data-aculta-pdf-control' => 'search-submit',
+        '#type' => 'aculta_portal_button',
+        '#props' => [
+          'text' => new TranslatableMarkup('Buscar'),
+          'variant' => 'secondary',
         ],
+        '#attributes' => ['data-aculta-pdf-control' => 'search-submit'],
       ],
       'previous' => [
-        '#type' => 'html_tag',
-        '#tag' => 'button',
-        '#value' => new TranslatableMarkup('Resultado anterior'),
-        '#attributes' => [
-          'type' => 'button',
-          'data-aculta-pdf-control' => 'search-previous',
-          'disabled' => 'disabled',
+        '#type' => 'aculta_portal_button',
+        '#props' => [
+          'text' => new TranslatableMarkup('Resultado anterior'),
+          'variant' => 'ghost',
+          'disabled' => TRUE,
         ],
+        '#attributes' => ['data-aculta-pdf-control' => 'search-previous'],
       ],
       'next' => [
-        '#type' => 'html_tag',
-        '#tag' => 'button',
-        '#value' => new TranslatableMarkup('Próximo resultado'),
-        '#attributes' => [
-          'type' => 'button',
-          'data-aculta-pdf-control' => 'search-next',
-          'disabled' => 'disabled',
+        '#type' => 'aculta_portal_button',
+        '#props' => [
+          'text' => new TranslatableMarkup('Próximo resultado'),
+          'variant' => 'ghost',
+          'disabled' => TRUE,
         ],
+        '#attributes' => ['data-aculta-pdf-control' => 'search-next'],
       ],
       'status' => [
         '#type' => 'html_tag',

@@ -26,7 +26,7 @@ final class MelhorEnvioOriginForm extends ConfigFormBase {
   public function __construct(
     ConfigFactoryInterface $config_factory,
     TypedConfigManagerInterface $typed_config_manager,
-    private readonly CepLookupInterface $cep,
+    protected readonly CepLookupInterface $cep,
   ) {
     parent::__construct($config_factory, $typed_config_manager);
   }

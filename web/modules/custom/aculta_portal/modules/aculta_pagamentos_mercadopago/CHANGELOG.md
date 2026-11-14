@@ -1,3 +1,28 @@
+## 0.1.0-dev.84 — endurece o update dos campos de cartão
+
+- O update `10002` valida o bundle Mercado Pago e instala seus campos pelo serviço oficial de bundles do Commerce.
+- `PaymentCardFieldsUpdateKernelTest`: 1 teste / 17 assertions PASS em `aculta_simpletest`; 13 depreciações de Core/contrib.
+- O update já aplicado no Runtime continua sem mudanças de entidade/campo, updates pendentes ou divergências de Config Sync.
+
+## 0.1.0-dev.83 — instala os campos de cartão do Commerce
+
+- O update `10002` instala os campos como campos de bundle, registra os bundles e tolera uma reexecução sem recriar colunas.
+- `PaymentCardFieldsUpdateKernelTest`: 1 teste / 17 assertions PASS em `aculta_simpletest`; 13 depreciações de Core/contrib.
+- O update foi aplicado no Runtime em 2026-11-03; a verificação final não encontrou mudanças de entidade/campo nem atualizações de banco pendentes. `config:status` sem diferenças.
+- O preflight ainda informa avisos preexistentes de versão do Simple OAuth e post-updates antigos de Group; não impediram este update.
+
+## 0.1.0-dev.82 — corrige update de metadados de cartão
+
+- O update `10001` agora valida os quatro campos de cartão como definições de
+  bundle do tipo `credit_card` no Commerce. Remove a tentativa inválida de
+  instalá-los como campos base, que recebia definição nula para `card_type`.
+- Runtime confirmou as definições pelo Entity Field Manager, mas o relatório de requisitos mostrou que o schema não havia sido instalado; o update `10002` corrige essa diferença.
+
+## 0.1.0-dev.81 — instala metadados de cartão do Commerce
+
+- Update `10001` instala nos meios de pagamento os campos base `card_type`, `card_number`, `card_exp_month` e `card_exp_year` definidos pelo Commerce 3.x.
+- A tabela do Runtime não tinha meios de pagamento; o update não migra nem inventa dados de cartão.
+
 ## Revalidação 2026-11-02 — gateway e recorrência
 
 - Unit completa: 258 testes / 1.156 assertions PASS, incluindo chave idempotente estável, timeout ambíguo e reconciliação de assinatura.
@@ -156,4 +181,14 @@
 
 - `refundPayment()` só atualiza o pagamento Commerce quando a API retorna um estorno aprovado com ID positivo e `payment_id` igual ao pagamento solicitado. Respostas incompletas ou vinculadas a outro pagamento falham fechadas.
 - Regressões cobrem ausência de ID de estorno ou `payment_id`, ID inválido e pagamento divergente. Unit MP: 211 testes / 944 assertions PASS; Kernel `CheckoutProTest`: 2 testes / 91 assertions PASS (77 depreciações upstream); PHPCS Drupal/DrupalPractice e PHP lint focais PASS. A homologação de estorno sandbox continua pendente.
+
+## 0.1.0-dev.85 — corrige o harness Kernel do Checkout Pro
+
+- O Kernel inclui `text_with_summary`, dependência de schema do campo `body`
+  instalado pelo Commerce Product, para que os testes alcancem os casos do
+  gateway em vez de falhar na instalação da configuração.
+- Unit MP: 258 testes / 1.156 assertions PASS. Kernels CheckoutPro e
+  PaymentCardFieldsUpdate: 4 testes / 152 assertions PASS, com 72 depreciações
+  Core/contrib.
+- Nenhuma cobrança, preferência ou mensagem externa foi criada nesta rodada.
 

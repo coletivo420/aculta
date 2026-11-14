@@ -29,104 +29,208 @@ dependencies:
     - field.field.block_content.aculta_institution.field_street_address
     - field.field.block_content.aculta_institution.field_trade_name
   module:
+    - layout_builder
     - link
     - text
+third_party_settings:
+  layout_builder:
+    enabled: true
+    allow_custom: false
+    sections:
+      -
+        layout_id: 'ui_patterns:aculta420_v2:layout_section'
+        layout_settings:
+          label: ''
+          context_mapping:
+            entity: layout_builder.entity
+          ui_patterns:
+            component_id: 'aculta420_v2:layout-section'
+            variant_id: null
+            props: {  }
+            slots: {  }
+        components:
+          1f563e9f-aaee-4746-9144-c4ab46400465:
+            uuid: 1f563e9f-aaee-4746-9144-c4ab46400465
+            region: content
+            configuration:
+              id: 'field_block:block_content:aculta_institution:field_org_name'
+              label_display: '0'
+              context_mapping:
+                entity: layout_builder.entity
+              formatter:
+                type: string
+                label: hidden
+                settings:
+                  link_to_entity: false
+                  link_rel: canonical
+                third_party_settings: {  }
+            weight: 0
+            additional: {  }
+          73821e9b-daea-4e5f-b025-8ccdebd2405f:
+            uuid: 73821e9b-daea-4e5f-b025-8ccdebd2405f
+            region: content
+            configuration:
+              id: 'field_block:block_content:aculta_institution:field_legal_nature'
+              label_display: '0'
+              context_mapping:
+                entity: layout_builder.entity
+              formatter:
+                type: string
+                label: hidden
+                settings:
+                  link_to_entity: false
+                  link_rel: canonical
+                third_party_settings: {  }
+            weight: 1
+            additional: {  }
+          111ef898-9629-4432-a6ab-d8ba2f2cff29:
+            uuid: 111ef898-9629-4432-a6ab-d8ba2f2cff29
+            region: content
+            configuration:
+              id: 'field_block:block_content:aculta_institution:field_cnpj'
+              label_display: '0'
+              context_mapping:
+                entity: layout_builder.entity
+              formatter:
+                type: string
+                label: hidden
+                settings:
+                  link_to_entity: false
+                  link_rel: canonical
+                third_party_settings: {  }
+            weight: 2
+            additional: {  }
+          db62a64b-755e-4ab8-bcee-076197bc2ddc:
+            uuid: db62a64b-755e-4ab8-bcee-076197bc2ddc
+            region: content
+            configuration:
+              id: 'field_block:block_content:aculta_institution:field_headquarters'
+              label_display: '0'
+              context_mapping:
+                entity: layout_builder.entity
+              formatter:
+                type: string
+                label: hidden
+                settings:
+                  link_to_entity: false
+                  link_rel: canonical
+                third_party_settings: {  }
+            weight: 3
+            additional: {  }
+          7155ea87-d12d-4201-a9ba-021cac91a5e3:
+            uuid: 7155ea87-d12d-4201-a9ba-021cac91a5e3
+            region: content
+            configuration:
+              id: 'field_block:block_content:aculta_institution:field_address'
+              label_display: '0'
+              context_mapping:
+                entity: layout_builder.entity
+              formatter:
+                type: basic_string
+                label: hidden
+                settings: {  }
+                third_party_settings: {  }
+            weight: 4
+            additional: {  }
+          c6547229-c275-4627-a71a-e4567348cbb0:
+            uuid: c6547229-c275-4627-a71a-e4567348cbb0
+            region: content
+            configuration:
+              id: 'field_block:block_content:aculta_institution:field_email'
+              label_display: '0'
+              context_mapping:
+                entity: layout_builder.entity
+              formatter:
+                type: email_mailto
+                label: hidden
+                settings: {  }
+                third_party_settings: {  }
+            weight: 5
+            additional: {  }
+          b13ac6b9-bf75-457e-bb6b-2960a9671afc:
+            uuid: b13ac6b9-bf75-457e-bb6b-2960a9671afc
+            region: content
+            configuration:
+              id: 'field_block:block_content:aculta_institution:field_phone'
+              label_display: '0'
+              context_mapping:
+                entity: layout_builder.entity
+              formatter:
+                type: string
+                label: hidden
+                settings:
+                  link_to_entity: false
+                  link_rel: canonical
+                third_party_settings: {  }
+            weight: 6
+            additional: {  }
+          978299e3-50ef-4b98-938a-7f83b480bdd0:
+            uuid: 978299e3-50ef-4b98-938a-7f83b480bdd0
+            region: content
+            configuration:
+              id: 'field_block:block_content:aculta_institution:field_site'
+              label_display: '0'
+              context_mapping:
+                entity: layout_builder.entity
+              formatter:
+                type: link
+                label: hidden
+                settings:
+                  trim_length: 80
+                  url_only: false
+                  url_plain: false
+                  rel: ''
+                  target: ''
+                third_party_settings: {  }
+            weight: 7
+            additional: {  }
+          cda834f9-8903-474d-bbba-ed72bfbcac5c:
+            uuid: cda834f9-8903-474d-bbba-ed72bfbcac5c
+            region: content
+            configuration:
+              id: 'field_block:block_content:aculta_institution:field_governance'
+              label_display: '0'
+              context_mapping:
+                entity: layout_builder.entity
+              formatter:
+                type: text_default
+                label: hidden
+                settings: {  }
+                third_party_settings: {  }
+            weight: 8
+            additional: {  }
+        third_party_settings: {  }
 id: block_content.aculta_institution.full
 targetEntityType: block_content
 bundle: aculta_institution
 mode: full
-content:
-  field_address:
-    type: basic_string
-    label: hidden
-    settings: {  }
-    third_party_settings: {  }
-    weight: 5
-    region: content
-  field_cnpj:
-    type: string
-    label: hidden
-    settings:
-      link_to_entity: false
-      link_rel: canonical
-    third_party_settings: {  }
-    weight: 3
-    region: content
-  field_email:
-    type: email_mailto
-    label: hidden
-    settings: {  }
-    third_party_settings: {  }
-    weight: 6
-    region: content
-  field_governance:
-    type: text_default
-    label: hidden
-    settings: {  }
-    third_party_settings: {  }
-    weight: 9
-    region: content
-  field_headquarters:
-    type: string
-    label: hidden
-    settings:
-      link_to_entity: false
-      link_rel: canonical
-    third_party_settings: {  }
-    weight: 4
-    region: content
-  field_legal_nature:
-    type: string
-    label: hidden
-    settings:
-      link_to_entity: false
-      link_rel: canonical
-    third_party_settings: {  }
-    weight: 2
-    region: content
-  field_org_name:
-    type: string
-    label: hidden
-    settings:
-      link_to_entity: false
-      link_rel: canonical
-    third_party_settings: {  }
-    weight: 0
-    region: content
-  field_phone:
-    type: string
-    label: hidden
-    settings:
-      link_to_entity: false
-      link_rel: canonical
-    third_party_settings: {  }
-    weight: 7
-    region: content
-  field_site:
-    type: link
-    label: hidden
-    settings:
-      trim_length: 80
-      url_only: false
-      url_plain: false
-      rel: ''
-      target: ''
-    third_party_settings: {  }
-    weight: 8
-    region: content
+content: {  }
 hidden:
+  entity_print_view_epub: true
+  entity_print_view_pdf: true
+  entity_print_view_word_docx: true
+  field_address: true
   field_address_region: true
+  field_cnpj: true
   field_country: true
+  field_email: true
+  field_governance: true
+  field_headquarters: true
   field_legal_code: true
+  field_legal_nature: true
   field_locality: true
   field_main_activity: true
   field_nonprofit_description: true
   field_opening_date: true
   field_org_description: true
+  field_org_name: true
+  field_phone: true
   field_postal_code: true
   field_registration_status: true
   field_schema_phone: true
   field_secondary_activity: true
+  field_site: true
   field_street_address: true
   field_trade_name: true
   langcode: true
+  search_api_excerpt: true

@@ -1,6 +1,7 @@
 <?php
 
-// Gate anti-regressão: caminhos internos de raiz devem responder 404 (sem 301), e a política deve estar ligada ao assinante.
+// Gate anti-regressão: caminhos internos de raiz devem responder 404
+// (sem 301), e a política deve estar ligada ao assinante.
 // Uso: php scripts/validate-domain-front-paths.php [--live]
 
 declare(strict_types=1);
@@ -13,8 +14,8 @@ $check = static function (bool $cond, string $msg) use (&$falhas, &$ok): void {
 };
 
 $politica = $raiz . '/web/modules/custom/aculta_portal/src/Domain/FrontPathPolicy.php';
-$assinante = $raiz . '/web/modules/custom/aculta_portal/src/EventSubscriber/DomainPurposeRequestSubscriber.php';
-$processador = $raiz . '/web/modules/custom/aculta_portal/src/PathProcessor/PurposeFrontPathProcessor.php';
+$assinante = $raiz . '/web/modules/custom/aculta_portal/src/EventSubscriber/DomainSiteRequestSubscriber.php';
+$mapaSuperficies = $raiz . '/web/modules/custom/aculta_portal/src/Domain/DomainSurfaceMap.php';
 $doc = $raiz . '/docs/portal/DOMAIN-FRONT-PATHS.md';
 
 $check(is_file($politica), 'FrontPathPolicy existe');
@@ -29,9 +30,12 @@ $check(str_contains($textoAssinante, 'throw new NotFoundHttpException()'), 'assi
 $quantos301 = substr_count($textoAssinante, 'HTTP_MOVED_PERMANENTLY');
 $check($quantos301 === 1, "assinante tem somente o 301 de checkout funcional pendente de auditoria; encontrado: $quantos301");
 
-// Mapa de caminhos internos: documento e código devem listar os mesmos caminhos.
-$textoProcessador = is_file($processador) ? file_get_contents($processador) : '';
-preg_match_all("/'([a-z_]+)' => '(\/[a-z0-9\/-]+)'/", $textoProcessador, $m, PREG_SET_ORDER);
+// Mapa de caminhos internos: documento e código devem listar os mesmos
+// caminhos.
+$textoMapa = is_file($mapaSuperficies) ? file_get_contents($mapaSuperficies) : '';
+preg_match('/public const FRONT_PATHS = \[(.*?)\n  \];/s', $textoMapa, $frontPaths);
+$textoFrontPaths = $frontPaths[1] ?? '';
+preg_match_all("/'([a-z_]+)' => '(\/[a-z0-9\/-]+)'/", $textoFrontPaths, $m, PREG_SET_ORDER);
 $mapa = [];
 foreach ($m as $linha) {
   $mapa[$linha[1]] = $linha[2];
@@ -42,7 +46,8 @@ foreach ($mapa as $purpose => $caminho) {
 }
 $check(count($mapa) >= 6, 'mapa de raiz tem as seis finalidades');
 
-// Endereços de produção não podem voltar nas sobreposições de metadados por domínio (canonical e og:url usam o token [site:url]).
+// Endereços de produção não podem voltar nas sobreposições de metadados
+// por domínio (canonical e og:url usam o token [site:url]).
 $sobreposicoes = glob($raiz . '/config/sync/domain*/metatag.metatag_defaults.front.yml') ?: [];
 foreach ($sobreposicoes as $arquivo) {
   $texto = file_get_contents($arquivo) ?: '';

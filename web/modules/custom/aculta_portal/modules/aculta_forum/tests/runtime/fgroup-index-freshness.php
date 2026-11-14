@@ -21,7 +21,7 @@ const FGROUP_PREFIX = 'fgroup_teste_';
 
 $entity_type_manager = \Drupal::entityTypeManager();
 $index = Index::load('aculta_forum');
-$purpose = \Drupal::service('aculta_portal.domain_purpose');
+$purpose = \Drupal::service('aculta_portal.domain_site');
 $topic_ids = $entity_type_manager->getStorage('node')->getQuery()
   ->accessCheck(FALSE)
   ->condition('type', 'aculta_forum_topic')
@@ -36,7 +36,7 @@ $member = reset($users);
 $accounts = ['anonimo' => new AnonymousUserSession(), 'ativo_membro' => $member];
 $visible = static function () use ($index, $purpose, $accounts): array {
   $result = [];
-  $purpose->runInPurpose('forum', static function () use ($index, $accounts, &$result): void {
+  $purpose->runInSite('forum', static function () use ($index, $accounts, &$result): void {
     foreach ($accounts as $label => $account) {
       $query = $index->query();
       $query->keys('fgroup');

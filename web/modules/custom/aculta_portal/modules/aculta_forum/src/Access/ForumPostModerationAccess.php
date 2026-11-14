@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_forum\Access;
 
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\aculta_forum\Entity\ForumPost;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\RevisionableStorageInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\node\NodeInterface;
 
@@ -19,14 +20,14 @@ final class ForumPostModerationAccess {
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly DomainPurposeManager $domainPurposeManager,
+    private readonly DomainSiteManager $siteManager,
   ) {}
 
   /**
    * Restricts the moderation queue to the main administrative purpose.
    */
   public function queueAccess(): AccessResultInterface {
-    return AccessResult::allowedIf($this->domainPurposeManager->getCurrentPurpose() === 'main')
+    return AccessResult::allowedIf($this->siteManager->getCurrentSiteKey()?->value === 'main')
       ->addCacheContexts(['domain', 'user.permissions']);
   }
 
@@ -34,12 +35,16 @@ final class ForumPostModerationAccess {
    * Checks access to one exact pending review revision on the main purpose.
    */
   public function reviewRevision(AccountInterface $account, string $revision_id): AccessResultInterface {
-    $post = $this->entityTypeManager->getStorage('aculta_forum_post')->loadRevision($revision_id);
-    if ($post === NULL) {
+    $storage = $this->entityTypeManager->getStorage('aculta_forum_post');
+    if (!$storage instanceof RevisionableStorageInterface) {
+      return AccessResult::forbidden()->addCacheContexts(['domain', 'user.permissions']);
+    }
+    $post = $storage->loadRevision($revision_id);
+    if (!$post instanceof ForumPost) {
       return AccessResult::forbidden()->addCacheContexts(['domain', 'user.permissions']);
     }
 
-    $context = $this->domainPurposeManager->getCurrentPurpose() === 'main'
+    $context = $this->siteManager->getCurrentSiteKey()?->value === 'main'
       ? AccessResult::allowed()
       : AccessResult::forbidden();
     $state = $post->hasField('moderation_state') && !$post->get('moderation_state')->isEmpty()
@@ -51,7 +56,7 @@ final class ForumPostModerationAccess {
     $topicDomainPurpose = $topic instanceof NodeInterface
       && $topic->hasField('field_domain_source')
       && !$topic->get('field_domain_source')->isEmpty()
-      ? $this->domainPurposeManager->getPurposeForDomainId((string) $topic->get('field_domain_source')->target_id)
+      ? $this->siteManager->getSiteKeyValueForDomainId((string) $topic->get('field_domain_source')->target_id)
       : NULL;
     $topicAccess = $topic instanceof NodeInterface
       && $topic->bundle() === 'aculta_forum_topic'
@@ -76,7 +81,7 @@ final class ForumPostModerationAccess {
    * Checks access to the revision history of a Forum post.
    */
   public function revisionHistory(AccountInterface $account, ForumPost $aculta_forum_post): AccessResultInterface {
-    $context = $this->domainPurposeManager->getCurrentPurpose() === 'main'
+    $context = $this->siteManager->getCurrentSiteKey()?->value === 'main'
       ? AccessResult::allowed()
       : AccessResult::forbidden();
     $topic = $aculta_forum_post->hasField('topic') ? $aculta_forum_post->get('topic')->entity : NULL;
@@ -85,7 +90,7 @@ final class ForumPostModerationAccess {
       && $topic->isPublished()
       && $topic->hasField('field_domain_source')
       && !$topic->get('field_domain_source')->isEmpty()
-      ? $this->domainPurposeManager->getPurposeForDomainId((string) $topic->get('field_domain_source')->target_id)
+      ? $this->siteManager->getSiteKeyValueForDomainId((string) $topic->get('field_domain_source')->target_id)
       : NULL;
     $topicAccess = $topicPurpose === 'forum'
       ? $topic->access('view', $account, TRUE)
@@ -116,6 +121,10 @@ final class ForumPostModerationAccess {
     }
 
     $storage = $this->entityTypeManager->getStorage('aculta_forum_post');
+    if (!$storage instanceof RevisionableStorageInterface) {
+      return AccessResult::forbidden()
+        ->addCacheContexts(['domain', 'user', 'user.permissions', 'url.path']);
+    }
     $left = $storage->loadRevision($left_revision);
     $right = $storage->loadRevision($right_revision);
     if ($left === NULL || $right === NULL) {

@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_forum\Controller;
 
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\RevisionableStorageInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
@@ -24,7 +25,7 @@ final class ForumPostModerationQueueController extends ControllerBase {
     private readonly EntityTypeManagerInterface $forumEntityTypeManager,
     private readonly AccountProxyInterface $forumCurrentUser,
     private readonly DateFormatterInterface $dateFormatter,
-    private readonly DomainPurposeManager $domainPurposeManager,
+    private readonly DomainSiteManager $siteManager,
   ) {}
 
   /**
@@ -42,9 +43,11 @@ final class ForumPostModerationQueueController extends ControllerBase {
       ->sort('content_entity_revision_id', 'DESC')
       ->pager(self::ITEMS_PER_PAGE)
       ->execute();
-    $revisionIds = array_column($result, 'content_entity_revision_id');
+    $revisionIds = $this->revisionIds($result);
     $postStorage = $this->forumEntityTypeManager->getStorage('aculta_forum_post');
-    $revisions = $revisionIds === [] ? [] : $postStorage->loadMultipleRevisions($revisionIds);
+    $revisions = $postStorage instanceof RevisionableStorageInterface && $revisionIds !== []
+      ? $postStorage->loadMultipleRevisions($revisionIds)
+      : [];
 
     $rows = [];
     $cacheability = (new CacheableMetadata())
@@ -57,6 +60,9 @@ final class ForumPostModerationQueueController extends ControllerBase {
       ])
       ->addCacheTags(['aculta_forum_post_list', 'content_moderation_state_list', 'config:system.date']);
     foreach ($revisions as $revisionId => $post) {
+      if (!$post instanceof \Drupal\aculta_forum\Entity\ForumPost) {
+        continue;
+      }
       $access = $post->access('view', $this->forumCurrentUser, TRUE);
       $cacheability->addCacheableDependency($post)->addCacheableDependency($access);
       if (!$access->isAllowed() || $post->get('moderation_state')->value !== 'review') {
@@ -69,7 +75,7 @@ final class ForumPostModerationQueueController extends ControllerBase {
         || !$topic->isPublished()
         || !$topic->hasField('field_domain_source')
         || $topic->get('field_domain_source')->isEmpty()
-        || $this->domainPurposeManager->getPurposeForDomainId((string) $topic->get('field_domain_source')->target_id) !== 'forum') {
+        || $this->siteManager->getSiteKeyValueForDomainId((string) $topic->get('field_domain_source')->target_id) !== 'forum') {
         continue;
       }
       $topicAccess = $topic->access('view', $this->forumCurrentUser, TRUE);
@@ -78,14 +84,12 @@ final class ForumPostModerationQueueController extends ControllerBase {
         continue;
       }
       $owner = $post->getOwner();
-      if ($owner !== NULL) {
-        $cacheability->addCacheableDependency($owner);
-      }
+      $cacheability->addCacheableDependency($owner);
 
       $rows[] = [
         ['data' => ['#plain_text' => (string) $post->label()]],
-        ['data' => ['#plain_text' => $topic?->label() ?? $this->t('Tópico indisponível')]],
-        ['data' => ['#plain_text' => $owner?->getDisplayName() ?? $this->t('Pessoa anônima')]],
+        ['data' => ['#plain_text' => $topic->label()]],
+        ['data' => ['#plain_text' => $owner->getDisplayName()]],
         ['data' => ['#plain_text' => $this->dateFormatter->format((int) $post->get('created')->value, 'short')]],
         [
           'data' => [
@@ -122,6 +126,26 @@ final class ForumPostModerationQueueController extends ControllerBase {
     ];
     $cacheability->applyTo($build);
     return $build;
+  }
+
+  /**
+   * Extracts revision IDs from Content Moderation aggregate-query rows.
+   *
+   * @param array $rows
+   *   Result rows returned by the aggregate entity query.
+   *
+   * @return list<string>
+   *   Revision IDs, kept as strings for RevisionableStorageInterface.
+   */
+  private function revisionIds(array $rows): array {
+    $ids = [];
+    foreach ($rows as $row) {
+      if (is_array($row) && isset($row['content_entity_revision_id'])
+        && (is_int($row['content_entity_revision_id']) || is_string($row['content_entity_revision_id']))) {
+        $ids[] = (string) $row['content_entity_revision_id'];
+      }
+    }
+    return $ids;
   }
 
 }

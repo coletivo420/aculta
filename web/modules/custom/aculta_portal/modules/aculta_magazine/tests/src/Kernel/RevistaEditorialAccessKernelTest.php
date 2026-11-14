@@ -53,7 +53,12 @@ final class RevistaEditorialAccessKernelTest extends KernelTestBase {
     'node',
     'workflows',
     'content_moderation',
-    'node_co_authors',
+    'profile',
+    'file',
+    'aculta_file_uploader',
+    'key',
+    'aculta_portal',
+    'aculta_user',
   ];
 
   /**
@@ -403,7 +408,7 @@ final class RevistaEditorialAccessKernelTest extends KernelTestBase {
    *   Co-authors to record.
    */
   private function setCoauthors(NodeInterface $node, array $coauthors): void {
-    $node->set('co_authors', array_map(
+    $node->set('aculta_coauthors', array_map(
       static fn (UserInterface $user): array => ['target_id' => (int) $user->id()],
       $coauthors,
     ));
@@ -632,11 +637,11 @@ final class RevistaEditorialAccessKernelTest extends KernelTestBase {
   public function testCoauthorsFieldAccess(): void {
     $editor = $this->account($this->editor);
     $coauthor = $this->account($this->coauthor);
-    $field = $this->editorDraft->get('co_authors');
+    $field = $this->editorDraft->get('aculta_coauthors');
     $definition = $field->getFieldDefinition();
-    self::assertTrue(node_co_authors_entity_field_access('edit', $definition, $editor, $field)->isForbidden());
+    self::assertTrue(\Drupal::service('entity_type.manager')->getAccessControlHandler('node')->fieldAccess('edit', $definition, $editor, $field)->isForbidden());
     self::assertFalse($field->access('edit', $editor));
-    self::assertFalse($this->editorDraft->get('co_authors')->access('edit', $coauthor));
+    self::assertFalse($this->editorDraft->get('aculta_coauthors')->access('edit', $coauthor));
     self::assertTrue($this->editorDraft->get('title')->access('edit', $editor));
   }
 

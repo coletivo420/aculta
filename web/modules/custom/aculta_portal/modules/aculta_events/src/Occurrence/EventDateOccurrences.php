@@ -6,6 +6,7 @@ namespace Drupal\aculta_events\Occurrence;
 
 use Drupal\aculta_calendar\Recurrence\RecurrenceExpander;
 use Drupal\aculta_events\Entity\EventDate;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 
 /**
@@ -100,6 +101,9 @@ final class EventDateOccurrences {
     $fuso = new \DateTimeZone(RecurrenceExpander::FUSO);
     $mapa = [];
     foreach ($storage->loadMultiple($ids) as $excecao) {
+      if (!$excecao instanceof ContentEntityInterface) {
+        continue;
+      }
       $original = new \DateTimeImmutable((string) $excecao->get('field_inicio_original')->value, $utc);
       $inicio = $excecao->get('field_inicio')->value ? new \DateTimeImmutable((string) $excecao->get('field_inicio')->value, $utc) : NULL;
       $fim = $excecao->get('field_fim')->value ? new \DateTimeImmutable((string) $excecao->get('field_fim')->value, $utc) : NULL;

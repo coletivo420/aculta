@@ -146,16 +146,15 @@ class SavedContentController {
     };
 
     return [
-      '#type' => 'container',
-      '#attributes' => [
-        'data-portal-ui' => 'studio-saved-content',
-      ],
-      'header' => [
-        '#type' => 'html_tag',
-        '#tag' => 'h1',
-        '#value' => $this->t('Meu espaço: salvos e recomendações'),
-        '#attributes' => ['data-portal-ui' => 'studio-page-title'],
-      ],
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:saved-content-page',
+      '#slots' => ['content' => [
+        'header' => [
+          '#type' => 'html_tag',
+          '#tag' => 'h1',
+          '#value' => $this->t('Meu espaço: salvos e recomendações'),
+          '#attributes' => ['data-portal-ui' => 'studio-page-title'],
+        ],
       'tabs' => [
         '#theme' => 'item_list',
         '#items' => $tabLinks,
@@ -178,7 +177,7 @@ class SavedContentController {
             '#attributes' => ['data-portal-ui' => 'studio-card-compact-list'],
           ],
         'pager' => $pagination,
-      ],
+      ]]],
       '#cache' => [
         'contexts' => $cacheContexts,
         'tags' => $cacheTags,
@@ -209,7 +208,7 @@ class SavedContentController {
 
       $cards[] = [
         '#type' => 'container',
-        '#attributes' => ['data-portal-ui' => 'studio-card-compact saved-item'],
+        '#attributes' => ['data-portal-ui' => 'studio-card-compact'],
         'link' => [
           '#type' => 'link',
           '#title' => $item->getTitle() ?: $this->t('Sem título'),
@@ -326,7 +325,7 @@ class SavedContentController {
 
       $cards[] = [
         '#type' => 'container',
-        '#attributes' => ['data-portal-ui' => 'studio-card-compact recommendation-item'],
+        '#attributes' => ['data-portal-ui' => 'studio-card-compact'],
         'link' => [
           '#type' => 'link',
           '#title' => $entity->label() ?? $this->t('Sem título'),

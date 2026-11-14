@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_forum\Plugin\migrate\source;
 
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\comment\CommentInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Query\QueryInterface;
@@ -38,15 +38,15 @@ final class ForumComment extends SourcePluginBase implements ContainerFactoryPlu
   /**
    * Maximum number of source Comments loaded into one batch.
    */
-  private int $batchSize;
+  protected int $batchSize;
 
   public function __construct(
     array $configuration,
     string $plugin_id,
     array $plugin_definition,
     MigrationInterface $migration,
-    private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly DomainPurposeManager $domainPurposeManager,
+    protected readonly EntityTypeManagerInterface $entityTypeManager,
+    protected readonly DomainSiteManager $siteManager,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $migration);
     $this->batchSize = (int) ($configuration['comment_batch_size'] ?? self::DEFAULT_BATCH_SIZE);
@@ -65,7 +65,7 @@ final class ForumComment extends SourcePluginBase implements ContainerFactoryPlu
       $plugin_definition,
       $migration,
       $container->get('entity_type.manager'),
-      $container->get('aculta_portal.domain_purpose'),
+      $container->get('aculta_portal.domain_site'),
     );
   }
 
@@ -95,11 +95,8 @@ final class ForumComment extends SourcePluginBase implements ContainerFactoryPlu
       $last_comment_id = (int) end($comment_ids);
 
       foreach ($storage->loadMultiple($comment_ids) as $comment) {
-        if (!$comment instanceof CommentInterface) {
-          continue;
-        }
         $topic = $comment->getCommentedEntity();
-        if (!$this->isEligibleTopic($topic)) {
+        if (!$topic instanceof NodeInterface || !$this->isEligibleTopic($topic)) {
           continue;
         }
         yield $this->toSourceRow($comment, $topic);
@@ -172,7 +169,7 @@ final class ForumComment extends SourcePluginBase implements ContainerFactoryPlu
       || !$topic->hasField('field_domain_source') || $topic->get('field_domain_source')->isEmpty()) {
       return FALSE;
     }
-    return $this->domainPurposeManager->getPurposeForDomainId((string) $topic->get('field_domain_source')->target_id) === 'forum';
+    return $this->siteManager->getSiteKeyValueForDomainId((string) $topic->get('field_domain_source')->target_id) === 'forum';
   }
 
   /**
@@ -185,11 +182,10 @@ final class ForumComment extends SourcePluginBase implements ContainerFactoryPlu
     $translations = [];
     foreach ($comment->getTranslationLanguages() as $language) {
       $translation = $comment->getTranslation($language->getId());
-      $body = $translation->get('comment_body')->first();
       $translations[$language->getId()] = [
-        'subject' => (string) ($translation->get('subject')->value ?? ''),
-        'body_value' => (string) ($body?->value ?? ''),
-        'body_format' => (string) ($body?->format ?? ''),
+        'subject' => (string) $translation->get('subject')->value,
+        'body_value' => (string) $translation->get('comment_body')->value,
+        'body_format' => (string) $translation->get('comment_body')->format,
         'published' => (int) $translation->isPublished(),
       ];
     }

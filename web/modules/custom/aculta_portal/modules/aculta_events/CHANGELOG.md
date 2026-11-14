@@ -1,4 +1,44 @@
+## Não versionado — biblioteca events-portal-ui (2026-11-12)
+
+- Nova biblioteca `aculta_events/events-portal-ui` (`aculta_events.libraries.yml`, `css/events-portal-ui.css`) com 9 regras movidas do tema para estilos de Locais, widgets de Local e Organização e painel administrativo.
+- Anexada por `#attached` em: `LocationListController`, `LocationPageController`, `EventAdminOverviewController`, `EventOrganizationAdminController`, `EventLocationModalWidget` e `EventOrganizationModalWidget`.
+- Estado: PHP sem erro de sintaxe; gates de CSS do tema PASS. Captura visual e Kernel: DEFERRED.
+- Observação: os widgets de Local e Organização ainda usam `core/drupal.dialog.ajax` (Drupal AJAX legado). Migração para HTMX fica como pendência separada (ADR-050).
+
 > Nota de 2026-11-02: os caminhos `/studio/we-sativa`, `/studio/green-stash`, `/wesativa`, `/greenstash`, `/wiki/busca`, `/wiki/verbetes` e `/wiki/propostas` citados abaixo foram substituídos por `/we-sativa`, `/green-stash`, `/busca-wiki`, `/verbetes` e `/propostas`. Registro histórico preservado; veja a retificação no ADR-038.
+
+## Não versionado — mapa: Local sem coordenadas volta a geocodificar (2026-11-07)
+
+- `EventLocation::preSave()` geocodifica também na atualização quando o Local
+  não tem coordenadas (antes só na criação ou mudança de endereço). Causa dos
+  marcadores ausentes em `/mapa` (diagnóstico em `aculta_maps/docs/DIAGNOSTICO-2026-11-07.md`).
+- `/mapa`: ordem mobile-first mapa → política → lista; docblock do `MapController`
+  corrigido (OSM/Leaflet sem chave é o padrão).
+- Kernel `MapControllerKernelTest`: 4 testes/77 assertions PASS, com geocodificador falso.
+
+## Não versionado — migração do cartão de catálogo para SDC (2026-11-10)
+
+- O cartão público usa o SDC existente `card-cultural` por template override
+  pertencente ao tema; o módulo Events deixou de manter markup visual próprio.
+- Props de cancelamento tipadas preservam texto de status acessível. A View,
+  seleção por ACL, dados, filtros e cache permanecem no módulo owner.
+- Kernel focal 7/7 passou; render real no tema ativo e browser seguem DEFERRED
+  até o cutover autorizado.
+
+## 0.2.0-dev.10 — listagem pública com card-cultural (2026-11-06)
+
+- Criada a View `eventos_publicos` para a raiz do purpose Eventos. O catálogo
+  continua selecionando Eventos e ocorrências, revalidando acesso por entidade
+  e aplicando filtros e janela de cache; a View só renderiza e ordena os IDs
+  preparados na requisição.
+- `EventCatalogue` agora inclui a data de origem da próxima ocorrência; a View
+  usa handlers próprios e um hook de Views data no módulo owner. O tema V2
+  compõe `card-cultural` pelo hook de tema, mantendo fallback neutro do módulo.
+- Kernel focal: 1 teste/23 assertions PASS. Captura Firefox ESR da raiz e de um
+  detalhe em claro/escuro, 320/1440 px, foco e overflow: `$SUITE_OUT/layouts-purpose-events-cards-20261106-r2/`.
+- Suíte Kernel Events: 155 testes/3.616 assertions PASS, com 33 depreciações
+  Core/contrib. A listagem não tinha baseline anterior; não há comparação antes/depois
+  válida para essa página.
 
 ## Implementação pendente de validação — provider Culturas no Studio (2026-11-03)
 
@@ -511,3 +551,7 @@
   conflita na aprovação, mantém a Contribution em `submitted` e não cria outro
   Evento. Caso focal: 1 teste / 26 assertions; classe completa: 29/941, com 24
   depreciações upstream. `aculta_simpletest`, sem escrita no Runtime.
+## Escopo do bloco Próximos eventos na landing principal (2026-11-03)
+
+- A configuração `block.block.aculta420_aculta_events_upcoming` combina a visibilidade do purpose `main` com o caminho `<front>`. O bloco não aparece mais em páginas internas do domínio principal, incluindo o Perfil público. Runtime atualizado após snapshot; HTTP anônimo confirmou landing `200` com o bloco e Perfil público `200` sem ele. Sem mudança de conteúdo ou dados.
+

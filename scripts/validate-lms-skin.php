@@ -1,15 +1,21 @@
 <?php
 
+/**
+ * @file
+ */
+
 declare(strict_types=1);
 
 /**
  * Gate for the course card skin against the LMS (DT-T11).
  *
  * - The theme must not define or consume the LMS internal --color-* variables.
- * - Every LMS class the skin selects must exist in the LMS course card markup or stylesheet.
- * - The LMS version is pinned. An upgrade fails this gate until the skin and the reference
- *   capture of the catalog are reviewed; then the pin moves with the review.
- * Run: php scripts/validate-lms-skin.php
+ * - Every LMS class the skin selects must exist in the LMS course card
+ *   markup or stylesheet.
+ * - The LMS version is pinned. An upgrade fails this gate until the skin
+ *   and the reference capture of the catalog are reviewed; then the pin
+ *   moves with the review.
+ * Run: php scripts/validate-lms-skin.php.
  */
 
 const LMS_REVIEWED_VERSION = '1.2.4';
@@ -35,7 +41,8 @@ if (preg_match('/--color-[a-z0-9-]+/', $source) === 1) {
   $failures[] = 'course-card.css uses LMS internal --color-* variables (DT-T11); set the properties with ACULTA tokens.';
 }
 
-// Each LMS class the skin selects must exist in the LMS course card, so a renamed class fails here.
+// Each LMS class the skin selects must exist in the LMS course card, so
+// a renamed class fails here.
 $lmsMarkup = (string) file_get_contents($lmsDir . '/components/course_card/course_card.twig')
   . (string) file_get_contents($lmsDir . '/components/course_card/course_card.css');
 preg_match_all('/\.(lms-[a-z0-9_-]+)/', $source, $matches);

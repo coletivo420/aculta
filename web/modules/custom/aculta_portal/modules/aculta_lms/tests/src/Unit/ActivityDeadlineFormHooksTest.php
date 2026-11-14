@@ -13,9 +13,15 @@ use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 
+/**
+ * Testa os hooks de prazo no formulário de atividade.
+ */
 #[CoversClass(ActivityDeadlineFormHooks::class)]
 final class ActivityDeadlineFormHooksTest extends UnitTestCase {
 
+  /**
+   * Confirma que um formulário que não é de resposta não é alterado.
+   */
   public function testNonAnswerFormIsLeftUnchanged(): void {
     $form = ['existing' => ['#plain_text' => 'answer form']];
     $state = $this->createMock(FormStateInterface::class);

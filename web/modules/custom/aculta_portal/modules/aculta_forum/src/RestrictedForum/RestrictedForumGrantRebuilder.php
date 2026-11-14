@@ -86,7 +86,7 @@ final class RestrictedForumGrantRebuilder {
         return;
       }
       $node_datasource = $index->getDatasource('entity:node');
-      $topic_item_id = $node_datasource?->getItemId($topic->getTypedData());
+      $topic_item_id = $node_datasource->getItemId($topic->getTypedData());
       if (!is_string($topic_item_id) || $topic_item_id === '') {
         return;
       }
@@ -98,7 +98,7 @@ final class RestrictedForumGrantRebuilder {
       $post_datasource = $index->getDatasource('entity:aculta_forum_post');
       $post_item_ids = [];
       foreach ($post_storage->loadMultiple($post_ids) as $post) {
-        $post_item_id = $post_datasource?->getItemId($post->getTypedData());
+        $post_item_id = $post_datasource->getItemId($post->getTypedData());
         if (is_string($post_item_id) && $post_item_id !== '') {
           $post_item_ids[] = $post_item_id;
         }

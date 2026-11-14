@@ -19,9 +19,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 final class ImageQuarantineForm extends FormBase {
 
   public function __construct(
-    private readonly ImageAudit $audit,
-    private readonly ImageQuarantine $quarantine,
-    private readonly EntityTypeManagerInterface $entityTypeManagerService,
+    protected readonly ImageAudit $audit,
+    protected readonly ImageQuarantine $quarantine,
+    protected readonly EntityTypeManagerInterface $entityTypeManagerService,
   ) {}
 
   /**

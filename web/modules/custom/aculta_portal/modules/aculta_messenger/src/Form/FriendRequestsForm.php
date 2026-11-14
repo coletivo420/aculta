@@ -22,9 +22,9 @@ final class FriendRequestsForm extends FormBase {
    * Constructs the incoming friendship requests form.
    */
   public function __construct(
-    private readonly FriendshipManagerInterface $friendshipManager,
-    private readonly EntityTypeManagerInterface $entityManager,
-    private readonly AccountProxyInterface $currentAccount,
+    protected readonly FriendshipManagerInterface $friendshipManager,
+    protected readonly EntityTypeManagerInterface $entityManager,
+    protected readonly AccountProxyInterface $currentAccount,
   ) {}
 
   /**

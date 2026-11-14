@@ -27,6 +27,8 @@ As seis MCP Tool Configurations têm defaults em `config/defaults/` e são criad
 
 O endpoint HTTP está disponível somente no domínio principal (`main`), em `/integracoes/mcp`; nos subdomínios, responde 404. Todo o endpoint exige autenticação e autorização. Para acesso externo, o servidor usa OAuth 2.1 Authorization Code com PKCE `S256`, identidade individual Simple OAuth e o escopo `aculta_mcp_access`. O escopo concede somente a permissão Drupal `access mcp server`; cada conta também precisa ter essa permissão.
 
+O checkout Composer de `drupal/simple_oauth` não inclui o campo `version` no `.info.yml`, embora o módulo OAuth 2.1 declare uma dependência de versão. O hook `system_info_alter` deste módulo fornece a versão do pacote travada pelo Composer para a descoberta Drupal. Isso corrige a verificação falsa de dependência não resolvida e não altera a compatibilidade de Core declarada pelo upstream.
+
 Administradores selecionam as contas autorizadas em **Serviços web → MCP Server → Usuários autorizados**, rota `/integracoes/mcp/acesso`. A seleção atribui a role dedicada `mcp_external`; contas novas não recebem acesso automaticamente. Usuários internos com a permissão Drupal podem usar uma sessão `cookie`, sem OAuth. O transporte local `stdio` continua sujeito às permissões Drupal da conta que executa o processo.
 
 Cada cliente OAuth deve ser pré-cadastrado como Consumer Drupal, com os grant types `authorization_code` e `refresh_token`, escopo `aculta_mcp_access`, PKCE obrigatório e redirect URIs exatos. O MCP Server OAuth depende de Simple OAuth Client Registration, mas o ACULTA remove as rotas públicas `/oauth/register` e `/oauth/register/{client_id}`; o metadata não anuncia registro dinâmico.

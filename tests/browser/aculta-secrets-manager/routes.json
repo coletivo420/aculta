@@ -1,0 +1,9 @@
+{
+  "front": "aculta-secrets-manager",
+  "purpose": "main",
+  "origin_env": "ACULTA_SITE_ORIGIN",
+  "source": "tests/browser/aculta-secrets-manager/README.md",
+  "auth": { "account": "teste_administrativo" },
+  "public_routes": [],
+  "notes": "Sem rota pública. Gerenciador de segredos é administrativo e exige sessão. Cobertura fica no script da frente."
+}

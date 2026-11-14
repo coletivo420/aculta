@@ -10,7 +10,7 @@ Base verificada: `origin/main` em `58ae82b` (PR #238; merge em 2026-10-13 UTC). 
 
 - `aculta_portal`: `0.3.0-dev.28`. A PR #238 ajusta o acesso ao armazenamento de documento e os formulários de Outros Dados; preserva o contrato: Portal controla funcionalidade e dados, `aculta_id_cpf` cifra/valida/persiste, ACULTA420 apresenta.
 - `aculta_id_cpf`: `0.2.0-dev.2`, opt-in; Runtime segue **DEFERRED**. Sem provisionamento das chaves/campos requeridos, gravação não fica habilitada.
-- `aculta420`: `0.6.0-dev.15`. A PR #239 mantém fixa somente a barra multidomínio. O cabeçalho de domínio rola com a página. A verificação em Chrome no servidor de testes, desktop e mobile, está registrada no [CHANGELOG do tema](../../web/themes/custom/aculta420/CHANGELOG.md).
+- `aculta420`: `0.6.0-dev.15`. A PR #239 mantém fixa somente a barra multidomínio. O cabeçalho de domínio rola com a página. A verificação em Chrome no servidor de desenvolvimento, desktop e mobile, está registrada no [CHANGELOG do tema](../../web/themes/custom/aculta420/CHANGELOG.md).
 - Fronteira módulo/tema: gate atual PASS, 684 verificações e zero classes de design no módulo. Não houve alteração de tema nesta revisão documental.
 
 ## Verificações locais desta revisão
@@ -19,7 +19,7 @@ Base verificada: `origin/main` em `58ae82b` (PR #238; merge em 2026-10-13 UTC). 
 | --- | --- |
 | `vendor/bin/phpunit -c web/core/phpunit.xml.dist web/modules/custom/aculta_portal/tests/src/Unit` | PASS — 63 testes, 118 asserções |
 | `vendor/bin/phpunit -c web/core/phpunit.xml.dist web/modules/custom/aculta_portal/modules/aculta_id_cpf/tests` | PASS — 47 testes, 107 asserções |
-| `php scripts/validate-aculta-portal-drupal11.php` | PASS — 659 checks |
+| `php scripts/validate-aculta-portal-drupal12.php` | PASS — 659 checks |
 | `php scripts/validate-module-theme-boundary.php` | PASS — 684 verificações |
 | `php scripts/validate-environment-addresses.php` | PASS — 1316 arquivos |
 | `php vendor/drush/drush/drush.php scr scripts/validate-aculta420-foundation.php` | FAIL por DT-T19: durações literais fora de `tokens.css` |

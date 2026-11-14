@@ -1,0 +1,632 @@
+/* Ported from ACULTA420's Institution Bar, with V2 semantic tokens.
+   Cores da barra são variáveis do próprio componente (modelo "Barra institucional · ACULTA420 V2",
+   13 nov 2026), para não alterar --color-surface-institution nos demais consumidores. */
+.aculta-institution-bar {
+  --institution-bar-surface: #e7eedc;
+  /* Cor dos ícones utilitários (ex.: menu da conta, que é um SDC próprio). */
+  --utility-icon-color: var(--institution-bar-icon);
+  --institution-bar-text: #0c3c29;
+  --institution-bar-border: rgb(12 60 41 / .16);
+  --institution-bar-badge-surface: #f2ca36;
+  --institution-bar-badge-text: #0c3c29;
+  --institution-bar-stripe-brand: #9ac15a;
+  --institution-bar-stripe-highlight: #f2ca36;
+  --institution-bar-stripe-alert: var(--palette-red);
+
+  position: fixed;
+  /* The shell occupies the page column; Gin keeps its own left navigation rail. */
+  z-index: 2000;
+  color: var(--institution-bar-text);
+  border-block-end: 1px solid var(--institution-bar-border);
+  background: var(--institution-bar-surface);
+  font: 500 var(--font-size-sm)/1.4 var(--font-family-base);
+  inset-block-start: var(--aculta-institution-bar-offset, 0);
+  inset-inline: var(--aculta-admin-sidebar-inline-size, 0) 0;
+}
+
+/* The core toolbar's vertical admin rail also has a fixed top control bar. */
+html body:has(.aculta-institution-bar) .toolbar-oriented .toolbar-bar {
+  inset-block-start: var(--aculta-institution-bar-height, 2.25rem);
+}
+
+html body:has(.aculta-institution-bar) .toolbar .toolbar-tray-vertical {
+  inset-block-start: calc(var(--aculta-institution-bar-height, 2.25rem) + var(--aculta-admin-toolbar-bar-height, 2.4375rem));
+  block-size: calc(100vh - var(--aculta-institution-bar-height, 2.25rem) - var(--aculta-admin-toolbar-bar-height, 2.4375rem));
+  block-size: calc(100dvh - var(--aculta-institution-bar-height, 2.25rem) - var(--aculta-admin-toolbar-bar-height, 2.4375rem));
+}
+
+/* Gin switches to a full-width mobile rail: reserve the top row for the
+   Institution Bar, then start the administrative rail beneath it. */
+@media (max-width: 39.999rem) {
+  .aculta-institution-bar {
+    inset-inline: 0;
+  }
+
+  html body:has(.aculta-institution-bar) #admin-toolbar.admin-toolbar {
+    inset-block-start: calc(var(--aculta-institution-bar-offset, 0px) + var(--aculta-institution-bar-height, 2.25rem));
+    block-size: calc(100vh - var(--aculta-institution-bar-offset, 0px) - var(--aculta-institution-bar-height, 2.25rem));
+    block-size: calc(100dvh - var(--aculta-institution-bar-offset, 0px) - var(--aculta-institution-bar-height, 2.25rem));
+  }
+}
+
+/* Barra institucional centralizada no mesmo container do conteúdo, em todos os domínios e subdomínios. */
+.aculta-institution-bar__inner {
+  inline-size: min(100%, var(--page-content-max, 84rem));
+  margin-inline: auto;
+}
+
+.aculta-institution-bar__inner {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: space-between;
+  container-name: aculta-institution-bar;
+  container-type: inline-size;
+  gap: 0;
+  min-block-size: 2.25rem;
+  padding-inline: clamp(var(--spacing-sm), 2.25vw, var(--spacing-xl));
+}
+
+.aculta-institution-bar__brand {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  margin: 0;
+  gap: var(--spacing-xs) var(--spacing-sm);
+  min-inline-size: 0;
+  padding-block: var(--spacing-xs);
+}
+
+.aculta-institution-bar__logo {
+  block-size: auto;
+  display: block;
+  filter: var(--logo-filter);
+  inline-size: 100px;
+  max-inline-size: 100%;
+}
+
+.aculta-institution-bar__home {
+  display: inline-flex;
+  line-height: 0;
+}
+
+.aculta-institution-bar__home:focus-visible {
+  outline: 3px solid var(--color-brand-primary);
+  outline-offset: 2px;
+}
+
+.aculta-utility {
+  display: flex;
+  flex: 0 1 auto;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: flex-end;
+  margin-inline-start: auto;
+  gap: 0;
+  min-inline-size: 0;
+}
+
+.aculta-utility > * {
+  flex: 0 0 auto;
+  margin-block: 0;
+  margin-inline: 0;
+  max-inline-size: 100%;
+  min-inline-size: 2.1875rem;
+}
+
+.aculta-institution-bar .aculta-icon--xl {
+  block-size: 1.875rem;
+  inline-size: 1.875rem;
+}
+
+.aculta-institution-bar .aculta-utility-trigger {
+  block-size: 2.1875rem;
+  flex-basis: 2.1875rem;
+  inline-size: 2.1875rem;
+  min-block-size: 2.1875rem;
+  min-inline-size: 2.1875rem;
+}
+
+@container aculta-institution-bar (max-width: 18rem) {
+  .aculta-institution-bar__brand {
+    flex: 0 0 auto;
+  }
+
+  .aculta-institution-bar__inner { padding-inline: var(--spacing-xs); }
+}
+
+/* Painel do account-menu: estilos ficam em components/account-menu/account-menu.css.
+   Aqui só o destaque de "Minha conta" no domínio de conta, com texto primário (contraste 4,5:1). */
+.aculta-institution-bar--account .aculta-account-menu a[data-portal-ui="account-home"] {
+  color: var(--color-text-primary);
+  font-weight: 700;
+}
+
+.aculta-login-dialog {
+  overflow: visible;
+  margin: auto;
+  padding: 0;
+  color: var(--color-auth-dialog-text);
+  border: 0;
+  background: var(--color-auth-dialog-surface);
+  inline-size: min(27.5rem, calc(100vw - var(--spacing-base) * 2));
+  max-block-size: min(90dvh, 52rem);
+  max-inline-size: none;
+}
+
+.aculta-search-dialog {
+  overflow: visible;
+  margin: auto;
+  padding: 0;
+  color: var(--color-text-primary);
+  border: 0;
+  background: transparent;
+  inline-size: min(42rem, calc(100vw - var(--spacing-base) * 2));
+  max-block-size: min(90dvh, 52rem);
+  max-inline-size: none;
+}
+
+.aculta-login-dialog::backdrop,
+.aculta-search-dialog::backdrop { background: var(--color-scrim); }
+
+.aculta-search-dialog__surface {
+  overflow: auto;
+  padding: var(--spacing-base);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface-raised);
+  box-shadow: var(--shadow-lg);
+  max-block-size: min(90dvh, 52rem);
+}
+
+.aculta-search-popup { color: var(--color-text-primary); }
+
+.aculta-login-dialog__header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-block-end: var(--spacing-sm);
+  padding-block-start: var(--spacing-xs);
+  gap: var(--spacing-sm);
+}
+
+.aculta-login-dialog__header h2 {
+  position: absolute;
+  overflow: hidden;
+  white-space: nowrap;
+  block-size: 1px;
+  clip-path: inset(50%);
+  inline-size: 1px;
+}
+
+.aculta-login-dialog__close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--color-auth-dialog-text);
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  min-block-size: var(--tap-target-min);
+  min-inline-size: var(--tap-target-min);
+}
+
+.aculta-login-dialog__content { min-inline-size: 0; }
+.aculta-login-dialog__content [data-portal-ui="login-popup"] { display: grid; gap: var(--spacing-sm); }
+.aculta-login-dialog__content :is([data-drupal-selector="edit-actions"], #edit-actions) {
+  display: flex;
+  justify-content: center;
+  inline-size: 100%;
+  margin-block-start: var(--spacing-sm);
+}
+.aculta-login-dialog__content [data-portal-ui="login-popup"] label {
+  color: var(--color-on-brand);
+  font-family: var(--font-family-heading);
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+}
+.aculta-login-dialog__content .form-item { display: grid; gap: var(--spacing-xs); margin: 0; }
+.aculta-login-dialog__content .form-required::after { content: none; }
+.aculta-login-dialog__content :is(input[type="text"], input[type="email"], input[type="password"]) { padding: var(--spacing-xs) var(--spacing-sm); color: var(--color-auth-control-text); border: 1px solid var(--color-auth-control-text); border-radius: 0; background: var(--color-auth-control-surface); font: inherit; inline-size: 100%; min-block-size: var(--tap-target-min); }
+.aculta-login-dialog__content [data-drupal-selector="edit-submit"] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  margin: 0 auto;
+  padding: var(--spacing-sm) var(--spacing-base);
+  cursor: pointer;
+  transition: background-color var(--motion-fast) ease, color var(--motion-fast) ease, border-color var(--motion-fast) ease;
+  text-align: center;
+  text-decoration: none;
+  color: var(--button-primary-fg);
+  border: 2px solid var(--button-primary-bg);
+  border-radius: var(--radius-control-button, var(--radius-base));
+  background-color: var(--button-primary-bg);
+  font: inherit;
+  font-family: var(--font-family-heading);
+  font-size: var(--font-size-base, 1rem);
+  font-weight: 700;
+  line-height: 1.4;
+  inline-size: min(100%, 14rem);
+  min-block-size: var(--tap-target-min);
+}
+
+.aculta-login-dialog__content [data-drupal-selector="edit-submit"]:hover {
+  color: var(--button-primary-fg);
+  border-color: var(--button-primary-bg-hover);
+  background-color: var(--button-primary-bg-hover);
+}
+
+.aculta-login-dialog__content [data-drupal-selector="edit-submit"]:active {
+  color: var(--button-primary-fg);
+  border-color: var(--button-primary-bg-active);
+  background-color: var(--button-primary-bg-active);
+}
+
+.aculta-login-dialog__content [data-drupal-selector="edit-submit"]:focus-visible {
+  outline: 2px solid var(--button-focus-ring);
+  outline-offset: 2px;
+}
+.aculta-login-dialog__content :is(a, button, input):focus-visible { outline: 3px solid var(--color-auth-control-focus); outline-offset: 2px; }
+.aculta-login-dialog__content [data-portal-ui="login-popup-divider"] {
+  margin: var(--spacing-xs) auto;
+  border: 0;
+  border-block-start: 2px solid var(--color-surface);
+  inline-size: min(100%, 22rem);
+}
+.aculta-login-dialog__content .aculta-login-dialog__google-btn { position: relative; display: flex; align-items: center; justify-content: center; box-sizing: border-box; padding: var(--spacing-sm) var(--spacing-base); text-decoration: none; color: var(--color-auth-provider-text); border: 1px solid var(--color-border); border-radius: 3px; background: var(--color-auth-provider-surface); box-shadow: var(--shadow-sm); gap: var(--spacing-md); inline-size: min(100%, 22rem); margin-inline: auto; min-block-size: 3rem; }
+.aculta-login-dialog__content .aculta-login-dialog__google-btn::before { flex: none; content: ""; background: url("../../assets/icons/brand/google.svg") center / contain no-repeat; block-size: 1.5rem; inline-size: 1.5rem; }
+.aculta-login-dialog__content .aculta-login-dialog__google-btn:is(:hover, :focus-visible) { color: var(--color-auth-provider-text); background: var(--color-auth-secondary-surface); }
+.aculta-login-dialog__content .aculta-login-dialog__google-btn :is(span, strong) { color: inherit; }
+.aculta-login-dialog__content [data-portal-ui="login-popup-links"] { display: grid; gap: var(--spacing-sm); justify-items: center; margin-block-start: var(--spacing-xs); }
+.aculta-login-dialog__content [data-portal-ui="login-popup-links"] a { text-decoration: none; }
+.aculta-login-dialog__content [data-portal-ui="login-popup-links"] a:first-of-type {
+  display: inline-flex;
+  align-items: center;
+  color: var(--color-on-brand);
+  font-family: var(--font-family-heading);
+  font-size: var(--font-size-lg);
+  min-block-size: var(--tap-target-min);
+  padding-inline: var(--spacing-sm);
+}
+.aculta-login-dialog__content [data-portal-ui="login-popup-links"] :is(a:last-of-type, [data-portal-ui="button-secondary"], .button--secondary) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  padding: var(--spacing-sm) var(--spacing-base);
+  cursor: pointer;
+  transition: background-color var(--motion-fast) ease, color var(--motion-fast) ease, border-color var(--motion-fast) ease;
+  text-align: center;
+  text-decoration: none;
+  color: var(--button-secondary-fg);
+  border: 2px solid var(--button-secondary-border);
+  border-radius: var(--radius-control-button, var(--radius-base));
+  background-color: var(--button-secondary-bg);
+  font: inherit;
+  font-family: var(--font-family-heading);
+  font-size: var(--font-size-base, 1rem);
+  font-weight: 700;
+  line-height: 1.4;
+  inline-size: min(100%, 14rem);
+  min-block-size: var(--tap-target-min);
+}
+
+.aculta-login-dialog__content [data-portal-ui="login-popup-links"] :is(a:last-of-type, [data-portal-ui="button-secondary"], .button--secondary):hover {
+  color: var(--button-secondary-fg);
+  border-color: var(--button-secondary-border);
+  background-color: var(--button-secondary-bg-hover);
+}
+
+.aculta-login-dialog__content [data-portal-ui="login-popup-links"] :is(a:last-of-type, [data-portal-ui="button-secondary"], .button--secondary):active {
+  color: var(--button-secondary-fg);
+  border-color: var(--button-secondary-border);
+  background-color: var(--button-secondary-bg-active);
+}
+
+.aculta-login-dialog__content [data-portal-ui="login-popup-links"] :is(a:last-of-type, [data-portal-ui="button-secondary"], .button--secondary):focus-visible {
+  outline: 2px solid var(--button-focus-ring);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .aculta-login-dialog[open] { animation: aculta-login-enter var(--motion-base) ease-out both; }
+}
+
+@keyframes aculta-login-enter {
+  from { opacity: 0; translate: 0 .5rem; }
+  to { opacity: 1; translate: 0 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aculta-login-dialog__content [data-drupal-selector="edit-submit"],
+  .aculta-login-dialog__content [data-portal-ui="login-popup-links"] :is(a:last-of-type, [data-portal-ui="button-secondary"], .button--secondary) {
+    transition: none;
+  }
+}
+
+.aculta-utility-trigger {
+  position: relative;
+  display: inline-flex;
+  flex: 0 0 2.75rem;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  padding: 0;
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  line-height: 1;
+  min-inline-size: var(--tap-target-min);
+}
+
+.aculta-utility-trigger:hover,
+.aculta-utility-trigger:focus-visible {
+  color: inherit;
+}
+
+.aculta-utility-trigger:focus-visible {
+  outline: 3px solid var(--color-brand-primary);
+  outline-offset: 2px;
+}
+
+.aculta-utility-trigger__icon {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.875rem;
+  line-height: 1;
+}
+
+.aculta-utility-trigger__icon .aculta-icon,
+.aculta-utility-dialog__close .aculta-icon { color: currentColor; }
+
+.aculta-unread-count {
+  position: absolute;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: .15rem .35rem;
+  transform: translate(45%, -45%);
+  color: var(--color-on-brand);
+  border-radius: var(--radius-full);
+  background: var(--color-error);
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  line-height: 1;
+  inset-block-start: 0;
+  inset-inline-end: 0;
+  min-block-size: 1.25rem;
+  min-inline-size: 1.25rem;
+}
+
+.aculta-unread-count[data-count="0"] {
+  display: none;
+}
+
+.aculta-institution-bar-placeholder {
+  visibility: hidden;
+  flex: 0 0 auto;
+  pointer-events: none;
+  block-size: 2.75rem;
+}
+
+.aculta-utility-dialog {
+  position: fixed;
+  overflow: hidden;
+  width: min(26.25rem, 100vw);
+  height: 100vh;
+  height: 100dvh;
+  margin: 0;
+  padding: 0;
+  color: var(--color-text-primary);
+  border: 0;
+  background: var(--color-surface-raised);
+  box-shadow: var(--shadow-lg);
+  inset-block: 0;
+  inset-inline: auto 0;
+  max-block-size: none;
+  max-inline-size: none;
+}
+
+.aculta-utility-dialog[open] {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Esmaecimento do fundo ao abrir, igual para carrinho, avisos, mensagens e menu de conta. */
+.aculta-utility-dialog::backdrop {
+  transition: opacity var(--motion-slow) ease, overlay var(--motion-slow) allow-discrete, display var(--motion-slow) allow-discrete;
+  opacity: 1;
+  background: var(--color-scrim);
+}
+
+@starting-style {
+  .aculta-utility-dialog[open]::backdrop {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aculta-utility-dialog::backdrop {
+    transition: none;
+  }
+}
+
+.aculta-utility-dialog__header {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-sm) var(--spacing-base);
+  border-block-end: 1px solid var(--color-border);
+}
+
+.aculta-utility-dialog__title {
+  margin: 0;
+  font-family: var(--font-family-heading);
+  font-size: var(--font-size-lg);
+}
+
+.aculta-utility-dialog__close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: inherit;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  font-size: var(--font-size-lg);
+  min-block-size: var(--tap-target-min);
+  min-inline-size: var(--tap-target-min);
+}
+
+.aculta-utility-dialog :is(a, button, input, select, textarea, summary):focus-visible {
+  outline: 3px solid var(--color-brand-primary);
+  outline-offset: 2px;
+}
+
+.aculta-confirm-dialog {
+  overflow: auto;
+  margin: auto;
+  padding: var(--spacing-base);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-base);
+  background: var(--color-surface-raised);
+  box-shadow: var(--shadow-lg);
+  inline-size: min(30rem, calc(100vw - var(--spacing-base) * 2));
+  max-block-size: min(90dvh, 40rem);
+}
+
+.aculta-confirm-dialog::backdrop {
+  background: var(--color-scrim);
+}
+
+.aculta-confirm-dialog [data-aculta-dialog] p {
+  font-weight: 600;
+}
+
+.aculta-confirm-dialog [data-aculta-dialog] .form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+  justify-content: flex-end;
+}
+
+.aculta-confirm-dialog [data-aculta-dialog] .form-actions :is(button, input[type="submit"]) {
+  min-block-size: var(--tap-target-min);
+  padding: var(--spacing-sm) var(--spacing-base);
+}
+
+.aculta-utility-dialog__body {
+  display: flex;
+  overflow-y: auto;
+  flex: 1 1 auto;
+  flex-direction: column;
+  padding: var(--spacing-base);
+  gap: var(--spacing-base);
+  min-block-size: 0;
+  overscroll-behavior: contain;
+}
+
+.aculta-utility-dialog__body > :first-child { margin-block-start: 0; }
+.aculta-utility-dialog__body > :last-child { margin-block-end: 0; }
+.aculta-utility-dialog__body[aria-busy="true"] { opacity: .7; }
+
+.aculta-utility-dialog__action,
+.page a.aculta-utility-dialog__action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-sm) var(--spacing-base);
+  text-align: center;
+  text-decoration: none;
+  color: var(--color-on-highlight);
+  border: 1px solid var(--color-brand-highlight);
+  border-radius: var(--radius-sm);
+  background: var(--color-brand-highlight);
+  font-family: var(--font-family-heading);
+  font-weight: 600;
+  min-block-size: var(--tap-target-min);
+}
+
+.aculta-utility-dialog__action:hover {
+  color: var(--color-on-brand);
+  border-color: var(--color-brand-primary);
+  background: var(--color-brand-primary);
+}
+
+/* HTMX login/registration fragments are presented on pages with the shared bar. */
+.aculta-login-popup { display: grid; gap: .75rem; }
+.aculta-login-popup__divider { margin: 0; border: 0; border-block-start: 1px solid var(--color-border); }
+.aculta-register-popup { display: grid; gap: 1rem; }
+
+@media (min-width: 768px) {
+  .aculta-institution-bar__inner {
+    gap: var(--spacing-xs) var(--spacing-base);
+  }
+
+  .aculta-utility {
+    flex: 0 1 auto;
+    gap: 0;
+    margin-inline-start: auto;
+  }
+}
+.aculta-account-home { display: block; }
+
+/* Modo escuro da barra institucional (modelo: carvão-marrom e texto claro; ícones em verde da marca). */
+:root[data-theme="dark"] .aculta-institution-bar,
+[data-theme="dark"] .aculta-institution-bar {
+  --institution-bar-surface: #2b2723;
+  --institution-bar-text: #f4efe8;
+  --institution-bar-border: rgb(244 239 232 / .16);
+  --institution-bar-icon: #9ac15a;
+  --institution-bar-badge-surface: #f2ca36;
+  --institution-bar-badge-text: #171513;
+  --institution-bar-stripe-brand: #9ac15a;
+  --institution-bar-stripe-highlight: #f2ca36;
+  --institution-bar-stripe-alert: var(--palette-red);
+}
+
+/* Ícones da barra: verde da marca no escuro, texto primário no claro. */
+.aculta-institution-bar {
+  --institution-bar-icon: var(--institution-bar-text);
+}
+
+.aculta-institution-bar .aculta-utility-trigger__icon .aculta-icon,
+.aculta-institution-bar .aculta-utility-dialog__close .aculta-icon {
+  color: var(--institution-bar-icon);
+}
+
+/* Contadores dos gatilhos da barra: amarelo da marca no lugar do vermelho de erro. */
+.aculta-institution-bar .aculta-unread-count {
+  color: var(--institution-bar-badge-text);
+  background: var(--institution-bar-badge-surface);
+}
+
+/* Faixa tricolor na base da barra, nas mesmas proporções do rodapé: verde até 68%,
+   amarelo até 84%, vermelho até 100%. Substitui a linha de borda inferior.  */
+.aculta-institution-bar::after {
+  position: absolute;
+  content: "";
+  inset-block-end: 0;
+  inset-inline: 0;
+  block-size: 3px;
+  pointer-events: none;
+  background:
+    linear-gradient(
+      to right,
+      var(--institution-bar-stripe-brand) 0 68%,
+      var(--institution-bar-stripe-highlight) 68% 84%,
+      var(--institution-bar-stripe-alert) 84% 100%
+    );
+}

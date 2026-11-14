@@ -1,0 +1,4656 @@
+{
+  "method": "Playwright Firefox headless",
+  "engine": "firefox",
+  "commit": "08a43975de63400d169b0415bc7e158cdb3fda20",
+  "origin": "https://aculta.toca.net.br/",
+  "generated_at": "2026-11-12T21:12:27.518Z",
+  "total": 774,
+  "passed": 683,
+  "failed": 91,
+  "results": [
+    {
+      "name": "home 320px light",
+      "check": "overflow",
+      "passed": true,
+      "detail": "320/320"
+    },
+    {
+      "name": "home 320px light",
+      "check": "canvas",
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
+    },
+    {
+      "name": "home 320px light",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "home 320px light",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "home 320px light",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "11.34"
+    },
+    {
+      "name": "home 320px dark",
+      "check": "overflow",
+      "passed": true,
+      "detail": "320/320"
+    },
+    {
+      "name": "home 320px dark",
+      "check": "canvas",
+      "passed": true,
+      "detail": "{\"r\":23,\"g\":21,\"b\":19,\"a\":1}"
+    },
+    {
+      "name": "home 320px dark",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "home 320px dark",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "home 320px dark",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "12.95"
+    },
+    {
+      "name": "home 390px light",
+      "check": "overflow",
+      "passed": true,
+      "detail": "390/390"
+    },
+    {
+      "name": "home 390px light",
+      "check": "canvas",
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
+    },
+    {
+      "name": "home 390px light",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "home 390px light",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "home 390px light",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "11.34"
+    },
+    {
+      "name": "home 390px dark",
+      "check": "overflow",
+      "passed": true,
+      "detail": "390/390"
+    },
+    {
+      "name": "home 390px dark",
+      "check": "canvas",
+      "passed": true,
+      "detail": "{\"r\":23,\"g\":21,\"b\":19,\"a\":1}"
+    },
+    {
+      "name": "home 390px dark",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "home 390px dark",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "home 390px dark",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "12.95"
+    },
+    {
+      "name": "home 768px light",
+      "check": "overflow",
+      "passed": true,
+      "detail": "768/768"
+    },
+    {
+      "name": "home 768px light",
+      "check": "canvas",
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
+    },
+    {
+      "name": "home 768px light",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "home 768px light",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "home 768px light",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "11.34"
+    },
+    {
+      "name": "home 768px dark",
+      "check": "overflow",
+      "passed": true,
+      "detail": "768/768"
+    },
+    {
+      "name": "home 768px dark",
+      "check": "canvas",
+      "passed": true,
+      "detail": "{\"r\":23,\"g\":21,\"b\":19,\"a\":1}"
+    },
+    {
+      "name": "home 768px dark",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "home 768px dark",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "home 768px dark",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "12.95"
+    },
+    {
+      "name": "home 959px light",
+      "check": "overflow",
+      "passed": true,
+      "detail": "959/959"
+    },
+    {
+      "name": "home 959px light",
+      "check": "canvas",
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
+    },
+    {
+      "name": "home 959px light",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "home 959px light",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "home 959px light",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "11.34"
+    },
+    {
+      "name": "home 959px dark",
+      "check": "overflow",
+      "passed": true,
+      "detail": "959/959"
+    },
+    {
+      "name": "home 959px dark",
+      "check": "canvas",
+      "passed": true,
+      "detail": "{\"r\":23,\"g\":21,\"b\":19,\"a\":1}"
+    },
+    {
+      "name": "home 959px dark",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "home 959px dark",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "home 959px dark",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "12.95"
+    },
+    {
+      "name": "home 960px light",
+      "check": "overflow",
+      "passed": true,
+      "detail": "960/960"
+    },
+    {
+      "name": "home 960px light",
+      "check": "canvas",
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
+    },
+    {
+      "name": "home 960px light",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "home 960px light",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "home 960px light",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "11.34"
+    },
+    {
+      "name": "home 960px dark",
+      "check": "overflow",
+      "passed": true,
+      "detail": "960/960"
+    },
+    {
+      "name": "home 960px dark",
+      "check": "canvas",
+      "passed": true,
+      "detail": "{\"r\":23,\"g\":21,\"b\":19,\"a\":1}"
+    },
+    {
+      "name": "home 960px dark",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "home 960px dark",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "home 960px dark",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "12.95"
+    },
+    {
+      "name": "home 1024px light",
+      "check": "overflow",
+      "passed": true,
+      "detail": "1024/1024"
+    },
+    {
+      "name": "home 1024px light",
+      "check": "canvas",
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
+    },
+    {
+      "name": "home 1024px light",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "home 1024px light",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "home 1024px light",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "11.34"
+    },
+    {
+      "name": "home 1024px dark",
+      "check": "overflow",
+      "passed": true,
+      "detail": "1024/1024"
+    },
+    {
+      "name": "home 1024px dark",
+      "check": "canvas",
+      "passed": true,
+      "detail": "{\"r\":23,\"g\":21,\"b\":19,\"a\":1}"
+    },
+    {
+      "name": "home 1024px dark",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "home 1024px dark",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "home 1024px dark",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "12.95"
+    },
+    {
+      "name": "home 1440px light",
+      "check": "overflow",
+      "passed": true,
+      "detail": "1440/1440"
+    },
+    {
+      "name": "home 1440px light",
+      "check": "canvas",
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
+    },
+    {
+      "name": "home 1440px light",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "home 1440px light",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "home 1440px light",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "11.34"
+    },
+    {
+      "name": "home 1440px dark",
+      "check": "overflow",
+      "passed": true,
+      "detail": "1440/1440"
+    },
+    {
+      "name": "home 1440px dark",
+      "check": "canvas",
+      "passed": true,
+      "detail": "{\"r\":23,\"g\":21,\"b\":19,\"a\":1}"
+    },
+    {
+      "name": "home 1440px dark",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "home 1440px dark",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "home 1440px dark",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "12.95"
+    },
+    {
+      "name": "forum 320px light",
+      "check": "overflow",
+      "passed": true,
+      "detail": "320/320"
+    },
+    {
+      "name": "forum 320px light",
+      "check": "canvas",
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
+    },
+    {
+      "name": "forum 320px light",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "forum 320px light",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "forum 320px light",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "11.34"
+    },
+    {
+      "name": "forum 320px dark",
+      "check": "overflow",
+      "passed": true,
+      "detail": "320/320"
+    },
+    {
+      "name": "forum 320px dark",
+      "check": "canvas",
+      "passed": true,
+      "detail": "{\"r\":23,\"g\":21,\"b\":19,\"a\":1}"
+    },
+    {
+      "name": "forum 320px dark",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "forum 320px dark",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "forum 320px dark",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "12.95"
+    },
+    {
+      "name": "forum 390px light",
+      "check": "overflow",
+      "passed": true,
+      "detail": "390/390"
+    },
+    {
+      "name": "forum 390px light",
+      "check": "canvas",
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
+    },
+    {
+      "name": "forum 390px light",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "forum 390px light",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "forum 390px light",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "11.34"
+    },
+    {
+      "name": "forum 390px dark",
+      "check": "overflow",
+      "passed": true,
+      "detail": "390/390"
+    },
+    {
+      "name": "forum 390px dark",
+      "check": "canvas",
+      "passed": true,
+      "detail": "{\"r\":23,\"g\":21,\"b\":19,\"a\":1}"
+    },
+    {
+      "name": "forum 390px dark",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "forum 390px dark",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "forum 390px dark",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "12.95"
+    },
+    {
+      "name": "forum 768px light",
+      "check": "overflow",
+      "passed": true,
+      "detail": "768/768"
+    },
+    {
+      "name": "forum 768px light",
+      "check": "canvas",
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
+    },
+    {
+      "name": "forum 768px light",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "forum 768px light",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "forum 768px light",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "11.34"
+    },
+    {
+      "name": "forum 768px dark",
+      "check": "overflow",
+      "passed": true,
+      "detail": "768/768"
+    },
+    {
+      "name": "forum 768px dark",
+      "check": "canvas",
+      "passed": true,
+      "detail": "{\"r\":23,\"g\":21,\"b\":19,\"a\":1}"
+    },
+    {
+      "name": "forum 768px dark",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "forum 768px dark",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "forum 768px dark",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "12.95"
+    },
+    {
+      "name": "forum 959px light",
+      "check": "overflow",
+      "passed": true,
+      "detail": "959/959"
+    },
+    {
+      "name": "forum 959px light",
+      "check": "canvas",
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
+    },
+    {
+      "name": "forum 959px light",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "forum 959px light",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "forum 959px light",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "11.34"
+    },
+    {
+      "name": "forum 959px dark",
+      "check": "overflow",
+      "passed": true,
+      "detail": "959/959"
+    },
+    {
+      "name": "forum 959px dark",
+      "check": "canvas",
+      "passed": true,
+      "detail": "{\"r\":23,\"g\":21,\"b\":19,\"a\":1}"
+    },
+    {
+      "name": "forum 959px dark",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "forum 959px dark",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "forum 959px dark",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "12.95"
+    },
+    {
+      "name": "forum 960px light",
+      "check": "overflow",
+      "passed": true,
+      "detail": "960/960"
+    },
+    {
+      "name": "forum 960px light",
+      "check": "canvas",
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
+    },
+    {
+      "name": "forum 960px light",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "forum 960px light",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "forum 960px light",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "11.34"
+    },
+    {
+      "name": "forum 960px dark",
+      "check": "overflow",
+      "passed": true,
+      "detail": "960/960"
+    },
+    {
+      "name": "forum 960px dark",
+      "check": "canvas",
+      "passed": true,
+      "detail": "{\"r\":23,\"g\":21,\"b\":19,\"a\":1}"
+    },
+    {
+      "name": "forum 960px dark",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "forum 960px dark",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "forum 960px dark",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "12.95"
+    },
+    {
+      "name": "forum 1024px light",
+      "check": "overflow",
+      "passed": true,
+      "detail": "1024/1024"
+    },
+    {
+      "name": "forum 1024px light",
+      "check": "canvas",
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
+    },
+    {
+      "name": "forum 1024px light",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "forum 1024px light",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "forum 1024px light",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "11.34"
+    },
+    {
+      "name": "forum 1024px dark",
+      "check": "overflow",
+      "passed": true,
+      "detail": "1024/1024"
+    },
+    {
+      "name": "forum 1024px dark",
+      "check": "canvas",
+      "passed": true,
+      "detail": "{\"r\":23,\"g\":21,\"b\":19,\"a\":1}"
+    },
+    {
+      "name": "forum 1024px dark",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "forum 1024px dark",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "forum 1024px dark",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "12.95"
+    },
+    {
+      "name": "forum 1440px light",
+      "check": "overflow",
+      "passed": true,
+      "detail": "1440/1440"
+    },
+    {
+      "name": "forum 1440px light",
+      "check": "canvas",
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
+    },
+    {
+      "name": "forum 1440px light",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "forum 1440px light",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "forum 1440px light",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "11.34"
+    },
+    {
+      "name": "forum 1440px dark",
+      "check": "overflow",
+      "passed": true,
+      "detail": "1440/1440"
+    },
+    {
+      "name": "forum 1440px dark",
+      "check": "canvas",
+      "passed": true,
+      "detail": "{\"r\":23,\"g\":21,\"b\":19,\"a\":1}"
+    },
+    {
+      "name": "forum 1440px dark",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "forum 1440px dark",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "forum 1440px dark",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "12.95"
+    },
+    {
+      "name": "links 320px light",
+      "check": "overflow",
+      "passed": true,
+      "detail": "320/320"
+    },
+    {
+      "name": "links 320px light",
+      "check": "canvas",
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
+    },
+    {
+      "name": "links 320px light",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "links 320px light",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "links 320px light",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "11.34"
+    },
+    {
+      "name": "links 320px dark",
+      "check": "overflow",
+      "passed": true,
+      "detail": "320/320"
+    },
+    {
+      "name": "links 320px dark",
+      "check": "canvas",
+      "passed": true,
+      "detail": "{\"r\":23,\"g\":21,\"b\":19,\"a\":1}"
+    },
+    {
+      "name": "links 320px dark",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "links 320px dark",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "links 320px dark",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "12.95"
+    },
+    {
+      "name": "links 390px light",
+      "check": "overflow",
+      "passed": true,
+      "detail": "390/390"
+    },
+    {
+      "name": "links 390px light",
+      "check": "canvas",
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
+    },
+    {
+      "name": "links 390px light",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "links 390px light",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "links 390px light",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "11.34"
+    },
+    {
+      "name": "links 390px dark",
+      "check": "overflow",
+      "passed": true,
+      "detail": "390/390"
+    },
+    {
+      "name": "links 390px dark",
+      "check": "canvas",
+      "passed": true,
+      "detail": "{\"r\":23,\"g\":21,\"b\":19,\"a\":1}"
+    },
+    {
+      "name": "links 390px dark",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "links 390px dark",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "links 390px dark",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "12.95"
+    },
+    {
+      "name": "links 768px light",
+      "check": "overflow",
+      "passed": true,
+      "detail": "768/768"
+    },
+    {
+      "name": "links 768px light",
+      "check": "canvas",
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
+    },
+    {
+      "name": "links 768px light",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "links 768px light",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "links 768px light",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "11.34"
+    },
+    {
+      "name": "links 768px dark",
+      "check": "overflow",
+      "passed": true,
+      "detail": "768/768"
+    },
+    {
+      "name": "links 768px dark",
+      "check": "canvas",
+      "passed": true,
+      "detail": "{\"r\":23,\"g\":21,\"b\":19,\"a\":1}"
+    },
+    {
+      "name": "links 768px dark",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "links 768px dark",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "links 768px dark",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "12.95"
+    },
+    {
+      "name": "links 959px light",
+      "check": "overflow",
+      "passed": true,
+      "detail": "959/959"
+    },
+    {
+      "name": "links 959px light",
+      "check": "canvas",
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
+    },
+    {
+      "name": "links 959px light",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "links 959px light",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "links 959px light",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "11.34"
+    },
+    {
+      "name": "links 959px dark",
+      "check": "overflow",
+      "passed": true,
+      "detail": "959/959"
+    },
+    {
+      "name": "links 959px dark",
+      "check": "canvas",
+      "passed": true,
+      "detail": "{\"r\":23,\"g\":21,\"b\":19,\"a\":1}"
+    },
+    {
+      "name": "links 959px dark",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "links 959px dark",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "links 959px dark",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "12.95"
+    },
+    {
+      "name": "links 960px light",
+      "check": "overflow",
+      "passed": true,
+      "detail": "960/960"
+    },
+    {
+      "name": "links 960px light",
+      "check": "canvas",
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
+    },
+    {
+      "name": "links 960px light",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "links 960px light",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "links 960px light",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "11.34"
+    },
+    {
+      "name": "links 960px dark",
+      "check": "overflow",
+      "passed": true,
+      "detail": "960/960"
+    },
+    {
+      "name": "links 960px dark",
+      "check": "canvas",
+      "passed": true,
+      "detail": "{\"r\":23,\"g\":21,\"b\":19,\"a\":1}"
+    },
+    {
+      "name": "links 960px dark",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "links 960px dark",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "links 960px dark",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "12.95"
+    },
+    {
+      "name": "links 1024px light",
+      "check": "overflow",
+      "passed": true,
+      "detail": "1024/1024"
+    },
+    {
+      "name": "links 1024px light",
+      "check": "canvas",
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
+    },
+    {
+      "name": "links 1024px light",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "links 1024px light",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "links 1024px light",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "11.34"
+    },
+    {
+      "name": "links 1024px dark",
+      "check": "overflow",
+      "passed": true,
+      "detail": "1024/1024"
+    },
+    {
+      "name": "links 1024px dark",
+      "check": "canvas",
+      "passed": true,
+      "detail": "{\"r\":23,\"g\":21,\"b\":19,\"a\":1}"
+    },
+    {
+      "name": "links 1024px dark",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "links 1024px dark",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "links 1024px dark",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "12.95"
+    },
+    {
+      "name": "links 1440px light",
+      "check": "overflow",
+      "passed": true,
+      "detail": "1440/1440"
+    },
+    {
+      "name": "links 1440px light",
+      "check": "canvas",
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
+    },
+    {
+      "name": "links 1440px light",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "links 1440px light",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "links 1440px light",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "11.34"
+    },
+    {
+      "name": "links 1440px dark",
+      "check": "overflow",
+      "passed": true,
+      "detail": "1440/1440"
+    },
+    {
+      "name": "links 1440px dark",
+      "check": "canvas",
+      "passed": true,
+      "detail": "{\"r\":23,\"g\":21,\"b\":19,\"a\":1}"
+    },
+    {
+      "name": "links 1440px dark",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "links 1440px dark",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "links 1440px dark",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "12.95"
+    },
+    {
+      "name": "wiki 320px light",
+      "check": "overflow",
+      "passed": true,
+      "detail": "320/320"
+    },
+    {
+      "name": "wiki 320px light",
+      "check": "canvas",
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
+    },
+    {
+      "name": "wiki 320px light",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "wiki 320px light",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "wiki 320px light",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "11.34"
+    },
+    {
+      "name": "wiki 320px dark",
+      "check": "overflow",
+      "passed": true,
+      "detail": "320/320"
+    },
+    {
+      "name": "wiki 320px dark",
+      "check": "canvas",
+      "passed": true,
+      "detail": "{\"r\":23,\"g\":21,\"b\":19,\"a\":1}"
+    },
+    {
+      "name": "wiki 320px dark",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "wiki 320px dark",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "wiki 320px dark",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "12.95"
+    },
+    {
+      "name": "wiki 390px light",
+      "check": "overflow",
+      "passed": true,
+      "detail": "390/390"
+    },
+    {
+      "name": "wiki 390px light",
+      "check": "canvas",
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
+    },
+    {
+      "name": "wiki 390px light",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "wiki 390px light",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "wiki 390px light",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "11.34"
+    },
+    {
+      "name": "wiki 390px dark",
+      "check": "overflow",
+      "passed": true,
+      "detail": "390/390"
+    },
+    {
+      "name": "wiki 390px dark",
+      "check": "canvas",
+      "passed": true,
+      "detail": "{\"r\":23,\"g\":21,\"b\":19,\"a\":1}"
+    },
+    {
+      "name": "wiki 390px dark",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "wiki 390px dark",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "wiki 390px dark",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "12.95"
+    },
+    {
+      "name": "wiki 768px light",
+      "check": "overflow",
+      "passed": true,
+      "detail": "768/768"
+    },
+    {
+      "name": "wiki 768px light",
+      "check": "canvas",
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
+    },
+    {
+      "name": "wiki 768px light",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "wiki 768px light",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "wiki 768px light",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "11.34"
+    },
+    {
+      "name": "wiki 768px dark",
+      "check": "overflow",
+      "passed": true,
+      "detail": "768/768"
+    },
+    {
+      "name": "wiki 768px dark",
+      "check": "canvas",
+      "passed": true,
+      "detail": "{\"r\":23,\"g\":21,\"b\":19,\"a\":1}"
+    },
+    {
+      "name": "wiki 768px dark",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "wiki 768px dark",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "wiki 768px dark",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "12.95"
+    },
+    {
+      "name": "wiki 959px light",
+      "check": "overflow",
+      "passed": true,
+      "detail": "959/959"
+    },
+    {
+      "name": "wiki 959px light",
+      "check": "canvas",
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
+    },
+    {
+      "name": "wiki 959px light",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "wiki 959px light",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "wiki 959px light",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "11.34"
+    },
+    {
+      "name": "wiki 959px dark",
+      "check": "overflow",
+      "passed": true,
+      "detail": "959/959"
+    },
+    {
+      "name": "wiki 959px dark",
+      "check": "canvas",
+      "passed": true,
+      "detail": "{\"r\":23,\"g\":21,\"b\":19,\"a\":1}"
+    },
+    {
+      "name": "wiki 959px dark",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "wiki 959px dark",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "wiki 959px dark",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "12.95"
+    },
+    {
+      "name": "wiki 960px light",
+      "check": "overflow",
+      "passed": true,
+      "detail": "960/960"
+    },
+    {
+      "name": "wiki 960px light",
+      "check": "canvas",
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
+    },
+    {
+      "name": "wiki 960px light",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "wiki 960px light",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "wiki 960px light",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "11.34"
+    },
+    {
+      "name": "wiki 960px dark",
+      "check": "overflow",
+      "passed": true,
+      "detail": "960/960"
+    },
+    {
+      "name": "wiki 960px dark",
+      "check": "canvas",
+      "passed": true,
+      "detail": "{\"r\":23,\"g\":21,\"b\":19,\"a\":1}"
+    },
+    {
+      "name": "wiki 960px dark",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "wiki 960px dark",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "wiki 960px dark",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "12.95"
+    },
+    {
+      "name": "wiki 1024px light",
+      "check": "overflow",
+      "passed": true,
+      "detail": "1024/1024"
+    },
+    {
+      "name": "wiki 1024px light",
+      "check": "canvas",
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
+    },
+    {
+      "name": "wiki 1024px light",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "wiki 1024px light",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "wiki 1024px light",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "11.34"
+    },
+    {
+      "name": "wiki 1024px dark",
+      "check": "overflow",
+      "passed": true,
+      "detail": "1024/1024"
+    },
+    {
+      "name": "wiki 1024px dark",
+      "check": "canvas",
+      "passed": true,
+      "detail": "{\"r\":23,\"g\":21,\"b\":19,\"a\":1}"
+    },
+    {
+      "name": "wiki 1024px dark",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "wiki 1024px dark",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "wiki 1024px dark",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "12.95"
+    },
+    {
+      "name": "wiki 1440px light",
+      "check": "overflow",
+      "passed": true,
+      "detail": "1440/1440"
+    },
+    {
+      "name": "wiki 1440px light",
+      "check": "canvas",
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
+    },
+    {
+      "name": "wiki 1440px light",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "wiki 1440px light",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "wiki 1440px light",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "11.34"
+    },
+    {
+      "name": "wiki 1440px dark",
+      "check": "overflow",
+      "passed": true,
+      "detail": "1440/1440"
+    },
+    {
+      "name": "wiki 1440px dark",
+      "check": "canvas",
+      "passed": true,
+      "detail": "{\"r\":23,\"g\":21,\"b\":19,\"a\":1}"
+    },
+    {
+      "name": "wiki 1440px dark",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "wiki 1440px dark",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "wiki 1440px dark",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "12.95"
+    },
+    {
+      "name": "revista 320px light",
+      "check": "overflow",
+      "passed": true,
+      "detail": "320/320"
+    },
+    {
+      "name": "revista 320px light",
+      "check": "canvas",
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
+    },
+    {
+      "name": "revista 320px light",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "revista 320px light",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "revista 320px light",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "11.34"
+    },
+    {
+      "name": "revista 320px dark",
+      "check": "overflow",
+      "passed": true,
+      "detail": "320/320"
+    },
+    {
+      "name": "revista 320px dark",
+      "check": "canvas",
+      "passed": true,
+      "detail": "{\"r\":23,\"g\":21,\"b\":19,\"a\":1}"
+    },
+    {
+      "name": "revista 320px dark",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "revista 320px dark",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "revista 320px dark",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "12.95"
+    },
+    {
+      "name": "revista 390px light",
+      "check": "overflow",
+      "passed": true,
+      "detail": "390/390"
+    },
+    {
+      "name": "revista 390px light",
+      "check": "canvas",
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
+    },
+    {
+      "name": "revista 390px light",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "revista 390px light",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "revista 390px light",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "11.34"
+    },
+    {
+      "name": "revista 390px dark",
+      "check": "overflow",
+      "passed": true,
+      "detail": "390/390"
+    },
+    {
+      "name": "revista 390px dark",
+      "check": "canvas",
+      "passed": true,
+      "detail": "{\"r\":23,\"g\":21,\"b\":19,\"a\":1}"
+    },
+    {
+      "name": "revista 390px dark",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "revista 390px dark",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "revista 390px dark",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "12.95"
+    },
+    {
+      "name": "revista 768px light",
+      "check": "overflow",
+      "passed": true,
+      "detail": "768/768"
+    },
+    {
+      "name": "revista 768px light",
+      "check": "canvas",
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
+    },
+    {
+      "name": "revista 768px light",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "revista 768px light",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "revista 768px light",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "11.34"
+    },
+    {
+      "name": "revista 768px dark",
+      "check": "overflow",
+      "passed": true,
+      "detail": "768/768"
+    },
+    {
+      "name": "revista 768px dark",
+      "check": "canvas",
+      "passed": true,
+      "detail": "{\"r\":23,\"g\":21,\"b\":19,\"a\":1}"
+    },
+    {
+      "name": "revista 768px dark",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "revista 768px dark",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "revista 768px dark",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "12.95"
+    },
+    {
+      "name": "revista 959px light",
+      "check": "overflow",
+      "passed": true,
+      "detail": "959/959"
+    },
+    {
+      "name": "revista 959px light",
+      "check": "canvas",
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
+    },
+    {
+      "name": "revista 959px light",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "revista 959px light",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "revista 959px light",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "11.34"
+    },
+    {
+      "name": "revista 959px dark",
+      "check": "overflow",
+      "passed": true,
+      "detail": "959/959"
+    },
+    {
+      "name": "revista 959px dark",
+      "check": "canvas",
+      "passed": true,
+      "detail": "{\"r\":23,\"g\":21,\"b\":19,\"a\":1}"
+    },
+    {
+      "name": "revista 959px dark",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "revista 959px dark",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "revista 959px dark",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "12.95"
+    },
+    {
+      "name": "revista 960px light",
+      "check": "overflow",
+      "passed": true,
+      "detail": "960/960"
+    },
+    {
+      "name": "revista 960px light",
+      "check": "canvas",
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
+    },
+    {
+      "name": "revista 960px light",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "revista 960px light",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "revista 960px light",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "11.34"
+    },
+    {
+      "name": "revista 960px dark",
+      "check": "overflow",
+      "passed": true,
+      "detail": "960/960"
+    },
+    {
+      "name": "revista 960px dark",
+      "check": "canvas",
+      "passed": true,
+      "detail": "{\"r\":23,\"g\":21,\"b\":19,\"a\":1}"
+    },
+    {
+      "name": "revista 960px dark",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "revista 960px dark",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "revista 960px dark",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "12.95"
+    },
+    {
+      "name": "revista 1024px light",
+      "check": "overflow",
+      "passed": true,
+      "detail": "1024/1024"
+    },
+    {
+      "name": "revista 1024px light",
+      "check": "canvas",
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
+    },
+    {
+      "name": "revista 1024px light",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "revista 1024px light",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "revista 1024px light",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "11.34"
+    },
+    {
+      "name": "revista 1024px dark",
+      "check": "overflow",
+      "passed": true,
+      "detail": "1024/1024"
+    },
+    {
+      "name": "revista 1024px dark",
+      "check": "canvas",
+      "passed": true,
+      "detail": "{\"r\":23,\"g\":21,\"b\":19,\"a\":1}"
+    },
+    {
+      "name": "revista 1024px dark",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "revista 1024px dark",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "revista 1024px dark",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "12.95"
+    },
+    {
+      "name": "revista 1440px light",
+      "check": "overflow",
+      "passed": true,
+      "detail": "1440/1440"
+    },
+    {
+      "name": "revista 1440px light",
+      "check": "canvas",
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
+    },
+    {
+      "name": "revista 1440px light",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "revista 1440px light",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "revista 1440px light",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "11.34"
+    },
+    {
+      "name": "revista 1440px dark",
+      "check": "overflow",
+      "passed": true,
+      "detail": "1440/1440"
+    },
+    {
+      "name": "revista 1440px dark",
+      "check": "canvas",
+      "passed": true,
+      "detail": "{\"r\":23,\"g\":21,\"b\":19,\"a\":1}"
+    },
+    {
+      "name": "revista 1440px dark",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "revista 1440px dark",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "revista 1440px dark",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "12.95"
+    },
+    {
+      "name": "eventos 320px light",
+      "check": "overflow",
+      "passed": true,
+      "detail": "320/320"
+    },
+    {
+      "name": "eventos 320px light",
+      "check": "canvas",
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
+    },
+    {
+      "name": "eventos 320px light",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "eventos 320px light",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "eventos 320px light",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "11.34"
+    },
+    {
+      "name": "eventos 320px dark",
+      "check": "overflow",
+      "passed": true,
+      "detail": "320/320"
+    },
+    {
+      "name": "eventos 320px dark",
+      "check": "canvas",
+      "passed": true,
+      "detail": "{\"r\":23,\"g\":21,\"b\":19,\"a\":1}"
+    },
+    {
+      "name": "eventos 320px dark",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "eventos 320px dark",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "eventos 320px dark",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "12.95"
+    },
+    {
+      "name": "eventos 390px light",
+      "check": "overflow",
+      "passed": true,
+      "detail": "390/390"
+    },
+    {
+      "name": "eventos 390px light",
+      "check": "canvas",
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
+    },
+    {
+      "name": "eventos 390px light",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "eventos 390px light",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "eventos 390px light",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "11.34"
+    },
+    {
+      "name": "eventos 390px dark",
+      "check": "overflow",
+      "passed": true,
+      "detail": "390/390"
+    },
+    {
+      "name": "eventos 390px dark",
+      "check": "canvas",
+      "passed": true,
+      "detail": "{\"r\":23,\"g\":21,\"b\":19,\"a\":1}"
+    },
+    {
+      "name": "eventos 390px dark",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "eventos 390px dark",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "eventos 390px dark",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "12.95"
+    },
+    {
+      "name": "eventos 768px light",
+      "check": "overflow",
+      "passed": true,
+      "detail": "768/768"
+    },
+    {
+      "name": "eventos 768px light",
+      "check": "canvas",
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
+    },
+    {
+      "name": "eventos 768px light",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "eventos 768px light",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "eventos 768px light",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "11.34"
+    },
+    {
+      "name": "eventos 768px dark",
+      "check": "overflow",
+      "passed": true,
+      "detail": "768/768"
+    },
+    {
+      "name": "eventos 768px dark",
+      "check": "canvas",
+      "passed": true,
+      "detail": "{\"r\":23,\"g\":21,\"b\":19,\"a\":1}"
+    },
+    {
+      "name": "eventos 768px dark",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "eventos 768px dark",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "eventos 768px dark",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "12.95"
+    },
+    {
+      "name": "eventos 959px light",
+      "check": "overflow",
+      "passed": true,
+      "detail": "959/959"
+    },
+    {
+      "name": "eventos 959px light",
+      "check": "canvas",
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
+    },
+    {
+      "name": "eventos 959px light",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "eventos 959px light",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "eventos 959px light",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "11.34"
+    },
+    {
+      "name": "eventos 959px dark",
+      "check": "overflow",
+      "passed": true,
+      "detail": "959/959"
+    },
+    {
+      "name": "eventos 959px dark",
+      "check": "canvas",
+      "passed": true,
+      "detail": "{\"r\":23,\"g\":21,\"b\":19,\"a\":1}"
+    },
+    {
+      "name": "eventos 959px dark",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "eventos 959px dark",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "eventos 959px dark",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "12.95"
+    },
+    {
+      "name": "eventos 960px light",
+      "check": "overflow",
+      "passed": true,
+      "detail": "960/960"
+    },
+    {
+      "name": "eventos 960px light",
+      "check": "canvas",
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
+    },
+    {
+      "name": "eventos 960px light",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "eventos 960px light",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "eventos 960px light",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "11.34"
+    },
+    {
+      "name": "eventos 960px dark",
+      "check": "overflow",
+      "passed": true,
+      "detail": "960/960"
+    },
+    {
+      "name": "eventos 960px dark",
+      "check": "canvas",
+      "passed": true,
+      "detail": "{\"r\":23,\"g\":21,\"b\":19,\"a\":1}"
+    },
+    {
+      "name": "eventos 960px dark",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "eventos 960px dark",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "eventos 960px dark",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "12.95"
+    },
+    {
+      "name": "eventos 1024px light",
+      "check": "overflow",
+      "passed": true,
+      "detail": "1024/1024"
+    },
+    {
+      "name": "eventos 1024px light",
+      "check": "canvas",
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
+    },
+    {
+      "name": "eventos 1024px light",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "eventos 1024px light",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "eventos 1024px light",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "11.34"
+    },
+    {
+      "name": "eventos 1024px dark",
+      "check": "overflow",
+      "passed": true,
+      "detail": "1024/1024"
+    },
+    {
+      "name": "eventos 1024px dark",
+      "check": "canvas",
+      "passed": true,
+      "detail": "{\"r\":23,\"g\":21,\"b\":19,\"a\":1}"
+    },
+    {
+      "name": "eventos 1024px dark",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "eventos 1024px dark",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "eventos 1024px dark",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "12.95"
+    },
+    {
+      "name": "eventos 1440px light",
+      "check": "overflow",
+      "passed": true,
+      "detail": "1440/1440"
+    },
+    {
+      "name": "eventos 1440px light",
+      "check": "canvas",
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
+    },
+    {
+      "name": "eventos 1440px light",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "eventos 1440px light",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "eventos 1440px light",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "11.34"
+    },
+    {
+      "name": "eventos 1440px dark",
+      "check": "overflow",
+      "passed": true,
+      "detail": "1440/1440"
+    },
+    {
+      "name": "eventos 1440px dark",
+      "check": "canvas",
+      "passed": true,
+      "detail": "{\"r\":23,\"g\":21,\"b\":19,\"a\":1}"
+    },
+    {
+      "name": "eventos 1440px dark",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "eventos 1440px dark",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "eventos 1440px dark",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "12.95"
+    },
+    {
+      "name": "loja 320px light",
+      "check": "overflow",
+      "passed": true,
+      "detail": "320/320"
+    },
+    {
+      "name": "loja 320px light",
+      "check": "canvas",
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
+    },
+    {
+      "name": "loja 320px light",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "loja 320px light",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "loja 320px light",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "11.34"
+    },
+    {
+      "name": "loja 320px dark",
+      "check": "overflow",
+      "passed": true,
+      "detail": "320/320"
+    },
+    {
+      "name": "loja 320px dark",
+      "check": "canvas",
+      "passed": true,
+      "detail": "{\"r\":23,\"g\":21,\"b\":19,\"a\":1}"
+    },
+    {
+      "name": "loja 320px dark",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "loja 320px dark",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "loja 320px dark",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "12.95"
+    },
+    {
+      "name": "loja 390px light",
+      "check": "overflow",
+      "passed": true,
+      "detail": "390/390"
+    },
+    {
+      "name": "loja 390px light",
+      "check": "canvas",
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
+    },
+    {
+      "name": "loja 390px light",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "loja 390px light",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "loja 390px light",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "11.34"
+    },
+    {
+      "name": "loja 390px dark",
+      "check": "overflow",
+      "passed": true,
+      "detail": "390/390"
+    },
+    {
+      "name": "loja 390px dark",
+      "check": "canvas",
+      "passed": true,
+      "detail": "{\"r\":23,\"g\":21,\"b\":19,\"a\":1}"
+    },
+    {
+      "name": "loja 390px dark",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "loja 390px dark",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "loja 390px dark",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "12.95"
+    },
+    {
+      "name": "loja 768px light",
+      "check": "overflow",
+      "passed": true,
+      "detail": "768/768"
+    },
+    {
+      "name": "loja 768px light",
+      "check": "canvas",
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
+    },
+    {
+      "name": "loja 768px light",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "loja 768px light",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "loja 768px light",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "11.34"
+    },
+    {
+      "name": "loja 768px dark",
+      "check": "overflow",
+      "passed": true,
+      "detail": "768/768"
+    },
+    {
+      "name": "loja 768px dark",
+      "check": "canvas",
+      "passed": true,
+      "detail": "{\"r\":23,\"g\":21,\"b\":19,\"a\":1}"
+    },
+    {
+      "name": "loja 768px dark",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "loja 768px dark",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "loja 768px dark",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "12.95"
+    },
+    {
+      "name": "loja 959px light",
+      "check": "overflow",
+      "passed": true,
+      "detail": "959/959"
+    },
+    {
+      "name": "loja 959px light",
+      "check": "canvas",
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
+    },
+    {
+      "name": "loja 959px light",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "loja 959px light",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "loja 959px light",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "11.34"
+    },
+    {
+      "name": "loja 959px dark",
+      "check": "overflow",
+      "passed": true,
+      "detail": "959/959"
+    },
+    {
+      "name": "loja 959px dark",
+      "check": "canvas",
+      "passed": true,
+      "detail": "{\"r\":23,\"g\":21,\"b\":19,\"a\":1}"
+    },
+    {
+      "name": "loja 959px dark",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "loja 959px dark",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "loja 959px dark",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "12.95"
+    },
+    {
+      "name": "loja 960px light",
+      "check": "overflow",
+      "passed": true,
+      "detail": "960/960"
+    },
+    {
+      "name": "loja 960px light",
+      "check": "canvas",
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
+    },
+    {
+      "name": "loja 960px light",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "loja 960px light",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "loja 960px light",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "11.34"
+    },
+    {
+      "name": "loja 960px dark",
+      "check": "overflow",
+      "passed": true,
+      "detail": "960/960"
+    },
+    {
+      "name": "loja 960px dark",
+      "check": "canvas",
+      "passed": true,
+      "detail": "{\"r\":23,\"g\":21,\"b\":19,\"a\":1}"
+    },
+    {
+      "name": "loja 960px dark",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "loja 960px dark",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "loja 960px dark",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "12.95"
+    },
+    {
+      "name": "loja 1024px light",
+      "check": "overflow",
+      "passed": true,
+      "detail": "1024/1024"
+    },
+    {
+      "name": "loja 1024px light",
+      "check": "canvas",
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
+    },
+    {
+      "name": "loja 1024px light",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "loja 1024px light",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "loja 1024px light",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "11.34"
+    },
+    {
+      "name": "loja 1024px dark",
+      "check": "overflow",
+      "passed": true,
+      "detail": "1024/1024"
+    },
+    {
+      "name": "loja 1024px dark",
+      "check": "canvas",
+      "passed": true,
+      "detail": "{\"r\":23,\"g\":21,\"b\":19,\"a\":1}"
+    },
+    {
+      "name": "loja 1024px dark",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "loja 1024px dark",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "loja 1024px dark",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "12.95"
+    },
+    {
+      "name": "loja 1440px light",
+      "check": "overflow",
+      "passed": true,
+      "detail": "1440/1440"
+    },
+    {
+      "name": "loja 1440px light",
+      "check": "canvas",
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
+    },
+    {
+      "name": "loja 1440px light",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "loja 1440px light",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "loja 1440px light",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "11.34"
+    },
+    {
+      "name": "loja 1440px dark",
+      "check": "overflow",
+      "passed": true,
+      "detail": "1440/1440"
+    },
+    {
+      "name": "loja 1440px dark",
+      "check": "canvas",
+      "passed": true,
+      "detail": "{\"r\":23,\"g\":21,\"b\":19,\"a\":1}"
+    },
+    {
+      "name": "loja 1440px dark",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "loja 1440px dark",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "loja 1440px dark",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "12.95"
+    },
+    {
+      "name": "apoio 320px light",
+      "check": "overflow",
+      "passed": true,
+      "detail": "320/320"
+    },
+    {
+      "name": "apoio 320px light",
+      "check": "canvas",
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
+    },
+    {
+      "name": "apoio 320px light",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "apoio 320px light",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "apoio 320px light",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "11.34"
+    },
+    {
+      "name": "apoio 320px dark",
+      "check": "overflow",
+      "passed": true,
+      "detail": "320/320"
+    },
+    {
+      "name": "apoio 320px dark",
+      "check": "canvas",
+      "passed": true,
+      "detail": "{\"r\":23,\"g\":21,\"b\":19,\"a\":1}"
+    },
+    {
+      "name": "apoio 320px dark",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "apoio 320px dark",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "apoio 320px dark",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "12.95"
+    },
+    {
+      "name": "apoio 390px light",
+      "check": "overflow",
+      "passed": true,
+      "detail": "390/390"
+    },
+    {
+      "name": "apoio 390px light",
+      "check": "canvas",
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
+    },
+    {
+      "name": "apoio 390px light",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "apoio 390px light",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "apoio 390px light",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "11.34"
+    },
+    {
+      "name": "apoio 390px dark",
+      "check": "overflow",
+      "passed": true,
+      "detail": "390/390"
+    },
+    {
+      "name": "apoio 390px dark",
+      "check": "canvas",
+      "passed": true,
+      "detail": "{\"r\":23,\"g\":21,\"b\":19,\"a\":1}"
+    },
+    {
+      "name": "apoio 390px dark",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "apoio 390px dark",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "apoio 390px dark",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "12.95"
+    },
+    {
+      "name": "apoio 768px light",
+      "check": "overflow",
+      "passed": true,
+      "detail": "768/768"
+    },
+    {
+      "name": "apoio 768px light",
+      "check": "canvas",
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
+    },
+    {
+      "name": "apoio 768px light",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "apoio 768px light",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "apoio 768px light",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "11.34"
+    },
+    {
+      "name": "apoio 768px dark",
+      "check": "overflow",
+      "passed": true,
+      "detail": "768/768"
+    },
+    {
+      "name": "apoio 768px dark",
+      "check": "canvas",
+      "passed": true,
+      "detail": "{\"r\":23,\"g\":21,\"b\":19,\"a\":1}"
+    },
+    {
+      "name": "apoio 768px dark",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "apoio 768px dark",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "apoio 768px dark",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "12.95"
+    },
+    {
+      "name": "apoio 959px light",
+      "check": "overflow",
+      "passed": true,
+      "detail": "959/959"
+    },
+    {
+      "name": "apoio 959px light",
+      "check": "canvas",
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
+    },
+    {
+      "name": "apoio 959px light",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "apoio 959px light",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "apoio 959px light",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "11.34"
+    },
+    {
+      "name": "apoio 959px dark",
+      "check": "overflow",
+      "passed": true,
+      "detail": "959/959"
+    },
+    {
+      "name": "apoio 959px dark",
+      "check": "canvas",
+      "passed": true,
+      "detail": "{\"r\":23,\"g\":21,\"b\":19,\"a\":1}"
+    },
+    {
+      "name": "apoio 959px dark",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "apoio 959px dark",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "apoio 959px dark",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "12.95"
+    },
+    {
+      "name": "apoio 960px light",
+      "check": "overflow",
+      "passed": true,
+      "detail": "960/960"
+    },
+    {
+      "name": "apoio 960px light",
+      "check": "canvas",
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
+    },
+    {
+      "name": "apoio 960px light",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "apoio 960px light",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "apoio 960px light",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "11.34"
+    },
+    {
+      "name": "apoio 960px dark",
+      "check": "overflow",
+      "passed": true,
+      "detail": "960/960"
+    },
+    {
+      "name": "apoio 960px dark",
+      "check": "canvas",
+      "passed": true,
+      "detail": "{\"r\":23,\"g\":21,\"b\":19,\"a\":1}"
+    },
+    {
+      "name": "apoio 960px dark",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "apoio 960px dark",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "apoio 960px dark",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "12.95"
+    },
+    {
+      "name": "apoio 1024px light",
+      "check": "overflow",
+      "passed": true,
+      "detail": "1024/1024"
+    },
+    {
+      "name": "apoio 1024px light",
+      "check": "canvas",
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
+    },
+    {
+      "name": "apoio 1024px light",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "apoio 1024px light",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "apoio 1024px light",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "11.34"
+    },
+    {
+      "name": "apoio 1024px dark",
+      "check": "overflow",
+      "passed": true,
+      "detail": "1024/1024"
+    },
+    {
+      "name": "apoio 1024px dark",
+      "check": "canvas",
+      "passed": true,
+      "detail": "{\"r\":23,\"g\":21,\"b\":19,\"a\":1}"
+    },
+    {
+      "name": "apoio 1024px dark",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "apoio 1024px dark",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "apoio 1024px dark",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "12.95"
+    },
+    {
+      "name": "apoio 1440px light",
+      "check": "overflow",
+      "passed": true,
+      "detail": "1440/1440"
+    },
+    {
+      "name": "apoio 1440px light",
+      "check": "canvas",
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
+    },
+    {
+      "name": "apoio 1440px light",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "apoio 1440px light",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "apoio 1440px light",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "11.34"
+    },
+    {
+      "name": "apoio 1440px dark",
+      "check": "overflow",
+      "passed": true,
+      "detail": "1440/1440"
+    },
+    {
+      "name": "apoio 1440px dark",
+      "check": "canvas",
+      "passed": true,
+      "detail": "{\"r\":23,\"g\":21,\"b\":19,\"a\":1}"
+    },
+    {
+      "name": "apoio 1440px dark",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "apoio 1440px dark",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "apoio 1440px dark",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "12.95"
+    },
+    {
+      "name": "cursos 320px light",
+      "check": "overflow",
+      "passed": true,
+      "detail": "320/320"
+    },
+    {
+      "name": "cursos 320px light",
+      "check": "canvas",
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
+    },
+    {
+      "name": "cursos 320px light",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "cursos 320px light",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "cursos 320px light",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "11.34"
+    },
+    {
+      "name": "cursos 320px dark",
+      "check": "overflow",
+      "passed": true,
+      "detail": "320/320"
+    },
+    {
+      "name": "cursos 320px dark",
+      "check": "canvas",
+      "passed": true,
+      "detail": "{\"r\":23,\"g\":21,\"b\":19,\"a\":1}"
+    },
+    {
+      "name": "cursos 320px dark",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "cursos 320px dark",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "cursos 320px dark",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "12.95"
+    },
+    {
+      "name": "cursos 390px light",
+      "check": "overflow",
+      "passed": true,
+      "detail": "390/390"
+    },
+    {
+      "name": "cursos 390px light",
+      "check": "canvas",
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
+    },
+    {
+      "name": "cursos 390px light",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "cursos 390px light",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "cursos 390px light",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "11.34"
+    },
+    {
+      "name": "cursos 390px dark",
+      "check": "overflow",
+      "passed": true,
+      "detail": "390/390"
+    },
+    {
+      "name": "cursos 390px dark",
+      "check": "canvas",
+      "passed": true,
+      "detail": "{\"r\":23,\"g\":21,\"b\":19,\"a\":1}"
+    },
+    {
+      "name": "cursos 390px dark",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "cursos 390px dark",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "cursos 390px dark",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "12.95"
+    },
+    {
+      "name": "cursos 768px light",
+      "check": "overflow",
+      "passed": true,
+      "detail": "768/768"
+    },
+    {
+      "name": "cursos 768px light",
+      "check": "canvas",
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
+    },
+    {
+      "name": "cursos 768px light",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "cursos 768px light",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "cursos 768px light",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "11.34"
+    },
+    {
+      "name": "cursos 768px dark",
+      "check": "overflow",
+      "passed": true,
+      "detail": "768/768"
+    },
+    {
+      "name": "cursos 768px dark",
+      "check": "canvas",
+      "passed": true,
+      "detail": "{\"r\":23,\"g\":21,\"b\":19,\"a\":1}"
+    },
+    {
+      "name": "cursos 768px dark",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "cursos 768px dark",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "cursos 768px dark",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "12.95"
+    },
+    {
+      "name": "cursos 959px light",
+      "check": "overflow",
+      "passed": true,
+      "detail": "959/959"
+    },
+    {
+      "name": "cursos 959px light",
+      "check": "canvas",
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
+    },
+    {
+      "name": "cursos 959px light",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "cursos 959px light",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "cursos 959px light",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "11.34"
+    },
+    {
+      "name": "cursos 959px dark",
+      "check": "overflow",
+      "passed": true,
+      "detail": "959/959"
+    },
+    {
+      "name": "cursos 959px dark",
+      "check": "canvas",
+      "passed": true,
+      "detail": "{\"r\":23,\"g\":21,\"b\":19,\"a\":1}"
+    },
+    {
+      "name": "cursos 959px dark",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "cursos 959px dark",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "cursos 959px dark",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "12.95"
+    },
+    {
+      "name": "cursos 960px light",
+      "check": "overflow",
+      "passed": true,
+      "detail": "960/960"
+    },
+    {
+      "name": "cursos 960px light",
+      "check": "canvas",
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
+    },
+    {
+      "name": "cursos 960px light",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "cursos 960px light",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "cursos 960px light",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "11.34"
+    },
+    {
+      "name": "cursos 960px dark",
+      "check": "overflow",
+      "passed": true,
+      "detail": "960/960"
+    },
+    {
+      "name": "cursos 960px dark",
+      "check": "canvas",
+      "passed": true,
+      "detail": "{\"r\":23,\"g\":21,\"b\":19,\"a\":1}"
+    },
+    {
+      "name": "cursos 960px dark",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "cursos 960px dark",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "cursos 960px dark",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "12.95"
+    },
+    {
+      "name": "cursos 1024px light",
+      "check": "overflow",
+      "passed": true,
+      "detail": "1024/1024"
+    },
+    {
+      "name": "cursos 1024px light",
+      "check": "canvas",
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
+    },
+    {
+      "name": "cursos 1024px light",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "cursos 1024px light",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "cursos 1024px light",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "11.34"
+    },
+    {
+      "name": "cursos 1024px dark",
+      "check": "overflow",
+      "passed": true,
+      "detail": "1024/1024"
+    },
+    {
+      "name": "cursos 1024px dark",
+      "check": "canvas",
+      "passed": true,
+      "detail": "{\"r\":23,\"g\":21,\"b\":19,\"a\":1}"
+    },
+    {
+      "name": "cursos 1024px dark",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "cursos 1024px dark",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "cursos 1024px dark",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "12.95"
+    },
+    {
+      "name": "cursos 1440px light",
+      "check": "overflow",
+      "passed": true,
+      "detail": "1440/1440"
+    },
+    {
+      "name": "cursos 1440px light",
+      "check": "canvas",
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
+    },
+    {
+      "name": "cursos 1440px light",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "cursos 1440px light",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "cursos 1440px light",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "11.34"
+    },
+    {
+      "name": "cursos 1440px dark",
+      "check": "overflow",
+      "passed": true,
+      "detail": "1440/1440"
+    },
+    {
+      "name": "cursos 1440px dark",
+      "check": "canvas",
+      "passed": true,
+      "detail": "{\"r\":23,\"g\":21,\"b\":19,\"a\":1}"
+    },
+    {
+      "name": "cursos 1440px dark",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "cursos 1440px dark",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "cursos 1440px dark",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "12.95"
+    },
+    {
+      "name": "conta 320px light",
+      "check": "overflow",
+      "passed": true,
+      "detail": "320/320"
+    },
+    {
+      "name": "conta 320px light",
+      "check": "canvas",
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
+    },
+    {
+      "name": "conta 320px light",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "conta 320px light",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "conta 320px light",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "11.34"
+    },
+    {
+      "name": "conta 320px dark",
+      "check": "overflow",
+      "passed": true,
+      "detail": "320/320"
+    },
+    {
+      "name": "conta 320px dark",
+      "check": "canvas",
+      "passed": true,
+      "detail": "{\"r\":23,\"g\":21,\"b\":19,\"a\":1}"
+    },
+    {
+      "name": "conta 320px dark",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "conta 320px dark",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "conta 320px dark",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "12.95"
+    },
+    {
+      "name": "conta 390px light",
+      "check": "overflow",
+      "passed": true,
+      "detail": "390/390"
+    },
+    {
+      "name": "conta 390px light",
+      "check": "canvas",
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
+    },
+    {
+      "name": "conta 390px light",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "conta 390px light",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "conta 390px light",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "11.34"
+    },
+    {
+      "name": "conta 390px dark",
+      "check": "overflow",
+      "passed": true,
+      "detail": "390/390"
+    },
+    {
+      "name": "conta 390px dark",
+      "check": "canvas",
+      "passed": true,
+      "detail": "{\"r\":23,\"g\":21,\"b\":19,\"a\":1}"
+    },
+    {
+      "name": "conta 390px dark",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "conta 390px dark",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "conta 390px dark",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "12.95"
+    },
+    {
+      "name": "conta 768px light",
+      "check": "overflow",
+      "passed": true,
+      "detail": "768/768"
+    },
+    {
+      "name": "conta 768px light",
+      "check": "canvas",
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
+    },
+    {
+      "name": "conta 768px light",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "conta 768px light",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "conta 768px light",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "11.34"
+    },
+    {
+      "name": "conta 768px dark",
+      "check": "overflow",
+      "passed": true,
+      "detail": "768/768"
+    },
+    {
+      "name": "conta 768px dark",
+      "check": "canvas",
+      "passed": true,
+      "detail": "{\"r\":23,\"g\":21,\"b\":19,\"a\":1}"
+    },
+    {
+      "name": "conta 768px dark",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "conta 768px dark",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "conta 768px dark",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "12.95"
+    },
+    {
+      "name": "conta 959px light",
+      "check": "overflow",
+      "passed": true,
+      "detail": "959/959"
+    },
+    {
+      "name": "conta 959px light",
+      "check": "canvas",
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
+    },
+    {
+      "name": "conta 959px light",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "conta 959px light",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "conta 959px light",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "11.34"
+    },
+    {
+      "name": "conta 959px dark",
+      "check": "overflow",
+      "passed": true,
+      "detail": "959/959"
+    },
+    {
+      "name": "conta 959px dark",
+      "check": "canvas",
+      "passed": true,
+      "detail": "{\"r\":23,\"g\":21,\"b\":19,\"a\":1}"
+    },
+    {
+      "name": "conta 959px dark",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "conta 959px dark",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "conta 959px dark",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "12.95"
+    },
+    {
+      "name": "conta 960px light",
+      "check": "overflow",
+      "passed": true,
+      "detail": "960/960"
+    },
+    {
+      "name": "conta 960px light",
+      "check": "canvas",
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
+    },
+    {
+      "name": "conta 960px light",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "conta 960px light",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "conta 960px light",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "11.34"
+    },
+    {
+      "name": "conta 960px dark",
+      "check": "overflow",
+      "passed": true,
+      "detail": "960/960"
+    },
+    {
+      "name": "conta 960px dark",
+      "check": "canvas",
+      "passed": true,
+      "detail": "{\"r\":23,\"g\":21,\"b\":19,\"a\":1}"
+    },
+    {
+      "name": "conta 960px dark",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "conta 960px dark",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "conta 960px dark",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "12.95"
+    },
+    {
+      "name": "conta 1024px light",
+      "check": "overflow",
+      "passed": true,
+      "detail": "1024/1024"
+    },
+    {
+      "name": "conta 1024px light",
+      "check": "canvas",
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
+    },
+    {
+      "name": "conta 1024px light",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "conta 1024px light",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "conta 1024px light",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "11.34"
+    },
+    {
+      "name": "conta 1024px dark",
+      "check": "overflow",
+      "passed": true,
+      "detail": "1024/1024"
+    },
+    {
+      "name": "conta 1024px dark",
+      "check": "canvas",
+      "passed": true,
+      "detail": "{\"r\":23,\"g\":21,\"b\":19,\"a\":1}"
+    },
+    {
+      "name": "conta 1024px dark",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "conta 1024px dark",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "conta 1024px dark",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "12.95"
+    },
+    {
+      "name": "conta 1440px light",
+      "check": "overflow",
+      "passed": true,
+      "detail": "1440/1440"
+    },
+    {
+      "name": "conta 1440px light",
+      "check": "canvas",
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
+    },
+    {
+      "name": "conta 1440px light",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "conta 1440px light",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "conta 1440px light",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "11.34"
+    },
+    {
+      "name": "conta 1440px dark",
+      "check": "overflow",
+      "passed": true,
+      "detail": "1440/1440"
+    },
+    {
+      "name": "conta 1440px dark",
+      "check": "canvas",
+      "passed": true,
+      "detail": "{\"r\":23,\"g\":21,\"b\":19,\"a\":1}"
+    },
+    {
+      "name": "conta 1440px dark",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "conta 1440px dark",
+      "check": "h1-max-one",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "conta 1440px dark",
+      "check": "header-contrast",
+      "passed": true,
+      "detail": "12.95"
+    },
+    {
+      "name": "conta-auth 320px light",
+      "check": "overflow",
+      "passed": true,
+      "detail": "320/320"
+    },
+    {
+      "name": "conta-auth 320px light",
+      "check": "canvas",
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
+    },
+    {
+      "name": "conta-auth 320px light",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "conta-auth 320px light",
+      "check": "h1-max-one",
+      "passed": false,
+      "detail": "2"
+    },
+    {
+      "name": "conta-auth 320px dark",
+      "check": "overflow",
+      "passed": true,
+      "detail": "320/320"
+    },
+    {
+      "name": "conta-auth 320px dark",
+      "check": "canvas",
+      "passed": true,
+      "detail": "{\"r\":23,\"g\":21,\"b\":19,\"a\":1}"
+    },
+    {
+      "name": "conta-auth 320px dark",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "conta-auth 320px dark",
+      "check": "h1-max-one",
+      "passed": false,
+      "detail": "2"
+    },
+    {
+      "name": "conta-auth 390px light",
+      "check": "overflow",
+      "passed": true,
+      "detail": "390/390"
+    },
+    {
+      "name": "conta-auth 390px light",
+      "check": "canvas",
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
+    },
+    {
+      "name": "conta-auth 390px light",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "conta-auth 390px light",
+      "check": "h1-max-one",
+      "passed": false,
+      "detail": "2"
+    },
+    {
+      "name": "conta-auth 390px dark",
+      "check": "overflow",
+      "passed": true,
+      "detail": "390/390"
+    },
+    {
+      "name": "conta-auth 390px dark",
+      "check": "canvas",
+      "passed": true,
+      "detail": "{\"r\":23,\"g\":21,\"b\":19,\"a\":1}"
+    },
+    {
+      "name": "conta-auth 390px dark",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "conta-auth 390px dark",
+      "check": "h1-max-one",
+      "passed": false,
+      "detail": "2"
+    },
+    {
+      "name": "conta-auth 768px light",
+      "check": "overflow",
+      "passed": true,
+      "detail": "768/768"
+    },
+    {
+      "name": "conta-auth 768px light",
+      "check": "canvas",
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
+    },
+    {
+      "name": "conta-auth 768px light",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "conta-auth 768px light",
+      "check": "h1-max-one",
+      "passed": false,
+      "detail": "2"
+    },
+    {
+      "name": "conta-auth 768px dark",
+      "check": "overflow",
+      "passed": true,
+      "detail": "768/768"
+    },
+    {
+      "name": "conta-auth 768px dark",
+      "check": "canvas",
+      "passed": true,
+      "detail": "{\"r\":23,\"g\":21,\"b\":19,\"a\":1}"
+    },
+    {
+      "name": "conta-auth 768px dark",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "conta-auth 768px dark",
+      "check": "h1-max-one",
+      "passed": false,
+      "detail": "2"
+    },
+    {
+      "name": "conta-auth 959px light",
+      "check": "overflow",
+      "passed": true,
+      "detail": "959/959"
+    },
+    {
+      "name": "conta-auth 959px light",
+      "check": "canvas",
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
+    },
+    {
+      "name": "conta-auth 959px light",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "conta-auth 959px light",
+      "check": "h1-max-one",
+      "passed": false,
+      "detail": "2"
+    },
+    {
+      "name": "conta-auth 959px dark",
+      "check": "overflow",
+      "passed": true,
+      "detail": "959/959"
+    },
+    {
+      "name": "conta-auth 959px dark",
+      "check": "canvas",
+      "passed": true,
+      "detail": "{\"r\":23,\"g\":21,\"b\":19,\"a\":1}"
+    },
+    {
+      "name": "conta-auth 959px dark",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "conta-auth 959px dark",
+      "check": "h1-max-one",
+      "passed": false,
+      "detail": "2"
+    },
+    {
+      "name": "conta-auth 960px light",
+      "check": "overflow",
+      "passed": true,
+      "detail": "960/960"
+    },
+    {
+      "name": "conta-auth 960px light",
+      "check": "canvas",
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
+    },
+    {
+      "name": "conta-auth 960px light",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "conta-auth 960px light",
+      "check": "h1-max-one",
+      "passed": false,
+      "detail": "2"
+    },
+    {
+      "name": "conta-auth 960px dark",
+      "check": "overflow",
+      "passed": true,
+      "detail": "960/960"
+    },
+    {
+      "name": "conta-auth 960px dark",
+      "check": "canvas",
+      "passed": true,
+      "detail": "{\"r\":23,\"g\":21,\"b\":19,\"a\":1}"
+    },
+    {
+      "name": "conta-auth 960px dark",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "conta-auth 960px dark",
+      "check": "h1-max-one",
+      "passed": false,
+      "detail": "2"
+    },
+    {
+      "name": "conta-auth 1024px light",
+      "check": "overflow",
+      "passed": true,
+      "detail": "1024/1024"
+    },
+    {
+      "name": "conta-auth 1024px light",
+      "check": "canvas",
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
+    },
+    {
+      "name": "conta-auth 1024px light",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "conta-auth 1024px light",
+      "check": "h1-max-one",
+      "passed": false,
+      "detail": "2"
+    },
+    {
+      "name": "conta-auth 1024px dark",
+      "check": "overflow",
+      "passed": true,
+      "detail": "1024/1024"
+    },
+    {
+      "name": "conta-auth 1024px dark",
+      "check": "canvas",
+      "passed": true,
+      "detail": "{\"r\":23,\"g\":21,\"b\":19,\"a\":1}"
+    },
+    {
+      "name": "conta-auth 1024px dark",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "conta-auth 1024px dark",
+      "check": "h1-max-one",
+      "passed": false,
+      "detail": "2"
+    },
+    {
+      "name": "conta-auth 1440px light",
+      "check": "overflow",
+      "passed": true,
+      "detail": "1440/1440"
+    },
+    {
+      "name": "conta-auth 1440px light",
+      "check": "canvas",
+      "passed": false,
+      "detail": "{\"r\":255,\"g\":255,\"b\":255,\"a\":1}"
+    },
+    {
+      "name": "conta-auth 1440px light",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "conta-auth 1440px light",
+      "check": "h1-max-one",
+      "passed": false,
+      "detail": "2"
+    },
+    {
+      "name": "conta-auth 1440px dark",
+      "check": "overflow",
+      "passed": true,
+      "detail": "1440/1440"
+    },
+    {
+      "name": "conta-auth 1440px dark",
+      "check": "canvas",
+      "passed": true,
+      "detail": "{\"r\":23,\"g\":21,\"b\":19,\"a\":1}"
+    },
+    {
+      "name": "conta-auth 1440px dark",
+      "check": "main-unique",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "conta-auth 1440px dark",
+      "check": "h1-max-one",
+      "passed": false,
+      "detail": "2"
+    },
+    {
+      "name": "ui-library 960px light",
+      "check": "overflow",
+      "passed": true,
+      "detail": "960/960"
+    },
+    {
+      "name": "ui-library 960px light",
+      "check": "aside-left",
+      "passed": true,
+      "detail": "true rects=[[92,341,373,871],[92,341,373,871]] inner=960"
+    },
+    {
+      "name": "ui-library 960px light",
+      "check": "stories-render",
+      "passed": true,
+      "detail": "6"
+    },
+    {
+      "name": "ui-library 960px dark",
+      "check": "overflow",
+      "passed": true,
+      "detail": "960/960"
+    },
+    {
+      "name": "ui-library 960px dark",
+      "check": "aside-left",
+      "passed": true,
+      "detail": "true rects=[[92,341,373,871],[92,341,373,871]] inner=960"
+    },
+    {
+      "name": "ui-library 960px dark",
+      "check": "stories-render",
+      "passed": true,
+      "detail": "6"
+    },
+    {
+      "name": "ui-library 1024px light",
+      "check": "overflow",
+      "passed": true,
+      "detail": "1024/1024"
+    },
+    {
+      "name": "ui-library 1024px light",
+      "check": "aside-left",
+      "passed": true,
+      "detail": "true rects=[[169,412,444,930],[169,412,444,930]] inner=1024"
+    },
+    {
+      "name": "ui-library 1024px light",
+      "check": "stories-render",
+      "passed": true,
+      "detail": "6"
+    },
+    {
+      "name": "ui-library 1024px dark",
+      "check": "overflow",
+      "passed": true,
+      "detail": "1024/1024"
+    },
+    {
+      "name": "ui-library 1024px dark",
+      "check": "aside-left",
+      "passed": true,
+      "detail": "true rects=[[169,412,444,930],[169,412,444,930]] inner=1024"
+    },
+    {
+      "name": "ui-library 1024px dark",
+      "check": "stories-render",
+      "passed": true,
+      "detail": "6"
+    },
+    {
+      "name": "ui-library 1440px light",
+      "check": "overflow",
+      "passed": true,
+      "detail": "1440/1440"
+    },
+    {
+      "name": "ui-library 1440px light",
+      "check": "aside-left",
+      "passed": true,
+      "detail": "true rects=[[280,588,620,1235],[280,588,620,1235]] inner=1440"
+    },
+    {
+      "name": "ui-library 1440px light",
+      "check": "stories-render",
+      "passed": true,
+      "detail": "6"
+    },
+    {
+      "name": "ui-library 1440px dark",
+      "check": "overflow",
+      "passed": true,
+      "detail": "1440/1440"
+    },
+    {
+      "name": "ui-library 1440px dark",
+      "check": "aside-left",
+      "passed": true,
+      "detail": "true rects=[[280,588,620,1235],[280,588,620,1235]] inner=1440"
+    },
+    {
+      "name": "ui-library 1440px dark",
+      "check": "stories-render",
+      "passed": true,
+      "detail": "6"
+    }
+  ]
+}

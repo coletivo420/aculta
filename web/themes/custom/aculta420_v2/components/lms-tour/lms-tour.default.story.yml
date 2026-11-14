@@ -1,0 +1,13 @@
+title: LMS Tour Guiado
+props:
+  id: student-tour-demo
+  title: Tour do Estudante ACULTA
+  trigger_label: Iniciar Tour
+  trigger_url: /lms/tour-guiado/welcome
+  current_step: '1'
+  total_steps: 4
+slots:
+  content:
+    '#markup': <p>Bem-vindo ao percurso inicial do ambiente de aprendizagem.</p>
+  actions:
+    '#markup': <a class="button button--primary" href="/lms/tour-guiado/navigation">Proximo</a>

@@ -32,7 +32,7 @@ Na F15, o Kernel confirma que o estado de tentativa persiste quando a mesma
 conta retorna em outra sessão e não pode ser lido por outro estudante
 matriculado no curso. O H5P continua dono de seu progresso interno; resultados
 não são convertidos em notas oficiais do LMS. A integração de discussões do
-`aculta_forum_lms` liga tópicos ao conteúdo H5P, limita seleção e acesso pelo
+LMS liga tópicos ao conteúdo H5P, limita seleção e acesso pelo
 curso/turma e renderiza conversas sob o player. Unit cobre o resolver; Kernel
 com entidades persistidas valida isolamento por conteúdo, curso e turma,
 permissão do tópico, contexto do Group no autocomplete e composição do player.

@@ -9,6 +9,7 @@ use Drupal\aculta_user\Identity\AuthorCardBuilder;
 use Drupal\aculta_user\Identity\AuthorCardVariantResolver;
 use Drupal\comment\CommentInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\user\EntityOwnerInterface;
@@ -32,6 +33,9 @@ final class DiscussionCommentAuthorHooks {
    */
   #[Hook('entity_view')]
   public function entityView(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, string $view_mode): void {
+    if (!$entity instanceof ContentEntityInterface) {
+      return;
+    }
     if ($entity->getEntityTypeId() === 'aculta_forum_post') {
       if ($entity->hasField('legacy_author') && !$entity->get('legacy_author')->isEmpty()) {
         $legacyAuthor = $entity->get('legacy_author')->entity;
@@ -42,7 +46,9 @@ final class DiscussionCommentAuthorHooks {
       }
 
       $author = $entity instanceof EntityOwnerInterface ? $entity->getOwner() : NULL;
-      if ($author instanceof UserInterface && ($card = $this->authorCardBuilder->build($author, 'author_forum')) !== NULL) {
+      if ($author instanceof UserInterface) {
+        // Sem apelido não há identidade pública; o acervo é o fallback obrigatório.
+        $card = $this->authorCardBuilder->build($author, 'author_forum') ?? $this->authorCardBuilder->buildFallback($author);
         $build['author_card'] = $card + ['#weight' => -20];
       }
       return;
@@ -73,14 +79,7 @@ final class DiscussionCommentAuthorHooks {
     }
 
     $author = $entity->getOwner();
-    if (!$author instanceof UserInterface) {
-      return;
-    }
-
-    $card = $this->authorCardBuilder->build($author, $variant);
-    if ($card === NULL) {
-      return;
-    }
+    $card = $this->authorCardBuilder->build($author, $variant) ?? $this->authorCardBuilder->buildFallback($author);
     $card['#weight'] = -20;
     $build['author_card'] = $card;
   }

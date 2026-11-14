@@ -1,0 +1,289 @@
+/* Componente SDC studio-calendar: Caixa com faixa superior --color-accent-sub-2 e raio --radius-lg */
+.aculta-studio-calendar {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  padding: var(--spacing-md);
+  border: 1px solid var(--color-border);
+  border-block-start: 4px solid var(--color-accent-sub-2);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  gap: var(--spacing-sm);
+  inline-size: 100%;
+  max-inline-size: 100%;
+}
+
+.aculta-studio-calendar__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-xs);
+}
+
+.aculta-studio-calendar__title-wrap {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.aculta-studio-calendar__title {
+  margin: 0;
+  font-family: var(--font-family-display, inherit);
+  font-size: var(--font-size-lg, 1.25rem);
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.aculta-studio-calendar__add-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border-radius: var(--radius-full);
+  min-block-size: 2rem;
+  min-inline-size: 2rem;
+}
+
+.aculta-studio-calendar__nav {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2xs, .25rem);
+}
+
+.aculta-studio-calendar__month-label {
+  text-align: center;
+  font-size: var(--font-size-sm, .875rem);
+  font-weight: 600;
+  min-inline-size: 7.5rem;
+}
+
+.aculta-studio-calendar__nav-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border-radius: var(--radius-sm);
+  min-block-size: 2rem;
+  min-inline-size: 2rem;
+}
+
+/* Filtros segmentados */
+.aculta-studio-calendar__filters {
+  inline-size: 100%;
+  overflow-x: auto;
+}
+
+.aculta-studio-calendar__filter-group {
+  display: flex;
+  padding: 2px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-raised);
+  gap: 2px;
+}
+
+.aculta-studio-calendar__filter-chip {
+  display: inline-flex;
+  flex: 1 1 0;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  white-space: nowrap;
+  text-decoration: none;
+  color: var(--color-text-secondary);
+  border-radius: var(--radius-xs, 2px);
+  font-size: var(--font-size-xs, .75rem);
+  font-weight: 500;
+  min-block-size: 2rem;
+  padding-inline: var(--spacing-xs);
+}
+
+.aculta-studio-calendar__filter-chip:hover {
+  color: var(--color-text-primary);
+  background: var(--button-secondary-bg-hover);
+}
+
+.aculta-studio-calendar__filter-chip.is-active {
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  box-shadow: 0 1px 2px var(--color-alpha-shadow-tint-17);
+  font-weight: 700;
+}
+
+.aculta-studio-calendar__filter-chip:focus-visible {
+  outline: 2px solid var(--button-focus-ring);
+  outline-offset: 1px;
+}
+
+/* Grade de dias */
+.aculta-studio-calendar__grid-wrap {
+  inline-size: 100%;
+}
+
+.aculta-studio-calendar__grid {
+  table-layout: fixed;
+  border-collapse: collapse;
+  inline-size: 100%;
+}
+
+.aculta-studio-calendar__grid th {
+  text-align: center;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs, .75rem);
+  font-weight: 600;
+  padding-block: var(--spacing-xs);
+}
+
+.aculta-studio-calendar__grid td {
+  padding: 1px;
+  text-align: center;
+}
+
+.aculta-studio-calendar__day {
+  position: relative;
+}
+
+.aculta-studio-calendar__day-link,
+.aculta-studio-calendar__day > span.aculta-studio-calendar__day-num {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  color: var(--color-text-primary);
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-xs, .75rem);
+  min-block-size: 2rem;
+}
+
+.aculta-studio-calendar__day-link:hover {
+  background: var(--button-secondary-bg-hover);
+}
+
+.aculta-studio-calendar__day-link:focus-visible {
+  outline: 2px solid var(--button-focus-ring);
+  outline-offset: 1px;
+}
+
+.aculta-studio-calendar__day.is-outside .aculta-studio-calendar__day-num {
+  opacity: .4;
+  color: var(--color-text-muted);
+}
+
+.aculta-studio-calendar__day.is-today .aculta-studio-calendar__day-link,
+.aculta-studio-calendar__day.is-today span.aculta-studio-calendar__day-num {
+  border-color: var(--color-border);
+  font-weight: 700;
+}
+
+/* Dia selecionado com --color-accent */
+.aculta-studio-calendar__day.is-selected .aculta-studio-calendar__day-link,
+.aculta-studio-calendar__day.is-selected span.aculta-studio-calendar__day-num {
+  color: var(--color-on-brand);
+  background: var(--color-accent);
+  font-weight: 700;
+}
+
+.aculta-studio-calendar__day-dot {
+  margin-block-start: 1px;
+  border-radius: var(--radius-full);
+  background: var(--color-brand-primary);
+  block-size: 4px;
+  inline-size: 4px;
+}
+
+.aculta-studio-calendar__day.is-selected .aculta-studio-calendar__day-dot {
+  background: var(--color-on-brand);
+}
+
+/* Resumo do dia */
+.aculta-studio-calendar__summary {
+  display: flex;
+  flex-direction: column;
+  padding-block-start: var(--spacing-sm);
+  border-block-start: 1px solid var(--color-border);
+  gap: var(--spacing-xs);
+}
+
+.aculta-studio-calendar__summary-title {
+  margin: 0;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  font-size: var(--font-size-xs, .75rem);
+  font-weight: 700;
+}
+
+.aculta-studio-calendar__events-list {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  gap: var(--spacing-xs);
+}
+
+.aculta-studio-calendar__event-item {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-left: 3px solid var(--color-accent-sub-2);
+  border-radius: var(--radius-xs, 2px);
+  background: var(--color-surface-raised);
+}
+
+.aculta-studio-calendar__event-item.is-cancelled {
+  text-decoration: line-through;
+  opacity: .6;
+}
+
+.aculta-studio-calendar__event-link {
+  text-decoration: none;
+  color: var(--color-text-primary);
+  font-size: var(--font-size-sm, .875rem);
+  font-weight: 600;
+}
+
+.aculta-studio-calendar__event-link:hover {
+  text-decoration: underline;
+}
+
+.aculta-studio-calendar__event-name {
+  display: block;
+}
+
+.aculta-studio-calendar__event-meta {
+  display: flex;
+  flex-wrap: wrap;
+  margin-block-start: 2px;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs, .75rem);
+  gap: var(--spacing-xs);
+}
+
+.aculta-studio-calendar__empty-msg {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs, .75rem);
+  font-style: italic;
+}
+
+/* Posicionamento responsivo */
+/* Celular: abaixo do cabeçalho, antes de "Suas experiências". */
+@media (max-width: 59.9375rem) {
+  .aculta-studio-calendar {
+    margin-block-end: var(--spacing-lg);
+  }
+}
+
+/* Desktop: coluna direita, sticky, topo alinhado ao conteúdo como o menu lateral */
+@media (min-width: 60rem) {
+  .aculta-studio-calendar {
+    inline-size: 20rem;
+    inset-block-start: 8.625rem;
+    inset-inline-end: 0;
+    position: absolute;
+    z-index: 5;
+  }
+}

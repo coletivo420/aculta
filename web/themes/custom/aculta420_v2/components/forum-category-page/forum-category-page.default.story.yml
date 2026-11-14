@@ -1,0 +1,19 @@
+name: Página de categoria com painel lateral
+description: Layout responsivo da View de categoria do Fórum.
+component: aculta420_v2:forum-category-page
+slots:
+  header:
+    type: inline_template
+    template: '<header class="forum-category-header"><h1>Categoria</h1></header>'
+  navigation:
+    type: inline_template
+    template: '<nav aria-label="Navegação da categoria">Todas as discussões · Em alta · Sem resposta</nav>'
+  topics:
+    type: inline_template
+    template: '<article>Tópico de exemplo</article>'
+  pager:
+    type: inline_template
+    template: '<nav aria-label="Paginação">Página 1</nav>'
+  sidebar:
+    type: inline_template
+    template: '<section><h2>Regras da comunidade</h2><p>Colabore com respostas úteis e fundamentadas.</p></section>'

@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\EventSubscriber;
 
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\Core\Routing\TrustedRedirectResponse;
 use Drupal\Core\Session\AccountProxyInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -14,20 +15,30 @@ use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\KernelEvents;
 
-/** Keeps ordinary users in the Portal for account management. */
+/**
+ * Keeps ordinary users in the Portal for account management. */
 final class AccountRouteSubscriber implements EventSubscriberInterface {
 
   public function __construct(
     private readonly AccountProxyInterface $currentUser,
-    private readonly DomainPurposeManager $domainPurposeManager,
+    private readonly DomainSiteManager $siteManager,
   ) {}
 
+  /**
+   * {@inheritdoc}
+   */
   public static function getSubscribedEvents(): array {
     // RouterListener resolves _route at priority 32. This runs after routing,
     // before controller dispatch, and only examines explicit route names.
     return [KernelEvents::REQUEST => ['onKernelRequest', 29]];
   }
 
+  /**
+   * Redireciona usuários comuns para o Portal nas rotas de conta.
+   *
+   * @param \Symfony\Component\HttpKernel\Event\RequestEvent $event
+   *   Evento da requisição do kernel.
+   */
   public function onKernelRequest(RequestEvent $event): void {
     if (!$event->isMainRequest() || !$this->currentUser->isAuthenticated()
       || $this->currentUser->hasPermission('administer users')) {
@@ -74,15 +85,15 @@ final class AccountRouteSubscriber implements EventSubscriberInterface {
         $destination = '<front>';
       }
       else {
-        $event->setResponse(new \Symfony\Component\HttpFoundation\Response('', 403));
+        $event->setResponse(new Response('', 403));
         return;
       }
     }
 
     if ($destination !== NULL) {
       $target = $destination === '<front>'
-        ? $this->domainPurposeManager->pathUrl('account', '/')
-        : $this->domainPurposeManager->routeUrl('account', $destination);
+        ? $this->siteManager->pathUrl(SiteKey::Account, '/')
+        : $this->siteManager->routeUrl(SiteKey::Account, $destination);
       if ($target === NULL) {
         $event->setResponse(new Response('', Response::HTTP_NOT_FOUND));
         return;
@@ -90,7 +101,7 @@ final class AccountRouteSubscriber implements EventSubscriberInterface {
 
       // The generic user edit route is canonical on MAIN. Never turn a
       // state-changing request there into a cross-domain replay on ACCOUNT.
-      if ($this->domainPurposeManager->getCurrentPurpose() !== 'account'
+      if ($this->siteManager->getCurrentSiteKey()?->value !== 'account'
         && !in_array($request->getMethod(), ['GET', 'HEAD'], TRUE)) {
         $event->setResponse(new Response('', Response::HTTP_NOT_FOUND, [
           'Cache-Control' => 'private, no-store',

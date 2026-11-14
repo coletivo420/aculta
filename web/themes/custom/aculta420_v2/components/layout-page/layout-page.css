@@ -1,0 +1,93 @@
+.layout-page {
+  display: grid;
+  grid-area: main;
+  grid-template-columns: minmax(0, 1fr);
+  align-content: start;
+  padding: var(--spacing-lg) var(--page-gutter);
+  gap: var(--spacing-xl);
+  inline-size: 100%;
+  margin-inline: auto;
+  min-block-size: 0;
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
+}
+
+/* Container externo do stack: acompanha o slider de largura estreita do tema.
+   A medida de leitura (68–70ch) fica no
+   conteúdo textual, para não estrangular formulários e tabelas. */
+.layout-page--stack {
+  inline-size: min(100%, var(--aculta-narrow-container-width, 750px));
+}
+
+.layout-page--aside {
+  max-inline-size: var(--page-content-max);
+}
+
+.layout-page--full {
+  max-inline-size: none;
+}
+
+/* O Dashboard da Conta reserva colunas para os SDCs de menu e calendário. */
+.layout-page--studio-dashboard .layout-page__title {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  margin: -1px;
+  padding: 0;
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (min-width: 60rem) {
+  .layout-page--studio-dashboard {
+    position: relative;
+    max-inline-size: var(--aculta-container-width, 84rem);
+    margin-inline: auto;
+    padding-inline-start: 16rem;
+    padding-inline-end: 21rem;
+  }
+
+  .layout-page--studio-dashboard .layout-page__content {
+    inline-size: 100%;
+    max-inline-size: none;
+  }
+}
+
+.layout-page__title,
+.layout-page__content,
+.layout-page__aside {
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
+}
+
+.layout-page__title {
+  grid-column: 1 / -1;
+}
+
+@media (min-width: 60rem) {
+  /* A barra fica à esquerda no desktop, mantendo conteúdo antes de aside no DOM. */
+  .layout-page--aside:has(.layout-page__aside) {
+    grid-template-areas:
+      "title title"
+      "aside content";
+    grid-template-columns: minmax(14rem, 1fr) minmax(0, 2fr);
+  }
+
+  .layout-page--aside:has(.layout-page__aside):not(:has(.layout-page__title)) {
+    grid-template-areas: "aside content";
+  }
+
+  .layout-page--aside:has(.layout-page__aside) .layout-page__title {
+    grid-area: title;
+  }
+
+  .layout-page--aside:has(.layout-page__aside) .layout-page__content {
+    grid-area: content;
+  }
+
+  .layout-page--aside:has(.layout-page__aside) .layout-page__aside {
+    grid-area: aside;
+  }
+}

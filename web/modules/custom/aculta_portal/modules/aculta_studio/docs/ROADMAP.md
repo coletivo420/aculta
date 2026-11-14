@@ -1,10 +1,30 @@
-## Conta Studio — implementação e validação focal no Runtime (2026-11-03)
+## Estado consolidado da entrega Studio — ACULTA420 dev.36 — 2026-11-03
 
-C1-C3 sincronizadas no Runtime, com shell `account-navigation.js`, root estável, metadata, Grid, estados, histórico e menu mobile. Owners Form API preservados. Dashboard providers/permissões/domain e Perfil público separados; Marley “Criar” usa rota owner e moderação aparece apenas à conta autorizada. Studio Unit 72/658 PASS. Runtime `aculta_runtime` em `b70e56dbec`: `updatedb:status` sem updates, `config:status` limpo, `drush cr` PASS. HTTP autenticado: Conta/Perfil/Marley respondem 200; anônimo 403 nas rotas privadas e 302 na raiz; moderação 404 para comum e 200 para moderadora.
+- **Implementado:** Dashboard e cards vindos dos providers/permissões; shell Conta dedicado com navegação AJAX, histórico, acessibilidade e fallback; Perfil público separado da Conta; Marley com ação Criar junto ao título e moderação condicionada ao owner. Nenhum owner, grant, workflow ou storage foi duplicado.
+- **Visual:** SDCs reutilizados `aculta420:card` (`studio_fidelity`), `profile-editor` e `profile-identity`; Conta usa estrutura Core `<details>`/lista e wrappers dos owners. Nenhum SDC novo. ACULTA420 dev.36 aplica escala global compacta e reduz o gap do Dashboard para 12 px, sem mudar as cores do cabeçalho.
+- **Último Runtime validado:** ACULTA420 `0.7.0-dev.36`, `aculta_studio` `0.1.0-dev.44`, Drupal 11.4.10. Firefox ESR passou 106/106 verificações, 21 SKIP condicionais, zero falhas; `updatedb:status` sem updates e `config:status` limpo após snapshot/import apenas do bloco de eventos. Capturas em `$SUITE_OUT/studio-spacing-runtime-dev36-20261103/`. Uma alteração local posterior em Composer deixou HTTP 500 e falha de container por `group.membership_loader` ausente; a revalidação atual está bloqueada sem recuperação desse ambiente.
+- **Referência:** a prancha `image(20261103-123227).png` e as capturas Runtime foram comparadas por composição; sem alegação de paridade pixel a pixel. Cinco referências oficiais são PNGs válidos, 1536×1024; ZIP indisponível.
+- **DEFERRED:** upload de avatar interrompido pelo desafio humano; troca de senha não executada sem aceite legal; Orca somente em Marley; criar/editar conteúdo próprio sem fixture editorial; ausência de módulos opcionais não exercitada no Runtime. Escritas pessoais/endereço tiveram submissão e conferência sem alteração persistida.
 
-Firefox ESR visível no Runtime: comum 82/82 PASS, 21 SKIP, 0 FAIL; moderadora 99/99 PASS, 5 SKIP, 0 FAIL. Validou AJAX Conta (troca, histórico, erro/retry, timeout/resposta tardia, cliques concorrentes, mobile), Form API inválido/sem persistência e preferência válida restaurada, Dashboard cinco cards autorizados, Perfil separado, responsividade 320–1440px, claro/escuro, teclado e Marley/moderação autorizada. Capturas e limites: [auditoria](../../../../../../../docs/portal/STUDIO-CONTA-AJAX-AUDITORIA.md), artefatos em `$SUITE_OUT/studio-account-member-final-4-20261103/` e `$SUITE_OUT/studio-account-moderator-final-4-20261103/`.
+## Histórico da primeira validação visual da Conta — ACULTA420 dev.31
 
-DEFERRED: sessão expirada/HTTP 403-404 simulados no cliente, upload/avatar/senha/anexos, escrita pessoal/endereço, opcionais ausentes, conteúdo aguardando moderação, zoom 200–400%, leitor de tela e comparação integral com a prancha. Sem homologação integral P1.2. Boundary/map/UI docs mantêm falhas preexistentes em `aculta_paths`/LMS/Eventos/uploader.
+Comparação real mostrou que a lista da Conta ainda herdava `nav-tabs`/`studio__subtabs`, e não formava caixas claras para menu e conteúdo. O ACULTA420 dev.31 agora apresenta navegação vertical e painéis com tokens semânticos; Core `details`, item list e Form API foram reutilizados por não haver SDC apropriado para substituir a estrutura de vários owners. Nenhum formulário, permissão ou owner mudou. Firefox Runtime passou 97/97 checks aplicáveis (22 SKIP), no-JS 14/14; nove rotas Conta diretas HTTP 200, foco/ativo, AJAX e formulários inválido/válido confirmados. Dados e Endereço tiveram submits válidos no Firefox usando os valores já existentes, com hashes iguais antes/depois. Artefatos em `$SUITE_OUT/studio-dashboard-final-20261103/account-panels-dev31-final/`. Pendentes: upload/avatar/senha, módulos opcionais, screen reader e conteúdo editorial próprio da conta de teste. Theme Unit 50/358 e gates estáticos constam no handoff.
+
+### Complemento de testes — 2026-11-03
+
+Orca/Firefox ESR passou 5/5 na tela Marley, com nome acessível das três abas autorizadas e heading correto; a gravação de áudio teve sinal. O harness de avatar passou 11/11 checks e registrou 1 `DEFERRED`: upload sintético recebido e corte aberto; desafio de verificação humana impediu submissão, estado persistido permaneceu igual e arquivos seguem temporários para limpeza normal. Senha continua pendente: a conta sintética exige o aceite individual dos Termos, não realizado; a fixture comum proíbe troca de senha sem decisão. Testes Unit cobrem owner CPF/CNPJ opcional ausente e componentes opcionais do Perfil; CPF/CNPJ está ativo no Runtime. A comparação visual real usa a prancha principal válida e capturas Runtime, sem declarar paridade pixel a pixel. ZIP não disponível; cinco PNGs rastreados validados por `file` e `identify`.
+
+## Histórico das correções dev.43/dev.44 — antes da validação integrada dev.36
+
+Dev.43 corrigiu o HTTP 500 do Dashboard: `AccessResultAllowed::applyTo()` não existe; `CacheableMetadata` aplica a cacheabilidade do link. Pós-push, Firefox ESR visível validou 94/94 checks aplicáveis, 21 SKIP, 0 falhas; Conta direta 9/9 HTTP 200, no-JS 4/4, Dashboard e Perfil responsivos, e ações do Perfil legíveis em viewport desktop. Capturas externas: `$SUITE_OUT/studio-dashboard-final-20261103/post-push/`.
+
+Dev.44 agrupa o título da seção Marley e suas ações num cabeçalho, para “Criar” ficar junto de “Meu trabalho”. A rota e o acesso continuam vindo do owner. Firefox ESR Runtime passou 97/97 verificações aplicáveis, 21 SKIP, incluindo alinhamento e tabela contida em 320/390px. Capturas externas estão em `$SUITE_OUT/studio-dashboard-final-20261103/marley-header-dev30-retest/`. A listagem e o menu de abas existentes não foram removidos.
+
+C1-C3 implementadas e verificadas no Runtime, com shell `account-navigation.js`, root estável, metadados, Grid, estados, histórico e menu mobile. O listener delegado único em `document` sobrevive ao `replaceWith`; `Drupal.Ajax` não registra um segundo listener Core. Owners Form API preservados. Dashboard usa providers/permissões/domain e Perfil público separado; Marley “Criar” usa rota owner e moderação aparece apenas à conta autorizada. Studio Unit 72/659 PASS. Runtime `aculta_runtime` em `d7879e0d2e`: sem updates/config drift e cache reconstruído. HTTP autenticado: nove rotas Conta 200; anônimo 403 nas rotas privadas e 302 na raiz; moderação 404 para comum e 200 para moderadora em rodada A/B.
+
+Firefox ESR visível no Runtime: Conta 92/92 verificações aplicáveis PASS, 22 SKIP. Validou AJAX Conta (troca, histórico, 403/404/retry, timeout/resposta tardia, cliques concorrentes, mobile), Form API inválido e preferência válida restaurada, Dashboard cinco cards autorizados, Perfil separado, responsividade 320–1440px, claro/escuro, teclado e Marley/moderação autorizada. Capturas e limites: [auditoria](../../../../../../../docs/portal/STUDIO-CONTA-AJAX-AUDITORIA.md), artefatos em `$SUITE_OUT/studio-audit-20261103/member-final10/` e `$SUITE_OUT/studio-account-moderator-final-4-20261103/`.
+
+Estado DEFERRED naquele registro pré-dev.36: upload/avatar/senha/anexos, escrita pessoal/endereço, módulos opcionais ausentes no Runtime, conteúdo aguardando moderação, leitor de tela e comparação visual. O conjunto de seis PNGs do caminho antigo `references/studio-visual/` era inválido e não foi usado; as cinco referências oficiais atuais em `docs/portal/studio-visual/referencias/` são válidas e foram comparadas por composição com capturas Runtime dev.36. Veja o estado consolidado no início deste roadmap. Boundary/map/UI docs mantêm falhas preexistentes em `aculta_paths`/LMS/Eventos/uploader.
 
 > Nota de 2026-11-02: os caminhos `/studio/we-sativa`, `/studio/green-stash`, `/wesativa`, `/greenstash`, `/wiki/busca`, `/wiki/verbetes` e `/wiki/propostas` citados abaixo foram substituídos por `/we-sativa`, `/green-stash`, `/busca-wiki`, `/verbetes` e `/propostas`. Registro histórico preservado; veja a retificação no ADR-038.
 
@@ -281,7 +301,7 @@ Origem: `docs/architecture/OPENCULTURAS-COMPARATIVO.md`. Entram depois do fecham
 - Código implementado na PR #297: `StudioProfileController` usa os quatro SDCs, com props e slots de render arrays providos por ACULTA User e `aculta_image`. `PublicProfileLink` continua árbitro do link público, e somente a pessoa dona da conta pode carregar o editor.
 - Edição segue sem duplicação para `aculta_studio.profile_nickname`, `profile_privacy`, `profile_bio`, `profile_social` e o modal original `aculta_user.foto`. Bio textarea desativada, linhas sociais e tags de cache do User são preservadas; botões modais originais removidos somente na composição Studio.
 - Testes Unit escritos, não executados: usuário anônimo, permissão negada, entidade inexistente, fallback sem owner, link público condicionado, componentes aninhados, render arrays, links de ações e cache.
-- Gates pendentes: PHP lint/PHPCS, PHPUnit Unit/Kernel/Functional, tema e schema SDC/Core discovery, cache por UID e privacidade com duas contas, foto própria privada, fallback no-JS, modal AJAX, teclados, 320/390/768/1024/1440px e tema Olivero, Firefox ESR/X11, Domain ACCOUNT e Runtime. A fase S-R5 de comparação visual com `/conta-legada` somente depois das validações; não remover o legado.
+- Gates pendentes: PHP lint/PHPCS, PHPUnit Unit/Kernel/Functional, tema e schema SDC/Core discovery, cache por UID e privacidade com duas contas, foto própria privada, fallback no-JS, modal AJAX, teclados, viewports 320/390/768/1024/1440 px no Firefox ESR/X11, Domain ACCOUNT e Runtime. A fase S-R5 de comparação visual com `/conta-legada` somente depois das validações; não remover o legado.
 
 ## Histórico — Pré-S-R4 — SDCs do tema ACULTA420 (0.7.0-dev.1)
 
@@ -298,7 +318,7 @@ Firefox ESR/X11, mobile e modos claro/escuro. Não declarar homologado.
 - **Código entregue na PR #297:** três rotas canônicas `/studio/conta/{pedidos,apoio,preferencias}` com autenticação, permissão e purpose ACCOUNT. A navegação própria do Studio agora aponta a esses destinos; a Conta antiga em `/conta-legada` e as rotas originárias continuam disponíveis.
 - **Ownership:** `PortalController::orders()` mantém o filtro e o link de pedido Commerce, `SupportController::mySupport()` mantém histórico e Form API de assinatura recorrente sem duplicação, e `AppearanceForm` mantém escrita e invalidação de cache via Core Form API. Os links secundários de preferências ainda seguem `SettingsTabs` no owner; são intencionalmente preservados para outras preferências não integradas.
 - **Testes Unit escritos, não executados:** rota única, purpose/account, permissão e no-cache, navegação com/sem documentos, delegação dos métodos de pedidos e suporte, ações de assinatura, acesso negado, Form API de aparência com seus tabs. Não declarar gates PASS sem execução.
-- **Gates antes de S-R5/RC:** instalar/check-out correto; PHP lint e PHPCS, `phpunit` Unit/Kernel/Functional, `validate-module-theme-boundary.php`, `validate-aculta-portal-drupal11.php`, `validate-project-status-index.php`, `validate-no-temporary-route-aliases.php`, teste de duas contas com Commerce e assinaturas, pagamento, ação de assinatura em POST/CSRF, preferência persistida e invalidada, login anônimo, Domain ACCOUNT, cache de usuário, AJAX/no-JS e Firefox ESR/X11 em 320 px e Olivero.
+- **Gates antes de S-R5/RC:** instalar/check-out correto; PHP lint e PHPCS, `phpunit` Unit/Kernel/Functional, `validate-module-theme-boundary.php`, `validate-aculta-portal-drupal12.php`, `validate-project-status-index.php`, `validate-no-temporary-route-aliases.php`, teste de duas contas com Commerce e assinaturas, pagamento, ação de assinatura em POST/CSRF, preferência persistida e invalidada, login anônimo, Domain ACCOUNT, cache de usuário, AJAX/no-JS e Firefox ESR/X11 em 320 px no tema ACULTA ativo.
 - **Limitação externa ainda aberta:** garantir unicidade transacional de CPF/CNPJ em B1; completar homologação B1/B2 sem mexer no legado. Próximo: fase S-R4 (SDC e edição de Perfil) e S-R5 (aceite Conta/Perfil com comparação visual), condicionadas a gates proporcionais.
 
 ## S-R3-B1 — revisão (Studio dev.19, Portal dev.31)
@@ -499,7 +519,7 @@ os links condicionados a acesso e HTML renderizado no ACULTA420 (2 testes / 208
 asserções junto ao owner Wiki).
 Teste Unit do controller inclui retorno owner, rota sem o contrato de início e
 acesso negado (3/3); a suíte Studio completa passou em 20 testes / 61 asserções.
-Runtime e Firefox ESR/X11, incluindo 320px e Olivero, permanecem pendentes.
+Runtime e Firefox ESR/X11, incluindo 320px, permanecem pendentes.
 
 ### Incremento Studio dev.4 — disponibilidade da aba Wiki
 
@@ -544,7 +564,7 @@ Wiki dev.77, a classe completa de ciclo da Wiki passou em MariaDB (23 testes /
 1.039 assertions) e inclui regressões de rota, propósito, autoria, paginação e
 acesso. Os formulários Wiki têm retorno cacheável ao workspace quando o
 provider/acesso estão disponíveis. A interface visual da experiência WE SATIVA ainda não foi homologada em
-Firefox ESR/X11, 320 px, Olivero ou Runtime; a suíte atual do browser Studio
+Firefox ESR/X11, 320 px ou Runtime; a suíte atual do browser Studio
 exercita principalmente GanjaLab. O smoke WE SATIVA foi adicionado em
 `tests/browser/aculta-wiki/we-sativa.py`; a execução de 2026-10-24 não encontrou
 rota/provider no container ativo do Runtime, apesar de Studio e Wiki constarem
@@ -600,7 +620,7 @@ Os dados e sua cacheabilidade continuam provenientes do `LearningDashboardManage
 | ACULTA420 | SDC card/grid/header/empty e stories estáticas | verificar render real, contratos de slots, tokens, 320–1440px, dark/light e gates UI Suite | tema é dono do visual; Studio não cria CSS concorrente |
 | GanjaLab editorial | StudioTab/Presenter/Controller/AJAX, plugins Revista/Wiki/Forum/Cursos/Galerias | hardening de consultas, ações reais, jornadas próprias, editor e fila | prioridade imediata |
 | Wiki moderação | proposta e WikiTab existentes | provider autorizado/paginado, grants por revisão, Kernel, Content Moderation | bloqueado para produção |
-| WE SATIVA | provider e `/studio/we-sativa`; workspace Wiki com paginação, SDCs, Entity Access e links para fluxos Form API do dono | validação visual/browser de autoria a 320 px, Olivero, fallback sem JS e Runtime | avançar visualização sem criar storage ou ACL no Studio |
+| WE SATIVA | provider e `/studio/we-sativa`; workspace Wiki com paginação, SDCs, Entity Access e links para fluxos Form API do dono | validação visual/browser de autoria a 320 px, fallback sem JS e Runtime | avançar visualização sem criar storage ou ACL no Studio |
 
 ### Frente prioritária: GANJALAB E-0.1 — Editor Studio
 
@@ -657,7 +677,7 @@ Referência: [auditoria 3.1.5](../../../../../../../docs/architecture/AUDITORIA-
 - **OC-ST2:** "Minhas recomendações" terá storage/flag/autoridade separados de favoritos e seguidores; não inferir vínculo organizacional de bookmark.
 - **OC-ST3:** "Minha organização" usa vínculo de representação aprovado pela moderação, nunca credencial de **Conta** ou papel global `organizador` por si. **Perfil** público continua entidade/experiência distinta; mudanças organizacionais exigem aprovação e trilha de auditoria.
 - **OC-ST4:** primeiro acesso em cartões existentes; sem depender de Tours do OpenCulturas, sem JS obrigatório e sem duplicar onboarding.
-- Gates: grants Entity/Domain, acesso negado em cross-account/cross-purpose, cache A/B, Firefox ESR e Olivero.
+- Gates: grants Entity/Domain, acesso negado em cross-account/cross-purpose, cache A/B, Firefox ESR no tema ACULTA ativo.
 
 ## OCS-F0 — inventário visual (2026-10-29)
 
@@ -1157,3 +1177,20 @@ Fixture Runtime autorizada do Green Stash: produto rascunho NID 14, não
 publicado, renderizado na listagem e no detalhe em 16 estados responsivos, sem
 overflow e com axe sem violações. O conteúdo é exclusivamente de teste e foi
 preservado para inspeção humana; submit e rollback permanecem pendentes.
+## Reteste da Conta Studio — 2026-11-03
+
+`0.1.0-dev.41` corrige a construção de `Drupal.Ajax` da Conta para evitar que o Core associe outro listener de clique aos links administrados pelo handler delegado. No Runtime `aculta_runtime`, o preflight permaneceu sem updates de banco e `config:status` limpo; o cache foi reconstruído após o ajuste de JS.
+
+Registro pré-dev.36: Firefox ESR no-JS 14/14 PASS; Conta 92/92 aplicáveis PASS, 22 SKIP; flags de senha/upload/anexos, leitor de tela e cotejo estavam pendentes naquela rodada. As referências mencionadas naquele registro eram os seis arquivos truncados de `references/studio-visual/`; foram substituídas pelas cinco imagens válidas versionadas em `docs/portal/studio-visual/referencias/`. O cotejo e a validação integrada posteriores estão resumidos no início deste roadmap.
+
+
+
+## Revisão visual do Dashboard — estado integrado dev.36 — 2026-11-03
+
+A entrada Account usa uma ligação privada, mostra editor Perfil com `Url::access()` no purpose `account`, e só apresenta link público/avatar quando vêm do `AuthorIdentityResolver`. Cards seguem registry, acesso e `DomainPurposeManager`. Tema reutiliza `aculta420:card` variante `studio_fidelity`; nenhum SDC novo nem mudança no cabeçalho. Capturas Runtime e cotejo por composição da prancha principal estão concluídos em dev.36; ver `$SUITE_OUT/studio-spacing-runtime-dev36-20261103/` e o estado consolidado no início deste roadmap.
+
+Na mesma revisão, o escopo Marley foi alinhado ao contrato: `WikiTab` e `CursosTab` removidos; permanecem Revista, Fórum/moderação e Galerias. `MarleyTabScopeTest` verifica o inventário. Nenhum owner, grant, workflow ou dado foi alterado; Wiki fica em WE SATIVA e LMS em Ganjalab.
+
+### Estado do Runtime após atualização iniciada — 2026-11-03
+
+O resultado integrado dev.36 acima é anterior à atualização do Runtime. O checkout está no commit `5f695dfecb49b4473aebda4f725c681f9c5b92a9` (Drupal 11.5.0-beta1 / Group 4 alpha); `drush status` identifica o banco `aculta_runtime`. Uma chamada concorrente de `updatedb:status` falhou transitoriamente ao analisar `modules/contrib/storybook/storybook.info.yml`; uma chamada posterior listou 18 updates pendentes. `config:status` registra diferenças em core, Group/LMS, ações de usuário e `upgrade_status.settings`. Esta tarefa não aplicou updates nem importação; um processo paralelo foi observado invocando `drush cr`, mas sua saída não ficou disponível. As rotas anônimas de controle anteriores retornaram 302 (`/`), 404 (`/u/pessoa-5`) e 403 (`/conta/dados` no host de Conta); a validação autenticada integrada permanece pendente. Ver [`STUDIO-CONTA-AJAX-AUDITORIA.md`](../../../../../../../docs/portal/STUDIO-CONTA-AJAX-AUDITORIA.md) para os detalhes e o limite da evidência anterior.

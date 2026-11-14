@@ -32,7 +32,7 @@ final class PersonalNamePane extends CheckoutPaneBase implements CheckoutPaneInt
    *
    * @var \Drupal\aculta_portal\Checkout\PersonalNameStore
    */
-  private PersonalNameStore $names;
+  protected PersonalNameStore $names;
 
   /**
    * {@inheritdoc}

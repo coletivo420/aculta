@@ -13,7 +13,8 @@ use Drupal\Core\Queue\Attribute\QueueWorker;
 use Drupal\Core\Queue\QueueWorkerBase;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\user\UserDataInterface;
 use Drupal\aculta_user\Badge\BadgeService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -32,12 +33,12 @@ final class AchievementEmailWorker extends QueueWorkerBase implements ContainerF
     array $configuration,
     string $plugin_id,
     mixed $plugin_definition,
-    private readonly EntityTypeManagerInterface $entities,
-    private readonly UserDataInterface $userData,
-    private readonly AcultaMailerInterface $mailer,
-    private readonly DomainPurposeManager $domainPurpose,
-    private readonly LockBackendInterface $lock,
-    private readonly BadgeService $badges,
+    protected readonly EntityTypeManagerInterface $entities,
+    protected readonly UserDataInterface $userData,
+    protected readonly AcultaMailerInterface $mailer,
+    protected readonly DomainSiteManager $siteManager,
+    protected readonly LockBackendInterface $lock,
+    protected readonly BadgeService $badges,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }
@@ -50,7 +51,7 @@ final class AchievementEmailWorker extends QueueWorkerBase implements ContainerF
       $container->get('entity_type.manager'),
       $container->get('user.data'),
       $container->get('aculta_mailer.mailer'),
-      $container->get('aculta_portal.domain_purpose'),
+      $container->get('aculta_portal.domain_site'),
       $container->get('lock.persistent'),
       $container->get('aculta_user.badge_service'),
     );
@@ -86,7 +87,7 @@ final class AchievementEmailWorker extends QueueWorkerBase implements ContainerF
       if ($definition === NULL) {
         return;
       }
-      $url = $this->domainPurpose->routeUrl('account', 'aculta_user.atividade', ['aba' => 'conquistas']);
+      $url = $this->siteManager->routeUrl(SiteKey::Account, 'aculta_user.atividade', ['aba' => 'conquistas']);
       if ($url === NULL) {
         throw new \RuntimeException('O endereço do ambiente para a conta não está disponível.');
       }

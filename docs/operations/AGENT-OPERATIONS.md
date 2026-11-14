@@ -4,15 +4,16 @@ Estas regras foram realocadas do arquivo histórico de instruções; aplique som
 
 ## Ambientes
 
-- `*.aculta.toca.net.br` é o servidor de desenvolvimento (Homelab); `*.aculta.org` é produção. Os hosts por purpose estão em `docs/architecture/multidomain.md`.
+- `*.aculta.toca.net.br` é o servidor de desenvolvimento (Homelab), único ambiente em uso. Não há host de produção ainda. Os hosts por purpose estão em `docs/architecture/multidomain.md`.
 - Para Drush e operações do Runtime, siga `docs/architecture/environments.md`; não presuma um caminho de checkout, necessidade de SSH ou URI padrão.
 - **Antes de qualquer operação de ambiente**, confirme `hostname`, `pwd`, branch/estado Git e `php vendor/drush/drush/drush.php status`. Confirme no Drush o site URI e o banco conectados antes de executar comandos que alterem estado.
 - Se `hostname` for `toca` e o Drush confirmar o Runtime `aculta_runtime`, trate a sessão como já estando no servidor de desenvolvimento: use o checkout e o Drush locais. A saída `Site URI: http://default` sem `--uri` é esperada neste ambiente e não significa produção nem erro de conexão. Para operações sensíveis ao purpose, passe `--uri` com um host de teste documentado. SSH só se justifica quando a operação necessária não estiver disponível localmente e o destino tiver sido confirmado pela documentação de ambientes.
 - Se um problema pontual e verificável bloquear diretamente uma entrega autorizada, agentes podem corrigi-lo durante o desenvolvimento sem interromper a tarefa. Inspecione primeiro o impacto e a reversão, limite a correção ao bloqueador, preserve o estado recuperável quando necessário e registre a causa e o resultado no changelog/documentação pertinente. Não use essa regra para ampliar escopo, remover conteúdo ou fazer alterações destrutivas.
 - Não inventar ambientes, hosts ou nomes de servidor. Use somente os definidos em `docs/architecture/environments.md` e `docs/architecture/multidomain.md`.
 - Testes em `127.0.0.1` com resolução de host própria simulam o servidor de desenvolvimento, mas não são o servidor de desenvolvimento; registre-os como tal.
-- Repositório: `coletivo420/aculta-site` (confira com `git remote -v`). Branch e fluxo de Git: `AGENTS.md`.
-- Sincronização do Runtime e operações persistentes (updatedb, config:import): `AGENTS.md`, seção Runtime.
+- Para testes autenticados no runtime `test`, confirme `captcha.settings:enable_globally=0` antes da rodada. Esse estado é o bypass operacional de `skip CAPTCHA` exclusivo do ambiente de testes; não desative CAPTCHA em produção.
+- Para Runtime Sync v2, a fonte versionada é `coletivo420/aculta`, branch `dev`. Confirme sempre o remote real com `git remote -v` antes de agir; não o reconfigure automaticamente. Regras: `AGENTS.md` e skills `aculta-runtime-sync`/`aculta-runtime-migracoes`.
+- Sincronização do Runtime: `AGENTS.md`, `docs/operations/RUNTIME-SYNC.md`, plano v2 e skills `aculta-runtime-sync`/`aculta-runtime-migracoes`. Não executar updatedb/config:import por haver pendências; requerem autorização explícita.
 
 ## Servidor web
 
@@ -48,12 +49,12 @@ Os testes de Kernel usam o MariaDB dedicado `aculta_simpletest`, com a configura
   de outro componente. Escopo de release central é decidido pelo responsável.
 - Entregas vão para `origin/dev` (D-71). PR, merge em `main` e tag só com pedido
   explícito do responsável; nunca como encerramento automático de fase.
-- Estados: Dev → RC → Alpha → Beta. O Alpha começa depois do RC, na migração para `*.aculta.org`. O Beta é a produção no Hostinger, depois de Alpha validado. Só se avança para Alpha quando todos os módulos, temas e subtemas estiverem em RC. Merge em `main` não é deploy.
-- Ambientes: o servidor de desenvolvimento é `*.aculta.toca.net.br` (com `.br`) e não é o Alpha. Produção é `*.aculta.org`. `127.0.0.1` simula o servidor de desenvolvimento, mas não é ele. Não invente hosts.
+- Estado atual: desenvolvimento. RC, Alpha e Beta são etapas futuras, sem data; não há deploy nem migração em andamento. Merge em `main` não é deploy.
+- Ambientes: o servidor de desenvolvimento é `*.aculta.toca.net.br` (com `.br`). Não existe produção ainda. `127.0.0.1` simula o servidor de desenvolvimento, mas não é ele. Não invente hosts.
 
 ## Regra de encerramento de fase
 
-Toda fase ou subfase concluída deve terminar em commit(s) atômicos publicados em `origin/dev` e sincronizados no Runtime (D-70). PR só é criado quando o responsável solicitar. Quando solicitado, o PR deve:
+Entregas de codigo sao publicadas em `origin/dev` apos revisao e gates do escopo. Runtime Sync e condicional ao impacto no codigo servido, acesso seguro e preflight; mudanca documental nao exige rebuild. Revisao R0-R3: `docs/operations/AGENT-REVIEW-POLICY.md`. PR so por pedido explicito. Quando solicitado, o PR deve:
 
 - representar uma unidade lógica clara;
 - listar entregas e limites;
@@ -67,4 +68,4 @@ Não declarar Alpha validado sem evidência do servidor de desenvolvimento.
 
 ## Versionamento de mudanças
 
-Antes de alterar código do Portal ou do tema, siga `web/themes/custom/aculta420/docs/versioning.md` e `docs/operations/RELEASES.md`. Portal e tema têm versões independentes; mantenha manifest e CHANGELOG correspondentes coerentes e não marque estado ainda não validado. Mudanças apenas documentais não avançam versão. Não criar tags sem pedido explícito do responsável.
+Ao entregar uma versão ou marco do Portal ou tema, consulte `web/themes/custom/aculta420_v2/CHANGELOG.md`, `web/themes/custom/aculta420_v2/docs/roadmap.md` e `docs/operations/RELEASES.md` conforme o escopo. Portal e tema têm versões independentes. Fixes intermediários não exigem atualização de versão, changelog ou roadmap sem mudança de contrato ou fase. Não marque estado não validado nem crie tags sem pedido.

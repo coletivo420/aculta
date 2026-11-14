@@ -11,4 +11,3 @@ password_secret: SMTP2GO_PASSWORD
 verify_peer: true
 id: smtp2go
 label: SMTP2GO
-

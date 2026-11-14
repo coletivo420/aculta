@@ -17,8 +17,8 @@ use Drupal\user\UserInterface;
 /**
  * Relatório de associados (situação, data de adesão e pedidos pendentes).
  *
- * Associado é situação definida pelo administrador (decisão de 2026-10-21). Na tela, o RG aparece mascarado; a exportação
- * CSV, com o RG completo, é restrita à permissão `export aculta associados` (somente administrador).
+ * Associado é situação definida pelo administrador (decisão de 2026-10-21). Na tela, o RG aparece mascarado;
+ * a exportação CSV, com o RG completo, é restrita à permissão `export aculta associados` (somente administrador).
  */
 final class AssociadosController extends ControllerBase {
 
@@ -28,6 +28,9 @@ final class AssociadosController extends ControllerBase {
     private readonly DateFormatterInterface $dateFormatter,
   ) {}
 
+  /**
+   * {@inheritdoc}
+   */
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('entity_type.manager'),
@@ -36,7 +39,8 @@ final class AssociadosController extends ControllerBase {
     );
   }
 
-  /** Tela: pedidos pendentes (com link para decidir) e situações, com RG mascarado. */
+  /**
+   * Tela: pedidos pendentes (com link para decidir) e situações, com RG mascarado. */
   public function report(): array {
     $pendentes = [];
     foreach ($this->marker->pendentes() as $uid) {
@@ -46,14 +50,24 @@ final class AssociadosController extends ControllerBase {
           $conta->getDisplayName(),
           (string) $conta->getEmail(),
           [
-            'data' => ['#type' => 'link', '#title' => $this->t('Decidir'), '#url' => Url::fromRoute('aculta_user.associado_situacao', ['user' => $uid])],
+            'data' => [
+              '#type' => 'link',
+              '#title' => $this->t('Decidir'),
+              '#url' => Url::fromRoute('aculta_user.associado_situacao', ['user' => $uid]),
+            ],
           ],
         ];
       }
     }
     $rows = array_map(fn (array $r): array => [
       $r['apelido'], $r['email'], $r['situacao'], $r['adesao'], $this->mask($r['rg']), $r['orgao'], $r['profissao'], $r['nascimento'],
-      ['data' => ['#type' => 'link', '#title' => $this->t('Alterar'), '#url' => Url::fromRoute('aculta_user.associado_situacao', ['user' => $r['uid']])]],
+      [
+        'data' => [
+          '#type' => 'link',
+          '#title' => $this->t('Alterar'),
+          '#url' => Url::fromRoute('aculta_user.associado_situacao', ['user' => $r['uid']]),
+        ],
+      ],
     ], $this->rows());
     return [
       'pendentes' => [
@@ -66,7 +80,17 @@ final class AssociadosController extends ControllerBase {
       'situacoes' => [
         '#type' => 'table',
         '#caption' => $this->t('Associados e situações'),
-        '#header' => [$this->t('Apelido'), $this->t('E-mail'), $this->t('Situação'), $this->t('Data de adesão'), $this->t('RG'), $this->t('Órgão emissor'), $this->t('Profissão'), $this->t('Nascimento'), $this->t('Ações')],
+        '#header' => [
+          $this->t('Apelido'),
+          $this->t('E-mail'),
+          $this->t('Situação'),
+          $this->t('Data de adesão'),
+          $this->t('RG'),
+          $this->t('Órgão emissor'),
+          $this->t('Profissão'),
+          $this->t('Nascimento'),
+          $this->t('Ações'),
+        ],
         '#rows' => $rows,
         '#empty' => $this->t('Nenhum associado cadastrado.'),
       ],
@@ -74,12 +98,31 @@ final class AssociadosController extends ControllerBase {
     ];
   }
 
-  /** CSV completo, somente para quem tem a permissão de exportação. */
+  /**
+   * CSV completo, somente para quem tem a permissão de exportação. */
   public function export(): Response {
     $handle = fopen('php://temp', 'r+');
-    fputcsv($handle, ['apelido', 'email', 'situacao', 'data_adesao', 'rg', 'orgao_emissor', 'profissao', 'data_nascimento']);
+    fputcsv($handle, [
+      'apelido',
+      'email',
+      'situacao',
+      'data_adesao',
+      'rg',
+      'orgao_emissor',
+      'profissao',
+      'data_nascimento',
+    ]);
     foreach ($this->rows() as $r) {
-      fputcsv($handle, [$r['apelido'], $r['email'], $r['situacao'], $r['adesao_iso'], $r['rg'], $r['orgao'], $r['profissao'], $r['nascimento']]);
+      fputcsv($handle, [
+        $this->safeSpreadsheetCell($r['apelido']),
+        $this->safeSpreadsheetCell($r['email']),
+        $this->safeSpreadsheetCell($r['situacao']),
+        $r['adesao_iso'],
+        $this->safeSpreadsheetCell($r['rg']),
+        $this->safeSpreadsheetCell($r['orgao']),
+        $this->safeSpreadsheetCell($r['profissao']),
+        $this->safeSpreadsheetCell($r['nascimento']),
+      ]);
     }
     rewind($handle);
     $csv = stream_get_contents($handle);
@@ -91,7 +134,12 @@ final class AssociadosController extends ControllerBase {
     ]);
   }
 
-  /** @return array<int, array<string, string>> */
+  /**
+   * Monta as linhas do relatório a partir dos associados cadastrados.
+   *
+   * @return array<int, array<string, string>>
+   *   Linhas com os dados de cada associado.
+   */
   private function rows(): array {
     $rows = [];
     foreach ($this->marker->listadas() as $linha) {
@@ -118,6 +166,15 @@ final class AssociadosController extends ControllerBase {
     return $rows;
   }
 
+  /**
+   * Traduz o código de situação para o rótulo exibido.
+   *
+   * @param string $situacao
+   *   Código da situação do associado.
+   *
+   * @return string
+   *   Rótulo legível da situação.
+   */
   private function rotulo(string $situacao): string {
     return match ($situacao) {
       AssociadoMarker::ATIVO => (string) $this->t('Ativo'),
@@ -128,6 +185,25 @@ final class AssociadosController extends ControllerBase {
     };
   }
 
+  /**
+   * Neutraliza fórmulas quando um campo textual for aberto em uma planilha.
+   *
+   * Espaços e controles podem preceder o marcador e ainda permitir
+   * interpretação como fórmula por alguns aplicativos.
+   */
+  private function safeSpreadsheetCell(string $value): string {
+    return preg_match('/^[\s\x00-\x1F]*[=+@-]/u', $value) ? "'" . $value : $value;
+  }
+
+  /**
+   * Mascara o RG, mantendo visíveis apenas os dois últimos caracteres.
+   *
+   * @param string $rg
+   *   RG a mascarar.
+   *
+   * @return string
+   *   RG mascarado ou string vazia quando não informado.
+   */
   private function mask(string $rg): string {
     return $rg === '' ? '' : str_repeat('•', max(0, strlen($rg) - 2)) . substr($rg, -2);
   }

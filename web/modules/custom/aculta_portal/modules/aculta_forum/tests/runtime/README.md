@@ -80,5 +80,4 @@ seguida, sem `drush cr` entre as etapas: espera-se 200 → 403 → 200.
   resultado traz `file_exists`, `image_file_exists` e `download_url`.
 - O cache da busca é medido por `curl` em `/pesquisar?keys=fgroup` antes/depois
   de restringir e reindexar: a primeira resposta deve ser MISS sem o título.
-- Olivero exige trocar `system.theme default`, medir e restaurar `aculta420` no
-  mesmo comando, com `trap`.
+- Não troque `system.theme` para comparar temas no Runtime compartilhado.

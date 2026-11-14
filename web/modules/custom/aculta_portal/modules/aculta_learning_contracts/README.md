@@ -1,28 +1,24 @@
 # ACULTA Learning Contracts
 
-Camada neutra dos contratos educacionais consumidos pelo ACULTA Studio
-(Ganjalab) e implementados pelo `aculta_lms`.
+Contratos neutros de aprendizagem consumidos pelo Portal. O módulo não conhece
+Group, LMS, matrícula ou progresso: apenas define a interface e o DTO que os
+provedores implementam.
 
-## Fronteira
+## Contrato
 
-- Não declara dependência de `aculta_portal`, de `aculta_studio` ou de `lms:lms`.
-- Contém apenas interfaces e value objects (sem entidades, storage, rotas ou
-  permissões).
-- `aculta_studio` e `aculta_lms` dependem deste módulo e podem importar seus
-  tipos sem criar uma dependência de código entre si.
-- A fonte de verdade continua no Group/Drupal LMS durante a transição; os DTOs
-  carregam somente dados já autorizados pelo provedor.
+- `Drupal\aculta_learning_contracts\Learning\AccountCoursesReaderInterface`
+  expõe `getAccountCourses(AccountInterface): array`.
+- `Drupal\aculta_learning_contracts\Learning\AccountCourseSummary` é o DTO
+  autorizado com status normalizado, descrição e URL.
 
-## Contratos
+## Provedor atual
 
-- `CourseJourneyReaderInterface`, `CourseJourney` e `CourseJourneyLesson`:
-  jornada do curso e sala de aula.
-- `StudentLearningSummaryReaderInterface`, `StudentLearningSummary`,
-  `StudentLearningCourse` e `StudentLearningCertificate`: resumo tipado do
-  painel do estudante (B2).
+O `aculta_lms` registra o alias
+`Drupal\aculta_learning_contracts\Learning\AccountCoursesReaderInterface`
+para `aculta_lms.account_courses_reader`. O Portal consome apenas o contrato e
+continua funcional quando nenhum provedor está instalado.
 
-## Estado
+## Limites
 
-Implementação inicial em Dev. Não há migração de dados nem armazenamento
-próprio. A retirada do Drupal LMS contrib depende das fases registradas em
-`docs/modules/LMS-CONTRIB-DEPENDENCY-INVENTORY.md`.
+- Não lê Group, matrícula ou progresso.
+- Não renderiza nem define acesso; o provedor entrega somente cursos autorizados.

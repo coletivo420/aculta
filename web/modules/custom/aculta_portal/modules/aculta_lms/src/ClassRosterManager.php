@@ -101,14 +101,13 @@ class ClassRosterManager {
     }
 
     $build = $classLists === [] ? [] : [
-      '#type' => 'container',
-      '#attributes' => ['data-portal-ui' => 'lms-class-roster'],
-      'title' => [
-        '#type' => 'html_tag',
-        '#tag' => 'h2',
-        '#value' => $this->t('Participantes'),
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:layout-section',
+      '#props' => [],
+      '#slots' => [
+        'header' => ['#type' => 'html_tag', '#tag' => 'h2', '#value' => $this->t('Participantes')],
+        'content' => $classLists,
       ],
-      'classes' => $classLists,
     ];
     $cacheability->applyTo($build);
     return $build;
@@ -126,16 +125,21 @@ class ClassRosterManager {
       'gid' => $class->id(),
       'plugin_id' => 'group_membership',
     ]);
-    return array_values(array_filter($memberships, static function ($membership): bool {
+    $students = [];
+    foreach ($memberships as $membership) {
       if (!$membership instanceof GroupRelationshipInterface || !$membership->hasField('group_roles')) {
-        return FALSE;
+        continue;
       }
       $roles = array_column($membership->get('group_roles')->getValue(), 'target_id');
-      return in_array('lms_class-member', $roles, TRUE);
-    }));
+      if (in_array('lms_class-member', $roles, TRUE)) {
+        $students[] = $membership;
+      }
+    }
+    return $students;
   }
 
-  /** Loads class Groups through their course relationship records. */
+  /**
+   * Loads class Groups through their course relationship records. */
   private function classesForCourse(GroupInterface $course): array {
     $relationships = $this->entityTypeManager->getStorage('group_relationship')->loadByProperties([
       'gid' => $course->id(),

@@ -37,6 +37,8 @@ final class MapRenderer {
     $provider = $googleKey ? 'google' : 'openstreetmap';
     $mapId = Html::getId((string) ($options['id'] ?? 'aculta-map'));
     $markers = [];
+    $popupTemplates = [];
+    $iconTemplates = [];
     foreach ($options['markers'] ?? [] as $marker) {
       if (!is_array($marker) || !is_numeric($marker['lat'] ?? NULL) || !is_numeric($marker['lng'] ?? NULL)) {
         continue;
@@ -50,13 +52,54 @@ final class MapRenderer {
         $latitude = round($latitude, 2);
         $longitude = round($longitude, 2);
       }
-      $markers[] = [
+      $label = trim((string) ($marker['label'] ?? '')) ?: 'Local';
+      $popupId = Html::getId($mapId . '-popup-' . count($markers));
+      $iconTemplateId = Html::getId($mapId . '-icon-' . count($markers));
+      $iconName = preg_match('/^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$/', (string) ($marker['iconName'] ?? ''))
+        ? (string) $marker['iconName']
+        : 'map-pin';
+      $colorVariant = in_array($marker['categoryColorClass'] ?? NULL, ['primary', 'highlight', 'neutral'], TRUE)
+        ? $marker['categoryColorClass']
+        : 'primary';
+      $markerData = [
         'lat' => $latitude,
         'lng' => $longitude,
-        'label' => (string) ($marker['label'] ?? ''),
+        'label' => $label,
         'description' => (string) ($marker['description'] ?? ''),
-        'url' => (string) ($marker['url'] ?? ''),
-        'routeUrl' => (string) ($marker['routeUrl'] ?? ''),
+        'url' => $this->safePopupUrl($marker['url'] ?? NULL),
+        'routeUrl' => $this->safePopupUrl($marker['routeUrl'] ?? NULL),
+        'popupId' => $popupId,
+        'iconTemplateId' => $iconTemplateId,
+        'categoryColorClass' => $colorVariant,
+      ];
+      $markers[] = $markerData;
+      $popupTemplates[$popupId] = [
+        '#theme' => 'aculta_maps_popup_template',
+        '#popup_id' => $popupId,
+        '#popup' => [
+          '#theme' => 'aculta_maps_popup_content',
+          '#title' => $markerData['label'],
+          '#url' => $markerData['url'],
+          '#category' => (string) ($marker['category'] ?? ''),
+          '#address' => $markerData['description'],
+          '#route_url' => $markerData['routeUrl'],
+        ],
+      ];
+      $iconTemplates[$iconTemplateId] = [
+        '#type' => 'inline_template',
+        '#template' => '<template data-aculta-map-marker-icon-template data-icon-template-id="{{ template_id }}">{{ icon }}</template>',
+        '#context' => [
+          'template_id' => $iconTemplateId,
+          'icon' => [
+            '#type' => 'component',
+            '#component' => 'aculta420_v2:icon',
+            '#props' => [
+              'name' => $iconName,
+              'variant' => 'duotone',
+              'size' => 'md',
+            ],
+          ],
+        ],
       ];
     }
 
@@ -89,16 +132,21 @@ final class MapRenderer {
         ],
       ],
     ];
+    if ($popupTemplates !== []) {
+      $build['popup_templates'] = $popupTemplates;
+      $build['icon_templates'] = $iconTemplates;
+    }
     if ($googleKey) {
       $build['#attached']['drupalSettings']['acultaMaps'][$mapId]['googleApiKey'] = $googleKey;
     }
     if ($engine === 'google' && !$googleKey) {
       $build['provider_notice'] = [
-        '#type' => 'html_tag',
-        '#tag' => 'p',
-        '#value' => 'Google Maps não está configurado; usando OpenStreetMap.',
+        '#component' => 'aculta420_v2:status-messages',
+        '#props' => [
+          'type' => 'warning',
+          'messages' => ['Google Maps não está configurado; usando OpenStreetMap.'],
+        ],
         '#access' => $this->currentUser->hasPermission('administer aculta maps'),
-        '#attributes' => ['data-portal-ui' => 'notice-warning'],
       ];
     }
     if ($provider === 'google' && $markers !== []) {
@@ -127,6 +175,20 @@ final class MapRenderer {
       ];
     }
     return $build;
+  }
+
+  /**
+   * Keeps only same-site relative URLs and HTTPS links in popup render data.
+   */
+  private function safePopupUrl(mixed $value): string {
+    if (!is_string($value) || $value === '' || preg_match('/[\x00-\x20]/', $value) || str_starts_with($value, '//')) {
+      return '';
+    }
+    $scheme = parse_url($value, PHP_URL_SCHEME);
+    if ($scheme === NULL) {
+      return parse_url($value) !== FALSE ? $value : '';
+    }
+    return is_string($scheme) && strtolower($scheme) === 'https' ? $value : '';
   }
 
 }

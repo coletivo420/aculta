@@ -1,0 +1,26 @@
+name: Corpo do carrinho com itens
+description: Lista agrupada por domínio, com checkout e atualização OOB desativada.
+component: aculta420_v2:cart-offcanvas-body
+props:
+  empty: false
+  url: /loja/carrinho
+  total: R$ 90,00
+  checkout_url: /loja/checkout
+  htmx_oob: false
+  sites:
+    - key: loja
+      label: Loja ACULTA
+      total: R$ 90,00
+      checkout_url: /loja/checkout
+      items:
+        - title: Livro exemplo
+          quantity: '2'
+          total: R$ 90,00
+    - key: assinatura
+      label: Assinatura
+      total: R$ 15,00
+      checkout_url: /assinatura/checkout
+      items:
+        - title: Apoio mensal
+          quantity: '1'
+          total: R$ 15,00

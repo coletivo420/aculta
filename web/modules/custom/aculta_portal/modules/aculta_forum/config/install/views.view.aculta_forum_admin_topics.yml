@@ -325,6 +325,7 @@ display:
       style:
         type: table
         options:
+          class: ''
           grouping: { }
           row_class: ''
           default_row_class: true

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_events\Controller;
 
-use Drupal\aculta_contributions\Entity\Contribution;
+use Drupal\aculta_cgu\Entity\Contribution;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Datetime\DateFormatterInterface;
@@ -106,9 +106,12 @@ final class EventContributionWorkspaceController extends ControllerBase {
       '#type' => 'container',
       '#attributes' => ['data-portal-ui' => 'event-contribution-status'],
       'back' => [
-        '#type' => 'link',
-        '#title' => $this->t('Voltar às minhas propostas'),
-        '#url' => Url::fromRoute('aculta_events.organizer_contributions'),
+        '#type' => 'aculta_portal_button',
+        '#props' => [
+          'text' => (string) $this->t('Voltar às minhas propostas'),
+          'url' => Url::fromRoute('aculta_events.organizer_contributions')->toString(),
+          'variant' => 'secondary',
+        ],
       ],
       'subject' => [
         '#type' => 'html_tag',
@@ -136,12 +139,14 @@ final class EventContributionWorkspaceController extends ControllerBase {
     ];
     if ($proposal->get('state')->value === 'needs_changes') {
       $build['revise'] = [
-        '#type' => 'link',
-        '#title' => $this->t('Revisar e reenviar proposta'),
-        '#url' => Url::fromRoute('aculta_events.organizer_contribution_revise', [
-          'proposal_uuid' => $proposal->uuid(),
-        ]),
-        '#attributes' => ['data-portal-ui' => 'button-primary'],
+        '#type' => 'aculta_portal_button',
+        '#props' => [
+          'text' => (string) $this->t('Revisar e reenviar proposta'),
+          'url' => Url::fromRoute('aculta_events.organizer_contribution_revise', [
+            'proposal_uuid' => $proposal->uuid(),
+          ])->toString(),
+          'variant' => 'primary',
+        ],
       ];
     }
     if (in_array($proposal->get('state')->value, ['needs_changes', 'declined', 'conflict'], TRUE)) {

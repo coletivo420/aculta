@@ -26,17 +26,21 @@ final class RoleHierarchyForm extends ConfigFormBase {
 
   private const ESTADO = 'aculta_portal.role_hierarchy';
 
-  /** Cadeia de partida quando a configuração ainda não existe (instalação). */
+  /**
+   * Cadeia de partida quando a configuração ainda não existe (instalação). */
   private const CADEIA_PADRAO = ['gerente_loja', 'content_editor', 'lms_teacher', 'email_confirmed', 'authenticated'];
 
   public function __construct(
     ConfigFactoryInterface $config_factory,
     TypedConfigManagerInterface $typedConfigManager,
-    private readonly EntityTypeManagerInterface $entityTypeManager,
+    protected readonly EntityTypeManagerInterface $entityTypeManager,
   ) {
     parent::__construct($config_factory, $typedConfigManager);
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('config.factory'),
@@ -45,14 +49,23 @@ final class RoleHierarchyForm extends ConfigFormBase {
     );
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function getFormId(): string {
     return 'aculta_role_hierarchy_form';
   }
 
+  /**
+   * {@inheritdoc}
+   */
   protected function getEditableConfigNames(): array {
     return [self::ESTADO];
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $papeis = $this->papeis();
     $cadeia = $this->cadeiaAtual($papeis);
@@ -132,6 +145,9 @@ final class RoleHierarchyForm extends ConfigFormBase {
     return parent::buildForm($form, $form_state);
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
     parent::validateForm($form, $form_state);
     $papeis = $this->papeis();
@@ -141,6 +157,9 @@ final class RoleHierarchyForm extends ConfigFormBase {
     }
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $this->config(self::ESTADO)->set('cadeia', $this->ordemDoEnvio($form_state))->save();
     $this->messenger()->addStatus($this->t('Hierarquia de papéis salva.'));
@@ -151,6 +170,7 @@ final class RoleHierarchyForm extends ConfigFormBase {
    * Papéis da cadeia na ordem dos pesos enviados (empate: ordem atual).
    *
    * @return string[]
+   *   Papéis da cadeia ordenados por peso.
    */
   private function ordemDoEnvio(FormStateInterface $form_state): array {
     $linhas = $form_state->getValue('cadeia') ?? [];
@@ -168,8 +188,10 @@ final class RoleHierarchyForm extends ConfigFormBase {
    * Cadeia salva, coerente com os papéis que existem. Sem configuração, usa a cadeia de instalação.
    *
    * @param array<string, string> $papeis
+   *   Mapa de identificador do papel para o rótulo.
    *
    * @return string[]
+   *   Papéis da cadeia que existem no site.
    */
   private function cadeiaAtual(array $papeis): array {
     $salva = $this->config(self::ESTADO)->get('cadeia');
@@ -181,6 +203,7 @@ final class RoleHierarchyForm extends ConfigFormBase {
    * Papéis do site (inclui anônimo, que aparece só como papel pai do administrador).
    *
    * @return array<string, string>
+   *   Mapa de identificador do papel para o rótulo.
    */
   private function papeis(): array {
     $papeis = [];
@@ -191,7 +214,10 @@ final class RoleHierarchyForm extends ConfigFormBase {
   }
 
   /**
+   * Tipos de perfil disponíveis, por identificador.
+   *
    * @return array<string, string>
+   *   Mapa de identificador do tipo de perfil para o rótulo.
    */
   private function tiposDePerfil(): array {
     $tipos = [];

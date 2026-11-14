@@ -56,8 +56,8 @@ final class StudioUploadEmbedForm extends FormBase {
     protected readonly AccountProxyInterface $currentUser,
     protected readonly DateFormatterInterface $dateFormatter,
     protected readonly UnusedFileCleaner $unusedFileCleaner,
-    private readonly ImageCleanup $imageCleanup,
-    private readonly TimeInterface $time,
+    protected readonly ImageCleanup $imageCleanup,
+    protected readonly TimeInterface $time,
   ) {}
 
   /**
@@ -113,7 +113,11 @@ final class StudioUploadEmbedForm extends FormBase {
   /**
    * Lista os envios recentes da integração: os do usuário, ou todos se administrador.
    *
+   * @param string $integracao
+   *   Identificador da integração consultada.
+   *
    * @return array<string, mixed>
+   *   Linhas dos envios recentes.
    */
   private function recentList(string $integracao): array {
     $isAdmin = $this->currentUser->hasPermission('administer site configuration');
@@ -160,6 +164,7 @@ final class StudioUploadEmbedForm extends FormBase {
         '#name' => 'remove_recent',
         '#limit_validation_errors' => [['recentes', 'table'], ['integracao']],
         '#submit' => ['::removeUnused'],
+        '#attributes' => ['data-portal-ui' => 'button-danger'],
       ],
     ];
   }

@@ -1,0 +1,144 @@
+/* ACULTA estatísticas (portado do V1 em 2026-11-05). Estado: DEFERRED (sem captura visual). */
+
+.aculta-statistics {
+  display: grid;
+  gap: 1rem;
+  color: var(--color-text-primary);
+}
+
+.aculta-statistics__areas {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  gap: .5rem;
+}
+
+.aculta-statistics__areas a {
+  display: inline-block;
+  padding: .35rem .75rem;
+  text-decoration: none;
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-base);
+  background: var(--color-surface-raised);
+}
+
+.aculta-statistics__areas a:hover,
+.aculta-statistics__areas a:focus-visible {
+  color: var(--color-on-primary);
+  background: var(--color-primary);
+}
+
+.aculta-statistics__form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: .75rem;
+}
+
+.aculta-statistics__form label {
+  display: grid;
+  gap: .25rem;
+  color: var(--color-text-secondary);
+  font-weight: 600;
+}
+
+.aculta-statistics__form select {
+  width: 100%;
+  min-width: 0;
+  padding: .4rem .5rem;
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-base);
+  background: var(--color-surface-raised);
+}
+
+.aculta-statistics__form select:focus-visible,
+.aculta-statistics__form button:focus-visible,
+.aculta-statistics__areas a:focus-visible {
+  outline: 3px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+.aculta-statistics__summary,
+.aculta-statistics__comparison,
+.aculta-statistics__note {
+  color: var(--color-text-secondary);
+}
+
+.aculta-statistics__chart {
+  overflow-x: auto;
+  padding: .75rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-base);
+  background: var(--color-canvas);
+}
+
+.aculta-statistics__chart svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+.aculta-statistics__table {
+  width: 100%;
+  color: var(--color-text-primary);
+  border-collapse: collapse;
+}
+
+.aculta-statistics__table th,
+.aculta-statistics__table td {
+  padding: .4rem .6rem;
+  text-align: left;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.aculta-statistics__table caption {
+  caption-side: top;
+  text-align: left;
+  color: var(--color-text-secondary);
+  font-weight: 600;
+}
+
+.aculta-statistics__form label {
+  width: 100%;
+}
+
+@media (min-width: 36rem) {
+  .aculta-statistics__form label,
+  .aculta-statistics__form select {
+    width: auto;
+  }
+
+  .aculta-statistics__form select {
+    min-width: 12rem;
+  }
+}
+
+/* Regras de layout antes compartilhadas em portal-ui-map.css (ADR-054 P7). */
+.aculta-statistics__controls,
+.aculta-statistics__wiki-ranking,
+.aculta-statistics__wiki-revisions {
+  display: grid;
+  gap: .5rem;
+}
+
+.aculta-statistics__forum {
+  display: grid;
+  gap: var(--spacing-base);
+  margin-block-start: var(--spacing-base);
+}
+
+.aculta-statistics__forum-kpis {
+  display: grid;
+  gap: var(--spacing-sm);
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+}
+
+@media (max-width: 30rem) {
+  .aculta-statistics__forum-kpis {
+    grid-template-columns: 1fr;
+  }
+}

@@ -195,11 +195,9 @@ permanente neste repositório.
 
 Política aprovada pelo responsável em 2026-10-09.
 
-- **Produção indexável:** todos os domínios e subdomínios de produção (`aculta.org`,
-  `conta.`, `apoio.`, `revista420.`, `wiki420.`, `loja.`, `cursos.`) não enviam `X-Robots-Tag`
-  com `noindex`.
-- **Servidor de desenvolvimento não indexável:** `*.aculta.toca.net.br` envia `noindex, nofollow, noarchive`. Essa regra continua valendo no Alpha, mesmo com os hosts `*.aculta.org` servidos por ele, e só sai no Beta, com a produção indexável.
-- **Cookie de sessão:** a troca para `.aculta.org` acontece no Alpha (decisão de 2026-10-28).
+- **Produção indexável (futuro, quando houver produção):** os domínios e subdomínios de produção (`aculta.org`, `conta.`, `apoio.`, `revista420.`, `wiki420.`, `loja.`, `cursos.`) não enviarão `X-Robots-Tag` com `noindex`. Hoje não há host de produção.
+- **Servidor de desenvolvimento não indexável:** `*.aculta.toca.net.br` envia `noindex, nofollow, noarchive`. É o único ambiente em uso.
+- **Cookie de sessão:** o domínio `.aculta.org` só será configurado quando houver produção; hoje o cookie segue o servidor de desenvolvimento.
 - **Páginas privadas da conta** continuam com `noindex` em nível de rota (meta `robots` do
   `aculta_portal`). Essa proteção não é removida pelo deploy.
 - **Quem garante:** o `aculta_deployer` (`robots --env=production|test`, `build` com trava de

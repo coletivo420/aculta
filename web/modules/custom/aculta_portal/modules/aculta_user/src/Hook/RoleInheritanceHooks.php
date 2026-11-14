@@ -6,6 +6,7 @@ namespace Drupal\aculta_user\Hook;
 
 use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
 use Drupal\aculta_user\Role\HerancaDePapeis;
+use Drupal\Core\Entity\EntityFormInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\user\RoleInterface;
@@ -24,6 +25,12 @@ final class RoleInheritanceHooks {
     private readonly ?EmailConfirmationPolicy $emailConfirmationPolicy = NULL,
   ) {}
 
+  /**
+   * Aplica os papéis herdados às contas carregadas.
+   *
+   * @param array $users
+   *   Contas de usuário carregadas.
+   */
   #[Hook('user_load')]
   public function userLoad(array $users): void {
     foreach ($users as $user) {
@@ -39,6 +46,12 @@ final class RoleInheritanceHooks {
     }
   }
 
+  /**
+   * Remove os papéis herdados que não devem ser gravados.
+   *
+   * @param \Drupal\user\UserInterface $user
+   *   Conta de usuário prestes a ser salva.
+   */
   #[Hook('user_presave')]
   public function userPresave(UserInterface $user): void {
     $emailConfirmado = $this->emailConfirmationPolicy?->isConfirmed($user) ?? TRUE;
@@ -49,9 +62,18 @@ final class RoleInheritanceHooks {
     }
   }
 
+  /**
+   * Ajusta os papéis padrão no formulário de conta do usuário.
+   *
+   * @param array $form
+   *   Formulário alterado por referência.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Estado do formulário.
+   */
   #[Hook('form_user_form_alter')]
   public function formUserAlter(array &$form, FormStateInterface $form_state): void {
-    $conta = $form_state->getFormObject()->getEntity();
+    $formObject = $form_state->getFormObject();
+    $conta = $formObject instanceof EntityFormInterface ? $formObject->getEntity() : NULL;
     if (!isset($form['account']['roles']['#default_value']) || !$conta instanceof UserInterface) {
       return;
     }

@@ -31,13 +31,13 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 final class NewConversationForm extends FormBase {
 
   public function __construct(
-    private readonly AccountProxyInterface $currentUser,
-    private readonly PrivateMessageServiceInterface $privateMessageService,
-    private readonly PrivateMessageMapperInterface $privateMessageMapper,
-    private readonly PrivateMessageFormValidator $validator,
-    private readonly EntityTypeManagerInterface $entityTypes,
-    private readonly PublicMemberIdentityInterface $memberIdentity,
-    private readonly ConversationPolicy $policy,
+    protected readonly AccountProxyInterface $currentUser,
+    protected readonly PrivateMessageServiceInterface $privateMessageService,
+    protected readonly PrivateMessageMapperInterface $privateMessageMapper,
+    protected readonly PrivateMessageFormValidator $validator,
+    protected readonly EntityTypeManagerInterface $entityTypes,
+    protected readonly PublicMemberIdentityInterface $memberIdentity,
+    protected readonly ConversationPolicy $policy,
   ) {}
 
   /**
@@ -73,6 +73,7 @@ final class NewConversationForm extends FormBase {
     $limit = $this->policy->maxRecipients(ConversationPolicy::KIND_GROUP, $this->currentUser);
     $form['#attributes'] = ['data-aculta-new-conversation-form' => ''];
     if (!$fixed) {
+      $form['#attached']['library'][] = 'aculta_messenger/new-conversation-presentation';
       // The drawer reads search/chips and posts to the group route.
       $form['#action'] = Url::fromRoute('aculta_messenger.new_conversation_group')->toString();
       $form['#attributes'] += [
@@ -110,18 +111,20 @@ final class NewConversationForm extends FormBase {
         ],
       ];
       $form['preview'] = [
-        '#type' => 'container',
+        '#type' => 'component',
+        '#component' => 'aculta420_v2:search-preview',
         '#weight' => -9,
-        '#attributes' => [
+        '#props' => ['attributes' => new \Drupal\Core\Template\Attribute([
           'id' => 'aculta-new-conversation-preview',
-          'data-portal-ui' => 'search-preview',
           'role' => 'region',
           'aria-label' => $this->t('Resultados de membros'),
           'aria-live' => 'polite',
           'hidden' => TRUE,
           'data-aculta-js-only' => '',
-        ],
-        'hint' => ['#plain_text' => $this->t('Digite pelo menos @n caracteres para ver resultados.', ['@n' => NewConversationController::MIN_CHARS])],
+        ])],
+        '#slots' => ['content' => [
+          'hint' => ['#plain_text' => $this->t('Digite pelo menos @n caracteres para ver resultados.', ['@n' => NewConversationController::MIN_CHARS])],
+        ]],
       ];
     }
     else {
@@ -348,8 +351,7 @@ final class NewConversationForm extends FormBase {
       $formState->set('aculta_messenger_new_conversation_privacy_rejected', TRUE);
       return NULL;
     }
-    $thread = $this->privateMessageService->getThreadForMembers($members);
-    return $thread instanceof PrivateMessageThreadInterface ? $thread : NULL;
+    return $this->privateMessageService->getThreadForMembers($members);
   }
 
   /**

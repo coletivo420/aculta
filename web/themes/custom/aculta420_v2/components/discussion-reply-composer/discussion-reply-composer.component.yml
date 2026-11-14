@@ -1,0 +1,75 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Compositor de Resposta da Discussão
+status: stable
+description: Componente visual SDC para composição de respostas e citações em discussões compartilhadas.
+group: Comunidade
+props:
+  type: object
+  additionalProperties: false
+  required: [target_id]
+  properties:
+    target_id:
+      type: string
+      title: Identificador do container alvo
+      minLength: 1
+      description: ID DOM estável do compositor usado como alvo para atualizações HTMX.
+    standalone_popup:
+      type: boolean
+      title: Abrir em popup próprio
+      default: true
+      description: Compõe o compositor dentro do SDC popup; desative quando o consumidor já fornece a janela modal.
+    status:
+      type: string
+      title: Estado do compositor
+      enum: [fechado, carregando, editando, previa, invalido, enviando, enviado, moderacao, acesso_revogado, sessao_expirada, erro_rede]
+      default: editando
+      description: Estado do fluxo de resposta refletido nas classes, mensagens e atributos do compositor.
+    parent_id:
+      type: [string, integer, 'null']
+      title: Identificador do comentário ou publicação pai
+      default: null
+      description: ID do comentário ou publicação ao qual a resposta/citação se refere; null quando não há pai.
+    parent_author:
+      type: [string, 'null']
+      title: Nome do autor do comentário pai
+      default: null
+      description: Nome público já preparado pelo módulo proprietário para identificar o autor do conteúdo pai.
+    parent_subject:
+      type: [string, 'null']
+      title: Título ou assunto do comentário pai
+      default: null
+      description: Título opcional do conteúdo pai, mostrado junto à identificação do autor.
+    mode:
+      type: string
+      title: Modo do compositor
+      enum: [responder, citar, editar, excluir]
+      default: responder
+      description: Operação autorizada que define o contexto visual e o rótulo do compositor.
+    host_title:
+      type: [string, 'null']
+      title: Título do conteúdo hospedeiro
+      default: null
+      description: Título público do tópico ou conteúdo que hospeda a discussão, quando disponível.
+    trigger_label:
+      type: string
+      title: Texto do botão que abre o popup
+      default: Responder
+      description: Texto visível e nome acessível do controle que abre o compositor.
+    dialog_title:
+      type: string
+      title: Título do popup
+      default: Responder
+      description: Título apresentado no cabeçalho do diálogo de resposta ou citação.
+slots:
+  avatar:
+    title: Avatar do usuário logado
+    description: Mídia do sistema de avatar do ACULTA (acervo ou foto da conta), fornecida pelo módulo do fórum.
+  messages:
+    title: Mensagens de status ou erro
+    description: Região de alerta acessível (role="status").
+  form:
+    title: Formulário Drupal
+    description: Render array do formulário Form API.
+  context:
+    title: Contexto de resposta
+    description: Informações adicionais do pai ou citação.

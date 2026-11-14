@@ -1,0 +1,27 @@
+{
+  "metodo": "Firefox ESR visível via WebDriver; autenticação de teste por ULI; submit no formulário UI Styles e medição de DOM na listagem pública",
+  "motor": "Firefox ESR",
+  "viewport": [320, 1440],
+  "modo": ["claro", "escuro"],
+  "url_relativa": {
+    "administrativa": "/painel-administrativo/aparencia/settings/aculta420_v2",
+    "publica": "/ (host da Revista no ambiente test)"
+  },
+  "opcoes_formulario": ["Verde", "Amarela", "Vermelha"],
+  "resultado_submit": "Verde persistiu pela submissão do formulário; depois de capturar a listagem, configuração global foi restaurada vazia",
+  "resultados_publicos": {
+    "casos": 4,
+    "passaram": 4,
+    "teasers_por_caso": 4,
+    "classe_no_wrapper_do_node": "revista-teaser--accent-green em todos os quatro teasers",
+    "classe_no_sdc": "revista-teaser--accent-green presente",
+    "overflow": false
+  },
+  "banco": {
+    "nos_revista": 5,
+    "nos_com_accent_proprio": 0,
+    "node_602": "vazio"
+  },
+  "png_versionados": false,
+  "hash_commit_testado_runtime": "80aae13a1c4500e69e1bce9cb2c0c5b6c6211b9c"
+}

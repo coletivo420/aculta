@@ -1,0 +1,9 @@
+/* Postagem de abertura: o cartão dos comentários com o destaque do tópico fixado
+   (forum-topic-row--pinned): barra lateral na cor primária e fundo de destaque. */
+.forum-opening-post {
+  min-inline-size: 0;
+}
+
+.forum-opening-post .forum-post-card {
+  background: var(--color-surface-highlight);
+}

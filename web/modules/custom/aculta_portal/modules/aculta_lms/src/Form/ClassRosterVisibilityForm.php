@@ -19,8 +19,8 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 final class ClassRosterVisibilityForm extends FormBase {
 
   public function __construct(
-    private readonly CurrentRouteMatch $currentRouteMatch,
-    private readonly ClassDashboardAccessCheck $classAccess,
+    protected readonly CurrentRouteMatch $currentRouteMatch,
+    protected readonly ClassDashboardAccessCheck $classAccess,
   ) {}
 
   /**
@@ -70,12 +70,15 @@ final class ClassRosterVisibilityForm extends FormBase {
       '#button_type' => 'primary',
     ];
     $form['actions']['cancel'] = [
-      '#type' => 'link',
-      '#title' => $this->t('Voltar ao painel da turma'),
-      '#url' => Url::fromRoute('aculta_lms.class_dashboard', [
-        'course' => $course->id(),
-        'group' => $class->id(),
-      ]),
+      '#type' => 'aculta_portal_button',
+      '#props' => [
+        'text' => (string) $this->t('Voltar ao painel da turma'),
+        'url' => Url::fromRoute('aculta_lms.class_dashboard', [
+          'course' => $course->id(),
+          'group' => $class->id(),
+        ])->toString(),
+        'variant' => 'secondary',
+      ],
     ];
     return $form;
   }

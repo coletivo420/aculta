@@ -1,0 +1,14 @@
+name: Superfície neutra institucional
+description: Superfície com faixa superior fina tricolor, fiel às referências 01 a 04 neutras claro/escuro.
+component: aculta420_v2:surface-accent
+props:
+  accent: neutral
+  position: top
+  tone: raised
+  radius: lg
+  spacing: normal
+  elevation: subtle
+slots:
+  content:
+    type: inline_template
+    template: '<p>Superfície neutra institucional com faixa fina tricolor no topo.</p>'

@@ -16,6 +16,12 @@ final class QuoteItem {
    *
    * @param string $reference
    *   Identificador do item no envio (ex.: SKU da variação), sem dados pessoais.
+   * @param \Drupal\aculta_commerce_melhorenvio\Quote\QuotePackage $package
+   *   Medida de uma unidade do item.
+   * @param int $quantity
+   *   Quantidade de unidades.
+   * @param float $insuranceValue
+   *   Valor declarado da linha.
    */
   public function __construct(
     public readonly string $reference,

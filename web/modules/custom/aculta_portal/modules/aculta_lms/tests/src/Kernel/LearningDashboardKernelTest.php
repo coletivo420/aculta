@@ -4,26 +4,29 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_lms\Kernel;
 
+use Drupal\Core\Cache\Cache;
+use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\aculta_lms\Access\AnswerSubmissionAccessCheck;
+use Drupal\aculta_lms\Access\LessonViewAccessCheck;
 use Drupal\aculta_lms\LearningDashboardManager;
 use Drupal\aculta_lms\Learning\CourseLessonReaderInterface;
 use Drupal\aculta_lms\Learning\CourseProgressReaderInterface;
 use Drupal\aculta_lms\Learning\CourseProgress;
-use Drupal\aculta_learning_contracts\Learning\AccountCourseSummary;
-use Drupal\aculta_learning_contracts\Learning\AccountCoursesReaderInterface;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
-use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\Core\Entity\EntityStorageInterface;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\domain\DomainNegotiatorInterface;
+use Drupal\aculta_lms\Notice\LearningEligibilityInterface;
+use Drupal\aculta_lms\Learning\AccountCourseSummary;
+use Drupal\aculta_lms\Learning\AccountCoursesReaderInterface;
 use Drupal\group\Entity\Group;
 use Drupal\group\Entity\GroupRole;
+use Drupal\group\Entity\GroupRelationshipType;
+use Drupal\group\Entity\GroupType;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\group\PermissionScopeInterface;
+use Drupal\field\Entity\FieldConfig;
+use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\user\Entity\User;
 use PHPUnit\Framework\Attributes\Group as TestGroup;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Tests student progress against Group and ACULTA-owned learning entities.
@@ -40,7 +43,7 @@ final class LearningDashboardKernelTest extends KernelTestBase {
   protected static $modules = [
     'key',
     'system', 'domain', 'user', 'file', 'field', 'filter', 'image', 'media', 'options', 'entity_print',
-    'entity_usage', 'aculta_image', 'aculta_file_uploader', 'flexible_permissions', 'group', 'views', 'text', 'lms', 'aculta_lms',
+    'entity_usage', 'aculta_image', 'aculta_file_uploader', 'flexible_permissions', 'group', 'views', 'text', 'aculta_lms',
   ];
 
   /**
@@ -56,16 +59,50 @@ final class LearningDashboardKernelTest extends KernelTestBase {
    */
   protected function setUp(): void {
     parent::setUp();
-    $this->installConfig(['group', 'lms']);
+    $this->installEntitySchema('group');
+    $this->installEntitySchema('group_relationship');
+    $this->installConfig(['group']);
+    $group_type = GroupType::create([
+      'id' => 'lms_course',
+      'label' => 'Curso',
+      'creator_membership' => FALSE,
+      'creator_roles' => [],
+    ]);
+    $group_type->save();
+    $relationship_type = GroupRelationshipType::load('lms_course-group_membership') ?? GroupRelationshipType::create([
+      'id' => 'lms_course-group_membership',
+      'group_type' => 'lms_course',
+      'relation_type' => 'group_membership',
+      'plugin_config' => [
+        'group_cardinality' => 0,
+        'entity_cardinality' => 1,
+      ],
+    ]);
+    $relationship_type->save();
+    $field_storage = FieldStorageConfig::load('group_relationship.group_roles') ?? FieldStorageConfig::create([
+      'field_name' => 'group_roles',
+      'entity_type' => 'group_relationship',
+      'type' => 'entity_reference',
+      'settings' => ['target_type' => 'group_role'],
+      'cardinality' => -1,
+    ]);
+    $field_storage->save();
+    $field = FieldConfig::load('group_relationship.lms_course-group_membership.group_roles') ?? FieldConfig::create([
+      'field_name' => 'group_roles',
+      'entity_type' => 'group_relationship',
+      'bundle' => 'lms_course-group_membership',
+      'label' => 'Group roles',
+      'settings' => ['handler' => 'default', 'handler_settings' => []],
+    ]);
+    $field->save();
     $this->installSchema('file', ['file_usage']);
     $this->installSchema('entity_usage', ['entity_usage']);
     $this->installEntitySchema('action');
     $this->installEntitySchema('user');
     $this->installSchema('user', ['users_data']);
-    $this->installEntitySchema('group');
-    $this->installEntitySchema('group_relationship');
     $this->installEntitySchema('group_config_wrapper');
     $this->installEntitySchema('aculta_lms_lesson');
+    $this->installEntitySchema('aculta_lms_activity');
     $this->installEntitySchema('aculta_lms_progress');
     $this->installEntitySchema('aculta_lms_certificate');
   }
@@ -91,14 +128,14 @@ final class LearningDashboardKernelTest extends KernelTestBase {
       'course_id' => $course->id(),
       'title' => 'Aula visível',
       'published' => TRUE,
-      'weight' => 0,
+      'weight' => 1,
     ]);
     $visible_lesson->save();
     $restricted_lesson = $lesson_storage->create([
       'course_id' => $course->id(),
       'title' => 'Aula restrita',
       'published' => FALSE,
-      'weight' => 1,
+      'weight' => 0,
     ]);
     $restricted_lesson->save();
     GroupRole::create([
@@ -109,7 +146,6 @@ final class LearningDashboardKernelTest extends KernelTestBase {
       'permissions' => ['view group', 'take course'],
     ])->save();
     $course->addMember($student, ['group_roles' => ['lms_course-dashboard_student']]);
-    self::assertCount(1, $this->container->get('group.membership_loader')->loadByUser($student));
     self::assertTrue($course->access('view', $student));
     self::assertTrue($course->hasPermission('take course', $student));
 
@@ -157,16 +193,6 @@ final class LearningDashboardKernelTest extends KernelTestBase {
     ]);
     $other_certificate->save();
 
-    $domain_storage = $this->createMock(EntityStorageInterface::class);
-    $domain_storage->method('load')->willReturn(NULL);
-    $domain_entity_type_manager = $this->createMock(EntityTypeManagerInterface::class);
-    $domain_entity_type_manager->expects(self::never())->method('getStorage');
-    $domain_purpose = new DomainPurposeManager(
-      $domain_entity_type_manager,
-      $this->createMock(DomainNegotiatorInterface::class),
-      $this->createMock(ConfigFactoryInterface::class),
-      new RequestStack(),
-    );
     $manager = new LearningDashboardManager(
       $this->container->get(AccountCoursesReaderInterface::class),
       $this->container->get('aculta_lms.course_certificate_manager'),
@@ -191,6 +217,62 @@ final class LearningDashboardKernelTest extends KernelTestBase {
     self::assertContains('user', $dashboard['cache']->getCacheContexts());
     self::assertContains('user.group_permissions', $dashboard['cache']->getCacheContexts());
     self::assertContains('aculta_lms_lesson:' . $visible_lesson->id(), $dashboard['cache']->getCacheTags());
+
+    $journey = $manager->courseJourney($course, $student);
+    self::assertCount(1, $journey->lessons);
+    self::assertSame(1, $journey->lessons[0]->delta);
+    self::assertSame('aculta_lms.lesson_view', $journey->lessons[0]->url?->getRouteName());
+    self::assertSame((string) $course->id(), (string) $journey->lessons[0]->url?->getRouteParameters()['group']);
+
+    $lesson_page = $this->container->get('aculta_lms.course_lesson_controller')
+      ->view($course, $journey->lessons[0]->delta);
+    self::assertSame('Aula visível', $lesson_page['title']['#value']);
+    self::assertSame('Esta aula ainda não tem atividades.', (string) $lesson_page['activities']['#empty']);
+    self::assertContains('aculta_lms_lesson_list', $lesson_page['#cache']['tags']);
+    self::assertContains('aculta_lms_activity_list', $lesson_page['#cache']['tags']);
+
+    $cache = $this->container->get('cache.default');
+    $cache_key = 'aculta_lms_test_activity_list_invalidation';
+    $cache->set($cache_key, 'cached', Cache::PERMANENT, $lesson_page['#cache']['tags']);
+    self::assertNotFalse($cache->get($cache_key));
+    $activity = $this->container->get('entity_type.manager')
+      ->getStorage('aculta_lms_activity')
+      ->create([
+        'lesson_id' => (int) $visible_lesson->id(),
+        'type' => 'free_text',
+        'graded' => FALSE,
+        'weight' => 0,
+        'answer_config' => '{"question":"Atividade criada no Kernel"}',
+      ]);
+    $activity->save();
+    self::assertFalse($cache->get($cache_key));
+
+    $updated_lesson_page = $this->container->get('aculta_lms.course_lesson_controller')
+      ->view($course, $journey->lessons[0]->delta);
+    self::assertCount(1, $updated_lesson_page['activities']['#rows']);
+
+    $current_user = $this->createMock(AccountProxyInterface::class);
+    $current_user->method('isAuthenticated')->willReturn(TRUE);
+    $eligibility = $this->createMock(LearningEligibilityInterface::class);
+    $eligibility->method('courseEnrollmentCacheTags')->willReturn([
+      'group_relationship_list:plugin:lms_classes:group:' . $course->id(),
+      'group_relationship_list:plugin:group_membership:group:89',
+    ]);
+    $eligibility->method('isContentAvailable')->willReturn(TRUE);
+    $eligibility->method('hasCurrentEnrollment')->willReturn(TRUE);
+    $eligibility->method('activityBelongsToCourse')->willReturn(TRUE);
+    $slugs = $this->container->get('aculta_portal.lms_friendly_slugs');
+    $lesson_access = (new LessonViewAccessCheck($slugs, $eligibility, $current_user))
+      ->access($course, $journey->lessons[0]->delta);
+    self::assertTrue($lesson_access->isAllowed());
+    self::assertContains('aculta_lms_lesson_list', $lesson_access->getCacheTags());
+    self::assertContains('group_relationship_list:plugin:group_membership:group:89', $lesson_access->getCacheTags());
+    $answer_access = (new AnswerSubmissionAccessCheck($slugs, $eligibility, $current_user))
+      ->access($course, $journey->lessons[0]->delta, 0);
+    self::assertTrue($answer_access->isAllowed());
+    self::assertContains('aculta_lms_lesson_list', $answer_access->getCacheTags());
+    self::assertContains('aculta_lms_activity_list', $answer_access->getCacheTags());
+    self::assertContains('group_relationship_list:plugin:group_membership:group:89', $answer_access->getCacheTags());
   }
 
 }

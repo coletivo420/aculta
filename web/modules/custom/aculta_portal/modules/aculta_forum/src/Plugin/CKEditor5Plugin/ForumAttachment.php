@@ -17,6 +17,7 @@ use Drupal\editor\EditorInterface;
 #[CKEditor5Plugin(
   id: 'aculta_forum_attachment',
   ckeditor5: new CKEditor5AspectsOfCKEditor5Plugin(
+    // @phpstan-ignore argument.type (The value is a CKEditor JavaScript global plugin name, not a PHP class-string.)
     plugins: ['acultaForumAttachment.AcultaForumAttachmentUI'],
   ),
   drupal: new DrupalAspectsOfCKEditor5Plugin(

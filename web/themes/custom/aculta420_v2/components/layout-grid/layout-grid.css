@@ -1,0 +1,28 @@
+.layout-grid {
+  --layout-grid-min: 16rem;
+
+  display: grid;
+  gap: var(--spacing-lg);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--layout-grid-min)), 1fr));
+  min-inline-size: 0;
+}
+
+.layout-grid--min-12 {
+  --layout-grid-min: 12rem;
+}
+
+.layout-grid--min-20 {
+  --layout-grid-min: 20rem;
+}
+
+.layout-grid--max-2 {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, max(var(--layout-grid-min), calc(50% - var(--spacing-lg)))), 1fr));
+}
+
+.layout-grid--max-3 {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, max(var(--layout-grid-min), calc(33.333% - var(--spacing-lg)))), 1fr));
+}
+
+.layout-grid--max-4 {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, max(var(--layout-grid-min), calc(25% - var(--spacing-lg)))), 1fr));
+}

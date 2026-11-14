@@ -15,7 +15,8 @@ use PHPUnit\Framework\Attributes\Group;
 #[Group('aculta_messenger')]
 class AvisoRetencaoTest extends UnitTestCase {
 
-  /** Aviso criado há mais de seis meses está vencido; aviso recente não. */
+  /**
+   * Aviso criado há mais de seis meses está vencido; aviso recente não. */
   public function testVencidoDepoisDeSeisMeses(): void {
     $agora = (int) (new \DateTimeImmutable('2026-10-16 12:00:00 UTC'))->getTimestamp();
     $criadoHaSeisMeses = (int) (new \DateTimeImmutable('2026-04-16 12:00:00 UTC'))->getTimestamp();
@@ -26,7 +27,8 @@ class AvisoRetencaoTest extends UnitTestCase {
     $this->assertFalse(AvisoRetencao::vencido($criadoHaCincoMeses, $agora));
   }
 
-  /** Só os tipos do Fórum são sujeitos à retenção. */
+  /**
+   * Só os tipos do Fórum são sujeitos à retenção. */
   public function testTiposSujeitosSaoOsDoForum(): void {
     $this->assertSame([Aviso::TIPO_RESPOSTA, Aviso::TIPO_ATUALIZACAO], AvisoRetencao::TIPOS);
   }

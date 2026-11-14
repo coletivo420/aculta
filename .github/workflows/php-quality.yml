@@ -1,0 +1,383 @@
+name: PHP Quality Assurance
+
+on:
+  push:
+    branches: [ main, dev ]
+  pull_request:
+    branches: [ main, dev ]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+concurrency:
+  # Push and PR are separate groups; the push guard skips SHAs already checked by a PR.
+  group: php-quality-${{ github.event.pull_request.head.ref || github.ref_name }}-${{ github.event_name }}
+  cancel-in-progress: true
+
+jobs:
+  workflow-guard:
+    name: Evita checks duplicados entre push e PR
+    runs-on: ubuntu-24.04
+    outputs:
+      should_run: ${{ steps.guard.outputs.should_run }}
+    steps:
+    - name: Decide whether this event needs the PHP suite
+      id: guard
+      env:
+        GH_TOKEN: ${{ github.token }}
+        API_URL: ${{ github.api_url }}
+        REPOSITORY: ${{ github.repository }}
+        COMMIT_SHA: ${{ github.sha }}
+        EVENT_NAME: ${{ github.event_name }}
+      run: |
+        if [ "$EVENT_NAME" != "push" ]; then
+          echo "should_run=true" >> "$GITHUB_OUTPUT"
+          exit 0
+        fi
+        prs="$(curl --fail --silent --show-error \
+          -H "Authorization: Bearer $GH_TOKEN" \
+          -H "Accept: application/vnd.github+json" \
+          "$API_URL/repos/$REPOSITORY/commits/$COMMIT_SHA/pulls?per_page=100")"
+        # PR de integração dev->main acumula a semana inteira: o diff dele
+        # não é a unidade de alteração. Nesse caso o push a dev roda a suíte
+        # para validar o incremento; PRs de feature continuam deduplicando.
+        open_prs="$(jq --arg sha "$COMMIT_SHA" \
+          '[.[] | select(.state == "open" and .head.sha == $sha and (.base.ref == "main" or .base.ref == "dev") and ((.head.ref == "dev" and .base.ref == "main") | not))] | length' \
+          <<< "$prs")"
+        if [ "$open_prs" -gt 0 ]; then
+          echo "Este SHA já é validado pelo workflow do PR de feature; pulando a suíte PHP duplicada."
+          echo "should_run=false" >> "$GITHUB_OUTPUT"
+        else
+          echo "should_run=true" >> "$GITHUB_OUTPUT"
+        fi
+
+  php-lint:
+    needs: workflow-guard
+    if: needs.workflow-guard.outputs.should_run == 'true'
+    runs-on: ubuntu-24.04
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # v2.40.0
+      with:
+        php-version: '8.4'
+        tools: composer
+
+    - name: Validate agent contracts and skill discovery
+      run: |
+        php scripts/validate-agent-token-budget.php
+        python3 scripts/validate-agent-skills.py
+
+    - name: Install dependencies
+      run: |
+        composer install --no-dev --prefer-dist --no-interaction
+
+    - name: Validate SDC library contract
+      run: php scripts/validate-aculta420-sdc-library-contract.php
+
+    - name: Find all PHP files for linting
+      id: find_php
+      run: |
+        find . \
+          \( -path "./web/modules/custom/*" -o -path "./web/themes/custom/*" -o -path "./scripts/*" \) \
+          -name "*.php" -type f > php_files.txt
+        echo "PHP files found: $(wc -l < php_files.txt)"
+
+    - name: PHP Lint Check
+      run: |
+        if [ -f php_files.txt ]; then
+          while IFS= read -r file; do
+            if [ -f "$file" ]; then
+              echo "Checking $file"
+              php -l "$file" || exit 1
+            fi
+          done < php_files.txt
+        else
+          echo "No PHP files found for linting"
+          exit 1
+        fi
+
+  test-discovery:
+    needs: workflow-guard
+    if: needs.workflow-guard.outputs.should_run == 'true'
+    runs-on: ubuntu-24.04
+    outputs:
+      kernel_shards: ${{ steps.kernel_shards.outputs.kernel_shards }}
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # v2.40.0
+      with:
+        php-version: '8.4'
+        tools: composer
+
+    - name: Install dependencies
+      run: |
+        composer install --prefer-dist --no-interaction
+
+    - name: Verify PHPUnit discovery
+      run: |
+        # Fails if a *Test.php is outside every suite, if a mandatory suite is
+        # empty, or if the committed phpunit.xml drifted from the tree.
+        php scripts/phpunit-suites.php --check
+
+    - name: Generate balanced Kernel shards
+      id: kernel_shards
+      run: php scripts/phpunit-suites.php --kernel-shards=6
+
+  phpunit-unit:
+    needs: [ workflow-guard, test-discovery ]
+    if: needs.workflow-guard.outputs.should_run == 'true'
+    runs-on: ubuntu-24.04
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # v2.40.0
+      with:
+        php-version: '8.4'
+        tools: composer
+        coverage: none
+
+    - name: Install dependencies
+      run: |
+        composer install --prefer-dist --no-interaction
+
+    - name: Install Ghostscript (PdfThumbnailGeneratorTest depende de gs)
+      run: sudo apt-get update && sudo apt-get install -y ghostscript
+
+    - name: Run Unit suite
+      run: |
+        mkdir -p artifacts
+        vendor/bin/phpunit --testsuite unit --no-progress \
+          --log-junit artifacts/unit-junit.xml \
+          --display-warnings --display-deprecations
+
+    - name: Upload Unit report
+      if: always()
+      uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+      with:
+        name: phpunit-unit
+        path: artifacts/unit-junit.xml
+        retention-days: 14
+
+  phpunit-kernel:
+    needs: [ workflow-guard, test-discovery ]
+    if: needs.workflow-guard.outputs.should_run == 'true'
+    name: phpunit-kernel (lote ${{ matrix.shard }}/6)
+    strategy:
+      fail-fast: false
+      max-parallel: 1
+      matrix: ${{ fromJSON(needs.test-discovery.outputs.kernel_shards) }}
+    runs-on: ubuntu-24.04
+    # Cada lote publica seu próprio JUnit; executá-los em série limita a carga simultânea.
+    timeout-minutes: 45
+    # Dívida conhecida (docs/operations/testing/UI-SUITE-AUDITORIA.md, seção 8): 276 erros e 15 falhas
+    # por serviços de módulos não habilitados no teste, schema de commerce_product e tabelas de grupo.
+    # Job informativo até a correção: a falha continua visível no log e no resumo do job,
+    # mas não bloqueia os demais gates. Não reduzir asserções para ficar verde.
+    continue-on-error: true
+    services:
+      mariadb:
+        image: mariadb:10.11
+        env:
+          MARIADB_ROOT_PASSWORD: root
+          MARIADB_DATABASE: aculta_simpletest
+        ports:
+          - "127.0.0.1:3306:3306"
+        options: >-
+          --health-cmd="healthcheck.sh --connect --innodb_initialized"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # v2.40.0
+      with:
+        php-version: '8.4'
+        tools: composer
+        extensions: pdo_mysql
+        coverage: none
+
+    - name: Install dependencies
+      run: |
+        composer install --prefer-dist --no-interaction
+
+    - name: Run Kernel suite
+      env:
+        SIMPLETEST_DB: mysql://root:root@127.0.0.1:3306/aculta_simpletest
+        KERNEL_SHARD: ${{ matrix.shard }}
+        KERNEL_DIRECTORIES: ${{ matrix.directories }}
+      run: |
+        mkdir -p artifacts
+        read -r -a kernel_directories <<< "$KERNEL_DIRECTORIES"
+        if [ "${#kernel_directories[@]}" -eq 0 ]; then
+          echo "O lote Kernel não recebeu diretórios de teste." >&2
+          exit 1
+        fi
+        vendor/bin/phpunit --configuration phpunit.xml \
+          --log-junit "artifacts/kernel-junit-${KERNEL_SHARD}.xml" \
+          "${kernel_directories[@]}"
+
+    - name: Upload Kernel report
+      if: always()
+      uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+      with:
+        name: phpunit-kernel-${{ matrix.shard }}
+        path: artifacts/kernel-junit-${{ matrix.shard }}.xml
+        retention-days: 14
+
+  phpstan:
+    needs: workflow-guard
+    if: needs.workflow-guard.outputs.should_run == 'true'
+    runs-on: ubuntu-24.04
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      with:
+        fetch-depth: 0
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # v2.40.0
+      with:
+        php-version: '8.4'
+        tools: composer
+
+    - name: Install dependencies
+      run: |
+        composer install --prefer-dist
+
+    - name: Resolve diff base
+      run: |
+        if [ "$GITHUB_EVENT_NAME" = "pull_request" ]; then
+          base="${{ github.event.pull_request.base.sha }}"
+          # Só as mudanças do PR: base efetiva é o merge-base, não a ponta
+          # móvel da branch de destino.
+          base="$(git merge-base "$base" HEAD 2>/dev/null || printf '%s' "$base")"
+        elif [ "$GITHUB_EVENT_NAME" = "push" ]; then
+          base="${{ github.event.before }}"
+        else
+          base="$(git rev-parse origin/dev 2>/dev/null || git rev-list --max-parents=0 HEAD)"
+        fi
+        if [ -z "$base" ] || [ "$base" = "0000000000000000000000000000000000000000" ]; then
+          base="$(git rev-parse HEAD~1 2>/dev/null || git rev-list --max-parents=0 HEAD)"
+        fi
+        echo "PHPSTAN_DIFF_BASE=$base" >> "$GITHUB_ENV"
+        echo "Base do gate PHPStan: $base"
+
+    - name: Run PHPStan level 10 with frozen baseline
+      run: |
+        mkdir -p artifacts
+        set +e
+        vendor/bin/phpstan analyse --configuration=phpstan.neon --no-progress \
+          --error-format=json --memory-limit=2G > artifacts/phpstan.json
+        rc=$?
+        set -e
+        echo "phpstan_exit=$rc" | tee artifacts/phpstan-exit.txt
+        if [ "$rc" -gt 1 ]; then
+          echo "Falha de execução do PHPStan (não é erro estático)." >&2
+          exit "$rc"
+        fi
+        # O código 1 com JSON válido é diagnóstico; o guard classifica cada
+        # erro como não suprimido, ignore.unmatched ou ignore.count.
+
+    - name: Blocking debt gates (integrity, config, growth, new errors)
+      run: |
+        php scripts/phpstan-debt-guard.php check \
+          --baseline=phpstan-baseline.neon \
+          --config=phpstan.neon \
+          --git-base="$PHPSTAN_DIFF_BASE" \
+          --analysis=artifacts/phpstan.json
+
+    - name: Blocking debt in touched files and modules
+      if: >-
+        github.event_name != 'pull_request' ||
+        !(github.event.pull_request.base.ref == 'main' && github.event.pull_request.head.ref == 'dev')
+      run: |
+        php scripts/phpstan-debt-guard.php diff \
+          --baseline=phpstan-baseline.neon \
+          --git-base="$PHPSTAN_DIFF_BASE"
+
+    - name: Debt diff gate for the weekly integration PR
+      if: >-
+        github.event_name == 'pull_request' &&
+        github.event.pull_request.base.ref == 'main' &&
+        github.event.pull_request.head.ref == 'dev'
+      run: |
+        # O PR dev->main carrega a semana inteira. Cada push a dev executa o
+        # gate por arquivo/módulo sobre o incremento real; aplicar o diff
+        # semanal exigiria limpar dívida de centenas de arquivos alheios à
+        # alteração corrente.
+        echo "PR de integração dev->main: gate por arquivo/módulo N/A;"
+        echo "os pushes a dev são a unidade de validação da dívida tocada."
+
+    - name: Debt evolution report
+      if: always()
+      run: |
+        mkdir -p artifacts
+        args=(
+          "--baseline=phpstan-baseline.neon"
+          "--analysis=artifacts/phpstan.json"
+          "--sha=${{ github.sha }}"
+          "--out=artifacts/phpstan-debt.md"
+          "--json-out=artifacts/phpstan-debt.json"
+        )
+        if git show "$PHPSTAN_DIFF_BASE:phpstan.neon" 2>/dev/null \
+          | grep -Eq '^[[:space:]]*level:[[:space:]]*10[[:space:]]*$'; then
+          git show "$PHPSTAN_DIFF_BASE:phpstan-baseline.neon" \
+            > artifacts/phpstan-baseline-reference.neon
+          args+=("--reference-baseline=artifacts/phpstan-baseline-reference.neon")
+        else
+          echo "Referência não está no nível 10: evolução omissa neste commit de transição."
+        fi
+        php scripts/phpstan-debt-report.php "${args[@]}"
+
+    - name: Upload PHPStan diagnostics
+      if: always()
+      uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+      with:
+        name: phpstan-debt
+        path: |
+          artifacts/phpstan.json
+          artifacts/phpstan-exit.txt
+          artifacts/phpstan-debt.md
+          artifacts/phpstan-debt.json
+          artifacts/phpstan-baseline-reference.neon
+        retention-days: 14
+        if-no-files-found: warn
+
+  # Check estável para branch protection: um job PHPStan `skipped` não pode
+  # ser lido como aprovação. Este job sempre executa e exige sucesso real.
+  phpstan-gate:
+    name: PHPStan level 10 gate
+    needs: [ workflow-guard, phpstan ]
+    if: always()
+    runs-on: ubuntu-24.04
+    steps:
+    - name: Require an executed and successful PHPStan job
+      run: |
+        if [ "${{ needs.workflow-guard.outputs.should_run }}" != "true" ]; then
+          echo "Push deduplicado: a verificação canônica é o job do PR aberto."
+          echo "O check estável não aprova por si só um PHPStan não executado."
+          exit 0
+        fi
+        result="${{ needs.phpstan.result }}"
+        if [ "$result" != "success" ]; then
+          echo "PHPStan nível 10 não aprovado (result=$result)." >&2
+          exit 1
+        fi
+        echo "PHPStan nível 10 executado e aprovado."

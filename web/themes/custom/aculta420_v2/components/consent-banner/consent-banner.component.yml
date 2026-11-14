@@ -1,0 +1,20 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Banner de consentimento de métricas
+description: Apresenta a escolha opcional de métricas de uso a visitantes anônimos.
+status: stable
+group: Shell institucional
+props:
+  type: object
+  additionalProperties: false
+  required: [privacy_url]
+  properties:
+    privacy_url:
+      title: Endereço da política de privacidade
+      type: string
+      minLength: 1
+      format: uri-reference
+      description: Destino do link que permite consultar a política de privacidade antes de escolher sobre métricas.
+assets:
+  css:
+    component:
+      consent-banner.css: {}

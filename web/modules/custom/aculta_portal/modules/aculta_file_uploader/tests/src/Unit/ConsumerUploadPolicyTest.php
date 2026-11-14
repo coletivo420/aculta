@@ -31,6 +31,11 @@ final class ConsumerUploadPolicyTest extends UnitTestCase {
    *
    * @param array<string, mixed> $values
    *   Valores de aculta_file_uploader.settings, com chaves pontilhadas.
+   * @param string|null $realpath
+   *   Caminho físico devolvido pelo sistema de arquivos.
+   *
+   * @return \Drupal\aculta_file_uploader\ConsumerUploadPolicy
+   *   Política de upload configurada para o teste.
    */
   private function policy(array $values, ?string $realpath = NULL): ConsumerUploadPolicy {
     $config = $this->createMock(ImmutableConfig::class);

@@ -1,0 +1,45 @@
+.lms-learning-dashboard {
+  display: grid;
+  gap: clamp(var(--spacing-xl), 4vw, var(--spacing-xxl));
+  min-inline-size: 0;
+}
+
+.lms-learning-dashboard__header {
+  display: grid;
+  gap: var(--spacing-sm);
+  min-inline-size: 0;
+}
+
+.lms-learning-dashboard__header .aculta-heading {
+  margin-block-end: 0;
+}
+
+.lms-learning-dashboard__introduction {
+  max-inline-size: 68ch;
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-lg);
+}
+
+.lms-learning-dashboard__section {
+  display: grid;
+  gap: var(--spacing-base);
+  min-inline-size: 0;
+}
+
+.lms-learning-dashboard__section-title {
+  margin: 0;
+  font-size: clamp(var(--font-size-xl), 3vw, var(--font-size-3xl));
+}
+
+.lms-learning-dashboard__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+  align-items: stretch;
+  gap: var(--spacing-base);
+  min-inline-size: 0;
+}
+
+.lms-learning-dashboard__grid--certificates {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
+}

@@ -357,7 +357,7 @@ final class RestrictedForumGroupAclKernelTest extends KernelTestBase {
        * {@inheritdoc}
        */
       public function configuredGroupType(): ?string {
-        return self::GROUP_TYPE;
+        return 'associado_forum';
       }
 
       /**

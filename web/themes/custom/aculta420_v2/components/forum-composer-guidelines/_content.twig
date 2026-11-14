@@ -1,0 +1,32 @@
+<div class="forum-composer-guidelines__grid">
+  {% if tips and tips|length > 0 %}
+    <div class="forum-composer-guidelines__col">
+      <h3 class="forum-composer-guidelines__subheading">
+        {{ include('aculta420_v2:icon', { name: 'lightbulb', variant: 'duotone', size: 'sm' }, with_context = false) }}
+        <span>{{ 'Como criar um bom tópico'|t }}</span>
+      </h3>
+      <ul class="forum-composer-guidelines__list" role="list">
+        {% for tip in tips %}
+          <li>{{ tip }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+
+  {% if community_rules and community_rules|length > 0 %}
+    <div class="forum-composer-guidelines__col">
+      <h3 class="forum-composer-guidelines__subheading">
+        {{ include('aculta420_v2:icon', { name: 'shield-check', variant: 'duotone', size: 'sm' }, with_context = false) }}
+        <span>{{ 'Normas da Comunidade'|t }}</span>
+      </h3>
+      <dl class="forum-composer-guidelines__rules-list">
+        {% for rule in community_rules %}
+          <div class="forum-composer-guidelines__rule">
+            <dt>{{ rule.title }}</dt>
+            <dd>{{ rule.text }}</dd>
+          </div>
+        {% endfor %}
+      </dl>
+    </div>
+  {% endif %}
+</div>

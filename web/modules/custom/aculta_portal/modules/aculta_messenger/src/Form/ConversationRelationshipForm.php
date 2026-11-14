@@ -36,12 +36,12 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 final class ConversationRelationshipForm extends FormBase {
 
   public function __construct(
-    private readonly FriendshipManagerInterface $friendshipManager,
-    private readonly PrivateMessageBanManagerInterface $banManager,
-    private readonly AccountProxyInterface $currentUser,
-    private readonly EntityTypeManagerInterface $entityTypes,
-    private readonly CacheTagsInvalidatorInterface $cacheTagsInvalidator,
-    private readonly CsrfTokenGenerator $csrfToken,
+    protected readonly FriendshipManagerInterface $friendshipManager,
+    protected readonly PrivateMessageBanManagerInterface $banManager,
+    protected readonly AccountProxyInterface $currentUser,
+    protected readonly EntityTypeManagerInterface $entityTypes,
+    protected readonly CacheTagsInvalidatorInterface $cacheTagsInvalidator,
+    protected readonly CsrfTokenGenerator $csrfToken,
   ) {}
 
   /**

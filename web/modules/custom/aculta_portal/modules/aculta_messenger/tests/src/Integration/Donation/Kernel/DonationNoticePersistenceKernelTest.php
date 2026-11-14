@@ -9,7 +9,7 @@ use Drupal\aculta_messenger\Aviso\AvisoPreferenciasInterface;
 use Drupal\aculta_messenger\Event\MessengerNoticeEvent;
 use Drupal\aculta_messenger\Integration\Donation\DonationNoticeManager;
 use Drupal\aculta_messenger\Integration\Donation\EventSubscriber\DonationNoticeEventConsumer;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\domain\DomainInterface;
 use Drupal\domain\DomainNegotiatorInterface;
 use Drupal\commerce_order\Entity\OrderInterface;
@@ -367,7 +367,7 @@ final class DonationNoticePersistenceKernelTest extends KernelTestBase {
     });
     return new DonationNoticeManager(
       $entityTypeManager,
-      new DomainPurposeManager(
+      new DomainSiteManager(
         $entityTypeManager,
         $this->createMock(DomainNegotiatorInterface::class),
         $this->createMock(ConfigFactoryInterface::class),

@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_events\Controller;
 
-use Drupal\aculta_events\Access\EventPermissionPolicy;
 use Drupal\aculta_events\Entity\Event;
 use Drupal\aculta_user\Organization\OrganizationMembershipManager;
 use Drupal\Core\Cache\CacheableMetadata;
+use Drupal\address\AddressInterface;
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -21,7 +22,6 @@ final class EventOrganizerDashboardController extends ControllerBase {
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entities,
-    private readonly EventPermissionPolicy $permissions,
     private readonly ?RequestStack $requestStack = NULL,
     private readonly ?OrganizationMembershipManager $membershipManager = NULL,
   ) {}
@@ -32,7 +32,6 @@ final class EventOrganizerDashboardController extends ControllerBase {
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('entity_type.manager'),
-      $container->get('aculta_events.permission_policy'),
       $container->get('request_stack'),
       $container->has('aculta_user.organization_membership_manager') ? $container->get('aculta_user.organization_membership_manager') : NULL,
     );
@@ -59,38 +58,48 @@ final class EventOrganizerDashboardController extends ControllerBase {
     $items = [];
     if ($canCreateEvent->isAllowed()) {
       $items[] = [
-        '#type' => 'link',
-        '#title' => $this->t('Criar evento'),
-        '#url' => Url::fromRoute('aculta_events.organizer_event_add'),
-        '#attributes' => ['data-portal-ui' => 'button-primary'],
+        '#type' => 'aculta_portal_button',
+        '#props' => [
+          'text' => (string) $this->t('Criar evento'),
+          'url' => Url::fromRoute('aculta_events.organizer_event_add')->toString(),
+          'variant' => 'primary',
+        ],
       ];
       $items[] = [
-        '#type' => 'link',
-        '#title' => $this->t('Propor novo Evento para revisão'),
-        '#url' => Url::fromRoute('aculta_events.organizer_event_contribution_add'),
-        '#attributes' => ['data-portal-ui' => 'button-secondary'],
+        '#type' => 'aculta_portal_button',
+        '#props' => [
+          'text' => (string) $this->t('Propor novo Evento para revisão'),
+          'url' => Url::fromRoute('aculta_events.organizer_event_contribution_add')->toString(),
+          'variant' => 'secondary',
+        ],
       ];
     }
     $items[] = [
-      '#type' => 'link',
-      '#title' => $this->t('Minhas propostas'),
-      '#url' => Url::fromRoute('aculta_events.organizer_contributions'),
-      '#attributes' => ['data-portal-ui' => 'button-secondary'],
+      '#type' => 'aculta_portal_button',
+      '#props' => [
+        'text' => (string) $this->t('Minhas propostas'),
+        'url' => Url::fromRoute('aculta_events.organizer_contributions')->toString(),
+        'variant' => 'secondary',
+      ],
     ];
     if ($canCreateLocation->isAllowed()) {
       $items[] = [
-        '#type' => 'link',
-        '#title' => $this->t('Cadastrar local'),
-        '#url' => Url::fromRoute('aculta_events.organizer_location_add'),
-        '#attributes' => ['data-portal-ui' => 'button-secondary'],
+        '#type' => 'aculta_portal_button',
+        '#props' => [
+          'text' => (string) $this->t('Cadastrar local'),
+          'url' => Url::fromRoute('aculta_events.organizer_location_add')->toString(),
+          'variant' => 'secondary',
+        ],
       ];
     }
     if ($canCreateEvent->isAllowed()) {
       $items[] = [
-        '#type' => 'link',
-        '#title' => $this->t('Cadastrar organização'),
-        '#url' => Url::fromRoute('aculta_events.organizer_organization_add'),
-        '#attributes' => ['data-portal-ui' => 'button-secondary'],
+        '#type' => 'aculta_portal_button',
+        '#props' => [
+          'text' => (string) $this->t('Cadastrar organização'),
+          'url' => Url::fromRoute('aculta_events.organizer_organization_add')->toString(),
+          'variant' => 'secondary',
+        ],
       ];
     }
 
@@ -193,6 +202,9 @@ final class EventOrganizerDashboardController extends ControllerBase {
       $dateIds = $dateQuery->execute();
       if ($dateIds !== []) {
         foreach ($dateStorage->loadMultiple($dateIds) as $date) {
+          if (!$date instanceof ContentEntityInterface) {
+            continue;
+          }
           $eventId = (int) ($date->get('field_evento')->target_id ?? 0);
           if ($eventId > 0 && !isset($nextDates[$eventId])) {
             $nextDates[$eventId] = $date;
@@ -208,6 +220,9 @@ final class EventOrganizerDashboardController extends ControllerBase {
     $locations = [];
     if ($locationIds !== []) {
       foreach ($this->entities->getStorage('aculta_event_location')->loadMultiple($locationIds) as $locationId => $location) {
+        if (!$location instanceof ContentEntityInterface) {
+          continue;
+        }
         $locationAccess = $location->access('view', $account, TRUE);
         $cache->addCacheableDependency($location)->addCacheableDependency($locationAccess);
         if ($locationAccess->isAllowed()) {
@@ -230,11 +245,12 @@ final class EventOrganizerDashboardController extends ControllerBase {
       if (isset($nextDates[$eventId])) {
         $date = $nextDates[$eventId];
         $quando = $date->get('field_quando')->first();
-        if ($quando && $quando->start_date) {
-          $dateText = $quando->start_date->format('d/m/Y H:i');
+        $startDate = $quando?->get('start_date')?->getValue();
+        if ($startDate instanceof \DateTimeInterface) {
+          $dateText = $startDate->format('d/m/Y H:i');
         }
-        elseif ($quando && !empty($quando->value)) {
-          $dateText = substr((string) $quando->value, 0, 16);
+        elseif ($quando !== NULL && $quando->get('value')->getValue() !== NULL) {
+          $dateText = substr((string) $quando->get('value')->getValue(), 0, 16);
         }
         else {
           $dateText = (string) $date->label();
@@ -247,8 +263,8 @@ final class EventOrganizerDashboardController extends ControllerBase {
           $cityUf = '';
           if ($loc->hasField('field_endereco') && !$loc->get('field_endereco')->isEmpty()) {
             $addr = $loc->get('field_endereco')->first();
-            if ($addr) {
-              $parts = array_filter([(string) $addr->locality, (string) $addr->administrative_area]);
+            if ($addr instanceof AddressInterface) {
+              $parts = array_filter([(string) $addr->getLocality(), (string) $addr->getAdministrativeArea()]);
               if ($parts !== []) {
                 $cityUf = ' (' . implode('/', $parts) . ')';
               }
@@ -359,12 +375,11 @@ final class EventOrganizerDashboardController extends ControllerBase {
             '#default_value' => $statusFilter,
           ],
           'submit' => [
-            '#type' => 'html_tag',
-            '#tag' => 'button',
-            '#value' => $this->t('Filtrar'),
-            '#attributes' => [
-              'type' => 'submit',
-              'data-portal-ui' => 'button-secondary',
+            '#type' => 'aculta_portal_button',
+            '#props' => [
+              'text' => (string) $this->t('Filtrar'),
+              'variant' => 'secondary',
+              'is_submit' => TRUE,
             ],
           ],
         ],
@@ -390,10 +405,12 @@ final class EventOrganizerDashboardController extends ControllerBase {
 
     if ($hasFilters) {
       $build['filters']['form']['reset'] = [
-        '#type' => 'link',
-        '#title' => $this->t('Limpar filtros'),
-        '#url' => Url::fromRoute('aculta_events.organizer_dashboard'),
-        '#attributes' => ['data-portal-ui' => 'button-ghost'],
+        '#type' => 'aculta_portal_button',
+        '#props' => [
+          'text' => (string) $this->t('Limpar filtros'),
+          'url' => Url::fromRoute('aculta_events.organizer_dashboard')->toString(),
+          'variant' => 'ghost',
+        ],
       ];
     }
 

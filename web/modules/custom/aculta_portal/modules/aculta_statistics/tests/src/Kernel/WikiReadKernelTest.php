@@ -30,7 +30,7 @@ final class WikiReadKernelTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['aculta_statistics', 'node', 'user', 'system', 'field', 'text', 'filter'];
+  protected static $modules = ['aculta_statistics', 'node', 'user', 'system', 'field', 'text', 'filter', 'aculta_file_uploader', 'file' ];
 
   /**
    * {@inheritdoc}

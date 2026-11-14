@@ -9,12 +9,22 @@ dependencies:
   module:
     - content_moderation
     - path
-    - text
+    - text_with_summary
 id: node.aculta_adm.default
 targetEntityType: node
 bundle: aculta_adm
 mode: default
 content:
+  aculta_coauthors:
+    type: entity_reference_autocomplete_tags
+    weight: 17
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
   body:
     type: text_textarea_with_summary
     weight: 121
@@ -24,16 +34,6 @@ content:
       summary_rows: 3
       placeholder: ''
       show_summary: false
-    third_party_settings: {  }
-  co_authors:
-    type: entity_reference_autocomplete_tags
-    weight: 17
-    region: content
-    settings:
-      match_operator: CONTAINS
-      match_limit: 10
-      size: 60
-      placeholder: ''
     third_party_settings: {  }
   created:
     type: datetime_timestamp
@@ -99,4 +99,3 @@ hidden:
   field_domain_source: true
   promote: true
   sticky: true
-

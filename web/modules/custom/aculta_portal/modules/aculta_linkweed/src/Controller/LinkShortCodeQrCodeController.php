@@ -10,7 +10,8 @@ use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\Url;
 use Drupal\aculta_linkweed\Entity\Link;
 use Drupal\aculta_linkweed\Service\QrCodeSvgGenerator;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
@@ -20,7 +21,7 @@ final class LinkShortCodeQrCodeController {
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly AccountProxyInterface $currentUser,
-    private readonly DomainPurposeManager $domainPurpose,
+    private readonly DomainSiteManager $siteManager,
     private readonly QrCodeSvgGenerator $generator,
   ) {}
 
@@ -47,8 +48,7 @@ final class LinkShortCodeQrCodeController {
       throw new NotFoundHttpException();
     }
 
-    $canonical = $this->domainPurpose->canonicalRouteUrl(
-      'links',
+    $canonical = $this->siteManager->canonicalRouteUrl(SiteKey::Links,
       'aculta_linkweed.short_redirect',
       ['codigo' => $codigo],
     );
@@ -68,7 +68,7 @@ final class LinkShortCodeQrCodeController {
     $response->headers->set('X-Content-Type-Options', 'nosniff');
     $response->addCacheableDependency($link);
     $response->addCacheableDependency($access);
-    $domain = $this->domainPurpose->getDomain('links');
+    $domain = $this->siteManager->getDomain(SiteKey::Links);
     if ($domain !== NULL) {
       $response->addCacheableDependency($domain);
     }

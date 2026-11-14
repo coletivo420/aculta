@@ -1,0 +1,6 @@
+name: Título H1 da página
+description: H1 único da página, Oswald 700, com faixa tricolor e escala máxima de 64 px no desktop.
+component: aculta420_v2:heading
+props:
+  text: Cultivo livre, associado e popular
+  level: 1

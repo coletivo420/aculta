@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace Drupal\aculta_events\Controller;
 
 use Drupal\aculta_events\Entity\EventOrganization;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Render\Markup;
 use Drupal\Core\Url;
@@ -18,7 +19,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 final class EventOrganizationPageController extends ControllerBase {
 
   public function __construct(
-    private readonly ?DomainPurposeManager $purposes = NULL,
+    private readonly ?DomainSiteManager $purposes = NULL,
   ) {}
 
   /**
@@ -26,7 +27,7 @@ final class EventOrganizationPageController extends ControllerBase {
    */
   public static function create(ContainerInterface $container): static {
     return new static(
-      $container->has('aculta_portal.domain_purpose') ? $container->get('aculta_portal.domain_purpose') : NULL,
+      $container->has('aculta_portal.domain_site') ? $container->get('aculta_portal.domain_site') : NULL,
     );
   }
 
@@ -187,19 +188,22 @@ final class EventOrganizationPageController extends ControllerBase {
     }
 
     if ($this->currentUser()->hasPermission('administer aculta claims') && $this->purposes !== NULL) {
-      $adminClaimsUrl = $this->purposes->environmentPathUrl('main', '/painel-administrativo/pessoas/reivindicacoes?target_type=aculta_event_organization&target_id=' . $org->id());
+      $adminClaimsUrl = $this->purposes->environmentPathUrl(SiteKey::Main, '/painel-administrativo/pessoas/reivindicacoes?target_type=aculta_event_organization&target_id=' . $org->id());
       if ($adminClaimsUrl !== NULL) {
         $build['actions']['admin_claims'] = [
-          '#type' => 'link',
-          '#title' => $this->t('Ver pedidos de reivindicação desta organização'),
-          '#url' => $adminClaimsUrl,
-          '#attributes' => ['data-portal-ui' => 'event-organization-admin-action'],
+          '#type' => 'aculta_portal_button',
+          '#props' => [
+            'text' => (string) $this->t('Ver pedidos de reivindicação desta organização'),
+            'url' => $adminClaimsUrl->toString(),
+            'variant' => 'secondary',
+            'size' => 'small',
+          ],
         ];
       }
     }
 
-    if ($this->currentUser()->hasPermission('moderar denuncias ugc') && $this->purposes !== NULL) {
-      $reportsUrl = $this->purposes->environmentPathUrl('main', '/painel-administrativo/moderacao/denuncias');
+    if ($this->currentUser()->hasPermission('moderar denuncias cgu') && $this->purposes !== NULL) {
+      $reportsUrl = $this->purposes->environmentPathUrl(SiteKey::Main, '/painel-administrativo/moderacao/denuncias');
       if ($reportsUrl !== NULL) {
         $build['actions']['admin_reports'] = [
           '#type' => 'link',

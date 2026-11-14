@@ -1,0 +1,6 @@
+name: Orientação de busca
+description: Texto auxiliar para explicar o mínimo necessário antes da busca.
+props:
+  tone: normal
+slots:
+  content: Digite pelo menos três caracteres para pesquisar.

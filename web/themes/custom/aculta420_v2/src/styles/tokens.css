@@ -1,0 +1,443 @@
+/* ACULTA420 V2 design tokens. The Portal's explicit mode controls the theme. */
+/* Modo claro: base de todos os tokens; também vale para [data-theme="light"]
+   para que um contêiner claro continue claro com o sistema em modo escuro. */
+:root,
+[data-theme="light"] {
+  --color-canvas: #fff;
+  /* Referência do painel do autor no cartão de post (claro). */
+  --color-reference-author-panel: #f2f7f0;
+  /* Transparências semânticas (antes em color-mix inline nos componentes). */
+  --color-alpha-border-75: color-mix(in sRGB, var(--color-border) 75%, transparent);
+  --color-alpha-brand-primary-76: color-mix(in sRGB, var(--color-brand-primary) 76%, transparent);
+  --color-alpha-on-brand-20: color-mix(in sRGB, var(--color-on-brand) 20%, transparent);
+  --color-alpha-shadow-tint-17: color-mix(in sRGB, var(--color-shadow-tint) 17%, transparent);
+  --color-alpha-shadow-tint-50: color-mix(in sRGB, var(--color-shadow-tint) 50%, transparent);
+  --color-alpha-text-muted-5: color-mix(in sRGB, var(--color-text-muted) 5%, transparent);
+  --color-alpha-text-primary-16: color-mix(in sRGB, var(--color-text-primary) 16%, transparent);
+  --studio-stripe: var(--color-accent-sub-2);
+  --motion-instant: .01ms;
+  --motion-fast: 150ms;
+  --motion-base: 180ms;
+  --motion-slow: 200ms;
+  --motion-spin: 1s;
+  --motion-loop: 3s;
+  --color-surface-subtle: #f3f4f6;
+  --color-surface: #fff;
+  --color-surface-raised: #fff;
+  --color-surface-institution: #fbf4e8;
+  /* Green wrappers are separate from raised cards/forms. */
+  --color-surface-green-soft: #e7eedc;
+  --color-surface-green-border: #6b7d70;
+  --color-text-primary: #0c3c29;
+  --color-text-secondary: #4d6357;
+  --color-text-muted: #5a6b60;
+  --color-brand-primary: #0c3c29;
+  --color-brand-highlight: #f2ca36;
+  --color-border: #6b7d70;
+  --color-on-brand: #fff;
+  --color-on-highlight: #0c3c29;
+  /* Fixed contrast pairs retain the legacy login panel and Google surface. */
+  --color-auth-control-surface: #e9f1fc;
+  --color-auth-control-text: #111;
+  --color-auth-control-focus: #0c3c29;
+  /* Keep the V1 login dialog's green surface while dark dialog text preserves AA contrast. */
+  --color-auth-dialog-surface: #6b9a2c;
+  --color-auth-dialog-text: #171513;
+  --color-auth-dialog-divider: #171513;
+  --color-auth-provider-surface: #fff;
+  --color-auth-provider-text: #163d2a;
+  --color-auth-secondary-surface: #fdf8ea;
+  --color-auth-secondary-text: #163d2a;
+  --color-auth-action-text: #1a1a1a;
+  --color-auth-dialog-link: #171513;
+  /* Botão oficial do Google: cores de marca fixas, iguais nos dois modos. */
+  --color-google-button-bg: #fff;
+  --color-google-button-text: #1f1f1f;
+  --color-google-button-border: #747775;
+  --color-google-button-hover-bg: #f8faff;
+  --color-google-button-shadow: rgba(60, 64, 67, .3);
+  --color-on-brand-muted: color-mix(in sRGB, var(--color-on-brand) 85%, transparent);
+  --color-on-footer: #171513;
+  --color-status: #176b3a;
+  --color-warning: #ffc107;
+  --color-warning-text: #7a4b00;
+  --color-error: #a3212d;
+  --color-scrim: rgb(0 0 0 / 78%);
+  --color-shadow-tint: rgb(0 0 0 / 30%);
+  --logo-filter: brightness(0);
+  --color-focus-ring: var(--color-brand-primary);
+  --focus-ring-width: 3px;
+  --focus-ring-offset: 2px;
+
+  /* Base visual herdada da V1 (ADR-046). Primitivas usadas só dentro deste arquivo. */
+  --palette-green: #689427;
+  --palette-red: #d4452d;
+  --color-brand-secondary: var(--palette-green);
+  /* Footer roles preserve the V1 green with text pairs meeting AA contrast. */
+  --color-footer-surface: var(--color-brand-secondary);
+  --color-footer-text: #171513;
+  --color-footer-link-surface: #0c3c29;
+  --color-footer-link-text: #fff;
+  --color-footer-focus-ring: #0c3c29;
+  /* Editorial red is slightly deepened from the V1 primitive to meet AA on light surfaces. */
+  --color-link-editorial: #b52f22;
+  --color-link-editorial-hover: var(--color-text-primary);
+  --color-media-stage: #e8dfcc;
+  --color-surface-highlight: #fbf4e8;
+  --color-border-highlight: #a98d26;
+  --color-status-error-text: #b3261e;
+  --color-status-error-surface: #fde8e7;
+  --color-status-ok-text: #1e5e2f;
+  --color-status-ok-surface: #e6f4ea;
+  --color-status-warning-text: #624b00;
+  --color-status-warning-surface: #fff4cc;
+  --accent-green-stripe: #689427;
+  --accent-yellow-stripe: #a98d26;
+  --accent-red-stripe: #b52f22;
+  --shadow-raised: 0 .125rem .5rem rgb(12 60 41 / 8%);
+  --tap-target-min: 44px;
+  --font-family-base: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-family-heading: Oswald, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-size-xs: .75rem;
+  --font-size-sm: .875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.25rem;
+  --font-size-xxl: 1.5rem;
+  /* Escala de títulos da referência "Tipografia do Portal ACULTA420 V2".
+     O mínimo atende 320/390 px; o máximo, o desktop de 1280/1920 px. */
+  --heading-h1-size: clamp(2rem, 1.25rem + 3.2vw, 4rem);
+  --heading-h1-weight: 700;
+  --heading-h1-line-height: 1.1;
+  --heading-h2-size: clamp(1.75rem, 1rem + 2.4vw, 3rem);
+  --heading-h2-weight: 700;
+  --heading-h2-line-height: 1.15;
+  --heading-h3-size: clamp(1.5rem, 1.1rem + 1.4vw, 2.25rem);
+  --heading-h3-weight: 700;
+  --heading-h3-line-height: 1.2;
+  --heading-h4-size: clamp(1.25rem, 1.05rem + .6vw, 1.75rem);
+  --heading-h4-weight: 600;
+  --heading-h4-line-height: 1.25;
+  --heading-h5-size: clamp(1.125rem, 1rem + .3vw, 1.375rem);
+  --heading-h5-weight: 600;
+  --heading-h5-line-height: 1.3;
+  --heading-h6-size: clamp(1rem, .95rem + .15vw, 1.125rem);
+  --heading-h6-weight: 600;
+  --heading-h6-line-height: 1.3;
+  --heading-space-before-h1: clamp(2rem, 1rem + 3vw, 4rem);
+  --heading-space-before-h2: clamp(1.5rem, .75rem + 2.5vw, 3.5rem);
+  --heading-space-before-h3: clamp(1.25rem, .75rem + 1.5vw, 2.5rem);
+  --heading-space-after: clamp(.5rem, .25rem + .6vw, 1.25rem);
+  --spacing-xs: .25rem;
+  --spacing-sm: .5rem;
+  --spacing-md: .75rem;
+  --spacing-base: 1rem;
+  --spacing-lg-compact: 1.25rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --spacing-xxl: 3rem;
+  --spacing-section: clamp(1.5rem, 3vw, 2.5rem);
+  --page-gutter: 1rem;
+  --aculta-container-width: 1200px;
+  --aculta-narrow-container-width: 750px;
+  --page-content-max: var(--aculta-container-width, 80rem);
+  --radius-sm: .25rem;
+  --radius-base: .5rem;
+  --radius-lg: 1rem;
+  --radius-full: 9999px;
+  --radius-control-button: var(--radius-lg);
+  --radius-control-card: var(--radius-lg);
+  --radius-control-field: var(--radius-base);
+  --shadow-sm: 0 1px 3px rgb(0 0 0 / 12%);
+
+  /* Tokens de botões ACULTA (docs/botoes.md) - Modo claro */
+  --button-primary-bg: #0c3c29;
+  --button-primary-bg-hover: #092b1d;
+  --button-primary-bg-active: #051a12;
+  --button-primary-fg: #fff;
+  --button-secondary-bg: #fff;
+  --button-secondary-bg-hover: #f2f7f0;
+  --button-secondary-bg-active: #e4ece1;
+  --button-secondary-border: #6b7d70;
+  --button-secondary-fg: #0c3c29;
+  --button-focus-ring: #0c3c29;
+  /* Perigo (danger): texto branco 6,19:1; borda/anel 5,7:1 sobre o canvas claro. */
+  --button-danger-bg: #b52f22;
+  --button-danger-bg-hover: #9a2619;
+  --button-danger-bg-active: #7f1f14;
+  --button-danger-fg: #fff;
+
+  /* Compatibility aliases for the existing shell until all consumers migrate. */
+  --color-primary: var(--color-brand-primary);
+  --color-secondary: #4b77a8;
+  --color-success: var(--color-status);
+  --color-danger: var(--color-error);
+  --color-light: var(--color-canvas);
+  --color-dark: var(--color-text-primary);
+  --color-white: #fff;
+  --color-black: #000;
+  --color-on-primary: var(--color-on-brand);
+  --color-on-warning: #202b35;
+  --font-size-3xl: 2rem;
+  --font-size-4xl: 2.5rem;
+  --font-size-5xl: 3rem;
+  --border-radius-sm: var(--radius-sm);
+  --border-radius-base: var(--radius-base);
+  --border-radius-lg: var(--radius-lg);
+  --border-radius-xl: 1.5rem;
+  --border-radius-full: var(--radius-full);
+  --shadow-base: 0 4px 6px rgb(0 0 0 / 10%);
+  --shadow-md: 0 4px 8px rgb(0 0 0 / 24%);
+  --shadow-lg: 0 10px 15px rgb(0 0 0 / 10%);
+  --surface-shadow-subtle: 0 2px 8px rgb(0 0 0 / 6%), 0 1px 2px rgb(0 0 0 / 4%);
+  --surface-shadow-raised: 0 .125rem .5rem rgb(12 60 41 / 8%);
+  --surface-shadow-floating: 0 10px 15px rgb(0 0 0 / 10%);
+  --surface-panel-institutional-bg: var(--palette-green);
+  --surface-panel-institutional-text: var(--color-footer-text);
+  --surface-accent-red: var(--palette-red);
+  --surface-accent-yellow: var(--color-brand-highlight);
+  --surface-accent-green: var(--palette-green);
+
+  /* Tokens semânticos --aculta-* exigidos pelo contrato de fundamentos de
+     design. Os valores são literais e espelham os --color-* equivalentes;
+     ainda não há consumidor, portanto não alteram a aparência do site. */
+  --aculta-surface-page: #fff; /* --color-canvas */
+  --aculta-surface-green-soft: var(--color-surface-green-soft);
+  --aculta-surface-raised: var(--color-surface-raised); /* alias semântico */
+  --aculta-surface-muted: #f3f4f6; /* --color-surface-subtle */
+  --aculta-surface-header: #fff; /* --color-surface */
+  --aculta-surface-interactive: #f2f7f0; /* --button-secondary-bg-hover (equivalente mais próximo) */
+  --aculta-surface-page-rgb: 255, 255, 255; /* canais de --color-canvas */
+  --aculta-text-primary: #0c3c29; /* --color-text-primary */
+  --aculta-text-secondary: #4d6357; /* --color-text-secondary */
+  --aculta-text-muted: #5a6b60; /* --color-text-muted */
+  --aculta-text-inverse: #fff; /* --color-on-brand */
+  --aculta-text-accent: #7a4b00; /* --color-warning-text: acento legível sobre superfície clara */
+  --aculta-border-subtle: #f3f4f6; /* --color-surface-subtle (equivalente mais próximo) */
+  --aculta-border-default: #6b7d70; /* --color-border */
+  --aculta-border-strong: #4d6357; /* --color-text-secondary */
+  --aculta-border-accent: #a98d26; /* --color-border-highlight */
+  --aculta-interactive-bg: #fff; /* --button-secondary-bg */
+  --aculta-interactive-text: #0c3c29; /* --button-secondary-fg */
+  --aculta-interactive-border: #6b7d70; /* --button-secondary-border */
+  --aculta-interactive-hover-bg: #f2f7f0; /* --button-secondary-bg-hover */
+  --aculta-interactive-hover-text: #0c3c29; /* --button-secondary-fg */
+  --aculta-interactive-active-bg: #e4ece1; /* --button-secondary-bg-active */
+  --aculta-interactive-active-text: #0c3c29; /* --button-secondary-fg */
+  --aculta-focus-ring: #0c3c29; /* --focus-ring */
+  --aculta-shell-institution-bg: #fbf4e8; /* --color-surface-institution */
+  --aculta-shell-institution-text: #0c3c29; /* --color-text-primary */
+  --aculta-shell-domain-bg: #fff; /* --color-surface */
+  --aculta-shell-domain-text: #0c3c29; /* --color-text-primary */
+  --aculta-shell-border: #6b7d70; /* --color-border */
+  --aculta-shell-active-bg: #0c3c29; /* --button-primary-bg */
+  --aculta-shell-active-text: #fff; /* --button-primary-fg */
+  --aculta-green: #689427; /* --palette-green */
+  --aculta-green-dark: #0c3c29; /* --color-brand-primary */
+  --aculta-yellow: #f2ca36; /* --color-brand-highlight */
+  --aculta-red: #d4452d; /* --palette-red */
+  --aculta-cream: #fbf4e8; /* --color-surface-institution */
+  --aculta-white: #fff; /* --color-white */
+  --aculta-button-primary-bg: #0c3c29; /* --button-primary-bg */
+  --aculta-button-primary-text: #fff; /* --button-primary-fg */
+  --aculta-button-secondary-bg: #fff; /* --button-secondary-bg */
+  --aculta-button-secondary-text: #0c3c29; /* --button-secondary-fg */
+  --aculta-button-secondary-border: #6b7d70; /* --button-secondary-border */
+  --aculta-button-hover-bg: #092b1d; /* --button-primary-bg-hover */
+  --aculta-button-hover-text: #fff; /* --button-primary-fg */
+  --aculta-nav-current-bg: #f2f7f0; /* --button-secondary-bg-hover (equivalente mais próximo) */
+  --aculta-nav-current-text: #0c3c29; /* --color-text-primary */
+  --aculta-nav-current-underline: #f2ca36; /* --color-brand-highlight */
+  --aculta-nav-hover-bg: #f2f7f0; /* --button-secondary-bg-hover */
+  --aculta-nav-hover-text: #0c3c29; /* --color-text-primary */
+  --aculta-nav-hover-underline: #689427; /* --palette-green */
+  --aculta-link-editorial: #b52f22; /* --color-link-editorial */
+  --aculta-link-editorial-hover: #0c3c29; /* --color-link-editorial-hover */
+  --aculta-link: #0c3c29; /* --color-brand-primary */
+  --aculta-border: #6b7d70; /* --color-border */
+  --aculta-control-border: #6b7d70; /* --color-border */
+  --aculta-focus: #0c3c29; /* --color-focus-ring */
+
+  color-scheme: light;
+}
+
+/* Modo escuro: vale para o <html> e para qualquer contêiner [data-theme="dark"]
+   (pré-visualizações da UI Library). Mesmos valores, sem duplicação. */
+:root[data-theme="dark"],
+[data-theme="dark"] {
+  --studio-stripe: var(--color-accent-sub-2);
+  --color-canvas: #171513;
+  /* Referência do painel do autor no cartão de post (escuro). */
+  --color-reference-author-panel: #171513;
+  --color-surface: #211e1b;
+  --color-surface-raised: #2b2723;
+  --color-surface-institution: #2b2723;
+  --color-surface-green-soft: #2a3a2f;
+  --color-surface-green-border: #8fa397;
+  --color-text-primary: #f4efe8;
+  --color-text-secondary: #d8d0c8;
+  --color-text-muted: #b7aea5;
+  --color-brand-primary: #9ac15a;
+  --color-brand-highlight: #f2ca36;
+  --color-border: #6b7d70;
+  --color-on-brand: #171513;
+  --color-on-highlight: #171513;
+  --color-auth-dialog-link: #9ac15a;
+  --color-on-footer: #171513;
+  --color-status: #8fe0a8;
+  --color-warning: #ffc107;
+  --color-warning-text: #ffd27a;
+  --color-error: #ff9da5;
+  --color-scrim: rgb(0 0 0 / 78%);
+  --logo-filter: none;
+  /* Valores do modo escuro para a paleta herdada da V1 (contraste a verificar na revisão visual). */
+  --color-brand-secondary: #9ac15a;
+  --color-footer-focus-ring: #171513;
+  --color-link-editorial: #f08a76;
+  --color-link-editorial-hover: #f4efe8;
+  --color-media-stage: #3a332a;
+  --color-surface-highlight: #2a3a2f;
+  --color-border-highlight: #f2ca36;
+  --accent-green-stripe: #689427;
+  --accent-yellow-stripe: #f2ca36;
+  --accent-red-stripe: #e7bcb8;
+  --color-status-error-text: #ff9da5;
+  --color-status-error-surface: #3a1f1e;
+  --color-status-ok-text: #8fe0a8;
+  --color-status-ok-surface: #1d3327;
+  --color-status-warning-text: #ffd27a;
+  --color-status-warning-surface: #3a3115;
+  --shadow-raised: 0 .125rem .5rem rgb(0 0 0 / 40%);
+  --surface-shadow-subtle: 0 2px 8px rgb(0 0 0 / 30%), 0 1px 2px rgb(0 0 0 / 20%);
+  --surface-shadow-raised: 0 4px 14px rgb(0 0 0 / 45%);
+  --surface-shadow-floating: 0 10px 28px rgb(0 0 0 / 60%);
+  --surface-panel-institutional-bg: #2e4d22;
+  --surface-panel-institutional-text: var(--color-text-primary);
+  --surface-accent-red: var(--accent-red-stripe);
+  --surface-accent-yellow: var(--accent-yellow-stripe);
+  --surface-accent-green: var(--accent-green-stripe);
+
+  /* Tokens de botões ACULTA (docs/botoes.md) - Modo escuro */
+  --button-primary-bg: #9ac15a;
+  --button-primary-bg-hover: #a5c86d;
+  --button-primary-bg-active: #8cb745;
+  --button-primary-fg: #171513;
+  --button-secondary-bg: #2b2723;
+  --button-secondary-bg-hover: #3a352f;
+  --button-secondary-bg-active: #322d28;
+  --button-secondary-border: #8fa397;
+  --button-secondary-fg: #f4efe8;
+  --button-focus-ring: #f4efe8;
+  /* Perigo (danger): texto escuro 7,46:1 sobre o fundo; borda/anel 7,46:1 sobre o canvas. */
+  --button-danger-bg: #f08a76;
+  --button-danger-bg-hover: #f59a86;
+  --button-danger-bg-active: #e27b66;
+  --button-danger-fg: #171513;
+
+  /* Tokens semânticos --aculta-* no modo escuro. Valores literais; não há
+     consumidor ainda, portanto não alteram a aparência do site. */
+  --aculta-surface-page: #171513; /* --color-canvas */
+  --aculta-surface-green-soft: var(--color-surface-green-soft);
+  --aculta-surface-raised: var(--color-surface-raised); /* alias semântico */
+  --aculta-surface-muted: #2b2723; /* --color-surface-raised */
+  --aculta-surface-header: #211e1b; /* --color-surface */
+  --aculta-surface-interactive: #302b27; /* superfície neutra escura aprovada */
+  --aculta-surface-page-rgb: 23, 21, 19; /* canais de --color-canvas */
+  --aculta-text-primary: #f4efe8; /* --color-text-primary */
+  --aculta-text-secondary: #d8d0c8; /* --color-text-secondary */
+  --aculta-text-muted: #b7aea5; /* --color-text-muted */
+  --aculta-text-inverse: #171513; /* --color-on-brand */
+  --aculta-text-accent: #f2ca36; /* --color-brand-highlight */
+  --aculta-border-subtle: #2b2723; /* --color-surface-raised (equivalente mais próximo) */
+  --aculta-border-default: #6b7d70; /* --color-border */
+  --aculta-border-strong: #d8d0c8; /* --color-text-secondary */
+  --aculta-border-accent: #f2ca36; /* --color-border-highlight */
+  --aculta-interactive-bg: #2b2723; /* --button-secondary-bg */
+  --aculta-interactive-text: #f4efe8; /* --button-secondary-fg */
+  --aculta-interactive-border: #8fa397; /* --button-secondary-border */
+  --aculta-interactive-hover-bg: #3a352f; /* --button-secondary-bg-hover */
+  --aculta-interactive-hover-text: #f4efe8; /* --button-secondary-fg */
+  --aculta-interactive-active-bg: #322d28; /* --button-secondary-bg-active */
+  --aculta-interactive-active-text: #f4efe8; /* --button-secondary-fg */
+  --aculta-focus-ring: #f4efe8; /* --button-focus-ring */
+  --aculta-shell-institution-bg: #2b2723; /* --color-surface-institution */
+  --aculta-shell-institution-text: #f4efe8; /* --color-text-primary */
+  --aculta-shell-domain-bg: #211e1b; /* --color-surface */
+  --aculta-shell-domain-text: #f4efe8; /* --color-text-primary */
+  --aculta-shell-border: #6b7d70; /* --color-border */
+  --aculta-shell-active-bg: #9ac15a; /* --button-primary-bg */
+  --aculta-shell-active-text: #171513; /* --button-primary-fg */
+  --aculta-green: #689427; /* --palette-green */
+  --aculta-green-dark: #9ac15a; /* --color-brand-primary */
+  --aculta-yellow: #f2ca36; /* --color-brand-highlight */
+  --aculta-red: #ff9da5; /* --color-error */
+  --aculta-cream: #2b2723; /* --color-surface-institution */
+  --aculta-white: #fff; /* --color-white */
+  --aculta-button-primary-bg: #9ac15a; /* --button-primary-bg */
+  --aculta-button-primary-text: #171513; /* --button-primary-fg */
+  --aculta-button-secondary-bg: #2b2723; /* --button-secondary-bg */
+  --aculta-button-secondary-text: #f4efe8; /* --button-secondary-fg */
+  --aculta-button-secondary-border: #8fa397; /* --button-secondary-border */
+  --aculta-button-hover-bg: #a5c86d; /* --button-primary-bg-hover */
+  --aculta-button-hover-text: #171513; /* --button-primary-fg */
+  --aculta-nav-current-bg: #3a352f; /* --button-secondary-bg-hover (equivalente mais próximo) */
+  --aculta-nav-current-text: #f4efe8; /* --color-text-primary */
+  --aculta-nav-current-underline: #f2ca36; /* --color-brand-highlight */
+  --aculta-nav-hover-bg: #3a352f; /* --button-secondary-bg-hover */
+  --aculta-nav-hover-text: #f4efe8; /* --color-text-primary */
+  --aculta-nav-hover-underline: #9ac15a; /* --color-brand-primary */
+  --aculta-link-editorial: #f08a76; /* --color-link-editorial */
+  --aculta-link-editorial-hover: #f4efe8; /* --color-link-editorial-hover */
+  --aculta-link: #9ac15a; /* --color-brand-primary */
+  --aculta-border: #6b7d70; /* --color-border */
+  --aculta-control-border: #8fa397; /* --button-secondary-border */
+  --aculta-focus: #f4efe8; /* --color-focus-ring */
+
+  /* Tokens derivados por var(): repetidos aqui para resolver com os valores escuros.
+     Declarados só no :root, eles herdariam o valor claro já calculado. */
+  --color-alpha-border-75: color-mix(in sRGB, var(--color-border) 75%, transparent);
+  --color-alpha-brand-primary-76: color-mix(in sRGB, var(--color-brand-primary) 76%, transparent);
+  --color-alpha-on-brand-20: color-mix(in sRGB, var(--color-on-brand) 20%, transparent);
+  --color-alpha-shadow-tint-17: color-mix(in sRGB, var(--color-shadow-tint) 17%, transparent);
+  --color-alpha-shadow-tint-50: color-mix(in sRGB, var(--color-shadow-tint) 50%, transparent);
+  --color-alpha-text-muted-5: color-mix(in sRGB, var(--color-text-muted) 5%, transparent);
+  --color-alpha-text-primary-16: color-mix(in sRGB, var(--color-text-primary) 16%, transparent);
+  --color-focus-ring: var(--color-brand-primary);
+  --color-footer-surface: var(--color-brand-secondary);
+  --color-primary: var(--color-brand-primary);
+  --color-success: var(--color-status);
+  --color-danger: var(--color-error);
+  --color-light: var(--color-canvas);
+  --color-dark: var(--color-text-primary);
+  --color-on-primary: var(--color-on-brand);
+  /* Tokens de cor com valor literal claro e sem par escuro (usados por componentes). */
+  --color-auth-action-text: #171513;
+  --color-auth-control-focus: #f4efe8;
+  --color-auth-control-surface: #302b27;
+  --color-auth-control-text: #f4efe8;
+  --color-auth-dialog-divider: #6b7d70;
+  --color-auth-dialog-surface: #211e1b;
+  --color-auth-dialog-text: #f4efe8;
+  --color-auth-provider-surface: #2b2723;
+  --color-auth-provider-text: #f4efe8;
+  --color-auth-secondary-surface: #2b2723;
+  --color-auth-secondary-text: #f4efe8;
+  --color-footer-link-surface: #2b2723;
+  --color-footer-link-text: #f4efe8;
+  --color-footer-text: #171513;
+  --color-surface-subtle: #2b2723;
+
+  color-scheme: dark;
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+}
+
+/* ==========================================================================
+   Identidade visual selecionada por UI Skins em escopos data-skin e data-theme.
+   Cores semânticas da skin resolvida pelo Portal e publicadas pelo UI Skins.
+   Botões, foco, anéis, abas, links, barra institucional, barra multidomínio,
+   fundo, texto primário e cabeçalho NUNCA mudam por purpose.
+   Variantes oficiais aprovadas e testadas contra critérios WCAG AA (4.5:1 texto, 3:1 interface).
+   ========================================================================== */

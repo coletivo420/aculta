@@ -42,7 +42,7 @@ aculta_linkweed.page_public:
   requirements:
     slug: '[a-z0-9]+(?:-[a-z0-9]+)*'
   options:
-    _aculta_domain_purpose: links
+    _aculta_site_key: links
 
 aculta_linkweed.page_preview:
   path: '/pagina/{slug}/previa'
@@ -52,7 +52,7 @@ aculta_linkweed.page_preview:
   requirements:
     slug: '[a-z0-9]+(?:-[a-z0-9]+)*'
   options:
-    _aculta_domain_purpose: links
+    _aculta_site_key: links
 
 aculta_linkweed.page_qr_code:
   path: '/pagina/{slug}/codigo-qr.svg'
@@ -62,7 +62,7 @@ aculta_linkweed.page_qr_code:
   requirements:
     slug: '[a-z0-9]+(?:-[a-z0-9]+)*'
   options:
-    _aculta_domain_purpose: links
+    _aculta_site_key: links
 
 aculta_linkweed.short_redirect:
   path: '/redirecionar/{codigo}'
@@ -73,7 +73,7 @@ aculta_linkweed.short_redirect:
     codigo: '[0-9a-z]{12}'
   methods: [GET, HEAD]
   options:
-    _aculta_domain_purpose: links
+    _aculta_site_key: links
 
 aculta_linkweed.short_qr_code:
   path: '/redirecionar/{codigo}/codigo-qr.svg'
@@ -84,7 +84,7 @@ aculta_linkweed.short_qr_code:
     codigo: '[0-9a-z]{12}'
   methods: [GET, HEAD]
   options:
-    _aculta_domain_purpose: links
+    _aculta_site_key: links
 
 aculta_linkweed.landing:
   path: '/redes-sociais'
@@ -94,7 +94,7 @@ aculta_linkweed.landing:
   requirements:
     _access: 'TRUE'
   options:
-    _aculta_domain_purpose: links
+    _aculta_site_key: links
 
 aculta_linkweed.social_links_settings:
   path: '/painel-administrativo/aculta/redes-sociais'

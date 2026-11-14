@@ -39,7 +39,7 @@ Data de referência: 2026-10-21. Registro operacional da frente aberta; a decis�
 
 - Testes de Kernel de rota, privacidade e fluxo de recorte: não executados. Banco de teste dedicado
   `aculta_simpletest` (procedimento em `docs/operations/BANCO-DE-TESTE.md`).
-- Inspeção visual humana do popup de foto, do recorte e da aba Atividade: pendente (a rodada automatizada no X11 passou; ver TESTES-NAVEGADOR, seção R).
+- Inspeção visual humana do popup de foto, do recorte e da aba Atividade: pendente (a rodada automatizada no X11 passou; ver TESTES-NAVEGADOR-RODADAS, seção R).
 - Google Login: importação OAuth da foto está configurada no código, mas o login não está operacional no servidor de
   testes (`client_id` vazio; `client_secret` na configuração do runtime; risco do módulo `group` em gravação posterior).
   Ver `docs/integrations/GOOGLE.md`.

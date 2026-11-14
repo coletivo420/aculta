@@ -1,15 +1,22 @@
 <?php
 
 /**
- * Gate: endereços dependentes de ambiente só existem no mapeamento do aculta_deployer.
+ * @file
+ * Gate: endereços dependentes de ambiente.
  *
- * Regra permanente (AGENTS.md, seção "Endereços dependentes de ambiente"): domínio, subdomínio, URL absoluta, redirect
- * entre hosts, back_url/webhook de gateway, link de e-mail, origem CORS/trusted_host e callback OAuth nunca ficam
- * fixos no código, nos templates, nos assets ou na configuração exportada. Os arquivos que contêm um host de
- * produção (aculta.org) ou de teste (aculta.toca.net.br) devem estar listados em environment_bound do
- * aculta_deployer/config/deploy.json. Falha se algum arquivo fora dessa lista contiver um desses hosts.
+ * Só existem no mapeamento do aculta_deployer.
  *
- * Fora do escopo (ferramenta e documentação, não execução): o próprio aculta_deployer, docs/, CHANGELOG, scripts/
+ * Regra permanente (AGENTS.md, seção "Endereços dependentes de ambiente"):
+ * domínio, subdomínio, URL absoluta, redirect entre hosts, back_url/webhook
+ * de gateway, link de e-mail, origem CORS/trusted_host e callback OAuth
+ * nunca ficam fixos no código, nos templates, nos assets ou na configuração
+ * exportada. Os arquivos que contêm um host de produção (aculta.org) ou
+ * de teste (aculta.toca.net.br) devem estar listados em environment_bound
+ * do aculta_deployer/config/deploy.json. Falha se algum arquivo fora
+ * dessa lista contiver um desses hosts.
+ *
+ * Fora do escopo (ferramenta e documentação, não execução): o próprio
+ * aculta_deployer, docs/, CHANGELOG, scripts/
  * (verificações de ambiente) e arquivos de ambiente em web/sites/.
  */
 

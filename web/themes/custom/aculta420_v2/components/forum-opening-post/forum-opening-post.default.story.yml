@@ -1,0 +1,39 @@
+name: Postagem de abertura do tópico
+props:
+  author_name: PiradoPirata
+  author_posts: 9
+  timestamp: 07/11/2026 14:36
+  permalink_url: /forum/topico/123#post-1
+  edit_url: /discussoes/editar/comment/1
+  reply_url: /discussoes/responder/comment/1
+  quote_url: /discussoes/citar/comment/1
+  delete_url: /discussoes/apagar/comment/1
+slots:
+  reactions_received:
+    type: inline_template
+    template: '{{ include("aculta420_v2:discussion-reactions-received", { target_id: "reactions-story", reactions: { thumbs_up: { id: "thumbs_up", count: 12 }, seedling: { id: "seedling", count: 7 } } }, with_context = false) }}'
+  avatar:
+    type: inline_template
+    template: '{{ render_var(aculta_avatar_sample("PiradoPirata")) }}'
+  body:
+    '#markup': <p>Quero montar meu primeiro cultivo, mas tenho pouco espaço. Quais substratos vocês recomendam?</p>
+  reactions_slot:
+    '#type': component
+    '#component': aculta420_v2:discussion-reaction-bar
+    '#props':
+      target_id: discussion-reactions-comment-story
+      entity_type: comment
+      entity_id: '1'
+      user_reaction: thumbs_up
+      default_reaction: broccoli
+      can_react: true
+      react_url: '#'
+      csrf_token: story-token
+      reactions:
+        thumbs_up:
+          id: thumbs_up
+          count: 12
+          user_reacted: true
+        seedling:
+          id: seedling
+          count: 7

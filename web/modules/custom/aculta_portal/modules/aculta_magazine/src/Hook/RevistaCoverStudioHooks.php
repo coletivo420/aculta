@@ -24,6 +24,8 @@ use Drupal\file\FileInterface;
  */
 final class RevistaCoverStudioHooks {
 
+  use \Drupal\Core\StringTranslation\StringTranslationTrait;
+
   private const FORM_IDS = ['node_revista_form', 'node_revista_edit_form'];
 
   private const FIELD = 'field_media_image';
@@ -58,17 +60,17 @@ final class RevistaCoverStudioHooks {
 
     $form[self::PICK] = [
       '#type' => 'select',
-      '#title' => t('Ou escolha uma imagem recente do Studio'),
-      '#options' => ['' => t('- Nenhuma -')] + $options,
+      '#title' => $this->t('Ou escolha uma imagem recente do Studio'),
+      '#options' => ['' => $this->t('- Nenhuma -')] + $options,
       '#default_value' => '',
-      '#description' => t('Usada somente se a imagem editorial acima estiver vazia.'),
+      '#description' => $this->t('Usada somente se a imagem editorial acima estiver vazia.'),
       '#weight' => (float) ($form[self::FIELD]['#weight'] ?? 0) + 0.01,
     ];
     // MediaLibraryWidget::validateRequired lê a seleção do user input bruto,
     // antes dos handlers de #validate. A conversão precisa ocorrer no
     // after_build e gravar também o user input.
     $this->relax($form[self::FIELD]);
-    $form['#after_build'][] = [self::class, 'afterBuild'];
+    $form['#after_build'][] = self::class . ':afterBuild';
     $form['#validate'] = array_merge(
       ['Drupal\aculta_magazine\Hook\RevistaCoverStudioHooks:validateCover'],
       $form['#validate'] ?? [],
@@ -78,16 +80,16 @@ final class RevistaCoverStudioHooks {
   /**
    * Converte a escolha do Studio antes da validação do widget.
    */
-  public static function afterBuild(array $form, FormStateInterface $form_state): array {
+  public function afterBuild(array $form, FormStateInterface $form_state): array {
     if (!isset($form[self::FIELD])) {
       return $form;
     }
-    static::relax($form[self::FIELD]);
+    $this->relax($form[self::FIELD]);
     $pick = (int) $form_state->getValue(self::PICK);
     if ($pick < 1 || (int) $form_state->getValue([self::FIELD, 0, 'target_id']) > 0) {
       return $form;
     }
-    $media_id = \Drupal::service(self::class)->createMediaFromPick($pick, $form_state);
+    $media_id = $this->createMediaFromPick($pick, $form_state);
     if ($media_id === NULL) {
       return $form;
     }
@@ -111,7 +113,7 @@ final class RevistaCoverStudioHooks {
     if (!$file instanceof FileInterface
       || !$this->recentUploads->isOwnedBy($file, (int) $this->currentUser->id(), self::CONSUMER, $isAdmin)
       || !$this->uploadPolicy->isValidImage($file, self::CONSUMER)) {
-      $form_state->setErrorByName(self::PICK, t('A imagem escolhida não está disponível. Escolha novamente.'));
+      $form_state->setErrorByName(self::PICK, $this->t('A imagem escolhida não está disponível. Escolha novamente.'));
       return NULL;
     }
     if (!$file->isPermanent()) {
@@ -123,7 +125,7 @@ final class RevistaCoverStudioHooks {
       'name' => $file->getFilename(),
       'uid' => $this->currentUser->id(),
       'status' => 1,
-      'field_media_image' => ['target_id' => $file->id(), 'alt' => (string) t('Imagem editorial')],
+      'field_media_image' => ['target_id' => $file->id(), 'alt' => (string) $this->t('Imagem editorial')],
     ]);
     $media->save();
     return (int) $media->id();
@@ -138,7 +140,7 @@ final class RevistaCoverStudioHooks {
 
     if ($existing > 0 || $pick === 0) {
       if ($existing === 0 && $pick === 0) {
-        $form_state->setErrorByName(self::FIELD, t('Escolha ou envie a imagem editorial.'));
+        $form_state->setErrorByName(self::FIELD, $this->t('Escolha ou envie a imagem editorial.'));
       }
       elseif ($existing > 0) {
         // MediaLibraryWidget::massageFormValues só devolve selection; sem ela,
@@ -158,7 +160,7 @@ final class RevistaCoverStudioHooks {
     if (!$file instanceof FileInterface
       || !$this->recentUploads->isOwnedBy($file, (int) $this->currentUser->id(), self::CONSUMER, $isAdmin)
       || !$this->uploadPolicy->isValidImage($file, self::CONSUMER)) {
-      $form_state->setErrorByName(self::PICK, t('A imagem escolhida não está disponível. Escolha novamente.'));
+      $form_state->setErrorByName(self::PICK, $this->t('A imagem escolhida não está disponível. Escolha novamente.'));
       return;
     }
 
@@ -169,7 +171,7 @@ final class RevistaCoverStudioHooks {
       'status' => 1,
       'field_media_image' => [
         'target_id' => $file->id(),
-        'alt' => (string) t('Imagem editorial'),
+        'alt' => (string) $this->t('Imagem editorial'),
       ],
     ]);
     $file->setPermanent();
@@ -204,12 +206,12 @@ final class RevistaCoverStudioHooks {
   /**
    * Removes the required flag from the widget tree. Our validator covers it.
    */
-  private static function relax(array &$element): void {
+  private function relax(array &$element): void {
     if (isset($element['#required'])) {
       $element['#required'] = FALSE;
     }
     foreach (Element::children($element) as $child) {
-      static::relax($element[$child]);
+      $this->relax($element[$child]);
     }
   }
 

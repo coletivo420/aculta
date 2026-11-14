@@ -1,0 +1,14 @@
+name: Moldura tricolor na lateral direita
+description: Superfície com faixa tricolor contínua na lateral direita (topo vermelho, meio amarelo, base verde), fiel à referência 03_bloco_tricolor_direita.
+component: aculta420_v2:surface-accent
+props:
+  accent: tricolor
+  position: end
+  tone: raised
+  radius: lg
+  spacing: normal
+  elevation: subtle
+slots:
+  content:
+    type: inline_template
+    template: '<p>Superfície com destaque tricolor na lateral direita (vermelho, amarelo e verde).</p>'

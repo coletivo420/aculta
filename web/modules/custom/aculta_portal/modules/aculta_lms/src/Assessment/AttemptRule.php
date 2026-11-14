@@ -64,6 +64,8 @@ final class AttemptRule {
    *
    * @param array<int, array{score: float, finished: int}> $attempts
    *   Tentativas na ordem em que ocorreram. `finished` é o timestamp de término.
+   * @param string $policy
+   *   Política de escolha da tentativa mantida.
    *
    * @return array{score: float, finished: int}|null
    *   A tentativa escolhida.

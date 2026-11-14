@@ -7,12 +7,10 @@ namespace Drupal\aculta_user\Form;
 use Drupal\aculta_file_uploader\ConsumerUploadPolicy;
 use Drupal\aculta_image\ImageRenderer;
 use Drupal\Core\Access\CsrfTokenGenerator;
-use Drupal\Core\Ajax\AjaxResponse;
-use Drupal\Core\Ajax\ReplaceCommand;
-use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Htmx\Htmx;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\aculta_user\Avatar\AvatarPool;
@@ -30,23 +28,32 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * - Foto personalizada: pode ser removida (volta ao sorteio do acervo) e recortada pelo popup de recorte.
  * - Recorte pendente (aplicado e aguardando "Salvar"): é o arquivo mostrado e salvo.
  */
-final class UserPictureForm extends FormBase {
+class UserPictureForm extends FormBase {
 
 
-  /** Pasta dos envios. Prefixo pictures/: a limpeza do cron trata esses temporários. */
+  /**
+   * Pasta dos envios. Prefixo pictures/: a limpeza do cron trata esses temporários. */
   public const UPLOAD_LOCATION = 'public://pictures/uploads';
 
-  public function __construct(
-    private EntityTypeManagerInterface $entityTypeManagerService,
-    private AccountInterface $currentUserService,
-    private UserDataInterface $userData,
-    private CsrfTokenGenerator $csrfToken,
-    private AvatarPool $avatarPool,
-    private readonly ImageRenderer $imageRenderer,
-    private readonly ConsumerUploadPolicy $uploadPolicy,
-    private readonly RendererInterface $renderer,
+  final public function __construct(
+    protected EntityTypeManagerInterface $entityTypeManagerService,
+    protected AccountInterface $currentUserService,
+    protected UserDataInterface $userData,
+    protected CsrfTokenGenerator $csrfToken,
+    protected AvatarPool $avatarPool,
+    protected readonly ImageRenderer $imageRenderer,
+    protected readonly ConsumerUploadPolicy $uploadPolicy,
   ) {}
 
+  /**
+   * Cria a instância do formulário com os serviços do container.
+   *
+   * @param \Symfony\Component\DependencyInjection\ContainerInterface $container
+   *   Container de serviços.
+   *
+   * @return static
+   *   Nova instância do formulário.
+   */
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('entity_type.manager'),
@@ -56,20 +63,37 @@ final class UserPictureForm extends FormBase {
       $container->get('aculta_user.avatar_pool'),
       $container->get('aculta_image.render'),
       $container->get('aculta_file_uploader.consumer_policy'),
-      $container->get('renderer'),
     );
   }
 
+  /**
+   * Retorna o identificador do formulário.
+   *
+   * @return string
+   *   Identificador do formulário.
+   */
   public function getFormId(): string {
     return 'aculta_user_picture_form';
   }
 
-  /** Conta atual, ou NULL. */
+  /**
+   * Conta atual, ou NULL. */
   private function account(): ?UserInterface {
     $account = $this->entityTypeManagerService->getStorage('user')->load($this->currentUserService->id());
     return $account instanceof UserInterface ? $account : NULL;
   }
 
+  /**
+   * Monta o formulário de foto do perfil.
+   *
+   * @param array $form
+   *   Estrutura do formulário.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Estado atual do formulário.
+   *
+   * @return array
+   *   Estrutura do formulário renderizável.
+   */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $account = $this->account();
     if ($account === NULL) {
@@ -82,14 +106,23 @@ final class UserPictureForm extends FormBase {
     $current = (int) ($account->get('user_picture')->target_id ?? 0);
     $isAcervo = $current > 0 && str_starts_with((string) $this->entityTypeManagerService->getStorage('file')->load($current)?->getFileUri(), AvatarPool::DIRECTORY . '/');
 
-    // O campo de envio começa vazio nos dois estados: nome e link da foto atual não aparecem no popup (a prévia mostra a foto).
-
+    // O campo de envio começa vazio nos dois estados: nome e link da foto atual não aparecem no popup
+    // (a prévia mostra a foto).
     $form['#attributes']['data-aculta-user-picture'] = '';
     $form['#attributes']['data-portal-ui'] = 'photo-dialog';
 
     // Mesmo conteúdo do popup anterior: prévia do avatar atual e a orientação de uso.
     $currentFile = $current > 0 ? $this->entityTypeManagerService->getStorage('file')->load($current) : NULL;
-    if ($currentFile !== NULL) {
+    $pending = $this->avatarPool->pendingEntry($account);
+    if ($currentFile !== NULL || $pending !== NULL) {
+      $image = $pending !== NULL
+        ? [
+          '#theme' => 'image',
+          '#uri' => $this->avatarPool->previewUrl($pending),
+          '#alt' => (string) $account->label(),
+          '#attributes' => ['data-portal-ui' => 'account-avatar'],
+        ]
+        : $this->imageRenderer->build('avatar', $currentFile->getFileUri(), (string) $this->t('Foto de perfil de @name', ['@name' => $account->getDisplayName()]), ['data-portal-ui' => 'account-avatar']);
       $form['preview'] = [
         '#type' => 'html_tag',
         '#tag' => 'div',
@@ -98,7 +131,7 @@ final class UserPictureForm extends FormBase {
           '#type' => 'html_tag',
           '#tag' => 'span',
           '#attributes' => ['data-aculta-user-avatar' => ''],
-          'image' => $this->imageRenderer->build('avatar', $currentFile->getFileUri(), (string) $this->t('Foto de perfil de @name', ['@name' => $account->getDisplayName()]), ['data-portal-ui' => 'account-avatar']),
+          'image' => $image,
         ],
       ];
     }
@@ -123,7 +156,8 @@ final class UserPictureForm extends FormBase {
     ];
     $form['#account_id'] = (int) $account->id();
 
-    // Ações: "Sortear outro avatar" (só avatar do sistema) e "Remover foto" (só foto personalizada) ficam no mesmo lugar,
+    // Ações: "Sortear outro avatar" (só avatar do sistema) e "Remover foto" (só foto personalizada) ficam no
+    // mesmo lugar,
     // ao lado de "Salvar foto do perfil" (regra de estado, docs/FOTO-PERFIL.md).
     // Linha de ações da foto (sortear, remover e salvar): token próprio do tema (account-photo-actions).
     $form['actions'] = ['#type' => 'actions', '#attributes' => ['data-portal-ui' => 'account-photo-actions']];
@@ -132,10 +166,22 @@ final class UserPictureForm extends FormBase {
       $form['actions']['sortear'] = [
         '#type' => 'submit',
         '#value' => $this->t('Sortear novo avatar'),
+        '#attributes' => ['data-aculta-photo-action' => 'sortear'],
+        // Nome próprio: o HTMX envia só o nome do disparador, e "op"
+        // compartilhado faria o "Salvar" ser acionado no lugar do sorteio.
+        '#name' => 'sortear',
         '#limit_validation_errors' => [],
         '#submit' => ['::noSubmit'],
-        '#ajax' => ['callback' => '::sortearPrevia', 'event' => 'click', 'progress' => ['type' => 'none']],
       ];
+      // O sorteio troca só a prévia dentro do diálogo; o formulário é devolvido
+      // como fragmento e o `hx-select` recorta o avatar.
+      (new Htmx())
+        ->post(Url::fromRoute('aculta_user.foto'))
+        ->select('[data-aculta-user-avatar]')
+        ->target('[data-aculta-user-avatar]')
+        ->swap('outerHTML')
+        ->onlyMainContent()
+        ->applyTo($form['actions']['sortear']);
     }
     if (!$isAcervo && $current > 0) {
       $form['actions']['remover'] = [
@@ -143,42 +189,36 @@ final class UserPictureForm extends FormBase {
         '#value' => $this->t('Remover foto'),
         '#limit_validation_errors' => [],
         '#submit' => ['::removePersonal'],
+        '#attributes' => [
+          'data-portal-ui' => 'button-danger',
+          'data-aculta-photo-action' => 'remover',
+        ],
       ];
     }
     $form['actions']['salvar'] = [
       '#type' => 'submit',
       '#value' => $this->t('Salvar foto do perfil'),
+      '#attributes' => ['data-aculta-photo-action' => 'salvar'],
     ];
     $form['#action'] = Url::fromRoute('aculta_user.foto')->toString();
     return $form;
   }
 
-  /** Sortear não grava nada: a escolha só vale quando o formulário é salvo (AvatarPool::applyPending). */
-  public function noSubmit(array &$form, FormStateInterface $form_state): void {}
-
-  /** Callback AJAX do sorteio: troca só a prévia dentro do modal (a visão geral muda ao salvar). */
-  public function sortearPrevia(array &$form, FormStateInterface $form_state): AjaxResponse {
-    $response = new AjaxResponse();
+  /**
+   * Sortear não grava nada: a escolha só vale quando o formulário é salvo (AvatarPool::applyPending).
+   *
+   * O sorteio só troca a prévia pendente; o rebuild do formulário devolve o
+   * avatar sorteado no fragmento do HTMX.
+   */
+  public function noSubmit(array &$form, FormStateInterface $form_state): void {
     $account = $this->account();
-    $entry = $account !== NULL ? $this->avatarPool->preview($account) : NULL;
-    if ($entry !== NULL) {
-      $build = [
-        '#type' => 'html_tag',
-        '#tag' => 'span',
-        '#attributes' => ['data-aculta-user-avatar' => ''],
-        'image' => [
-          '#theme' => 'image',
-          '#uri' => $this->avatarPool->previewUrl($entry),
-          '#alt' => (string) $account->label(),
-          '#attributes' => ['data-portal-ui' => 'account-avatar'],
-        ],
-      ];
-      $response->addCommand(new ReplaceCommand('.ui-dialog [data-aculta-user-avatar]', (string) $this->renderer->renderInIsolation($build)));
+    if ($account !== NULL) {
+      $this->avatarPool->preview($account);
     }
-    return $response;
   }
 
-  /** Remove o botão "Remover" do campo quando a foto é do acervo do sistema (regra de estado). */
+  /**
+   * Remove o botão "Remover" do campo quando a foto é do acervo do sistema (regra de estado). */
   public static function withoutRemoveForAcervo(array $element, FormStateInterface $form_state): array {
     if (!empty($element['#aculta_acervo'])) {
       unset($element['remove_button']);
@@ -187,8 +227,15 @@ final class UserPictureForm extends FormBase {
   }
 
   /**
-   * Botão "Remover foto" (só foto personalizada): volta a um avatar sorteado do acervo e recarrega o painel.
-   * A foto personalizada substituída é apagada pelo hook de troca de foto (PictureReplacementHooks).
+   * Remove a foto personalizada e volta ao avatar sorteado do acervo.
+   *
+   * A foto personalizada substituída é apagada pelo hook de troca de foto
+   * (PictureReplacementHooks).
+   *
+   * @param array $form
+   *   Estrutura do formulário.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Estado atual do formulário.
    */
   public function removePersonal(array &$form, FormStateInterface $form_state): void {
     $account = $this->account();
@@ -204,18 +251,24 @@ final class UserPictureForm extends FormBase {
     $form_state->setRedirect('aculta_portal.dashboard');
   }
 
+  /**
+   * Salva a foto enviada ou aplica o avatar sorteado no modal.
+   *
+   * @param array $form
+   *   Estrutura do formulário.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Estado atual do formulário.
+   */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $account = $this->account();
     if ($account === NULL) {
       return;
     }
-    $uid = (int) $account->id();
     $current = (int) ($account->get('user_picture')->target_id ?? 0);
     $fids = array_values(array_filter((array) $form_state->getValue('imagem')));
     $new = (int) ($fids[0] ?? 0);
 
     $file = $new > 0 ? $this->entityTypeManagerService->getStorage('file')->load($new) : NULL;
-    $isAcervo = $current > 0 && str_starts_with((string) $this->entityTypeManagerService->getStorage('file')->load($current)?->getFileUri(), AvatarPool::DIRECTORY . '/');
 
     // Envio tem prioridade; sem envio, aplica o avatar sorteado no modal (só agora ele vira a foto da conta).
     // Campo vazio e sem sorteio não altera a foto (a remoção é o botão "Remover foto").

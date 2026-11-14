@@ -15,7 +15,8 @@ use Drupal\Core\Hook\Attribute\Hook;
  */
 final class AdminNavigationHooks {
 
-  /** Item do menu do módulo Navigation para a edição do próprio perfil. */
+  /**
+   * Item do menu do módulo Navigation para a edição do próprio perfil. */
   private const OWN_PROFILE_EDIT_LINK = 'navigation.user_links.user.edit';
 
   /**

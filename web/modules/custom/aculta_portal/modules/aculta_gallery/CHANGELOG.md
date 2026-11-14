@@ -1,4 +1,21 @@
+## 0.1.0-dev.24 — galerias do Fórum em UI Patterns
+
+- `aculta_forum_gallery_slides:block_1` e `galeria_produto:default` trocam VVJS pelo SDC existente `layout-grid`; PhotoSwipe, query, pager, acesso e cache continuam nas APIs Drupal e Gallery.
+- `GalleryViewHooks` remove o palco e as miniaturas VVJS; `ProductGalleryHooks` continua entregando o render array Commerce. O módulo deixa de depender de `vvjs`.
+- Runtime `aculta_runtime`: imports parciais isolados após snapshots; YAML parseado Sync/Runtime coincide. Fórum retorna zero rows e não tem galeria publicada; produto publicado retorna sete mídias no style `ui_patterns`. Aceite visual/access/cache do Fórum e visual do produto permanecem DEFERRED.
+
+RUNTIME STATUS: PARTIAL.
+
 # Changelog — ACULTA Gallery
+
+## 0.1.0-dev.23 — Álbum editorial em UI Patterns Views
+
+- `aculta_album_fotos:block_1` troca `views_vvjs` pelo SDC existente `layout-grid`; PhotoSwipe continua como lightbox.
+- `GalleryViewHooks` não emite miniaturas/atributos de palco VVJS para álbuns editoriais; a View do Fórum permanece isolada.
+- Runtime: import parcial do único YAML após snapshot e rollback exato; HTTP 200 e 63 imagens antes/depois. Firefox ESR 10/10 antes/depois em 320/390/768/1024/1440 claro/escuro; PhotoSwipe abre e fecha por Escape.
+- Gate de contrato SDC/PhotoSwipe, Portal Drupal 12 e PHP lint passaram. Zoom 200%, cache-hit, perfis e aceite assistivo DEFERRED.
+
+RUNTIME STATUS: PARTIAL.
 
 ## 0.1.0-dev.22 — embed de galeria aceita imagens recentes do Studio
 

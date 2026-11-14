@@ -11,6 +11,7 @@ use Drupal\aculta_events_openstreetmap\Osm\OpenStreetMapApiClient;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Component\Utility\Html;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -48,8 +49,8 @@ final class OpenStreetMapImportWizard extends FormBase {
   /**
    * Creates a wizard using the active OSM API and local location storage. */
   public function __construct(
-    private readonly OpenStreetMapApiClient $osm,
-    private readonly EntityTypeManagerInterface $entityTypeManager,
+    protected readonly OpenStreetMapApiClient $osm,
+    protected readonly EntityTypeManagerInterface $entityTypeManager,
   ) {}
 
   /**
@@ -186,7 +187,7 @@ final class OpenStreetMapImportWizard extends FormBase {
     $form['coordinates'] = [
       '#type' => 'item',
       '#title' => $this->t('Coordenadas importadas'),
-      '#markup' => $element['lat'] . ', ' . $element['lon'],
+      '#markup' => Html::escape((string) $element['lat']) . ', ' . Html::escape((string) $element['lon']),
     ];
     $saved_values = $form_state->get('osm_review_values') ?? [];
     $selectedAddressTags = array_intersect(array_merge(array_keys(self::ADDRESS_TAGS), ['addr:housenumber']), $selected);
@@ -249,6 +250,7 @@ final class OpenStreetMapImportWizard extends FormBase {
       '#value' => $this->t('Cancelar e começar de novo'),
       '#submit' => ['::restartSubmit'],
       '#limit_validation_errors' => [],
+      '#attributes' => ['data-portal-ui' => 'button-secondary'],
     ];
     return $form;
   }

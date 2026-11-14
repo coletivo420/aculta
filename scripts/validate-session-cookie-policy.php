@@ -1,11 +1,16 @@
 <?php
 
 /**
- * Gate: cookie de sessão por ambiente (aculta_deployer, seção session_cookie) continua batendo com os arquivos de serviços.
+ * @file
+ * Gate: cookie de sessão por ambiente (aculta_deployer).
  *
- * Barreira para alterações futuras de cookie: se o services.homelab.yml (teste) ou o modelo de produção
- * (services.hostinger.yml.example) mudar o cookie_domain sem atualizar config/deploy.json, este gate falha.
- * Roda o comando somente leitura `aculta-deployer cookies`. Não consulta o Runtime nem o servidor de produção.
+ * Seção session_cookie continua batendo com os arquivos de serviços.
+ * Barreira para alterações futuras de cookie: se o
+ * services.homelab.yml (teste) ou o modelo de produção
+ * (services.hostinger.yml.example) mudar o cookie_domain sem atualizar
+ * config/deploy.json, este gate falha.
+ * Roda o comando somente leitura `aculta-deployer cookies`. Não consulta
+ * o Runtime nem o servidor de produção.
  * Regra e transição: web/modules/custom/aculta_portal/modules/aculta_deployer/docs/COOKIES-AMBIENTE.md.
  */
 

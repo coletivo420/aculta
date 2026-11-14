@@ -1,60 +1,54 @@
-# ACULTA — instruções para agentes
+# ACULTA - instrucoes para agentes
 
-PROJECT-STATUS-INDEX-GUARD: 2026-10-21
+Regra compartilhada de Claude, Codex e demais agentes. Politica de revisao: `docs/operations/AGENT-REVIEW-POLICY.md`. Aplicar instrucoes locais e skills conforme a tarefa.
 
-Regras gerais do repositório, válidas para todos os agentes. Em caso de conflito, prevalecem a instrução explícita mais recente do responsável e as regras de segurança abaixo. Regras específicas de ambiente, Drush, servidor web e testes ficam em `docs/operations/AGENT-OPERATIONS.md`; regras por escopo, no índice `docs/operations/AGENT-POLICY-INDEX.md`. Não replique aqui históricos nem planos.
+## Autonomia e precedencia
 
-## Sessão
+- O pedido do responsavel ja autoriza pesquisa, implementacao, testes, refatoracao, documentacao e correcoes no escopo, inclusive no tema V2. Nao exigir segunda confirmacao para trabalho tecnico reversivel.
+- Resolver decisoes tecnicas a partir do codigo e das ADRs vigentes. Perguntar so sobre escolha de produto, dado essencial ausente ou operacao sensivel; executar a parte independente.
+- Precedencia: seguranca e integridade > instrucao explicita vigente do responsavel > ADR/contrato atual > regra local do componente > skill > runbook/historico. Excecao tecnica justificada pode substituir preferencia global, nunca protecao de seguranca.
+- Conferir fatos atuais no codigo, manifests e ambiente. Nao inventar APIs, hosts, CNPJ, enderecos, rotas ou status de runtime.
 
-- Antes de trocar de sessão, encerrar uma fase ou transferir o trabalho, atualize o handoff em [`docs/operations/ESTADO-DA-SESSAO.md`](docs/operations/ESTADO-DA-SESSAO.md): objetivo, o que foi feito, arquivos alterados, verificações e resultados, pendências e próximos passos, com caminhos concretos de leitura. Não registre segredos.
-- Atualize o registro existente em vez de criar históricos paralelos.
+## Git e entrega
 
-## Git (D-70, D-71)
+- Integrar em `dev`, por commit atomico em portugues e push fast-forward em `origin/dev`; selecionar apenas arquivos da tarefa e revisar diff/staged. Todos os agentes trabalham na mesma worktree: isolar os proprios commits (staged apenas por caminho explicito, revisando o diff) e preservar alteracoes de outros agentes, sem reset, stash, checkout ou clean que descarte trabalho alheio. Worktree separada nao e obrigatoria.
+- Nao usar force push, reset destrutivo ou reescrita de historico compartilhado. Se `dev` avancar, integrar sem perder o trabalho alheio e revisar de novo. PR, merge em `main` e tag so sob pedido explicito.
+- Trailer de CLI e opcional e deve identificar a sessao real; nao atribuir coautoria ficticia. Informar hashes confirmados, resultados de testes e pendencias.
+- Apos push que altera codigo servido, consultar a skill `aculta-runtime-sync` quando houver ambiente comprovado. O checkout de desenvolvimento compartilhado com o Apache e o ambiente esperado; worktree isolada nao e pre-requisito. Alteracao apenas documental nao exige sincronizacao/cache. Sem acesso ou baseline confiavel, registrar DEFERRED/BLOCKED; preservar os demais gates do preflight e nunca contorna-los manualmente.
 
-- **Branch:** `dev`. Cada entrega é commitada e enviada a `origin/dev` por fast-forward, logo após o commit. Push automático, sem autorização por hash.
-- **Worktree local sem branch é permitido** para isolar a tarefa: `git worktree add --detach <caminho fora do repositório> origin/dev`. Ao integrar, `git push origin HEAD:dev` e depois `git worktree remove <caminho>`.
-- **Não crie branches, PRs nem publique em outra branch**, salvo ordem explícita do responsável. PR e merge em `main` só com pedido explícito; commit e push não autorizam merge. Tag só com pedido.
-- **Um commit por entrega**, só com os arquivos da entrega. Verifique o conteúdo staged antes do commit. Se a tarefa virar entregas independentes, separe em commits atômicos.
-- **Antes de editar**, confira `git status --short --branch`. Preserve alterações de outras pessoas e não descarte trabalho alheio.
-- **Se o remoto avançar ou o push for recusado**, integre por rebase sem sobrescrever trabalho, revise e tente de novo.
-- **Nunca** force push, reset destrutivo nem reescrita de histórico compartilhado.
-- **Stash não é entrega.** Não guarde trabalho em `git stash` como destino final.
-- **Mensagem de commit** em português, com o trailer `Claude-Session` quando a sessão for do Claude (CLAUDE.md).
-- **Coautoria é proibida.** Agentes não incluem `Co-Authored-By` nem outro trailer de coautoria em commits, PRs ou documentos.
-- **Não commitar** credenciais, `settings.local.php`, `.claude/settings.local.json`, backups locais nem conteúdo de `secrets/`.
-- **Ao concluir**, informe os commits enviados com hash, as validações executadas, o estado do Runtime e qualquer bloqueio. Não diga que publicou se o push não foi confirmado.
+## Seguranca e Runtime
 
-## Runtime (D-70)
+- Nunca versionar segredos, senhas, tokens, dados pessoais, backups ou arquivos locais de configuracao. Sem deploy em producao. Ambiente de desenvolvimento: `docs/architecture/environments.md`.
+- Composer no Runtime, `updatedb`, `config:import`, `pm:uninstall`, DROP, exclusoes persistentes e cutover exigem plano, reversibilidade e autorizacao explicita por operacao. Push nao autoriza migracao. Kernel usa apenas banco de teste, nunca `aculta_runtime`.
+- Preservar permissoes, ownership, isolamento multidominio, caches privados, escape, consentimento, contratos de pagamento e integridade de dados. Nao trocar `system.theme` para testar.
+- Evitar caminhos absolutos de maquina e URLs fixas de ambiente em codigo versionado; usar configuracao e variaveis.
 
-- **Sincronização:** após cada push em `origin/dev`, atualize o Runtime de desenvolvimento para o mesmo commit. Atualize somente o código. Não toque em `secrets/`, `settings.local.php`, `private/`, `var/` nem nos dados do site.
-- **Antes da troca de head**, rode `updatedb:status` e `config:status` (somente leitura).
-- **Havendo pendência**, faça snapshot do `aculta_runtime` com hash e, depois, `updatedb` e `config:import` do `config/sync`. Pare e informe o responsável se qualquer passo falhar.
-- **Nunca** `pm:uninstall`, `DROP`, nem apagamento de conteúdo ou de dados, sem ordem explícita.
-- **Testes de Kernel** usam só `aculta_simpletest`. Nunca crie bancos.
-- **Não se aplica a produção.** Produção não recebe sincronização automática nem estados `estados/*.sqlite`.
+## Implementacao
 
-## Escopo e segurança
+- Drupal 11 efetivo e compatibilidade Drupal 12 quando aplicavel. Preferir HTML nativo/Form API; HTMX para fragmentos onde agrega valor. Drupal AJAX e legado: migrar com justificativa e regressao, nao por obrigacao cega. jQuery local sob demanda conforme regra da area, sem carga global desnecessaria.
+- Reutilizar SDC, UI Suite, tokens e componentes existentes. Priorizar acessibilidade, responsividade e contratos de renderizacao; alternativas tecnicas sao permitidas com justificativa.
+- Endereco/CEP centralizados em `aculta_portal_cep`, pais unico Brasil (BR), conforme ADR-034. Nao duplicar formularios de endereco. Rotas administrativas e integracoes tecnicas pertencem ao dominio MAIN; manter a politica multidominio de acesso e escrita.
+- URLs publicas usam slugs em portugues minusculo com hifen e sem acentos (`docs/portal/FRIENDLY-PORTUGUESE-SLUGS.md`). Aceite de Termos e Politica e unico (`docs/portal/ACEITE-UNICO.md`); nao criar aceite paralelo.
+- A tabela de estado dos componentes no README e gerada a partir de `docs/operations/status/`; valide com `scripts/validate-project-status-index.php` quando mudar status ou versao.
+- Ler `TODO.md` e handoff do componente quando houver fase a retomar, nao por ritual. Preferir `rg`, trecho relevante e APIs instaladas; Core/contrib e referencias podem ser lidos quando necessarios.
 
-- Altere somente o necessário para a tarefa. Preserve contratos existentes, trabalho paralelo e dados.
-- Não faça deploy nem alteração de produção sem autorização explícita.
-- Drupal fica em `web/`; módulos customizados em `web/modules/custom/`; tema em `web/themes/custom/aculta420/`. Siga os padrões Drupal/PHP e os contratos dos módulos envolvidos.
-- Não invente contratos nem altere ownership de rotas, entidades, permissões, workflow ou integrações sem verificar a documentação e o código atuais.
-- Não invente hosts, nomes de servidor, CNPJ, endereço ou dados institucionais.
-- **Evite caminhos e rotas absolutas.** Em código, scripts, testes, documentação e comandos versionados, não grave caminhos absolutos de máquina (`/home/...`, `/mnt/...`, `/usr/...`, `/tmp/...`) nem URLs de ambiente fixas. Use caminhos relativos à raiz do repositório, `__DIR__`/`$root` nos scripts, variáveis de ambiente (`SUITE_OUT`, `FIREFOX_BIN`, `GECKODRIVER`, `LOGIN_URL`, `BASE`) e resolução pelo `PATH`. Hosts e URLs de teste vêm de configuração ou de variável, não de texto fixo. Exceção: caminhos de servidor documentados em `docs/architecture/environments.md`.
+## Revisao e documentacao
 
-## Arquitetura e validação
+- Toda entrega exige autorrevisao do diff e gates proporcionais. Classificar R0-R3 segundo `docs/operations/AGENT-REVIEW-POLICY.md`; R2/R3 exigem revisao independente e R3 autorizacao operacional. Essa escala e diferente da classificacao R0-R4/RX do Runtime Sync.
+- Rodar gates somente do diff e dos consumidores afetados (`docs/operations/GATES.md`). Declarar PASS somente quando executado, FAIL quando falhar, DEFERRED se indisponivel e N/A fora de escopo. Teste pulado nao e PASS.
+- Atualizar documento dono apenas quando mudar API, contrato, decisao, fase ou marco. Fix simples nao obriga repetir CHANGELOG, roadmap, TODO, status e handoff. Handoff para fase parcial/transferencia; nao para cada microalteracao.
+- Saida verbosa: `python3 scripts/agent-output.py --lines 60 -- COMANDO`, preservando diagnosticos.
 
-- Suítes atuais: Marley `account:/marley`; Ganjalab `courses:/ganjalab`; WE SATIVA `wiki:/we-sativa`; Green Stash `shop:/green-stash`; Culturas `eventos:/culturas`. `aculta_studio` é infraestrutura compartilhada, não uma raiz pública. `/studio` e `/studio/*` respondem 404, sem alias nem redirect.
-- Rotas administrativas e de integração existem só no domínio principal e respondem 404 nos demais. A experiência de organizadores em `/culturas` permanece separada.
-- Preserve os módulos responsáveis e valide acesso no servidor, inclusive em escritas.
-- Endereço centralizado em `aculta_portal_cep` e país exclusivo Brasil (BR), conforme ADR-034 (`docs/decisions/ADR-034-pais-unico-brasil-endereco-central.md`).
-- Padrão Drupal 11+: `docs/portal/DRUPAL-11-STANDARDS.md`.
-- Antes de concluir, execute as verificações relevantes e registre os resultados. Não alegue testes que não executou.
+Indice por area: `docs/operations/AGENT-POLICY-INDEX.md`. Skills canonicas: `.agents/skills/`. Procedimentos de Runtime: `docs/operations/RUNTIME-SYNC.md`.
+Padrao de implementacao Drupal 11+ e compatibilidade Drupal 12: `docs/portal/DRUPAL-12-STANDARDS.md`.
+Analise PHP/Drupal e erros PHPStan: skill `aculta-phpstan` (referencias por familia; comandos e familias em `.agents/skills/aculta-phpstan/`).
 
-## Referências
+Politica PHPStan nivel 10:
 
-- Ambientes, Drush, servidor web, banco de teste e ciclo de release: `docs/operations/AGENT-OPERATIONS.md`, `docs/architecture/environments.md`.
-- Regras por escopo: `docs/operations/AGENT-POLICY-INDEX.md`.
-- Decisões do responsável: `docs/architecture/DECISOES-RESPONSAVEL-2026-10-28.md` (D-70 e D-71 vigentes).
-- Contratos de domínio e rotas: ADR-038, `docs/portal/ADMIN-DOMAIN-POLICY.md` e documentação de arquitetura pertinente.
-- Aceite único de Termos de Uso e Política de Privacidade: `docs/portal/ACEITE-UNICO.md`.
+- O nivel oficial e 10; codigo novo e alterado deve respeita-lo. Nao reduzir nivel, `reportUnmatchedIgnoredErrors`, escopo ou regras para obter verde.
+- Divida congelada em `phpstan-baseline.neon`: corrigir os erros do arquivo alterado e reduzir ao menos uma ocorrencia por modulo tocado. O gate `scripts/phpstan-debt-guard.php diff` reprova o contrario.
+- Nao regenerar o baseline por rotina nem no CI. Reducao legitima remove as entradas correspondentes no mesmo commit, com testes.
+- Erro novo **nunca** pode ser suprimido: `@phpstan-ignore`, `@phpstan-ignore-next-line` ou `@phpstan-ignore-line` adicionado no diff falha o gate. Apenas a divida ja congelada permanece suprimida, pelo baseline.
+- Stub ou exclusao nova exige identificador exato, motivo e revisao; sem mecanismo generico de bypass.
+- Antes de publicar: `vendor/bin/phpstan analyse`, `phpstan-debt-guard.php check` e `diff` com `--analysis` da execucao canonica. Relatar erros preexistentes, introduzidos e corrigidos; falha de infraestrutura e distinta de falha de analise.
+- Job estavel do CI: **PHPStan level 10 gate**; `skipped`/`cancelled` nao e PASS.

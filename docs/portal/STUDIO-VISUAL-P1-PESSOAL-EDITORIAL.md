@@ -1,8 +1,30 @@
 # Studio Visual P1 - estruturas pessoais e editoriais
 
-## Implementação P1.1/P1.2 e estado P1.3 - 2026-11-03
+## Estado da entrega P1 — implementação dev.36; Runtime em atualização — 2026-11-03
 
-P1.1 e a implementação local de P1.2 estão em código: dashboard de Conta, identidade provider-backed, shell Grid dedicado e navegação AJAX própria. Preserva Form API e owners. Focais Studio Unit 72/658 PASS. Runtime sincronizado em `b70e56dbec` com configuração limpa e cache reconstruído. Firefox ESR visível autenticado: Conta comum 82/82 (21 SKIP) e moderadora 99/99 (5 SKIP), sem falhas; Dashboard/Perfil em 320–1280px, Conta AJAX com histórico/falha/retry/timeout e Form API inválido/válido verificados. Upload, senha, escrita pessoal, zoom 200–400%, leitor de tela e conteúdo real de moderação permanecem DEFERRED; detalhes na auditoria. Marley mantém listagem, ação abaixo do título e moderação condicional owner-backed.
+Dashboard, Minha Conta, Meu Perfil e Marley estão implementados e publicados em `dev`. O Firefox ESR no Runtime passou 106/106 verificações aplicáveis, 21 SKIP condicionais e zero falhas. A bateria cobriu rotas diretas da Conta, AJAX/histórico/retry/timeout, formulários Form API válidos/inválidos, responsividade, teclado/foco, modos claro/escuro, Perfil sem campos privados, zoom 200/400% e composição de Marley. Capturas e JSON: `$SUITE_OUT/studio-spacing-runtime-dev36-20261103/`.
+
+Este resultado descreve o Runtime no momento do teste, antes da atualização atual. O commit `5f695df` atualizou o checkout para Drupal 11.5.0-beta1 e Group 4 alpha; `drush status` responde. Uma consulta de `updatedb:status` falhou transitoriamente ao analisar `modules/contrib/storybook/storybook.info.yml`, e a seguinte listou 18 updates; há diferenças de configuração pendentes. O responsável pediu para aguardar a atualização: esta tarefa não executou updates/import, e um processo paralelo foi observado invocando `drush cr` sem saída disponível. A revalidação autenticada das rotas e fluxos Studio está pendente; o estado e as respostas HTTP anônimas estão registrados na auditoria.
+
+A comparação de composição foi feita com `docs/portal/studio-visual/referencias/image(20261103-123227).png` e capturas reais das quatro telas; não se declara paridade pixel a pixel. Os cinco PNGs da pasta oficial foram reconhecidos por `file`, decodificados em 1536×1024 por `identify` e validados por chunks/CRC/IEND. O ZIP não estava disponível, então `unzip -t` não foi executado.
+
+Dados e Endereço foram enviados no formulário original com valores existentes e conferidos sem mudança persistida; preferência de cor salva pelo harness foi restaurada. **DEFERRED:** gravação final do avatar (desafio humano), alteração de senha (aceite legal não realizado), screen reader além de Marley, publicação própria para testar as ações de edição/criação e desinstalação Runtime de módulos opcionais. Esses limites não alteram o aceite do restante da matriz; detalhes na [auditoria](STUDIO-CONTA-AJAX-AUDITORIA.md).
+
+## Histórico da implementação P1.1/P1.2 pré-dev.36 — 2026-11-03
+
+### Histórico da revisão visual pós-dev.31 — 2026-11-03
+
+O Firefox real mostrou que a navegação da Conta ainda reutilizava abas de Marley e não formava as caixas da prancha. Corrigido no ACULTA420 dev.31: lista contextual vertical, ativa destacada, menu e conteúdo em superfícies separadas, mantendo o `<details>` no mobile, Form API dos owners e cabeçalho global intacto. Reteste Runtime 97/97 PASS aplicáveis, 22 SKIP; no-JS 14/14; capturas em `$SUITE_OUT/studio-dashboard-final-20261103/account-panels-dev31-final/`. Tema Unit 50/358, Foundation 2441 e SDC schemas 764 PASS. Dados e Endereço foram submetidos validamente com os valores existentes e comparação de igualdade passou; avatar/upload, senha e screen reader permanecem DEFERRED. Veja a auditoria para estados e diferenças de comparação.
+
+### Histórico anterior ao dev.31
+
+Firefox ESR pós-correção do Dashboard: 94/94 verificações aplicáveis PASS, 21 SKIP, 0 falhas; após a correção do cabeçalho Marley, 97/97 PASS, 21 SKIP, 0 falhas. Rotas Conta diretas 9/9 HTTP 200, no-JS 4/4, navegação AJAX/histórico/falhas e zoom real de Perfil 200/400% sem overflow. Capturas em `$SUITE_OUT/studio-dashboard-final-20261103/post-push/` e `$SUITE_OUT/studio-dashboard-final-20261103/marley-header-dev30-retest/`; Dashboard, Conta, Perfil e Marley foram inspecionados contra a composição da prancha principal válida. A ação “Criar” está ao lado do título no desktop; tabela e ação cabem na página em 320/390px. Naquele reteste, escritas pessoais/endereço, upload/avatar/senha, módulos opcionais ausentes, conteúdo real aguardando moderação e leitor de tela seguiam DEFERRED.
+
+P1.1 e a implementação de P1.2 estão no código: Dashboard com identidade e providers autorizados, shell Grid da Conta, navegação AJAX própria e Perfil público separado. Owners/Form API preservados. O Dashboard oferece uma única entrada para Conta, edição de Meu Perfil verificada pela rota/ACL e link público apenas se resolvido pelo owner. Reutiliza SDCs `aculta420:card` (`studio_fidelity`) e `profile-editor`/`profile-identity`, com tokens semânticos existentes; nenhuma mudança no cabeçalho global. Capturas reais pós-dev.29 e pós-dev.30 registradas nas pastas `$SUITE_OUT/studio-dashboard-final-20261103/post-push/` e `$SUITE_OUT/studio-dashboard-final-20261103/marley-header-dev30-retest/`. A prancha desktop/mobile foi removida do remoto `dev` em `4599e115ed` e não foi restaurada. Consulte a auditoria para DEFERRED.
+
+### Estado adicional dos testes — 2026-11-03
+
+Orca/Firefox ESR passou 5/5 em Marley, incluindo anúncios das abas permitidas, heading e saída de áudio; a conta teste.comum tem permissão de moderação vigente via `content_editor`. O harness `avatar-write.mjs` passou 11/11 verificações, com 1 `DEFERRED`: upload sintético chegou ao formulário de corte, mas o desafio humano impediu a etapa final; avatar persistido não mudou e os três arquivos de teste continuam temporários. Senha permanece sem submissão por causa do aceite obrigatório de Termos, que não foi feito em nome da conta. Comparação real das quatro telas com a prancha principal válida foi realizada; aceite pixel a pixel não foi declarado. Veja a auditoria AJAX para evidências e limites.
 
 
 **Tipo:** plano documental para execução incremental.  
@@ -96,4 +118,4 @@ A trilha pessoal/editorial só fecha quando:
 
 ## Referências visuais
 
-As imagens geradas anteriormente ajudam a discutir composição, mas contêm conteúdo fictício e erros de texto. A prancha pessoal/editorial tem erro de marca “ACULTA Drupal Studio”; não reutilizar essa marca. Gerar/atualizar capturas de referência com logo, rótulos e conteúdo corretos antes de tratá-las como alvo de implementação. Referências conceituais: [prancha Dashboard/Conta/Perfil/Marley](https://chatgpt.com/library?file_id=libfile_60aecd549e64819190d243cb41ea9b87&account_id=personal) e [prancha geral com barra multidomínio](https://chatgpt.com/library?file_id=libfile_7735ab10eae88191b49c9ba339cca5b0&account_id=personal).
+As referências conceituais disponíveis estão versionadas em [`studio-visual/referencias/`](studio-visual/referencias/README.md). A principal prancha de quatro estruturas foi inspecionada; contém dados fictícios e a marca não aprovada “ACULTA Drupal Studio”, que não deve ser reutilizada. A fidelidade é de caixas, hierarquia e distribuição. Não copiar conteúdo, rótulos não aprovados, dados ou permissões. O arquivo desktop/mobile não está no HEAD remoto atual; ver índice para origem histórica e dimensões.

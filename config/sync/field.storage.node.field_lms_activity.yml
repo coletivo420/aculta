@@ -7,7 +7,7 @@ dependencies:
     - node
   enforced:
     module:
-      - aculta_forum_lms
+      - aculta_lms
 id: node.field_lms_activity
 field_name: field_lms_activity
 entity_type: node

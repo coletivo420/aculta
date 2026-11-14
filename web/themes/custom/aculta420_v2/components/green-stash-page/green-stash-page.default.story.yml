@@ -1,0 +1,7 @@
+name: Green Stash
+description: Navegação, busca e cartões de produtos da loja.
+component: aculta420_v2:green-stash-page
+slots:
+  content:
+    type: inline_template
+    template: '<section class="studio aculta-green-stash"><h2>Produtos</h2><nav class="aculta-green-stash__navigation"><a class="aculta-green-stash__navigation-link" href="#" aria-current="page">Produtos</a><a class="aculta-green-stash__navigation-link" href="#">Envios</a><a class="aculta-green-stash__navigation-link" href="#">Visão geral</a></nav><p>Produtos administráveis da loja.</p><div class="aculta-green-stash__products"><form><label for="green-stash-search">Buscar produtos</label><input id="green-stash-search" type="search"><button type="submit">Buscar</button></form><div><h3>Produto cultural</h3><a href="#">Ver detalhes</a></div></div></section>'

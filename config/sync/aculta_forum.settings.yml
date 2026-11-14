@@ -1,3 +1,68 @@
 comment_move_enabled: false
 edit_window_minutes: 10
 restricted_group_type: ''
+reactions_enabled: true
+reply_max_depth: 2
+topic_author_delete_policy: moderation_queue
+default_reaction: broccoli
+allowed_reactions:
+  -
+    id: broccoli
+    icon: broccoli
+    label: Curtir
+    enabled: true
+  -
+    id: heart
+    icon: heart
+    label: Coração
+    enabled: true
+  -
+    id: thumbs_up
+    icon: thumbs-up
+    label: Apoiar
+    enabled: true
+  -
+    id: seedling
+    icon: seedling
+    label: Cultivo
+    enabled: true
+  -
+    id: herb
+    icon: herb
+    label: Botânica
+    enabled: true
+  -
+    id: fire
+    icon: fire
+    label: Excelente
+    enabled: true
+  -
+    id: clap
+    icon: clapping-hands
+    label: Aplausos
+    enabled: true
+  -
+    id: laugh
+    icon: grinning-squinting-face
+    label: Engraçado
+    enabled: true
+  -
+    id: pray
+    icon: folded-hands
+    label: Gratidão
+    enabled: true
+  -
+    id: rocket
+    icon: rocket
+    label: Foguete
+    enabled: true
+  -
+    id: bomb
+    icon: bomb
+    label: Bomba
+    enabled: true
+  -
+    id: dashing
+    icon: dashing-away
+    label: Rajada
+    enabled: true

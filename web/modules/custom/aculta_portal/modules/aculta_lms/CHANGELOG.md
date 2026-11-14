@@ -1,3 +1,299 @@
+# Cobertura Kernel adicional F7 — 2026-11-04
+
+- Kernel Commerce confirma que pedido gratuito em rascunho não matricula; ao
+  concluir a transição real do pedido, o hook concede membership e grava a
+  origem `field_course_order`, sem gateway remoto.
+- Seleções forjadas de turma fechada ou de outro curso falham em validação e
+  submit, sem criar carrinho.
+- `CourseEnrollmentPurchaseKernelTest`: 4 testes / 173 assertions PASS no
+  MariaDB `aculta_simpletest`; 67 depreciações são de Core/contrib.
+
+# 0.1.0-dev.206 — corrige serialização dos formulários do Course Builder
+
+- Serviços injetados nos formulários de mover, ordenar e excluir agora são `protected`, conforme o contrato de `DependencySerializationTrait`; após Form API cache serialization, as dependências são restauradas do container.
+- Upgrade Status/PHPStan analisou 225 arquivos: 19 alertas sobre visibilidade e `@covers` foram corrigidos, resultado final sem erros. `AcultaLmsInstallTest` Kernel 9/409 verifica a restauração dos serviços nos quatro formulários do Course Builder.
+
+# 0.1.0-dev.205 — alerta para alterações não salvas na autoria
+
+- Formulários de aula, atividade e ordenação agora detectam alterações e usam o aviso nativo do navegador antes de abandonar a página; submissão limpa o estado de alteração.
+- Testes JavaScript cobrem alerta, formulário inalterado/fora do escopo e reanexação do behavior Drupal.
+
+# 0.1.0-dev.204 — remove CSS de navegação legado do formulário de resposta
+
+- Removida `answer-form.css`, que limitava overflow em IDs/classes exclusivos do Olivero e não correspondia ao tema ACULTA ativo. O formulário LMS não carrega mais uma folha sem efeito; Kernel protege esse contrato.
+- Corrigidos os estados do roadmap: editor de aula/atividade em Form API com CKEditor e ordenação por arrasto com fallback de teclado estão implementados; permanecem pendentes somente gates de homologação e integrações listadas em cada fase.
+
+# 0.1.0-dev.203 — corrige renderização do formulário de reordenação
+
+- `CourseStructureOrderForm::buildForm()` agora segue a assinatura de `FormInterface` e lê os argumentos extras pelo `FormState`, como prevê o Form API. Isso remove o fatal que impedia renderizar a estrutura do curso.
+- Unit valida o carregamento do formulário, o estado inicial da ordem e a autorização contextual de educador.
+
+## 0.1.0-dev.202 — bloqueia inscrição em curso não publicado
+
+- O formulário de compra não oferece turmas nem ação de checkout quando o curso
+  está despublicado.
+- Validação e submit revalidam a publicação do próprio curso; uma submissão
+  forjada não cria carrinho nem item Commerce.
+- Unit: 3 testes / 24 assertions PASS. Kernel MariaDB `aculta_simpletest`: 2
+  testes / 87 assertions PASS; as 65 depreciações são de Core/contrib.
+
+## 0.1.0-dev.201 — cobre formulário e carrinho de compra de curso
+
+- Kernel Commerce exercita a montagem do formulário com curso, produto e
+  variação reais; confirma que somente turma publicada aparece e que preço e
+  ação de checkout são apresentados.
+- A submissão cria o carrinho `curso` e persiste a variação e a turma selecionada
+  no item (`field_course_class`), sem gateway externo.
+- MariaDB `aculta_simpletest`: 1 teste / 45 assertions PASS; 65 depreciações
+  upstream Core/contrib. Checkout HTTP e pagamento sandbox permanecem pendentes.
+
+## 0.1.0-dev.200 — cobre estados indisponíveis da compra de curso
+
+- Unit do `CourseEnrollmentPurchaseForm` protege os estados sem turma publicada
+  e sem produto de curso válido: o formulário não oferece ação de checkout.
+- A homologação de compra paga permanece pendente de produto/turma de teste e
+  autorização de gateway sandbox.
+
+## 0.1.0-dev.199 — corrige renderização da sala de aula
+
+- As linhas da tabela de atividades entregam conteúdo e link como dados de
+  célula do Render API, em vez de serem interpretadas como atributos HTML.
+- Kernel renderiza atividade e link de abertura para proteger a página da aula
+  contra erro 500.
+
+## 0.1.0-dev.198 — mostra histórico agregado por turma
+
+- O painel de educador lê a série diária `lms.students.by_status` do Statistics
+  para a turma autorizada e oferece períodos de 7, 14 ou 30 dias por links GET,
+  sem JavaScript. Dias sem snapshot aparecem como zero; a página distingue
+  ausência de histórico da integração opcional indisponível.
+- A consulta carrega só as seis dimensões da combinação curso/turma e não
+  inclui UID, notas, respostas ou dados por estudante. O resumo atual e a lista
+  de participantes mantêm suas políticas existentes.
+- `aculta_lms_requirements()` recebe `LegacyRequirementsHook`, evitando a
+  depreciação do hook procedural no Core 11.3+.
+- Unit LMS 264/984 e Kernel 36/1101; Statistics Unit 108/438 e Kernel focado
+  16/29. PHPCS focal, PHP lint e `git diff --check` passaram. O Kernel amplo
+  reporta 59 depreciações em módulos contrib/Core externos ao LMS.
+
+## 0.1.0-dev.197 — testa reordenação do Course Builder
+
+- Unit cobre atributos e handles das listas; Kernel comprova reordenação de
+  aulas/atividades, pesos contíguos, no-op, rejeição de lista incompleta e
+  preservação do vínculo de respostas.
+- Handles de arraste são decorativos e ficam fora da árvore acessível; links
+  funcionais de mover acima/abaixo continuam sendo os comandos de teclado.
+- Unit CourseStructureController: 1 teste / 29 assertions PASS. Kernel focal:
+  1 teste / 46 assertions PASS, com 13 depreciações upstream.
+- Atualiza o contrato visual para marcar arraste implementado e documentar o
+  limite de não mover entre módulos, que não existem como entidade LMS.
+
+## 0.1.0-dev.196 — reordena o currículo por arraste acessível
+
+- Aulas e atividades podem ser reordenadas por arraste dentro da sua própria
+  lista; os controles “mover acima/abaixo” seguem disponíveis como alternativa
+  por teclado e sem JavaScript.
+- O servidor confirma novamente a permissão contextual, a relação curso/aula,
+  a coleção completa de IDs e grava pesos sob lock e transação.
+- Validação executada: PHP lint, Node syntax check, parse Symfony YAML e
+  `git diff --check`. Smoke visual e testes Drupal ainda não executados.
+
+## 0.1.0-dev.195 — tipa o parâmetro convertido da prévia
+
+- O callback de acesso exige `ContentEntityInterface` para receber a aula já
+  convertida pelo resolvedor de argumentos do Router e delegar a política.
+- Unit cobre autorização do educador e negação de pessoa sem grant.
+- Firefox autenticado após rebuild confirmou a rota 200, prévia renderizada,
+  nenhum formulário de submissão e nenhuma resposta/gabarito expostos.
+
+## 0.1.0-dev.194 — adiciona prévia privada de aula
+
+- O Educador pode abrir a prévia de uma aula, inclusive rascunhos, usando a
+  autorização contextual existente e revalidada no acesso e no controller.
+- A saída mostra conteúdo filtrado e enunciados, sem gabaritos, respostas,
+  notas, perfis de estudantes ou formulário de submissão.
+- A rota canônica permanece no workspace Ganjalab Educador; o LMS fornece
+  access check e controller por ser o owner dos dados e da política.
+
+## 0.1.0-dev.193 — ordena DLL e traduções do CKEditor
+
+- Expande o ajuste de ordem dos assets para manter jQuery, traduções e DLL do
+  CKEditor antes dos bundles que dependem deles, mesmo com agregação JavaScript.
+- Firefox autenticado confirma jQuery, CKEditor editável, toolbar e formato
+  filtrado ativos no formulário da aula; o formulário não foi submetido.
+- O geckodriver ainda registra um `TypeError` no agregado de
+  `ckeditor5_plugin_pack/drupal_powered_by`; o editor inicia, mas investigar se
+  o plugin afetado perdeu comportamento.
+
+## 0.1.0-dev.192 — ordena jQuery antes dos agregados JQuery UI
+
+- O asset `core/jquery` recebe peso anterior aos componentes JQuery UI que
+  chegam com peso negativo, evitando sua execução antes da dependência.
+- Corrige uma causa observada no formulário do educador: CKEditor 5 não
+  inicializava quando o agregado UI executava com `jQuery` indefinido.
+- Unit cobre a alteração de peso e garante que outros extensions não sejam
+  alterados. Repetir smoke visual autenticado após rebuild do cache.
+
+## 0.1.0-dev.191 — inicia shell visual responsivo do Course Builder
+
+- A estrutura do curso agora apresenta resumo de aulas/atividades, cartões
+  responsivos de aula e atividade, estados editoriais e ações contextualizadas.
+- Estados vazios orientam a criação da primeira aula ou de atividades; controles
+  de ordenação por link permanecem acessíveis por teclado e sem JavaScript.
+- A tela continua usando as entidades existentes do LMS e não cria níveis
+  conceituais ou armazenamento paralelo. Preview, materiais e drag-and-drop
+  permanecem pendentes.
+- Unit cobre a estrutura do novo render array e os destinos de edição/ordenação.
+
+## 0.1.0-dev.190 — habilita edição rica e filtrada do conteúdo de aulas
+
+- O formulário de aula usa CKEditor 5 com formato dedicado e allowlist de
+  elementos editoriais; imagens, mídia incorporada e HTML irrestrito não são
+  habilitados nesta fase.
+- O papel `lms_teacher` recebe acesso ao formato. Valores antigos `plain_text`
+  são escapados ao abrir a edição e só passam a ser HTML filtrado ao salvar.
+- Kernel verifica configuração do editor e renderização sanitizada; Unit cobre
+  o payload do formulário e a validação de conteúdo.
+
+## 0.1.0-dev.189 — contém a tabela larga do Course Builder no mobile
+
+- O viewport estreito mantém a estrutura LMS dentro de sua própria área de
+  rolagem horizontal, permitindo alcançar e acionar os comandos da tabela sem
+  alargar a página inteira.
+- Unit valida o anexo da biblioteca específica da estrutura. Revisão visual
+  final após a correção permanece pendente.
+
+## 0.1.0-dev.188 — corrige renderização da estrutura do curso
+
+- Links e conteúdo renderizado agora são encapsulados em `data` nas células da
+  Table API. Sem o wrapper, o Drupal interpretava o objeto `Url` como atributo
+  HTML e respondia 500 na estrutura do educador.
+- Regressão coberta pela Unit do `CourseStructureController`; smoke no Runtime
+  com educador autenticado passou com título, estrutura e ações de movimento.
+
+## 0.1.0-dev.187 — conteúdo textual de aula na sala Ganjalab
+
+- A entidade ACULTA de aula recebe um campo de texto longo com formato fixo
+  `plain_text`; o formulário do educador permite criar e editar o corpo textual.
+- A sala do estudante apresenta o texto pelo render element `processed_text`,
+  com filtro Drupal e tratamento de quebras de linha. Aula publicada sem corpo
+  não pode ser gravada pelo formulário; aulas antigas vazias mostram um aviso.
+- Update `aculta_lms_update_10015` instala o armazenamento sem alterar o conteúdo
+  existente. Kernel confirma update, armazenamento e renderização sem HTML
+  executável (8 testes/347 assertions; 14 depreciações upstream); Unit LMS 254
+  testes/928 assertions (21 depreciações PHPUnit).
+
+## 0.1.0-dev.186 — localiza os comandos de movimento
+
+- Os caminhos de mover currículo passam a usar `acima`/`abaixo` em português;
+  a direção é convertida para o valor interno do serviço de ordenação.
+- Rotas do Educador e suas ações de movimento documentadas no mapa operacional.
+
+## 0.1.0-dev.185 — comandos acessíveis de ordenação do currículo
+
+- O Educador agora oferece ações para mover aulas dentro do curso e atividades
+  dentro da aula. Os movimentos exigem confirmação, avisam que a ordem é
+  compartilhada com as turmas e preservam respostas/notas já registradas.
+- A persistência revalida a pertença à coleção, serializa movimentos concorrentes
+  por coleção e normaliza os pesos em transação. Atividades com respostas podem
+  mudar de posição sem desbloquear edição do enunciado ou gabarito.
+- Kernel focal (`AcultaLmsInstallTest`): 8 testes / 340 assertions PASS (14
+  depreciações upstream); suíte Unit LMS: 253 testes / 927 assertions PASS
+  (20 depreciações PHPUnit). PHPCS nos arquivos de produção e Unit focais PASS.
+
+## 0.1.0-dev.184 — exclusão segura de aulas e atividades
+
+- O workspace Educador agora oferece ações de exclusão com confirmação para
+  aulas e atividades. Uma aula com atividade não pode ser excluída; uma
+  atividade com resposta ou snapshot de tentativa preserva o histórico.
+- Relações Group são limpas pelo hook do módulo Group quando uma atividade
+  elegível é removida. Os formulários revalidam a cadeia curso→aula→atividade
+  e o histórico no submit.
+- Unit LMS: 252 testes / 911 assertions PASS; PHPCS Drupal/DrupalPractice e
+  PHP lint focais PASS.
+
+## 0.1.0-dev.183 — autoria de aulas e atividades ACULTA
+
+- Adicionada a página de estrutura do curso no workspace Ganjalab Educador,
+  com criação/edição de aulas e atividades usando as entidades ACULTA já
+  existentes e o formato `answer_config` consumido pelo formulário do aluno.
+- Acesso verifica `grade students` no curso e a cadeia curso→aula→atividade;
+  configuração e gabarito de atividade ficam bloqueados após a primeira
+  resposta, preservando o contexto histórico sem sobrescrever dados.
+- Suíte Unit completa do LMS: 247 testes / 880 assertions PASS; Studio: 67 testes /
+  679 assertions PASS. PHPCS Drupal/DrupalPractice focal, PHP lint e
+  `git diff --check` PASS. Runtime em `49cc9757a4`: `drush cr` e rotas de estrutura, aula e atividade presentes; `updatedb:status` sem updates e `config:status` limpo após importação de `aculta_patcher.patch.import_510ccfe2e06a59191779bc83`. Os cinco post-updates removidos do Group 2.0 foram reconciliados no registro após validar seus efeitos no estado atual; `core:requirements` não lista mais a incompatibilidade.
+
+## 0.1.0-dev.182 — cobre submissão de arquivos privados
+
+- Kernels exercitam o formulário ACULTA de atividade `file_upload`: arquivo
+  privado do próprio estudante aceito, resposta criada com referência no payload,
+  arquivo tornado permanente e uso registrado; conteúdo que falsifica extensão
+  PNG é recusado sem criar resposta.
+- A cobertura usa a File API e a política real `aculta_file_uploader` no banco
+  dedicado `aculta_simpletest`; não grava no Runtime.
+- Atualizada a documentação que ainda dizia que a interface não conectava a
+  referência ao payload.
+
+## 0.1.0-dev.181 — inclui Views administrativas do LMS na instalação
+
+- As Views administrativas `courses_admin` e `classes_admin` passaram a ser
+  fornecidas pelo `config/install` do módulo, junto das Views públicas já
+  existentes. Isso faz uma instalação limpa do `aculta_lms` receber o mesmo
+  conjunto de páginas do Config Sync.
+- As permissões específicas de criação de curso e turma foram preservadas. A
+  navegação mantém a hierarquia curso-primeiro e não adiciona atalho global de
+  turmas.
+- Testes de configuração verificam os quatro YAMLs instaláveis contra Config
+  Sync; Kernel de instalação verifica que as quatro Views são carregadas.
+
+## 0.1.0-dev.180 — completa revisão docente de respostas por turma
+
+- O painel de turma passou a oferecer a lista de respostas. A consulta é
+  paginada e filtra por curso, turma e estudantes ativos atualmente vinculados.
+- A autorização agora confirma a relação `lms_classes`, permissão `grade
+  students` e matrícula do autor da resposta na turma selecionada. Isso impede
+  que uma avaliação de outra turma do mesmo curso apareça por troca de URL.
+- O detalhe apresenta o payload enviado com escape, referência segura para
+  download privado e formulário próprio de nota (0–100) e feedback. A gravação
+  usa transação de banco; feedback não vazio cria comentário publicado via Core
+  Comment API para manter histórico e notificações.
+- Kernel `AnswerReviewWorkflowKernelTest`: 1 teste / 34 assertions PASS;
+  suíte Kernel LMS: 33 testes / 996 assertions PASS (62 depreciações de Core e
+  contrib ainda presentes),
+  incluindo isolamento entre duas turmas, permissão de lista, payload, nota,
+  feedback e comentário persistido. Unit LMS: 234 testes / 828 assertions
+  PASS (4 depreciações PHPUnit). O Kernel reporta depreciações upstream; a
+  validação visual de navegador permanece pendente.
+- PHPCS Drupal, PHP lint e `git diff --check` PASS. Runtime pré-push:
+  `updatedb:status` sem pendências e `config:status` sem diferenças. Depois do
+  push, sincronizar o código e limpar o cache; não há mudanças de schema ou
+  configuração planejadas.
+
+## 0.1.0-dev.179 — abre páginas individuais de aula na jornada
+
+- A jornada do estudante agora liga cada aula publicada a uma página própria,
+  com atividades ordenadas e acesso às submissões existentes.
+- A autorização exige curso publicado, aula publicada e matrícula vigente; URLs
+  amigáveis mantêm a posição original quando há aulas não publicadas. A página
+  só exibe atividades disponíveis e pertencentes ao curso.
+- Kernel `LearningDashboardKernelTest`: 1 teste / 35 assertions PASS (6
+  depreciações upstream). Unit do LMS: 230 testes / 805 assertions PASS
+  (4 depreciações PHPUnit). PHPCS e PHP lint dos arquivos alterados PASS.
+- Runtime sincronizado no commit 808879f6e2; `drush cr` passou e os status de update/config permaneceram limpos.
+
+## 0.1.0-dev.178 — migra Views públicas de cursos para aculta_lms
+
+- As Views `courses` e `courses_catalog` agora são fornecidas em
+  `config/install` pelo módulo, com dependência explícita de Views e LMS.
+- O row plugin legado inexistente `course_card_row` foi substituído por
+  `entity:group` no modo `default`, usando a exibição oficial do curso para capa
+  e descrição.
+- As cópias do Sync foram alinhadas às configurações instaláveis.
+- `CourseViewsConfigTest`: 1 teste / 10 assertions PASS; YAMLs Sync e install
+  iguais e sintaxe PHP válida. A atualização da configuração no Runtime segue
+  pendente por falhas independentes nos hooks de pagamento e Group.
+
 ## 0.1.0-dev.177 — corrige autorização das respostas ACULTA
 
 - A rota de resposta recebia os slugs ainda não convertidos durante a checagem
@@ -1170,4 +1466,27 @@ Tarefa: "Pendência de smoke autenticado do aculta_lms (CHANGELOG.md linha 51): 
   relacionamento própria, sem reintroduzir o contrib.
 - Olivero: validação dispensada pelo responsável em 2026-11-03.
 - Adicionada revisão docente ACULTA em `/painel-administrativo/lms/curso/{course}/turma/{group}/respostas`: educadores listam tentativas, gravam nota de 0 a 100 e feedback, e a própria resposta do estudante exibe a avaliação. A permissão contextual `grade students` protege a lista e o detalhe.
+- Olivero validado no Firefox ESR visível em 1440 px e 320 px: 10/10 verificações PASS para formulário, upload, recusa de extensão, envio e JavaScript. O tema foi habilitado somente durante a validação e restaurado para `aculta420` ao final.
 
+
+# 0.1.0-dev.207 — invalida acesso à agenda ao publicar o curso
+
+- A negativa de acesso a eventos da turma agora inclui o curso pai como dependência cacheável quando ele está em rascunho. A publicação do curso invalida a negativa anterior e permite a reavaliação de matrícula/permissão.
+- Kernel da Agenda LMS cobre as tags de cache e a transição de rascunho para publicado; Agenda Kernel 5/195 e Unit 8/18 PASS. LMS Unit 270/1.024 e Kernel 41/1.330 PASS.
+- Teste responsivo funcional já documentado: formulários de autoria de aula e atividade excedem a largura da viewport entre 320 e 600 px por campos de 635 px. Sem ajuste visual nesta entrega.
+
+# 0.1.0-dev.208 — invalida cache quando muda o currículo
+
+- A página de aula, o access check e os links amigáveis agora variam pelos tags de lista de aulas e atividades. Criar, alterar, excluir ou reordenar esses itens invalida posições e páginas dependentes.
+- Kernel `LearningDashboardKernelTest` confirma os tags no render e nos resultados de acesso permitidos, a invalidação após salvar atividade e sua presença na página refeita. LMS Unit 270/1.027 PASS; Kernel focal 1/45 PASS.
+
+# 0.1.0-dev.209 — testa cache das URLs amigáveis do currículo
+
+- Unit do `LmsFriendlyRouteProcessor` confirma que links de resposta gerados carregam tags de listas de aulas e atividades, invalidando URLs quando o currículo muda.
+- LMS Unit: 271 testes / 1.034 assertions PASS; PHPCS e PHP lint da nova cobertura PASS.
+
+
+# 0.1.0-dev.210 — invalida autorização quando muda a matrícula da turma
+
+- Centraliza as cache tags usadas para decidir matrícula no curso e nas turmas vinculadas. Acesso a aula, submissão de resposta e download de anexo inclui as tags de membership mesmo em resultados negados, para que concessões e revogações sejam reavaliadas.
+- Testes verificam as tags derivadas, propagação nos três access checks e no Kernel do currículo. LMS Unit 272/1.039 PASS; `LearningDashboardKernelTest` 1/47 PASS.

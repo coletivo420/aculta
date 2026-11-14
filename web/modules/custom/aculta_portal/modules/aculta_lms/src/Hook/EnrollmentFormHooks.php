@@ -7,9 +7,9 @@ namespace Drupal\aculta_lms\Hook;
 use Drupal\aculta_lms\CourseOrderEnrollmentManagerInterface;
 use Drupal\commerce_order\Entity\OrderInterface;
 use Drupal\commerce_payment\Entity\PaymentInterface;
+use Drupal\commerce_payment\PaymentStorageInterface;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
-use Drupal\Core\Cache\CacheableDependencyInterface;
 use Drupal\Core\Entity\ContentEntityFormInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -55,7 +55,7 @@ final class EnrollmentFormHooks {
     }
 
     $class = $entity->getGroup();
-    if (!$class instanceof GroupInterface || $class->bundle() !== 'lms_class') {
+    if ($class->bundle() !== 'lms_class') {
       return AccessResult::neutral();
     }
     if (!$entity->hasField('field_course_order') || $entity->get('field_course_order')->isEmpty()) {
@@ -91,25 +91,26 @@ final class EnrollmentFormHooks {
     }
 
     $access = AccessResult::neutral()->addCacheableDependency($entity)->addCacheableDependency($order);
-    $payments = $this->entityTypeManager->getStorage('commerce_payment')->loadMultipleByOrder($order);
+    $payments = $this->paymentsForOrder($order);
     $has_payment = $payments !== [];
     if (!$has_payment && $order->getState()->getId() === 'canceled') {
       return $access;
     }
     foreach ($payments as $payment) {
-      if ($payment instanceof PaymentInterface) {
-        $access->addCacheableDependency($payment);
-      }
-      // A partial refund does not revoke a course enrollment. Only an order
-      // whose every payment is fully refunded releases the manual-delete lock.
-      if (!$payment instanceof PaymentInterface || $payment->getState()->getId() !== 'refunded') {
-        $denied = AccessResult::forbidden('Matrículas concedidas por compras pagas não podem ser removidas manualmente.')
+      // An unexpected record must not unlock manual deletion.
+      if (!$payment instanceof PaymentInterface) {
+        return AccessResult::forbidden('Matrículas concedidas por compras pagas não podem ser removidas manualmente.')
           ->addCacheableDependency($entity)
           ->addCacheableDependency($order);
-        if ($payment instanceof CacheableDependencyInterface) {
-          $denied->addCacheableDependency($payment);
-        }
-        return $denied;
+      }
+      $access->addCacheableDependency($payment);
+      // A partial refund does not revoke a course enrollment. Only an order
+      // whose every payment is fully refunded releases the manual-delete lock.
+      if ($payment->getState()->getId() !== 'refunded') {
+        return AccessResult::forbidden('Matrículas concedidas por compras pagas não podem ser removidas manualmente.')
+          ->addCacheableDependency($entity)
+          ->addCacheableDependency($order)
+          ->addCacheableDependency($payment);
       }
     }
 
@@ -122,6 +123,20 @@ final class EnrollmentFormHooks {
     }
 
     return $access;
+  }
+
+  /**
+   * Loads the payments of an order, failing closed on an unexpected storage.
+   *
+   * @return array<mixed>
+   *   Payment records, including malformed values in fail-closed scenarios.
+   */
+  private function paymentsForOrder(OrderInterface $order): array {
+    $storage = $this->entityTypeManager->getStorage('commerce_payment');
+    if (!$storage instanceof PaymentStorageInterface) {
+      return [];
+    }
+    return $storage->loadMultipleByOrder($order);
   }
 
   /**
@@ -141,7 +156,7 @@ final class EnrollmentFormHooks {
     }
 
     $course = $relationship->getGroup();
-    if (!$course instanceof GroupInterface || $course->bundle() !== 'lms_course') {
+    if ($course->bundle() !== 'lms_course') {
       return;
     }
 
@@ -247,6 +262,7 @@ final class EnrollmentFormHooks {
    * transition; replacing its provider is tracked in the P5 inventory.
    *
    * @return \Drupal\group\Entity\GroupRelationshipInterface[]
+   *   Relações de turma do grupo do curso.
    */
   private function classRelationships(GroupInterface $course): array {
     return array_values(array_filter(

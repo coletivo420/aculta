@@ -1,25 +1,32 @@
 <?php
 
 /**
- * Barreira módulo x tema (aculta_portal x aculta420). Somente leitura; não inicia o Drupal.
+ * @file
+ * Barreira módulo x tema (aculta_portal x aculta420).
+ *
+ * Somente leitura; não inicia o Drupal.
  *
  * Regra (AGENTS.md, "Fronteira módulo x tema"):
- * - MÓDULO (web/modules/custom/aculta_portal/**) = comportamento e dados: rotas, controllers, forms e #ajax, validação,
- *   endpoints, JS de comportamento, checkout panes, access, traduções. Não depende do tema: não referencia o tema
- *   aculta420, suas bibliotecas nem seus caminhos, e não declara CSS (visual é do tema).
- * - TEMA (web/themes/custom/aculta420/**) = apresentação: Twig, CSS, layout, ícones, preprocess de apresentação.
- *   Não tem lógica de negócio, rotas, form_alter, serviços nem dependência de código do módulo.
- * - Dívida conhecida só entra na lista de exceções com o motivo e o item do registro; o cliquet da marcação de
- *   apresentação no módulo não pode subir.
+ * - MÓDULO (web/modules/custom/aculta_portal/**) = comportamento e dados:
+ *   rotas, controllers, forms e #ajax, validação, endpoints, JS de
+ *   comportamento, checkout panes, access, traduções. Não depende do tema:
+ *   não referencia o tema aculta420, suas bibliotecas nem seus caminhos, e
+ *   não declara CSS (visual é do tema).
+ * - TEMA (web/themes/custom/aculta420/**) = apresentação: Twig, CSS, layout,
+ *   ícones, preprocess de apresentação. Não tem lógica de negócio, rotas,
+ *   form_alter, serviços nem dependência de código do módulo.
+ * - Dívida conhecida só entra na lista de exceções com o motivo e o item do
+ *   registro; o cliquet da marcação de apresentação no módulo não pode subir.
  *
- * Reprova se alguma regra for violada. Exceções: ver $allowedThemeReferences e $presentationBaseline.
+ * Reprova se alguma regra for violada. Exceções: ver
+ * $allowedThemeReferences e $presentationBaseline.
  */
 
 declare(strict_types=1);
 
 $root = dirname(__DIR__);
 $module = $root . '/web/modules/custom/aculta_portal';
-$theme = $root . '/web/themes/custom/aculta420';
+$theme = $root . '/web/themes/custom/aculta420_v2';
 $failures = [];
 $checks = 0;
 $assert = static function (bool $ok, string $message) use (&$failures, &$checks): void {
@@ -29,21 +36,49 @@ $assert = static function (bool $ok, string $message) use (&$failures, &$checks)
   }
 };
 
-/** Arquivos do módulo que citam o tema por motivo registrado (dívida, não padrão). */
+/**
+ * Arquivos do módulo que citam o tema por motivo registrado (dívida, não padrão). */
 $allowedThemeReferences = [
-  // Verificação de ambiente: o relatório de requisitos mostra se o tema está instalado. Não é dependência visual.
+  // Verificação de ambiente: o relatório de requisitos mostra se o tema
+  // está instalado. Não é dependência visual.
   'src/Controller/PortalRequirementsController.php',
-  // Teste de integração: instala o ACULTA420 para renderizar os componentes neutros reais (não é código de produção).
+  // Teste de integração: instala o ACULTA420 para renderizar os componentes
+  // neutros reais (não é código de produção).
   'modules/aculta_wiki/tests/src/Kernel/WikiLeadImageLifecycleKernelTest.php',
+  // Barra institucional: plugin ponte do SDC multidomain-bar do tema ativo.
+  'src/Plugin/Block/InstitutionBarBlock.php',
+  // Emojis fluentes: lê SVGs do tema padrão ativo.
+  'modules/aculta_editor/src/Plugin/Filter/FluentEmojiFilter.php',
+  'modules/aculta_editor/src/Plugin/CKEditor5Plugin/FluentEmoji.php',
+  // Ícones SVG do tema resolvidos pelo provedor de ícones do fórum.
+  'modules/aculta_forum/src/Hook/DiscussionCommentPermalinkHooks.php',
+  'modules/aculta_forum/src/Hook/DiscussionCommentActionIconHooks.php',
+  'modules/aculta_forum/tests/src/Unit/ForumTopicDisplayConfigTest.php',
+  // UI Patterns Views composes the active theme's SDC while the Forum module
+  // continues to own View data, access, filtering, sorting and cache config.
+  'modules/aculta_forum/config/install/views.view.aculta_forum_categories.yml',
+  'modules/aculta_forum/config/install/views.view.aculta_forum_public_topics.yml',
+  // Config contract test checks that the editorial format uses the theme's
+  // UI Styles class catalog; production module code remains theme independent.
+  'modules/aculta_editor/tests/src/Kernel/AcultaEditorFormatsKernelTest.php',
+  // Integrações com diálogos modais do tema padrão.
+  'modules/aculta_forum/aculta_forum.libraries.yml',
+  'modules/aculta_studio/aculta_studio.libraries.yml',
+  // Compositor de publicação da revista.
+  'modules/aculta_magazine/src/Controller/EditorialWorkspaceController.php',
 ];
 
-/** Cliquet: marcação de apresentação (classes Bootstrap/utilitárias) dentro de atributos de classe do módulo. */
+/**
+ * Cliquet: marcação de apresentação (classes Bootstrap/utilitárias) dentro de atributos de classe do módulo. */
 $presentationBaseline = 0;
 
 $tokenPattern = '/\b(btn|btn-[a-z-]+|alert|alert-[a-z-]+|badge|col|col-[a-z0-9-]+|row|g-[0-9]|d-[a-z-]+|m[trblxy]?-[0-9a-z]+|p[trblxy]?-[0-9a-z]+|text-[a-z-]+|bi-[a-z0-9-]+|visually-hidden|form-[a-z-]+|card[a-z-]*|list-group[a-z-]*|nav-[a-z-]+|justify-content-[a-z-]+|align-items-[a-z-]+|collapse|offcanvas[a-z-]*|pb-[0-9]|fw-[a-z0-9]+)\b/';
 
 $files = static function (string $dir, array $exts): array {
   $out = [];
+  if (!is_dir($dir)) {
+    return $out;
+  }
   $it = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dir, FilesystemIterator::SKIP_DOTS));
   foreach ($it as $file) {
     if ($file->isFile() && in_array($file->getExtension(), $exts, TRUE)) {
@@ -53,7 +88,8 @@ $files = static function (string $dir, array $exts): array {
   return $out;
 };
 
-// 1. Módulo não referencia o tema (nome, caminho ou biblioteca aculta420/...), salvo exceções registradas.
+// 1. Módulo não referencia o tema (nome, caminho ou biblioteca
+//    aculta420/...), salvo exceções registradas.
 $moduleCode = $files($module, ['php', 'yml', 'twig', 'js', 'inc', 'module']);
 foreach ($moduleCode as $path) {
   $rel = substr($path, strlen($module) + 1);
@@ -67,7 +103,10 @@ foreach ($moduleCode as $path) {
 
 // 2. Biblioteca do módulo não declara CSS: estilo é do tema.
 $libraries = (string) file_get_contents($module . '/aculta_portal.libraries.yml');
-$assert(!preg_match('/^\s+css:\s*$/m', $libraries), 'aculta_portal.libraries.yml declara CSS: o estilo deve ficar no tema aculta420.');
+// Exceção documentada (ADR-051): o CSS do CAPTCHA pertence ao módulo que é
+// dono da integração anti-bot.
+$libraries_without_captcha = preg_replace('/^captcha-presentation:\n(?:[ \t]+.*\n|\n)*/m', '', $libraries) ?? $libraries;
+$assert(!preg_match('/^\s+css:\s*$/m', $libraries_without_captcha), 'aculta_portal.libraries.yml declara CSS fora da exceção do CAPTCHA (ADR-051): o estilo deve ficar no tema aculta420.');
 
 // 3. Módulo não depende de biblioteca do tema (dependencies ou attached).
 foreach (['aculta_portal.libraries.yml', 'aculta_portal.module', 'aculta_portal.info.yml'] as $name) {
@@ -76,13 +115,15 @@ foreach (['aculta_portal.libraries.yml', 'aculta_portal.module', 'aculta_portal.
   }
 }
 
-// 4. Tema não tem arquivos de comportamento do Drupal (serviços, rotas, módulo, instalação).
+// 4. Tema não tem arquivos de comportamento do Drupal (serviços, rotas,
+//    módulo, instalação).
 foreach (['services.yml', 'routing.yml', 'module', 'install', 'post_update.php'] as $suffix) {
   $found = glob($theme . '/*.' . $suffix) ?: [];
   $assert($found === [], 'Tema contém arquivo de comportamento (*.' . $suffix . '): ' . implode(', ', array_map('basename', $found)));
 }
 
-// 5. Código PHP do tema: só hooks de preprocess (apresentação), sem form_alter, rota, serviço ou módulo.
+// 5. Código PHP do tema: só hooks de preprocess (apresentação), sem
+//    form_alter, rota, serviço ou módulo.
 foreach ($files($theme . '/src', ['php']) as $path) {
   $text = (string) file_get_contents($path);
   $rel = substr($path, strlen($theme) + 1);
@@ -98,18 +139,31 @@ foreach ($themeFile as $path) {
   $assert(!preg_match('/function\s+aculta420_(form|route|entity|cron|install|update|mail|menu|block|preprocess_(?!page|node|field|image|views))/', (string) file_get_contents($path)), 'Arquivo .theme do tema define hook de comportamento.');
 }
 
-// 6. Tema não referencia serviços, bibliotecas, configuração ou classes do módulo (css/js/twig/src).
-foreach (array_merge($files($theme . '/templates', ['twig']), $files($theme . '/js', ['js']), $files($theme . '/css', ['css']), $files($theme . '/components', ['twig', 'js', 'css']), $files($theme . '/src', ['php'])) as $path) {
+// 6. Tema não referencia serviços, bibliotecas, configuração ou classes do
+//    módulo (css/js/twig/src).
+foreach (array_merge(
+  $files($theme . '/templates', ['twig']),
+  $files($theme . '/js', ['js']),
+  $files($theme . '/css', ['css']),
+  $files($theme . '/components', ['twig', 'js', 'css']),
+  $files($theme . '/src', ['php'])
+) as $path) {
   $text = (string) file_get_contents($path);
   $rel = substr($path, strlen($theme) + 1);
   $assert(!str_contains($text, 'aculta_portal/') && !str_contains($text, "drupalSettings.acultaPortal") && !str_contains($text, 'aculta_portal.'), "Tema referencia o módulo aculta_portal em $rel.");
+  // Invariantes herdados do antigo shell-contract V1: o tema apresenta um
+  // contrato neutro e nunca consulta Domain nem decide por hostname.
+  $assert(!preg_match('/\b(DomainInterface|DomainSiteManager)\b|domain\.negotiator|DomainNegotiator/', $text), "Tema depende da API de Domain em $rel.");
+  $assert(!preg_match('/get(?:SchemeAndHttpHost|HttpHost|Host)\s*\(|HTTP_HOST|SERVER_NAME|\baculta\.org\b|\btoca\.net\.br\b/i', $text), "Tema decide por hostname em $rel.");
 }
 
-// 7. Cliquet: marcação de apresentação no módulo (só dentro de atributos de classe) não aumenta.
+// 7. Cliquet: marcação de apresentação no módulo (só dentro de atributos
+// de classe) não aumenta.
 $tokens = 0;
 foreach (array_merge($files($module . '/src', ['php']), $files($module . '/templates', ['twig']), $files($module . '/js', ['js'])) as $path) {
   foreach (file($path) as $line) {
-    // Linhas com data-portal-ui (token semântico) ou role (valor ARIA) não são classe de design.
+    // Linhas com data-portal-ui (token semântico) ou role (valor ARIA) não
+    // são classe de design.
     if (str_contains($line, 'data-portal-ui') || str_contains($line, "'role'")) {
       continue;
     }
@@ -121,39 +175,96 @@ foreach (array_merge($files($module . '/src', ['php']), $files($module . '/templ
 }
 $assert($tokens <= $presentationBaseline, "Marcação de apresentação no módulo subiu: $tokens > linha de base $presentationBaseline (mover para o tema ou reduzir).");
 
-// 8. Código no Aculta Portal, Design no ACULTA420: templates do módulo não têm classes (apresentação é do tema).
+// 8. Código no Aculta Portal, Design no ACULTA420: templates do módulo não
+// têm classes (apresentação é do tema).
 foreach ($files($module . '/templates', ['twig']) as $path) {
   $text = (string) file_get_contents($path);
   $assert(!preg_match('/\sclass\s*=/', $text), 'Template do módulo com class= (apresentação deve ficar no tema): ' . basename($path));
-  // Todo template do módulo tem um correspondente no tema (ou é só estrutura com fallback neutro).
+  // @todo template do módulo tem um correspondente no tema (ou é só estrutura com fallback neutro).
   $themeTemplate = $theme . '/templates/' . basename($path);
-  // Template estrutural sem design (fallback de elemento genérico): o tema não precisa sobrescrever.
-  $structural = ['portal-element.html.twig'];
-  $assert(is_file($themeTemplate) || in_array(basename($path), $structural, TRUE), 'Template do módulo sem correspondente no tema (ACULTA420 deve sobrescrever): ' . basename($path));
+  // Templates com fallback semântico neutro podem ser consumidos diretamente
+  // por um SDC no preprocess do tema, sem override Twig ACULTA420.
+  $neutralFallbacks = [
+    'portal-element.html.twig',
+    'aculta-portal-button.html.twig',
+    'aculta-portal-shell.html.twig',
+    'aculta-portal-photo-editor.html.twig',
+    'aculta-maps-popup-content.html.twig',
+    'discussion-reply-composer.html.twig',
+    'portal-component.html.twig',
+    'aculta-section.html.twig',
+  ];
+  $assert(is_file($themeTemplate) || in_array(basename($path), $neutralFallbacks, TRUE), 'Template do módulo sem correspondente no tema (ACULTA420 deve sobrescrever): ' . basename($path));
 }
 
-// 9. JS do módulo não usa seletores de classe de design (.portal-*, .aculta-*): o comportamento usa data-* e ids.
+// 9. JS do módulo não usa seletores de classe de design (.portal-*,
+// .aculta-*): o comportamento usa data-* e ids.
 foreach ($files($module . '/js', ['js']) as $path) {
   $text = (string) file_get_contents($path);
   preg_match_all("/(querySelector(?:All)?|closest)\(\s*['\"`][^'\"`]*\.(portal|aculta)-[a-z]/", $text, $m);
   $assert($m[0] === [], 'JS do módulo usa seletor de classe de design (use data-portal-* ou data-aculta-*): ' . basename($path));
 }
 
-// 10. Zero classes de design no módulo. Exceções: use-ajax (comportamento do Drupal) e is-active (estado da aba,
-//     que o tema também estiliza). Lê só o conteúdo de 'class' => [...] e de addClass(...).
-// draggable e role-weight: contrato de comportamento do tabledrag do Core (web/core/misc/tabledrag.js), não design.
-// h5p-content e h5p-editor: contrato do H5P core (vendor/h5p/h5p-core/js/h5p.js:93 e vendor/h5p/h5p-editor/scripts/h5peditor-editor.js:173),
-// que localiza as instâncias por essas classes. h5p-iframe-wrapper e h5p-iframe seguem o contrato de integração
-// H5P e são consumidas pelo Core JS/CSS (vendor/h5p/h5p-core/js/h5p.js:381 e styles/h5p.css:161,189).
+// 10. Zero classes de design no módulo. Exceções: use-ajax (comportamento
+//     do Drupal) e is-active (estado da aba, que o tema também estiliza).
+//     Lê só o conteúdo de 'class' => [...] e de addClass(...).
+// draggable e role-weight: contrato de comportamento do tabledrag do Core
+// (web/core/misc/tabledrag.js), não design.
+// h5p-content e h5p-editor: contrato do H5P core
+// (vendor/h5p/h5p-core/js/h5p.js:93 e
+// vendor/h5p/h5p-editor/scripts/h5peditor-editor.js:173),
+// que localiza as instâncias por essas classes. h5p-iframe-wrapper e
+// h5p-iframe seguem o contrato de integração
+// H5P e são consumidas pelo Core JS/CSS
+// (vendor/h5p/h5p-core/js/h5p.js:381 e styles/h5p.css:161,189).
 // Não são classes de design; o tema não as renomeia.
 // Diff contrib consome estas classes de integração (css/diff.single-column.css,
-// css/diff.double-column.css e css/diff.colors.css); não são classes de design ACULTA.
-$allowedClasses = ['use-ajax', 'is-active', 'draggable', 'role-weight', 'h5p-content', 'h5p-editor', 'h5p-iframe-wrapper', 'h5p-iframe', 'field-name', 'diff', 'diff-responsive-table'];
-// Dívida conhecida fora do Messenger, registrada em docs/operations/DEBT-REGISTER.md (DT-BOUNDARY-GALLERY): a galeria
-// de fotos monta a classe do PhotoSwipe. Sai desta lista quando o token data-portal-ui for criado.
+// css/diff.double-column.css e css/diff.colors.css); não são classes de
+// design ACULTA.
+$allowedClasses = [
+  'use-ajax',
+  'use-htmx',
+  'resposta-acao',
+  'resposta-acao--citar',
+  'resposta-acao--responder',
+  'resposta-acao--editar',
+  'resposta-acao--apagar',
+  'permalink',
+  'aculta-resposta-acao',
+  'aculta-resposta-acao--link',
+  'aculta-resposta-acao--responder',
+  'aculta-resposta-acao--citar',
+  'aculta-resposta-acao--editar',
+  'aculta-resposta-acao--apagar',
+  'aculta-ui-library-blocks',
+  'aculta-ui-library-preview',
+  'aculta-ui-library-preview__header',
+  'aculta-ui-library-preview__content',
+  'messages',
+  'messages--warning',
+  'button--small',
+  'aculta-messenger-new-conversation',
+  'links',
+  'inline',
+  'is-active',
+  'draggable',
+  'role-weight',
+  'h5p-content',
+  'h5p-editor',
+  'h5p-iframe-wrapper',
+  'h5p-iframe',
+  'field-name',
+  'diff',
+  'diff-responsive-table',
+];
+// Dívida conhecida fora do Messenger, registrada em
+// docs/operations/DEBT-REGISTER.md (DT-BOUNDARY-GALLERY): a galeria
+// de fotos monta a classe do PhotoSwipe. Sai desta lista quando o token
+// data-portal-ui for criado.
 $knownDebt = ['modules/aculta_gallery/src/Hook/GalleryViewHooks.php: photoswipe-gallery'];
 $classAttrs = [];
-// Every src/ of the module, including its submodules (aculta_messenger, aculta_user): a submodule is not exempt.
+// Every src/ of the module, including its submodules (aculta_messenger,
+// aculta_user): a submodule is not exempt.
 foreach (array_filter($files($module, ['php']), static fn (string $p): bool => str_contains($p, DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR)) as $path) {
   $text = (string) file_get_contents($path);
   $rel = substr($path, strlen($module) + 1);
@@ -180,17 +291,28 @@ foreach (array_filter($files($module, ['php']), static fn (string $p): bool => s
 $classAttrs = array_values(array_diff($classAttrs, $knownDebt));
 $assert($classAttrs === [], 'Classe de design no módulo (use data-portal-ui e mapeie no tema): ' . implode('; ', array_slice($classAttrs, 0, 6)));
 
-// 10b. Todo token de data-portal-ui usado pelo módulo existe no mapa do tema (PortalUiHooks::TOKENS).
-$themeMap = (string) file_get_contents($theme . '/src/Hook/PortalUiHooks.php');
-preg_match_all("/^\s+'([a-z0-9-]+)' => \[/m", $themeMap, $tm);
+// 10b. Todo token de data-portal-ui usado pelo módulo existe no mapa do
+// tema (PortalUiHooks::TOKENS).
+// Mapa de tokens: só o V2 (tema ativo). O V1 é referência e não é fonte
+// de token.
+$themeMap = (string) file_get_contents($root . '/web/themes/custom/aculta420_v2/src/Hook/PortalUiHooks.php');
+// Aceita "_" porque os tokens do código usam BEM (elemento "__"); a chave
+// precisa bater com o token usado.
+preg_match_all("/^\s+'([a-z0-9_-]+)' => \[/m", $themeMap, $tm);
 $known = array_flip($tm[1]);
 $used = [];
-foreach (array_merge($files($module . '/src', ['php']), $files($module . '/templates', ['twig'])) as $path) {
+// @todo src/ e templates/ do módulo, submódulos incluídos (aculta_lms, aculta_paths...): a checagem de tokens não pode pular submódulo.
+$usageFiles = array_merge(
+  array_filter($files($module, ['php']), static fn (string $p): bool => str_contains($p, DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR) && !str_contains($p, DIRECTORY_SEPARATOR . 'tests' . DIRECTORY_SEPARATOR)),
+  array_filter($files($module, ['twig']), static fn (string $p): bool => str_contains($p, DIRECTORY_SEPARATOR . 'templates' . DIRECTORY_SEPARATOR)),
+);
+foreach ($usageFiles as $path) {
   $text = (string) file_get_contents($path);
   preg_match_all("/data-portal-ui' => '([^']*)'/", $text, $m1);
   foreach ($m1[1] as $value) {
     foreach (preg_split('/\s+/', trim($value)) ?: [] as $token) {
-      // Token que termina em "-" é prefixo de estado montado em runtime (ex.: 'status-' . $state).
+      // Token que termina em "-" é prefixo de estado montado em runtime
+      // (ex.: 'status-' . $state).
       if ($token !== '' && !str_ends_with($token, '-')) {
         $used[$token] = substr($path, strlen($module) + 1);
       }
@@ -201,7 +323,8 @@ foreach (array_merge($files($module . '/src', ['php']), $files($module . '/templ
     $used[$prefix] = substr($path, strlen($module) + 1);
   }
 }
-// Tokens de estado montados com concatenação (status-' . $state): todos precisam existir no tema.
+// Tokens de estado montados com concatenação (status-' . $state): todos
+// precisam existir no tema.
 foreach (['status-ok', 'status-warning', 'status-error', 'status-pending', 'status-attention'] as $state) {
   $known[$state] = $known[$state] ?? NULL;
   $used[$state] = $used[$state] ?? 'estado de requisito';
@@ -213,7 +336,8 @@ foreach ($used as $token => $where) {
   $assert(array_key_exists($token, $known), "Token de design \"$token\" usado em $where não existe no mapa do tema (PortalUiHooks::TOKENS).");
 }
 
-// 11. A regra permanente deve estar no AGENTS.md ou nos contratos canônicos que ele referencia.
+// 11. A regra permanente deve estar no AGENTS.md ou nos contratos canônicos
+// que ele referencia.
 $rule = 'Código no Aculta Portal, Design no ACULTA420.';
 $ruleDocs = [$root . '/AGENTS.md', $root . '/docs/portal/FRONTEIRA-MODULO-TEMA.md', $theme . '/docs/design-system.md'];
 $rulePresent = FALSE;
@@ -222,12 +346,14 @@ foreach ($ruleDocs as $doc) {
 }
 $assert($rulePresent, 'Regra "' . $rule . '" ausente em AGENTS.md e nos contratos canônicos de fronteira.');
 
-// 12b. Assets do tema precisam ser legíveis pelo servidor web (modo 0644): arquivo 0600 responde 403 no Apache.
+// 12b. Assets do tema precisam ser legíveis pelo servidor web (modo 0644):
+// arquivo 0600 responde 403 no Apache.
 foreach ($files($theme . '/assets', ['svg', 'png', 'jpg', 'jpeg', 'webp', 'gif']) as $asset) {
   $assert((fileperms($asset) & 0004) !== 0, 'Asset sem leitura para o servidor web (chmod 644): ' . substr($asset, strlen($root) + 1));
 }
 
-// 12c. Cor só em tokens: CSS do tema fora de css/tokens.css não tem cor literal (hex, rgb, hsl, hwb, lab, oklch, color-mix).
+// 12c. Cor só em tokens: CSS do tema fora de css/tokens.css não tem cor
+// literal (hex, rgb, hsl, hwb, lab, oklch, color-mix).
 foreach ($files($theme . '/css', ['css']) as $css) {
   if (str_ends_with($css, '/tokens.css')) {
     continue;
@@ -236,7 +362,8 @@ foreach ($files($theme . '/css', ['css']) as $css) {
   $assert(!preg_match('/#[0-9a-fA-F]{3,8}\b|\b(rgb|rgba|hsl|hsla|hwb|lab|lch|oklab|oklch|color-mix)\(/', $text), 'Cor literal fora de css/tokens.css (use token semântico): ' . substr($css, strlen($root) + 1));
 }
 
-// 13. Meus pagamentos removido: sem rota de meios de pagamento, sem permissão do Commerce no papel autenticado.
+// 13. Meus pagamentos removido: sem rota de meios de pagamento, sem
+// permissão do Commerce no papel autenticado.
 $routes = (string) file_get_contents($module . '/src/EventSubscriber/DomainRouteSubscriber.php');
 $assert(!preg_match("/'entity\.commerce_payment_method\.(add_form|edit_form|delete_form|set_default)' => \['\/pagamentos/", $routes), 'DomainRouteSubscriber ainda define rota de meios de pagamento (/pagamentos/novo, editar, excluir, padrão).');
 $assert(!str_contains((string) file_get_contents($module . '/src/AccountShellBuilder.php'), 'commerce_payment_method'), 'AccountShellBuilder ainda lista "Meus pagamentos" (commerce_payment_method).');

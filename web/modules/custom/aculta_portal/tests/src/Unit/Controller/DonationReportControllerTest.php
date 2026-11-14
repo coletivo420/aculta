@@ -69,8 +69,9 @@ final class DonationReportControllerTest extends UnitTestCase {
       ['de' => '2026-10-01', 'ate' => '2026-10-16'],
     ));
 
-    $this->assertSame([['2026-10', 2, '60,00 BRL', 'BRL']], $render['resumo']['conteudo']['#rows']);
-    $this->assertArrayHasKey('#empty', $render['resumo']['conteudo']);
+    $this->assertSame('aculta420_v2:sales-panel', $render['#component']);
+    $this->assertSame([['2026-10', 2, '60,00 BRL', 'BRL']], $render['#slots']['content']['resumo']['conteudo']['#rows']);
+    $this->assertArrayHasKey('#empty', $render['#slots']['content']['resumo']['conteudo']);
   }
 
   /**
@@ -82,8 +83,8 @@ final class DonationReportControllerTest extends UnitTestCase {
 
     $render = $this->controller($consultas)->report(Request::create('/painel-administrativo/loja/doacoes'));
 
-    $this->assertSame([], $render['resumo']['conteudo']['#rows']);
-    $this->assertSame(['max-age' => 0, 'contexts' => ['url.query_args']], $render['resumo']['conteudo']['#cache']);
+    $this->assertSame([], $render['#slots']['content']['resumo']['conteudo']['#rows']);
+    $this->assertSame(['max-age' => 0, 'contexts' => ['url.query_args']], $render['#slots']['content']['resumo']['conteudo']['#cache']);
     $this->assertArrayNotHasKey('recorrentes', $render);
   }
 

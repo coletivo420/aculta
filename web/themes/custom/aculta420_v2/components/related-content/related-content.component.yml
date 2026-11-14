@@ -1,0 +1,16 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Conteúdo relacionado
+description: Envolve uma lista de itens relacionados preparada pelo bloco proprietário.
+status: stable
+group: Conteúdo
+props:
+  type: object
+  additionalProperties: false
+slots:
+  content:
+    title: Lista relacionada
+    description: Item list com título e itens filtrados pelo módulo proprietário.
+assets:
+  css:
+    component:
+      related-content.css: {}

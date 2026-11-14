@@ -22,16 +22,21 @@ final class DomainPurposeRootGuardTest extends UnitTestCase {
    */
   public static function accountActionProvider(): array {
     return [
-      'anônimo na raiz da Conta vai ao login' => ['account', '/', 'aculta_studio.account', FALSE, FrontPathPolicy::ACAO_LOGIN],
-      'logado na raiz da Conta é servido' => ['account', '/', 'aculta_studio.account', TRUE, NULL],
-      'rota Conta direta não sofre a guarda da raiz' => ['account', '/conta', 'aculta_studio.account', TRUE, NULL],
+      'anônimo no dashboard da Conta vai ao login' => [
+        'account', '/', 'aculta_studio.dashboard', FALSE, FrontPathPolicy::ACAO_LOGIN,
+      ],
+      'logado no dashboard da Conta é servido' => ['account', '/', 'aculta_studio.dashboard', TRUE, NULL],
+      'rota Minha Conta direta não sofre a guarda da raiz' => ['account', '/conta', 'aculta_studio.account', TRUE, NULL],
       'outra rota na raiz da Conta não sofre a guarda' => ['account', '/', 'aculta_portal.dashboard', FALSE, NULL],
-      'outro purpose não sofre a guarda' => ['main', '/', 'aculta_studio.account', FALSE, NULL],
-      'sem purpose não sofre a guarda' => [NULL, '/', 'aculta_studio.account', FALSE, NULL],
+      'outro purpose não sofre a guarda' => ['main', '/', 'aculta_studio.dashboard', FALSE, NULL],
+      'sem purpose não sofre a guarda' => [NULL, '/', 'aculta_studio.dashboard', FALSE, NULL],
     ];
   }
 
   #[DataProvider('accountActionProvider')]
+  /**
+   * Confirms the expected root action for each purpose and session state.
+   */
   public function testAccountAction(?string $purpose, string $path, string $route, bool $autenticado, ?string $expected): void {
     self::assertSame($expected, FrontPathPolicy::acaoDaContaNaRaiz($purpose, $path, $route, $autenticado));
   }

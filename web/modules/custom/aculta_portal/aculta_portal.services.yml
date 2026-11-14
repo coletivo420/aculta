@@ -59,6 +59,11 @@ services:
     arguments: ['@config.factory', '@user.data']
     tags:
       - { name: aculta_portal.helper }
+  aculta_portal.domain_skin_resolver:
+    class: Drupal\aculta_portal\Appearance\DomainSkinResolver
+    arguments: ['@config.factory', '@aculta_portal.domain_site']
+    tags:
+      - { name: aculta_portal.helper }
   aculta_portal.aculta_user_agreement_registration:
     class: Drupal\aculta_portal\Account\AcultaUserAgreementRegistration
     arguments: ['@aculta_user.aculta_user_agreement_ledger']
@@ -109,7 +114,7 @@ services:
       - { name: aculta_mailer.type }
   Drupal\aculta_portal\Email\AccountMailRouter:
     class: Drupal\aculta_portal\Email\AccountMailRouter
-    arguments: ['@Drupal\aculta_mailer\Type\MailTypeRegistry', '@Drupal\aculta_mailer\Template\MailTemplateRenderer', '@Drupal\user\OneTimeAuthentication', '@config.factory', '@Drupal\aculta_portal\Domain\DomainPurposeManager']
+    arguments: ['@Drupal\aculta_mailer\Type\MailTypeRegistry', '@Drupal\aculta_mailer\Template\MailTemplateRenderer', '@Drupal\user\OneTimeAuthentication', '@config.factory', '@Drupal\aculta_portal\Domain\DomainSiteManager']
   # Cadastro simplificado: pede a confirmação de e-mail (fluxo existente) para a conta criada no checkout.
   aculta_portal.simplified_account_checkout_subscriber:
     class: Drupal\aculta_portal\EventSubscriber\SimplifiedAccountCheckoutSubscriber
@@ -160,25 +165,25 @@ services:
       - { name: aculta_portal.helper }
   aculta_portal.form_callbacks:
     class: Drupal\aculta_portal\Form\PortalFormCallbacks
-    arguments: ['@messenger', '@current_user', '@user.data', '@entity_type.manager', '@string_translation', '@user.auth', '@user.flood_control', '@config.factory', '@aculta_portal.email_confirmation_requester', '@aculta_portal.aculta_user_agreement_registration', '@aculta_portal.registration_mail_policy', '@current_route_match', '@aculta_portal.domain_purpose']
+    arguments: ['@messenger', '@current_user', '@user.data', '@entity_type.manager', '@string_translation', '@user.auth', '@user.flood_control', '@config.factory', '@aculta_portal.email_confirmation_requester', '@aculta_portal.aculta_user_agreement_registration', '@aculta_portal.registration_mail_policy', '@current_route_match', '@aculta_portal.domain_site']
   aculta_portal.search_results:
     class: Drupal\aculta_portal\Search\SearchResults
-    arguments: ['@entity_type.manager', '@aculta_portal.domain_purpose']
+    arguments: ['@entity_type.manager', '@aculta_portal.domain_site']
     tags:
       - { name: aculta_portal.helper }
   aculta_portal.search_preview_controller:
     class: Drupal\aculta_portal\Search\SearchPreviewController
-    arguments: ['@aculta_portal.search_results', '@aculta_portal.domain_purpose', '@renderer', '@string_translation']
-  aculta_portal.purpose_front_path_processor:
-    class: Drupal\aculta_portal\PathProcessor\PurposeFrontPathProcessor
-    arguments: ['@aculta_portal.domain_purpose']
+    arguments: ['@aculta_portal.search_results', '@aculta_portal.domain_site', '@renderer', '@string_translation']
+  aculta_portal.site_front_path_processor:
+    class: Drupal\aculta_portal\PathProcessor\SiteFrontPathProcessor
+    arguments: ['@aculta_portal.domain_site']
     tags:
       - { name: path_processor_inbound, priority: 300 }
       - { name: aculta_portal.implementation }
   aculta_portal.account_ajax_main_content_renderer:
     class: Drupal\aculta_portal\Render\AccountAjaxMainContentRenderer
     decorates: main_content_renderer.ajax
-    arguments: ['@aculta_portal.account_ajax_main_content_renderer.inner', '@title_resolver', '@breadcrumb']
+    arguments: ['@aculta_portal.account_ajax_main_content_renderer.inner', '@title_resolver']
     tags:
       - { name: render.main_content_renderer, format: drupal_ajax }
       - { name: aculta_portal.implementation }
@@ -195,26 +200,33 @@ services:
       - { name: aculta_portal.implementation }
   aculta_portal.cart_ajax:
     class: Drupal\aculta_portal\Cart\AddToCartAjax
-    arguments: ['@aculta_portal.cart_utility', '@string_translation', '@renderer', '@messenger']
+    arguments: ['@aculta_portal.cart_utility', '@string_translation', '@renderer', '@messenger', '@request_stack', '@event_dispatcher']
   aculta_portal.cart_consolidator:
     class: Drupal\aculta_portal\Cart\CartConsolidator
     arguments: ['@commerce_cart.cart_provider', '@commerce_cart.cart_session', '@commerce_store.current_store', '@current_user', '@aculta_portal.checkout_settings']
   aculta_portal.cart_utility:
     class: Drupal\aculta_portal\Cart\CartUtility
-    arguments: ['@commerce_cart.cart_provider', '@aculta_portal.domain_purpose', '@string_translation', '@aculta_portal.checkout_settings', '@aculta_portal.checkout_step_resolver']
+    arguments: ['@commerce_cart.cart_provider', '@aculta_portal.domain_site', '@string_translation', '@aculta_portal.checkout_settings', '@aculta_portal.checkout_step_resolver']
     tags:
       - { name: aculta_portal.helper }
   aculta_portal.search_utility:
     class: Drupal\aculta_portal\Search\SearchUtility
-    arguments: ['@aculta_portal.domain_purpose', '@string_translation']
+    arguments: ['@string_translation']
     tags:
       - { name: aculta_portal.helper }
-  Drupal\aculta_portal\Domain\DomainPurposeManager: '@aculta_portal.domain_purpose'
-  aculta_portal.domain_purpose:
-    class: Drupal\aculta_portal\Domain\DomainPurposeManager
-    arguments: ['@entity_type.manager', '@domain.negotiator', '@config.factory', '@request_stack', '%app.root%']
+  Drupal\aculta_portal\Domain\DomainSiteManager: '@aculta_portal.domain_site'
+  Drupal\aculta_portal\Domain\DomainSiteManagerInterface: '@aculta_portal.domain_site'
+  aculta_portal.site_key_registry:
+    class: Drupal\aculta_portal\Domain\SiteKeyRegistry
+  aculta_portal.domain_site:
+    class: Drupal\aculta_portal\Domain\DomainSiteManager
+    arguments: ['@entity_type.manager', '@domain.negotiator', '@config.factory', '@request_stack', '@aculta_portal.site_key_registry', '%app.root%']
     tags:
       - { name: aculta_portal.helper }
+  Drupal\aculta_portal\Domain\ActiveSiteKeysState: '@aculta_portal.active_site_keys_state'
+  aculta_portal.active_site_keys_state:
+    class: Drupal\aculta_portal\Domain\ActiveSiteKeysState
+    arguments: ['@state', '@aculta_portal.domain_site']
   aculta_portal.checkout_step_resolver:
     class: Drupal\aculta_portal\Checkout\CheckoutStepResolver
     arguments: ['@commerce_checkout.chain_checkout_flow_resolver']
@@ -222,7 +234,7 @@ services:
       - { name: aculta_portal.helper }
   aculta_portal.payment_domain_path_processor:
     class: Drupal\aculta_portal\Routing\PaymentDomainPathProcessor
-    arguments: ['@aculta_portal.domain_purpose']
+    arguments: ['@aculta_portal.domain_site']
     tags:
       - { name: path_processor_outbound, priority: 1000 }
 
@@ -230,7 +242,7 @@ services:
     class: Drupal\aculta_portal\AccountCoursesManager
     arguments:
       - '@?Drupal\aculta_learning_contracts\Learning\AccountCoursesReaderInterface'
-      - '@aculta_portal.domain_purpose'
+      - '@aculta_portal.domain_site'
     tags:
       - { name: aculta_portal.helper }
   aculta_portal.presentation.account_course:
@@ -238,22 +250,23 @@ services:
     arguments: ['@aculta_portal.account_courses', '@string_translation']
   aculta_portal.presentation.domain:
     class: Drupal\aculta_portal\Presentation\DomainPresentationBuilder
-    arguments: ['@aculta_portal.domain_purpose', '@string_translation', '@?aculta_wiki.presentation.wiki_search_form', '@path.matcher']
-  aculta_portal.content_purpose_resolver:
-    class: Drupal\aculta_portal\Domain\ContentPurposeResolver
-    arguments: ['@entity_type.manager', '@aculta_portal.domain_purpose']
+    arguments: ['@aculta_portal.domain_site', '@string_translation', '@?aculta_wiki.presentation.wiki_search_form', '@path.matcher']
+  aculta_portal.content_site_key_resolver:
+    class: Drupal\aculta_portal\Domain\ContentSiteKeyResolver
+    arguments: ['@entity_type.manager', '@aculta_portal.domain_site']
     tags:
       - { name: aculta_portal.helper }
   aculta_portal.account_shell_builder:
     class: Drupal\aculta_portal\AccountShellBuilder
-    arguments: ['@current_route_match', '@plugin.manager.menu.link', '@string_translation', '@aculta_portal.domain_purpose', '@router.route_provider', '@module_handler', '@current_user']
+    arguments: ['@current_route_match', '@plugin.manager.menu.link', '@string_translation', '@aculta_portal.domain_site', '@router.route_provider', '@module_handler', '@current_user']
     tags:
       - { name: aculta_portal.helper }
   aculta_portal.breadcrumb_builder:
     class: Drupal\aculta_portal\Domain\AcultaBreadcrumbBuilder
-    arguments: ['@aculta_portal.domain_purpose', '@request_stack', '@title_resolver', '@path.matcher']
+    arguments: ['@aculta_portal.domain_site', '@request_stack', '@title_resolver', '@path.matcher']
     tags:
-      - { name: breadcrumb_builder, priority: 100 }
+      # Acima do builder de termos do core (1002), que devolvia só "Início" nas páginas de termo.
+      - { name: breadcrumb_builder, priority: 1004 }
       - { name: aculta_portal.implementation }
   aculta_portal.administrative_route_subscriber:
     class: Drupal\aculta_portal\EventSubscriber\AdministrativeRouteSubscriber
@@ -273,9 +286,9 @@ services:
     tags:
       - { name: event_subscriber }
 
-  aculta_portal.domain_purpose_subscriber:
-    class: Drupal\aculta_portal\EventSubscriber\DomainPurposeRequestSubscriber
-    arguments: ['@aculta_portal.domain_purpose', '@router.no_access_checks', '@current_user', '@router.route_provider', '@aculta_portal.content_purpose_resolver']
+  aculta_portal.domain_site_subscriber:
+    class: Drupal\aculta_portal\EventSubscriber\DomainSiteRequestSubscriber
+    arguments: ['@aculta_portal.domain_site', '@router.no_access_checks', '@current_user', '@router.route_provider', '@aculta_portal.content_site_key_resolver']
     tags:
       - { name: event_subscriber }
       - { name: aculta_portal.implementation }
@@ -284,7 +297,7 @@ services:
     arguments: ['@entity_type.manager', '@?aculta_portal.payment_provider.subscription_status', '@commerce_price.currency_formatter']
   aculta_portal.account_route_subscriber:
     class: Drupal\aculta_portal\EventSubscriber\AccountRouteSubscriber
-    arguments: ['@current_user', '@aculta_portal.domain_purpose']
+    arguments: ['@current_user', '@aculta_portal.domain_site']
     tags:
       - { name: event_subscriber }
       - { name: aculta_portal.implementation }
@@ -397,7 +410,7 @@ services:
 
   aculta_portal.saved_content_query:
     class: Drupal\aculta_portal\Saved\SavedContentQuery
-    arguments: ['@database', '@entity_type.manager', '@?aculta_portal.domain_purpose']
+    arguments: ['@database', '@entity_type.manager', '@?aculta_portal.domain_site']
 
   Drupal\aculta_portal\Saved\SavedContentQueryInterface: '@aculta_portal.saved_content_query'
   aculta_portal.surface_config_reader:
@@ -405,6 +418,6 @@ services:
     arguments: ['@config.factory']
   aculta_portal.surface_request_subscriber:
     class: Drupal\aculta_portal\EventSubscriber\SurfaceRequestSubscriber
-    arguments: ['@aculta_portal.surface_config_reader', '@aculta_portal.domain_purpose']
+    arguments: ['@aculta_portal.surface_config_reader', '@aculta_portal.domain_site']
     tags:
       - { name: event_subscriber }

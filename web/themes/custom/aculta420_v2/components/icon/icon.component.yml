@@ -1,0 +1,45 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Ícone Phosphor / ACULTA
+variants:
+  thin:
+    title: Fino
+  light:
+    title: Leve
+  regular:
+    title: Regular
+  bold:
+    title: Negrito
+  fill:
+    title: Preenchido
+  duotone:
+    title: Duotone
+description: Ícone vetorial Phosphor (regular e duotone) ou ACULTA Brócolis (seis pesos).
+status: stable
+group: Elementos básicos
+props:
+  type: object
+  additionalProperties: false
+  required: [name]
+  properties:
+    name:
+      type: string
+      title: Nome do ícone
+      description: Nome do arquivo de ícone Phosphor ou aculta-brocolis para a marca do tema.
+      pattern: '^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$'
+    variant:
+      type: string
+      title: Peso visual
+      description: Peso do ícone; para Phosphor o template reduz as opções a regular ou duotone, enquanto o ícone ACULTA oferece os seis pesos.
+      enum: [thin, light, regular, bold, fill, duotone]
+      default: duotone
+    size:
+      type: string
+      title: Tamanho
+      description: Classe de tamanho aplicada ao ícone.
+      enum: [sm, md, lg, xl, bar]
+      default: md
+    color:
+      type: string
+      title: Token CSS ou cor hexadecimal
+      description: Valor CSS permitido para a cor primária, como var(--token), hexadecimal ou currentColor.
+      pattern: '^(var\(--[a-z][a-z0-9-]*\)|#[0-9A-Fa-f]{3,8}|currentColor)$'

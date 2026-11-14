@@ -134,7 +134,10 @@ final class UploadSettingsForm extends ConfigFormBase {
       ];
     }
     $this->config('aculta_file_uploader.settings')
-      ->set('allowed_extensions', implode(' ', $this->checkedExtensions($form_state->getValue(['global', 'allowed_extensions']))))
+      ->set('allowed_extensions', implode(' ', $this->checkedExtensions($form_state->getValue([
+        'global',
+        'allowed_extensions',
+      ]))))
       ->set('max_size_mb', $this->limit((int) $form_state->getValue(['global', 'max_size_mb'])))
       ->set('consumers', $consumers)
       ->save();
@@ -145,6 +148,7 @@ final class UploadSettingsForm extends ConfigFormBase {
    * Opções de extensão, na ordem do catálogo central.
    *
    * @return array<string, string>
+   *   Opções de extensão indexadas pela extensão, com o rótulo em maiúsculas.
    */
   private function extensionOptions(): array {
     $options = [];
@@ -158,6 +162,7 @@ final class UploadSettingsForm extends ConfigFormBase {
    * Extensões marcadas a partir de uma lista separada por espaço.
    *
    * @return array<string, string>
+   *   Extensões do catálogo que estavam marcadas.
    */
   private function selectedExtensions(string $configured): array {
     $requested = preg_split('/\s+/', strtolower(trim($configured))) ?: [];
@@ -168,6 +173,7 @@ final class UploadSettingsForm extends ConfigFormBase {
    * Extensões marcadas em um campo checkboxes, na ordem do catálogo.
    *
    * @return string[]
+   *   Extensões marcadas, na ordem do catálogo.
    */
   private function checkedExtensions(mixed $values): array {
     if (!is_array($values)) {
@@ -181,6 +187,7 @@ final class UploadSettingsForm extends ConfigFormBase {
    * Catálogo completo do painel: imagens e documentos, na ordem central.
    *
    * @return string[]
+   *   Extensões de imagens e documentos do catálogo.
    */
   private static function catalog(): array {
     return array_merge(explode(' ', UploadPolicy::EXTENSIONS), explode(' ', UploadPolicy::DOCUMENT_EXTENSIONS));

@@ -25,4 +25,4 @@ foi anexada nem substitui a revisão visual do CSS instalado.
 
 Usa o usuário administrativo UID 1 já existente no Runtime de desenvolvimento.
 Não registra a URL de login, cookies, dados ou tokens. Esta revisão não cobre
-leitor de tela, zoom de 200%, consultas reais GA4/Search Console nem Olivero.
+leitor de tela, zoom de 200% nem consultas reais GA4/Search Console.

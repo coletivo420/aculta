@@ -1,0 +1,30 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Categoria do Fórum
+description: Card informativo de categoria e hierarquia pública preparada pela View.
+status: experimental
+group: Comunidade
+props:
+  type: object
+  additionalProperties: false
+  properties:
+    title_level:
+      type: string
+      title: Nível do título
+      description: Nível semântico do título conforme a posição do cartão.
+      enum:
+        - h2
+        - h3
+      default: h2
+slots:
+  parent:
+    title: Categoria principal
+    description: Rótulo de hierarquia renderizado pela View.
+  title:
+    title: Nome da categoria
+    description: Título de taxonomia renderizado e autorizado pela View.
+  description:
+    title: Descrição
+    description: Descrição da categoria processada pelo Drupal.
+  count:
+    title: Contagem de tópicos
+    description: Contagem de tópicos acessíveis preparada pelo campo da View.

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_forum\Migration;
 
 use Drupal\aculta_forum\Entity\ForumPost;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\comment\CommentInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\flag\FlagInterface;
@@ -26,14 +26,14 @@ final class ForumFlaggingMigrationContext {
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly DomainPurposeManager $domainPurposeManager,
+    private readonly DomainSiteManager $siteManager,
     private readonly MigrateLookupInterface $migrateLookup,
   ) {}
 
   /**
    * Saves a mapped Flagging while authorizing only this entity object in hooks.
    *
-   * @param \Drupal\Core\Entity\ContentEntityInterface $flagging
+   * @param \Drupal\flag\FlaggingInterface $flagging
    *   The destination Flagging populated from one migration row.
    * @param int $source_flagging_id
    *   The source Flagging ID.
@@ -80,14 +80,13 @@ final class ForumFlaggingMigrationContext {
       || $source_topic->bundle() !== 'aculta_forum_topic'
       || !$source_topic->hasField('field_domain_source')
       || $source_topic->get('field_domain_source')->isEmpty()
-      || $this->domainPurposeManager->getPurposeForDomainId((string) $source_topic->get('field_domain_source')->target_id) !== 'forum') {
+      || $this->siteManager->getSiteKeyValueForDomainId((string) $source_topic->get('field_domain_source')->target_id) !== 'forum') {
       throw new MigrateException(sprintf('Flagging de origem %d não pertence a um Comment migrável do Fórum.', $source_flagging_id));
     }
 
-    if ((int) ($source->getOwnerId() ?? 0) !== (int) ($flagging->getOwnerId() ?? 0)
+    if ((int) $source->getOwnerId() !== (int) $flagging->getOwnerId()
       || (string) $source->get('session_id')->value !== (string) $flagging->get('session_id')->value
       || (bool) $source->get('global')->value
-      || (bool) $flagging->get('global')->value
       || (int) $source->getCreatedTime() <= 0
       || (int) $source->getCreatedTime() !== (int) $flagging->getCreatedTime()) {
       throw new MigrateException(sprintf('Flagging de origem %d tem dono, escopo ou timestamp incompatível com a configuração de destino.', $source_flagging_id));
@@ -97,9 +96,7 @@ final class ForumFlaggingMigrationContext {
       throw new MigrateException(sprintf('Flagging anônimo de origem %d não tem sessão identificável.', $source_flagging_id));
     }
 
-    if ($flagging->getFlagId() !== 'sinalizar_post_forum'
-      || $flagging->getFlaggableType() !== 'aculta_forum_post'
-      || !$target instanceof ForumPost
+    if (!$target instanceof ForumPost
       || !$target_topic instanceof NodeInterface
       || !$target_flag instanceof FlagInterface
       || $target_flag->getFlaggableEntityTypeId() !== 'aculta_forum_post'

@@ -1,0 +1,16 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Relatório de auditoria de imagens
+description: Apresenta as tabelas somente de leitura preparadas pelo módulo de auditoria de imagens.
+status: stable
+group: Administração
+props:
+  type: object
+  additionalProperties: false
+slots:
+  content:
+    title: Dados do relatório
+    description: Aviso e tabelas construídos pelo módulo proprietário com controle de acesso administrativo.
+assets:
+  css:
+    component:
+      image-audit-report.css: {}

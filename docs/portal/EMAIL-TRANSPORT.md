@@ -4,7 +4,7 @@ Status do componente de envio: [aculta_mailer.yml](../operations/status/aculta_m
 
 Documentos relacionados: [DEBT-REGISTER](../operations/DEBT-REGISTER.md) (DT-P05, DT-P09, DT-O07),
 [EMAIL-CONFIRMATION-POLICY.md](EMAIL-CONFIRMATION-POLICY.md), [GUARDRAILS.md](GUARDRAILS.md),
-[DRUPAL-11-STANDARDS.md](DRUPAL-11-STANDARDS.md), `config/secrets-contract.json`.
+[DRUPAL-12-STANDARDS.md](DRUPAL-12-STANDARDS.md), `config/secrets-contract.json`.
 
 ## Status e credenciais
 
@@ -240,7 +240,7 @@ Executada no mesmo PR da M1, a pedido do responsável (o `AGENTS.md` pede um PR 
 - Gate `validate-mail-transport.php` impede o retorno do `drupal/smtp` e do `smtp.settings`.
 
 **Verificações da M2:**
-- `validate-mail-transport.php`: PASS. `validate-aculta-portal-drupal11.php`: PASS (542 checks). `validate-secrets-contract.php`: PASS.
+- `validate-mail-transport.php`: PASS. `validate-aculta-portal-drupal12.php`: PASS (542 checks). `validate-secrets-contract.php`: PASS.
 - Testes do deployer (`tests/run.php`): PASS.
 - `validate-portal-commerce-security.php`: as asserções de e-mail passam; a execução para numa asserção do formulário de apoio (gateway de doação), sem relação com e-mail e sem alteração nesta branch. Falha anterior à M2.
 - `validate-final-drupal.php`: as asserções de e-mail passam (verificadas diretamente). Para numa asserção do endereço do site (`4e20coletivo@gmail.com` esperado; runtime tem `naoresponda@toca.net.br`), anterior à M2. A divergência de 77 itens entre runtime e `config/sync` também é anterior.

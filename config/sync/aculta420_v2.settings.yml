@@ -1,0 +1,121 @@
+third_party_settings:
+  ui_skins:
+    css_variables:
+      color_accent:
+        'html[data-skin="skunk"][data-theme="light"]': '#5a8022'
+        'html[data-skin="skunk"][data-theme="dark"]': '#6c9e22'
+        'html[data-skin="sativa"][data-theme="light"]': '#689427'
+        'html[data-skin="sativa"][data-theme="dark"]': '#7ab327'
+        'html[data-skin="ruderalis"][data-theme="light"]': '#76a82c'
+        'html[data-skin="ruderalis"][data-theme="dark"]': '#89c72c'
+        'html[data-skin="afghan"][data-theme="light"]': '#08271a'
+        'html[data-skin="afghan"][data-theme="dark"]': '#059e61'
+        'html[data-skin="acapulco-gold"][data-theme="light"]': '#f0c41e'
+        'html[data-skin="acapulco-gold"][data-theme="dark"]': '#fbd132'
+        'html[data-skin="lemon-haze"][data-theme="light"]': '#f2ca36'
+        'html[data-skin="lemon-haze"][data-theme="dark"]': '#fcd64b'
+        'html[data-skin="golden-goat"][data-theme="light"]': '#f4d04e'
+        'html[data-skin="golden-goat"][data-theme="dark"]': '#fcdc64'
+        'html[data-skin="red-kush"][data-theme="light"]': '#c03d27'
+        'html[data-skin="red-kush"][data-theme="dark"]': '#dd4329'
+        'html[data-skin="panama-red"][data-theme="light"]': '#d4452d'
+        'html[data-skin="panama-red"][data-theme="dark"]': '#e1563f'
+        'html[data-skin="red-congolese"][data-theme="light"]': '#d85842'
+        'html[data-skin="red-congolese"][data-theme="dark"]': '#e46a55'
+      color_on_accent:
+        'html[data-skin="skunk"][data-theme="light"]': '#ffffff'
+        'html[data-skin="skunk"][data-theme="dark"]': '#000000'
+        'html[data-skin="sativa"][data-theme="light"]': '#000000'
+        'html[data-skin="sativa"][data-theme="dark"]': '#000000'
+        'html[data-skin="ruderalis"][data-theme="light"]': '#000000'
+        'html[data-skin="ruderalis"][data-theme="dark"]': '#000000'
+        'html[data-skin="afghan"][data-theme="light"]': '#ffffff'
+        'html[data-skin="afghan"][data-theme="dark"]': '#000000'
+        'html[data-skin="acapulco-gold"][data-theme="light"]': '#000000'
+        'html[data-skin="acapulco-gold"][data-theme="dark"]': '#000000'
+        'html[data-skin="lemon-haze"][data-theme="light"]': '#000000'
+        'html[data-skin="lemon-haze"][data-theme="dark"]': '#000000'
+        'html[data-skin="golden-goat"][data-theme="light"]': '#000000'
+        'html[data-skin="golden-goat"][data-theme="dark"]': '#000000'
+        'html[data-skin="red-kush"][data-theme="light"]': '#ffffff'
+        'html[data-skin="red-kush"][data-theme="dark"]': '#000000'
+        'html[data-skin="panama-red"][data-theme="light"]': '#000000'
+        'html[data-skin="panama-red"][data-theme="dark"]': '#000000'
+        'html[data-skin="red-congolese"][data-theme="light"]': '#000000'
+        'html[data-skin="red-congolese"][data-theme="dark"]': '#000000'
+      color_accent_sub_1:
+        'html[data-skin="skunk"][data-theme="light"]': '#f0c41e'
+        'html[data-skin="skunk"][data-theme="dark"]': '#fbd132'
+        'html[data-skin="sativa"][data-theme="light"]': '#f2ca36'
+        'html[data-skin="sativa"][data-theme="dark"]': '#fcd64b'
+        'html[data-skin="ruderalis"][data-theme="light"]': '#f4d04e'
+        'html[data-skin="ruderalis"][data-theme="dark"]': '#fcdc64'
+        'html[data-skin="afghan"][data-theme="light"]': '#5a8022'
+        'html[data-skin="afghan"][data-theme="dark"]': '#6c9e22'
+        'html[data-skin="acapulco-gold"][data-theme="light"]': '#5a8022'
+        'html[data-skin="acapulco-gold"][data-theme="dark"]': '#6c9e22'
+        'html[data-skin="lemon-haze"][data-theme="light"]': '#689427'
+        'html[data-skin="lemon-haze"][data-theme="dark"]': '#7ab327'
+        'html[data-skin="golden-goat"][data-theme="light"]': '#76a82c'
+        'html[data-skin="golden-goat"][data-theme="dark"]': '#89c72c'
+        'html[data-skin="red-kush"][data-theme="light"]': '#5a8022'
+        'html[data-skin="red-kush"][data-theme="dark"]': '#6c9e22'
+        'html[data-skin="panama-red"][data-theme="light"]': '#689427'
+        'html[data-skin="panama-red"][data-theme="dark"]': '#7ab327'
+        'html[data-skin="red-congolese"][data-theme="light"]': '#76a82c'
+        'html[data-skin="red-congolese"][data-theme="dark"]': '#89c72c'
+      color_accent_sub_2:
+        'html[data-skin="skunk"][data-theme="light"]': '#c03d27'
+        'html[data-skin="skunk"][data-theme="dark"]': '#dd4329'
+        'html[data-skin="sativa"][data-theme="light"]': '#d4452d'
+        'html[data-skin="sativa"][data-theme="dark"]': '#e1563f'
+        'html[data-skin="ruderalis"][data-theme="light"]': '#d85842'
+        'html[data-skin="ruderalis"][data-theme="dark"]': '#e46a55'
+        'html[data-skin="afghan"][data-theme="light"]': '#f0c41e'
+        'html[data-skin="afghan"][data-theme="dark"]': '#fbd132'
+        'html[data-skin="acapulco-gold"][data-theme="light"]': '#c03d27'
+        'html[data-skin="acapulco-gold"][data-theme="dark"]': '#dd4329'
+        'html[data-skin="lemon-haze"][data-theme="light"]': '#d4452d'
+        'html[data-skin="lemon-haze"][data-theme="dark"]': '#e1563f'
+        'html[data-skin="golden-goat"][data-theme="light"]': '#d85842'
+        'html[data-skin="golden-goat"][data-theme="dark"]': '#e46a55'
+        'html[data-skin="red-kush"][data-theme="light"]': '#f0c41e'
+        'html[data-skin="red-kush"][data-theme="dark"]': '#fbd132'
+        'html[data-skin="panama-red"][data-theme="light"]': '#f2ca36'
+        'html[data-skin="panama-red"][data-theme="dark"]': '#fcd64b'
+        'html[data-skin="red-congolese"][data-theme="light"]': '#f4d04e'
+        'html[data-skin="red-congolese"][data-theme="dark"]': '#fcdc64'
+      color_accent_sub_3:
+        'html[data-skin="skunk"][data-theme="light"]': transparent
+        'html[data-skin="skunk"][data-theme="dark"]': transparent
+        'html[data-skin="sativa"][data-theme="light"]': transparent
+        'html[data-skin="sativa"][data-theme="dark"]': transparent
+        'html[data-skin="ruderalis"][data-theme="light"]': transparent
+        'html[data-skin="ruderalis"][data-theme="dark"]': transparent
+        'html[data-skin="afghan"][data-theme="light"]': '#c03d27'
+        'html[data-skin="afghan"][data-theme="dark"]': '#dd4329'
+        'html[data-skin="acapulco-gold"][data-theme="light"]': transparent
+        'html[data-skin="acapulco-gold"][data-theme="dark"]': transparent
+        'html[data-skin="lemon-haze"][data-theme="light"]': transparent
+        'html[data-skin="lemon-haze"][data-theme="dark"]': transparent
+        'html[data-skin="golden-goat"][data-theme="light"]': transparent
+        'html[data-skin="golden-goat"][data-theme="dark"]': transparent
+        'html[data-skin="red-kush"][data-theme="light"]': transparent
+        'html[data-skin="red-kush"][data-theme="dark"]': transparent
+        'html[data-skin="panama-red"][data-theme="light"]': transparent
+        'html[data-skin="panama-red"][data-theme="dark"]': transparent
+        'html[data-skin="red-congolese"][data-theme="light"]': transparent
+        'html[data-skin="red-congolese"][data-theme="dark"]': transparent
+  ui_styles_entity_status:
+    unpublished:
+      selected:
+        unpublished_preview: aculta-content-status--unpublished
+      extra: ''
+aculta_radius_button: lg
+aculta_radius_card: lg
+aculta_radius_field: base
+aculta_accent_override: mapping
+aculta_show_accent_stripe: true
+aculta_revista_accent:
+  selected: {  }
+  extra: ''

@@ -114,6 +114,7 @@ final class RecurrenceManagementKernelTest extends KernelTestBase {
     $this->assertSame([], $form_state->getErrors());
 
     $salva = $this->container->get('entity_type.manager')->getStorage('aculta_event_date')->loadUnchanged($data->id());
+    self::assertInstanceOf(EventDate::class, $salva);
     $this->assertSame('FREQ=WEEKLY;INTERVAL=1;BYDAY=MO,WE', $salva->get('field_regra')->value);
     $this->assertSame(6, (int) $salva->get('field_limite_meses')->value);
   }
@@ -134,6 +135,7 @@ final class RecurrenceManagementKernelTest extends KernelTestBase {
 
     $this->assertArrayHasKey('field_regra', $form_state->getErrors());
     $salva = $this->container->get('entity_type.manager')->getStorage('aculta_event_date')->loadUnchanged($data->id());
+    self::assertInstanceOf(EventDate::class, $salva);
     $this->assertSame('FREQ=DAILY', $salva->get('field_regra')->value);
   }
 

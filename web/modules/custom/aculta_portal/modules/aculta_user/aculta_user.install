@@ -1,15 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * @file
  * Instalação e atualização do aculta_user.
  */
 
-declare(strict_types=1);
+use Drupal\aculta_user\Entity\OrganizationMember;
+use Drupal\aculta_user\Entity\AssociadoMarcador;
+use Drupal\Core\Entity\EntityDefinitionUpdateManagerInterface;
+use Drupal\Core\Field\BaseFieldDefinition;
+use Drupal\Core\Field\FieldStorageDefinitionInterface;
 
-use Drupal\aculta_user\Entity\BadgeAward;
-
-/** Implements hook_schema(). */
+/**
+ * Implements hook_schema(). */
 function aculta_user_schema(): array {
   $schema['aculta_user_agreement'] = [
     'description' => 'Append-only consent evidence; retained for the lifetime of the user account.',
@@ -38,10 +43,27 @@ function aculta_user_schema(): array {
     'primary key' => ['uid'],
     'unique keys' => ['nickname_slug' => ['slug']],
   ];
+  $schema['aculta_coauthor_audit'] = [
+    'description' => 'Audit log of node coauthorship changes.',
+    'fields' => [
+      'id' => ['type' => 'serial', 'not null' => TRUE],
+      'nid' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE],
+      'actor_uid' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE],
+      'action' => ['type' => 'varchar', 'length' => 32, 'not null' => TRUE],
+      'created' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE],
+      'coauthors' => ['type' => 'varchar', 'length' => 1024, 'not null' => FALSE, 'default' => ''],
+    ],
+    'primary key' => ['id'],
+    'indexes' => [
+      'node_lookup' => ['nid'],
+      'actor_lookup' => ['actor_uid'],
+    ],
+  ];
   return $schema;
 }
 
-/** Creates the ledger and preserves each Agreement module's current row as incomplete legacy evidence. */
+/**
+ * Creates the ledger and preserves each Agreement module's current row as incomplete legacy evidence. */
 function aculta_user_update_10006(): string {
   $schema = \Drupal::database()->schema();
   if (!$schema->tableExists('aculta_user_agreement')) {
@@ -67,7 +89,8 @@ function aculta_user_update_10006(): string {
   return (string) t('Created the append-only consent ledger and copied current Agreement records as incomplete legacy evidence.');
 }
 
-/** Renames the initial generic consent ledger and types to the ACULTA namespace. */
+/**
+ * Renames the initial generic consent ledger and types to the ACULTA namespace. */
 function aculta_user_update_10007(): string {
   $db = \Drupal::database();
   $schema = $db->schema();
@@ -111,7 +134,8 @@ function aculta_user_update_10007(): string {
   return (string) t('Renamed the ACULTA user agreement ledger and re-signed its per-account integrity chains.');
 }
 
-/** Replaces the contributed Agreement bypass permission with the ACULTA audit permission. */
+/**
+ * Replaces the contributed Agreement bypass permission with the ACULTA audit permission. */
 function aculta_user_update_10008(): string {
   $roles = \Drupal::entityTypeManager()->getStorage('user_role')->loadMultiple();
   foreach ($roles as $role) {
@@ -123,7 +147,8 @@ function aculta_user_update_10008(): string {
   return (string) t('Removed the retired Agreement bypass permission from all roles.');
 }
 
-/** Preserves source Agreement type metadata on the incomplete legacy events and refreshes their HMAC chains. */
+/**
+ * Preserves source Agreement type metadata on the incomplete legacy events and refreshes their HMAC chains. */
 function aculta_user_update_10009(): string {
   $db = \Drupal::database();
   $previous = [];
@@ -158,7 +183,8 @@ function aculta_user_update_10009(): string {
   return (string) t('Recorded source type and scope on legacy evidence, then re-signed the account chains.');
 }
 
-/** Applies the selected account-lifetime retention period to migrated legacy events. */
+/**
+ * Applies the selected account-lifetime retention period to migrated legacy events. */
 function aculta_user_update_10010(): string {
   $db = \Drupal::database();
   $query = $db->select('aculta_user_agreement', 'a');
@@ -179,14 +205,16 @@ function aculta_user_update_10001(): void {
   $manager->installEntityType($type);
 }
 
-/** Instala a entidade interna de relacionamentos entre membros. */
+/**
+ * Instala a entidade interna de relacionamentos entre membros. */
 function aculta_user_update_10002(): void {
   $manager = \Drupal::entityDefinitionUpdateManager();
   $type = \Drupal::entityTypeManager()->getDefinition('aculta_friendship');
   $manager->installEntityType($type);
 }
 
-/** Adiciona motivos administrativos sem alterar IDs, datas ou concessões anteriores. */
+/**
+ * Adiciona motivos administrativos sem alterar IDs, datas ou concessões anteriores. */
 function aculta_user_update_10003(): void {
   $manager = \Drupal::entityDefinitionUpdateManager();
   foreach ([
@@ -196,8 +224,8 @@ function aculta_user_update_10003(): void {
     if ($manager->getFieldStorageDefinition($name, 'aculta_badge_award') !== NULL) {
       continue;
     }
-    $field = \Drupal\Core\Field\BaseFieldDefinition::create('string_long')->setLabel($label);
-    $manager->installFieldStorageDefinition($name, 'aculta_badge_award', 'aculta_user', $field);
+    $field = BaseFieldDefinition::create('string_long')->setLabel($label);
+    _aculta_user_install_storage_definition($manager, $name, 'aculta_badge_award', $field);
   }
 }
 
@@ -212,7 +240,6 @@ function aculta_user_update_10004(): string {
   return (string) t('Removed the obsolete first-comment setting for Drupal Forum.');
 }
 
-
 /**
  * Associado vira situação: campos de situação, data de adesão, autor e motivo na marca existente.
  *
@@ -222,10 +249,10 @@ function aculta_user_update_10004(): string {
 function aculta_user_update_10005(): void {
   $manager = \Drupal::entityDefinitionUpdateManager();
   $entity_type = \Drupal::entityTypeManager()->getDefinition('aculta_associado');
-  $fields = \Drupal\aculta_user\Entity\AssociadoMarcador::baseFieldDefinitions($entity_type);
+  $fields = AssociadoMarcador::baseFieldDefinitions($entity_type);
   foreach (['situacao', 'data_adesao', 'motivo', 'changed'] as $name) {
     if ($manager->getFieldStorageDefinition($name, 'aculta_associado') === NULL) {
-      $manager->installFieldStorageDefinition($name, 'aculta_associado', 'aculta_user', $fields[$name]);
+      _aculta_user_install_storage_definition($manager, $name, 'aculta_associado', $fields[$name]);
     }
   }
   \Drupal::database()->update('aculta_associado')
@@ -235,8 +262,8 @@ function aculta_user_update_10005(): void {
   \Drupal::database()->query("UPDATE {aculta_associado} SET data_adesao = created WHERE data_adesao IS NULL AND situacao = 'ativo'");
 }
 
-
-/** Migra o papel legado estudante para a categoria de perfil e o remove da conta. */
+/**
+ * Migra o papel legado estudante para a categoria de perfil e o remove da conta. */
 function aculta_user_update_10011(): string {
   $storage = \Drupal::entityTypeManager()->getStorage('user');
   $uids = $storage->getQuery()->accessCheck(FALSE)->condition('roles', 'estudante')->execute();
@@ -253,8 +280,8 @@ function aculta_user_update_10011(): string {
   return (string) t('Migrated the legacy student role to the student profile category.');
 }
 
-
-/** Concede a categoria estudante a todas as contas cujo e-mail já está confirmado. */
+/**
+ * Concede a categoria estudante a todas as contas cujo e-mail já está confirmado. */
 function aculta_user_update_10012(): string {
   $users = \Drupal::entityTypeManager()->getStorage('user');
   $profiles = \Drupal::entityTypeManager()->getStorage('profile');
@@ -273,7 +300,8 @@ function aculta_user_update_10012(): string {
   return (string) t('Granted the student category to existing email-confirmed accounts.');
 }
 
-/** Builds the unique current nickname index from existing role Profiles. */
+/**
+ * Builds the unique current nickname index from existing role Profiles. */
 function aculta_user_update_10013(): string {
   $schema = \Drupal::database()->schema();
   if (!$schema->tableExists('aculta_user_nickname')) {
@@ -293,7 +321,8 @@ function aculta_user_update_10013(): string {
   ]);
 }
 
-/** Instala tipos de entidade para vinculos de organizacao e reivindicacao de posse (ARQ-05). */
+/**
+ * Instala tipos de entidade para vinculos de organizacao e reivindicacao de posse (ARQ-05). */
 function aculta_user_update_10014(): string {
   $updateManager = \Drupal::entityDefinitionUpdateManager();
   $entityTypeManager = \Drupal::entityTypeManager();
@@ -311,18 +340,29 @@ function aculta_user_update_10014(): string {
   return (string) t('Installed organization member and ownership claim entity types (ARQ-05).');
 }
 
-/** Instala campos de poderes delegados em vinculos de organizacao (can_manage_members, can_publish). */
+/**
+ * Instala campos de poderes delegados em vinculos de organizacao (can_manage_members, can_publish). */
 function aculta_user_update_10015(): string {
   $manager = \Drupal::entityDefinitionUpdateManager();
-  $fields = \Drupal\aculta_user\Entity\OrganizationMember::baseFieldDefinitions(
+  $fields = OrganizationMember::baseFieldDefinitions(
     \Drupal::entityTypeManager()->getDefinition('aculta_org_member')
   );
 
   foreach (['can_manage_members', 'can_publish'] as $fieldName) {
     if ($manager->getFieldStorageDefinition($fieldName, 'aculta_org_member') === NULL && isset($fields[$fieldName])) {
-      $manager->installFieldStorageDefinition($fieldName, 'aculta_org_member', 'aculta_user', $fields[$fieldName]);
+      _aculta_user_install_storage_definition($manager, $fieldName, 'aculta_org_member', $fields[$fieldName]);
     }
   }
 
   return (string) t('Installed can_manage_members and can_publish on aculta_org_member.');
+}
+
+/**
+ * Installs a field storage definition after validating its declared type.
+ */
+function _aculta_user_install_storage_definition(EntityDefinitionUpdateManagerInterface $manager, string $fieldName, string $entityTypeId, mixed $definition): void {
+  if (!$definition instanceof FieldStorageDefinitionInterface) {
+    throw new \RuntimeException(sprintf('Campo %s não possui definição de armazenamento instalável.', $fieldName));
+  }
+  _aculta_user_install_storage_definition($manager, $fieldName, $entityTypeId, $definition);
 }

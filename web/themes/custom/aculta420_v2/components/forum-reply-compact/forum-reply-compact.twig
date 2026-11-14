@@ -1,0 +1,31 @@
+{#
+/**
+ * @file
+ * Reply compacto: autor, horário, barra de reações e contador (topo); texto e barra de respostas (base).
+ * Faixa verde à esquerda, sem faixa tricolor no topo.
+ */
+#}
+<article{% if theme == 'dark' %} data-theme="dark"{% endif %} class="forum-reply-compact forum-reply-compact--density-{{ density|default('default') }}{% if density == 'compact' %} aculta-mobile-frame{% endif %}{% if reacted %} is-reacted{% endif %}{% if accent_side == 'end' %} forum-reply-compact--side-end{% endif %}">
+  <div class="forum-reply-compact__body">
+    <div class="forum-reply-compact__main">
+      <header class="forum-reply-compact__header">
+        {{ include('aculta420_v2:forum-author-line', { author_name: author_name, profile_url: author_url, timestamp: timestamp, avatar: avatar }, with_context = false) }}
+        {% if received_slot %}
+          <div class="forum-reply-compact__received">{{ received_slot }}</div>
+        {% endif %}
+      </header>
+      <div class="forum-reply-compact__text">
+        {{ content }}
+      </div>
+      <footer class="forum-reply-compact__footer">
+        {% if reactions_slot %}
+          <div class="forum-reply-compact__reactions">{{ reactions_slot }}</div>
+        {% endif %}
+        {% if actions %}
+          <div class="forum-reply-compact__actions">{{ actions }}</div>
+        {% endif %}
+      </footer>
+    </div>
+  </div>
+  {% if admin %}<div class="forum-reply-compact__admin">{{ admin }}</div>{% endif %}
+</article>

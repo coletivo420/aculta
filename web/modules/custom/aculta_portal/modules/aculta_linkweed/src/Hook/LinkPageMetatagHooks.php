@@ -11,7 +11,8 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\aculta_linkweed\Entity\LinkPage;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
@@ -25,8 +26,8 @@ final class LinkPageMetatagHooks {
     private readonly EntityTypeManagerInterface $entityTypeManager,
     #[Autowire(service: 'current_route_match')]
     private readonly RouteMatchInterface $routeMatch,
-    #[Autowire(service: 'aculta_portal.domain_purpose')]
-    private readonly DomainPurposeManager $domainPurposeManager,
+    #[Autowire(service: 'aculta_portal.domain_site')]
+    private readonly DomainSiteManager $siteManager,
     #[Autowire(service: 'config.factory')]
     private readonly ConfigFactoryInterface $configFactory,
   ) {}
@@ -95,8 +96,7 @@ final class LinkPageMetatagHooks {
       $tags['schema_web_page_description'] = $description;
     }
 
-    $canonical = $this->domainPurposeManager->canonicalRouteUrl(
-      'links',
+    $canonical = $this->siteManager->canonicalRouteUrl(SiteKey::Links,
       'aculta_linkweed.page_public',
       ['slug' => $slug],
     );

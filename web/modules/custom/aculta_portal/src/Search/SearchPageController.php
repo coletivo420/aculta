@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Search;
 
-use Drupal\Core\Template\Attribute;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Form\FormBuilderInterface;
@@ -40,29 +40,49 @@ final class SearchPageController implements ContainerInjectionInterface {
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly MessengerInterface $messenger,
-    private readonly DomainPurposeManager $domainPurposeManager,
+    private readonly DomainSiteManager $siteManager,
     private readonly FormBuilderInterface $formBuilder,
   ) {}
 
+  /**
+   * {@inheritdoc}
+   */
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('entity_type.manager'),
       $container->get('messenger'),
-      $container->get('aculta_portal.domain_purpose'),
+      $container->get('aculta_portal.domain_site'),
       $container->get('form_builder'),
     );
   }
 
+  /**
+   * Monta a página pública de busca.
+   *
+   * @param \Symfony\Component\HttpFoundation\Request $request
+   *   Requisição com o termo de busca no parâmetro query `q`.
+   *
+   * @return array
+   *   Array de renderização da busca e dos resultados.
+   */
   public function page(Request $request): array {
     $term = mb_substr(trim((string) $request->query->get('q', '')), 0, self::MAX_CHARS);
     $build = [
       '#type' => 'container',
       '#attributes' => ['data-portal-ui' => 'search'],
-      '#cache' => ['contexts' => ['url.query_args:q', 'user.permissions'], 'tags' => ['search_api_list:' . self::INDEX_ID]],
+      '#cache' => [
+        'contexts' => ['url.query_args:q', 'user.permissions'],
+        'tags' => ['search_api_list:' . self::INDEX_ID],
+      ],
       'form' => $this->formBuilder->getForm(SearchPageForm::class),
     ];
     if ($term === '') {
-      $build['hint'] = ['#theme' => 'aculta_portal_element', '#tag' => 'p', '#element_attributes' => new Attribute(['data-portal-ui' => 'hint-muted']), '#value' => $this->t('Digite um termo para buscar no site.')];
+      $build['hint'] = [
+        '#type' => 'component',
+        '#component' => 'aculta420_v2:hint',
+        '#props' => ['tone' => 'muted'],
+        '#slots' => ['content' => ['#plain_text' => $this->t('Digite um termo para buscar no site.')]],
+      ];
       return $build;
     }
     if (mb_strlen($term) < self::MIN_CHARS) {
@@ -134,14 +154,17 @@ final class SearchPageController implements ContainerInjectionInterface {
   }
 
   /**
-   * Link do resultado no host do conteúdo: a busca é centralizada no MAIN, mas cada item abre no purpose
-   * ao qual pertence (field_domain_source). Sem purpose conhecido, usa o caminho do próprio host.
+   * Retorna o link do resultado no host do conteúdo.
+   *
+   * A busca é centralizada no MAIN, mas cada item abre no purpose ao qual
+   * pertence (field_domain_source). Sem purpose conhecido, usa o caminho do
+   * próprio host.
    */
   private function resultUrl(NodeInterface $node): Url {
     $relative = $node->toUrl();
     $domainId = $node->hasField('field_domain_source') ? $node->get('field_domain_source')->target_id : NULL;
-    $purpose = is_string($domainId) ? $this->domainPurposeManager->getPurposeForDomainId($domainId) : NULL;
-    $absolute = $purpose !== NULL ? $this->domainPurposeManager->canonicalPathUrl($purpose, $relative->toString()) : NULL;
+    $purpose = is_string($domainId) ? $this->siteManager->getSiteKeyValueForDomainId($domainId) : NULL;
+    $absolute = $purpose !== NULL ? $this->siteManager->canonicalPathUrl($purpose, $relative->toString()) : NULL;
     return $absolute ?? $relative;
   }
 

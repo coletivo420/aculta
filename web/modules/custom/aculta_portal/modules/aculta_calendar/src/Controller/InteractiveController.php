@@ -50,7 +50,7 @@ final class InteractiveController extends ControllerBase {
    */
   public function page(): array {
     $agenda = $this->url('agenda');
-    return [
+    $content = [
       'aviso' => [
         '#type' => 'html_tag',
         '#tag' => 'p',
@@ -61,10 +61,12 @@ final class InteractiveController extends ControllerBase {
         '#type' => 'container',
         '#attributes' => ['data-portal-ui' => 'calendar-interactive-controls'],
         'contrast' => [
-          '#type' => 'html_tag',
-          '#tag' => 'button',
-          '#attributes' => ['type' => 'button', 'id' => 'aculta-calendar-contrast', 'aria-pressed' => 'false'],
-          '#value' => $this->t('Alto contraste'),
+          '#type' => 'aculta_portal_button',
+          '#props' => [
+            'text' => (string) $this->t('Alto contraste'),
+            'variant' => 'secondary',
+          ],
+          '#attributes' => ['id' => 'aculta-calendar-contrast', 'aria-pressed' => 'false'],
         ],
       ],
       'componente' => [
@@ -104,6 +106,11 @@ final class InteractiveController extends ControllerBase {
         'contexts' => ['route'],
         'max-age' => 900,
       ],
+    ];
+    return [
+      '#component' => 'aculta420_v2:calendar-interactive',
+      '#props' => [],
+      '#slots' => ['content' => $content],
     ];
   }
 

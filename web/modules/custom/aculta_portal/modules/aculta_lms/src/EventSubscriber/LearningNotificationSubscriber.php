@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_lms\EventSubscriber;
 
 use Drupal\aculta_lms\Event\CertificateIssuedEvent;
-use Drupal\aculta_learning_contracts\Event\CourseCompletedEvent;
+use Drupal\aculta_lms\Event\CourseCompletedEvent;
 use Drupal\aculta_lms\Event\CourseEnrollmentEvent;
 use Drupal\aculta_lms\Event\AnswerEvaluatedEvent;
 use Drupal\aculta_lms\Event\AnswerSubmittedEvent;

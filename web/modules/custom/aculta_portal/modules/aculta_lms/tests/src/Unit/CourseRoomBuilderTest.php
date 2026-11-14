@@ -7,8 +7,8 @@ namespace Drupal\Tests\aculta_lms\Unit;
 use Drupal\aculta_lms\ClassRosterManager;
 use Drupal\aculta_lms\CourseRoomBuilder;
 use Drupal\aculta_lms\Form\CourseEnrollmentPurchaseForm;
-use Drupal\aculta_learning_contracts\Learning\CourseJourney;
-use Drupal\aculta_learning_contracts\Learning\CourseJourneyReaderInterface;
+use Drupal\aculta_lms\Learning\CourseJourney;
+use Drupal\aculta_lms\Learning\CourseJourneyReaderInterface;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -76,8 +76,12 @@ final class CourseRoomBuilderTest extends UnitTestCase {
     );
     $build = $builder->build($course);
 
+    self::assertIsArray($build['participant_rosters'] ?? NULL);
+    self::assertIsArray($build['participant_rosters']['classes'] ?? NULL);
     self::assertSame(['class-1'], $build['participant_rosters']['classes']);
     self::assertArrayNotHasKey('aculta_learning_journey', $build);
+    self::assertIsArray($build['#cache'] ?? NULL);
+    self::assertIsArray($build['#cache']['contexts'] ?? NULL);
     self::assertContains('user.group_permissions', $build['#cache']['contexts']);
   }
 

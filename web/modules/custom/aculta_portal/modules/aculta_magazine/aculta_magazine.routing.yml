@@ -7,7 +7,7 @@ aculta_magazine.admin:
     _custom_access: 'Drupal\aculta_magazine\Controller\EditorialAdminController::access'
   options:
     _admin_route: true
-    _aculta_domain_purpose: main
+    _aculta_site_key: main
 
 aculta_magazine.capabilities:
   path: '/painel-administrativo/revista/configuracoes'
@@ -18,7 +18,7 @@ aculta_magazine.capabilities:
     _custom_access: 'Drupal\aculta_magazine\Controller\EditorialAdminController::access'
   options:
     _admin_route: true
-    _aculta_domain_purpose: main
+    _aculta_site_key: main
 
 aculta_magazine.admin_comments:
   path: '/painel-administrativo/revista/comentarios'
@@ -29,7 +29,7 @@ aculta_magazine.admin_comments:
     _custom_access: 'Drupal\aculta_magazine\Controller\EditorialAdminController::access'
   options:
     _admin_route: true
-    _aculta_domain_purpose: main
+    _aculta_site_key: main
 
 aculta_magazine.studio_list:
   path: '/marley/revista/publicacoes'
@@ -39,18 +39,19 @@ aculta_magazine.studio_list:
   requirements:
     _custom_access: 'aculta_magazine.editorial_workspace:accessWorkspace'
   options:
-    _aculta_domain_purpose: account
+    _aculta_site_key: account
     no_cache: true
 
-aculta_magazine.studio_add:
-  path: '/marley/revista/nova'
+aculta_magazine.studio_add_popup:
+  path: '/marley/revista/nova/popup'
   defaults:
-    _controller: 'aculta_magazine.editorial_workspace:create'
+    _controller: 'aculta_magazine.editorial_workspace:createPopup'
     _title: 'Nova publicação'
   requirements:
     _custom_access: 'aculta_magazine.editorial_workspace:accessCreate'
   options:
-    _aculta_domain_purpose: account
+    _htmx_route: TRUE
+    _aculta_site_key: account
     no_cache: true
 
 aculta_magazine.studio_transition:
@@ -62,7 +63,7 @@ aculta_magazine.studio_transition:
     _custom_access: 'aculta_magazine.editorial_workspace:accessReview'
     node: '\d+'
   options:
-    _aculta_domain_purpose: account
+    _aculta_site_key: account
     no_cache: true
     parameters:
       node:
@@ -77,7 +78,7 @@ aculta_magazine.studio_comment_moderate:
     _custom_access: 'aculta_magazine.editorial_workspace:accessComment'
     comment: '\d+'
   options:
-    _aculta_domain_purpose: account
+    _aculta_site_key: account
     no_cache: true
     parameters:
       comment:
@@ -92,7 +93,7 @@ aculta_magazine.studio_edit:
     _custom_access: 'aculta_magazine.editorial_workspace:accessEdit'
     node: '\d+'
   options:
-    _aculta_domain_purpose: account
+    _aculta_site_key: account
     no_cache: true
     parameters:
       node:
@@ -107,7 +108,7 @@ aculta_magazine.studio_discussion:
     _custom_access: 'aculta_magazine.editorial_workspace:accessDiscussion'
     node: '\d+'
   options:
-    _aculta_domain_purpose: account
+    _aculta_site_key: account
     no_cache: true
     parameters:
       node:

@@ -1,0 +1,38 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Seção com cabeçalho
+description: Empilha cabeçalho e conteúdo, com espaçamento entre as partes e largura controlada pelo contêiner.
+status: experimental
+group: Layouts
+props:
+  type: object
+  additionalProperties: false
+  properties:
+    tone:
+      type: string
+      enum: [default, raised, green-soft]
+      default: default
+      title: Superfície
+      description: '`raised` usa uma superfície neutra; `green-soft` aplica verde estrutural com contraste nos dois modos.'
+    section_variant:
+      type: string
+      enum: [default, city, transparency]
+      default: default
+      title: Variante editorial
+      description: Variante selecionada no bloco editorial do Portal.
+    section_color:
+      type: string
+      enum: [default, red, green, yellow, green-dark]
+      default: default
+      title: Cor editorial
+      description: Cor selecionada no bloco editorial do Portal.
+slots:
+  header:
+    title: Cabeçalho da seção
+    description: Título, antetítulo ou ação da seção.
+  content:
+    title: Conteúdo da seção
+    description: Conteúdo principal da seção.
+assets:
+  css:
+    component:
+      layout-section.css: {}

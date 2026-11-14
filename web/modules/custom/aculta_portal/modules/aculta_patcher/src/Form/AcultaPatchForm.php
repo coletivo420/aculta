@@ -22,9 +22,9 @@ final class AcultaPatchForm extends EntityForm {
     /** @var \Drupal\aculta_patcher\Entity\AcultaPatch $patch */
     $patch = $this->entity;
     $form['notice'] = [
-      '#type' => 'container',
-      '#attributes' => ['data-portal-ui' => 'notice-warning'],
-      'text' => ['#markup' => $this->t('O estado ativo inclui este diff no manifesto do próximo build Composer. Salvar aqui não altera arquivos de código nem ativa o patch no site em execução; exporte a configuração, gere os artefatos e revise o commit antes do deploy.')],
+      '#component' => 'aculta420_v2:status-messages',
+      '#props' => ['type' => 'warning'],
+      '#slots' => ['content' => ['#markup' => $this->t('O estado ativo inclui este diff no manifesto do próximo build Composer. Salvar aqui não altera arquivos de código nem ativa o patch no site em execução; exporte a configuração, gere os artefatos e revise o commit antes do deploy.')]],
     ];
     $form['label'] = [
       '#type' => 'textfield',

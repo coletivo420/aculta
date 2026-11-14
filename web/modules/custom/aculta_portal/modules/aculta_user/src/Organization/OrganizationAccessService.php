@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_user\Organization;
 
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
 
@@ -66,7 +67,7 @@ final class OrganizationAccessService {
    * Confere se a conta pode publicar ou retirar do ar um evento específico.
    */
   public function canPublishEvent(EntityInterface $entity, AccountInterface $account): bool {
-    if ($account->isAnonymous()) {
+    if ($account->isAnonymous() || !$entity instanceof ContentEntityInterface) {
       return FALSE;
     }
 
@@ -98,7 +99,7 @@ final class OrganizationAccessService {
    * Confere se um editor de conteúdo possui escopo autorizado sobre a entidade.
    */
   public function isContentEditorScoped(EntityInterface $entity, AccountInterface $account): bool {
-    if ($account->isAnonymous()) {
+    if ($account->isAnonymous() || !$entity instanceof ContentEntityInterface) {
       return FALSE;
     }
 
@@ -141,7 +142,7 @@ final class OrganizationAccessService {
       $orgField = $entity->get('field_organizacao');
       if (!$orgField->isEmpty()) {
         $targetOrg = $orgField->entity;
-        if ($targetOrg !== NULL) {
+        if ($targetOrg instanceof ContentEntityInterface) {
           if ($targetOrg->hasField('reivindicada') && empty($targetOrg->get('reivindicada')->value)) {
             return TRUE;
           }
@@ -163,15 +164,17 @@ final class OrganizationAccessService {
     // Coorganizadores do evento: concedem acesso de edição (update).
     if ($entity->hasField('field_coorganizadores')) {
       $coOrgsField = $entity->get('field_coorganizadores');
-      foreach ($coOrgsField as $item) {
-        $coOrgEntity = $item->entity;
-        if ($coOrgEntity !== NULL && $coOrgEntity->hasField('titular')) {
+      foreach ($coOrgsField->referencedEntities() as $coOrgEntity) {
+        if (!$coOrgEntity instanceof ContentEntityInterface) {
+          continue;
+        }
+        if ($coOrgEntity->hasField('titular')) {
           $titularId = (int) $coOrgEntity->get('titular')->target_id;
           if ($titularId > 0 && $titularId === $uid) {
             return TRUE;
           }
         }
-        $coOrgId = (string) ($item->target_id ?? $item->value);
+        $coOrgId = (string) $coOrgEntity->id();
         if ($coOrgId !== '' && $this->canActOnBehalf($account, $coOrgId)) {
           return TRUE;
         }

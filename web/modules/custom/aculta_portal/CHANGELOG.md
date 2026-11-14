@@ -1,3 +1,235 @@
+## Não versionado — restringir destino do aviso Mercado Pago
+
+- A configuração do link agora só é exibida para HTTPS nos hosts oficiais
+  `mercadopago.com.br`; Twig renderiza com a função Drupal `link()`.
+
+## Não versionado — Runtime Sync v2 e leitura no painel do Deployer (2026-11-11)
+
+- `scripts/runtime-sync.sh` v2, `scripts/runtime-sync/helper.py`, `scripts/runtime-sync/risk-rules.yml` e `scripts/test-runtime-sync.sh`: estado persistente atômico 0600 em `var/runtime-sync/` (`state.json` e `latest.json`, schema 2), correção do bug em que `HEAD == origin/dev` saía sem reconstruir caches pendentes, classificador cumulativo `R0..R4`/`RX`, CLI com `plan [--refresh]`, `doctor`, `status`, `sync-code [--adopt-baseline]`, `verify`, `structural-plan` e `isolation-plan`.
+- `DeployerStatusReader::readRuntimeSync()` e `DeployerStatusController`: adaptador somente leitura exibe SHAs, situação de cache, risco, pendências, gates e histórico do Runtime Sync v2 no painel `/painel-administrativo/aculta/deployer` sem alterar `var/deployer/status.json` (schema 1) nem introduzir dependências no submódulo standalone `aculta_deployer`.
+
+## Não versionado - catálogo de skills Runtime Sync (2026-11-11)
+
+- Duas skills canônicas para Codex/Claude: sincronização pós-push e migrações estruturais supervisionadas; matriz documental de avaliações RS-01 a RS-12.
+- Limite do gate de leitura de 10 para 24 skills: o catálogo já tinha 18, e passa a 20. Skills com descrição curta e corpo menor que 4 KB, referências sob demanda; limites de entrada e de bytes por skill não mudam.
+- Não houve execução de Composer, Drush, alteração de banco/configuração ou deploy nesta mudança.
+
+## Não versionado — status do carrinho via SDC do tema (2026-11-10)
+
+- O tema ativo apresenta o status do carrinho pelo SDC `status-messages`, sem
+  alterar o fallback neutro do módulo, o render array, o link ou os atributos
+  funcionais consumidos pelo JavaScript de dispensa.
+
+## Não versionado — SDC `layout-section` no adapter editorial (2026-11-10)
+
+- O template de tema `aculta_section` agora compõe o SDC compartilhado
+  `layout-section`; o Portal continua dono dos dados, campos e render array.
+- O contrato estrito do SDC mantém variante e cor editorial e preserva as
+  classes usadas pelo tema.
+
+## Não versionado — resolvedor visual por Domain ID
+
+- Adiciona `DomainSkinResolver` com mapeamento exportável `aculta_portal.visual_skins`, lista estrita de skins UI Skins e skin ACULTA padrão para IDs ausentes/inválidos.
+- `DomainSiteManager` expõe o Domain ID atual; `AppearanceHooks` entrega `aculta_site_key` e `aculta_skin_id`, sem chamar `DomainPurposeManager` para aparência.
+- Preferência de modo continua com `ColorModePreference`; anexos variam por usuário/domínio e dependem da config de skins.
+- UI Skins ainda não foi habilitado no Runtime. Ativação e renderização continuam pendentes.
+
+## Não versionado — bundle Locale e biblioteca UI Patterns (2026-11-10)
+
+- Mantém o arquivo JavaScript dinâmico `locale/translations` fora dos agregados,
+  pois o asset controller não consegue reconstruí-lo a partir do grupo isolado.
+- A biblioteca de componentes autenticada voltou a abrir após rebuild; Firefox
+  confirmou 11 scripts com HTTP 200 e MIME `text/javascript`, sem página de erro.
+- Avisos CSP de scripts/estilos inline seguem em `Report-Only`; o navegador
+  informa que não houve bloqueio. A homologação visual completa segue pendente.
+
+## Não versionado — destinos de login em site_key
+
+- `DomainSiteRequestSubscriber`, PortalHooks, login popup e checkout usam `DomainSiteManagerInterface`/`SiteKey`; remove dependências visuais/URLs desses consumers em `DomainPurposeManager` e troca o service/class subscriber.
+- Login popup, checkout e menu emitem `aculta_destination_site_key`; a sessão grava/aceita apenas `site_key`. Chaves/query `purpose` antigas não são lidas.
+- URLs de MAIN/ACCOUNT/SUPPORT/MAGAZINE usam enum `SiteKey`; guardas de rota, 403/404 e validação de destino permanecem.
+- Testes focais: 3 subscriber (17 assertions), rota/front-path e site manager (20/64); PHPCS e PHPStan subscriber PASS.
+
+## Não versionado — resolução de ownership `site_key`
+
+- Substitui `ContentPurposeResolver`/`content_purpose_resolver` por `ContentSiteKeyResolver`/`content_site_key_resolver`, com métodos `requiredSiteKey` e `canonicalContentSiteKey`.
+- A resolução por `field_domain_source` consome `DomainSiteManagerInterface`; migrações em Portal, Events e Wiki atualizam testes e referências de serviço.
+- O subscriber HTTP e outros consumidores funcionais ainda serão migrados em slices seguintes.
+
+## Não versionado — resolvedor funcional tipado
+
+- `DomainSiteManager` agora implementa resolução Domain, troca/restauração de contexto e URLs canônicas, de ambiente e alias diretamente com `SiteKey`; deixou de delegar no manager baseado em purpose.
+- `ActiveSiteKeysState` usa somente a API tipada. O serviço `DomainPurposeManager` continua preservado durante a migração funcional dos seus consumidores.
+
+## Não versionado — State funcional `site_key`
+
+- Substitui o serviço e a chave de State `active_purposes` por `active_site_keys`; não lê nem mantém fallback da chave removida.
+- A lista é reconstruída pelos dez `SiteKey` tipados em eventos do ciclo de vida de Domain e o getter filtra valores não registrados.
+- O post-update cria/reconstrói a nova chave, mas não foi executado no Runtime; exige autorização para `updatedb`.
+
+## Não versionado — API funcional tipada `site_key` (RN-01 inicial)
+
+- Introduz `SiteKey` e `SiteKeyRegistry`, mantendo como fonte dos Domain IDs e paths os valores já definidos em `DomainSurfaceMap`.
+- Adiciona `DomainSiteManagerInterface` e `DomainSiteManager`, API tipada que delega ao `DomainPurposeManagerInterface` compatível; os consumidores antigos, rotas, URLs e regras permanecem no serviço atual.
+- Unit focais: 7 testes / 84 assertions PASS; Domain/ContentPurposeResolver: 54 testes / 161 assertions PASS. PHPCS, PHPStan, YAML e gate Drupal 12 (1.238 checks) PASS. Sem mudança de Runtime, State, sessão ou configuração.
+
+## Não versionado — RN-02, corte de options de rota para `site_key`
+
+- `DomainRoutePolicy` usa apenas `allowsSharedSite()` e
+  `siteKeyForDonationRoute()`. As opções de rota foram migradas para
+  `_aculta_site_key(s)` e `_aculta_cross_domain_canonical_site_key` em todos os
+  módulos customizados, subscribers e testes. Não há fallback ou wrappers.
+- Options removidas e valores inválidos falham fechados. Regras de
+  compartilhamento, prioridade administrativa e owners `main`/`support`
+  permanecem.
+- A costura de teste passou para `aculta_site_key_test_relaxed`; o gate
+  `NoLegacyRoutePurposeOptionsTest` varre código customizado, rotas, testes,
+  Config Sync e scripts para impedir reintrodução das opções/APIs removidas.
+- Kernel EventDomainBoundary + LinkEntities PASS (17 testes/614 assertions) em
+  SQLite temporário. PHPCS, PHPStan, PHPUnit de rota, gates de configuração e
+  de admin PASS.
+- Após o push, 34 arquivos PHP/YAML de produção foram sincronizados no Runtime;
+  `drush cr` PASS. O route provider validou 2.633 rotas (2.406 com owner,
+  10 canonicals, 6 compartilhadas), sem options antigas/inválidas. Admin
+  Domain 4.456 checks, cross-domain 18 e pagamento 44 PASS com URI de
+  desenvolvimento. Sem importação de configuração ou `updatedb`.
+
+## 0.5.0-dev.1 — estado neutro de purposes ativos e hooks de ciclo de vida (F3)
+
+- Cria o serviço `ActivePurposesState` (`aculta_portal.active_purposes_state`) que expõe o estado neutro `aculta_portal.active_purposes` via Core State API.
+- Mantém o estado atualizado com hooks OOP em `DomainLifecycleHooks` (`domain_insert`, `domain_update`, `domain_delete`).
+- Popula o estado em sites existentes via `aculta_portal_post_update_active_purposes_state`.
+- Teste de Kernel `ActivePurposesStateKernelTest` valida ciclo de vida, persistência e pós-atualização.
+
+## Não versionado — chave neutra de purpose no HTML (ADR-046 Fase 3)
+
+- `AppearanceHooks::preprocessHtml` expõe `aculta_purpose`, a chave neutra do
+  purpose atual, e `page_attachments` declara o contexto de cache `domain`.
+- O tema ACULTA420 V2 aplica `data-purpose` no `<html>` após validar o formato.
+  Verificado no Runtime: `main`, `account`, `eventos` e `wiki`.
+- O ajuste de tokens de destaque por purpose continua dependente de
+  `domain_presentation.accent` (D1).
+
+## Não versionado — suporte HTMX aos popups e à busca (ADR-050 F1b parcial)
+
+- `LoginPopupForm` configura `Htmx` apenas em requisições `HX-Request`, envia o
+  formulário à URL explícita da rota do popup, seleciona o wrapper e retorna ao
+  alvo do diálogo. O sucesso usa `HX-Redirect` com o destino local validado; o
+  fluxo sem HTMX mantém o redirect nativo e a resposta Drupal AJAX legada para
+  a V1. A URL explícita corrige o `data-hx-post=""`, que enviava o POST à
+  página atual em vez de `/entrar/janela` quando o formulário era carregado em
+  outra rota.
+- `RegisterPopupForm` segue o mesmo contrato, com `hx-post` explícito para
+  `/criar-conta/janela`: fragmento e `HX-Redirect` em `HX-Request`, com `#ajax`
+  preservado só no caminho sem HTMX.
+- `SearchPopupForm` adiciona `hx-get` à prévia em requisições HTMX, com debounce
+  de 300 ms e `hx-sync="this:replace"`; sem HTMX continua anexando
+  `aculta_portal/search-preview`, cujo Fetch permanece exclusivo da V1.
+  `SearchUtility` mantém o gatilho `use-ajax` como fallback da V1; o tema V2 o
+  substitui por HTMX antes da interação.
+- A validação existente, flood control, Turnstile e finalização de sessão do
+  Core permanecem no Portal. O contrato de apresentação continua neutro; o tema
+  decide como abrir o diálogo.
+- PHP lint PASS. No Runtime de desenvolvimento: login real da conta de teste
+  respondeu `HX-Redirect` e criou sessão; POST inválido do cadastro devolveu o
+  fragmento com erro e não criou conta; a busca retornou `data-hx-*` só com
+  `HX-Request` e manteve o script legado sem o cabeçalho. A suíte de navegador
+  `tests/browser/aculta-htmx-f1/` passou 43/43 checks, incluindo login real,
+  gavetas autenticadas de mensagens/avisos e teclado. O consumer V2 do cadastro
+  popup (checkout de doação) é F5 e aguarda autorização.
+
+## Não versionado — raiz do Studio e entrada de Minha Conta
+
+- ADR-048 passa a valer no roteamento: a raiz de `account` serve o dashboard
+  `aculta_studio.dashboard`; `/conta` apresenta Dados cadastrais privados.
+- O path interno da raiz não pode ser requisitado diretamente; a guarda da raiz
+  continua redirecionando visitantes anônimos ao login.
+
+## Não versionado — contrato de sites ativos para a barra V2
+
+- `DomainPresentation` agora inclui uma lista neutra dos Domains ativos com
+  purpose estável, título, URL resolvida por ambiente e indicador do site atual.
+  `PortalHooks` também expõe a lista como `aculta_domain_sites` para o tema.
+- Teste Kernel ampliado para verificar a lista completa em cada purpose,
+  URLs de cada Domain, ordem estável e identificação do atual: 3 testes/429
+  assertions PASS em `aculta_simpletest`. PHP lint e PHPCS Drupal/DrupalPractice
+  PASS. O gate `validate-aculta-portal-drupal11.php` falhou por divergências
+  pré-existentes entre versões em 9 entradas do índice e README raiz; sem
+  executar seu modo `--write` fora do escopo.
+
+## 0.4.1-dev.76 — completa schema da política de upload
+
+- Adicionado ao módulo Portal o schema de `aculta_portal.user_upload`, com
+  extensões, limites de tamanho e políticas por consumidor. A configuração
+  existente deixa de depender de um schema fornecido somente pelo módulo de
+  teste, permitindo instalar e validar o Portal no Kernel real.
+- O teste de upload usa `aculta_file_uploader.consumer_policy` como o builder
+  exige e declara File Uploader/Filter nas dependências do harness; os limites
+  esperados respeitam o teto central de 10 MB.
+- Kernel de integração do Index e Kernel de upload: 8 testes / 162 assertions
+  PASS; 216 depreciações de Core/contrib. PHPCS focal, PHP lint e diff check
+  registrados após a rodada final.
+
+## 0.4.1-dev.75 — compatibilidade Drupal 12 no Portal
+
+- Atualizadas as propriedades de serviços nas classes Drupal serializáveis para
+  visibilidade `protected`, corrigindo os avisos do `DependencySerializationTrait`.
+- Corrigidos usos de APIs e tipos do Core: finalização de login, cache em memória,
+  operações de entidade, filas, formulários, datas, acesso e geração de URLs.
+- Corrigidos erros de tipos/imports em H5P, Magazine, imagem, calendário e outros
+  módulos; mantidos os contratos de domínio e as regras de acesso existentes.
+- Validação registrada no handoff da sessão. Não foram executados testes.
+
+## 0.4.1-dev.74 — autoria ACULTA da estrutura de cursos
+
+- `aculta_lms` fornece páginas e Form API para estruturar aulas e atividades
+  com as entidades próprias existentes; `aculta_studio` liga os cursos geridos
+  à estrutura no Ganjalab Educador. O acesso é revalidado no curso e nos
+  relacionamentos de aula/atividade; respostas existentes impedem edição do
+  enunciado/gabarito in-place.
+- Suíte Unit completa LMS: 247 testes / 880 assertions PASS; Studio: 67 testes /
+  679 assertions PASS. PHP lint, PHPCS Drupal/DrupalPractice focal e
+  `git diff --check` PASS. Runtime sincronizado em `49cc9757a4`, com cache rebuild, rotas novas registradas e `config:status` limpo. O import de configuração foi precedido por snapshot. Os post-updates removidos do Group foram reconciliados após auditoria de dependências, permissões, cache metadata e schema revisionável.
+
+## 0.4.1-dev.73 — completa revisão docente de respostas LMS
+
+- `aculta_lms` conecta as respostas enviadas ao painel de cada turma, limita a
+  listagem aos estudantes ativos daquela turma e oferece revisão segura com
+  nota, feedback persistido por Comment API e acesso controlado a anexos.
+- Kernel do fluxo docente 1/34; suíte Kernel LMS 33/996 e Unit LMS 234/828
+  PASS. PHPCS Drupal, lint e `git diff --check` PASS. Runtime está limpo antes
+  do push; sincronizar o código após publicar. Inspeção visual continua
+  pendente.
+
+## 0.4.1-dev.72 — recupera migração de autores de revisão do Group
+
+- `update_11010` recupera a instalação parcial de `revision_uid`, cria a coluna
+  ausente no `groups_revision` sem assumir coluna de bundle, copia e verifica os
+  autores antes de remover `revision_user` e seus metadados legados.
+- Kernel `GroupRevisionAuthorUpdateKernelTest`: 1 teste / 14 assertions PASS,
+  cobrindo migração, recuperação parcial e idempotência. Runtime pendente.
+
+## 0.4.1-dev.71 — entidades e campos sincronizados (2026-11-03)
+
+- Adicionados updates idempotentes nos módulos owners para instalar os tipos de entidade ausentes e reconciliar os schemas indicados pelo relatório Drupal.
+- A troca de `group.revision_user` para `revision_uid` copia os autores de revisão antes de remover a definição antiga; o update valida que todos os valores foram preservados.
+- Kernel/Runtime necessários após publicação. Não foi executado `updatedb` neste checkout: há post-updates pendentes e configurações divergentes; ver handoff.
+
+## 0.4.1-dev.70 — compatibilidade integrada com contrib atualizado (2026-11-03)
+
+- `DomainPurposeManager::runInPurpose()` agora negocia/restaura o Domain pelo contexto público (`getContext()`), compatível com a API Domain instalada. Antes, a chamada removida `setActiveDomain()` quebrava a compilação do serviço no Kernel.
+- Fixtures dos Kernels Sitemap e Agenda removem módulos LMS contrib obsoletos e declaram as dependências/configurações atuais; testes diretos do gerador de sitemap recebem `surface_config_reader`.
+- Compatibilidade ACULTA revisada para Simple Sitemap 5, Pathauto 8.x-1.x-dev, Simple OAuth 6.1.x-dev e Webform 6.x-dev. Webform ainda apresenta depreciações upstream para Drupal 12, registradas no changelog do Sitemap.
+- Validação em PHP 8.5.12: DomainPurposeManager Kernel 8/47, Sitemap 4/15, Agenda 4/160 e Webform score ownership 1/11 PASS. Depreciações são de Core/contrib; integração no Core 12 não foi executada.
+
+## 0.4.1-dev.69 — preparar compatibilidade Drupal 12 (2026-11-03)
+
+- Os manifests customizados declaram `^11 || ^12`; o gate Portal acompanha esse
+  requisito. Corrigidos os usos removidos no Drupal 12 para sobrescrita de
+  arquivos e removidos os usos de Reflection obsoletos em PHP 8.5 nos testes.
+- Upgrade Status foi instalado e ativado. Rector foi executado em modo de
+  análise sobre o código próprio; a execução final ainda está sendo concluída.
+
 ## 0.4.1-dev.68 — remove roteamento LMS duplicado
 
 - Remove a cópia inativa de slugs/conversores no Portal. A implementação

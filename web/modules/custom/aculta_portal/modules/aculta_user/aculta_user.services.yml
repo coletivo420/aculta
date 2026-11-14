@@ -14,6 +14,15 @@ services:
     arguments: ['@config.factory', '@lock.persistent', '@entity_type.manager', '@file.usage']
     tags:
       - { name: aculta_portal.helper }
+  aculta_user.connection_query_service:
+    class: Drupal\aculta_user\Social\ConnectionQueryService
+    arguments:
+      - '@entity_type.manager'
+      - '@current_user'
+      - '@database'
+      - '@aculta_user.friendship_manager'
+      - '@?private_message.ban_manager'
+      - '@?aculta_user.author_identity_resolver'
   aculta_user.friendship_manager:
     class: Drupal\aculta_user\Social\FriendshipManager
     arguments: ['@entity_type.manager', '@current_user', '@lock.persistent', '@flood', '@event_dispatcher']
@@ -27,7 +36,7 @@ services:
     class: Drupal\aculta_user\PublicProfilePolicy
   aculta_user.public_profile_link:
     class: Drupal\aculta_user\PublicProfileLink
-    arguments: ['@entity_type.manager', '@aculta_portal.domain_purpose']
+    arguments: ['@entity_type.manager', '@aculta_portal.domain_site']
   aculta_user.author_identity_resolver:
     class: Drupal\aculta_user\Identity\AuthorIdentityResolver
     arguments: ['@entity_type.manager', '@aculta_user.public_profile_link', '@aculta_image.render', '@aculta_user.public_profile_policy', '@aculta_user.social_networks', '@date.formatter', '@aculta_user.avatar_resolver']
@@ -58,6 +67,11 @@ services:
   aculta_user.avatar_resolver:
     class: Drupal\aculta_user\Avatar\AvatarResolver
     arguments: ['@aculta_image.render', '@aculta_user.avatar_pool']
+  aculta_user.twig_avatar_extension:
+    class: Drupal\aculta_user\Twig\AvatarTwigExtension
+    arguments: ['@aculta_user.avatar_resolver']
+    tags:
+      - { name: twig.extension }
   aculta_user.social_auth_fields_subscriber:
     class: Drupal\aculta_user\EventSubscriber\SocialAuthFieldsSubscriber
     arguments: ['@entity_type.manager']
@@ -87,7 +101,7 @@ services:
     arguments: ['@entity_type.manager']
   aculta_user.report_queue:
     class: Drupal\aculta_user\Moderation\ReportQueue
-    arguments: ['@entity_type.manager', '@aculta_portal.domain_purpose']
+    arguments: ['@entity_type.manager', '@aculta_portal.domain_site']
   aculta_user.associado_marker:
     class: Drupal\aculta_user\Associado\AssociadoMarker
     arguments: ['@entity_type.manager', '@datetime.time']
@@ -121,3 +135,17 @@ services:
   aculta_user.organization_access_service:
     class: Drupal\aculta_user\Organization\OrganizationAccessService
     arguments: ['@aculta_user.organization_membership_manager']
+
+  aculta_user.portal_menu_presentation:
+    class: Drupal\aculta_user\Identity\AccountMenuPresentationBuilder
+    arguments: ['@entity_type.manager', '@aculta_user.public_profile_policy', '@aculta_user.avatar_resolver']
+
+  # Sistema nativo de coautoria de Node do aculta_user.
+  aculta_user.coauthor_manager:
+    class: Drupal\aculta_user\CoAuthor\CoAuthorManager
+
+  Drupal\aculta_user\CoAuthor\CoAuthorManagerInterface: '@aculta_user.coauthor_manager'
+
+  aculta_user.coauthor_audit:
+    class: Drupal\aculta_user\CoAuthor\CoAuthorAuditService
+    arguments: ['@database', '@datetime.time']

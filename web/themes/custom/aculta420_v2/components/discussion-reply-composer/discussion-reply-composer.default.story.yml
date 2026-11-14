@@ -1,0 +1,4 @@
+name: Padrão (Editando)
+description: Botão abre o popup padrão com o formulário real de resposta do Drupal Form API e editor CKEditor 5 integrado.
+component: aculta420_v2:discussion-reply-composer
+class: Drupal\aculta420_v2\Story\DiscussionReplyComposerStory

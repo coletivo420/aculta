@@ -1,0 +1,227 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Drupal\aculta_lms\Resources\ContentIndex;
+
+use Drupal\aculta_portal\ContentIndex\ContentIndexAccessContextProviderInterface;
+use Drupal\aculta_portal\ContentIndex\ContentIndexAccessPolicyProviderInterface;
+use Drupal\aculta_portal\ContentIndex\ContentIndexProjection;
+use Drupal\aculta_portal\ContentIndex\ContentIndexIndexabilityProviderInterface;
+use Drupal\aculta_portal\ContentIndex\ContentIndexOwnerResolver;
+use Drupal\aculta_portal\ContentIndex\ContentIndexProviderInterface;
+use Drupal\aculta_portal\ContentIndex\ContentIndexRelation;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
+use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Access\AccessResultInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\group\Plugin\Group\Relation\GroupRelationTypeManagerInterface;
+use Drupal\group\Entity\GroupInterface;
+use Drupal\media\MediaInterface;
+use Drupal\media_gallery\MediaGalleryInterface;
+use Drupal\node\NodeInterface;
+
+/**
+ * Projects LMS courses and their explicitly configured editorial resources.
+ *
+ * Progress, lessons, membership, answers and certificates remain owned by LMS.
+ */
+final class LmsCourseContentIndexProvider implements ContentIndexProviderInterface, ContentIndexIndexabilityProviderInterface, ContentIndexAccessContextProviderInterface, ContentIndexAccessPolicyProviderInterface {
+
+  public function __construct(
+    private readonly DomainSiteManager $siteManager,
+    private readonly GroupRelationTypeManagerInterface $relationTypeManager,
+  ) {}
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getProviderId(): string {
+    return 'lms_course';
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getProjectionVersion(): int {
+    // Version 4/3 adds the explicit course_video relation; the document edge
+    // remains optional depending on the Document Viewer Group plugin.
+    return $this->relationTypeManager->hasDefinition('aculta_document_viewer:course_document')
+      || $this->relationTypeManager->hasDefinition('aculta_document_viewer_group:course_document') ? 4 : 3;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getSupportedEntityTypes(): array {
+    return ['group' => ['lms_course']];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getAccessSiteKey(ContentEntityInterface $entity): ?string {
+    return $entity instanceof GroupInterface && $entity->bundle() === 'lms_course'
+      ? 'courses'
+      : NULL;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function isIndexable(ContentEntityInterface $entity): bool {
+    return $entity instanceof GroupInterface
+      && $entity->getEntityTypeId() === 'group'
+      && $entity->bundle() === 'lms_course'
+      && $this->siteManager->getDomain(SiteKey::Courses) !== NULL;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function checkAccess(ContentEntityInterface $entity, AccountInterface $account): AccessResultInterface {
+    if (!$entity instanceof GroupInterface || $entity->bundle() !== 'lms_course') {
+      return AccessResult::forbidden();
+    }
+
+    $takeAccess = AccessResult::allowedIf($entity->hasPermission('take course', $account))
+      ->cachePerUser()
+      ->addCacheContexts(['user.permissions', 'user.group_permissions']);
+    $canManage = $entity->hasPermission('administer members', $account)
+      || $entity->hasPermission('grade students', $account);
+    return AccessResult::allowedIf($takeAccess->isAllowed() || $canManage)
+      ->addCacheableDependency($takeAccess)
+      ->addCacheableDependency($entity)
+      ->addCacheContexts(['user', 'user.permissions', 'user.group_permissions']);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function project(ContentEntityInterface $entity): ?ContentIndexProjection {
+    if (!$entity instanceof GroupInterface
+      || $entity->getEntityTypeId() !== 'group'
+      || $entity->bundle() !== 'lms_course') {
+      return NULL;
+    }
+    $domain = $this->siteManager->getDomain(SiteKey::Courses);
+    if ($domain === NULL) {
+      return NULL;
+    }
+
+    $relations = [];
+    $this->appendNodeRelations($entity, 'field_lms_readings', $relations);
+    $this->appendGalleryRelations($entity, $relations);
+    $this->appendDocumentRelations($entity, $relations);
+    $this->appendVideoRelations($entity, $relations);
+
+    return new ContentIndexProjection(
+      'group',
+      (string) $entity->id(),
+      $entity->language()->getId(),
+      'lms_course',
+      (string) $entity->uuid(),
+      (string) $entity->label(),
+      $domain->id(),
+      $entity->isPublished(),
+      max(0, (int) $entity->getCreatedTime()),
+      max(0, (int) $entity->getChangedTime()),
+      NULL,
+      $relations,
+      ownerUid: ContentIndexOwnerResolver::resolve($entity),
+    );
+  }
+
+  /**
+   * Adds only explicitly supported editorial node references.
+   *
+   * @param \Drupal\group\Entity\GroupInterface $course
+   *   Course containing the field.
+   * @param string $fieldName
+   *   Reference field that contains editorial nodes.
+   * @param list<\Drupal\aculta_portal\ContentIndex\ContentIndexRelation> $relations
+   *   Relations to append.
+   */
+  private function appendNodeRelations(GroupInterface $course, string $fieldName, array &$relations): void {
+    if (!$course->hasField($fieldName) || $course->get($fieldName)->isEmpty()) {
+      return;
+    }
+    foreach ($course->get($fieldName)->referencedEntities() as $target) {
+      if (!$target instanceof NodeInterface || !in_array($target->bundle(), ['revista', 'wiki_entry'], TRUE)) {
+        continue;
+      }
+      $relations[] = new ContentIndexRelation('course_reading', 'node', (string) $target->id());
+    }
+  }
+
+  /**
+   * Adds references to galleries selected for course resources.
+   *
+   * @param \Drupal\group\Entity\GroupInterface $course
+   *   Course containing the gallery field.
+   * @param list<\Drupal\aculta_portal\ContentIndex\ContentIndexRelation> $relations
+   *   Relations to append.
+   */
+  private function appendGalleryRelations(GroupInterface $course, array &$relations): void {
+    $fieldName = 'field_lms_galleries';
+    if (!$course->hasField($fieldName) || $course->get($fieldName)->isEmpty()) {
+      return;
+    }
+    foreach ($course->get($fieldName)->referencedEntities() as $target) {
+      if (!$target instanceof MediaGalleryInterface || $target->bundle() !== 'media_gallery') {
+        continue;
+      }
+      $relations[] = new ContentIndexRelation('course_gallery', 'media_gallery', (string) $target->id());
+    }
+  }
+
+  /**
+   * Adds explicitly selected remote videos to the course projection.
+   *
+   * Only Media of the shared Portal bundle enter the catalog. The video Media
+   * and its Entity Access remain owned by the Portal; no URL, body or
+   * thumbnail is copied.
+   *
+   * @param \Drupal\group\Entity\GroupInterface $course
+   *   Course containing the video reference field.
+   * @param list<\Drupal\aculta_portal\ContentIndex\ContentIndexRelation> $relations
+   *   Relations to append.
+   */
+  private function appendVideoRelations(GroupInterface $course, array &$relations): void {
+    $fieldName = 'field_lms_videos';
+    if (!$course->hasField($fieldName) || $course->get($fieldName)->isEmpty()) {
+      return;
+    }
+    foreach ($course->get($fieldName)->referencedEntities() as $target) {
+      if ($target instanceof MediaInterface && $target->bundle() === 'remote_video') {
+        $relations[] = new ContentIndexRelation('course_video', 'media', (string) $target->id());
+      }
+    }
+  }
+
+  /**
+   * Adds access-controlled PDF documents attached through the Group plugin.
+   *
+   * @param \Drupal\group\Entity\GroupInterface $course
+   *   Course containing the Group relation.
+   * @param list<\Drupal\aculta_portal\ContentIndex\ContentIndexRelation> $relations
+   *   Relations to append.
+   */
+  private function appendDocumentRelations(GroupInterface $course, array &$relations): void {
+    $pluginId = $this->relationTypeManager->hasDefinition('aculta_document_viewer:course_document')
+      ? 'aculta_document_viewer:course_document'
+      : 'aculta_document_viewer_group:course_document';
+    if (!$this->relationTypeManager->hasDefinition($pluginId)) {
+      return;
+    }
+    foreach ($course->getRelatedEntities($pluginId) as $target) {
+      if (!$target instanceof MediaInterface || $target->bundle() !== 'course_document') {
+        continue;
+      }
+      $relations[] = new ContentIndexRelation('course_document', 'media', (string) $target->id());
+    }
+  }
+
+}

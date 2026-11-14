@@ -105,18 +105,18 @@ Foi criado um comprador de teste por `POST /users/test_user` sem autorização d
 
 Só a conta de `secrets/mercadolivre_test_user` está autorizada para os testes.
 
-Credenciais do comprador de teste da aplicação (login e senha) estão no arquivo local `secrets/mercadolivre_test_user`, ignorado pelo Git (`/secrets/`). O módulo nunca lê esse arquivo; somente o helper manual `tests/browser/aculta-mercadopago/buyer-login.py` o lê em memória durante o login autorizado. Valores não são impressos nem versionados.
+Credenciais do comprador de teste da aplicação (login e senha) estão no arquivo local `secrets/mercadolivre_test_user`, ignorado pelo Git (`/secrets/`). O módulo nunca lê esse arquivo; somente o helper manual `tests/browser/shop/aculta-mercadopago/buyer-login.py` o lê em memória durante o login autorizado. Valores não são impressos nem versionados.
 
 Como usar: abrir `https://www.mercadopago.com.br/` em Firefox ESR visível, clicar em “Iniciar sessão”, inserir o usuário de teste e enviar; na página seguinte inserir a senha e, somente se solicitado, o código de verificação. O helper acima segue essa ordem e não cria pagamentos.
 
 ## Pendências
 
-- Runtime de teste em `test`, gateway `mercado_pago` ativo e par de credenciais sandbox disponível no override do ambiente; os campos armazenados no config ativo e no Sync estão vazios.
+- Runtime de desenvolvimento em `test`, gateway `mercado_pago` ativo e par de credenciais sandbox disponível no override do ambiente; os campos armazenados no config ativo e no Sync estão vazios.
 - Validar Checkout Pro de ponta a ponta com o comprador de teste e os cartões/status acima. Em 2026-10-27 Firefox carregou produto, carrinho, cadastro AJAX e etapa de endereço/frete sem CAPTCHA; o smoke para antes de enviar endereço ou pedido. Separadamente, o client factory criou uma preferência sandbox sintética e o `init_point` carregou “Escolha como pagar” (HTTP 200, sem CAPTCHA); “Continuar” abriu a identificação do comprador (HTTP 200). O helper de login tentou a autenticação a partir dessa etapa e terminou `login_incomplete`; a tentativa anterior pela página principal recebeu HTTP 403/desafio manual. Não houve pedido Commerce, sessão confirmada, pagamento ou estorno.
 - Homologar estornos parcial e total no sandbox; a implementação usa lock e `x-idempotency-key`, mas ainda não há evidência de chamada sandbox nesta versão.
 - Configurar as notificações da aplicação no painel do Mercado Pago (URL de teste e URL de produção), salvar e
   copiar a assinatura secreta para `MERCADOPAGO_WEBHOOK_SECRET`.
-- Provisionar as credenciais de produção pelo ACULTA Deployer (não pelo painel do Runtime de teste).
+- Provisionar as credenciais de produção pelo ACULTA Deployer (não pelo painel do Runtime de desenvolvimento).
 - Endereço de notificação do ambiente de teste: `https://aculta.toca.net.br/integracoes/pagamentos/mercado_pago/notificacao`
   (a rota de `commerce_payment.notify` é reescrita pelo Portal). Cadastrar esse endereço no painel do Mercado Pago
   para os tópicos `payment`, `subscription_preapproval`, `subscription_preapproval_plan` e `subscription_authorized_payment`.

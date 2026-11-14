@@ -8,7 +8,7 @@ use Drupal\aculta_forum\Form\ForumCommentMoveForm;
 use Drupal\aculta_forum\Event\ForumCommentSubtreeMovedEvent;
 use Drupal\aculta_forum\Service\ForumCommentMover;
 use Drupal\aculta_forum\Service\ForumDiscussionWriteGuard;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\comment\CommentInterface;
 use Drupal\comment\CommentingStatus;
 use Drupal\comment\Entity\Comment;
@@ -72,6 +72,7 @@ final class ForumCommentMoverKernelTest extends KernelTestBase {
     'search_api',
     'search_api_test',
     'options',
+    'aculta_forum_test_routes',
     'aculta_forum_comment_move_test',
   ];
 
@@ -193,7 +194,7 @@ final class ForumCommentMoverKernelTest extends KernelTestBase {
     $this->account->method('isAuthenticated')->willReturn(TRUE);
 
     $manager = $this->container->get('entity_type.manager');
-    $purpose = new DomainPurposeManager(
+    $purpose = new DomainSiteManager(
       $manager,
       $this->createMock(DomainNegotiatorInterface::class),
       $this->createMock(ConfigFactoryInterface::class),

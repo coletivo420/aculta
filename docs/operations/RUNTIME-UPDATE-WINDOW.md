@@ -1,5 +1,10 @@
 # Janela de updates do Runtime — ensaio de snapshot e restauração
 
+> **Plano vigente (2026-11-12):** a janela para zerar o drift de configuração
+> e fechar o delta R3 está em
+> [RUNTIME-WINDOW-PLAN-2026-11-12.md](RUNTIME-WINDOW-PLAN-2026-11-12.md).
+> Este documento permanece como histórico do ensaio de 2026-10-26.
+
 Data: 2026-10-26. Autorização do responsável para copiar o `aculta_runtime` a um banco
 descartável: **18:32**. Janela operacional: até 20h. Este documento cobre o ensaio de
 snapshot/restauração; **não é a janela** e nada foi executado no Runtime.
@@ -170,7 +175,7 @@ Se o passo 1 ou 2 falhar, pare antes do passo 3. O contrib continua instalado e 
 - Não removido: `/mnt/disco1/tmp/aculta-token-cipher` (18 alterações pendentes; regra de parar).
 - Preservados: `backup/checkout-antes-pr-8499180a6` (bundle verificado em `/home/piradopirata/worktrees/backup-bundles/checkout-antes-pr-8499180a6.bundle`; a branch fica até o fim da janela de updates); stashes de Fórum, Messenger e mailer, com patch em `/home/piradopirata/worktrees/backup-stashes-20261026/`; `stash@{0}` da fase B, só sai depois que o Local 2 confirmar a recuperação.
 - Não tocados: branches e worktrees de agentes (`agent/*`), do Local 2 (`feat/aculta-secrets-claro`) e do Local 3 (`docs/aculta-mp-extracao-b0`, `docs/aculta-runtime-snapshot-ensaio`, `feat/aculta-messenger-update-ensaio`, `feat/aculta-user-update-ensaio`).
-- Classificação dos 101 commits do backup: ver `ACULTA-CONTINUOUS-EXECUTION.md`.
+- Classificação dos 101 commits do backup: ver `docs/history/operations/ACULTA-CONTINUOUS-EXECUTION.md`.
 ## Retomada 2 — 2026-10-26 19:09 (bloqueio de credencial)
 
 O responsável informou que o banco descartável e o usuário de restauração **já existem**;
@@ -327,7 +332,7 @@ Código: PR `6e3d93d8b` + `feat/aculta-user-10013-contagem` (`fc2abf903`) + `fea
 - **Cutover:** métodos migrados 1 (`Envio`, `aculta_flat_rate`); não mapeado mantido: `aculta_melhorenvio` (ver abaixo). Remessas legadas apagadas 1; pedido ajustado 1, **salvo sem erro de transação**; campo → `aculta_shipment`.
 - **Pós-checagens:** pedidos por tipo idênticos (2 e 6); `commerce_order__shipments` 0; `commerce_shipment` 0; token sandbox do Melhor Envio em `encrypted_v1`; índice único de CPF presente; índice de apelidos com 15 linhas.
 - **Desinstalação do `commerce_shipping`: BLOQUEADA** por `blockersForUninstall()`: `método sem mapeamento: 2`. O método 2 é "Melhor Envio", plugin `aculta_melhorenvio`, ativo. O mapa de migração não cobre esse plugin. **Achado a corrigir em revisão:** mapear `aculta_melhorenvio` para `aculta_melhorenvio` na migração. Não corrigido nesta execução.
-- **Checkout no Firefox até o passo de envio:** **DEFERRED**. Servir a cópia exige apontar o docroot do servidor de teste, o que toca o checkout servido.
+- **Checkout no Firefox até o passo de envio:** **DEFERRED**. Servir a cópia exige apontar o docroot do servidor de desenvolvimento, o que toca o checkout servido.
 - **Tempos:** `updatedb` total 55 s. O log não traz horário individual por etapa.
 - **Rollback:** dump `31d5350b…` em `/home/piradopirata/worktrees/ensaio-cutover-private/`, reimportável em 16 s em `aculta_runtime_copia`.
 
@@ -383,7 +388,7 @@ entre 19:37:01 e 19:38:43, posterior ao registro de 19:30, e não era possível 
   do `aculta_install_b2` não foi localizada fora de `secrets/`: nenhum `settings.php` nas
   worktrees referencia esse banco. Não foi lido `secrets/`.
 - `config/sync` presente (1304 arquivos, `system.site.yml` incluído). `config:status`,
-  `validate-aculta-portal-drupal11.php` e as contagens pós-instalação não se aplicam: não
+  `validate-aculta-portal-drupal12.php` e as contagens pós-instalação não se aplicam: não
   houve instalação.
 - Contagens conferidas após a tentativa: `aculta_runtime` = 588; `aculta_runtime_copia` = 598.
   Sem alteração.

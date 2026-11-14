@@ -1,0 +1,13 @@
+name: Micropágina clássica
+description: Página de links com conteúdo renderizado pelo Portal.
+component: aculta420_v2:social-links-page
+props:
+  title: Cultura e cuidado
+  description: Canais e projetos da comunidade.
+  has_links: true
+  theme_preset: classic
+slots:
+  owner_identity:
+    '#markup': '<p>Identidade pública autorizada</p>'
+  links:
+    '#markup': '<ul data-portal-ui="social-links-list"><li><a data-portal-ui="social-links-channel" href="/">Página inicial da ACULTA</a></li></ul>'

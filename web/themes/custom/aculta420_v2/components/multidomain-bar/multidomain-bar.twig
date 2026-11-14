@@ -1,0 +1,73 @@
+<div class="aculta-institution-bar-placeholder" aria-hidden="true"></div>
+<div{{ attributes.addClass('aculta-institution-bar', is_account_domain ? 'aculta-institution-bar--account') }} role="region" aria-label="{{ 'Barra institucional'|t }}">
+  <div class="aculta-institution-bar__inner">
+    <p class="aculta-institution-bar__brand">
+      <a class="aculta-institution-bar__home" href="{{ brand_home_url }}" rel="home">
+        <img class="aculta-institution-bar__logo"
+          src="{{ logo_base_url }}/aculta420-horizontal-white-78x26.webp"
+          srcset="{{ logo_base_url }}/aculta420-horizontal-white-78x26.webp 1x, {{ logo_base_url }}/aculta420-horizontal-white-156x52.webp 2x"
+          width="78" height="26" alt="{{ logo_alt }}" decoding="async">
+      </a>
+    </p>
+    {% if show_utility_bar %}
+    <div class="aculta-utility">
+      {{ search }}
+      {% if cart_url %}
+        {{ include('aculta420_v2:cart-offcanvas', {
+          count: cart_count,
+          empty: cart_empty,
+          url: cart_url,
+          total: cart_total,
+          sites: cart_sites,
+          checkout_url: cart_checkout_url,
+          banner: 'Compre na loja e apoie a luta antiproibicionista!'|t
+        }, with_context = false) }}
+      {% endif %}
+      {% if messages_url %}
+        {{ include('aculta420_v2:messenger-trigger', {
+          href: messages_url,
+          all_href: messages_all_url,
+          count: messages_count
+        }, with_context = false) }}
+      {% endif %}
+      {% if alerts_url %}
+        {{ include('aculta420_v2:alerts-trigger', {
+          href: alerts_url,
+          all_href: alerts_all_url,
+          count: alerts_count,
+          count_kind: alerts_count_kind
+        }, with_context = false) }}
+      {% endif %}
+      {{ portal_menu }}
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+<template data-aculta-login-dialog-template>
+  {{ include('aculta420_v2:auth-dialog', {
+    id: 'aculta-login-dialog',
+    title: 'Entrar na ACULTA'|t,
+    subtitle: 'Acesse sua conta e continue de onde parou.'|t,
+    header_variant: 'neutral',
+    show_accent_stripes: true,
+    close_label: 'Fechar janela de acesso'|t,
+    google_auth_url: null,
+    register_url: null,
+  }, with_context = false) }}
+</template>
+
+<template data-aculta-search-dialog-template>
+  <dialog class="aculta-search-dialog" aria-labelledby="aculta-search-dialog-title" data-aculta-search-dialog>
+    <div class="aculta-search-dialog__surface">
+      <header class="aculta-login-dialog__header">
+        <h2 id="aculta-search-dialog-title">{{ 'Buscar no site'|t }}</h2>
+        <button type="button" class="aculta-login-dialog__close" data-aculta-search-close aria-label="{{ 'Fechar busca'|t }}">
+          {{ include('aculta420_v2:icon', { name: 'x', variant: 'duotone', size: 'md' }, with_context = false) }}
+        </button>
+      </header>
+      <div class="aculta-login-dialog__content" id="aculta-search-content" data-aculta-search-content aria-live="polite" aria-busy="false"></div>
+    </div>
+  </dialog>
+</template>
+

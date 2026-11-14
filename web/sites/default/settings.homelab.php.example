@@ -7,6 +7,9 @@
  * Drupal runtime settings only; VirtualHost configuration remains external.
  * Production remains MariaDB and must use its own external settings/credentials.
  */
+// Preserve Drupal 11 form behavior while testing the Drupal 12 default change.
+$settings['enable_html5_validation'] = FALSE;
+
 $aculta_environment = getenv('ACULTA_ENV') ?: 'homelab';
 if ($aculta_environment !== 'homelab') {
   return;

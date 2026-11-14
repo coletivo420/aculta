@@ -1,0 +1,16 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Cabeçalho de seção do Studio
+description: Apresenta o título e as ações da seção ativa do Studio.
+status: stable
+group: Studio
+props:
+  type: object
+  additionalProperties: false
+slots:
+  content:
+    title: Cabeçalho
+    description: Render array original com título e ações autorizadas da seção.
+assets:
+  css:
+    component:
+      studio-section-header.css: {}

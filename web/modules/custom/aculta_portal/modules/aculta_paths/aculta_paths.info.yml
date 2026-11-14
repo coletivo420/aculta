@@ -2,8 +2,8 @@ name: 'ACULTA Caminhos (modo, slug e DNS por superfície)'
 type: module
 description: 'Interface administrativa para ativar, desativar, escolher modo (subdomínio ou diretório) e slug de cada superfície do aculta_portal. Submódulo opt-in; a resolução fica no núcleo. Ver README.md.'
 package: 'ACULTA Portal'
-core_version_requirement: ^11.3
-version: '0.1.0-dev.22'
+core_version_requirement: ^11 || ^12
+version: '0.1.0-dev.23'
 dependencies:
   - aculta_portal:aculta_portal
   - domain:domain

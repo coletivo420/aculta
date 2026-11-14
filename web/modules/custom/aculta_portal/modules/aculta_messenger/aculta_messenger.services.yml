@@ -134,7 +134,7 @@ services:
       - { name: aculta_mailer.type }
   aculta_messenger.forum_notice_access_policy:
     class: Drupal\aculta_messenger\Aviso\ForumNoticeAccessPolicy
-    arguments: ['@entity_type.manager', '@aculta_portal.domain_purpose']
+    arguments: ['@entity_type.manager', '@aculta_portal.domain_site']
   aculta_messenger.forum_aviso_read_subscriber:
     class: Drupal\aculta_messenger\EventSubscriber\ForumAvisoReadSubscriber
     arguments: ['@current_user', '@aculta_messenger.aviso_service']
@@ -161,7 +161,7 @@ services:
     arguments: ['@user.data', '@database']
   aculta_messenger.avisos_privacy_form:
     class: Drupal\aculta_messenger\Form\AvisosPrivacyForm
-    arguments: ['@current_user', '@entity_type.manager', '@flag', '@aculta_portal.domain_purpose', '@messenger']
+    arguments: ['@current_user', '@entity_type.manager', '@flag', '@aculta_portal.domain_site', '@messenger']
   aculta_messenger.avisos_resumo:
     class: Drupal\aculta_messenger\Aviso\AvisosResumo
     arguments: ['@entity_type.manager', '@aculta_messenger.aviso_preferencias', '@aculta_mailer.mailer', '@aculta_portal.email_confirmation_policy', '@user.data', '@datetime.time', '@aculta_messenger.aviso_service', '@settings', '@database', '@lock', !tagged_iterator aculta_messenger.aviso_digest_provider, '@logger.channel.aculta_messenger']

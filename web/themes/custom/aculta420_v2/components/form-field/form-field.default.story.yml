@@ -1,0 +1,22 @@
+name: Campo de texto com instrução
+description: Controle nativo com rótulo e instrução associados pelo markup Drupal.
+component: aculta420_v2:form-field
+props:
+  id: nome-publico
+slots:
+  label:
+    type: html_tag
+    tag: label
+    attributes:
+      for: nome-publico-control
+    value: Nome público
+  control:
+    type: html_tag
+    tag: input
+    attributes:
+      id: nome-publico-control
+      name: nome_publico
+      type: text
+      aria-describedby: nome-publico-description
+      autocomplete: name
+  description: Use o nome que deve aparecer em autoria pública.

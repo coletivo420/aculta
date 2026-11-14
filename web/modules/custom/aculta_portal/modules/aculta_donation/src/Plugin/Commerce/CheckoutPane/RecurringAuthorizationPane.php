@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_donation\Plugin\Commerce\CheckoutPane;
 
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoApiException;
 use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoSubscriptionRecorder;
 use Drupal\commerce\Response\NeedsRedirectException;
@@ -51,10 +52,10 @@ final class RecurringAuthorizationPane extends CheckoutPaneBase {
     $plugin_definition,
     CheckoutFlowInterface $checkout_flow,
     EntityTypeManagerInterface $entity_type_manager,
-    private readonly MercadoPagoSubscriptionRecorder $assinaturas,
-    private readonly DomainPurposeManager $purposes,
-    private readonly LoggerChannelInterface $logger,
-    private readonly MessengerInterface $avisos,
+    protected readonly MercadoPagoSubscriptionRecorder $assinaturas,
+    protected readonly DomainSiteManager $purposes,
+    protected readonly LoggerChannelInterface $logger,
+    protected readonly MessengerInterface $avisos,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $checkout_flow, $entity_type_manager);
   }
@@ -70,7 +71,7 @@ final class RecurringAuthorizationPane extends CheckoutPaneBase {
       $checkout_flow,
       $container->get('entity_type.manager'),
       $container->get('aculta_pagamentos_mercadopago.subscription_recorder'),
-      $container->get('aculta_portal.domain_purpose'),
+      $container->get('aculta_portal.domain_site'),
       $container->get('aculta_pagamentos_mercadopago.logger'),
       $container->get('messenger'),
     );
@@ -109,7 +110,7 @@ final class RecurringAuthorizationPane extends CheckoutPaneBase {
       throw new PaymentGatewayException('Gateway do Mercado Pago ausente.');
     }
     $total = $this->order->getTotalPrice();
-    $retorno = $this->purposes->routeUrl('main', 'aculta_donation.donation_controller_formPage', [
+    $retorno = $this->purposes->routeUrl(SiteKey::Main, 'aculta_donation.donation_controller_formPage', [
       'commerce_order' => $this->order->id(),
       'step' => 'complete',
     ]);

@@ -56,7 +56,7 @@ Achado principal: **nenhuma rota declarada no código usa `/studio/we-sativa` ou
 
 ## Riscos
 
-- Mudar a raiz de um subdomínio altera a entrada pública e o SEO. Produção é indexável; o servidor de testes tem `noindex`.
+- Mudar a raiz de um subdomínio altera a entrada pública e o SEO. Produção é indexável; o servidor de desenvolvimento tem `noindex`.
 - `/wesativa` e `/greenstash` aparecem em testes Kernel da Wiki e em links de navegação dos módulos de loja e Studio.
 - A Conta bloqueia `/studio/*` no ACCOUNT; se a Conta passar a expor o Studio, a regra precisa mudar junto.
 

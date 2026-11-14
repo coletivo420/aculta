@@ -32,6 +32,13 @@
 
 # Changelog — ACULTA Portal Sitemap
 
+## Não lançado — compatibilidade com Simple Sitemap 5.x
+
+- Removida de `config/sync/simple_sitemap.settings.yml` a opção `xsl`, que deixou de existir no Simple Sitemap 5.x; o update hook upstream também a limpa da configuração ativa.
+- A integração mantém compatibilidade com a descoberta de plugins 5.x: o manager reconhece atributos e anotações, incluindo `PurposeNodeUrlGenerator`. As rotas das variantes usadas pelo ACULTA permanecem válidas; o ACULTA não referencia URLs de chunks.
+- Inspeção das integrações com Simple OAuth 6.1.x-dev, Pathauto 8.x-1.x-dev, Simple Sitemap 5.x-dev e Webform 6.x-dev não identificou outra alteração de código PHP ACULTA necessária. No Webform, o branch ainda emite depreciações upstream relacionadas à descoberta de plugins removida no Drupal 12.
+- `DomainPurposeManager` atualizado para negociar o Domain via contexto, API suportada pelo Domain instalado; a fixture inclui dependências e construtor atual do gerador. Kernel Sitemap PASS (4 testes/15 assertions; 60 depreciações Core/contrib). Kernel Agenda PASS (4/160; 36 depreciações). `WebformScoreOwnershipTest` PASS (1/11; 42 depreciações, incluindo Webform e `webform_score`). Core 12 não foi ativado.
+
 ## 0.1.2-rc.1 — sitemap por purpose pronto para Alpha — 2026-10-29
 
 - `PurposeNodeUrlGenerator` resolve alias de front-page dentro do Domain da variante e restaura o Domain anterior.

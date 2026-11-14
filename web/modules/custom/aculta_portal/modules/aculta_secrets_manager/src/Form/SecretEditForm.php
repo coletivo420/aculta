@@ -5,14 +5,13 @@ declare(strict_types=1);
 namespace Drupal\aculta_secrets_manager\Form;
 
 use Drupal\aculta_portal\Secrets\SecretsManager;
-use Drupal\Core\Ajax\AjaxResponse;
-use Drupal\Core\Ajax\CloseModalDialogCommand;
-use Drupal\Core\Ajax\RedirectCommand;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Htmx\Htmx;
 use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
@@ -24,7 +23,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 final class SecretEditForm extends FormBase implements ContainerInjectionInterface {
 
   public function __construct(
-    private readonly SecretsManager $secrets,
+    protected readonly SecretsManager $secrets,
   ) {}
 
   /**
@@ -67,9 +66,8 @@ final class SecretEditForm extends FormBase implements ContainerInjectionInterfa
     $form['actions'] = ['#type' => 'actions'];
     if (!$this->secrets->canSaveHere()) {
       $form['storage_notice'] = [
-        '#type' => 'container',
-        '#attributes' => ['data-portal-ui' => 'notice-warning'],
-        'text' => ['#plain_text' => (string) $this->t('⚠ Neste ambiente as credenciais são armazenadas no banco de dados. O formulário não grava aqui.')],
+        '#component' => 'aculta420_v2:status-messages',
+        '#props' => ['type' => 'warning', 'messages' => [(string) $this->t('⚠ Neste ambiente as credenciais são armazenadas no banco de dados. O formulário não grava aqui.')]],
       ];
       $form['actions']['submit'] = ['#type' => 'submit', '#value' => $this->t('Salvar'), '#disabled' => TRUE];
     }
@@ -77,8 +75,16 @@ final class SecretEditForm extends FormBase implements ContainerInjectionInterfa
       $form['actions']['submit'] = [
         '#type' => 'submit',
         '#value' => $this->t('Salvar'),
-        '#ajax' => ['callback' => '::ajaxSubmit', 'wrapper' => 'aculta-secret-edit'],
       ];
+      // Erro de validação devolve o popup; sucesso navega com HX-Redirect
+      // (a navegação fecha o diálogo).
+      (new Htmx())
+        ->post(Url::fromRoute('aculta_portal.secrets_edit', ['name' => $name]))
+        ->select('#aculta-secret-edit')
+        ->target('#aculta-secret-edit')
+        ->swap('outerHTML')
+        ->onlyMainContent()
+        ->applyTo($form['actions']['submit']);
     }
     return $form;
   }
@@ -95,18 +101,12 @@ final class SecretEditForm extends FormBase implements ContainerInjectionInterfa
     else {
       $this->messenger()->addError($this->t('Não salvo: @reason', ['@reason' => $result['message']]));
     }
-  }
-
-  /**
-   * Com erro de validação, devolve o próprio popup; sem erro, fecha e volta à página de credenciais. */
-  public function ajaxSubmit(array $form, FormStateInterface $form_state): array|AjaxResponse {
-    if ($form_state->hasAnyErrors()) {
-      return $form;
+    $url = Url::fromRoute('aculta_portal.secrets_import');
+    if ($this->isHtmxRequest()) {
+      $form_state->setResponse(new Response('', Response::HTTP_OK, ['HX-Redirect' => $url->toString()]));
+      return;
     }
-    $response = new AjaxResponse();
-    $response->addCommand(new CloseModalDialogCommand());
-    $response->addCommand(new RedirectCommand(Url::fromRoute('aculta_portal.secrets_import')->toString()));
-    return $response;
+    $form_state->setRedirectUrl($url);
   }
 
 }

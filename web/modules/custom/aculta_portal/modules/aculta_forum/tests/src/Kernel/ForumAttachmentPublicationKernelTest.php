@@ -16,7 +16,7 @@ use Drupal\aculta_file_uploader\Cleanup\FileReferenceInspector;
 use Drupal\aculta_file_uploader\Cleanup\FileReferenceStatus;
 use Drupal\aculta_file_uploader\Cleanup\UnusedFileCleaner;
 use Drupal\aculta_portal\Cleanup\UnusedMediaCleaner;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\comment\CommentInterface;
 use Drupal\comment\CommentingStatus;
 use Drupal\comment\Entity\Comment;
@@ -79,6 +79,7 @@ final class ForumAttachmentPublicationKernelTest extends KernelTestBase {
     'domain',
     'filter',
     'text',
+    'text_with_summary',
     'options',
     'path',
     'path_alias',
@@ -108,9 +109,9 @@ final class ForumAttachmentPublicationKernelTest extends KernelTestBase {
   /**
    * Domain purpose resolver for the fixture.
    *
-   * @var \Drupal\aculta_portal\Domain\DomainPurposeManager
+   * @var \Drupal\aculta_portal\Domain\DomainSiteManager
    */
-  private DomainPurposeManager $purpose;
+  private DomainSiteManager $purpose;
 
   /**
    * {@inheritdoc}
@@ -212,7 +213,7 @@ final class ForumAttachmentPublicationKernelTest extends KernelTestBase {
     ])->save();
     $this->container->get('entity_field.manager')->clearCachedFieldDefinitions();
 
-    $this->purpose = new DomainPurposeManager(
+    $this->purpose = new DomainSiteManager(
       $this->container->get('entity_type.manager'),
       $this->container->get('domain.negotiator'),
       $this->container->get('config.factory'),
@@ -265,7 +266,7 @@ final class ForumAttachmentPublicationKernelTest extends KernelTestBase {
 
     $first = $this->comment($topic, $media, CommentInterface::PUBLISHED);
     $this->registerEmbedUsage($media, $first);
-    self::assertSame('forum', $this->purpose->getPurposeForDomainId('forum_aculta_org'));
+    self::assertSame('forum', $this->purpose->getSiteKeyValueForDomainId('forum_aculta_org'));
     self::assertTrue($topic->access('view', new AnonymousUserSession(), TRUE)->isAllowed(), 'Anonymous can view the published host topic.');
     self::assertTrue($first->access('view', new AnonymousUserSession(), TRUE)->isAllowed(), 'Anonymous can view the published comment.');
     self::assertNotEmpty($this->container->get('entity_usage.usage')->listSources($media, FALSE));
@@ -336,13 +337,13 @@ final class ForumAttachmentPublicationKernelTest extends KernelTestBase {
     self::assertTrue($this->publication->hasCurrentPublicReference($media, $member), 'A conta com acesso ao Comment tem referência acessível.');
 
     $hooks = new ForumAttachmentAccessHooks($this->purpose, $this->publication);
-    $anonymous_result = $this->purpose->runInPurpose(
+    $anonymous_result = $this->purpose->runInSite(
       'forum',
       fn () => $hooks->mediaAccess($media, 'view', new AnonymousUserSession()),
     );
     self::assertTrue($anonymous_result?->isForbidden(), 'O anônimo não lê a Media de referência restrita.');
 
-    $member_result = $this->purpose->runInPurpose(
+    $member_result = $this->purpose->runInSite(
       'forum',
       fn () => $hooks->mediaAccess($media, 'view', $member),
     );
@@ -355,7 +356,7 @@ final class ForumAttachmentPublicationKernelTest extends KernelTestBase {
     $this->container->get('entity_type.manager')->getStorage('node')->resetCache([$topic->id()]);
     $this->container->get('entity_type.manager')->getStorage('comment')->resetCache([$comment->id()]);
     self::assertFalse($this->publication->hasCurrentPublicReference($media, $member), 'Reference no longer public for member.');
-    $revoked = $this->purpose->runInPurpose(
+    $revoked = $this->purpose->runInSite(
       'forum',
       fn () => $hooks->mediaAccess($media, 'view', $member),
     );
@@ -364,7 +365,7 @@ final class ForumAttachmentPublicationKernelTest extends KernelTestBase {
     $topic->setPublished()->save();
     $this->container->get('entity_type.manager')->getStorage('node')->resetCache([$topic->id()]);
     $this->container->get('entity_type.manager')->getStorage('comment')->resetCache([$comment->id()]);
-    $restored = $this->purpose->runInPurpose(
+    $restored = $this->purpose->runInSite(
       'forum',
       fn () => $hooks->mediaAccess($media, 'view', $member),
     );
@@ -389,13 +390,13 @@ final class ForumAttachmentPublicationKernelTest extends KernelTestBase {
         'is_default' => TRUE,
       ])->save();
     }
-    $outside = $this->purpose->runInPurpose(
+    $outside = $this->purpose->runInSite(
       'main',
       fn () => $hooks->mediaAccess($media, 'view', new AnonymousUserSession()),
     );
     self::assertTrue($outside?->isForbidden(), 'Fora do purpose Fórum o anexo é negado.');
 
-    $inside = $this->purpose->runInPurpose(
+    $inside = $this->purpose->runInSite(
       'forum',
       fn () => $hooks->mediaAccess($media, 'view', new AnonymousUserSession()),
     );
@@ -410,13 +411,13 @@ final class ForumAttachmentPublicationKernelTest extends KernelTestBase {
     ]);
     $gallery->save();
 
-    $gallery_outside = $this->purpose->runInPurpose(
+    $gallery_outside = $this->purpose->runInSite(
       'main',
       fn () => $hooks->entityAccess($gallery, 'view', new AnonymousUserSession()),
     );
     self::assertTrue($gallery_outside?->isForbidden(), 'Fora do purpose Fórum a galeria é negada.');
 
-    $gallery_inside = $this->purpose->runInPurpose(
+    $gallery_inside = $this->purpose->runInSite(
       'forum',
       fn () => $hooks->entityAccess($gallery, 'view', new AnonymousUserSession()),
     );
@@ -665,12 +666,12 @@ final class ForumAttachmentPublicationKernelTest extends KernelTestBase {
     self::assertTrue($this->publication->hasCurrentPublicGalleryReference($gallery, $member), 'A conta com acesso ao Comment tem referência acessível.');
 
     $hooks = new ForumAttachmentAccessHooks($this->purpose, $this->publication);
-    $anonymous_result = $this->purpose->runInPurpose(
+    $anonymous_result = $this->purpose->runInSite(
       'forum',
       fn () => $hooks->entityAccess($gallery, 'view', new AnonymousUserSession()),
     );
     self::assertTrue($anonymous_result?->isForbidden(), 'O anônimo não lê a Galeria de referência restrita.');
-    $member_result = $this->purpose->runInPurpose(
+    $member_result = $this->purpose->runInSite(
       'forum',
       fn () => $hooks->entityAccess($gallery, 'view', $member),
     );

@@ -8,15 +8,14 @@ use Drupal\Core\Session\AccountInterface;
 
 /**
  * Reads the authorized course summaries visible to one account.
+ *
+ * The provider enforces access before returning any course metadata. Portal
+ * consumers depend on this contract, not on the LMS implementation.
  */
 interface AccountCoursesReaderInterface {
 
   /**
    * Returns account-visible course summaries.
-   *
-   * The provider enforces Group/LMS access before returning any course
-   * metadata. Implementations return neutral DTOs rather than provider
-   * entities or render arrays.
    *
    * @return list<\Drupal\aculta_learning_contracts\Learning\AccountCourseSummary>
    *   The account's authorized courses.

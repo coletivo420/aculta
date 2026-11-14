@@ -10,7 +10,8 @@ use Drupal\aculta_lms\EducatorFeedbackPolicy;
 use Drupal\aculta_messenger\Event\MessengerNoticeEvent;
 use Drupal\aculta_messenger\Service\MessengerNoticePublisherInterface;
 use Drupal\comment\CommentInterface;
-use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupMembership;
@@ -37,7 +38,7 @@ final class LearningNoticeRecipients implements LearningNoticeRecipientsInterfac
   public function publishSubmissionNoticesForEducators(string $answerUuid, string $eventVersion): void {
     $answers = $this->entityTypeManager->getStorage('aculta_lms_answer')->loadByProperties(['uuid' => $answerUuid]);
     $answer = reset($answers);
-    if (!$answer instanceof EntityInterface || $answer->getEntityTypeId() !== 'aculta_lms_answer'
+    if (!$answer instanceof FieldableEntityInterface || $answer->getEntityTypeId() !== 'aculta_lms_answer'
       || (string) $answer->get('state')->value !== 'submitted') {
       return;
     }
@@ -73,18 +74,15 @@ final class LearningNoticeRecipients implements LearningNoticeRecipientsInterfac
     }
     $contentEntities = $this->entityTypeManager->getStorage($contentEntityType)->loadByProperties(['uuid' => $contentUuid]);
     $content = reset($contentEntities);
-    if (!$content instanceof EntityInterface || !$this->eligibility->isContentAvailable($content)) {
+    if (!$content instanceof FieldableEntityInterface || !$this->eligibility->isContentAvailable($content)) {
       return;
     }
     $courses = $this->eligibility->coursesForContent($content);
     foreach ($courses as $course) {
-      if (!$course instanceof GroupInterface || $course->bundle() !== 'lms_course' || !$course->isPublished()) {
+      if ($course->bundle() !== 'lms_course' || !$course->isPublished()) {
         continue;
       }
       foreach ($course->getRelationships('lms_classes') as $relationship) {
-        if (!$relationship instanceof GroupRelationshipInterface) {
-          continue;
-        }
         $class = $relationship->getEntity();
         if (!$class instanceof GroupInterface || $class->bundle() !== 'lms_class' || !$class->isPublished()) {
           continue;
@@ -125,14 +123,14 @@ final class LearningNoticeRecipients implements LearningNoticeRecipientsInterfac
       return;
     }
     $answer = $comment->getCommentedEntity();
-    if (!$answer instanceof EntityInterface || $answer->getEntityTypeId() !== 'aculta_lms_answer') {
+    if (!$answer instanceof FieldableEntityInterface || $answer->getEntityTypeId() !== 'aculta_lms_answer') {
       return;
     }
     $course = $this->eligibility->courseForAnswer($answer);
     $learner = $this->entityTypeManager->getStorage('user')->loadUnchanged((int) $answer->get('uid')->value);
     $educator = $comment->getOwner();
     if (!$course instanceof GroupInterface || !$learner instanceof UserInterface || !$learner->isActive()
-      || !$educator || (int) $educator->id() === (int) $learner->id()
+      || (int) $educator->id() === (int) $learner->id()
       || !$course->hasPermission('grade students', $educator)
       || !$this->eligibility->hasCurrentEnrollment($course, $learner)
       || !$comment->access('view', $learner, TRUE)->isAllowed()) {
@@ -178,10 +176,10 @@ final class LearningNoticeRecipients implements LearningNoticeRecipientsInterfac
     }
     $class = $deadline->getGroup();
     $activity = $deadline->getEntity();
-    $course = $class instanceof GroupInterface ? $this->eligibility->courseForClass($class) : NULL;
-    if (!$class instanceof GroupInterface || !$class->isPublished()
-      || !$activity instanceof EntityInterface || $activity->getEntityTypeId() !== 'aculta_lms_activity'
-      || !$course instanceof GroupInterface || !$course->isPublished()
+    $course = $this->eligibility->courseForClass($class);
+    if (!$class->isPublished()
+      || !$activity instanceof ContentEntityInterface || $activity->getEntityTypeId() !== 'aculta_lms_activity'
+      || $course === NULL || !$course->isPublished()
       || !$this->eligibility->activityBelongsToCourse($activity, $course)) {
       return;
     }

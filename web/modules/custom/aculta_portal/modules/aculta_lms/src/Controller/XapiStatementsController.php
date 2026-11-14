@@ -9,6 +9,7 @@ use Drupal\aculta_lms\Xapi\XapiBatchIngestor;
 use Drupal\aculta_lms\Xapi\XapiProgressAccess;
 use Drupal\Core\Database\Connection;
 use Drupal\Component\Datetime\TimeInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Flood\FloodInterface;
 use Drupal\Core\Lock\LockBackendInterface;
@@ -75,7 +76,14 @@ final class XapiStatementsController {
     $this->flood->register(self::FLOOD_EVENT, self::FLOOD_WINDOW, $floodIdentifier);
 
     $body = $request->getContent();
+    if (strlen($body) > XapiBatchIngestor::MAX_BODY_BYTES) {
+      return $this->json(['error' => 'Lote acima do tamanho máximo.'], 400);
+    }
     $decoded = json_decode($body, TRUE);
+    if (is_array($decoded) && array_is_list($decoded)
+      && count($decoded) > XapiBatchIngestor::MAX_STATEMENTS) {
+      return $this->json(['error' => 'Lote com declarações demais.'], 400);
+    }
     $statementIds = [];
     if (is_array($decoded) && array_is_list($decoded)) {
       foreach ($decoded as $statement) {
@@ -98,12 +106,15 @@ final class XapiStatementsController {
           ->condition('statement_id', array_values(array_unique($statementIds)), 'IN')
           ->execute();
         foreach ($storage->loadMultiple($existing) as $record) {
+          if (!$record instanceof ContentEntityInterface) {
+            continue;
+          }
           $knownIds[] = (string) $record->get('statement_id')->value;
         }
       }
 
       $claims['actor_mbox_sha1sum'] = strtolower($claims['actor_mbox_sha1sum']);
-      $result = $this->ingestor->ingest($body, $claims, $knownIds);
+      $result = $this->ingestor->ingestDecoded($decoded, $claims, $knownIds);
       $transaction = $this->database->startTransaction();
       $acceptedIds = [];
       foreach ($result['accepted'] as $statement) {

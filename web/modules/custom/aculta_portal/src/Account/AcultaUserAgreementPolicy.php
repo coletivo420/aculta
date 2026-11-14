@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Account;
 
+use Drupal\aculta_user\Consent\AcultaUserAgreementLedger;
 use Drupal\Core\Session\AccountInterface;
 
 /**
@@ -15,9 +16,10 @@ final class AcultaUserAgreementPolicy {
 
   public const AGREEMENT_TYPE = 'aculta_user_agreement_terms';
 
-  public function __construct(private readonly \Drupal\aculta_user\Consent\AcultaUserAgreementLedger $ledger) {}
+  public function __construct(private readonly AcultaUserAgreementLedger $ledger) {}
 
-  /** TRUE quando a conta autenticada ainda precisa aceitar a versão atual dos termos. */
+  /**
+   * TRUE quando a conta autenticada ainda precisa aceitar a versão atual dos termos. */
   public function needsAcceptance(AccountInterface $account): bool {
     if ($account->isAnonymous() || $account->hasPermission('administer aculta user agreements')) {
       return FALSE;
@@ -25,7 +27,8 @@ final class AcultaUserAgreementPolicy {
     return !$this->ledger->hasAcceptedAcultaUserAgreement((int) $account->id(), self::AGREEMENT_TYPE);
   }
 
-  /** Grava o aceite da versão atual. Retorna TRUE se foi gravado. */
+  /**
+   * Grava o aceite da versão atual. Retorna TRUE se foi gravado. */
   public function record(AccountInterface $account): bool {
     if ($account->isAnonymous()) {
       return FALSE;

@@ -1,0 +1,4 @@
+name: Diálogo de Autenticação - Superfície Neutra
+description: Modal de autenticação SDC na variante neutra com o formulário real do Drupal.
+component: aculta420_v2:auth-dialog
+class: Drupal\aculta420_v2\Story\AuthDialogStory

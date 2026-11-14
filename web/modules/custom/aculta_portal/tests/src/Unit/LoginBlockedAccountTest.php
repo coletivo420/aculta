@@ -35,6 +35,17 @@ use PHPUnit\Framework\Attributes\Group;
 #[Group('aculta_portal')]
 final class LoginBlockedAccountTest extends UnitTestCase {
 
+  /**
+   * Cria os callbacks do Portal com as dependências simuladas.
+   *
+   * @param \Drupal\user\UserAuthenticationInterface $auth
+   *   Autenticação de usuário simulada.
+   * @param \Drupal\user\UserFloodControlInterface $flood
+   *   Controle de flood simulado.
+   *
+   * @return \Drupal\aculta_portal\Form\PortalFormCallbacks
+   *   Callbacks configurados.
+   */
   private function callbacks(UserAuthenticationInterface $auth, UserFloodControlInterface $flood): PortalFormCallbacks {
     $floodConfig = $this->createMock(ImmutableConfig::class);
     $floodConfig->method('get')->willReturnMap([['ip_limit', 50], ['ip_window', 3600]]);
@@ -115,24 +126,51 @@ final class LoginBlockedAccountTest extends UnitTestCase {
     return $state;
   }
 
+  /**
+   * Cria uma conta simulada com o estado de bloqueio informado.
+   *
+   * @param bool $blocked
+   *   Indica se a conta está bloqueada.
+   *
+   * @return \Drupal\user\UserInterface
+   *   Conta simulada.
+   */
   private function account(bool $blocked): UserInterface {
     $account = $this->createMock(UserInterface::class);
     $account->method('isBlocked')->willReturn($blocked);
     return $account;
   }
 
+  /**
+   * Cria um serviço de autenticação que devolve a conta informada.
+   *
+   * @param mixed $account
+   *   Conta retornada pela consulta.
+   *
+   * @return \Drupal\user\UserAuthenticationInterface
+   *   Autenticação simulada.
+   */
   private function auth(mixed $account): UserAuthenticationInterface {
     $auth = $this->createMock(UserAuthenticationInterface::class);
     $auth->method('lookupAccount')->willReturn($account);
     return $auth;
   }
 
+  /**
+   * Cria um controle de flood que sempre permite a tentativa.
+   *
+   * @return \Drupal\user\UserFloodControlInterface
+   *   Controle de flood simulado.
+   */
   private function allowingFlood(): UserFloodControlInterface {
     $flood = $this->createMock(UserFloodControlInterface::class);
     $flood->method('isAllowed')->willReturn(TRUE);
     return $flood;
   }
 
+  /**
+   * Verifica que a conta bloqueada não gera erro na autenticação.
+   */
   public function testBlockedAccountLeavesAuthenticationWithoutAnyError(): void {
     $form_object = $this->createMock(UserLoginForm::class);
     $form_object->expects($this->never())->method('validateAuthentication');
@@ -146,6 +184,9 @@ final class LoginBlockedAccountTest extends UnitTestCase {
       ->validateLoginAuthentication($form, $state);
   }
 
+  /**
+   * Verifica que a conta bloqueada é barrada pelo flood de IP como as demais.
+   */
   public function testBlockedAccountIsRejectedByIpFloodLikeAnyAccount(): void {
     // With the IP limit reached, Core stops before looking the account up. A
     // blocked account must stop the same way, or the flood response discloses it.
@@ -163,6 +204,9 @@ final class LoginBlockedAccountTest extends UnitTestCase {
       ->validateLoginAuthentication($form, $state);
   }
 
+  /**
+   * Verifica que a conta ativa segue a autenticação do Core.
+   */
   public function testActiveAccountGoesThroughCoreAuthentication(): void {
     $form_object = $this->createMock(UserLoginForm::class);
     $form_object->expects($this->once())->method('validateAuthentication');
@@ -175,6 +219,9 @@ final class LoginBlockedAccountTest extends UnitTestCase {
       ->validateLoginAuthentication($form, $state);
   }
 
+  /**
+   * Verifica que a conta desconhecida segue a autenticação do Core.
+   */
   public function testUnknownAccountGoesThroughCoreAuthentication(): void {
     $form_object = $this->createMock(UserLoginForm::class);
     $form_object->expects($this->once())->method('validateAuthentication');
@@ -186,6 +233,9 @@ final class LoginBlockedAccountTest extends UnitTestCase {
       ->validateLoginAuthentication($form, $state);
   }
 
+  /**
+   * Verifica que senha vazia ignora flood e consulta, como no Core.
+   */
   public function testEmptyPasswordSkipsFloodAndLookupLikeCore(): void {
     $flood = $this->createMock(UserFloodControlInterface::class);
     $flood->expects($this->never())->method('isAllowed');
@@ -199,6 +249,9 @@ final class LoginBlockedAccountTest extends UnitTestCase {
     $this->callbacks($auth, $flood)->validateLoginAuthentication($form, $this->formState('blocked@example.invalid', '', $form_object));
   }
 
+  /**
+   * Verifica que um formulário inesperado nunca autentica.
+   */
   public function testUnexpectedFormObjectNeverAuthenticates(): void {
     $form_object = $this->createMock(FormInterface::class);
     $state = $this->formState('active@example.invalid', 'Wrong-Password-1!', $form_object);

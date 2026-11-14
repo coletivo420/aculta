@@ -8,7 +8,7 @@ use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\aculta_lms\Form\CourseEnrollmentPurchaseForm;
-use Drupal\aculta_learning_contracts\Learning\CourseJourneyReaderInterface;
+use Drupal\aculta_lms\Learning\CourseJourneyReaderInterface;
 use Drupal\group\Entity\GroupInterface;
 
 /**

@@ -24,7 +24,10 @@ final class AcultaH5PHookDiscoveryTest extends KernelTestBase {
 
   /**
    * {@inheritdoc} */
-  protected static $modules = ['system', 'user', 'file', 'views', 'aculta_image', 'aculta_lms_h5p', 'token', 'aculta_file_uploader'];
+  protected static $modules = [
+    'system', 'user', 'file', 'views', 'aculta_image', 'aculta_lms_h5p',
+    'token', 'aculta_file_uploader',
+  ];
 
   /**
    * {@inheritdoc}
@@ -50,7 +53,6 @@ final class AcultaH5PHookDiscoveryTest extends KernelTestBase {
       (new aculta_H5PFinishedEvent(['score' => 1]))->getQuizFields(),
     );
     $framework = new \ReflectionMethod(aculta_H5PDrupal::class, 'framework');
-    $framework->setAccessible(TRUE);
     self::assertSame($this->container->get('aculta_lms_h5p.framework'), $framework->invoke(NULL));
     self::assertInstanceOf(aculta_H5PLifecycleHooks::class, $this->container->get(aculta_H5PLifecycleHooks::class));
     self::assertSame('h5p_editor', $this->container->get('plugin.manager.field.widget')->getDefinition('h5p_editor')['id']);
@@ -86,6 +88,13 @@ final class AcultaH5PHookDiscoveryTest extends KernelTestBase {
       $routes = $this->container->get('router.route_provider')->getRouteCollectionForRequest(Request::create($path));
       self::assertNotNull($routes->get($expectedRoute), $path);
     }
+
+    self::assertNull(
+      $this->container->get('router.route_provider')
+        ->getRouteByName('aculta_lms_h5p.editor_ajax')
+        ->getOption('_aculta_site_key'),
+      'The H5P editor submits same-origin requests from the Group edit form, which belongs to the main purpose.',
+    );
   }
 
 }

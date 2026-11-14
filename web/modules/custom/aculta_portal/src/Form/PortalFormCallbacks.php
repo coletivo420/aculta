@@ -9,8 +9,11 @@ use Drupal\aculta_portal\Account\AccountAddressForm;
 use Drupal\aculta_portal\Account\RegistrationMailPolicy;
 use Drupal\aculta_portal\Account\AcultaUserAgreementRegistration;
 use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\aculta_portal\Email\EmailConfirmationRequester;
+use Drupal\Core\Entity\EntityFormInterface;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
@@ -18,6 +21,7 @@ use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\profile\Entity\ProfileInterface;
+use Drupal\profile\ProfileStorageInterface;
 use Drupal\user\Form\UserLoginForm;
 use Drupal\user\UserAuthenticationInterface;
 use Drupal\user\UserFloodControlInterface;
@@ -43,7 +47,7 @@ final class PortalFormCallbacks {
     private readonly AcultaUserAgreementRegistration $userAgreementRegistration,
     private readonly RegistrationMailPolicy $registrationMail,
     private readonly ?RouteMatchInterface $routeMatch = NULL,
-    private readonly ?DomainPurposeManager $domainPurpose = NULL,
+    private readonly ?DomainSiteManager $siteManager = NULL,
   ) {}
 
   /**
@@ -66,14 +70,6 @@ final class PortalFormCallbacks {
   }
 
   /**
-   * Returns the messages and account form in the same AJAX response.
-   */
-  public function accountAjaxResponse(array &$form, FormStateInterface $formState): array {
-    unset($form['#prefix'], $form['#suffix']);
-    return ['messages' => ['#type' => 'status_messages'], 'form' => $form];
-  }
-
-  /**
    * Keeps account saves on the same page.
    */
   public function disableAccountRedirect(array &$form, FormStateInterface $formState): void {
@@ -87,7 +83,7 @@ final class PortalFormCallbacks {
     if ($this->registrationAlreadyUsed($formState)) {
       return;
     }
-    $account = $formState->get('user') ?? $formState->getFormObject()->getEntity();
+    $account = $formState->get('user') ?? $this->formEntity($formState);
     if ($account instanceof UserInterface) {
       $this->userAgreementRegistration->record($account);
     }
@@ -100,7 +96,7 @@ final class PortalFormCallbacks {
     if ($this->registrationAlreadyUsed($formState)) {
       return;
     }
-    $account = $formState->get('user') ?? $formState->getFormObject()->getEntity();
+    $account = $formState->get('user') ?? $this->formEntity($formState);
     if ($account instanceof UserInterface) {
       $result = $this->confirmationRequester->request($account);
       if ($result !== EmailConfirmationRequestResult::ACCEPTED) {
@@ -196,7 +192,10 @@ final class PortalFormCallbacks {
       }
     }
     else {
-      $formState->getFormObject()->save($form, $formState);
+      $formObject = $formState->getFormObject();
+      if ($formObject instanceof EntityFormInterface) {
+        $formObject->save($form, $formState);
+      }
       // Replace Core's welcome message with the generic response.
       $this->messenger->deleteByType(MessengerInterface::TYPE_STATUS);
     }
@@ -219,7 +218,7 @@ final class PortalFormCallbacks {
       return;
     }
     $pass = $formState->get('aculta_register_pass');
-    $account = $formState->get('user') ?? $formState->getFormObject()->getEntity();
+    $account = $formState->get('user') ?? $this->formEntity($formState);
     if (!is_string($pass) || $pass === '' || !$account instanceof UserInterface) {
       return;
     }
@@ -256,7 +255,7 @@ final class PortalFormCallbacks {
    */
   public function recoveryPasswordRedirect(array &$form, FormStateInterface $formState): void {
     // O domínio da conta é o que mostra a Visão geral; no domínio principal a página fica vazia.
-    $url = $this->domainPurpose?->routeUrl('account', 'aculta_portal.dashboard');
+    $url = $this->siteManager?->routeUrl(SiteKey::Account, 'aculta_portal.dashboard');
     if ($url !== NULL) {
       $formState->setRedirectUrl($url);
       return;
@@ -295,17 +294,16 @@ final class PortalFormCallbacks {
   /**
    * Synchronizes Commerce address names with the participant profile. */
   public function syncCustomerAddressNames(array &$form, FormStateInterface $formState): void {
-    $participant = $formState->getFormObject()->getEntity();
+    $participant = $this->formEntity($formState);
     if (!$participant instanceof ProfileInterface || !PerfilDoPapel::ehTipoDePapel($participant)) {
       return;
     }
 
     $user = $participant->getOwner();
-    if ($user === NULL) {
+    $storage = $this->entityTypeManager->getStorage('profile');
+    if (!$storage instanceof ProfileStorageInterface) {
       return;
     }
-
-    $storage = $this->entityTypeManager->getStorage('profile');
     $customer = $storage->loadByUser($user, 'authenticated');
     if ($customer === NULL || $customer->get('field_address')->isEmpty()) {
       return;
@@ -318,7 +316,8 @@ final class PortalFormCallbacks {
       'family_name' => 'field_last_name',
     ] as $addressKey => $profileField) {
       $value = (string) ($participant->get($profileField)->value ?? '');
-      if ($address->get($addressKey) !== $value) {
+      $current = (string) ($address->getValue()[$addressKey] ?? '');
+      if ($current !== $value) {
         $address->set($addressKey, $value);
         $changed = TRUE;
       }
@@ -359,6 +358,14 @@ final class PortalFormCallbacks {
         $this->translation->translate('Informe um valor de apoio maior que zero.'),
       );
     }
+  }
+
+  /**
+   * Returns the entity behind an entity-backed form, when available.
+   */
+  private function formEntity(FormStateInterface $formState): ?EntityInterface {
+    $formObject = $formState->getFormObject();
+    return $formObject instanceof EntityFormInterface ? $formObject->getEntity() : NULL;
   }
 
 }

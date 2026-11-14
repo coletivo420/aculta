@@ -11,7 +11,9 @@ use Drupal\aculta_lms\Notice\LearningEligibilityInterface;
 use Drupal\aculta_lms\Routing\LmsFriendlySlugs;
 use Drupal\group\Entity\GroupInterface;
 
-/** Grants answer submission only to currently enrolled learners. */
+/**
+ * Grants answer submission only to currently enrolled learners.
+ */
 final class AnswerSubmissionAccessCheck {
 
   public function __construct(
@@ -20,12 +22,20 @@ final class AnswerSubmissionAccessCheck {
     private readonly AccountProxyInterface $currentUser,
   ) {}
 
+  /**
+   * Checks membership and resolves the current lesson and activity positions.
+   */
   public function access(GroupInterface $group, mixed $lesson_delta, mixed $activity_delta): AccessResult {
+    $enrollmentCacheTags = $this->eligibility->courseEnrollmentCacheTags($group);
     $result = AccessResult::forbidden()
       ->cachePerUser()
       ->addCacheContexts(['user.permissions', 'user.group_permissions'])
       ->addCacheableDependency($group)
-      ->addCacheTags(['group_relationship_list:plugin:lms_classes:group:' . $group->id()]);
+      ->addCacheTags([
+        ...$enrollmentCacheTags,
+        LmsFriendlySlugs::LESSON_LIST_CACHE_TAG,
+        LmsFriendlySlugs::ACTIVITY_LIST_CACHE_TAG,
+      ]);
     if (!$this->currentUser->isAuthenticated() || $group->bundle() !== LmsFriendlySlugs::COURSE_BUNDLE || !$group->isPublished()) {
       return $result;
     }
@@ -60,7 +70,11 @@ final class AnswerSubmissionAccessCheck {
       ->addCacheContexts(['user.permissions', 'user.group_permissions'])
       ->addCacheableDependency($group)
       ->addCacheableDependency($activity)
-      ->addCacheTags(['group_relationship_list:plugin:lms_classes:group:' . $group->id()]);
+      ->addCacheTags([
+        ...$enrollmentCacheTags,
+        LmsFriendlySlugs::LESSON_LIST_CACHE_TAG,
+        LmsFriendlySlugs::ACTIVITY_LIST_CACHE_TAG,
+      ]);
   }
 
 }

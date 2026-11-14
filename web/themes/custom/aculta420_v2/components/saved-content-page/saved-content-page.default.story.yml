@@ -1,0 +1,7 @@
+name: Salvos e recomendações
+description: Página pessoal com abas, conteúdo salvo e paginação.
+component: aculta420_v2:saved-content-page
+slots:
+  content:
+    type: inline_template
+    template: '<h1 class="page-title">Meu espaço</h1><ul class="studio-saved-tabs"><li><a href="#" aria-current="page">Salvos</a></li><li><a href="#">Seguindo</a></li><li><a href="#">Recomendações</a></li></ul><div class="studio-saved-list-wrapper"><ul class="studio-card-compact-list"><li><article class="studio-card-compact"><a class="compact-card-title" href="#">Conteúdo de exemplo</a><span class="compact-card-meta">Salvo recentemente</span></article></li></ul></div>'

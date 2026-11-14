@@ -93,16 +93,13 @@ final class DonationReportController implements ContainerInjectionInterface {
       '#empty' => $this->t('Nenhuma doação concluída no intervalo.'),
       '#cache' => ['max-age' => 0, 'contexts' => ['url.query_args']],
     ];
-    $saida = [
-      '#type' => 'container',
-      '#attributes' => ['data-portal-ui' => 'sales-panel'],
+    $conteudo = [
       'resumo' => [
         '#type' => 'container',
         '#attributes' => ['data-portal-ui' => 'sales-section'],
         'titulo' => [
           '#type' => 'html_tag',
           '#tag' => 'h2',
-          '#attributes' => ['data-portal-ui' => 'sales-heading'],
           '#value' => $this->t('Doações por período'),
         ],
         'conteudo' => $tabela,
@@ -113,7 +110,6 @@ final class DonationReportController implements ContainerInjectionInterface {
         'titulo' => [
           '#type' => 'html_tag',
           '#tag' => 'h2',
-          '#attributes' => ['data-portal-ui' => 'sales-heading'],
           '#value' => $this->t('Doações e pagamentos'),
         ],
         'conteudo' => $this->pedidosTabela->construir($filtros, SalesReportQuery::ESCOPO_DOACAO, $this->paginaAtual($request), 'aculta_portal.relatorio_doacoes', $this->filtrosDaUrl($request)),
@@ -121,19 +117,23 @@ final class DonationReportController implements ContainerInjectionInterface {
     ];
     $recorrentes = $this->recorrentes->construir();
     if ($recorrentes !== []) {
-      $saida['recorrentes'] = [
+      $conteudo['recorrentes'] = [
         '#type' => 'container',
         '#attributes' => ['data-portal-ui' => 'sales-section'],
         'titulo' => [
           '#type' => 'html_tag',
           '#tag' => 'h2',
-          '#attributes' => ['data-portal-ui' => 'sales-heading'],
           '#value' => $this->t('Doações recorrentes'),
         ],
         'conteudo' => $recorrentes,
       ];
     }
-    return $saida;
+    return [
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:sales-panel',
+      '#slots' => ['content' => $conteudo],
+      '#cache' => ['max-age' => 0, 'contexts' => ['url.query_args']],
+    ];
   }
 
   /**

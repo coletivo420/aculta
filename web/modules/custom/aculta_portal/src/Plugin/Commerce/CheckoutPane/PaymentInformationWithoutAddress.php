@@ -15,7 +15,8 @@ use Drupal\commerce_payment\Plugin\Commerce\CheckoutPane\PaymentInformation;
  */
 class PaymentInformationWithoutAddress extends PaymentInformation {
 
-  /** {@inheritdoc} */
+  /**
+   * {@inheritdoc} */
   public function buildPaneSummary() {
     $gateway = $this->order->get('payment_gateway')->entity;
     if (!$gateway) {

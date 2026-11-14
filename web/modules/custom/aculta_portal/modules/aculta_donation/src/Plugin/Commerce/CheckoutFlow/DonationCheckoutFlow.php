@@ -10,6 +10,7 @@ use Drupal\commerce_order\Entity\OrderInterface;
 use Drupal\commerce_order\Entity\OrderItemInterface;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Template\Attribute;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -268,7 +269,7 @@ class DonationCheckoutFlow extends CheckoutFlowWithPanesBase implements Checkout
         '#attributes' => [
           'target' => '_blank',
           'rel' => 'noopener noreferrer',
-          'data-portal-ui' => 'donation-document-link',
+          'class' => ['donation-presentation__document-link'],
         ],
         '#theme_wrappers' => ['container'],
       ];
@@ -313,7 +314,7 @@ class DonationCheckoutFlow extends CheckoutFlowWithPanesBase implements Checkout
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     // Steps are dynamic based on the submission, so clear to recalculate.
-    unset($this->visibleSteps);
+    $this->visibleSteps = [];
     parent::submitForm($form, $form_state);
     // Override the parent redirect data.
     $nextStepId = $this->getNextStepId($form['#step_id']);
@@ -391,18 +392,24 @@ class DonationCheckoutFlow extends CheckoutFlowWithPanesBase implements Checkout
    */
   protected function buildSummaries(array &$form, array $summarySteps) {
     $form['summaries'] = [
-      '#theme' => 'aculta_donation_summary_container',
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:donation-presentation',
+      '#props' => ['variant' => 'summaries'],
+      '#slots' => ['content' => []],
       '#weight' => -80,
-      '#attributes' => [
-        'data-portal-ui' => 'donation-summaries',
-      ],
-      '#content' => [],
     ];
     // Adapted from Review::buildPaneForm.
     foreach ($summarySteps as $summaryStep => $data) {
-      $form['summaries']['#content'][$summaryStep] = [
-        'summary' => [],
-        'edit_link' => [
+      $form['summaries']['#slots']['content'][$summaryStep] = [
+        '#type' => 'component',
+        '#component' => 'aculta420_v2:donation-presentation',
+        '#props' => [
+          'variant' => 'summary',
+          'attributes' => new Attribute(['data-donation-step' => $summaryStep]),
+        ],
+        '#slots' => ['content' => [
+          'summary' => [],
+          'edit_link' => [
           '#title' => $this->t('Edit'),
           '#type' => 'link',
           '#url' => $data->url,
@@ -410,16 +417,12 @@ class DonationCheckoutFlow extends CheckoutFlowWithPanesBase implements Checkout
             'data-portal-ui' => 'donation-summary-edit',
             'data-donation-step' => $summaryStep,
           ],
-        ],
-        '#type' => 'container',
-        '#attributes' => [
-          'data-portal-ui' => 'donation-summary',
-          'data-donation-step' => $summaryStep,
-        ],
+          ],
+        ]],
       ];
       if ($data->hasPanes()) {
         foreach ($data->panes as $pane) {
-          $form['summaries']['#content'][$summaryStep]['summary'][] = $pane->buildPaneSummary();
+          $form['summaries']['#slots']['content'][$summaryStep]['#slots']['content']['summary'][] = $pane->buildPaneSummary();
         }
       }
     }

@@ -25,7 +25,7 @@ final class OrganizationContributionEventWorker extends QueueWorkerBase implemen
   /**
    * Creates a worker using Drupal's event dispatcher.
    */
-  public function __construct(array $configuration, string $plugin_id, mixed $plugin_definition, private readonly EventDispatcherInterface $eventDispatcher) {
+  public function __construct(array $configuration, string $plugin_id, mixed $plugin_definition, protected readonly EventDispatcherInterface $eventDispatcher) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }
 

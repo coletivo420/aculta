@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_events\Form;
 
-use Drupal\aculta_contributions\Entity\Contribution;
-use Drupal\aculta_contributions\Service\ContributionLifecycle;
+use Drupal\aculta_cgu\Entity\Contribution;
+use Drupal\aculta_cgu\Service\ContributionLifecycle;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -21,9 +21,9 @@ final class EventOrganizationContributionReviewForm extends FormBase {
 
   public function __construct(
     #[Autowire(service: 'entity_type.manager')]
-    private readonly EntityTypeManagerInterface $entities,
-    #[Autowire(service: 'aculta_contributions.lifecycle')]
-    private readonly ContributionLifecycle $lifecycle,
+    protected readonly EntityTypeManagerInterface $entities,
+    #[Autowire(service: 'aculta_cgu.contribution_lifecycle')]
+    protected readonly ContributionLifecycle $lifecycle,
   ) {}
 
   /**
@@ -40,7 +40,7 @@ final class EventOrganizationContributionReviewForm extends FormBase {
    *   Existing form render array.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   Current form state.
-   * @param \Drupal\aculta_contributions\Entity\Contribution|null $aculta_contribution
+   * @param \Drupal\aculta_cgu\Entity\Contribution|null $aculta_contribution
    *   Proposal being reviewed.
    *
    * @return array
@@ -83,7 +83,7 @@ final class EventOrganizationContributionReviewForm extends FormBase {
         ? $this->t('Será criada após aprovação')
         : ($isEvent && $field === 'dates'
           ? $this->t('Datas oficiais existentes serão preservadas; as propostas são aditivas')
-        : ($target !== FALSE && $target !== NULL
+        : ($target instanceof \Drupal\Core\Entity\ContentEntityInterface
         ? ($field === 'title' ? $target->label() : $target->get($field)->value)
         : $this->t('Registro removido')));
       $rows[] = [
@@ -107,7 +107,7 @@ final class EventOrganizationContributionReviewForm extends FormBase {
       if (!$form_state->getValue('reveal_private_address')
         || !$this->currentUser()->hasPermission('administer aculta events')) {
         foreach ($form['changes']['#rows'] as &$row) {
-          if (($row['field']['#plain_text'] ?? '') === $this->fieldLabel('field_endereco')) {
+          if ($row['field']['#plain_text'] === $this->fieldLabel('field_endereco')) {
             $row['proposed']['#plain_text'] = (string) $this->t('Endereço privado — revele somente se necessário');
           }
         }

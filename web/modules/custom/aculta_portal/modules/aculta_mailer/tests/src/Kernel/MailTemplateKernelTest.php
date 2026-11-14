@@ -29,7 +29,7 @@ final class MailTemplateKernelTest extends KernelTestBase {
    *
    * @var string[]
    */
-  protected static $modules = ['system', 'user', 'filter', 'aculta_mailer', 'aculta_mailer_test'];
+  protected static $modules = ['system', 'user', 'filter', 'aculta_mailer', 'aculta_mailer_test', 'aculta_file_uploader', 'file' ];
 
   /**
    * Correlation ID fixo usado nas mensagens de teste.
@@ -94,6 +94,7 @@ final class MailTemplateKernelTest extends KernelTestBase {
   /**
    * Modelo com layout: cabeçalho e rodapé da marca em torno do corpo, e o corpo não é reprocessado.
    */
+
   /**
    * Com corpo HTML, o texto de marca e de layout é escapado e as quebras viram <br>; o HTML do modelo não muda.
    */
@@ -132,6 +133,9 @@ final class MailTemplateKernelTest extends KernelTestBase {
     $this->assertTrue($rendered['layout']);
   }
 
+  /**
+   * Confirma que o layout envolve o corpo com a marca.
+   */
   public function testLayoutWrapsBodyWithBrand(): void {
     MailBrand::create([
       'id' => 'aculta',

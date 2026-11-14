@@ -1,0 +1,9 @@
+{
+  "front": "aculta-uploader",
+  "purpose": "transversal",
+  "origin_env": "BASE",
+  "source": "tests/browser/transversal/aculta-uploader/README.md",
+  "auth": { "account": "teste_comum" },
+  "public_routes": [],
+  "notes": "Sem rota pública. Os fluxos de upload exigem login de teste (uid 257) e a rota /forum/anexos/adicionar/forum, que a README registra renderizando em branco. Cobertura fica nos scripts da frente."
+}

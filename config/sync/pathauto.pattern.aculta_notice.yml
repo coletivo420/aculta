@@ -20,4 +20,4 @@ selection_criteria:
       aculta_notice: aculta_notice
 selection_logic: and
 weight: 0
-relationships: { }
+relationships: {  }

@@ -10,7 +10,8 @@ use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\aculta_linkweed\Service\LinkAnalytics;
 
 /**
@@ -21,7 +22,7 @@ final class LinksDashboardController {
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly AccountProxyInterface $currentUser,
-    private readonly DomainPurposeManager $domainPurpose,
+    private readonly DomainSiteManager $siteManager,
     private readonly LinkAnalytics $analytics,
     private readonly RequestStack $requestStack,
   ) {}
@@ -183,7 +184,7 @@ final class LinksDashboardController {
     }
     $entities = $storage->loadMultiple($query->execute());
     $links_domain = in_array($entity_type_id, ['aculta_linkweed', 'aculta_linkweed_page'], TRUE)
-      ? $this->domainPurpose->getDomain('links')
+      ? $this->siteManager->getDomain(SiteKey::Links)
       : NULL;
     $cache_tags = array_merge(
       $this->entityTypeManager->getDefinition($entity_type_id)->getListCacheTags(),
@@ -238,7 +239,7 @@ final class LinksDashboardController {
           $page_path = $entity->isPublished()
             ? '/pagina/' . $slug
             : '/pagina/' . $slug . '/previa';
-          $page_url = $this->domainPurpose->pathUrl('links', $page_path);
+          $page_url = $this->siteManager->pathUrl(SiteKey::Links, $page_path);
           if ($page_url !== NULL) {
             $operations['public_page'] = [
               'title' => $entity->isPublished()
@@ -248,7 +249,7 @@ final class LinksDashboardController {
             ];
           }
           if ($entity->isPublished()) {
-            $qr_url = $this->domainPurpose->pathUrl('links', '/pagina/' . $slug . '/codigo-qr.svg');
+            $qr_url = $this->siteManager->pathUrl(SiteKey::Links, '/pagina/' . $slug . '/codigo-qr.svg');
             if ($qr_url !== NULL) {
               $operations['qr_code'] = [
                 'title' => new TranslatableMarkup('Baixar código QR'),
@@ -261,8 +262,7 @@ final class LinksDashboardController {
       elseif ($entity_type_id === 'aculta_linkweed' && $entity->isPublished()) {
         $short_code = (string) $entity->get('short_code')->value;
         if (preg_match('/^[0-9a-z]{12}$/D', $short_code) === 1) {
-          $short_url = $this->domainPurpose->routeUrl(
-            'links',
+          $short_url = $this->siteManager->routeUrl(SiteKey::Links,
             'aculta_linkweed.short_redirect',
             ['codigo' => $short_code],
           );
@@ -272,8 +272,7 @@ final class LinksDashboardController {
               'url' => $short_url,
             ];
           }
-          $qr_url = $this->domainPurpose->routeUrl(
-            'links',
+          $qr_url = $this->siteManager->routeUrl(SiteKey::Links,
             'aculta_linkweed.short_qr_code',
             ['codigo' => $short_code],
           );

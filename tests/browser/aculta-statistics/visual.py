@@ -13,7 +13,7 @@ from urllib.parse import urlsplit
 from websockets.sync.client import connect
 
 PROJECT = Path(os.environ.get("ACULTA_PROJECT_ROOT", Path(__file__).resolve().parents[3]))
-sys.path.insert(0, str(PROJECT / "tests/browser/aculta-cpf-checkout"))
+sys.path.insert(0, str(PROJECT / "tests/browser/shop/aculta-cpf-checkout"))
 from wdlib import Driver  # noqa: E402
 
 BASE = "https://aculta.toca.net.br"
@@ -22,7 +22,7 @@ EXPECTED_PROJECT = Path("/home/piradopirata/projetos/aculta").resolve()
 UID = 1
 OUT = Path(os.environ["SUITE_OUT"])
 PREVIEW_CSS = os.environ.get("STATISTICS_CSS_PREVIEW")
-WIDTHS = [(1280, "desktop"), (768, "tablet-768"), (390, "mobile-390"), (320, "mobile-320")]
+WIDTHS = [(1280, "desktop"), (768, "tablet-768"), (640, "zoom-200-1280"), (390, "mobile-390"), (320, "mobile-320")]
 AREAS = ["", "vendas", "email", "lms", "links", "forum", "midia", "wiki"]
 results = []
 
@@ -129,7 +129,7 @@ try:
               document.head.append(style);""", [preview_css])
         page = driver.js("""return {
           path: location.pathname,
-          h1: document.querySelector('main h1')?.innerText || '',
+          h1: (document.querySelector('main h1') || document.querySelector('h1'))?.innerText || '',
           title: document.title,
           nav: !!document.querySelector('main [data-portal-ui="statistics-areas"]'),
           overflow: document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
@@ -144,7 +144,7 @@ try:
               fixture.dataset.statisticsLayoutFixture = 'true';
               fixture.className = 'aculta-statistics';
               fixture.style.cssText = 'box-sizing:border-box;width:min(calc(100% - 1rem),28rem);margin:1rem auto;padding:0.5rem;border:1px dashed currentColor';
-              fixture.innerHTML = '<form class="aculta-statistics__form"><label>Área<select><option>Geral</option></select></label><button type="button">Aplicar</button></form>';
+              fixture.innerHTML = '<form data-portal-ui="statistics-form"><label>Área<select><option selected>Geral</option></select></label><button type="button">Aplicar</button></form>';
               document.body.append(fixture);
             }""")
             expected = driver.js("""return [...new Map(
@@ -170,7 +170,7 @@ try:
         for width, label in WIDTHS:
             actual = set_width(width)
             metrics = driver.js("""const main = document.querySelector('main');
-              const heading = main?.querySelector('h1');
+              const heading = main?.querySelector('h1') || document.querySelector('h1, [data-drupal-selector="page-title"]');
               const rect = heading?.getBoundingClientRect();
               return {
                 documentWidth: document.documentElement.scrollWidth,
@@ -195,21 +195,65 @@ try:
             if area == "" and width in (320, 768):
                 form_layout = driver.js("""const fixture=document.querySelector('[data-statistics-layout-fixture]');
                   const form=fixture?.querySelector('form'), label=form?.querySelector('label');
-                  const select=label?.querySelector('select'), box=fixture?.getBoundingClientRect();
+                  const select=label?.querySelector('select');
+                  const style=fixture ? getComputedStyle(fixture) : null;
+                  const contentWidth = fixture ? fixture.clientWidth
+                    - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight)
+                    - parseFloat(style.borderLeftWidth) - parseFloat(style.borderRightWidth) : 0;
                   const labelBox=label?.getBoundingClientRect(), selectBox=select?.getBoundingClientRect();
-                  return {fixtureWidth:box?.width,labelWidth:labelBox?.width,selectWidth:selectBox?.width,
+                  return {contentWidth,labelWidth:labelBox?.width,selectWidth:selectBox?.width,
                     selectMinWidth:select ? getComputedStyle(select).minWidth : null};""")
                 if width == 320:
                     layout_ok = (
-                        abs(form_layout["labelWidth"] - form_layout["fixtureWidth"]) <= 1
+                        form_layout["labelWidth"] <= form_layout["contentWidth"] + 3
+                        and form_layout["labelWidth"] >= form_layout["contentWidth"] - 3
                         and abs(form_layout["selectWidth"] - form_layout["labelWidth"]) <= 1
                     )
                 else:
                     layout_ok = (
-                        form_layout["labelWidth"] < form_layout["fixtureWidth"] - 100
+                        form_layout["labelWidth"] <= form_layout["contentWidth"] + 3
                         and form_layout["selectWidth"] >= 192
+                        and abs(form_layout["selectWidth"] - form_layout["labelWidth"]) <= 1
                     )
                 check(f"filtro de estatísticas reflow em {width}px", layout_ok, str(form_layout))
+    # Modo escuro dos componentes de estatísticas: os tokens do tema são
+    # ativados por data-theme no html; medimos contraste dentro do cartão,
+    # não o chrome do tema administrativo.
+    driver.get(BASE + "/painel-administrativo/aculta/estatisticas/area/forum")
+    dark = driver.js("""const parse = value => value.match(/\\d+/g)?.map(Number) || [0,0,0];
+      const lum = rgb => { const c = rgb.map(v => { v/=255; return v <= 0.03928 ? v/12.92 : Math.pow((v+0.055)/1.055, 2.4); }); return 0.2126*c[0]+0.7152*c[1]+0.0722*c[2]; };
+      const ratio = (a,b) => { const l1=lum(parse(a)), l2=lum(parse(b)); return (Math.max(l1,l2)+0.05)/(Math.min(l1,l2)+0.05); };
+      const card = document.querySelector('[data-portal-ui="statistics-metric-card"]');
+      const label = card?.querySelector('[data-portal-ui="statistics-metric-card__label"]');
+      const value = card?.querySelector('[data-portal-ui="statistics-metric-card__number"]');
+      const before = card ? getComputedStyle(card).backgroundColor : '';
+      document.documentElement.setAttribute('data-theme','dark');
+      const after = card ? getComputedStyle(card).backgroundColor : '';
+      const bg = after;
+      const result = {
+        applicable: before !== after,
+        overflow: document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
+        card: !!card,
+        labelContrast: label ? ratio(getComputedStyle(label).color, bg) : 0,
+        valueContrast: value ? ratio(getComputedStyle(value).color, bg) : 0,
+      };
+      document.documentElement.removeAttribute('data-theme');
+      return result;""")
+    check("componentes de estatísticas em modo escuro", dark["card"] and (not dark["applicable"] or (not dark["overflow"] and dark["labelContrast"] >= 4.5 and dark["valueContrast"] >= 4.5)),
+          str(dark))
+    a11y = driver.js("""
+      const issues = [];
+      if (document.querySelectorAll('h1').length !== 1) issues.push('h1 count');
+      document.querySelectorAll('main table').forEach(table => { if (!table.querySelector('caption')) issues.push('table without caption'); });
+      document.querySelectorAll('main th').forEach(th => { if (!th.getAttribute('scope')) issues.push('th without scope'); });
+      document.querySelectorAll('main a[href]').forEach(link => { if (!link.textContent.trim() && !link.getAttribute('aria-label')) issues.push('empty link'); });
+      document.querySelectorAll('main select').forEach(select => {
+        const labelled = select.closest('label') || select.getAttribute('aria-label') || (select.id && document.querySelector('label[for="'+select.id+'"]'));
+        if (!labelled) issues.push('select without label');
+      });
+      return [...new Set(issues)];""")
+    check("estrutura acessível do painel do Fórum", a11y == [], str(a11y))
+
 finally:
     if bidi:
         bidi.close()

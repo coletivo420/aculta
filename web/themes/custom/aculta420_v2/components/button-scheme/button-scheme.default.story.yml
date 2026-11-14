@@ -1,0 +1,3 @@
+name: Esquema de botões
+description: Repouso, desativado e foco. O modo claro/escuro é o da página, pelo seletor.
+props: {}

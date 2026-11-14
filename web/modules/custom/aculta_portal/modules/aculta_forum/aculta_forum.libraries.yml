@@ -1,17 +1,34 @@
-discussion-progress:
+revista-comment-order:
   js:
-    js/discussion-progress.js: {}
+    js/revista-comment-order.js: {}
   dependencies:
     - core/drupal
     - core/once
 
-forum-post-history:
+discussion-side:
   js:
-    js/forum-post-history.js: {}
+    js/discussion-side.js: {}
   dependencies:
-    - core/jquery
-    - core/once
     - core/drupal
+    - core/once
+
+topic-create-popup:
+  version: 1.0.1
+  js:
+    js/topic-create-popup.js: {}
+  dependencies:
+    - core/drupal
+    - core/once
+    - history/api
+    - aculta420_v2/topic-dialog
+
+discussion-reply-popup:
+  version: 1.0.5
+  js:
+    js/discussion-reply-popup.js: {}
+  dependencies:
+    - core/drupal
+    - core/once
     - history/api
 
 ckeditor5.attachment:
@@ -22,3 +39,11 @@ ckeditor5.attachment:
     - core/drupal.ajax
     - core/drupal.dialog.ajax
     - entity_embed/entity_embed
+
+comment-admin-popup:
+  version: 1.0.0
+  js:
+    js/comment-admin-popup.js: {}
+  dependencies:
+    - core/drupal
+    - core/once

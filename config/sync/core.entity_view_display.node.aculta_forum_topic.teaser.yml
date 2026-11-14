@@ -22,7 +22,7 @@ content:
     label: hidden
     settings:
       trim_length: 400
-    third_party_settings: { }
+    third_party_settings: {  }
     weight: 10
     region: content
   field_aculta_categories:
@@ -30,11 +30,14 @@ content:
     label: hidden
     settings:
       link: false
-    third_party_settings: { }
+    third_party_settings: {  }
     weight: 0
     region: content
 hidden:
-  co_authors: true
+  aculta_coauthors: true
+  entity_print_view_epub: true
+  entity_print_view_pdf: true
+  entity_print_view_word_docx: true
   field_aculta_discussion: true
   field_autor_legado: true
   field_domain_source: true

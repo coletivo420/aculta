@@ -1,0 +1,24 @@
+.account-courses {
+  display: grid;
+  gap: 1rem;
+}
+
+.account-courses .portal-account-course {
+  margin-block: 0;
+  padding: 1rem;
+  border: 1px solid var(--color-brand-primary);
+  border-inline-start: 3px solid var(--color-brand-highlight);
+  border-radius: var(--radius-base);
+  background: var(--color-surface-raised);
+}
+
+.account-courses .portal-account-course h3 {
+  margin-block-start: 0;
+}
+
+.account-courses .portal-account-course__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem 1rem;
+  margin-block: .75rem;
+}

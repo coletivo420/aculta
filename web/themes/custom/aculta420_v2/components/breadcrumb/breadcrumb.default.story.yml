@@ -1,0 +1,9 @@
+name: Trilha por sessão
+props:
+  label: Navegação estrutural
+  sessao: revista
+  variant: padrao
+  trail:
+    - label: Revista
+      url: /revista
+  current: Cultura e território

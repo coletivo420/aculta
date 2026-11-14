@@ -1,3 +1,16 @@
+## Não versionado — Desacoplamento de node_co_authors e integração com aculta_coauthors
+
+- Remoção da dependência `node_co_authors:node_co_authors` do manifesto `aculta_magazine.info.yml`.
+- Atualização de `ArticleAuthorsHooks`, `MagazineNoticeEventPublisher` e `MagazineNoticeManager` para consumir o campo proprietário `aculta_coauthors`.
+- Preservação dos créditos editoriais em `field_editorial_author` e `field_credits`.
+
+## 0.5.0-dev.19 — escolha administrativa de accent na Revista
+
+- Campo nativo `field_revista_accent` no owner `aculta_magazine`; o formulário usa o widget UI Styles com três opções fechadas, sem classes livres.
+- O hook aplica a classe oficial ao wrapper do teaser; CSS do componente garante que a escolha administrativa prevaleça sobre o accent automático do Portal.
+- `#tree: true` mantém a estrutura aninhada de valores do widget UI Styles para o submit do formulário. Teste focal cobre o value callback real; o fluxo Drupal transacional escreve o campo e renderiza a classe no teaser, com rollback ao fim.
+- Gate UI Styles: 24 verificações PASS. PHPUnit focal: 7 testes/42 assertions PASS (8 depreciações PHPUnit). Firefox ESR confirmou a faixa com o campo nativo temporariamente salvo em claro/escuro e 320/1440 px; valor restaurado vazio após captura. Submit visual do formulário segue pendente.
+
 ## 0.5.0-dev.18 — capa pela escolha de envio recente do Studio
 
 - `MediaLibraryWidget::validateRequired` lê a seleção do **user input** bruto, antes dos handlers de `#validate`. A escolha agora é convertida no `#after_build` do formulário da Revista, que grava a Media criada no form state **e** no user input, e relaxa `#required` de novo.
@@ -260,7 +273,7 @@ RUNTIME STATUS: DEFERRED.
   lê campos privados do perfil nem monta avatar, nome, biografia ou redes.
 - O ACULTA420 renderiza o mesmo SDC de autoria usado pelos contextos do Portal.
   Firefox/X11 no Runtime confirmou a caixa editorial em 1270 e 500 px, claro e
-  escuro, com a inicial de fallback quando não há avatar. Nenhum conteúdo foi
+  escuro, com o acervo como fallback quando não há avatar (*correção 2026-11-04: a inicial do nome nunca é usada; ver `docs/architecture/avatar.md`*). Nenhum conteúdo foi
   criado ou alterado. Unit Magazine 7/31 PASS; User Unit 63/222 PASS. RUNTIME
   STATUS: PARTIAL (viewport X11 mínimo 500 px; overflow lateral de 9 px no PDF
   da publicação testada não pertence ao cartão).
@@ -452,3 +465,4 @@ Classificação: PATCH (correção de cache; sem mudança de contrato).
   PASS (266 depreciações Core/contrib). PHPCS e PHP lint sem achados. Nenhuma
   operação no Runtime.
 
+- Accent da Revista passou a ser uma escolha global do UI Styles nas configurações do tema; `field_revista_accent` ficou legado, sem leitura ou widget, sem migração destrutiva.

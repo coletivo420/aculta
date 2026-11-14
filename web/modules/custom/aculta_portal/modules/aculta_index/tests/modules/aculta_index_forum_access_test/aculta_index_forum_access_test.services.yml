@@ -13,14 +13,14 @@ services:
     arguments: ['@aculta_index_forum_access_test.group_resolver', '@aculta_index_forum_access_test.access_policy', '@aculta_index_forum_access_test.associate_marker', '@logger.channel.aculta_index_forum_access_test']
   Drupal\aculta_forum\Hook\ForumPostAccessHooks:
     class: Drupal\aculta_forum\Hook\ForumPostAccessHooks
-    arguments: ['@aculta_portal.domain_purpose']
+    arguments: ['@aculta_portal.domain_site']
   aculta_index_forum_access_test.attachment_publication:
     class: Drupal\aculta_forum\Attachment\ForumAttachmentPublication
-    arguments: ['@entity_type.manager', '@aculta_portal.domain_purpose']
+    arguments: ['@entity_type.manager', '@aculta_portal.domain_site']
   Drupal\aculta_forum\Hook\ForumAttachmentAccessHooks:
     class: Drupal\aculta_forum\Hook\ForumAttachmentAccessHooks
     arguments:
-      - '@aculta_portal.domain_purpose'
+      - '@aculta_portal.domain_site'
       - '@aculta_index_forum_access_test.attachment_publication'
   aculta_index_forum_access_test.forum_access_hooks:
     class: Drupal\aculta_index_forum_access_test\Hook\ForumAccessTestHooks

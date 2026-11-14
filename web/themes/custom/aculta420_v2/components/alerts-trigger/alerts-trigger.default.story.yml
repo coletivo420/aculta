@@ -1,0 +1,8 @@
+name: Gatilho de alertas
+description: Gatilho no shell com contagem de alertas.
+component: aculta420_v2:alerts-trigger
+props:
+  href: /alertas
+  all_href: /alertas
+  count: 3
+  count_kind: active

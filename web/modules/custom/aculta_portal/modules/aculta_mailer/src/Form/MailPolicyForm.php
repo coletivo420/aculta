@@ -29,7 +29,7 @@ final class MailPolicyForm extends ConfigFormBase {
   public function __construct(
     ConfigFactoryInterface $config_factory,
     TypedConfigManagerInterface $typedConfigManager,
-    private readonly MailTypeRegistry $types,
+    protected readonly MailTypeRegistry $types,
   ) {
     parent::__construct($config_factory, $typedConfigManager);
   }
@@ -171,11 +171,11 @@ final class MailPolicyForm extends ConfigFormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $config = $this->config('aculta_mailer.policy');
-    $config->set('global', $this->levelValues($form_state->getValue('global'), TRUE));
+    $config->set('global', $this->levelValues($form_state->getValue('global')));
 
     $types = [];
     foreach ($this->types->ids() as $id) {
-      $level = $this->levelValues($form_state->getValue(['types', $id]) ?? [], FALSE);
+      $level = $this->levelValues($form_state->getValue(['types', $id]) ?? []);
       if ($level !== []) {
         $types[$id] = $level;
       }
@@ -202,7 +202,7 @@ final class MailPolicyForm extends ConfigFormBase {
   /**
    * Valores de um nível, só com o que foi definido.
    */
-  private function levelValues(array $level, bool $global): array {
+  private function levelValues(array $level): array {
     $out = [];
     if (($level['transport'] ?? '') !== '') {
       $out['transport'] = (string) $level['transport'];

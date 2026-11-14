@@ -61,7 +61,7 @@ final class Cli {
       'build' => $this->build($options),
       'hostinger-layout' => $this->hostingerLayout($options),
       'transition' => $this->transition($options),
-      'domains' => $this->domains(),
+      'domains' => $this->domains($options),
       'cookies' => $this->cookies(),
       'webhooks' => $this->webhooks(),
       'provision' => $this->provision($options),
@@ -224,7 +224,7 @@ final class Cli {
           'url' => (string) $url,
           'ok' => $ok,
           'observed' => ($advertised ? 'Sitemap índice' : 'Sitemap ausente')
-          . ', Disallow: / ' . ($blocked ? 'presente' : 'ausente'),
+            . ', Disallow: / ' . ($blocked ? 'presente' : 'ausente'),
         ];
         $code = $ok ? $code : 1;
       }
@@ -249,8 +249,8 @@ final class Cli {
         'url' => (string) $url,
         'ok' => $ok,
         'observed' => 'status ' . ($status ?? '?')
-        . ', X-Robots-Tag ' . ($value ?? 'ausente')
-        . ', meta ' . ($meta ? 'noindex' : 'ausente'),
+          . ', X-Robots-Tag ' . ($value ?? 'ausente')
+          . ', meta ' . ($meta ? 'noindex' : 'ausente'),
       ];
       $code = $ok ? $code : 1;
     }
@@ -575,6 +575,7 @@ final class Cli {
    * @return int
    *   Process exit code.
    */
+
   /**
    * Sugere entradas de correção de deploy para superfícies em diretório.
    *
@@ -611,6 +612,15 @@ final class Cli {
     return 0;
   }
 
+  /**
+   * Registra uma sugestão de alteração a partir das opções da linha de comando.
+   *
+   * @param array $o
+   *   Opções informadas na linha de comando.
+   *
+   * @return int
+   *   Código de saída do comando.
+   */
   private function register(array $o): int {
     if (isset($o['from-json'])) {
       return $this->importFindings((string) $o['from-json']);
@@ -1299,7 +1309,6 @@ final class Cli {
     }
     $raw = curl_exec($handle);
     $http = (int) curl_getinfo($handle, CURLINFO_RESPONSE_CODE);
-    curl_close($handle);
     $body = is_string($raw) ? json_decode($raw, TRUE) : NULL;
     return ['http' => $http, 'body' => is_array($body) ? $body : []];
   }
@@ -1359,7 +1368,10 @@ final class Cli {
    * @return int
    *   Process exit code.
    */
-  private function domains(): int {
+  private function domains(array $o = []): int {
+    if (isset($o['env'])) {
+      return $this->domainHostnamesSync($o);
+    }
     $config = $this->json($this->toolRoot . '/config/deploy.json');
     $table = $config['domain_transition']['entries'] ?? NULL;
     if (!is_array($table) || $table === []) {
@@ -1442,6 +1454,96 @@ final class Cli {
       }
     }
     return $out;
+  }
+
+  /**
+   * Plans, and with --apply writes, the hostname of each Domain record.
+   *
+   * Reads and writes go through the command in ACULTA_DOMAIN_CONFIG_CMD, set
+   * by the operator outside this repository: `get <domain_id>` prints the
+   * current hostname; `set <domain_id> <hostname>` stores it. The tool itself
+   * has no Drupal dependency.
+   */
+  private function domainHostnamesSync(array $o): int {
+    $env = (string) ($o['env'] ?? '');
+    if (!in_array($env, ['test', 'production'], TRUE)) {
+      $this->err('domains: --env deve ser test ou production');
+      return 1;
+    }
+    $apply = !empty($o['apply']);
+    $cmd = getenv('ACULTA_DOMAIN_CONFIG_CMD') ?: '';
+    if ($cmd === '' || !is_executable($cmd)) {
+      $this->err('domains: defina ACULTA_DOMAIN_CONFIG_CMD com o comando executável de leitura e gravação');
+      return 1;
+    }
+    $config = $this->json($this->toolRoot . '/config/deploy.json');
+    $entries = $config['domain_transition']['entries'] ?? [];
+    if (isset($o['only'])) {
+      $only = array_filter(array_map('trim', explode(',', (string) $o['only'])));
+      $entries = array_values(array_filter($entries, static fn($e) => in_array((string) ($e['domain_id'] ?? ''), $only, TRUE)));
+      if ($entries === []) {
+        $this->err('domains: --only não corresponde a nenhum domain_id de domain_transition');
+        return 1;
+      }
+    }
+    $current = [];
+    foreach ($entries as $entry) {
+      $id = (string) ($entry['domain_id'] ?? '');
+      if ($id === '') {
+        continue;
+      }
+      [$code, $out] = $this->runConfigCommand($cmd, ['get', $id]);
+      $value = trim($out);
+      $current[$id] = ($code === 0 && $value !== '') ? $value : NULL;
+    }
+    $plan = DomainHostnames::plan($entries, $env, $current);
+    $failed = 0;
+    foreach ($plan as $row) {
+      $line = $row['domain_id'] . ': ' . ($row['current'] ?? '?') . ' -> ' . $row['target'];
+      if ($row['action'] === 'ok') {
+        $this->say('ok ' . $line);
+        continue;
+      }
+      if ($row['action'] === 'unknown') {
+        $failed++;
+        $this->say('sem leitura ' . $line);
+        continue;
+      }
+      if (!$apply) {
+        $this->say('plano ' . $line);
+        continue;
+      }
+      [$code] = $this->runConfigCommand($cmd, ['set', $row['domain_id'], $row['target']]);
+      if ($code !== 0) {
+        $failed++;
+        $this->say('falhou ' . $line);
+        continue;
+      }
+      $this->say('gravado ' . $line);
+    }
+    if (!$apply) {
+      $this->say('simulação: nenhuma alteração feita; use --apply para gravar');
+    }
+    return $failed === 0 ? 0 : 1;
+  }
+
+  /**
+   * Runs the configured config command with arguments, without a shell.
+   *
+   * @return array{0: int, 1: string}
+   *   Exit code and stdout.
+   */
+  private function runConfigCommand(string $cmd, array $args): array {
+    $parts = array_merge([$cmd], $args);
+    $spec = [1 => ['pipe', 'w'], 2 => ['pipe', 'w']];
+    $proc = proc_open($parts, $spec, $pipes);
+    if (!is_resource($proc)) {
+      return [1, ''];
+    }
+    $out = (string) stream_get_contents($pipes[1]);
+    fclose($pipes[1]);
+    fclose($pipes[2]);
+    return [proc_close($proc), $out];
   }
 
   /**

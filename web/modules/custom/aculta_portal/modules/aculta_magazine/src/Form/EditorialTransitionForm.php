@@ -8,6 +8,7 @@ use Drupal\aculta_magazine\Access\EditorialCapability;
 use Drupal\content_moderation\StateTransitionValidationInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\node\NodeInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -17,13 +18,13 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
  * Form API adapter for valid transitions of the Revista workflow. */
 final class EditorialTransitionForm extends FormBase {
 
-  public function __construct(private readonly EditorialCapability $capabilities, private readonly StateTransitionValidationInterface $transitions, private readonly AccountInterface $account) {}
+  public function __construct(protected readonly EditorialCapability $capabilities, protected readonly StateTransitionValidationInterface $transitions, protected readonly AccountInterface $account, protected readonly EntityTypeManagerInterface $entities) {}
 
   /**
    * Creates the transition form with the workflow and capability services.
    */
   public static function create(ContainerInterface $container): static {
-    return new static($container->get('aculta_magazine.capability'), $container->get('content_moderation.state_transition_validation'), $container->get('current_user'));
+    return new static($container->get('aculta_magazine.capability'), $container->get('content_moderation.state_transition_validation'), $container->get('current_user'), $container->get('entity_type.manager'));
   }
 
   /**
@@ -66,7 +67,7 @@ final class EditorialTransitionForm extends FormBase {
    * Revalidates the transition and saves it through the moderated Node entity.
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
-    $storage = $this->entityTypeManager()->getStorage('node');
+    $storage = $this->entities->getStorage('node');
     $node = $storage->load((int) $form_state->getValue('node_id'));
     if (!$node instanceof NodeInterface || !$this->allowed($node)) {
       throw new AccessDeniedHttpException();
@@ -111,8 +112,8 @@ final class EditorialTransitionForm extends FormBase {
    * Loads the latest revision for transition discovery.
    */
   private function latest(NodeInterface $node): NodeInterface {
-    $id = $this->entityTypeManager()->getStorage('node')->getLatestRevisionId($node->id());
-    $latest = $id ? $this->entityTypeManager()->getStorage('node')->loadRevision($id) : NULL;
+    $id = $this->entities->getStorage('node')->getLatestRevisionId($node->id());
+    $latest = $id ? $this->entities->getStorage('node')->loadRevision($id) : NULL;
     return $latest instanceof NodeInterface ? $latest : $node;
   }
 

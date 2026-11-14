@@ -27,6 +27,8 @@ final class ShipmentAddressBinder {
   ) {}
 
   /**
+   * Monta o par de endereços de origem e destino da remessa.
+   *
    * @param array<string, mixed>|null $destination
    *   Campos do Drupal Address do perfil de envio da remessa (snapshot do pedido). NULL quando o perfil não existe.
    * @param string $purpose

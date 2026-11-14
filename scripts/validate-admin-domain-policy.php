@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Validates centralized ACULTA administrator Domain ownership.
+ */
+
 declare(strict_types=1);
 
 /**
@@ -28,7 +33,7 @@ foreach ($routes as $name => $route) {
   if ($isAdmin) {
     $adminRoutes++;
     $assert(
-      $route->getOption('_aculta_domain_purpose') === 'main',
+      $route->getOption('_aculta_site_key') === 'main',
       'Admin route belongs to MAIN: ' . $name,
     );
   }
@@ -36,7 +41,7 @@ foreach ($routes as $name => $route) {
   if ($isAdminPrefix) {
     $adminPrefixRoutes++;
     $assert(
-      $route->getOption('_aculta_domain_purpose') === 'main',
+      $route->getOption('_aculta_site_key') === 'main',
       'Admin-prefix route belongs to MAIN: ' . $name,
     );
   }
@@ -47,7 +52,7 @@ $assert($adminPrefixRoutes > 0, 'At least one /painel-administrativo route was i
 
 $userEdit = $routeProvider->getRouteByName('entity.user.edit_form');
 $assert(
-  $userEdit->getOption('_aculta_domain_purpose') === 'main',
+  $userEdit->getOption('_aculta_site_key') === 'main',
   'entity.user.edit_form is canonically classified as MAIN.',
 );
 $assert(
@@ -55,9 +60,9 @@ $assert(
   'entity.user.edit_form uses the centralized admin path.',
 );
 
-$domainPurpose = \Drupal::service('aculta_portal.domain_purpose');
-$adminUrl = $domainPurpose->pathUrl('main', '/painel-administrativo');
-$assert($adminUrl !== NULL, 'DomainPurposeManager can build the MAIN admin URL.');
+$domainSite = \Drupal::service('aculta_portal.domain_site');
+$adminUrl = $domainSite->pathUrl('main', '/painel-administrativo');
+$assert($adminUrl !== NULL, 'DomainSiteManager can build the MAIN admin URL.');
 $assert(
   preg_match('#^https?://[^/]+/painel-administrativo$#', $adminUrl->toString()) === 1,
   'MAIN admin URL is absolute and Domain-managed.',
@@ -65,20 +70,20 @@ $assert(
 
 $portalRoot = DRUPAL_ROOT . '/modules/custom/aculta_portal';
 $subscriberSource = file_get_contents(
-  $portalRoot . '/src/EventSubscriber/DomainPurposeRequestSubscriber.php'
+  $portalRoot . '/src/EventSubscriber/DomainSiteRequestSubscriber.php'
 );
 $routeSource = file_get_contents(
   $portalRoot . '/src/EventSubscriber/DomainRouteSubscriber.php'
 );
 $resolverSource = file_get_contents(
-  $portalRoot . '/src/Domain/ContentPurposeResolver.php'
+  $portalRoot . '/src/Domain/ContentSiteKeyResolver.php'
 );
-$themeRoot = DRUPAL_ROOT . '/themes/custom/aculta420';
+$themeRoot = DRUPAL_ROOT . '/themes/custom/aculta420_v2';
 
 $assert(
   str_contains($subscriberSource, 'canonicalMainNavigationResponse')
-    && str_contains($subscriberSource, "pathUrl('main', \$request->getPathInfo())"),
-  'Admin canonicalization uses DomainPurposeManager instead of a hardcoded host.',
+    && str_contains($subscriberSource, 'pathUrl(DomainSurfaceMap::MAIN, $request->getPathInfo())'),
+  'Admin canonicalization uses DomainSiteManager instead of a hardcoded host.',
 );
 $assert(
   str_contains($subscriberSource, "['GET', 'HEAD']")
@@ -87,7 +92,7 @@ $assert(
 );
 $assert(
   str_contains($subscriberSource, 'catch (MethodNotAllowedException)')
-    && str_contains($subscriberSource, "\$this->domainPurposeManager->getCurrentPurpose() !== 'main'")
+    && str_contains($subscriberSource, '$this->domainPurposeManager->getCurrentSiteKey() !== DomainSurfaceMap::MAIN')
     && str_contains($subscriberSource, "\$event->setResponse(\$this->notFoundResponse())"),
   'Wrong-method requests to existing admin routes also fail closed on secondary purposes.',
 );
@@ -106,7 +111,7 @@ $assert(
 );
 $assert(
   str_contains($subscriberSource, 'notFoundResponse')
-    && str_contains($subscriberSource, 'canonicalContentPurpose'),
+    && str_contains($subscriberSource, 'canonicalContentSiteKey'),
   'Public wrong-purpose enforcement remains fail-closed.',
 );
 $assert(
@@ -120,7 +125,7 @@ $assert(
 );
 $assert(
   str_contains($routeSource, "\$accountRoutes['entity.user.edit_form']")
-    && str_contains($routeSource, "\$route->setOption('_aculta_domain_purpose', 'main')"),
+    && str_contains($routeSource, "\$route->setOption('_aculta_site_key', 'main')"),
   'User edit is excluded from generic ACCOUNT classification and classified as MAIN.',
 );
 $adminPrecedence = strpos($resolverSource, "if (\$route->getOption('_admin_route')");

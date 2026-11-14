@@ -1,0 +1,23 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Modal dos termos da Conta
+description: Apresentação do formulário de aceite dos termos aberto pelo módulo.
+status: stable
+group: Conta
+props:
+  type: object
+  additionalProperties: false
+  required: [title]
+  properties:
+    title:
+      type: string
+      minLength: 1
+      title: Título anunciado ao diálogo
+      description: Texto anunciado quando o formulário de aceite é aberto pelo diálogo da Conta.
+slots:
+  content:
+    title: Formulário
+    description: Form API original dos termos, com handlers e cache preservados.
+assets:
+  css:
+    component:
+      account-terms-modal.css: {}

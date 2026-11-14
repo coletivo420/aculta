@@ -7,7 +7,8 @@ namespace Drupal\aculta_messenger\Integration\Game;
 use Drupal\aculta_messenger\Aviso\EligibleNoticePage;
 use Drupal\aculta_messenger\Event\MessengerNoticeEvent;
 use Drupal\aculta_messenger\Service\NoticeListFilter;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\aculta_portal\Render\PortalLinkElement;
 use Drupal\aculta_user\Badge\BadgeService;
 use Drupal\Core\Entity\ContentEntityInterface;
@@ -34,7 +35,7 @@ final class GameAchievementNoticeManager implements GameAchievementNoticeManager
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly BadgeService $badges,
-    private readonly DomainPurposeManager $domainPurposeManager,
+    private readonly DomainSiteManager $siteManager,
     private readonly LockBackendInterface $lock,
   ) {}
 
@@ -114,7 +115,7 @@ final class GameAchievementNoticeManager implements GameAchievementNoticeManager
           ->condition('template', self::TEMPLATE)
           ->condition('uid', (int) $account->id());
         NoticeListFilter::applyReadCondition($query, self::READ_FIELD, $filters);
-        return $query->sort('created', 'DESC')->sort('id', 'DESC')
+        return $query->sort('created', 'DESC')->sort('mid', 'DESC')
           ->range($scanOffset, $batchSize)->execute();
       },
       function (array $ids) use ($storage, &$awards): array {
@@ -132,7 +133,7 @@ final class GameAchievementNoticeManager implements GameAchievementNoticeManager
       $message = $entry['entity'];
       $notice = $entry['resolved'];
       $read = (bool) $message->get(self::READ_FIELD)->value;
-      $url = $this->domainPurposeManager->routeUrl('account', 'aculta_user.atividade', ['aba' => 'conquistas']);
+      $url = $this->siteManager->routeUrl(SiteKey::Account, 'aculta_user.atividade', ['aba' => 'conquistas']);
       if ($url === NULL) {
         continue;
       }
@@ -276,7 +277,7 @@ final class GameAchievementNoticeManager implements GameAchievementNoticeManager
     $storage->resetCache($ids);
     $awards = [];
     foreach ($storage->loadMultiple($ids) as $award) {
-      if ($this->isAward($award) && isset($uuids[$award->uuid()])) {
+      if ($award instanceof ContentEntityInterface && $this->isAward($award) && isset($uuids[$award->uuid()])) {
         $awards[$award->uuid()] = $award;
       }
     }
@@ -291,7 +292,8 @@ final class GameAchievementNoticeManager implements GameAchievementNoticeManager
     if (!$this->isAward($award) || $award->id() === NULL) {
       return NULL;
     }
-    return $this->entityTypeManager->getStorage('aculta_badge_award')->loadUnchanged((int) $award->id());
+    $loaded = $this->entityTypeManager->getStorage('aculta_badge_award')->loadUnchanged((int) $award->id());
+    return $loaded instanceof ContentEntityInterface ? $loaded : NULL;
   }
 
   /**

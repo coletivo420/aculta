@@ -1,0 +1,122 @@
+.forum-topic-meta {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-lg);
+  background: var(--color-surface);
+}
+
+.forum-topic-meta::before {
+  content: "";
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0;
+  inline-size: 4px;
+  background: var(--accent-green-stripe);
+}
+
+.forum-topic-meta__tricolor {
+  display: flex;
+  block-size: 4px;
+}
+
+.forum-topic-meta__tricolor-segment {
+  flex: 1 1 0;
+}
+
+.forum-topic-meta__tricolor-segment--green { background: var(--accent-green-stripe); }
+.forum-topic-meta__tricolor-segment--yellow { background: var(--accent-yellow-stripe); }
+.forum-topic-meta__tricolor-segment--red { background: var(--accent-red-stripe); }
+
+.forum-topic-meta__inner {
+  display: grid;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md) var(--spacing-lg);
+}
+
+.forum-topic-meta__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.forum-topic-meta__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 2.5rem;
+  block-size: 2.5rem;
+  border-radius: var(--border-radius-md, 0.5rem);
+  background: var(--color-brand-primary);
+  color: var(--color-surface);
+}
+
+.forum-topic-meta__title {
+  margin: 0;
+  flex: 1 1 auto;
+  font-size: var(--font-size-lg);
+  color: var(--color-text-primary);
+}
+
+.forum-topic-meta__status {
+  display: inline-flex;
+  align-items: center;
+  gap: .375rem;
+  padding: .25rem .75rem;
+  border-radius: 999px;
+  background: var(--color-surface-subtle, var(--color-surface));
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+.forum-topic-meta__dot {
+  inline-size: .5rem;
+  block-size: .5rem;
+  border-radius: 999px;
+  background: var(--accent-green-stripe);
+}
+
+.forum-topic-meta__status--closed .forum-topic-meta__dot {
+  background: var(--accent-red-stripe);
+}
+
+.forum-topic-meta__stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(7rem, 1fr));
+  margin: 0;
+  border-radius: var(--border-radius-md, 0.5rem);
+  background: var(--color-surface-subtle, var(--color-surface));
+}
+
+.forum-topic-meta__stat {
+  display: grid;
+  justify-items: center;
+  gap: .25rem;
+  padding: var(--spacing-sm);
+  text-align: center;
+}
+
+.forum-topic-meta__stat + .forum-topic-meta__stat {
+  border-inline-start: 1px solid var(--color-border);
+}
+
+.forum-topic-meta__stat dt {
+  color: var(--color-brand-primary);
+}
+
+.forum-topic-meta__stat dd {
+  display: grid;
+  margin: 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.forum-topic-meta__stat dd strong {
+  color: var(--color-text-primary);
+  font-size: var(--font-size-base);
+}
+
+/* Densidade compacta (celular): estatísticas em grade de duas colunas, título um degrau menor. */
+.forum-topic-meta--density-compact .forum-topic-meta__stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.forum-topic-meta--density-compact .forum-topic-meta__title { font-size: var(--font-size-base); }

@@ -6,6 +6,7 @@ namespace Drupal\aculta_events\Hook;
 
 use Drupal\aculta_events\Cache\EventCacheTags;
 use Drupal\aculta_events\Entity\EventDate;
+use Drupal\aculta_events\Entity\Event;
 use Drupal\aculta_events\Entity\EventLocation;
 use Drupal\aculta_events\Occurrence\UpcomingDates;
 use Drupal\aculta_index\Provider\ContentIndexProviderRegistry;
@@ -62,7 +63,7 @@ final class EventDateHooks {
     $agora = $this->tempo->getCurrentTime();
     $ocorrencias = [];
     foreach ($view->result as $indice => $linha) {
-      $entidade = $linha->_entity ?? NULL;
+      $entidade = $linha->_entity;
       if (!$entidade instanceof EventDate) {
         continue;
       }
@@ -120,7 +121,7 @@ final class EventDateHooks {
       }
 
       // Se a data mudou de evento, reprojeta também o evento anterior.
-      $original = method_exists($entity, 'getOriginal') ? $entity->getOriginal() : ($entity->original ?? NULL);
+      $original = $entity->getOriginal();
       if ($original instanceof EventDate) {
         $oldEventId = (int) ($original->get('field_evento')->target_id ?? 0);
         if ($oldEventId > 0 && $oldEventId !== $eventId) {
@@ -143,6 +144,9 @@ final class EventDateHooks {
         $dates = $this->entityTypeManager->getStorage('aculta_event_date')->loadMultiple($dateIds);
         $eventIds = [];
         foreach ($dates as $date) {
+          if (!$date instanceof EventDate) {
+            continue;
+          }
           $eid = (int) ($date->get('field_evento')->target_id ?? 0);
           if ($eid > 0) {
             $eventIds[$eid] = $eid;

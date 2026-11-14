@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * @file
+ */
+
 declare(strict_types=1);
 
 use Drupal\commerce_store\Entity\Store;
@@ -8,7 +12,8 @@ use Drupal\commerce_store\Entity\Store;
  * Provisions the single ACULTA Commerce store from the canonical site data.
  *
  * Run locally with:
- *   php vendor/drush/drush/drush.php php:script scripts/institution/provision-commerce-store.php
+ *   php vendor/drush/drush/drush.php php:script
+ *   scripts/institution/provision-commerce-store.php.
  *
  * This script creates a Commerce content entity. It is intentionally
  * idempotent and fails closed if the canonical institutional record changes,

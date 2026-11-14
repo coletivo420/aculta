@@ -7,6 +7,7 @@ namespace Drupal\aculta_forum\Plugin\views\field;
 use Drupal\aculta_forum\Service\ForumPostThreadBuilder;
 use Drupal\aculta_forum\Service\ForumPostUnreadManager;
 use Drupal\Core\Link;
+use Drupal\Component\Render\MarkupInterface;
 use Drupal\Core\Url;
 use Drupal\views\Attribute\ViewsField;
 use Drupal\views\Plugin\views\field\FieldPluginBase;
@@ -25,14 +26,14 @@ final class ForumUnreadPosts extends FieldPluginBase implements ContainerFactory
    *
    * @var array<int, array{count: int, post_id: int, page: int}>
    */
-  private array $unreadByTopic = [];
+  protected array $unreadByTopic = [];
 
   public function __construct(
     array $configuration,
     $plugin_id,
     $plugin_definition,
-    private readonly ForumPostUnreadManager $unreadManager,
-    private readonly ForumPostThreadBuilder $threadBuilder,
+    protected readonly ForumPostUnreadManager $unreadManager,
+    protected readonly ForumPostThreadBuilder $threadBuilder,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }
@@ -65,6 +66,10 @@ final class ForumUnreadPosts extends FieldPluginBase implements ContainerFactory
    * {@inheritdoc}
    */
   public function preRender(&$values): void {
+    // The displayed count depends on each visitor's History records.
+    if ($this->view !== NULL) {
+      $this->view->element['#cache']['contexts'][] = 'user';
+    }
     $topicIds = [];
     foreach ($values as $row) {
       $topicIds[] = (int) $this->getValue($row, 'nid');
@@ -75,11 +80,11 @@ final class ForumUnreadPosts extends FieldPluginBase implements ContainerFactory
   /**
    * {@inheritdoc}
    */
-  public function render(ResultRow $values): array {
+  public function render(ResultRow $values): MarkupInterface|string {
     $topicId = (int) $this->getValue($values, 'nid');
     $unread = $this->unreadByTopic[$topicId] ?? NULL;
     if ($unread === NULL || $unread['count'] < 1) {
-      return [];
+      return '';
     }
 
     $query = $this->threadBuilder->getTopicPagerQuery($unread['page']);
@@ -88,7 +93,7 @@ final class ForumUnreadPosts extends FieldPluginBase implements ContainerFactory
       'fragment' => 'forum-post-' . $unread['post_id'],
     ]);
     $label = $this->formatPlural($unread['count'], '@count nova publicação', '@count novas publicações');
-    return Link::fromTextAndUrl($label, $url)->toRenderable();
+    return Link::fromTextAndUrl($label, $url)->toString();
   }
 
 }

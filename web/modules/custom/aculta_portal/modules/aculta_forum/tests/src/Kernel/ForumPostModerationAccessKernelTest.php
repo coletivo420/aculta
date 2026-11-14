@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_forum\Kernel;
 
 use Drupal\aculta_forum\Access\ForumPostModerationAccess;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\domain\Entity\Domain;
 use Drupal\KernelTests\KernelTestBase;
 use PHPUnit\Framework\Attributes\Group;
@@ -31,12 +31,13 @@ final class ForumPostModerationAccessKernelTest extends KernelTestBase {
     'text',
     'node',
     'domain',
+    'filter',
   ];
 
   /**
    * Purpose manager used by the access check.
    */
-  private DomainPurposeManager $purpose;
+  private DomainSiteManager $purpose;
 
   /**
    * {@inheritdoc}
@@ -59,7 +60,7 @@ final class ForumPostModerationAccessKernelTest extends KernelTestBase {
         'is_default' => $id === 'aculta_org',
       ])->save();
     }
-    $this->purpose = new DomainPurposeManager(
+    $this->purpose = new DomainSiteManager(
       $this->container->get('entity_type.manager'),
       $this->container->get('domain.negotiator'),
       $this->container->get('config.factory'),
@@ -76,10 +77,10 @@ final class ForumPostModerationAccessKernelTest extends KernelTestBase {
       $this->purpose,
     );
 
-    $main = $this->purpose->runInPurpose('main', fn () => $access->queueAccess());
+    $main = $this->purpose->runInSite('main', fn () => $access->queueAccess());
     self::assertTrue($main->isAllowed(), 'No purpose main a fila é permitida.');
 
-    $forum = $this->purpose->runInPurpose('forum', fn () => $access->queueAccess());
+    $forum = $this->purpose->runInSite('forum', fn () => $access->queueAccess());
     self::assertFalse($forum->isAllowed(), 'No purpose forum a fila não é liberada.');
 
   }

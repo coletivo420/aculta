@@ -20,9 +20,9 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 final class ForumTopicMoveForm extends FormBase {
 
   public function __construct(
-    private readonly ForumTopicMover $mover,
-    private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly AccountInterface $account,
+    protected readonly ForumTopicMover $mover,
+    protected readonly EntityTypeManagerInterface $entityTypeManager,
+    protected readonly AccountInterface $account,
   ) {}
 
   /**
@@ -85,9 +85,12 @@ final class ForumTopicMoveForm extends FormBase {
       '#button_type' => 'primary',
     ];
     $form['actions']['cancel'] = [
-      '#type' => 'link',
-      '#title' => $this->t('Cancelar'),
-      '#url' => Url::fromRoute('aculta_forum.admin'),
+      '#type' => 'aculta_portal_button',
+      '#props' => [
+        'text' => (string) $this->t('Cancelar'),
+        'url' => Url::fromRoute('aculta_forum.admin')->toString(),
+        'variant' => 'secondary',
+      ],
     ];
     return $form;
   }

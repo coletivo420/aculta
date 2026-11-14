@@ -1,3 +1,30 @@
+## 0.4.0-dev.174 — fecha o gate PHPCS do adapter
+
+- O gate integral Drupal/DrupalPractice agora não registra erros nem avisos.
+- A classe utilitária recém-criada de limites de ZIP e seu teste seguem UpperCamelCase; os identificadores H5P legados usados pela descoberta Drupal permanecem intactos.
+- Referências de namespaces Drupal usam imports, a consulta do upgrade mantém seus parâmetros explícitos e a fixture de Kernel segue a indentação Drupal.
+- Unit H5P: 34 testes/139 asserções PASS, incluindo os 6/40 do limite ZIP; Kernel H5P: 18 testes/480 asserções PASS, com 7 depreciações upstream Core/contrib. PHPCS integral Drupal/DrupalPractice: 0 erros/avisos; PHP lint e `git diff --check` PASS. Runtime após sincronização somente de código: `drush cr` PASS, atualização de banco ausente, configuração limpa e extensão reporta dev.174. O HEAD Git do Runtime foi preservado por alterações paralelas locais.
+
+## 0.4.0-dev.173 — corrige consultas do editor de bibliotecas
+
+- A listagem H5P e a busca de detalhes falhavam com erro SQL porque um comentário
+  PHP de acompanhamento de dívida havia sido incluído dentro das strings SQL.
+  A anotação foi movida para fora das consultas sem retirar o filtro de semântica.
+- Kernel exercita ambos os caminhos de `getLibraries()` com uma biblioteca real
+  de teste e semântica cadastrada.
+- Runtime autenticado após publicação: a API de bibliotecas respondeu HTTP 200,
+  listou `H5P.HelloWorld` e montou o seletor no iframe sem erro JavaScript.
+  `drush cr` passou; `updatedb:status` e `config:status` ficaram limpos.
+
+## 0.4.0-dev.172 — serve o editor H5P no domínio de cursos
+
+- O endpoint AJAX que lista bibliotecas e retorna semânticas do editor agora
+  pertence ao purpose `courses`, igual ao formulário contextual que o consome.
+  Antes, ele era classificado como `main` e respondia 404 no domínio de cursos,
+  deixando o iframe mostrar “Error, unable to load libraries.”
+- O Kernel de descoberta fixa esse contrato de rota para evitar regressão.
+- Runtime: validar a correção após sincronização e rebuild de cache.
+
 ## 0.4.0-dev.171 — remove dependência do Drupal LMS contrib
 
 - `aculta_lms_h5p` mantém os acessos por Group e não precisa habilitar o módulo `lms`; o Kernel focal remove essa dependência do harness.
@@ -31,7 +58,7 @@
 
 ## 0.4.0-dev.166 — limites de recursos no instalador de bibliotecas H5P
 
-- Novo `aculta_H5PArchiveResourceLimits`, sem dependências Drupal: recusa pacotes
+- Novo `AcultaH5PArchiveResourceLimits`, sem dependências Drupal: recusa pacotes
   com mais de 10.000 entradas, arquivo descompactado acima de 32 MiB, pacote
   acima de 256 MiB descompactado e taxa de compressão acima de 100:1 (aplicada a
   entradas com mais de 1 MiB).
@@ -41,7 +68,7 @@
   extração, com o validador H5P oficial ainda como segunda barreira.
 - Referência de dimensionamento: o pacote de bibliotecas do Opigno 3.2.8 (2.683
   entradas, 16,3 MB descompactados, taxa máxima 11,4) passa com folga.
-- Testes: Unit `aculta_H5PArchiveResourceLimitsTest` (6 casos) executado
+- Testes: Unit `AcultaH5PArchiveResourceLimitsTest` (6 casos) executado
   localmente com executor mínimo compatível com as asserções usadas, sem PHPUnit
   do projeto (o Packagist estava bloqueado no ambiente). Kernel do instalador e
   PHPUnit oficial: NÃO executados.
@@ -577,4 +604,30 @@ RUNTIME STATUS: PARTIAL.
 
 - Acesso de estudante e educador, painel, formatter, editor e integrações agora tipam cursos por `GroupInterface`; permissão de estudante usa `take course` no Group.
 - Unit H5P 34/139 PASS; Kernel de acesso/integração 3/134 PASS, com 44 depreciações upstream.
+
+## 0.4.0-dev.175 — respeita permissões do storage H5P
+
+- A preparação do diretório privado deixa de solicitar `MODIFY_PERMISSIONS`.
+  O usuário do PHP-FPM pode escrever pela associação ao grupo `aculta`, mas não
+  é o proprietário da pasta para executar `chmod`; o fluxo agora preserva as
+  permissões existentes e ainda cria o caminho quando ele não existe.
+- Unit focal: 1 teste/8 asserções PASS. PHPCS Drupal/DrupalPractice, lint PHP,
+  atualização do Runtime e validação HTTP autenticada serão registrados após
+  concluir a verificação da entrega.
+
+## 0.4.0-dev.176 — serve a API do editor no domínio correto
+
+- O formulário de edição do curso Group fica no purpose `main`, e o editor H5P
+  usa AJAX same-origin. A rota `/h5peditor` deixa de declarar o purpose `courses`
+  e permanece no domínio principal, conforme a política de rotas de integração.
+- O smoke anterior mostrou HTTP 404 e “Error, unable to load libraries” porque
+  o endpoint estava bloqueado no host `main`. Após sincronizar, Chromium autenticado
+  confirmou HTTP 200 em `/h5peditor/.../libraries`, listagem de `H5P.HelloWorld` e
+  editor carregado no iframe. Kernel de descoberta: 1 teste/23 asserções PASS.
+- O submit do editor ainda não persistiu conteúdo: o formulário recarregou sem
+  preencher os campos Drupal ocultos `library`/`parameters`; e a criação por Drush
+  para verificar o player não pôde gravar em `private://h5p` sob a identidade CLI.
+  Grupo descartável 130 foi removido; nenhuma atividade H5P ou arquivo foi criado.
+  O caminho e as permissões privadas não foram alterados. Smoke de criação/player
+  segue pendente; atualização/configuração do Runtime continuam limpas.
 

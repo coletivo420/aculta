@@ -9,7 +9,6 @@ use Drupal\aculta_lms\Notice\LearningEligibilityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
-use Drupal\Core\Entity\EntityPublishedInterface;
 use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface;
@@ -32,7 +31,8 @@ use Drupal\aculta_messenger\Aviso\AvisoDigestProviderIdentityInterface;
 use Drupal\aculta_messenger\Aviso\AvisoDigestSelectiveDiscardInterface;
 use Drupal\aculta_messenger\Service\NoticeListFilter;
 use Drupal\aculta_messenger\Service\NoticeRelatedGrouper;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\aculta_portal\Render\PortalLinkElement;
 use Psr\Log\LoggerInterface;
 
@@ -90,7 +90,7 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly DomainPurposeManager $domainPurposeManager,
+    private readonly DomainSiteManager $siteManager,
     private readonly ClassActivityDeadlineManager $deadlines,
     private readonly DateFormatterInterface $dateFormatter,
     private readonly QueueFactory $queueFactory,
@@ -145,17 +145,21 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
       $message = $ids === [] ? NULL : $storage->load(reset($ids));
       $enqueueEmail = FALSE;
       if (!$message instanceof MessageInterface) {
-        $message = $storage->create([
+        $created = $storage->create([
           'template' => self::TEMPLATE,
           'uid' => $uid,
           self::EVENT_FIELD => $type,
           self::SOURCE_FIELD => $sourceUuid,
           self::EVENT_VERSION_FIELD => $eventVersion,
           self::READ_FIELD => 0,
-          self::DIGEST_FIELD => in_array($type, self::DIGEST_EVENTS, TRUE) && $includeInDigest ? 0 : 1,
+          self::DIGEST_FIELD => $includeInDigest ? 0 : 1,
           self::DELIVERY_FIELD => $sendEmail ? 'pending' : 'sent',
           self::ATTEMPTS_FIELD => 0,
         ]);
+        if (!$created instanceof MessageInterface) {
+          throw new \LogicException('The message storage returned an unexpected entity.');
+        }
+        $message = $created;
         $message->save();
         $enqueueEmail = $sendEmail;
       }
@@ -225,17 +229,17 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
       return NULL;
     }
     return match ($type) {
-      'enrollment' => $source instanceof GroupRelationshipInterface ? $this->resolveEnrollment($sourceUuid, $account, $source) : NULL,
-      'certificate' => $source instanceof CourseCertificate ? $this->resolveCertificate($sourceUuid, $account, $source) : NULL,
-      'completion' => $this->resolveCompletion($sourceUuid, $account, $source),
-      'evaluation' => $this->resolveEvaluation($sourceUuid, $account, $source),
-      'submission' => $this->resolveSubmission($sourceUuid, $account, $source),
-      'course_release' => $this->resolveContentRelease($sourceUuid, $account, $source),
-      'lesson_release' => $this->resolveContentRelease($sourceUuid, $account, $source),
-      'activity_release' => $this->resolveContentRelease($sourceUuid, $account, $source),
-      'feedback' => $source instanceof CommentInterface ? $this->resolveEducatorFeedback($sourceUuid, $account, $source) : NULL,
-      'deadline' => $source instanceof GroupRelationshipInterface ? $this->resolveActivityDeadline($sourceUuid, $account, (string) $message->get(self::EVENT_VERSION_FIELD)->value, FALSE, $source) : NULL,
-      'deadline_reminder' => $source instanceof GroupRelationshipInterface ? $this->resolveActivityDeadline($sourceUuid, $account, (string) $message->get(self::EVENT_VERSION_FIELD)->value, TRUE, $source) : NULL,
+      'enrollment' => $source instanceof GroupRelationshipInterface ? $this->resolveEnrollment($account, $source) : NULL,
+      'certificate' => $source instanceof CourseCertificate ? $this->resolveCertificate($account, $source) : NULL,
+      'completion' => $source instanceof ContentEntityInterface ? $this->resolveCompletion($account, $source) : NULL,
+      'evaluation' => $source instanceof ContentEntityInterface ? $this->resolveEvaluation($account, $source) : NULL,
+      'submission' => $source instanceof ContentEntityInterface ? $this->resolveSubmission($account, $source) : NULL,
+      'course_release', 'lesson_release', 'activity_release' => $source instanceof ContentEntityInterface
+        ? $this->resolveContentRelease($account, $source)
+        : NULL,
+      'feedback' => $source instanceof CommentInterface ? $this->resolveEducatorFeedback($account, $source) : NULL,
+      'deadline' => $source instanceof GroupRelationshipInterface ? $this->resolveActivityDeadline($account, (string) $message->get(self::EVENT_VERSION_FIELD)->value, FALSE, $source) : NULL,
+      'deadline_reminder' => $source instanceof GroupRelationshipInterface ? $this->resolveActivityDeadline($account, (string) $message->get(self::EVENT_VERSION_FIELD)->value, TRUE, $source) : NULL,
       default => NULL,
     };
   }
@@ -247,8 +251,8 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
    * before loading them together makes each page, counter and digest use fresh
    * source state without issuing one UUID query per notice.
    *
-   * @param \Drupal\message\MessageInterface[] $messages
-   *   Candidate LMS notices.
+   * @param \Drupal\Core\Entity\EntityInterface[] $messages
+   *   Candidate LMS notices; non-message records are ignored below.
    *
    * @return array<string, array<string, \Drupal\Core\Entity\EntityInterface>>
    *   Entities keyed by type and UUID.
@@ -273,7 +277,7 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
       $matches = $storage->loadByProperties(['uuid' => array_values($uuids)]);
       $ids = [];
       foreach ($matches as $entity) {
-        if ($entity instanceof EntityInterface && isset($uuids[$entity->uuid()]) && $entity->id() !== NULL) {
+        if (isset($uuids[$entity->uuid()]) && $entity->id() !== NULL) {
           $ids[] = $entity->id();
         }
       }
@@ -282,7 +286,7 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
       }
       $storage->resetCache($ids);
       foreach ($storage->loadMultiple($ids) as $entity) {
-        if ($entity instanceof EntityInterface && isset($uuids[$entity->uuid()])) {
+        if (isset($uuids[$entity->uuid()])) {
           $sources[$entityType][$entity->uuid()] = $entity;
         }
       }
@@ -329,7 +333,7 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
           ->condition('template', self::TEMPLATE)
           ->condition('uid', (int) $account->id());
         NoticeListFilter::applyReadCondition($query, self::READ_FIELD, $filters);
-        return $query->sort('created', 'DESC')->sort('id', 'DESC')
+        return $query->sort('created', 'DESC')->sort('mid', 'DESC')
           ->range($scanOffset, $batchSize)->execute();
       },
       function (array $ids) use ($storage, &$sources): array {
@@ -530,7 +534,7 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
   /**
    * Loads and authorizes an enrollment event's course and class.
    */
-  private function resolveEnrollment(string $sourceUuid, AccountInterface $account, GroupRelationshipInterface $membership): ?array {
+  private function resolveEnrollment(AccountInterface $account, GroupRelationshipInterface $membership): ?array {
     $member = $membership instanceof GroupMembership ? $membership->getEntity() : NULL;
     if (!$membership instanceof GroupMembership || $membership->getPluginId() !== 'group_membership'
       || !$member instanceof UserInterface || !$member->isActive()
@@ -538,7 +542,7 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
       return NULL;
     }
     $class = $membership->getGroup();
-    if ($class === NULL || $class->bundle() !== 'lms_class'
+    if ($class->bundle() !== 'lms_class'
       || !$class->access('view', $account, TRUE)->isAllowed()) {
       return NULL;
     }
@@ -553,7 +557,7 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
         || !$course->access('view', $account, TRUE)->isAllowed()) {
         continue;
       }
-      $url = $this->domainPurposeManager->routeUrl('courses', 'entity.group.canonical', ['group' => $course->id()]);
+      $url = $this->siteManager->routeUrl(SiteKey::Courses, 'entity.group.canonical', ['group' => $course->id()]);
       if ($url === NULL) {
         return NULL;
       }
@@ -576,11 +580,11 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
   /**
    * Loads the owner's certificate snapshot and public verifier URL.
    */
-  private function resolveCertificate(string $sourceUuid, AccountInterface $account, CourseCertificate $certificate): ?array {
-    if (!$certificate instanceof CourseCertificate || (int) $certificate->get('uid')->value !== (int) $account->id()) {
+  private function resolveCertificate(AccountInterface $account, CourseCertificate $certificate): ?array {
+    if ((int) $certificate->get('uid')->value !== (int) $account->id()) {
       return NULL;
     }
-    $url = $this->domainPurposeManager->routeUrl('main', 'aculta_lms.certificate_verify', [
+    $url = $this->siteManager->routeUrl(SiteKey::Main, 'aculta_lms.certificate_verify', [
       'codigo' => $certificate->get('verification_code')->value,
     ]);
     if ($url === NULL) {
@@ -597,7 +601,7 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
   /**
    * Loads a passed course status and checks its current learner membership.
    */
-  private function resolveCompletion(string $sourceUuid, AccountInterface $account, EntityInterface $status): ?array {
+  private function resolveCompletion(AccountInterface $account, ContentEntityInterface $status): ?array {
     if ($status->getEntityTypeId() !== 'aculta_lms_progress'
       || (int) $status->get('uid')->value !== (int) $account->id()
       || !(bool) $status->get('finished')->value
@@ -612,7 +616,7 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
     if (!$this->eligibility->hasCurrentEnrollment($course, $account)) {
       return NULL;
     }
-    $url = $this->domainPurposeManager->routeUrl('courses', 'aculta_lms.student_dashboard');
+    $url = $this->siteManager->routeUrl(SiteKey::Courses, 'aculta_lms.student_dashboard');
     if ($url === NULL) {
       return NULL;
     }
@@ -627,7 +631,7 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
 
   /**
    * Resolves an evaluated answer without exposing its response or score. */
-  private function resolveEvaluation(string $sourceUuid, AccountInterface $account, EntityInterface $answer): ?array {
+  private function resolveEvaluation(AccountInterface $account, ContentEntityInterface $answer): ?array {
     if ($answer->getEntityTypeId() !== 'aculta_lms_answer'
       || (string) $answer->get('state')->value !== 'graded'
       || (int) $answer->get('uid')->value !== (int) $account->id()) {
@@ -639,7 +643,7 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
       || !$this->eligibility->hasCurrentEnrollment($course, $account)) {
       return NULL;
     }
-    $url = $this->domainPurposeManager->routeUrl('courses', 'aculta_lms.student_dashboard');
+    $url = $this->siteManager->routeUrl(SiteKey::Courses, 'aculta_lms.student_dashboard');
     if ($url === NULL) {
       return NULL;
     }
@@ -661,7 +665,7 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
   /**
    * Resolves a pending response only for a current course grader.
    */
-  private function resolveSubmission(string $sourceUuid, AccountInterface $account, EntityInterface $answer): ?array {
+  private function resolveSubmission(AccountInterface $account, ContentEntityInterface $answer): ?array {
     if ($answer->getEntityTypeId() !== 'aculta_lms_answer'
       || (string) $answer->get('state')->value !== 'submitted') {
       return NULL;
@@ -676,7 +680,7 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
     if (!$student instanceof UserInterface || !$student->isActive() || !$this->eligibility->hasCurrentEnrollment($course, $student)) {
       return NULL;
     }
-    $url = $this->domainPurposeManager->routeUrl('courses', 'aculta_lms.educator_dashboard');
+    $url = $this->siteManager->routeUrl(SiteKey::Courses, 'aculta_lms.educator_dashboard');
     if ($url === NULL) {
       return NULL;
     }
@@ -698,16 +702,16 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
   /**
    * Resolves a published content release only while the learner stays enrolled.
    */
-  private function resolveContentRelease(string $sourceUuid, AccountInterface $account, EntityInterface $content): ?array {
+  private function resolveContentRelease(AccountInterface $account, ContentEntityInterface $content): ?array {
     if (!$this->eligibility->isContentAvailable($content)) {
       return NULL;
     }
     foreach ($this->eligibility->coursesForContent($content) as $course) {
-      if (!$course instanceof GroupInterface || $course->bundle() !== 'lms_course' || !$course->isPublished()
+      if ($course->bundle() !== 'lms_course' || !$course->isPublished()
         || !$course->access('view', $account, TRUE)->isAllowed() || !$this->eligibility->hasCurrentEnrollment($course, $account)) {
         continue;
       }
-      $url = $this->domainPurposeManager->routeUrl('courses', 'entity.group.canonical', ['group' => $course->id()]);
+      $url = $this->siteManager->routeUrl(SiteKey::Courses, 'entity.group.canonical', ['group' => $course->id()]);
       if ($url === NULL) {
         return NULL;
       }
@@ -723,25 +727,25 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
 
   /**
    * Resolves current educator feedback without exposing its body in the notice. */
-  private function resolveEducatorFeedback(string $commentUuid, AccountInterface $account, CommentInterface $comment): ?array {
+  private function resolveEducatorFeedback(AccountInterface $account, CommentInterface $comment): ?array {
     if ($comment->bundle() !== 'lms_answer_comment' || (int) $comment->get('status')->value !== CommentInterface::PUBLISHED) {
       return NULL;
     }
-    if (!$comment instanceof CommentInterface || !$comment->access('view', $account, TRUE)->isAllowed()) {
+    if (!$comment->access('view', $account, TRUE)->isAllowed()) {
       return NULL;
     }
     $answer = $comment->getCommentedEntity();
-    if (!$answer instanceof EntityInterface || $answer->getEntityTypeId() !== 'aculta_lms_answer'
+    if (!$answer instanceof ContentEntityInterface || $answer->getEntityTypeId() !== 'aculta_lms_answer'
       || (int) $answer->get('uid')->value !== (int) $account->id()) {
       return NULL;
     }
     $course = $this->eligibility->courseForAnswer($answer);
     $educator = $comment->getOwner();
-    if (!$course instanceof GroupInterface || !$educator || !$course->hasPermission('grade students', $educator)
+    if (!$course instanceof GroupInterface || !$course->hasPermission('grade students', $educator)
       || !$this->eligibility->hasCurrentEnrollment($course, $account)) {
       return NULL;
     }
-    $url = $this->domainPurposeManager->routeUrl('courses', 'aculta_lms.student_dashboard');
+    $url = $this->siteManager->routeUrl(SiteKey::Courses, 'aculta_lms.student_dashboard');
     if ($url === NULL) {
       return NULL;
     }
@@ -755,11 +759,11 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
 
   /**
    * Resolves a current class deadline only for its active class learners. */
-  private function resolveActivityDeadline(string $deadlineUuid, AccountInterface $account, string $eventVersion, bool $reminder, GroupRelationshipInterface $deadline): ?array {
+  private function resolveActivityDeadline(AccountInterface $account, string $eventVersion, bool $reminder, GroupRelationshipInterface $deadline): ?array {
     if ($deadline->getPluginId() !== 'lms_class_activity_due') {
       return NULL;
     }
-    if (!$deadline instanceof GroupRelationshipInterface || $deadline->get('field_activity_due_at')->isEmpty()) {
+    if ($deadline->get('field_activity_due_at')->isEmpty()) {
       return NULL;
     }
     $currentVersion = ActivityDeadlineAssignedEvent::versionFor(
@@ -772,10 +776,10 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
     }
     $class = $deadline->getGroup();
     $activity = $deadline->getEntity();
-    $course = $class instanceof GroupInterface ? $this->deadlines->courseForClass($class) : NULL;
-    if (!$class instanceof GroupInterface || !$class->isPublished() || !$activity instanceof ContentEntityInterface
+    $course = $this->deadlines->courseForClass($class);
+    if (!$class->isPublished() || !$activity instanceof ContentEntityInterface
       || $activity->getEntityTypeId() !== 'aculta_lms_activity'
-      || !$course instanceof GroupInterface || !$course->isPublished()
+      || $course === NULL || !$course->isPublished()
       || !$course->access('view', $account, TRUE)->isAllowed()
       || !$this->deadlines->activityBelongsToCourse($activity, $course)
       || !$this->eligibility->memberCanTakeCourseInClass($class, $account)) {
@@ -786,13 +790,13 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
       (string) $deadline->get('field_activity_due_at')->value,
       new \DateTimeZone('UTC'),
     );
-    if (!$date instanceof DrupalDateTime || $date->hasErrors()) {
+    if ($date->hasErrors()) {
       return NULL;
     }
     $user = $account instanceof UserInterface ? $account : NULL;
     $timestamp = $date->getTimestamp();
-    $formattedDate = $this->dateFormatter->format($timestamp, 'long', NULL, $user?->getTimeZone());
-    $url = $this->domainPurposeManager->routeUrl('courses', 'entity.group.canonical', ['group' => $course->id()]);
+    $formattedDate = $this->dateFormatter->format($timestamp, 'long', '', $user?->getTimeZone());
+    $url = $this->siteManager->routeUrl(SiteKey::Courses, 'entity.group.canonical', ['group' => $course->id()]);
     if ($url === NULL) {
       return NULL;
     }

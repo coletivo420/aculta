@@ -1,0 +1,28 @@
+{% set count = count|default(0) %}
+{% set label = count > 0
+  ? (count == 1 ? '1 conversa não lida. Abrir mensagens'|t : '@count conversas não lidas. Abrir mensagens'|t({'@count': count}))
+  : 'Abrir mensagens'|t %}
+<button type="button" class="aculta-utility-trigger aculta-messenger-trigger"
+  aria-controls="aculta-messenger-dialog" aria-expanded="false" aria-haspopup="dialog"
+  aria-label="{{ label }}" data-aculta-dialog-trigger>
+  <span class="aculta-utility-trigger__icon">
+    {{ include('aculta420_v2:icon', { name: 'chat-circle-dots', variant: 'duotone', size: 'xl' }, with_context = false) }}
+    <span class="aculta-unread-count aculta-utility-trigger__count" data-aculta-messenger-count data-count="{{ count }}" aria-hidden="true">{{ count > 99 ? '99+' : count }}</span>
+  </span>
+</button>
+<dialog class="aculta-utility-dialog aculta-messenger-dialog" id="aculta-messenger-dialog"
+  aria-labelledby="aculta-messenger-dialog-title" data-aculta-utility-drawer
+  data-aculta-drawer-count="messages" data-aculta-drawer-url="{{ href }}"
+  data-hx-get="{{ href }}" data-hx-trigger="aculta:drawer:open"
+  data-hx-target="find [data-aculta-drawer-content]" data-hx-swap="innerHTML"
+  data-hx-sync="this:replace"
+  data-aculta-drawer-label="{{ 'Não foi possível carregar as mensagens. Tente novamente.'|t }}">
+  <header class="aculta-utility-dialog__header">
+    <h2 class="aculta-utility-dialog__title" id="aculta-messenger-dialog-title">{{ 'Mensagens'|t }}</h2>
+    <button type="button" class="aculta-utility-dialog__close" data-aculta-dialog-close aria-label="{{ 'Fechar mensagens'|t }}">{{ include('aculta420_v2:icon', { name: 'x', variant: 'duotone', size: 'md' }, with_context = false) }}</button>
+  </header>
+  <div class="aculta-utility-dialog__body" data-aculta-drawer-content aria-live="polite" aria-busy="false">
+    <p>{{ 'Abra para atualizar suas conversas.'|t }}</p>
+  </div>
+  {% if all_href %}<footer class="aculta-messenger-dialog__footer"><a class="aculta-utility-dialog__action" href="{{ all_href }}">{{ 'Ver todas as mensagens'|t }}</a></footer>{% endif %}
+</dialog>

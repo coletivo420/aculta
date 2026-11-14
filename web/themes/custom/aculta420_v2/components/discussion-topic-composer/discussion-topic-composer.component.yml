@@ -1,0 +1,48 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Compositor de Criação de Tópico
+status: stable
+description: Componente visual SDC para criar um tópico de discussão. É o único compositor com Assunto, que aparece antes do Comentário.
+group: Comunidade
+props:
+  type: object
+  additionalProperties: false
+  required: [target_id]
+  properties:
+    target_id:
+      type: string
+      title: Identificador do container alvo
+      minLength: 1
+      description: ID DOM estável do compositor usado como alvo para atualizações HTMX.
+    standalone_popup:
+      type: boolean
+      title: Abrir em popup próprio
+      default: true
+      description: Compõe o compositor dentro do SDC popup; desative quando o consumidor já fornece a janela modal.
+    status:
+      type: string
+      title: Estado do compositor
+      enum: [editando, enviando, erro, enviado]
+      default: editando
+      description: Estado da submissão refletido nas classes e atributos de estado do compositor.
+    host_title:
+      type: [string, 'null']
+      title: Título do fórum ou espaço onde o tópico será criado
+      default: null
+      description: Nome público do fórum ou espaço em que o novo tópico será publicado, quando disponível.
+    trigger_label:
+      type: string
+      title: Texto do botão que abre o popup
+      default: Novo tópico
+      description: Texto visível e nome acessível do controle que abre o formulário de novo tópico.
+    dialog_title:
+      type: string
+      title: Título do popup
+      default: Novo tópico
+      description: Título apresentado no cabeçalho do diálogo de criação de tópico.
+slots:
+  messages:
+    title: Mensagens de status ou erro
+    description: Região de alerta acessível (role="status").
+  form:
+    title: Formulário Drupal
+    description: Render array do formulário de criação de tópico (Assunto, Comentário, Categoria).

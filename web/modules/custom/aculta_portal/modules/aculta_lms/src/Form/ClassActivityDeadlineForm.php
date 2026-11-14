@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_lms\Form;
 
-use Drupal\Core\Datetime\DateTimeItemInterface;
 use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
@@ -15,6 +14,7 @@ use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\Url;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupRelationshipInterface;
+use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -22,9 +22,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 final class ClassActivityDeadlineForm extends FormBase {
 
   public function __construct(
-    private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly CurrentRouteMatch $deadlineRouteMatch,
-    private readonly AccountProxyInterface $account,
+    protected readonly EntityTypeManagerInterface $entityTypeManager,
+    protected readonly CurrentRouteMatch $deadlineRouteMatch,
+    protected readonly AccountProxyInterface $account,
   ) {}
 
   /**
@@ -61,7 +61,7 @@ final class ClassActivityDeadlineForm extends FormBase {
         (string) $relationship->get('field_activity_due_at')->value,
         new \DateTimeZone('UTC'),
       );
-      if ($parsed instanceof DrupalDateTime) {
+      if ($parsed !== FALSE) {
         $default = $parsed->setTimezone(new \DateTimeZone($timezone));
       }
     }
@@ -95,12 +95,16 @@ final class ClassActivityDeadlineForm extends FormBase {
         '#value' => $this->t('Remover prazo'),
         '#submit' => ['::clearDeadline'],
         '#limit_validation_errors' => [],
+        '#attributes' => ['data-portal-ui' => 'button-danger'],
       ];
     }
     $form['actions']['cancel'] = [
-      '#type' => 'link',
-      '#title' => $this->t('Voltar ao painel da turma'),
-      '#url' => Url::fromRoute('aculta_lms.class_dashboard', ['course' => $course->id(), 'group' => $class->id()]),
+      '#type' => 'aculta_portal_button',
+      '#props' => [
+        'text' => (string) $this->t('Voltar ao painel da turma'),
+        'url' => Url::fromRoute('aculta_lms.class_dashboard', ['course' => $course->id(), 'group' => $class->id()])->toString(),
+        'variant' => 'secondary',
+      ],
     ];
     return $form;
   }

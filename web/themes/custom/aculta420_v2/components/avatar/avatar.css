@@ -1,0 +1,27 @@
+.aculta-avatar {
+  display: inline-grid;
+  overflow: hidden;
+  flex: 0 0 auto;
+  place-items: center;
+  color: var(--color-text-secondary);
+  border-radius: var(--radius-full);
+  background: var(--color-surface-raised);
+  aspect-ratio: 1;
+}
+
+.aculta-avatar__media,
+.aculta-avatar__media img {
+  block-size: 100%;
+  inline-size: 100%;
+}
+
+.aculta-avatar__media img {
+  display: block;
+  object-fit: cover;
+}
+
+.aculta-avatar--xs { inline-size: 1.5rem; }
+.aculta-avatar--sm { inline-size: 2rem; }
+.aculta-avatar--md { inline-size: 2.5rem; }
+.aculta-avatar--lg { inline-size: 3rem; }
+.aculta-avatar--xl { inline-size: 4.5rem; }

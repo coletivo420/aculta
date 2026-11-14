@@ -1,0 +1,9 @@
+{% if items %}
+  <nav{{ attributes.addClass('filter-chips') }} aria-label="{{ 'Filter results'|t }}" tabindex="0">
+    <ul class="filter-chips__list">
+      {% for item in items %}
+        <li><a class="filter-chips__link{{ item.is_active|default(false) ? ' is-active' }}" href="{{ item.url }}"{% if item.is_active|default(false) %} aria-current="true"{% endif %}>{{ item.label }}{% if item.count is not null %}<span class="filter-chips__count">{{ item.count }}</span>{% endif %}</a></li>
+      {% endfor %}
+    </ul>
+  </nav>
+{% endif %}

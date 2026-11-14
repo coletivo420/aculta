@@ -1,0 +1,23 @@
+<?php
+
+/**
+ * @file
+ * Apresentação do tema ACULTA420 V2.
+ *
+ * O preprocess genérico converte o token neutro data-portal-ui nas classes do
+ * tema. Fica aqui, e não em src/Hook, porque o hook genérico `preprocess` não
+ * é um `preprocess_*` nomeado por theme hook; o mapa de tokens continua em
+ * \Drupal\aculta420_v2\Hook\PortalUiHooks, junto do preprocess_container.
+ */
+
+declare(strict_types=1);
+
+use Drupal\aculta420_v2\Hook\PortalUiHooks;
+
+/**
+ * Implements hook_preprocess().
+ */
+function aculta420_v2_preprocess(array &$variables): void {
+  PortalUiHooks::preprocessVariables($variables);
+}
+

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_file_uploader\Unit;
 
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\aculta_file_uploader\RecentUploads;
 use Drupal\file\FileInterface;
 use Drupal\Tests\UnitTestCase;
@@ -31,7 +32,7 @@ final class RecentUploadsTest extends UnitTestCase {
    * O próprio usuário, na pasta da integração, é dono do envio.
    */
   public function testOwnerInsideIntegrationFolderIsAllowed(): void {
-    $recent = new RecentUploads($this->createMock(\Drupal\Core\Entity\EntityTypeManagerInterface::class));
+    $recent = new RecentUploads($this->createMock(EntityTypeManagerInterface::class));
     self::assertTrue($recent->isOwnedBy($this->file('private://studio/envio/wiki/a.png', 7), 7, 'wiki'));
   }
 
@@ -39,7 +40,7 @@ final class RecentUploadsTest extends UnitTestCase {
    * Outro usuário não usa o envio, mesmo na pasta certa.
    */
   public function testOtherUserIsRefused(): void {
-    $recent = new RecentUploads($this->createMock(\Drupal\Core\Entity\EntityTypeManagerInterface::class));
+    $recent = new RecentUploads($this->createMock(EntityTypeManagerInterface::class));
     self::assertFalse($recent->isOwnedBy($this->file('private://studio/envio/wiki/a.png', 7), 8, 'wiki'));
   }
 
@@ -47,7 +48,7 @@ final class RecentUploadsTest extends UnitTestCase {
    * Envio de uma integração não vale para outra.
    */
   public function testFileFromAnotherIntegrationIsRefused(): void {
-    $recent = new RecentUploads($this->createMock(\Drupal\Core\Entity\EntityTypeManagerInterface::class));
+    $recent = new RecentUploads($this->createMock(EntityTypeManagerInterface::class));
     self::assertFalse($recent->isOwnedBy($this->file('private://studio/envio/forum/a.png', 7), 7, 'wiki'));
   }
 
@@ -55,7 +56,7 @@ final class RecentUploadsTest extends UnitTestCase {
    * Administrador vê e usa envios de outro usuário, dentro da pasta da integração.
    */
   public function testAdministratorMayUseAnotherUsersUploadInsideTheFolder(): void {
-    $recent = new RecentUploads($this->createMock(\Drupal\Core\Entity\EntityTypeManagerInterface::class));
+    $recent = new RecentUploads($this->createMock(EntityTypeManagerInterface::class));
     self::assertTrue($recent->isOwnedBy($this->file('private://studio/envio/wiki/a.png', 7), 0, 'wiki', TRUE));
     self::assertFalse($recent->isOwnedBy($this->file('private://studio/envio/forum/a.png', 7), 0, 'wiki', TRUE));
   }
@@ -64,7 +65,7 @@ final class RecentUploadsTest extends UnitTestCase {
    * Caminho com ".." não escapa da pasta da integração.
    */
   public function testPathTraversalIsRefused(): void {
-    $recent = new RecentUploads($this->createMock(\Drupal\Core\Entity\EntityTypeManagerInterface::class));
+    $recent = new RecentUploads($this->createMock(EntityTypeManagerInterface::class));
     self::assertFalse($recent->isOwnedBy($this->file('private://studio/envio/wiki/../forum/a.png', 7), 7, 'wiki'));
   }
 
@@ -72,7 +73,7 @@ final class RecentUploadsTest extends UnitTestCase {
    * Nome de integração fora de letras minúsculas é recusado antes de compor caminho.
    */
   public function testInvalidIntegrationNameIsRefused(): void {
-    $recent = new RecentUploads($this->createMock(\Drupal\Core\Entity\EntityTypeManagerInterface::class));
+    $recent = new RecentUploads($this->createMock(EntityTypeManagerInterface::class));
     self::assertFalse($recent->isOwnedBy($this->file('private://studio/envio/wiki/a.png', 7), 7, 'wiki/../x'));
     self::assertSame([], $recent->forUser(7, '../wiki'));
   }

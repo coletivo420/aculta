@@ -17,4 +17,4 @@ Status: vigente desde 0.2.0-dev.41.
 ## Verificação
 
 - Teste de Kernel: publicado aparece, rascunho não aparece para visitante, total igual à lista.
-- Runtime de teste: visitante vê 12 itens no índice, igual aos 12 publicados nos tipos indexados. Resultado de magazine abre no host do magazine.
+- Runtime de desenvolvimento: visitante vê 12 itens no índice, igual aos 12 publicados nos tipos indexados. Resultado de magazine abre no host do magazine.

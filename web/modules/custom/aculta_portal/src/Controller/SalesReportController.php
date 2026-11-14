@@ -43,6 +43,9 @@ final class SalesReportController implements ContainerInjectionInterface {
     $this->stringTranslation = $stringTranslation;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('aculta_portal.sales_report_query'),
@@ -65,11 +68,13 @@ final class SalesReportController implements ContainerInjectionInterface {
     }
 
     return [
-      '#type' => 'container',
-      '#attributes' => ['data-portal-ui' => 'sales-panel'],
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:sales-panel',
+      '#slots' => ['content' => [
       'por_variacao' => $this->secao($this->t('Vendas por variação'), $this->tabelaPorVariacao($filtros)),
       'por_periodo' => $this->secao($this->t('Vendas por período'), $this->tabelaPorPeriodo($filtros)),
       'pedidos' => $this->secao($this->t('Pedidos e pagamentos'), $this->pedidosTabela->construir($filtros, SalesReportQuery::ESCOPO_PRODUTO, $this->paginaAtual($request), 'aculta_portal.relatorio_vendas', $this->filtrosDaUrl($request))),
+      ]],
       '#cache' => ['max-age' => 0, 'contexts' => ['url.query_args']],
     ];
   }
@@ -78,6 +83,7 @@ final class SalesReportController implements ContainerInjectionInterface {
    * Seção do painel: título semântico e conteúdo. Aparência decidida pelo tema (tokens sales-*).
    *
    * @return array<string, mixed>
+   *   Render array da seção.
    */
   private function secao(mixed $titulo, array $conteudo): array {
     return [
@@ -86,13 +92,21 @@ final class SalesReportController implements ContainerInjectionInterface {
       'titulo' => [
         '#type' => 'html_tag',
         '#tag' => 'h2',
-        '#attributes' => ['data-portal-ui' => 'sales-heading'],
         '#value' => $titulo,
       ],
       'conteudo' => $conteudo,
     ];
   }
 
+  /**
+   * Número da página atual da listagem, a partir da URL.
+   *
+   * @param \Symfony\Component\HttpFoundation\Request $request
+   *   Requisição atual.
+   *
+   * @return int
+   *   Página solicitada, nunca negativa.
+   */
   private function paginaAtual(Request $request): int {
     return max(0, (int) $request->query->get('pagina', 0));
   }
@@ -101,6 +115,7 @@ final class SalesReportController implements ContainerInjectionInterface {
    * Filtros da URL repassados à paginação (sem o parâmetro de página).
    *
    * @return array<string, string>
+   *   Filtros da URL, sem o parâmetro de página.
    */
   private function filtrosDaUrl(Request $request): array {
     return array_filter($request->query->all(), static fn ($valor, $chave): bool => $chave !== 'pagina' && is_scalar($valor), ARRAY_FILTER_USE_BOTH);

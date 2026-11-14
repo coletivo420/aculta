@@ -19,10 +19,10 @@ use Symfony\Component\HttpFoundation\RequestStack;
 final class NoticeReadStateForm extends FormBase {
 
   public function __construct(
-    private readonly NoticeReadStateManagerInterface $readState,
-    private readonly AccountInterface $currentUser,
-    private readonly NoticeListFilter $filter,
-    private readonly RequestStack $noticeRequestStack,
+    protected readonly NoticeReadStateManagerInterface $readState,
+    protected readonly AccountInterface $currentUser,
+    protected readonly NoticeListFilter $filter,
+    protected readonly RequestStack $noticeRequestStack,
   ) {}
 
   /**

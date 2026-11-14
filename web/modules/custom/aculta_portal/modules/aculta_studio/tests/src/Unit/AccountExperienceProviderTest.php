@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_studio\Unit;
 
-use Drupal\aculta_portal\Account\AccountDocumentInterface;
 use Drupal\aculta_studio\Experience\AccountExperienceProvider;
 use Drupal\aculta_studio\Experience\StudioExperienceManager;
+use Drupal\Core\DependencyInjection\ContainerBuilder;
+use Drupal\Core\Routing\UrlGeneratorInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -18,6 +19,20 @@ use PHPUnit\Framework\Attributes\Group;
 #[CoversClass(AccountExperienceProvider::class)]
 #[Group('aculta_studio')]
 final class AccountExperienceProviderTest extends UnitTestCase {
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function setUp(): void {
+    parent::setUp();
+    // Url::fromRoute() precisa de um url_generator registrado nos testes unitários.
+    $generator = $this->createMock(UrlGeneratorInterface::class);
+    $generator->method('generateFromRoute')->willReturn('/conta-teste');
+    $container = new ContainerBuilder();
+    $container->set('url_generator', $generator);
+    $container->set('string_translation', $this->getStringTranslationStub());
+    \Drupal::setContainer($container);
+  }
 
   /**
    * The account entry is registered for the account purpose only.
@@ -64,30 +79,18 @@ final class AccountExperienceProviderTest extends UnitTestCase {
   /**
    * The new entry links to existing forms, never to /minha-conta.
    */
-  public function testLinksReuseExistingAccountRoutes(): void {
-    $document = $this->createMock(AccountDocumentInterface::class);
-    $document->method('isAvailable')->willReturn(TRUE);
-    $build = (new AccountExperienceProvider($document))->build();
+  public function testDashboardLinksSeparatePrivateAccountAndPublicProfile(): void {
+    $build = (new AccountExperienceProvider())->build();
 
-    self::assertSame('account-entry', $build['#attributes']['data-portal-ui']);
-    self::assertSame('item_list', $build['sections']['#theme']);
-    $routes = array_map(static fn (array $link): string =>
-      $link['#url']->getRouteName(), $build['sections']['#items']);
-    self::assertSame([
-      'aculta_studio.account_data',
-      'aculta_studio.account_address',
-      'aculta_studio.account_documents',
-      'aculta_studio.account_security',
-      'aculta_studio.account_password',
-      'aculta_studio.account_connections',
-      'aculta_studio.account_orders',
-      'aculta_studio.account_support',
-      'aculta_studio.account_preferences',
-      'aculta_portal.dashboard',
-    ], $routes);
+    self::assertSame('component', $build['#type']);
+    self::assertSame('aculta420_v2:account-experience-dashboard', $build['#component']);
+    self::assertSame('/conta-teste', $build['#props']['account_url']);
+    self::assertSame('Minha conta', $build['#props']['account_link_title']);
+    self::assertSame([], $build['#slots']['profile_link']);
     self::assertContains('user', $build['#cache']['contexts']);
-    self::assertSame('Studio Dashboard', $build['heading']['#value']);
-    self::assertSame('studio-profile-entry', $build['profile_link']['#attributes']['data-portal-ui']);
+    self::assertSame('Studio Dashboard', $build['#slots']['menu']['#props']['title']);
+    self::assertArrayNotHasKey('items', $build['#slots']['menu']['#props']);
+    self::assertSame(['sidebar_items' => [], 'dialog_items' => []], $build['#slots']['menu']['#slots']);
   }
 
   /**
@@ -99,22 +102,7 @@ final class AccountExperienceProviderTest extends UnitTestCase {
 
     // The provider alone has no authority to enumerate suites. The dashboard
     // controller adds only manager-resolved links after access checks.
-    self::assertSame([], $build['suites']['#items']);
-  }
-
-  /**
-   * A missing CPF/CNPJ owner cannot create a broken account link.
-   */
-  public function testDocumentsHiddenWhenOwnerUnavailable(): void {
-    $items = (new AccountExperienceProvider())->build()['sections']['#items'];
-    $routeNames = array_map(static fn (array $item): string =>
-      $item['#url']->getRouteName(), $items);
-    self::assertNotContains('aculta_studio.account_documents', $routeNames);
-
-    $service = $this->createMock(AccountDocumentInterface::class);
-    $service->method('isAvailable')->willReturn(FALSE);
-    $hidden = (new AccountExperienceProvider($service))->build()['sections']['#items'];
-    self::assertCount(count($items), $hidden);
+    self::assertSame([], $build['#slots']['experiences']);
   }
 
 }

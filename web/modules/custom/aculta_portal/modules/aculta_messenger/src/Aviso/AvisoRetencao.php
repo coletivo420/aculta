@@ -16,20 +16,24 @@ use Drupal\aculta_messenger\Entity\Aviso;
  */
 final class AvisoRetencao {
 
-  /** Meses desde a criação até a exclusão automática. */
+  /**
+   * Meses desde a criação até a exclusão automática. */
   public const MESES = 6;
 
-  /** Tipos de aviso sujeitos à retenção: somente os avisos do Fórum. */
+  /**
+   * Tipos de aviso sujeitos à retenção: somente os avisos do Fórum. */
   public const TIPOS = [Aviso::TIPO_RESPOSTA, Aviso::TIPO_ATUALIZACAO];
 
-  /** Timestamp abaixo do qual (inclusive) um aviso criado está vencido. */
+  /**
+   * Timestamp abaixo do qual (inclusive) um aviso criado está vencido. */
   public static function limite(int $agora): int {
     return (new \DateTimeImmutable('@' . $agora))
       ->modify('-' . self::MESES . ' months')
       ->getTimestamp();
   }
 
-  /** Um aviso criado em $criado está vencido em $agora? */
+  /**
+   * Um aviso criado em $criado está vencido em $agora? */
   public static function vencido(int $criado, int $agora): bool {
     return $criado <= self::limite($agora);
   }

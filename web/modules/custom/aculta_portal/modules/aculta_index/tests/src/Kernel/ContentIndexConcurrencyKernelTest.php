@@ -6,7 +6,7 @@ namespace Drupal\Tests\aculta_index\Kernel;
 
 use Drupal\aculta_index\Generation\ContentIndexGenerationManager;
 use Drupal\aculta_index\Queue\ContentIndexWorkManager;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Database\Database;
@@ -39,6 +39,10 @@ final class ContentIndexConcurrencyKernelTest extends KernelTestBase {
     'node',
     'aculta_index',
     'aculta_index_test',
+    'aculta_calendar',
+    'aculta_file_uploader',
+    'filter',
+    'file',
   ];
 
   /**
@@ -46,7 +50,7 @@ final class ContentIndexConcurrencyKernelTest extends KernelTestBase {
    */
   public function register(ContainerBuilder $container): void {
     parent::register($container);
-    $container->set('aculta_portal.domain_purpose', new DomainPurposeManager(
+    $container->set('aculta_portal.domain_site', new DomainSiteManager(
       $this->createMock(EntityTypeManagerInterface::class),
       $this->createMock(DomainNegotiatorInterface::class),
       $this->createMock(ConfigFactoryInterface::class),

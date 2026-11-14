@@ -17,7 +17,8 @@ use Drupal\Core\Session\AccountInterface;
  */
 final class EmailPendingAviso {
 
-  /** Modelo de aviso do e-mail não confirmado. */
+  /**
+   * Modelo de aviso do e-mail não confirmado. */
   public const TEMPLATE = 'aculta_msg_email_pendente';
 
   public function __construct(
@@ -25,12 +26,14 @@ final class EmailPendingAviso {
     private readonly EmailConfirmationPolicy $policy,
   ) {}
 
-  /** TRUE quando a conta está logada e ainda não confirmou o e-mail. */
+  /**
+   * TRUE quando a conta está logada e ainda não confirmou o e-mail. */
   public function isPending(AccountInterface $account): bool {
     return $account->isAuthenticated() && !$this->policy->isConfirmed($account);
   }
 
-  /** Garante o aviso da conta (cria se faltar) e devolve-o. */
+  /**
+   * Garante o aviso da conta (cria se faltar) e devolve-o. */
   public function ensure(int $uid): ?object {
     $storage = $this->entityTypeManager->getStorage('message');
     $ids = $this->ids($uid);
@@ -42,17 +45,20 @@ final class EmailPendingAviso {
     return $storage->load(reset($ids));
   }
 
-  /** Título do aviso (delta 0 do modelo). Null se o modelo não existir. */
+  /**
+   * Título do aviso (delta 0 do modelo). Null se o modelo não existir. */
   public function title(?object $message): ?string {
     return $this->text($message, 0);
   }
 
-  /** Corpo do aviso (delta 1 do modelo). Única fonte do texto que a caixa de Minha conta também mostra. */
+  /**
+   * Corpo do aviso (delta 1 do modelo). Única fonte do texto que a caixa de Minha conta também mostra. */
   public function body(?object $message): ?string {
     return $this->text($message, 1);
   }
 
-  /** Texto de um delta do modelo do aviso. */
+  /**
+   * Texto de um delta do modelo do aviso. */
   private function text(?object $message, int $delta): ?string {
     if ($message === NULL || !method_exists($message, 'getText')) {
       return NULL;
@@ -64,7 +70,8 @@ final class EmailPendingAviso {
     return $plain !== '' ? $plain : NULL;
   }
 
-  /** Remove os avisos de e-mail pendente da conta. */
+  /**
+   * Remove os avisos de e-mail pendente da conta. */
   public function remove(int $uid): void {
     $storage = $this->entityTypeManager->getStorage('message');
     $ids = $this->ids($uid);
@@ -73,7 +80,15 @@ final class EmailPendingAviso {
     }
   }
 
-  /** @return int[] */
+  /**
+   * Devolve os IDs dos avisos de e-mail pendente da conta.
+   *
+   * @param int $uid
+   *   ID da conta.
+   *
+   * @return int[]
+   *   IDs dos avisos encontrados.
+   */
   private function ids(int $uid): array {
     return array_values(array_map('intval', $this->entityTypeManager->getStorage('message')->getQuery()
       ->accessCheck(FALSE)

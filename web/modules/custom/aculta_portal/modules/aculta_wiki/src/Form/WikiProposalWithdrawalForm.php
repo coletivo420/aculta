@@ -9,8 +9,8 @@ use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Url;
-use Drupal\aculta_contributions\Entity\Contribution;
-use Drupal\aculta_contributions\Service\ContributionLifecycle;
+use Drupal\aculta_cgu\Entity\Contribution;
+use Drupal\aculta_cgu\Service\ContributionLifecycle;
 use Drupal\aculta_wiki\Entity\WikiProposal;
 use Drupal\aculta_wiki\Service\WikiProposalWithdrawal;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -23,9 +23,9 @@ use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 final class WikiProposalWithdrawalForm extends FormBase {
 
   public function __construct(
-    private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly WikiProposalWithdrawal $withdrawal,
-    private readonly ContributionLifecycle $contributions,
+    protected readonly EntityTypeManagerInterface $entityTypeManager,
+    protected readonly WikiProposalWithdrawal $withdrawal,
+    protected readonly ContributionLifecycle $contributions,
     MessengerInterface $messenger,
   ) {
     $this->messenger = $messenger;
@@ -38,7 +38,7 @@ final class WikiProposalWithdrawalForm extends FormBase {
     return new static(
       $container->get('entity_type.manager'),
       $container->get('aculta_wiki.proposal_withdrawal'),
-      $container->get('aculta_contributions.lifecycle'),
+      $container->get('aculta_cgu.contribution_lifecycle'),
       $container->get('messenger'),
     );
   }
@@ -81,9 +81,12 @@ final class WikiProposalWithdrawalForm extends FormBase {
       '#value' => $this->t('Retirar proposta'),
     ];
     $form['actions']['cancel'] = [
-      '#type' => 'link',
-      '#title' => $this->t('Voltar ao status da proposta'),
-      '#url' => Url::fromRoute('aculta_wiki.proposal_status', ['proposal' => $proposal->id()]),
+      '#type' => 'aculta_portal_button',
+      '#props' => [
+        'text' => (string) $this->t('Voltar ao status da proposta'),
+        'url' => Url::fromRoute('aculta_wiki.proposal_status', ['proposal' => $proposal->id()])->toString(),
+        'variant' => 'secondary',
+      ],
     ];
     return $form;
   }

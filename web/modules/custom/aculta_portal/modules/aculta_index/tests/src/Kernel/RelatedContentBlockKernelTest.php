@@ -8,7 +8,8 @@ use Drupal\aculta_events\Entity\Event;
 use Drupal\aculta_events\Entity\EventLocation;
 use Drupal\aculta_index\Plugin\Block\RelatedContentBlock;
 use Drupal\aculta_index\Queue\ContentIndexWorkManager;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_user\Organization\OrganizationAccessService;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\Form\FormState;
 use Drupal\Core\Render\Element;
@@ -51,6 +52,8 @@ final class RelatedContentBlockKernelTest extends KernelTestBase {
     'aculta_calendar',
     'aculta_index',
     'aculta_events',
+    'aculta_file_uploader',
+    'file',
   ];
 
   /**
@@ -58,7 +61,12 @@ final class RelatedContentBlockKernelTest extends KernelTestBase {
    */
   public function register(ContainerBuilder $container): void {
     parent::register($container);
-    $container->setDefinition('aculta_portal.domain_purpose', (new Definition(DomainPurposeManager::class, [
+    // This partial Kernel does not install aculta_user's full dependency graph.
+    $container->setDefinition(
+      'aculta_user.organization_access_service',
+      (new Definition(OrganizationAccessService::class))->setSynthetic(TRUE)->setPublic(TRUE),
+    );
+    $container->setDefinition('aculta_portal.domain_site', (new Definition(DomainSiteManager::class, [
       new Reference('entity_type.manager'),
       new Reference('domain.negotiator'),
       new Reference('config.factory'),
@@ -71,6 +79,10 @@ final class RelatedContentBlockKernelTest extends KernelTestBase {
    */
   protected function setUp(): void {
     parent::setUp();
+    $this->container->set(
+      'aculta_user.organization_access_service',
+      (new \ReflectionClass(OrganizationAccessService::class))->newInstanceWithoutConstructor(),
+    );
     $this->installEntitySchema('user');
     $this->installEntitySchema('taxonomy_term');
     $this->installEntitySchema('domain');
@@ -116,7 +128,6 @@ final class RelatedContentBlockKernelTest extends KernelTestBase {
     $blockManager = $this->container->get('plugin.manager.block');
     $this->assertTrue($blockManager->hasDefinition('aculta_index_related_content'));
 
-    /** @var \Drupal\aculta_index\Plugin\Block\RelatedContentBlock $block */
     $block = $blockManager->createInstance('aculta_index_related_content');
     $this->assertInstanceOf(RelatedContentBlock::class, $block);
 
@@ -232,14 +243,15 @@ final class RelatedContentBlockKernelTest extends KernelTestBase {
 
     $build = $block->build();
     $this->assertNotEmpty($build);
-    $this->assertSame('item_list', $build['#theme']);
-    $this->assertSame('Locais do Festival', (string) $build['#title']);
-    $this->assertCount(2, $build['#items']);
-    $this->assertSame('related-content-block', $build['#attributes']['data-portal-ui']);
+    $this->assertSame('component', $build['#type']);
+    $this->assertSame('aculta420_v2:related-content', $build['#component']);
+    $this->assertSame('item_list', $build['#slots']['content']['#theme']);
+    $this->assertSame('Locais do Festival', (string) $build['#slots']['content']['#title']);
+    $this->assertCount(2, $build['#slots']['content']['#items']);
     $this->assertArrayNotHasKey('#attached', $build);
 
     // Check rendered item attributes and sub-elements.
-    $firstItem = $build['#items'][0];
+    $firstItem = $build['#slots']['content']['#items'][0];
     $this->assertSame('container', $firstItem['#type']);
     $this->assertSame('related-content-item', $firstItem['#attributes']['data-portal-ui']);
     $this->assertSame('aculta_event_location', $firstItem['#attributes']['data-entity-type']);
@@ -415,7 +427,7 @@ final class RelatedContentBlockKernelTest extends KernelTestBase {
    * Builds and activates an index generation from existing entities.
    */
   private function buildAndActivateGeneration(): void {
-    /** @var \Drupal\aculta_index\Maintenance\ContentIndexRebuilder $rebuilder */
+    /** @var \Drupal\aculta_index\Rebuild\ContentIndexRebuilder $rebuilder */
     $rebuilder = $this->container->get('aculta_index.rebuilder');
     $generationId = $rebuilder->start();
     $complete = FALSE;
@@ -435,7 +447,11 @@ final class RelatedContentBlockKernelTest extends KernelTestBase {
     $worker = $this->container->get('plugin.manager.queue_worker')
       ->createInstance(ContentIndexWorkManager::QUEUE_ID);
     $queue = $this->container->get('queue')->get(ContentIndexWorkManager::QUEUE_ID);
-    while ($item = $queue->claimItem()) {
+    while (TRUE) {
+      $item = $queue->claimItem();
+      if (!is_object($item)) {
+        break;
+      }
       $worker->processItem($item->data);
       $queue->deleteItem($item);
     }

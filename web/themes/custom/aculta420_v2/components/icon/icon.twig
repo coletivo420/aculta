@@ -1,0 +1,15 @@
+{% set variant = variant|default('duotone') %}
+{% set size = size|default('md') %}
+{% set is_brocolis = name == 'aculta-brocolis' %}
+{# Os pesos extras só existem para o desenho ACULTA; Phosphor continua com dois pesos. #}
+{% set variant = is_brocolis or variant in ['regular', 'duotone'] ? variant : 'regular' %}
+{% if is_brocolis %}
+  {% set icon_filename = variant == 'regular' ? 'aculta-brocolis.svg' : 'aculta-brocolis-' ~ variant ~ '.svg' %}
+  {% set icon_file = '@aculta420_v2/assets/icons/aculta-brocolis/' ~ icon_filename %}
+{% else %}
+  {% set icon_filename = variant == 'duotone' ? name ~ '-duotone.svg' : name ~ '.svg' %}
+  {% set icon_file = '@aculta420_v2/assets/icons/phosphor/' ~ variant ~ '/' ~ icon_filename %}
+{% endif %}
+<span class="aculta-icon aculta-icon--{{ variant }} aculta-icon--{{ size }}{% if is_brocolis %} aculta-icon--brocolis{% endif %}"{% if color %} style="--icon-primary: {{ color }};"{% endif %} aria-hidden="true">
+  {{ source(icon_file, ignore_missing = true) }}
+</span>

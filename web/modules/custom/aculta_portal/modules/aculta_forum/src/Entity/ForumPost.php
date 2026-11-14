@@ -77,6 +77,9 @@ final class ForumPost extends EditorialContentEntityBase implements EntityOwnerI
     $fields = parent::baseFieldDefinitions($entity_type);
     $fields += static::ownerBaseFieldDefinitions($entity_type);
 
+    if (!$fields['uid'] instanceof BaseFieldDefinition) {
+      throw new \LogicException('The Forum post owner field must be a base field definition.');
+    }
     $fields['uid']->setRevisionable(TRUE);
     $fields['topic'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(new TranslatableMarkup('Tópico'))
@@ -116,6 +119,9 @@ final class ForumPost extends EditorialContentEntityBase implements EntityOwnerI
       ])
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
+    if (!$fields['status'] instanceof BaseFieldDefinition) {
+      throw new \LogicException('The Forum post status field must be a base field definition.');
+    }
     $fields['status']->setDefaultValue(FALSE);
     $fields['created'] = BaseFieldDefinition::create('created')
       ->setLabel(new TranslatableMarkup('Criada em'))

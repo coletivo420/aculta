@@ -1,9 +1,21 @@
-<main aria-labelledby="aculta-links-landing-title">
-  <h1 id="aculta-links-landing-title">{{ title }}</h1>
+{#
+/**
+ * @file
+ * Conteúdo da landing Links/LinkWeed.
+ *
+ * O <main> e o H1 pertencem ao shell do tema (layout-page), que envolve este
+ * conteúdo. Renderizar um segundo landmark ou título aqui duplicaria ambos.
+ */
+#}
+{% if component %}
+  {{ component }}
+{% else %}
+<div class="aculta-links-landing">
   {% if description %}
     <p>{{ description }}</p>
   {% endif %}
   {% if has_links %}
     {{ links }}
   {% endif %}
-</main>
+</div>
+{% endif %}

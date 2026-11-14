@@ -27,6 +27,12 @@ final class PhotoFlowPageHooks {
     private readonly EntityTypeManagerInterface $entityTypeManager,
   ) {}
 
+  /**
+   * Anexa a biblioteca do fluxo de foto e informa a foto salva ao script.
+   *
+   * @param array $attachments
+   *   Anexos da página, alterados no lugar.
+   */
   #[Hook('page_attachments')]
   public function pageAttachments(array &$attachments): void {
     if ($this->routeMatch->getRouteName() !== 'aculta_portal.dashboard' || (int) $this->currentUser->id() <= 0) {

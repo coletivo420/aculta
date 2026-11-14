@@ -12,9 +12,12 @@ use Drupal\Core\Session\UserSession;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\taxonomy\Entity\Vocabulary;
+use Drupal\views\Views;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
@@ -29,7 +32,8 @@ final class EventCatalogueKernelTest extends KernelTestBase {
    */
   protected static $modules = [
     'system', 'user', 'key', 'address', 'geofield', 'options', 'link', 'text',
-    'filter', 'taxonomy', 'datetime', 'datetime_range', 'aculta_calendar',
+    'filter', 'taxonomy', 'datetime', 'datetime_range', 'views', 'ui_patterns',
+    'ui_patterns_views', 'aculta_calendar',
     'aculta_events',
   ];
 
@@ -45,7 +49,7 @@ final class EventCatalogueKernelTest extends KernelTestBase {
     parent::setUp();
     $this->installEntitySchema('user');
     $this->installEntitySchema('taxonomy_term');
-    $this->installConfig(['system', 'taxonomy']);
+    $this->installConfig(['system', 'taxonomy', 'views', 'aculta_events']);
     $this->installEntitySchema('aculta_event');
     $this->installEntitySchema('aculta_event_date');
     $this->installEntitySchema('aculta_event_location');
@@ -126,21 +130,41 @@ final class EventCatalogueKernelTest extends KernelTestBase {
   }
 
   /**
-   * Títulos dos cartões do catálogo seguem o H1 da página com H2.
+   * A View pública usa os IDs do catálogo e ordena os cartões.
    */
-  public function testCatalogoUsaHierarquiaDeTitulos(): void {
-    $this->cenario();
-    $controller = new EventCatalogueController(
+  public function testCatalogoViewUsesFilteredDataAndCulturalCardSdc(): void {
+    $cenario = $this->cenario();
+    $request = Request::create('/eventos');
+    $request->setSession(new Session(new MockArraySessionStorage()));
+    $requestStack = $this->container->get('request_stack');
+    $requestStack->push($request);
+    try {
+      $controller = new EventCatalogueController(
       $this->container->get('aculta_events.catalogue'),
       $this->container->get('aculta_events.upcoming'),
       $this->container->get('datetime.time'),
-      Request::create('/eventos'),
-    );
-    $page = $controller->page();
+      $request,
+      );
+      $page = $controller->page();
+      $this->assertSame('eventos_publicos', $page['catalogue']['#name']);
+      $this->assertSame('block_1', $page['catalogue']['#display_id']);
+      $view = Views::getView('eventos_publicos');
+      $this->assertNotNull($view);
+      $view->setDisplay('block_1');
+      $view->setArguments($page['catalogue']['#arguments']);
+      $view->execute();
+      $this->assertCount(3, $view->result, 'A View recebe as três Datas selecionadas pelo catálogo.');
+      $cards = $request->attributes->get('_aculta_events_catalogue_cards');
+      $this->assertIsArray($cards);
+      $this->assertCount(3, $cards, 'O conjunto mantém somente os eventos públicos selecionados pelo catálogo.');
+      $this->assertSame('Roda cancelada', $cards[(string) $cenario['cancelado']->id()]['title']);
+      $this->assertTrue($cards[(string) $cenario['cancelado']->id()]['cancelled']);
+      $this->assertSame('Evento cancelado', $cards[(string) $cenario['cancelado']->id()]['cancel_label']);
+      $this->assertNotContains('Rascunho secreto', array_column($cards, 'title'));
 
-    $this->assertNotEmpty($page['#items']);
-    foreach ($page['#items'] as $item) {
-      $this->assertSame('h2', $item['title']['#tag']);
+    }
+    finally {
+      $requestStack->pop();
     }
   }
 
@@ -171,8 +195,8 @@ final class EventCatalogueKernelTest extends KernelTestBase {
     $this->cenario();
     $controlador = EventPageController::create($this->container);
     $pagina = $controlador->page('oficina-de-ceramica');
-    $this->assertSame('Oficina de cerâmica', $pagina['#titulo']);
-    $this->assertSame('Oficina', $pagina['#tipo']);
+    $this->assertSame('Oficina de cerâmica', $pagina['#slots']['title']['heading']['#value']);
+    $this->assertSame('Oficina', $pagina['#slots']['essentials']['type']['#context']['type']);
 
     $this->expectException(NotFoundHttpException::class);
     $controlador->page('rascunho-secreto');
@@ -203,7 +227,7 @@ final class EventCatalogueKernelTest extends KernelTestBase {
     ]));
     $page = EventPageController::create($this->container)->page('oficina-recorrente');
     $this->assertContains('user.permissions', $page['#cache']['contexts']);
-    $adminMarkup = $page['#datas'][0]['#markup'];
+    $adminMarkup = $page['#slots']['essentials']['dates']['items']['date_0']['#markup'];
     $id = (string) $data->id();
     $this->assertStringContainsString('/painel-administrativo/eventos/datas/' . $id . '/recorrencia', $adminMarkup);
     $this->assertStringContainsString('/painel-administrativo/eventos/datas/' . $id . '/ocorrencia/' . $inicio->getTimestamp(), $adminMarkup);
@@ -212,7 +236,8 @@ final class EventCatalogueKernelTest extends KernelTestBase {
 
     $this->container->get('current_user')->setAccount(new UserSession(['uid' => 0]));
     $publicPage = EventPageController::create($this->container)->page('oficina-recorrente');
-    $this->assertStringNotContainsString('/painel-administrativo/eventos/datas/' . $id . '/recorrencia', $publicPage['#datas'][0]['#markup']);
+    $publicMarkup = $publicPage['#slots']['essentials']['dates']['items']['date_0']['#markup'];
+    $this->assertStringNotContainsString('/painel-administrativo/eventos/datas/' . $id . '/recorrencia', $publicMarkup);
     $this->assertContains('user.permissions', $publicPage['#cache']['contexts']);
   }
 

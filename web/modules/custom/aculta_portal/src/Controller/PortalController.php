@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Controller;
 
+use Drupal\aculta_portal\Account\StreetNumberField;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Drupal\aculta_user\Avatar\AvatarResolver;
 use Drupal\aculta_portal\Secrets\SecretsManager;
 use Drupal\Core\Template\Attribute;
@@ -11,14 +13,16 @@ use Drupal\aculta_portal\Account\AccountDocumentInterface;
 use Drupal\aculta_portal\Form\AccountOtherDataForm;
 use Drupal\aculta_portal\Render\PortalLinkElement;
 use Drupal\aculta_portal\Auth\AuthIntegrationManager;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\aculta_portal\Form\AccountPasswordCreateForm;
-use Drupal\Core\Block\BlockManagerInterface;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use CommerceGuys\Intl\Formatter\CurrencyFormatterInterface;
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\commerce_order\Entity\OrderInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityFormBuilderInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
@@ -27,6 +31,8 @@ use Drupal\Core\Render\Markup;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Routing\TrustedRedirectResponse;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\profile\ProfileStorageInterface;
+use Drupal\social_auth\Entity\SocialAuth;
 use Drupal\Core\Url;
 use Drupal\aculta_mail_confirmer\AcultaMailConfirmerManagerInterface;
 use Drupal\user\UserDataInterface;
@@ -34,22 +40,23 @@ use Drupal\user\UserInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\aculta_portal\Profile\PerfilDoPapel;
 
-/** Private user account area. */
+/**
+ * Private user account area. */
 final class PortalController extends ControllerBase {
 
-  /** Social Auth stores the network plugin ID, not its URL short name. */
+  /**
+   * Social Auth stores the network plugin ID, not its URL short name. */
   private const GOOGLE_SOCIAL_AUTH_PLUGIN_ID = 'social_auth_google';
 
-  /** Transporte da camada de envio E-Mails ACULTA usado pelo Portal (ver docs/portal/EMAIL-TRANSPORT.md). */
-
+  /**
+   * Transporte da camada de envio E-Mails ACULTA usado pelo Portal (ver docs/portal/EMAIL-TRANSPORT.md). */
   public function __construct(
     private readonly EntityTypeManagerInterface $entities,
     private readonly EntityFormBuilderInterface $forms,
     private readonly FormBuilderInterface $accountFormBuilder,
-    private readonly DomainPurposeManager $domainPurposeManager,
+    private readonly DomainSiteManager $siteManager,
     private readonly UserDataInterface $userData,
     private readonly AuthIntegrationManager $authIntegrationManager,
-    private readonly BlockManagerInterface $blockManager,
     private readonly AcultaMailConfirmerManagerInterface $emailConfirmer,
     private readonly RouteMatchInterface $routeMatch,
     private readonly AccountInterface $account,
@@ -62,15 +69,17 @@ final class PortalController extends ControllerBase {
     private readonly SecretsManager $secrets,
   ) {}
 
+  /**
+   * {@inheritdoc}
+   */
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('entity_type.manager'),
       $container->get('entity.form_builder'),
       $container->get('form_builder'),
-      $container->get('aculta_portal.domain_purpose'),
+      $container->get('aculta_portal.domain_site'),
       $container->get('user.data'),
       $container->get('aculta_portal.auth_integration'),
-      $container->get('plugin.manager.block'),
       $container->get('aculta_mail_confirmer'),
       $container->get('current_route_match'),
       $container->get('current_user'),
@@ -106,12 +115,15 @@ final class PortalController extends ControllerBase {
    * Keeps Core's legacy user.page route compatible without exposing its UI.
    */
   public function legacyUserPageRedirect(): TrustedRedirectResponse {
-    $accountRoot = $this->domainPurposeManager->pathUrl('account', '/');
+    $accountRoot = $this->siteManager->pathUrl(SiteKey::Account, '/');
     return new TrustedRedirectResponse(
       $accountRoot?->toString() ?? Url::fromRoute('<front>')->toString(),
     );
   }
 
+  /**
+   * Visão geral da conta: identidade, foto e caixas extras do submódulo de usuário.
+   */
   public function dashboard(): array {
     $account = $this->entities->getStorage('user')->load($this->account->id());
     $profile = $this->loadRoleProfile($account);
@@ -138,7 +150,12 @@ final class PortalController extends ControllerBase {
         '#type' => 'html_tag',
         '#tag' => 'div',
         '#attributes' => ['data-portal-ui' => 'account-photo-preview'],
-        'avatar' => ['#type' => 'html_tag', '#tag' => 'span', '#attributes' => ['data-aculta-user-avatar' => ''], 'image' => $photo],
+        'avatar' => [
+          '#type' => 'html_tag',
+          '#tag' => 'span',
+          '#attributes' => ['data-aculta-user-avatar' => ''],
+          'image' => $photo,
+        ],
       ],
       'form' => $this->buildPortalAccountForm($account),
     ];
@@ -152,7 +169,12 @@ final class PortalController extends ControllerBase {
           '#theme' => 'aculta_portal_photo_editor',
           // Avatar em <span> (válido dentro do botão) com atributo de alvo: o sorteio (aculta_user) troca todas as
           // ocorrências por AJAX. A visualização no popup mostra o mesmo avatar antes do envio do formulário.
-          '#photo' => ['#type' => 'html_tag', '#tag' => 'span', '#attributes' => ['data-aculta-user-avatar' => ''], 'image' => $photo],
+          '#photo' => [
+            '#type' => 'html_tag',
+            '#tag' => 'span',
+            '#attributes' => ['data-aculta-user-avatar' => ''],
+            'image' => $photo,
+          ],
           '#photo_form' => $photoForm,
           '#display_name' => $display_name,
         ],
@@ -169,29 +191,40 @@ final class PortalController extends ControllerBase {
     return $build;
   }
 
+  /**
+   * Aba de informações básicas de Meus Dados.
+   */
   public function myData(): array {
     return $this->buildDataSection('basics');
   }
 
+  /**
+   * Aba de endereço de Meus Dados.
+   */
   public function address(): array {
     return $this->buildDataSection('address');
   }
 
-  /** Outros Dados (CPF ou CNPJ). Sem o submódulo que implementa o documento, o caminho responde 404. */
+  /**
+   * Outros Dados (CPF ou CNPJ). Sem o submódulo que implementa o documento, o caminho responde 404. */
   public function otherData(): array {
     if ($this->accountDocument === NULL) {
-      throw new \Symfony\Component\HttpKernel\Exception\NotFoundHttpException();
+      throw new NotFoundHttpException();
     }
     return $this->buildDataSection('other');
   }
 
-  /** Caminho aposentado (página do acordo substituída pelo popup de aceite): responde 404. */
+  /**
+   * Caminho aposentado (página do acordo substituída pelo popup de aceite): responde 404. */
   public function retiredNotFound(): never {
-    throw new \Symfony\Component\HttpKernel\Exception\NotFoundHttpException();
+    throw new NotFoundHttpException();
   }
 
-  /** Meus pedidos: compras da pessoa logada (rascunhos de carrinho ficam fora). */
-  /** Situação do pedido em português (os rótulos do workflow vêm em inglês). */
+  /**
+   * Meus pedidos: compras da pessoa logada (rascunhos de carrinho ficam fora). */
+
+  /**
+   * Situação do pedido em português (os rótulos do workflow vêm em inglês). */
   private function orderStateLabel($order): string {
     return match ($order->getState()->getId()) {
       'completed' => (string) $this->t('Concluído'),
@@ -202,19 +235,55 @@ final class PortalController extends ControllerBase {
   }
 
   /**
-   * Caixa da Mercado Pago em "Meus pedidos": os pagamentos são processados pelo Mercado Pago, e o portal não guarda
-   * meios de pagamento. O texto e o link vêm da configuração aculta_portal.settings (mercado_pago_account_url).
+   * Caixa da Mercado Pago em "Meus pedidos".
+   *
+   * Os pagamentos são processados pelo Mercado Pago, e o portal não guarda
+   * meios de pagamento. O texto e o link vêm da configuração
+   * aculta_portal.settings (mercado_pago_account_url).
    */
   private function paymentNotice(): array {
+    $paymentUrl = $this->safeMercadoPagoAccountUrl();
+
     return [
-      '#theme' => 'aculta_portal_payment_notice',
-      '#intro' => $this->t('Todos os nossos pagamentos são processados pelo Mercado Pago.'),
-      '#link_label' => $this->t('Acesse sua conta Mercado Pago'),
-      '#url' => (string) $this->configs->get('aculta_portal.settings')->get('mercado_pago_account_url'),
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:payment-notice',
+      '#props' => [
+        'intro' => (string) $this->t('Todos os nossos pagamentos são processados pelo Mercado Pago.'),
+        'link_label' => (string) $this->t('Acesse sua conta Mercado Pago'),
+        'url' => $paymentUrl,
+      ],
       '#weight' => 10,
     ];
   }
 
+  /**
+   * Restricts the configurable payment link to the official HTTPS domain.
+   */
+  private function safeMercadoPagoAccountUrl(): ?string {
+    $configuredUrl = $this->configs->get('aculta_portal.settings')->get('mercado_pago_account_url');
+    if (!is_string($configuredUrl)) {
+      return NULL;
+    }
+
+    $url = trim($configuredUrl);
+    $parts = parse_url($url);
+    if ($url === ''
+      || !is_array($parts)
+      || filter_var($url, FILTER_VALIDATE_URL) === FALSE
+      || strtolower((string) ($parts['scheme'] ?? '')) !== 'https'
+      || !in_array(strtolower((string) ($parts['host'] ?? '')), ['mercadopago.com.br', 'www.mercadopago.com.br'], TRUE)
+      || isset($parts['user'])
+      || isset($parts['pass'])
+      || (isset($parts['port']) && $parts['port'] !== 443)) {
+      return NULL;
+    }
+
+    return $url;
+  }
+
+  /**
+   * Meus pedidos: listagem das compras da pessoa logada.
+   */
   public function orders(): array {
     $storage = $this->entities->getStorage('commerce_order');
     $ids = $storage->getQuery()->accessCheck(TRUE)
@@ -224,12 +293,28 @@ final class PortalController extends ControllerBase {
       ->execute();
     $rows = [];
     foreach ($storage->loadMultiple($ids) as $order) {
+      if (!$order instanceof OrderInterface) {
+        continue;
+      }
       $total = $order->getTotalPrice();
       // data-label: rótulo de cada coluna, usado pelo tema no celular (linhas empilhadas).
       $rows[] = [
-        ['data' => ['#type' => 'link', '#title' => '#' . $order->getOrderNumber(), '#url' => Url::fromRoute('entity.commerce_order.user_view', ['commerce_order' => $order->id()])], 'data-label' => (string) $this->t('Pedido')],
-        ['data' => $order->getPlacedTime() ? $this->dateFormatter->format($order->getPlacedTime(), 'short') : '', 'data-label' => (string) $this->t('Data')],
-        ['data' => $total ? $this->currencyFormatter->format($total->getNumber(), $total->getCurrencyCode()) : '', 'data-label' => (string) $this->t('Total')],
+        [
+          'data' => [
+            '#type' => 'link',
+            '#title' => '#' . $order->getOrderNumber(),
+            '#url' => Url::fromRoute('entity.commerce_order.user_view', ['commerce_order' => $order->id()]),
+          ],
+          'data-label' => (string) $this->t('Pedido'),
+        ],
+        [
+          'data' => $order->getPlacedTime() ? $this->dateFormatter->format($order->getPlacedTime(), 'short') : '',
+          'data-label' => (string) $this->t('Data'),
+        ],
+        [
+          'data' => $total ? $this->currencyFormatter->format($total->getNumber(), $total->getCurrencyCode()) : '',
+          'data-label' => (string) $this->t('Total'),
+        ],
         ['data' => $this->orderStateLabel($order), 'data-label' => (string) $this->t('Situação')],
       ];
     }
@@ -249,17 +334,32 @@ final class PortalController extends ControllerBase {
   /**
    * Caixa do Google: link para conectar (com URL) ou estado "Conectado" (sem URL). Marca e cores são do tema.
    *
+   * @param \Drupal\Core\Url|null $url
+   *   URL de conexão; NULL para exibir o estado "Conectado".
    * @param string $label
    *   Texto já traduzido; aceita <strong> apenas em textos de desenvolvimento.
    */
   private function googleBox(?Url $url, string $label): array {
     $markup = Markup::create('<span>' . $label . '</span>');
     if ($url !== NULL) {
-      return ['#type' => 'html_tag', '#tag' => 'a', '#attributes' => ['href' => $url->toString(), 'data-portal-ui' => 'auth-google'], '#value' => $markup];
+      return [
+        '#type' => 'html_tag',
+        '#tag' => 'a',
+        '#attributes' => ['href' => $url->toString(), 'class' => ['portal-account__google-auth']],
+        '#value' => $markup,
+      ];
     }
-    return ['#type' => 'html_tag', '#tag' => 'div', '#attributes' => ['data-portal-ui' => 'auth-google-status'], '#value' => $markup];
+    return [
+      '#type' => 'html_tag',
+      '#tag' => 'div',
+      '#attributes' => ['class' => ['portal-account__google-auth-status']],
+      '#value' => $markup,
+    ];
   }
 
+  /**
+   * Contas externas conectadas à conta do portal (Google).
+   */
   public function connections(): array {
     $account = $this->entities->getStorage('user')->load($this->account->id());
     $google_ready = $this->authIntegrationManager->isGoogleConfigured();
@@ -277,8 +377,10 @@ final class PortalController extends ControllerBase {
     ];
     if ($links) {
       $social_auth = reset($links);
-      $provider_email = $social_auth->getAdditionalData()['provider_email'] ?? NULL;
-      // Caixa "Conectado": logo e texto; a marca e o check vêm do tema (data-portal-ui="auth-google-status").
+      $provider_email = $social_auth instanceof SocialAuth
+        ? ($social_auth->getAdditionalData()['provider_email'] ?? NULL)
+        : NULL;
+      // Caixa "Conectado": logo e texto; a marca e o check vêm do tema.
       $items['google_status'] = $this->googleBox(NULL, (string) $this->t('Conectado'));
       if (is_string($provider_email) && filter_var($provider_email, FILTER_VALIDATE_EMAIL)) {
         $items['google_account'] = [
@@ -292,21 +394,34 @@ final class PortalController extends ControllerBase {
           '#type' => 'container',
           '#attributes' => ['data-portal-ui' => 'google-account'],
           'text' => ['#plain_text' => $this->t('O endereço da conta Google ainda não está disponível nesta conexão.')],
-          'reconnect' => PortalLinkElement::build($this->t('Atualizar conexão Google'), Url::fromRoute('social_auth.network.redirect', ['network' => 'google']), ['data-portal-ui' => 'button-secondary']),
+          'reconnect' => [
+            '#type' => 'aculta_portal_button',
+            '#props' => [
+              'text' => (string) $this->t('Atualizar conexão Google'),
+              'url' => Url::fromRoute('social_auth.network.redirect', ['network' => 'google'])->toString(),
+              'variant' => 'secondary',
+            ],
+          ],
         ];
       }
       if ($this->hasUserChosenPassword($account)) {
         $items['disconnect'] = [
-          '#type' => 'link',
-          '#title' => $this->t('Desconectar Google'),
-          '#url' => Url::fromRoute('entity.social_auth.delete_form', ['social_auth' => $social_auth->id()]),
-          '#attributes' => ['data-portal-ui' => 'button-secondary'],
+          '#type' => 'aculta_portal_button',
+          '#props' => [
+            'text' => (string) $this->t('Desconectar Google'),
+            'url' => Url::fromRoute('entity.social_auth.delete_form', ['social_auth' => $social_auth->id()])->toString(),
+            'variant' => 'secondary',
+          ],
           '#access' => $social_auth->access('delete'),
         ];
       }
       else {
         $items['password_notice'] = ['#plain_text' => $this->t('Defina uma senha para sua conta antes de desconectar o Google.')];
-        $items['password_link'] = ['#type' => 'link', '#title' => $this->t('Gerenciar segurança da conta'), '#url' => Url::fromRoute('aculta_portal.security')];
+        $items['password_link'] = [
+          '#type' => 'link',
+          '#title' => $this->t('Gerenciar segurança da conta'),
+          '#url' => Url::fromRoute('aculta_portal.security'),
+        ];
       }
     }
     elseif ($google_ready) {
@@ -320,19 +435,24 @@ final class PortalController extends ControllerBase {
     return $items;
   }
 
-  /** Segurança, aba E-mail (/seguranca): e-mail atual e troca do endereço (com confirmação). */
+  /**
+   * Segurança, aba E-mail (/seguranca): e-mail atual e troca do endereço (com confirmação). */
   public function security(): array {
     return $this->buildSecuritySection('email');
   }
 
-  /** Segurança, aba Senha (/seguranca/senha): troca da senha (exige a senha atual). */
+  /**
+   * Segurança, aba Senha (/seguranca/senha): troca da senha (exige a senha atual). */
   public function securityPassword(): array {
     return $this->buildSecuritySection('password');
   }
 
   /**
-   * Abas internas da Segurança, no mesmo padrão de Meus Dados: E-mail e Senha, cada uma com URL própria. O conteúdo
-   * fica no shell da conta; os formulários salvam por AJAX (mensagens em português).
+   * Abas internas da Segurança.
+   *
+   * No mesmo padrão de Meus Dados: E-mail e Senha, cada uma com URL própria.
+   * O conteúdo fica no shell da conta; os formulários salvam por AJAX
+   * (mensagens em português).
    */
   private function buildSecuritySection(string $section): array {
     $account = $this->entities->getStorage('user')->load($this->account->id());
@@ -341,7 +461,10 @@ final class PortalController extends ControllerBase {
       'email' => ['title' => $this->t('E-mail'), 'route' => 'aculta_portal.security'],
       'password' => ['title' => $this->t('Senha'), 'route' => 'aculta_portal.security_password'],
     ] as $key => $tab) {
-      $link = PortalLinkElement::build($tab['title'], Url::fromRoute($tab['route']), ['data-portal-account-data-link' => 'true', 'data-portal-ui' => 'account-data-link']);
+      $link = PortalLinkElement::build($tab['title'], Url::fromRoute($tab['route']), [
+        'data-portal-account-data-link' => 'true',
+        'data-portal-ui' => 'account-data-link',
+      ]);
       if ($section === $key) {
         $link['#element_attributes']->setAttribute('aria-current', 'page');
         $link['#element_attributes']->addClass('is-active');
@@ -350,19 +473,28 @@ final class PortalController extends ControllerBase {
     }
     $content = [
       'description' => ['#plain_text' => $section === 'email'
-        ? $this->t('Veja o e-mail de acesso e solicite a troca dele.')
-        : $this->t('Mantenha uma senha segura para acessar sua conta.')],
+          ? $this->t('Veja o e-mail de acesso e solicite a troca dele.')
+          : $this->t('Mantenha uma senha segura para acessar sua conta.')],
       'tabs' => [
         '#type' => 'container',
-        '#attributes' => ['data-portal-ui' => 'account-data-nav', 'aria-label' => $this->t('Seções de segurança'), 'data-portal-account-data-nav' => 'true'],
+        '#attributes' => [
+          'data-portal-ui' => 'account-data-nav',
+          'aria-label' => $this->t('Seções de segurança'),
+          'data-portal-account-data-nav' => 'true',
+        ],
         'links' => $links,
       ],
-      '#cache' => ['contexts' => ['user', 'user.permissions', 'route'], 'tags' => $account->getCacheTags(), 'max-age' => 0],
+      '#cache' => [
+        'contexts' => ['user', 'user.permissions', 'route'],
+        'tags' => $account->getCacheTags(),
+        'max-age' => 0,
+      ],
     ];
     return ['content' => $content + ['section' => $this->securitySectionContent($account, $section)]];
   }
 
-  /** Conteúdo de cada aba de Segurança (e-mail ou senha). */
+  /**
+   * Conteúdo de cada aba de Segurança (e-mail ou senha). */
   private function securitySectionContent(UserInterface $account, string $section): array {
     if ($section === 'password') {
       if ($this->hasUserChosenPassword($account)) {
@@ -376,7 +508,7 @@ final class PortalController extends ControllerBase {
       'current_label' => ['#theme' => 'aculta_portal_element', '#tag' => 'h4', '#value' => $this->t('E-mail atual')],
       'current_email' => ['#plain_text' => $account->getEmail()],
     ];
-    if ($email_ready && $this->modules->moduleExists('aculta_mail_confirmer_user')) {
+    if ($email_ready && $this->modules->moduleExists('aculta_mail_confirmer')) {
       $pending_email = $this->pendingEmail($account->id());
       if ($pending_email !== NULL) {
         $section_content['pending'] = [
@@ -384,7 +516,11 @@ final class PortalController extends ControllerBase {
           '#attributes' => ['data-portal-ui' => 'security-pending', 'aria-live' => 'polite'],
           'label' => ['#theme' => 'aculta_portal_element', '#tag' => 'h4', '#value' => $this->t('Alteração pendente')],
           'email' => ['#theme' => 'aculta_portal_element', '#tag' => 'p', '#value' => $pending_email],
-          'message' => ['#theme' => 'aculta_portal_element', '#tag' => 'p', '#value' => $this->t('Aguardando confirmação no novo endereço.')],
+          'message' => [
+            '#theme' => 'aculta_portal_element',
+            '#tag' => 'p',
+            '#value' => $this->t('Aguardando confirmação no novo endereço.'),
+          ],
         ];
       }
     }
@@ -396,7 +532,8 @@ final class PortalController extends ControllerBase {
     return $section_content;
   }
 
-  /** Returns TRUE only when the account has a user-chosen local password. */
+  /**
+   * Returns TRUE only when the account has a user-chosen local password. */
   private function hasUserChosenPassword(UserInterface $account): bool {
     $password = $account->getPassword();
     return is_string($password)
@@ -405,8 +542,11 @@ final class PortalController extends ControllerBase {
   }
 
   /**
-   * O envio do site é a camada de envio E-Mails ACULTA (system.mail): pronto quando o transporte padrão tem usuário e
-   * senha, e a senha está no arquivo de segredos. Nenhuma Key participa.
+   * Indica se o envio de e-mail do site está pronto.
+   *
+   * O envio do site é a camada de envio E-Mails ACULTA (system.mail): pronto
+   * quando o transporte padrão tem usuário e senha, e a senha está no arquivo
+   * de segredos. Nenhuma Key participa.
    */
   private function transactionalMailReady(): bool {
     $site_mail = trim((string) $this->configs->get('system.site')->get('mail'));
@@ -417,15 +557,18 @@ final class PortalController extends ControllerBase {
     }
     $transport = $this->entities->getStorage('aculta_mailer_transport')->load('smtp_hostinger');
     return $interface === 'aculta_mailer'
-      && $transport !== NULL
-      && $transport->get('user') !== ''
-      && $transport->get('password_secret') !== ''
-      && $this->secrets->value((string) $transport->get('password_secret')) !== NULL
+      && $transport instanceof ContentEntityInterface
+      && (string) $transport->get('user')->value !== ''
+      && (string) $transport->get('password_secret')->value !== ''
+      && $this->secrets->value((string) $transport->get('password_secret')->value) !== NULL
       && $site_mail !== '';
   }
 
+  /**
+   * E-mail pendente de confirmação para a conta, se houver.
+   */
   private function pendingEmail(int|string $uid): ?string {
-    if (!$this->modules->moduleExists('aculta_mail_confirmer_user')) {
+    if (!$this->modules->moduleExists('aculta_mail_confirmer')) {
       return NULL;
     }
     $pending = $this->userData->get('aculta_mail_confirmer_user', $uid, 'email_change_new_address');
@@ -441,17 +584,15 @@ final class PortalController extends ControllerBase {
     return NULL;
   }
 
+  /**
+   * Monta uma seção de Meus Dados conforme a aba pedida.
+   */
   private function buildDataSection(string $section): array {
     $account = $this->entities->getStorage('user')->load($this->account->id());
     $profile = match ($section) {
       'address' => $this->loadCommerceAddressProfile($account),
       'other' => NULL,
       default => $this->loadRoleProfile($account),
-    };
-    $route = match ($section) {
-      'address' => 'aculta_portal.my_data_address',
-      'other' => 'aculta_portal.my_data_other',
-      default => 'aculta_portal.my_data',
     };
     $title = match ($section) {
       'address' => $this->t('Endereço'),
@@ -467,7 +608,10 @@ final class PortalController extends ControllerBase {
     }
     $links = [];
     foreach ($tabs as $key => $tab) {
-      $link = PortalLinkElement::build($tab['title'], Url::fromRoute($tab['route']), ['data-portal-account-data-link' => 'true', 'data-portal-ui' => 'account-data-link']);
+      $link = PortalLinkElement::build($tab['title'], Url::fromRoute($tab['route']), [
+        'data-portal-account-data-link' => 'true',
+        'data-portal-ui' => 'account-data-link',
+      ]);
       if ($section === $key) {
         // Estado da aba atual (aria-current; "is-active" é só o estado que o tema também reconhece).
         $link['#element_attributes']->setAttribute('aria-current', 'page');
@@ -479,24 +623,44 @@ final class PortalController extends ControllerBase {
       'description' => ['#plain_text' => $this->t('Mantenha suas informações pessoais e de contato atualizadas.')],
       'tabs' => [
         '#type' => 'container',
-        '#attributes' => ['data-portal-ui' => 'account-data-nav', 'aria-label' => $this->t('Seções de meus dados'), 'data-portal-account-data-nav' => 'true'],
+        '#attributes' => [
+          'data-portal-ui' => 'account-data-nav',
+          'aria-label' => $this->t('Seções de meus dados'),
+          'data-portal-account-data-nav' => 'true',
+        ],
         'links' => $links,
       ],
       'content' => [
         '#type' => 'container',
-        '#attributes' => ['data-portal-ui' => 'account-data-content', 'data-portal-account-data-content' => 'true', 'aria-busy' => 'false'],
-        'heading' => ['#theme' => 'aculta_portal_element', '#tag' => 'h3', '#value' => $title, '#element_attributes' => new Attribute(['tabindex' => '-1'])],
+        '#attributes' => [
+          'data-portal-ui' => 'account-data-content',
+          'data-portal-account-data-content' => 'true',
+          'aria-busy' => 'false',
+        ],
+        'heading' => [
+          '#theme' => 'aculta_portal_element',
+          '#tag' => 'h3',
+          '#value' => $title,
+          '#element_attributes' => new Attribute(['tabindex' => '-1']),
+        ],
         'form' => $section === 'other'
           ? $this->accountFormBuilder->getForm(AccountOtherDataForm::class)
           : $this->profileForm($section, $profile),
       ],
-      '#cache' => ['contexts' => ['user', 'user.permissions', 'route'], 'tags' => $account->getCacheTags(), 'max-age' => 0],
+      '#cache' => [
+        'contexts' => ['user', 'user.permissions', 'route'],
+        'tags' => $account->getCacheTags(),
+        'max-age' => 0,
+      ],
     ];
   }
 
   /**
-   * Formulário do perfil. No endereço, o número e a marca S/N saem do logradouro para os campos próprios
-   * (StreetNumberField), logo depois da rua; ao gravar, são juntados de novo (PortalHooks, entity builder).
+   * Formulário do perfil.
+   *
+   * No endereço, o número e a marca S/N saem do logradouro para os campos
+   * próprios (StreetNumberField), logo depois da rua; ao gravar, são juntados
+   * de novo (PortalHooks, entity builder).
    */
   private function profileForm(string $section, $profile): array {
     if ($section !== 'address') {
@@ -515,14 +679,18 @@ final class PortalController extends ControllerBase {
     return $this->forms->getForm($display, 'edit');
   }
 
-  /** Rua, número e S/N salvos no logradouro. */
+  /**
+   * Rua, número e S/N salvos no logradouro. */
   private function savedParts($profile): array {
     if (!$profile->hasField('field_address') || $profile->get('field_address')->isEmpty()) {
       return ['street' => '', 'number' => '', 'sn' => FALSE];
     }
-    return \Drupal\aculta_portal\Account\StreetNumberField::split((string) $profile->get('field_address')->first()->getAddressLine1());
+    return StreetNumberField::split((string) $profile->get('field_address')->first()->getAddressLine1());
   }
 
+  /**
+   * Carrega o perfil principal da pessoa, criando um em memória se não existir.
+   */
   private function loadRoleProfile(UserInterface $account) {
     $profiles = PerfilDoPapel::principal($this->entities->getStorage('profile'), $account);
     return $profiles ?: $this->entities->getStorage('profile')->create([
@@ -541,6 +709,9 @@ final class PortalController extends ControllerBase {
    */
   private function loadCommerceAddressProfile(UserInterface $account) {
     $storage = $this->entities->getStorage('profile');
+    if (!$storage instanceof ProfileStorageInterface) {
+      throw new \LogicException('The profile storage is unavailable.');
+    }
     $existing = $storage->loadByUser($account, 'authenticated');
     if (!$existing) {
       $profiles = $storage->loadByProperties(['uid' => $account->id(), 'type' => 'authenticated']);

@@ -6,7 +6,7 @@ namespace Drupal\aculta_wiki\Form;
 
 use Drupal\aculta_wiki\Entity\WikiProposal;
 use Drupal\aculta_wiki\Service\WikiProposalSubmission;
-use Drupal\aculta_contributions\Service\ContributionLifecycle;
+use Drupal\aculta_cgu\Service\ContributionLifecycle;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -22,9 +22,9 @@ use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 final class WikiProposalSubmissionForm extends FormBase {
 
   public function __construct(
-    private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly WikiProposalSubmission $submission,
-    private readonly ContributionLifecycle $contributions,
+    protected readonly EntityTypeManagerInterface $entityTypeManager,
+    protected readonly WikiProposalSubmission $submission,
+    protected readonly ContributionLifecycle $contributions,
   ) {}
 
   /**
@@ -34,7 +34,7 @@ final class WikiProposalSubmissionForm extends FormBase {
     return new static(
       $container->get('entity_type.manager'),
       $container->get('aculta_wiki.proposal_submission'),
-      $container->get('aculta_contributions.lifecycle'),
+      $container->get('aculta_cgu.contribution_lifecycle'),
     );
   }
 
@@ -91,7 +91,7 @@ final class WikiProposalSubmissionForm extends FormBase {
       '#options' => WikiProposal::INTENTS,
       '#required' => TRUE,
     ];
-    $requestedIntent = $this->getRequest()?->query->all()['intent'] ?? NULL;
+    $requestedIntent = $this->getRequest()->query->all()['intent'] ?? NULL;
     if (is_string($requestedIntent) && isset(WikiProposal::INTENTS[$requestedIntent])) {
       $form['intent']['#default_value'] = $requestedIntent;
     }
@@ -207,6 +207,7 @@ final class WikiProposalSubmissionForm extends FormBase {
         '#value' => $this->t('Voltar e ajustar'),
         '#submit' => ['::backToEdit'],
         '#limit_validation_errors' => [],
+        '#attributes' => ['data-portal-ui' => 'button-secondary'],
       ];
       $form['actions']['submit'] = [
         '#type' => 'submit',
@@ -337,9 +338,6 @@ final class WikiProposalSubmissionForm extends FormBase {
     $values = (array) ($submittedValues['field_values'] ?? []);
     $fields = [];
     foreach ($selected as $fieldName => $selectedValue) {
-      if ($selectedValue === 0 || $selectedValue === '0' || $selectedValue === '') {
-        continue;
-      }
       switch ($fieldName) {
         case 'title':
           $fields[$fieldName] = (string) ($values['title'] ?? '');
@@ -504,7 +502,7 @@ final class WikiProposalSubmissionForm extends FormBase {
   /**
    * Extracts one ID from the media autocomplete element.
    */
-  private function extractTargetId(mixed $value): int|string|null {
+  private function extractTargetId(mixed $value): ?int {
     if (is_array($value)) {
       $value = $value['target_id'] ?? NULL;
     }

@@ -1,0 +1,20 @@
+name: Painel institucional com cartão cultural e ações
+description: Composição do painel institucional com cabeçalho, cartão cultural e botões de ação.
+component: aculta420_v2:surface-panel
+props:
+  header_variant: institutional
+  tone: raised
+  radius: lg
+  spacing: normal
+  elevation: subtle
+  show_header_placeholder: false
+slots:
+  header:
+    type: inline_template
+    template: '<h3 style="margin:0;font-size:1.25rem;">Programação Cultural</h3>'
+  content:
+    type: inline_template
+    template: '{{ include("aculta420_v2:card-cultural", { title: "Encontro Cultural ACULTA 2026", date: "15 de Novembro", location: "Sede ACULTA", accent: "green" }, with_context = false) }}'
+  actions:
+    type: inline_template
+    template: '{{ include("aculta420_v2:button", { text: "Ver Mais Detalhes", variant: "secondary", url: "#" }, with_context = false) }}'

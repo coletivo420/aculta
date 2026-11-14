@@ -33,18 +33,23 @@ use Symfony\Component\Yaml\Yaml;
 #[RunTestsInSeparateProcesses]
 final class MelhorEnvioWiringKernelTest extends KernelTestBase {
 
+
   /**
    * {@inheritdoc}
    */
   protected static $modules = [
     'aculta_commerce',
     'aculta_commerce_melhorenvio',
+    'aculta_calendar',
+    'aculta_events',
+    'geofield',
     'aculta_document_viewer',
+    'aculta_file_uploader',
+    'aculta_lms',
     'aculta_forum',
     'aculta_gallery',
     'aculta_image',
     'aculta_mail_confirmer',
-    'aculta_mail_confirmer_user',
     'aculta_mailer',
     'aculta_messenger',
     'aculta_pagamentos_mercadopago',
@@ -94,7 +99,6 @@ final class MelhorEnvioWiringKernelTest extends KernelTestBase {
     'key',
     'language',
     'link',
-    'lms',
     'login_emailusername',
     'media',
     'media_duplicates',
@@ -148,6 +152,10 @@ final class MelhorEnvioWiringKernelTest extends KernelTestBase {
    */
   protected function setUp(): void {
     parent::setUp();
+    $this->installEntitySchema('group');
+    $this->installEntitySchema('group_relationship');
+    $this->installEntitySchema('group_config_wrapper');
+    $this->installConfig(['group']);
     $this->installConfig(['key', 'aculta_commerce_melhorenvio']);
     Key::create([
       'id' => 'me_sb_id',
@@ -392,12 +400,15 @@ final class MelhorEnvioWiringKernelTest extends KernelTestBase {
     $this->installEntitySchema('path_alias');
     $this->container->get('router.builder')->rebuild();
     $build = $this->container->get('aculta_commerce_melhorenvio.status_controller')->page();
-    $html = (string) $this->container->get('renderer')->renderInIsolation($build);
+    // Renderiza só a tabela de status: o botão é um SDC e o tema V2 não está ativo neste teste.
+    $html = (string) $this->container->get('renderer')->renderInIsolation($build['status']);
     self::assertStringContainsString('Sandbox (testes)', $html);
     self::assertStringContainsString('Não conectada', $html);
-    self::assertStringContainsString('data-aculta-popup="melhorenvio_autorizacao"', $html);
-    self::assertStringContainsString('data-portal-ui="button-primary"', $html);
-    self::assertStringContainsString('/integracoes/melhorenvio/autorizar', $html);
+    $connect = $build['connect'];
+    self::assertSame('aculta_portal_button', $connect['#type']);
+    self::assertSame('primary', $connect['#props']['variant']);
+    self::assertSame('melhorenvio_autorizacao', $connect['#attributes']['data-aculta-popup']);
+    self::assertStringContainsString('/integracoes/melhorenvio/autorizar', $connect['#props']['url']);
     self::assertSame(0, $build['#cache']['max-age']);
   }
 

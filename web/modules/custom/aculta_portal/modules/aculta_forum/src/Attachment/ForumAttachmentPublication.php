@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_forum\Attachment;
 
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\comment\CommentInterface;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\RevisionableStorageInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Session\AnonymousUserSession;
 use Drupal\aculta_forum\Entity\ForumPost;
@@ -32,7 +33,7 @@ final class ForumAttachmentPublication {
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly DomainPurposeManager $domainPurposeManager,
+    private readonly DomainSiteManager $siteManager,
   ) {}
 
   /**
@@ -108,9 +109,6 @@ final class ForumAttachmentPublication {
         break;
       }
       foreach ($comment_storage->loadMultiple($comment_ids) as $comment) {
-        if (!$comment instanceof CommentInterface) {
-          continue;
-        }
         foreach ($this->mediaUuids($comment) as $uuid) {
           $media = $this->loadAttachmentByUuid($uuid);
           if ($media instanceof MediaInterface) {
@@ -278,16 +276,14 @@ final class ForumAttachmentPublication {
       ->condition('comment_body.value', '%' . $gallery->uuid() . '%', 'LIKE')
       ->execute();
     foreach ($comment_storage->loadMultiple($comment_ids) as $comment) {
-      if ($comment instanceof CommentInterface
-        && $this->isForumComment($comment)
+      if ($this->isForumComment($comment)
         && in_array($gallery->uuid(), $this->galleryUuids($comment), TRUE)
         && $this->isPublicComment($comment, NULL, $account)) {
         return TRUE;
       }
     }
     foreach ($this->findPostsReferencing($gallery->uuid(), 'media_gallery') as $post) {
-      if ($post instanceof ForumPost
-        && in_array($gallery->uuid(), $this->postGalleryUuids($post), TRUE)
+      if (in_array($gallery->uuid(), $this->postGalleryUuids($post), TRUE)
         && $this->isPublicPost($post, NULL, $account)) {
         return TRUE;
       }
@@ -348,8 +344,7 @@ final class ForumAttachmentPublication {
       }
     }
     foreach ($comments as $comment) {
-      if ($comment instanceof CommentInterface
-        && $this->isForumComment($comment)
+      if ($this->isForumComment($comment)
         && in_array($media->uuid(), $this->mediaUuids($comment), TRUE)
         && $this->isPublicComment($comment, $current_topic, $account, $check_access)) {
         return TRUE;
@@ -367,7 +362,7 @@ final class ForumAttachmentPublication {
       }
     }
     foreach ($posts as $post) {
-      if ($post instanceof ForumPost && $this->isPublicPost($post, $current_topic, $account, $check_access)) {
+      if ($this->isPublicPost($post, $current_topic, $account, $check_access)) {
         return TRUE;
       }
     }
@@ -406,7 +401,7 @@ final class ForumAttachmentPublication {
       || $topic->get('field_domain_source')->isEmpty()) {
       return FALSE;
     }
-    $purpose = $this->domainPurposeManager->getPurposeForDomainId((string) $topic->get('field_domain_source')->target_id);
+    $purpose = $this->siteManager->getSiteKeyValueForDomainId((string) $topic->get('field_domain_source')->target_id);
     if ($purpose !== 'forum') {
       return FALSE;
     }
@@ -414,7 +409,7 @@ final class ForumAttachmentPublication {
       return TRUE;
     }
     $account ??= new AnonymousUserSession();
-    return (bool) $this->domainPurposeManager->runInPurpose(
+    return (bool) $this->siteManager->runInSite(
       'forum',
       static fn (): bool => $comment->access('view', $account, TRUE)->isAllowed(),
     );
@@ -442,7 +437,7 @@ final class ForumAttachmentPublication {
       || !$topic->isPublished()
       || !$topic->hasField('field_domain_source')
       || $topic->get('field_domain_source')->isEmpty()
-      || $this->domainPurposeManager->getPurposeForDomainId((string) $topic->get('field_domain_source')->target_id) !== 'forum') {
+      || $this->siteManager->getSiteKeyValueForDomainId((string) $topic->get('field_domain_source')->target_id) !== 'forum') {
       return FALSE;
     }
     if (!$check_access) {
@@ -450,7 +445,7 @@ final class ForumAttachmentPublication {
     }
 
     $account ??= new AnonymousUserSession();
-    return (bool) $this->domainPurposeManager->runInPurpose(
+    return (bool) $this->siteManager->runInSite(
       'forum',
       static fn (): bool => $post->access('view', $account, TRUE)->isAllowed(),
     );
@@ -508,6 +503,9 @@ final class ForumAttachmentPublication {
    */
   private function findPostsReferencing(string $uuid, string $entityType, bool $allRevisions = FALSE): array {
     $storage = $this->entityTypeManager->getStorage('aculta_forum_post');
+    if ($allRevisions && !$storage instanceof RevisionableStorageInterface) {
+      return [];
+    }
     $query = $storage->getQuery()->accessCheck(FALSE);
     if ($allRevisions) {
       $query->allRevisions();
@@ -543,7 +541,7 @@ final class ForumAttachmentPublication {
     ?AccountInterface $account = NULL,
     bool $check_access = TRUE,
   ): bool {
-    if (!$gallery->isPublished()
+    if (!$gallery->isEnabled()
       || !$gallery->hasField('field_gallery_purpose')
       || $gallery->get('field_gallery_purpose')->value !== 'forum') {
       return FALSE;
@@ -561,16 +559,14 @@ final class ForumAttachmentPublication {
       ->condition('comment_body.value', '%' . $gallery->uuid() . '%', 'LIKE')
       ->execute();
     foreach ($this->entityTypeManager->getStorage('comment')->loadMultiple($comment_ids) as $comment) {
-      if ($comment instanceof CommentInterface
-        && $this->isForumComment($comment)
+      if ($this->isForumComment($comment)
         && in_array($gallery->uuid(), $this->galleryUuids($comment), TRUE)
         && $this->isPublicComment($comment, $current_topic, $account, $check_access)) {
         return TRUE;
       }
     }
     foreach ($this->findPostsReferencing($gallery->uuid(), 'media_gallery') as $post) {
-      if ($post instanceof ForumPost
-        && in_array($gallery->uuid(), $this->postGalleryUuids($post), TRUE)
+      if (in_array($gallery->uuid(), $this->postGalleryUuids($post), TRUE)
         && $this->isPublicPost($post, $current_topic, $account, $check_access)) {
         return TRUE;
       }

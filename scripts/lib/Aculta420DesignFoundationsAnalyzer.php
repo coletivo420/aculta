@@ -187,6 +187,103 @@ final class Aculta420DesignFoundationsAnalyzer {
 
   /**
    * Analyze the two supported token blocks and their effective values. */
+  /**
+   * Analisa os tokens semânticos do tema ACULTA420 V2 (--color-*).
+   *
+   * Exige um bloco claro (:root), um bloco escuro (data-theme="dark") e um
+   * valor literal para cada token semântico em ambos os modos. Calcula o
+   * contraste do texto sobre as superfícies usadas pelos componentes.
+   *
+   * @return array{assertions: list<array{0: bool, 1: string}>, dark_contrast: array<string, float>, focus_contrast: array<string, float>}
+   */
+  public static function analyzeTokensV2(string $css): array {
+    $assertions = [];
+    $assert = static function (bool $condition, string $message) use (&$assertions): void {
+      $assertions[] = [$condition, $message];
+    };
+    $clean = self::stripCssComments($css);
+    [$rules, $parse_errors] = self::parseCssRules($clean);
+    foreach ($parse_errors as $error) {
+      $assert(FALSE, 'Token CSS parses within the supported flat-rule subset: ' . $error . '.');
+    }
+
+    $light_blocks = 0;
+    $dark_blocks = 0;
+    $light = [];
+    $dark = [];
+    $darkSelectors = [':root[data-theme="dark"]', 'html[data-theme="dark"]', '[data-theme="dark"]'];
+    $lightSelectors = [':root', ':root:not([data-theme="dark"])', '[data-theme="light"]', ':root[data-theme="light"]'];
+    foreach ($rules as $rule) {
+      // O tokens.css usa listas de seletores (":root, [data-theme=light]")
+      // para cobrir o <html> e contêineres de prévia. Cada seletor da lista
+      // é avaliado individualmente.
+      $selectors = array_map(
+        static fn (string $part): string => self::normalizeSelector($part),
+        explode(',', (string) $rule['selector']),
+      );
+      // Só o bloco base conta: variações por purpose (html[data-purpose=...]) são validadas à parte.
+      $is_dark = array_intersect($selectors, $darkSelectors) !== [];
+      $is_light = !$is_dark && array_intersect($selectors, $lightSelectors) !== [];
+      if (!$is_dark && !$is_light) {
+        continue;
+      }
+      $declarations = self::parseDeclarations((string) $rule['body']);
+      $has_color_token = FALSE;
+      foreach ($declarations as $declaration) {
+        if (!str_starts_with($declaration['name'], '--color-')) {
+          continue;
+        }
+        $has_color_token = TRUE;
+        if ($is_dark) {
+          $dark[$declaration['name']] = $declaration['value'];
+        }
+        else {
+          $light[$declaration['name']] = $declaration['value'];
+        }
+      }
+      // Regras como ":root[data-theme=light] { color-scheme }" não são o
+      // bloco base e não devem contar como segundo bloco.
+      if ($has_color_token) {
+        $is_dark ? $dark_blocks++ : $light_blocks++;
+      }
+    }
+
+    $assert($light_blocks === 1, 'Exactly one root/light token block exists.');
+    $assert($dark_blocks === 1, 'Exactly one dark token block exists.');
+
+    $required = [
+      '--color-canvas', '--color-surface', '--color-surface-raised', '--color-surface-highlight',
+      '--color-text-primary', '--color-text-secondary', '--color-text-muted',
+      '--color-brand-primary', '--color-brand-highlight', '--color-on-brand',
+      '--color-link-editorial', '--color-border',
+    ];
+    foreach ($required as $token) {
+      $assert(isset($light[$token]), "Light token {$token} has a value.");
+      $assert(isset($dark[$token]), "Dark token {$token} has a value.");
+    }
+
+    $pairs = [
+      ['--color-text-primary', '--color-surface-raised'],
+      ['--color-text-secondary', '--color-surface-raised'],
+      ['--color-text-muted', '--color-surface-raised'],
+      ['--color-on-brand', '--color-brand-primary'],
+    ];
+    $dark_contrast = [];
+    foreach ($pairs as [$foreground, $background]) {
+      $fg = isset($dark[$foreground]) ? self::parseColor($dark[$foreground]) : NULL;
+      $bg = isset($dark[$background]) ? self::parseColor($dark[$background]) : NULL;
+      $assert($fg !== NULL && $bg !== NULL, "Dark pair {$foreground} / {$background} resolves to literal colors.");
+      $ratio = $fg !== NULL && $bg !== NULL ? self::contrast(self::composite($fg, $bg), $bg) : 0.0;
+      $dark_contrast[$foreground . ' / ' . $background] = $ratio;
+    }
+
+    return [
+      'assertions' => $assertions,
+      'dark_contrast' => $dark_contrast,
+      'focus_contrast' => [],
+    ];
+  }
+
   public static function analyzeTokens(string $css): array {
     $assertions = [];
     $assert = static function (bool $condition, string $message) use (&$assertions): void {

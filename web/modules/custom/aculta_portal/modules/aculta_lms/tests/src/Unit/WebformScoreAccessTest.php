@@ -5,45 +5,71 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_lms\Unit;
 
 use Drupal\Core\Field\FieldDefinitionInterface;
+use Drupal\Core\Field\FieldItemInterface;
 use Drupal\Core\Field\FieldItemListInterface;
+use Drupal\Core\Cache\CacheableDependencyInterface;
+use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Tests\UnitTestCase;
 use Drupal\webform\WebformSubmissionInterface;
-use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\CoversFunction;
 
 require_once dirname(__DIR__, 8) . '/modules/contrib/webform_score/webform_score.module';
 
-#[CoversClass(\Functionwebform_score_entity_field_access::class)]
+/**
+ * Testa o acesso aos campos de nota do módulo webform_score.
+ */
+#[CoversFunction('webform_score_entity_field_access')]
 final class WebformScoreAccessTest extends UnitTestCase {
 
+  /**
+   * Permite que a pessoa dona veja a própria nota quando tem permissão.
+   */
   public function testOnlySubmissionOwnerCanViewOwnScoreWhenGranted(): void {
     [$field, $items, $account] = $this->scoreField(TRUE, ['view own submission score']);
 
     $result = webform_score_entity_field_access('view', $field, $account, $items);
 
+    self::assertInstanceOf(AccessResultInterface::class, $result);
     self::assertTrue($result->isNeutral());
+    self::assertInstanceOf(CacheableDependencyInterface::class, $result);
     self::assertContains('user', $result->getCacheContexts());
   }
 
+  /**
+   * Impede que outra pessoa veja a nota como se fosse a própria.
+   */
   public function testOtherUserCannotViewOwnScore(): void {
     [$field, $items, $account] = $this->scoreField(FALSE, ['view own submission score']);
 
     $result = webform_score_entity_field_access('view', $field, $account, $items);
 
+    self::assertInstanceOf(AccessResultInterface::class, $result);
     self::assertTrue($result->isForbidden());
+    self::assertInstanceOf(CacheableDependencyInterface::class, $result);
     self::assertContains('user', $result->getCacheContexts());
   }
 
+  /**
+   * Permite ver qualquer nota com a permissão dedicada.
+   */
   public function testDedicatedPermissionCanViewAnyScore(): void {
     [$field, $items, $account] = $this->scoreField(FALSE, ['view any submission score']);
 
-    self::assertTrue(webform_score_entity_field_access('view', $field, $account, $items)->isNeutral());
+    $result = webform_score_entity_field_access('view', $field, $account, $items);
+    self::assertInstanceOf(AccessResultInterface::class, $result);
+    self::assertTrue($result->isNeutral());
   }
 
+  /**
+   * Impede a edição direta da nota.
+   */
   public function testScoreCannotBeEditedDirectly(): void {
     [$field, $items, $account] = $this->scoreField(TRUE, ['view own submission score']);
 
-    self::assertTrue(webform_score_entity_field_access('edit', $field, $account, $items)->isForbidden());
+    $result = webform_score_entity_field_access('edit', $field, $account, $items);
+    self::assertInstanceOf(AccessResultInterface::class, $result);
+    self::assertTrue($result->isForbidden());
   }
 
   /**
@@ -54,7 +80,8 @@ final class WebformScoreAccessTest extends UnitTestCase {
    * @param string[] $permissions
    *   Permissions granted to the account.
    *
-   * @return array{0: \Drupal\Core\Field\FieldDefinitionInterface, 1: \Drupal\Core\Field\FieldItemListInterface, 2: \Drupal\Core\Session\AccountInterface}
+   * @return array{\Drupal\Core\Field\FieldDefinitionInterface, \Drupal\Core\Field\FieldItemListInterface<\Drupal\Core\Field\FieldItemInterface>&\PHPUnit\Framework\MockObject\MockObject, \Drupal\Core\Session\AccountInterface}
+   *   Campo, lista de itens e conta simulados.
    */
   private function scoreField(bool $is_owner, array $permissions): array {
     $field = $this->createMock(FieldDefinitionInterface::class);

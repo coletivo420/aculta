@@ -1,0 +1,169 @@
+<?php
+
+/**
+ * @file
+ * Gate que valida os plugins de UI Styles do tema ACULTA420 V2.
+ *
+ * Garante que:
+ * 1. O arquivo aculta420_v2.ui_styles.yml existe e é um YAML válido.
+ * 2. Cada opção aponta para uma variante existente no componente ou
+ *    esquema oficial.
+ * 3. As classes CSS geradas existem em arquivos CSS do tema e estão no mapa de
+ *    PortalUiHooks::TOKENS ou exceções documentadas.
+ */
+
+declare(strict_types=1);
+
+use Symfony\Component\Yaml\Yaml;
+
+$root = dirname(__DIR__);
+$theme = $root . '/web/themes/custom/aculta420_v2';
+$uiStylesFile = $theme . '/aculta420_v2.ui_styles.yml';
+$buttonCssFile = $theme . '/components/button/button.css';
+$cardCssFile = $theme . '/components/card-cultural/card-cultural.css';
+$revistaCssFile = $theme . '/components/revista-teaser/revista-teaser.css';
+$surfaceCssFile = $theme . '/components/surface/surface.css';
+$layoutSectionCssFile = $theme . '/components/layout-section/layout-section.css';
+
+$fail = static function (string $message): never {
+  fwrite(STDERR, "FAIL: $message\n");
+  exit(1);
+};
+
+if (!is_file($uiStylesFile)) {
+  $fail("Arquivo aculta420_v2.ui_styles.yml não encontrado.");
+}
+
+$yamlContent = file_get_contents($uiStylesFile);
+if ($yamlContent === FALSE) {
+  $fail("Não foi possível ler aculta420_v2.ui_styles.yml.");
+}
+
+// Simple YAML parser for standard ui_styles structures.
+// In runtime, symfony/yaml or pecl-yaml may be available, but we can use
+// yaml_parse or Symfony Yaml if available.
+require_once $root . '/vendor/autoload.php';
+if (function_exists('yaml_parse')) {
+  $definitions = yaml_parse($yamlContent);
+}
+else {
+  $definitions = Yaml::parse($yamlContent);
+}
+
+if (!is_array($definitions) || empty($definitions)) {
+  $fail("Definições vazias ou inválidas em aculta420_v2.ui_styles.yml.");
+}
+
+// Lê TOKENS sem eval: cada entrada é 'chave' => ['classe', ...].
+// Qualquer outra forma é recusada.
+$tokensSource = (string) file_get_contents($root . '/web/themes/custom/aculta420_v2/src/Hook/PortalUiHooks.php');
+if (!preg_match('/TOKENS = \[(.*?)\n  \];/s', $tokensSource, $m)) {
+  $fail("TOKENS não encontrado em PortalUiHooks.php.");
+}
+$portalTokens = [];
+foreach (preg_split('/\R/', trim($m[1])) as $linha) {
+  $linha = trim($linha);
+  if ($linha === '' || str_starts_with($linha, '//')) {
+    continue;
+  }
+  if (!preg_match("/^'([^']+)'\s*=>\s*\[((?:'[^']*'(?:,\s*)?)*)\],?$/", $linha, $entrada)) {
+    $fail("Entrada de TOKENS fora do formato esperado: " . $linha);
+  }
+  preg_match_all("/'([^']*)'/", $entrada[2], $classes);
+  $portalTokens[$entrada[1]] = $classes[1];
+}
+
+$mappedClasses = [];
+foreach ($portalTokens as $classes) {
+  foreach ((array) $classes as $c) {
+    $mappedClasses[$c] = TRUE;
+  }
+}
+
+$buttonCss = (string) file_get_contents($buttonCssFile);
+$cardCss = (string) file_get_contents($cardCssFile);
+$revistaCss = (string) file_get_contents($revistaCssFile);
+$surfaceCss = (string) file_get_contents($surfaceCssFile);
+$layoutSectionCss = (string) file_get_contents($layoutSectionCssFile);
+
+$checks = 0;
+
+foreach ($definitions as $id => $definition) {
+  $checks++;
+  if (empty($definition['label'])) {
+    $fail("Estilo '$id' sem label em aculta420_v2.ui_styles.yml.");
+  }
+  if (empty($definition['category'])) {
+    $fail("Estilo '$id' sem category em aculta420_v2.ui_styles.yml.");
+  }
+  if (empty($definition['options']) || !is_array($definition['options'])) {
+    $fail("Estilo '$id' sem options válidas em aculta420_v2.ui_styles.yml.");
+  }
+
+  foreach ($definition['options'] as $classOrKey => $label) {
+    $checks++;
+    if (empty($label)) {
+      $fail("Opção '$classOrKey' do estilo '$id' está com rótulo vazio.");
+    }
+
+    if ($id === 'button') {
+      // Must exist in button.css and in PortalUiHooks::TOKENS.
+      if (!str_contains($buttonCss, '.' . $classOrKey)) {
+        $fail("Opção '$classOrKey' não possui variante CSS correspondente em $buttonCssFile.");
+      }
+      if (!isset($mappedClasses[$classOrKey])) {
+        $fail("Classe de botão '$classOrKey' não está mapeada em PortalUiHooks::TOKENS.");
+      }
+    }
+    elseif ($id === 'card_accent') {
+      // Must exist in card-cultural.css and in PortalUiHooks::TOKENS.
+      if (!str_contains($cardCss, '.' . $classOrKey)) {
+        $fail("Opção '$classOrKey' não possui variante CSS correspondente em $cardCssFile.");
+      }
+      if (!isset($mappedClasses[$classOrKey])) {
+        $fail("Classe de faixa de cartão '$classOrKey' não está mapeada em PortalUiHooks::TOKENS.");
+      }
+    }
+    elseif ($id === 'revista_accent') {
+      if (!in_array($classOrKey, [
+        'revista-teaser--accent-green',
+        'revista-teaser--accent-yellow',
+        'revista-teaser--accent-red',
+      ], TRUE)) {
+        $fail("Classe '$classOrKey' não pertence às três escolhas da Revista.");
+      }
+      if (!str_contains($revistaCss, '.' . $classOrKey)) {
+        $fail("Opção '$classOrKey' não possui regra em $revistaCssFile.");
+      }
+      $token = 'revista-teaser-accent-' . substr($classOrKey, strlen('revista-teaser--accent-'));
+      if (!isset($mappedClasses[$classOrKey]) || !isset($portalTokens[$token])) {
+        $fail("Classe da Revista '$classOrKey' não está mapeada no PortalUiHooks::TOKENS.");
+      }
+    }
+    elseif ($id === 'layout_section_surface') {
+      if (!in_array($classOrKey, ['layout-section--raised', 'layout-section--green-soft'], TRUE)) {
+        $fail("Opção de Layout Builder não permitida: '$classOrKey'.");
+      }
+      if (!str_contains($layoutSectionCss, '.' . $classOrKey)) {
+        $fail("Opção '$classOrKey' não possui variante CSS em $layoutSectionCssFile.");
+      }
+    }
+    elseif (in_array($id, ['spacing_section', 'surface_style', 'surface_elevation_style', 'surface_radius_style'], TRUE)) {
+      if (preg_match('/(?:^|\s)(?:spacing--section|surface--)/', $classOrKey) === 1) {
+        $fail("Opção '$classOrKey' conserva um identificador de superfície substituído.");
+      }
+      foreach (explode(' ', $classOrKey) as $class) {
+        if ($class === '' || !str_contains($surfaceCss, '.' . $class)) {
+          $fail("Opção '$classOrKey' não possui regra correspondente em $surfaceCssFile.");
+        }
+      }
+    }
+  }
+}
+
+if (isset($definitions['revista_accent']['options']) && count($definitions['revista_accent']['options']) !== 3) {
+  $fail('revista_accent deve expor exatamente três opções fechadas.');
+}
+
+echo "ACULTA420 UI STYLES GATE: PASS ({$checks} verificações em aculta420_v2.ui_styles.yml)\n";
+exit(0);

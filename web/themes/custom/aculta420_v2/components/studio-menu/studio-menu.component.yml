@@ -1,0 +1,27 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Menu lateral do Studio Dashboard
+description: Título do painel de conta com botão de menu no desktop. O botão abre um diálogo pela esquerda, como os diálogos da barra institucional.
+group: Studio
+status: experimental
+libraryOverrides:
+  dependencies:
+    - aculta420_v2/utility-drawers
+    - core/drupal
+    - core/once
+props:
+  type: object
+  additionalProperties: false
+  required: [title]
+  properties:
+    title:
+      type: string
+      title: Título
+      description: Nome do painel exibido na barra superior móvel.
+      minLength: 1
+slots:
+  sidebar_items:
+    title: Links da navegação lateral
+    description: Itens SDC autorizados pelo provider do Studio, renderizados na navegação fixa de desktop.
+  dialog_items:
+    title: Links da navegação móvel
+    description: Cópias SDC dos itens autorizados, renderizadas dentro do diálogo móvel.

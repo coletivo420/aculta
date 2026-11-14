@@ -32,7 +32,7 @@ final class ForumCommentPost extends EntityContentBase {
   /**
    * The entity type manager used to resolve embedded references.
    */
-  private EntityTypeManagerInterface $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * {@inheritdoc}

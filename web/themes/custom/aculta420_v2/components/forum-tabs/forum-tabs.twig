@@ -1,0 +1,23 @@
+<nav class="forum-tabs" aria-label="{{ label }}">
+  <div class="forum-tabs__bar">
+    <ul class="forum-tabs__list" role="list">
+      {% for item in items %}
+        <li class="forum-tabs__item">
+          <a href="{{ item.href }}"
+             class="forum-tabs__link{% if item.active %} is-active{% endif %}"
+             {% if item.active %}aria-current="page"{% endif %}>
+            <span class="forum-tabs__label">{{ item.label }}</span>
+            {% if item.count is not null and item.count > 0 %}
+              <span class="forum-tabs__count" aria-label="{{ item.count }} {{ 'não lidos'|t }}">{{ item.count }}</span>
+            {% endif %}
+          </a>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% if filters %}
+    <div class="forum-tabs__filters">
+      {{ filters }}
+    </div>
+  {% endif %}
+</nav>

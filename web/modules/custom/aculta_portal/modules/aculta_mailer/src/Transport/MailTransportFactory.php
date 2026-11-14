@@ -5,8 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_mailer\Transport;
 
 use Drupal\aculta_mailer\Entity\MailTransport;
-use Symfony\Component\Mailer\Transport\Smtp\EsmtpTransport;
-use Symfony\Component\Mailer\Transport\Smtp\Stream\SocketStream;
+use Symfony\Component\Mailer\Transport\Smtp\EsmtpTransportFactory;
 use Symfony\Component\Mailer\Transport\TransportInterface;
 use Symfony\Component\Mailer\Transport\Dsn;
 
@@ -42,31 +41,29 @@ final class MailTransportFactory {
   /**
    * Transporte SMTP. Porta 465 usa TLS implícito; as demais, STARTTLS quando o servidor oferecer.
    */
-  private function smtp(MailTransport $transport): EsmtpTransport {
-    $smtp = new EsmtpTransport($transport->host(), $transport->port(), $transport->port() === 465);
+  private function smtp(MailTransport $transport): TransportInterface {
     $user = $transport->user();
     if ($transport->userSecret() !== '') {
       $user = (string) $this->secrets?->value($transport->userSecret());
     }
+    $password = NULL;
     if ($user !== '') {
       $secret = $transport->passwordSecret();
       $password = $secret !== '' ? $this->secrets?->value($secret) : NULL;
       if ($password === NULL) {
         throw new \RuntimeException('Credencial da senha SMTP ausente no arquivo de segredos.');
       }
-      $smtp->setUsername($user);
-      $smtp->setPassword($password);
     }
-    $stream = $smtp->getStream();
-    if ($stream instanceof SocketStream) {
-      $stream->setStreamOptions([
-        'ssl' => [
-          'verify_peer' => $transport->verifyPeer(),
-          'verify_peer_name' => $transport->verifyPeer(),
-        ],
-      ]);
-    }
-    return $smtp;
+    $scheme = $transport->port() === 465 ? 'smtps' : 'smtp';
+    $options = $transport->verifyPeer() ? [] : ['verify_peer' => FALSE];
+    return (new EsmtpTransportFactory())->create(new Dsn(
+      $scheme,
+      $transport->host(),
+      $user !== '' ? $user : NULL,
+      $password,
+      $transport->port(),
+      $options,
+    ));
   }
 
 }

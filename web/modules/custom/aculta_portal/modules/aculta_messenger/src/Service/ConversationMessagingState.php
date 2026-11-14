@@ -69,7 +69,7 @@ final class ConversationMessagingState {
   private function otherMembers(PrivateMessageThreadInterface $thread): array {
     $currentId = (int) $this->currentUser->id();
     return array_values(array_unique(array_filter(
-      array_map('intval', $thread->getMembersId()),
+      array_map('intval', $thread->getMemberIds()),
       static fn(int $id): bool => $id > 0 && $id !== $currentId,
     )));
   }

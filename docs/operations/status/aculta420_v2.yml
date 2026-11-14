@@ -1,0 +1,7 @@
+# Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
+version: '1.5.0'
+state: Dev
+progress_note: >-
+  1.5.0: Tema ACULTA420 V2 SDC First, com fundações neutras, UI Suite integral e governança ADR-056 integralmente concluída (P0 a P4). Catálogo UI Patterns Library oficial como fonte única com 150 manifests SDC e 244 stories auditados (módulo legado aculta_ui_library purgado). Todos os 550 props de topo e 714 nós tipados possuem descrição; todos os 279 slots possuem título e descrição; metadados variants alinhados em 7 SDCs e 13 props enum variant mapeadas. O validador de renderização isolada V2 SDC cobre todos os 150 componentes do catálogo no Drupal Runtime. Redução dos templates do tema para 17 adaptadores e infraestrutura essenciais.
+next_phase: >-
+  ADR-056 P0/P1/P2/P3/P4 concluídos no código, inventário e homologação de Runtime. Governança de UI Patterns 2 ativa e estável. Próximos passos operacionais: limpeza focal da chave órfã de schema em janela de banco autorizada com backup privado e acompanhamento de evoluções upstream do UI Patterns 2.1+.

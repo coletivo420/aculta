@@ -1,0 +1,40 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Tópico do Fórum
+description: Apresenta teaser e conteúdo completo de tópico com render arrays Drupal.
+status: experimental
+group: Comunidade
+props:
+  type: object
+  additionalProperties: false
+  required: [variant, has_title, has_meta, has_bookmark]
+  properties:
+    variant:
+      type: string
+      title: Variante de apresentação
+      description: Escolhe a apresentação compacta de teaser ou a composição completa do tópico.
+      enum: [teaser, full]
+    has_title:
+      type: boolean
+      title: Título visível no conteúdo
+      description: Controla se o slot title aparece dentro do componente.
+    has_meta:
+      type: boolean
+      title: Data de publicação disponível
+      description: Controla a exibição do slot meta no rodapé da apresentação.
+    has_bookmark:
+      type: boolean
+      title: Ação de favorito disponível
+      description: Controla se o slot bookmark renderizado pelo Drupal aparece no tópico.
+slots:
+  title:
+    title: Título do tópico
+    description: Heading e link processados pelo template Drupal.
+  meta:
+    title: Data de publicação
+    description: Data e metadados de publicação do tópico.
+  bookmark:
+    title: Ação de favorito
+    description: Render array da ação; o chamador deve validar acesso e fornecer apenas controles permitidos.
+  content:
+    title: Conteúdo
+    description: Render arrays Drupal ou markup confiável de campos, autoria e discussão; strings simples são escapadas automaticamente pelo Twig.

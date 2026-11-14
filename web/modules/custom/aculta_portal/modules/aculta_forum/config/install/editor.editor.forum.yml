@@ -15,6 +15,7 @@ settings:
       - italic
       - '|'
       - link
+      - acultaFluentEmoji
       - '|'
       - bulletedList
       - numberedList

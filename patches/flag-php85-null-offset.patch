@@ -1,0 +1,29 @@
+--- a/src/Entity/Storage/FlaggingStorage.php
++++ b/src/Entity/Storage/FlaggingStorage.php
+@@ -42,6 +42,9 @@
+       throw new \LogicException('Anonymous users must be identified by session_id');
+     }
+ 
++    if ($entity->id() === NULL) {
++      return [];
++    }
+     $flag_ids = $this->loadIsFlaggedMultiple([$entity], $account, $session_id);
+     return $flag_ids[$entity->id()];
+   }
+@@ -68,12 +71,15 @@
+ 
+     // All entities must be of the same type, get the entity type from the
+     // first.
+-    $entity_type_id = reset($entities)->getEntityTypeId();
++    $entity_type_id = (string) reset($entities)->getEntityTypeId();
+     $ids_to_load = [];
+ 
+     // Loop over all requested entities, if they are already in the loaded list,
+     // get then from there, merge the global and per-user flags together.
+     foreach ($entities as $entity) {
++      if ($entity->id() === NULL || $account->id() === NULL || $session_id === NULL || $entity_type_id === NULL) {
++        continue;
++      }
+       if (isset($this->flagIdsByEntity[$account->id()][$session_id][$entity_type_id][$entity->id()])) {
+         $flag_ids_by_entity[$entity->id()] = array_merge($this->flagIdsByEntity[$account->id()][$session_id][$entity_type_id][$entity->id()], $this->globalFlagIdsByEntity[$entity_type_id][$entity->id()]);
+       }

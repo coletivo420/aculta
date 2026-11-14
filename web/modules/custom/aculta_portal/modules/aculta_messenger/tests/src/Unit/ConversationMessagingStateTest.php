@@ -26,7 +26,7 @@ final class ConversationMessagingStateTest extends UnitTestCase {
     $currentUser = $this->createMock(AccountProxyInterface::class);
     $currentUser->method('id')->willReturn(42);
     $thread = $this->createMock(PrivateMessageThreadInterface::class);
-    $thread->method('getMembersId')->willReturn([42, 84]);
+    $thread->method('getMemberIds')->willReturn([42, 84]);
     $banManager = $this->createMock(PrivateMessageBanManagerInterface::class);
     $banManager->expects(self::once())->method('isBanned')->with(84)->willReturn(FALSE);
     $banManager->expects(self::once())->method('isCurrentUserBannedByUser')->with(84)->willReturn(FALSE);
@@ -47,7 +47,7 @@ final class ConversationMessagingStateTest extends UnitTestCase {
       $currentUser = $this->createMock(AccountProxyInterface::class);
       $currentUser->method('id')->willReturn(42);
       $thread = $this->createMock(PrivateMessageThreadInterface::class);
-      $thread->method('getMembersId')->willReturn([42, 84]);
+      $thread->method('getMemberIds')->willReturn([42, 84]);
       $banManager = $this->createMock(PrivateMessageBanManagerInterface::class);
       $banManager->method('isBanned')->with(84)->willReturn($blockedByMe);
       $banManager->method('isCurrentUserBannedByUser')->with(84)->willReturn($blockedByThem);
@@ -67,7 +67,7 @@ final class ConversationMessagingStateTest extends UnitTestCase {
       $currentUser = $this->createMock(AccountProxyInterface::class);
       $currentUser->method('id')->willReturn(42);
       $thread = $this->createMock(PrivateMessageThreadInterface::class);
-      $thread->method('getMembersId')->willReturn([42, 84, 85]);
+      $thread->method('getMemberIds')->willReturn([42, 84, 85]);
       $banManager = $this->createMock(PrivateMessageBanManagerInterface::class);
       $banManager->method('isBanned')->willReturnCallback(static fn(int $uid): bool => $uid === $blockedMember && $blockedByMe);
       $banManager->method('isCurrentUserBannedByUser')->willReturnCallback(static fn(int $uid): bool => $uid === $blockedMember && $blockedByThem);
@@ -83,7 +83,7 @@ final class ConversationMessagingStateTest extends UnitTestCase {
     $currentUser = $this->createMock(AccountProxyInterface::class);
     $currentUser->method('id')->willReturn(42);
     $thread = $this->createMock(PrivateMessageThreadInterface::class);
-    $thread->method('getMembersId')->willReturn([42, 84, 85]);
+    $thread->method('getMemberIds')->willReturn([42, 84, 85]);
     $banManager = $this->createMock(PrivateMessageBanManagerInterface::class);
     $banManager->expects(self::exactly(2))->method('isBanned')->willReturn(FALSE);
     $banManager->expects(self::exactly(2))->method('isCurrentUserBannedByUser')->willReturn(FALSE);

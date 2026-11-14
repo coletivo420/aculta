@@ -32,6 +32,17 @@ use Symfony\Component\HttpFoundation\Request;
 #[Group('aculta_forum')]
 final class ForumQuoteHooksTest extends UnitTestCase {
 
+  protected function setUp(): void {
+    parent::setUp();
+    // Url::toString() precisa do gerador de URL; o teste unitário fornece um falso.
+    $generator = $this->createMock(\Drupal\Core\Routing\UrlGeneratorInterface::class);
+    $generator->method('generateFromRoute')->willReturn('/comentario/42/responder?quote=42#comment-form');
+    $container = new \Symfony\Component\DependencyInjection\ContainerBuilder();
+    $container->set('url_generator', $generator);
+    $container->set('string_translation', $this->getStringTranslationStub());
+    \Drupal::setContainer($container);
+  }
+
   /**
    * Comments outside the shared discussion bundle never receive a quote link.
    */
@@ -93,21 +104,20 @@ final class ForumQuoteHooksTest extends UnitTestCase {
    * Readable published comments link to Core's reply form with the source ID.
    */
   public function testReadableCommentLinksToCoreReplyForm(): void {
-    $hooks = $this->hooks(AccessResult::allowed());
+    $hooks = $this->hooks(AccessResult::allowed(), NULL, AccessResult::allowed());
     $comment = $this->comment(AccessResult::allowed());
     $links = [];
     $context = [];
 
     $hooks->commentLinksAlter($links, $comment, $context);
 
-    $url = $links['aculta_forum_quote']['#links']['aculta-forum-quote']['url'];
-    self::assertSame('comment.reply', $url->getRouteName());
-    self::assertSame(42, $url->getRouteParameters()['pid']);
-    self::assertSame(['quote' => 42], $url->getOption('query'));
-    self::assertSame(
-      ['data-portal-ui' => 'button-secondary'],
-      $links['aculta_forum_quote']['#links']['aculta-forum-quote']['attributes'],
-    );
+    $quoteLink = $links['#links']['resposta-citar'];
+    self::assertSame('Citar', (string) $quoteLink['title']);
+    self::assertSame('resposta-citar', $quoteLink['attributes']['data-action']);
+    self::assertSame('42', $quoteLink['attributes']['data-quote-id']);
+    $url = $quoteLink['url']->toString();
+    self::assertStringContainsString('quote=42', $url);
+    self::assertStringContainsString('#comment-form', $url);
   }
 
   /**
@@ -115,7 +125,7 @@ final class ForumQuoteHooksTest extends UnitTestCase {
    */
   public function testReplyFormPrefillsSanitizedParentQuote(): void {
     [$formState, $stack] = $this->quoteReplyContext();
-    $hooks = $this->hooks(AccessResult::allowed(), $stack);
+    $hooks = $this->hooks(AccessResult::allowed(), $stack, AccessResult::allowed());
     $form = ['comment_body' => ['widget' => [0 => ['value' => ['#default_value' => '']]]]];
 
     $hooks->commentFormAlter($form, $formState, 'comment_form');
@@ -135,7 +145,7 @@ final class ForumQuoteHooksTest extends UnitTestCase {
    */
   public function testReplyFormPrefillsUnprocessedTextFormatElement(): void {
     [$formState, $stack] = $this->quoteReplyContext();
-    $hooks = $this->hooks(AccessResult::allowed(), $stack);
+    $hooks = $this->hooks(AccessResult::allowed(), $stack, AccessResult::allowed());
     // A new reply has no body, so Core keeps #default_value NULL at the root.
     $form = [
       'comment_body' => [
@@ -226,7 +236,7 @@ final class ForumQuoteHooksTest extends UnitTestCase {
     $formState = new FormState();
     $formState->setFormObject($formObject);
 
-    $request = Request::create('/comment/reply/node/17/field_aculta_discussion/42?quote=42');
+    $request = Request::create('/resposta/comentar/node/17/field_aculta_discussion/42?quote=42');
     $request->attributes->set('_route', 'comment.reply');
     $stack = new RequestStack();
     $stack->push($request);
@@ -237,7 +247,11 @@ final class ForumQuoteHooksTest extends UnitTestCase {
   /**
    * Creates the hook with a single provider returning the chosen access result.
    */
-  private function hooks(AccessResult $readAccess, ?RequestStack $requestStack = NULL): ForumQuoteHooks {
+  private function hooks(
+    AccessResult $readAccess,
+    ?RequestStack $requestStack = NULL,
+    ?AccessResult $writeAccess = NULL,
+  ): ForumQuoteHooks {
     $host = $this->createMock(EntityInterface::class);
     $this->makeCacheable($host);
     $context = new DiscussionContext(
@@ -245,7 +259,7 @@ final class ForumQuoteHooksTest extends UnitTestCase {
       'public_forum',
       'public_forum:node:uuid',
       $readAccess,
-      AccessResult::neutral(),
+      $writeAccess ?? AccessResult::neutral(),
       AccessResult::neutral(),
       Url::fromRoute('system.404'),
       'public_if_entity_accessible',

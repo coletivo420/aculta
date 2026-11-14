@@ -326,6 +326,7 @@ display:
       style:
         type: table
         options:
+          class: ''
           grouping: {  }
           row_class: ''
           default_row_class: true
@@ -421,10 +422,10 @@ display:
     position: 1
     display_options:
       title: Fórum
-      display_extenders: {  }
       path: painel-administrativo/forum/conteudo
       menu:
         type: none
+      display_extenders: {  }
     cache_metadata:
       max-age: 0
       contexts:

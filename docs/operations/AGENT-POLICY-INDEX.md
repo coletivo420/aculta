@@ -1,19 +1,20 @@
 # Índice de regras de agentes por escopo
 
-O arquivo `docs/operations/AGENT-GUARDRAILS-FULL.md` é **arquivo histórico de auditoria**, não instrução de carregamento obrigatório. Não o leia integralmente por padrão.
+O arquivo `docs/history/operations/AGENT-GUARDRAILS-FULL.md` é **arquivo histórico de auditoria**, não instrução de carregamento obrigatório. Não o leia integralmente por padrão.
 
 | Escopo | Regras ativas/localizadas |
 |---|---|
-| Todos os agentes | `AGENTS.md`; Claude Code: `CLAUDE.md` |
+| Todos os agentes | `AGENTS.md`; `docs/operations/AGENT-REVIEW-POLICY.md`; Claude Code: `CLAUDE.md` |
 | Portal | `web/modules/custom/aculta_portal/AGENTS.md` e `web/modules/custom/aculta_portal/docs/AGENT-POLICIES.md` |
 | Fórum | `web/modules/custom/aculta_portal/modules/aculta_forum/AGENTS.md` e `docs/AGENT-POLICIES.md` local |
 | Mailer | `web/modules/custom/aculta_portal/modules/aculta_mailer/AGENTS.md` |
 | Studio | `web/modules/custom/aculta_portal/modules/aculta_studio/AGENTS.md` |
 | Usuários | `web/modules/custom/aculta_portal/modules/aculta_user/AGENTS.md` |
 | Avatar e identidade de autoria | `docs/architecture/avatar.md`; detalhe do módulo em `web/modules/custom/aculta_portal/modules/aculta_user/docs/AVATAR-PADRAO.md` |
-| Tema / mobile-first global | `web/themes/custom/aculta420/AGENTS.md`; norma transversal em `docs/architecture/ACULTA420-MOBILE-FIRST-GUARDRAILS.md`, obrigatória para todos os agentes que alterem UI no tema |
-| Git, commits, push e Runtime | `AGENTS.md` (seções Git e Runtime) |
+| Tema / mobile-first global | `web/themes/custom/aculta420_v2/AGENTS.md`; norma transversal em `docs/architecture/ACULTA420-MOBILE-FIRST-GUARDRAILS.md`, obrigatória para todos os agentes que alterem UI no tema |
+| Git, commits, push e Runtime | `AGENTS.md` (contrato), `docs/operations/AGENT-REVIEW-POLICY.md` (revisao), skills `aculta-commit-entrega`, `aculta-runtime-sync` e `aculta-runtime-migracoes` |
 | Ambientes, Drush, servidor web e banco de teste | `docs/operations/AGENT-OPERATIONS.md` |
+| Testes visuais de navegador (localizar ou criar script) | `docs/operations/NAVEGADOR-TESTES.md`; índice de frentes com caminho completo em `tests/browser/INDICE.md` (gerado por `tests/browser/gerar-indice.py`); scripts em `tests/browser/<purpose>/<frente>/` |
 | Rotas e domínios | `docs/architecture/AGENT-ROUTES.md` |
 | Administração e integrações somente no MAIN | `docs/portal/ADMIN-DOMAIN-POLICY.md`; regra em `docs/architecture/AGENT-ROUTES.md`; gate `php scripts/validate-admin-routes-main-domain.php` |
 | Conteúdo institucional e Wiki | `docs/operations/AGENT-CONTENT.md` |
@@ -25,14 +26,13 @@ O arquivo `docs/operations/AGENT-GUARDRAILS-FULL.md` é **arquivo histórico de 
 | Agenda LMS | `web/modules/custom/aculta_portal/modules/aculta_lms_agenda/docs/INTEGRACAO.md` |
 | UGC | `web/modules/custom/aculta_portal/modules/aculta_ugc/docs/README.md` |
 | Visualização de documentos | `web/modules/custom/aculta_portal/modules/aculta_document_viewer/README.md` |
-| Visualização de PDF | `web/modules/custom/aculta_portal/modules/aculta_pdf_viewer/README.md` |
 | CPF/CNPJ | `web/modules/custom/aculta_portal/modules/aculta_id_cpf/AGENTS.md` |
 | Messenger | `web/modules/custom/aculta_portal/modules/aculta_messenger/AGENTS.md` |
 | Cache e saídas | `docs/operations/AGENT-CACHE.md` e `docs/operations/AGENT-OUTPUT.md` |
 | Bibliotecas e dependências | `docs/operations/AGENT-DEPENDENCIAS.md`; tabela vigente em `README.md` (`## Bibliotecas usadas`) |
 | Endereços e CEP centralizados | `docs/portal/ACCOUNT-ADDRESS.md`; `docs/decisions/ADR-034-pais-unico-brasil-endereco-central.md`; `web/modules/custom/aculta_portal/modules/aculta_portal_cep/README.md` |
 | Mapa do projeto | `docs/operations/MAPA-PARA-AGENTES.md` (leia antes de uma tarefa nova) |
-| Decisões do responsável | `docs/architecture/DECISOES-RESPONSAVEL-2026-10-28.md` (D-01 a D-43); prevalecem sobre planos |
+| Decisões do responsável | `docs/architecture/DECISOES-RESPONSAVEL-2026-10-28.md` e ADRs/decisões posteriores; prevalecem sobre planos historicos |
 | Checkouts, carrinho e pagamentos | `docs/decisions/ADR-032-portal-multi-cart-checkout.md`; `aculta_pagamentos_mercadopago/README.md`; `aculta_commerce/docs/PAYMENT-FLOW-CONTRACTS-0.1.0-B.md` |
 | Ingressos pagos (planejamento) | `web/modules/custom/aculta_portal/modules/aculta_events/docs/PLANO-INGRESSOS-PAGOS.md`; sem código ainda |
 

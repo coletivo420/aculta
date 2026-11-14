@@ -6,6 +6,7 @@ namespace Drupal\aculta_user\Entity;
 
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\EntityAccessControlHandler;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
 
@@ -14,7 +15,13 @@ use Drupal\Core\Session\AccountInterface;
  */
 final class OrganizationMemberAccessControlHandler extends EntityAccessControlHandler {
 
+  /**
+   * {@inheritdoc}
+   */
   protected function checkAccess(EntityInterface $entity, $operation, AccountInterface $account): AccessResult {
+    if (!$entity instanceof ContentEntityInterface) {
+      return AccessResult::neutral();
+    }
     if ($account->hasPermission('administer aculta claims')) {
       return AccessResult::allowed()->cachePerPermissions();
     }
@@ -29,6 +36,9 @@ final class OrganizationMemberAccessControlHandler extends EntityAccessControlHa
     return AccessResult::forbidden()->cachePerUser();
   }
 
+  /**
+   * {@inheritdoc}
+   */
   protected function checkCreateAccess(AccountInterface $account, array $context, $entity_bundle = NULL): AccessResult {
     return AccessResult::allowedIfHasPermission($account, 'administer aculta claims');
   }

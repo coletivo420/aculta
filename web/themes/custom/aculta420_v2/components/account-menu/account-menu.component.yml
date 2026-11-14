@@ -1,0 +1,68 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Menu de conta na barra institucional
+description: Gatilho de três linhas na barra institucional que abre um painel de tela cheia com navegação principal, conta e sites/legal. Visitante vê Entrar e Criar conta; usuário autenticado vê avatar e ações de conta (ADR-047).
+group: Conta
+status: experimental
+libraryOverrides:
+  dependencies:
+    - core/drupal
+    - core/once
+props:
+  type: object
+  additionalProperties: false
+  required: [authenticated]
+  properties:
+    authenticated:
+      type: boolean
+      title: Usuário autenticado
+      description: Quando true, mostra o bloco de identidade autenticada com avatar e nome; não controla acesso nem substitui os itens de menu fornecidos pelo Drupal.
+      default: false
+    summary_label:
+      type: string
+      title: Rótulo acessível
+      description: Nome acessível do botão; fica visualmente oculto.
+      default: Abrir menu
+    account_name:
+      type: [string, 'null']
+      title: Nome de exibição
+      description: Nome entregue pelo Portal, mostrado somente no bloco de sessão autenticada.
+      default: null
+    sites:
+      type: array
+      title: Sites por purpose
+      description: Links neutros entregues pelo Portal para sites publicados.
+      default: []
+      items:
+        type: object
+        description: Destino publicado da rede ACULTA mostrado no menu da conta.
+        additionalProperties: false
+        required: [purpose, title, url, current]
+        properties:
+          purpose:
+            type: string
+            minLength: 1
+            description: Identificador do purpose do site publicado.
+          title:
+            type: string
+            minLength: 1
+            description: Nome localizado do site mostrado como link.
+          url:
+            type: string
+            format: uri
+            description: URL completa do site publicado.
+          current:
+            type: boolean
+            description: Indica se o site corresponde ao domínio atual.
+    legal_links:
+      type: array
+      title: Links legais
+      description: Links neutros de busca, política e privacidade. Somente rotas confirmadas.
+      default: []
+      $ref: 'ui-patterns://links'
+slots:
+  avatar:
+    title: Avatar
+    description: Avatar fornecido pelo Portal (AvatarResolver). Sem slot, o componente usa o ícone neutro. Nunca gera inicial do nome.
+  menu_items:
+    title: Itens do menu
+    description: Render array do menu Drupal de conta (system_menu_block:account), com access e cache preservados pelo Portal. Para visitante, traz Entrar e Criar conta.

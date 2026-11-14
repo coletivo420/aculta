@@ -1,0 +1,196 @@
+/* Menu da barra institucional (ADR-047). Mesmo padrão dos diálogos utilitários (carrinho, avisos, mensagens):
+   gatilho com data-aculta-dialog-trigger e <dialog> aberto com showModal(), fundo esmaecido por ::backdrop,
+   fechamento com Esc e X, foco preso e devolvido ao gatilho pelo próprio diálogo. Mobile-first: base em 320 CSS px. */
+
+.aculta-account-menu {
+  position: static;
+}
+
+/* Gatilho: variante ghost, alvo de toque de 44 px, só ícone de três linhas. */
+.aculta-account-menu .aculta-account-menu__trigger.aculta-utility-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  cursor: pointer;
+  /* A cor do ícone pode vir do contexto (ex.: barra institucional); o padrão é o botão secundário. */
+  color: var(--utility-icon-color, var(--button-secondary-fg));
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  min-block-size: 2.75rem;
+  min-inline-size: 2.75rem;
+}
+
+.aculta-account-menu .aculta-account-menu__trigger:hover {
+  background: var(--button-secondary-bg-hover);
+}
+
+.aculta-account-menu .aculta-account-menu__trigger:active {
+  background: var(--button-secondary-bg-active);
+}
+
+.aculta-account-menu__trigger:focus-visible,
+.aculta-account-menu__close:focus-visible,
+.aculta-account-dialog a:focus-visible {
+  outline: 2px solid var(--button-focus-ring);
+  outline-offset: 2px;
+}
+
+/* Três linhas feitas com spans, sem imagem. */
+.aculta-account-menu__icon {
+  display: inline-flex;
+  flex-direction: column;
+  gap: .3125rem;
+  inline-size: 1.375rem;
+}
+
+.aculta-account-menu__icon > span {
+  display: block;
+  border-radius: 1px;
+  background: currentColor;
+  block-size: 2px;
+  inline-size: 100%;
+}
+
+/* Diálogo em tela cheia: sobrescreve o painel lateral padrão dos diálogos utilitários. */
+/* Painel lateral, mesmo tamanho de carrinho, mensagens e avisos no mobile (faixa do fundo à mostra e esmaecida).
+   No desktop ocupa quase toda a tela. */
+.aculta-utility-dialog.aculta-account-dialog {
+  overflow-x: hidden;
+  overflow-y: auto;
+  margin: 0;
+  padding: 0;
+  color: var(--color-text-primary);
+  background: var(--color-surface);
+  block-size: 100vh;
+  block-size: 100dvh;
+  inset-block: 0;
+  inset-inline: auto 0;
+  max-block-size: none;
+  max-inline-size: none;
+}
+
+/* Desktop: deixa faixa à esquerda (6 rem) e uma faixa maior embaixo (8 rem) mostrando o fundo esmaecido. */
+@media (min-width: 60rem) {
+  .aculta-utility-dialog.aculta-account-dialog {
+    block-size: calc(100dvh - 8rem);
+    inline-size: calc(100vw - 6rem);
+    inset-block: 0 auto;
+    width: calc(100vw - 6rem);
+  }
+}
+
+.aculta-account-dialog .aculta-utility-dialog__header {
+  justify-content: flex-end;
+  padding: var(--spacing-sm) var(--spacing-md) 0;
+  border-block-end: 0;
+}
+
+.aculta-account-menu__close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--button-secondary-fg);
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  font: inherit;
+  font-size: 1.75rem;
+  line-height: 1;
+  min-block-size: 2.75rem;
+  min-inline-size: 2.75rem;
+}
+
+.aculta-account-menu__close:hover {
+  background: var(--button-secondary-bg-hover);
+}
+
+.aculta-account-menu__close:active {
+  background: var(--button-secondary-bg-active);
+}
+
+/* Duas colunas no desktop (conta, sites/legal); no celular, uma coluna. A navegação principal fica só na barra. */
+.aculta-utility-dialog.aculta-account-dialog .aculta-account-menu__columns {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  box-sizing: border-box;
+  padding: var(--spacing-sm) var(--spacing-md) var(--spacing-lg);
+  gap: var(--spacing-lg);
+}
+
+.aculta-account-menu__col {
+  min-inline-size: 0;
+}
+
+.aculta-account-menu__col + .aculta-account-menu__col {
+  padding-block-start: var(--spacing-md);
+  border-block-start: 1px solid var(--color-border);
+}
+
+.aculta-account-menu__col :where(ul) {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.aculta-account-menu__col :where(li) {
+  border-block-end: 1px solid var(--color-border);
+}
+
+.aculta-account-menu__col :where(li:last-child) {
+  border-block-end: 0;
+}
+
+.aculta-account-menu__col a {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: var(--color-text-primary);
+  min-block-size: 2.75rem;
+  overflow-wrap: anywhere;
+}
+
+.aculta-account-menu__col a:hover {
+  text-decoration: underline;
+}
+
+.aculta-account-menu__col h2 {
+  margin: 0 0 var(--spacing-xs);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-sm);
+}
+
+.aculta-account-menu__group + .aculta-account-menu__group {
+  margin-block-start: var(--spacing-sm);
+  padding-block-start: var(--spacing-sm);
+  border-block-start: 1px solid var(--color-border);
+}
+
+.aculta-account-menu__identity {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  min-block-size: 2.75rem;
+  overflow-wrap: anywhere;
+  padding-block: var(--spacing-xs);
+}
+
+.aculta-account-menu__actions :where(ul, li, a) {
+  min-inline-size: 0;
+}
+
+@media (min-width: 60rem) {
+  .aculta-utility-dialog.aculta-account-dialog .aculta-account-menu__columns {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--spacing-xl);
+  }
+
+  .aculta-account-menu__col + .aculta-account-menu__col {
+    padding-block-start: 0;
+    padding-inline-start: var(--spacing-lg);
+    border-block-start: 0;
+    border-inline-start: 1px solid var(--color-border);
+  }
+}

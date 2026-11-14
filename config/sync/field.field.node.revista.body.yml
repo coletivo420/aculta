@@ -6,7 +6,7 @@ dependencies:
     - field.storage.node.body
     - node.type.revista
   module:
-    - text
+    - text_with_summary
 id: node.revista.body
 field_name: body
 entity_type: node

@@ -2,7 +2,7 @@ name: 'ACULTA Commerce Melhor Envio'
 type: module
 description: 'Integração logística com o Melhor Envio. Usa o motor de envios do aculta_commerce e a consulta de CEP compartilhada do Portal; não tem carrinho, pedido ou pagamento próprios.'
 package: 'ACULTA Portal'
-core_version_requirement: ^11.3
+core_version_requirement: ^11 || ^12
 version: '0.1.0-dev.10'
 dependencies:
   - aculta_portal:aculta_portal

@@ -1,0 +1,24 @@
+{#
+/**
+ * @file
+ * Modal de controles do comentário: situação (somente leitura), ações e registro.
+ */
+#}
+<section class="comment-admin-controls">
+  <dl class="comment-admin-controls__facts">
+    <div><dt>{{ 'Autor'|t }}</dt><dd>{{ author_name }}</dd></div>
+    <div><dt>{{ 'Situação'|t }}</dt><dd>{{ state_label }}</dd></div>
+    {% if created_label %}<div><dt>{{ 'Publicado'|t }}</dt><dd>{{ created_label }}</dd></div>{% endif %}
+    <div><dt>{{ 'Reações'|t }}</dt><dd>{{ reactions_total }}</dd></div>
+    <div><dt>{{ 'Respostas'|t }}</dt><dd>{{ reply_count }}</dd></div>
+  </dl>
+  {% if actions %}
+    <div class="comment-admin-controls__actions">{{ actions }}</div>
+  {% endif %}
+  {% if log %}
+    <div class="comment-admin-controls__log">
+      <h3 class="comment-admin-controls__subtitle">{{ 'Registro de moderação'|t }}</h3>
+      {{ log }}
+    </div>
+  {% endif %}
+</section>

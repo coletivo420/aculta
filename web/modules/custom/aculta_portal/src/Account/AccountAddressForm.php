@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Account;
 
+use Drupal\Core\Render\Element;
 use Drupal\address\Element\Address;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 
@@ -71,7 +73,7 @@ final class AccountAddressForm {
   /**
    * Aplica o formulário central ao primeiro elemento address encontrado.
    *
-   * @param array<string, mixed> $tree
+   * @param array<mixed> $tree
    *   Árvore do formulário que contém o elemento address.
    * @param string $number
    *   Número salvo para preencher no elemento.
@@ -103,6 +105,7 @@ final class AccountAddressForm {
       $tree['#element_validate'][] = [self::class, 'validateAddressElement'];
       if ($withStreetNumber) {
         StreetNumberField::attach($tree, $number, $sn);
+        $tree['#attached']['library'][] = 'aculta420_v2/address-fields';
       }
       else {
         // External address adapters (such as OSM tag review) have their own
@@ -139,10 +142,13 @@ final class AccountAddressForm {
    *   Rua, número e indicador de sem número.
    */
   public static function savedParts(?EntityInterface $saved, string $field): array {
-    if ($saved === NULL || !$saved->hasField($field) || $saved->get($field)->isEmpty()) {
+    if (!$saved instanceof FieldableEntityInterface || !$saved->hasField($field) || $saved->get($field)->isEmpty()) {
       return ['street' => '', 'number' => '', 'sn' => FALSE];
     }
-    return StreetNumberField::split((string) $saved->get($field)->first()->getAddressLine1());
+    $address = $saved->get($field)->first();
+    $addressValue = $address?->getValue() ?? [];
+    $parts = StreetNumberField::split((string) ($addressValue['address_line1'] ?? ''));
+    return ['street' => (string) ($parts['street'] ?? ''), 'number' => (string) ($parts['number'] ?? ''), 'sn' => (bool) ($parts['sn'] ?? FALSE)];
   }
 
   /**
@@ -163,6 +169,9 @@ final class AccountAddressForm {
     array &$form,
     FormStateInterface $formState,
   ): void {
+    if (!$entity instanceof FieldableEntityInterface) {
+      return;
+    }
     // Perfis usam field_address; eventos, field_endereco; lojas, address.
     $field = $entity->hasField('field_address') ? 'field_address'
       : ($entity->hasField('field_endereco') ? 'field_endereco' : 'address');
@@ -174,7 +183,7 @@ final class AccountAddressForm {
     $value = $address->getValue();
     $value['country_code'] = 'BR';
     $value['address_line1'] = StreetNumberField::join(
-      (string) $address->getAddressLine1(),
+      (string) ($value['address_line1'] ?? ''),
       $number,
       $sn,
     );
@@ -186,7 +195,7 @@ final class AccountAddressForm {
    *
    * Roda após Address::processAddress, quando os subcampos já existem.
    *
-   * @param array<string, mixed> $element
+   * @param array<mixed> $element
    *   Elemento address após o processamento de seus subcampos.
    *
    * @return array<string, mixed>
@@ -242,7 +251,7 @@ final class AccountAddressForm {
     if (isset($element['dependent_locality'])) {
       $element['dependent_locality']['#weight'] = -20;
     }
-    foreach (\Drupal\Core\Render\Element::children($element) as $key) {
+    foreach (Element::children($element) as $key) {
       if (str_starts_with((string) $key, 'container')) {
         $element[$key]['#weight'] = -10;
       }
@@ -265,11 +274,11 @@ final class AccountAddressForm {
   /**
    * Finaliza elemento de país avulso para campo oculto fixo em BR.
    *
-   * @param array<string, mixed> $element
+   * @param array<mixed> $element
    *   Elemento address_country sendo processado.
    * @param \Drupal\Core\Form\FormStateInterface $formState
    *   Estado do formulário.
-   * @param array<string, mixed> $completeForm
+   * @param array<mixed> $completeForm
    *   Estrutura do formulário completo.
    *
    * @return array<string, mixed>
@@ -303,11 +312,11 @@ final class AccountAddressForm {
   /**
    * Validação no servidor: o país deve ser exclusivamente Brasil (BR).
    *
-   * @param array<string, mixed> $element
+   * @param array<mixed> $element
    *   Elemento country_code validado.
    * @param \Drupal\Core\Form\FormStateInterface $formState
    *   Estado do formulário.
-   * @param array<string, mixed> $completeForm
+   * @param array<mixed> $completeForm
    *   Formulário completo.
    */
   public static function validateCountryCode(array &$element, FormStateInterface $formState, array &$completeForm): void {
@@ -324,11 +333,11 @@ final class AccountAddressForm {
   /**
    * Validação no servidor do elemento de endereço: garante country_code BR.
    *
-   * @param array<string, mixed> $element
+   * @param array<mixed> $element
    *   Elemento address.
    * @param \Drupal\Core\Form\FormStateInterface $formState
    *   Estado do formulário.
-   * @param array<string, mixed> $completeForm
+   * @param array<mixed> $completeForm
    *   Formulário completo.
    */
   public static function validateAddressElement(array &$element, FormStateInterface $formState, array &$completeForm): void {

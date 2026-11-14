@@ -89,7 +89,7 @@ Core (user, node, comment, Views, image, Mailer)  +  contrib instalado (profile,
    ACULTA420  (SDC/Bootstrap de cartão de autor, avatar, badges — só apresentação)
 ```
 
-Princípios, conforme `GUARDRAILS.md` e `DRUPAL-11-STANDARDS.md`:
+Princípios, conforme `GUARDRAILS.md` e `DRUPAL-12-STANDARDS.md`:
 
 - **Sem storage novo nas fases U1–U3.** Nenhuma tabela de pontos, de seguidores, de contribuições ou de comentários. Contagens saem de Views e de entidades reais.
 - **Sem service locator** em `src/`: injeção de dependência nos serviços.
@@ -244,9 +244,9 @@ ACULTA420: PortalUiHooks (TOKENS) e/ou SDC `author-card` (Bootstrap card), escol
   bloqueada, nó não publicado, nó de outro tipo e nó de outro purpose.
 - Unit: `AuthorshipPresenter` com `PublicProfilePolicy` simulada; nome nunca é e-mail.
 - Cache: tags presentes no render array; invalidação ao mudar a visibilidade.
-- Gates: `validate-aculta-portal-drupal11.php`, `validate-module-theme-boundary.php`, `validate-public-slugs.php` e
+- Gates: `validate-aculta-portal-drupal12.php`, `validate-module-theme-boundary.php`, `validate-public-slugs.php` e
   `validate-environment-addresses.php`.
-- Navegador no servidor de testes (`TESTES-NAVEGADOR.md`): caixa visível em artigo da Revista, link só com perfil público.
+- Navegador no servidor de desenvolvimento (`TESTES-NAVEGADOR.md`): caixa visível em artigo da Revista, link só com perfil público.
 
 **Entrega:** fase U2 em commits na branch autorizada. Código, testes, gates e
 revisão visual aplicável ficam prontos antes de RC; o Runtime é validado em
@@ -534,7 +534,7 @@ validação do servidor de desenvolvimento ocorre em Alpha.
 
 Versionamento (`web/themes/custom/aculta420/docs/versioning.md`): U1 é **MINOR** no Portal (submódulo novo). Linha alvo sugerida: `0.4.0-dev.N`, com o submódulo em `0.1.0-dev.N`. Marcadores coerentes no mesmo PR: `aculta_portal.info.yml`, `CHANGELOG.md` do Portal e do submódulo, `ROADMAP.md`. Nenhuma tag sem pedido do responsável.
 
-Gates por fase: `php scripts/validate-aculta-portal-drupal11.php`, `php scripts/validate-module-theme-boundary.php`, `php scripts/validate-public-slugs.php`, `php scripts/validate-environment-addresses.php`, e os testes do submódulo.
+Gates por fase: `php scripts/validate-aculta-portal-drupal12.php`, `php scripts/validate-module-theme-boundary.php`, `php scripts/validate-public-slugs.php`, `php scripts/validate-environment-addresses.php`, e os testes do submódulo.
 
 ## 7. Decisões para o responsável
 

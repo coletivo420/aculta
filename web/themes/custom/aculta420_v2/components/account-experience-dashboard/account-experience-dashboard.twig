@@ -1,0 +1,53 @@
+<div{{ attributes.addClass('studio', 'aculta-account-entry') }} data-portal-ui="account-entry">
+  {{ menu }}
+  <div class="aculta-xp-hero">
+    {% if show_identity %}
+      {% set identity_content %}
+        <p>{{ identity_name }}</p>
+        {% if identity_email %}
+          <p class="aculta-xp-hero__mail">{{ identity_email }}</p>
+        {% endif %}
+        {% if avatar %}
+          <div class="studio-account-identity__avatar" data-portal-ui="studio-account-avatar">{{ avatar }}</div>
+        {% endif %}
+        {% if profile_url %}
+          <a class="studio__action" data-portal-ui="studio-profile-public-link" href="{{ profile_url }}">{{ 'Ver perfil público'|t }}</a>
+        {% endif %}
+      {% endset %}
+      <div class="studio-account-identity">
+        {{ include('aculta420_v2:surface-panel', {
+          content: identity_content,
+          tone: 'raised',
+          radius: 'md',
+          spacing: 'compact',
+          elevation: 'none'
+        }, with_context = false) }}
+      </div>
+    {% endif %}
+    {% if profile_link %}
+      <div class="aculta-xp-hero__profile">
+        <span aria-hidden="true">{{ include('aculta420_v2:icon', { name: 'user', variant: 'duotone', size: 'xl' }, with_context = false) }}</span>
+        <p class="aculta-xp-hero__text">{{ 'Seu perfil público na ACULTA'|t }}</p>
+        {{ profile_link }}
+      </div>
+    {% endif %}
+  </div>
+  {{ calendar }}
+  {{ connections }}
+  <h2 id="suas-experiencias">{{ experiences_title }}</h2>
+  <p class="aculta-xp-section__text">{{ experiences_description }}</p>
+  <ul class="aculta-xp-grid" data-portal-ui="account-experiences">
+    {{ experiences }}
+  </ul>
+  {% if account_url %}
+    <a class="aculta-xp-row" data-portal-ui="account-entry-links" href="{{ account_url }}" aria-label="{{ account_link_label }}">
+      <span class="aculta-xp-row__body">
+        {{ include('aculta420_v2:icon', { name: 'gear-six', variant: 'duotone', size: 'xl' }, with_context = false) }}
+        <span class="aculta-xp-row__text">
+          <span class="aculta-xp-row__title">{{ account_link_title }}</span>
+          <span class="aculta-xp-row__desc">{{ account_link_description }}</span>
+        </span>
+      </span>
+    </a>
+  {% endif %}
+</div>

@@ -76,7 +76,8 @@ final class PhpExtensionRequirements {
     return $rows;
   }
 
-  /** Recursively collects required ext-* packages in a Composer dependency tree. */
+  /**
+   * Recursively collects required ext-* packages in a Composer dependency tree. */
   private static function collect(string $name, array $packageMap, array &$visited, array &$extensions): void {
     if (isset($visited[$name]) || !isset($packageMap[$name])) {
       return;

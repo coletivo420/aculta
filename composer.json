@@ -256,59 +256,65 @@
         }
     ],
     "require": {
-        "php": ">=8.3",
+        "php": ">=8.4",
         "codemirror/codemirror": "5.65.12",
         "composer/installers": "^2.3",
         "composer/semver": "^3.4",
         "cweagans/composer-patches": "^2.0",
-        "drupal/bootstrap": "^5.0",
         "drupal/captcha": "^2.0",
-        "drupal/ckeditor5_plugin_pack": "^1.5",
+        "drupal/ckeditor5_plugin_pack": "^1.5 || ^2.0@beta",
         "drupal/commerce": "^3.3",
-        "drupal/commerce_cart": "3.3.10",
-        "drupal/commerce_checkout": "3.3.10",
+        "drupal/commerce_cart": "^3.3",
+        "drupal/commerce_checkout": "^3.3",
         "drupal/content_lock": "^3.0",
-        "drupal/core-composer-scaffold": "^11.4",
-        "drupal/core-project-message": "^11.4",
-        "drupal/core-recipe-unpack": "^11.4",
-        "drupal/core-recommended": "^11.4",
+        "drupal/core": "11.5.0-beta1",
+        "drupal/core-composer-scaffold": "11.5.0-beta1",
+        "drupal/core-project-message": "11.5.0-beta1",
+        "drupal/core-recipe-unpack": "11.5.0-beta1",
+        "drupal/core-recommended": "11.5.0-beta1",
         "drupal/crop": "^2.6",
         "drupal/csp": "^2.2",
         "drupal/ctools": "^4.1",
         "drupal/diff": "^2.1",
-        "drupal/domain": "^3.0",
+        "drupal/domain": "^4.0@alpha",
+        "drupal/domain_config": "^4.0@alpha",
+        "drupal/domain_config_entity_ui": "^4.0@alpha",
+        "drupal/domain_config_ui": "^4.0@alpha",
+        "drupal/domain_extras": "^4.0@alpha",
         "drupal/entity_embed": "^1.7",
         "drupal/entity_print": "^2.19",
+        "drupal/entity_reference_revisions": "1.x-dev",
         "drupal/entity_usage": "^5.0.1",
-        "drupal/fences": "^3.0",
+        "drupal/field_group": "^4.1@beta",
         "drupal/flag": "^5.1.1",
+        "drupal/flexible_permissions": "^2.0",
         "drupal/flood_control": "^3.0",
-        "drupal/freelinking": "^4.0",
-        "drupal/geofield": "^1",
+        "drupal/freelinking": "^5.0@alpha",
+        "drupal/geofield": "^10.3",
+        "drupal/gin": "5.0.x-dev@dev",
         "drupal/google_tag": "^2.0.9",
-        "drupal/group": "^3.3",
+        "drupal/group": "4.0.x-dev@dev",
         "drupal/history": "^1.0",
         "drupal/image_widget_crop": "^3.0",
         "drupal/imageapi_optimize_binaries": "^1.2.0-beta1",
-        "drupal/imagemagick": "^4.0",
+        "drupal/imagemagick": "^5.0",
         "drupal/key": "^1.22",
         "drupal/login_emailusername": "^3.0",
         "drupal/mcp_server": "^2.0@beta",
         "drupal/mcp_server_oauth": "^1.0@alpha",
         "drupal/mcp_server_tool_bridge": "^1.0@beta",
         "drupal/mcp_server_ui": "^1.0@beta",
-        "drupal/media_duplicates": "^2.0.4",
+        "drupal/media_duplicates": "^3.0@alpha",
         "drupal/media_gallery": "^3.3",
         "drupal/message": "^1.9",
         "drupal/message_notify": "^1.5",
         "drupal/message_subscribe": "^2.1",
         "drupal/metatag": "^2.2",
-        "drupal/node_co_authors": "^1.2",
-        "drupal/pathauto": "1.15",
-        "drupal/pdfpreview": "^1.2",
+        "drupal/pathauto": "1.x-dev@dev",
+        "drupal/pdfpreview": "^1.2@dev",
         "drupal/photoswipe": "^5.0",
         "drupal/physical": "^1.5",
-        "drupal/private_message": "^3.0",
+        "drupal/private_message": "^4.0@alpha",
         "drupal/profile": "^1.14",
         "drupal/redirect": "^1.13",
         "drupal/rename_admin_paths": "^3.1",
@@ -316,18 +322,21 @@
         "drupal/role_hierarchy": "^4.0",
         "drupal/schema_metatag": "^3.0",
         "drupal/search_api": "^1.40",
-        "drupal/section_library": "^2.0",
         "drupal/security_review": "^3.1",
-        "drupal/simple_oauth": "^6",
-        "drupal/simple_sitemap": "^4.2",
+        "drupal/simple_oauth": "6.1.x-dev@dev",
+        "drupal/simple_sitemap": "5.x-dev@dev",
         "drupal/site_alert": "^1.4",
-        "drupal/social_auth": "^4.1",
+        "drupal/social_api": "^4.1@beta",
+        "drupal/social_auth": "^4.2@beta",
         "drupal/social_auth_google": "^4.0",
+        "drupal/text_with_summary": "2.0.x-dev@dev",
         "drupal/tool": "^1.0@beta",
         "drupal/turnstile": "^1.2",
-        "drupal/ui_patterns": "^2.0",
-        "drupal/ui_patterns_field_group": "^2.0@beta",
+        "drupal/ui_icons": "^2.1",
+        "drupal/ui_patterns": "2.0.x-dev@dev",
+        "drupal/ui_patterns_field_group": "2.0.x-dev@dev",
         "drupal/ui_patterns_layouts": "^2.0",
+        "drupal/ui_skins": "^1.2",
         "drupal/ui_styles": "^1.22",
         "drupal/username_enumeration_prevention": "^1.4",
         "drupal/views_bulk_operations": "^4.4",
@@ -339,7 +348,7 @@
         "drupal/vvjr": "^2.0",
         "drupal/vvjs": "^2.0",
         "drupal/vvjt": "^2.0",
-        "drupal/webform": "^6.3",
+        "drupal/webform": "6.x-dev@dev",
         "drupal/webform_score": "^2.4",
         "drush/drush": "^13.8",
         "e0ipso/simple_oauth_21": "^1",
@@ -347,24 +356,15 @@
         "google/apiclient": "^2.18",
         "h5p/h5p-core": "^1.28",
         "h5p/h5p-editor": "^1.25",
-        "jquery/inputmask": "5.0.9",
-        "jquery/intl-tel-input": "17.0.19",
-        "jquery/rateit": "1.1.5",
-        "jquery/select2": "4.0.13",
-        "jquery/textcounter": "0.9.1",
-        "jquery/timepicker": "1.14.0",
         "mercadopago/dx-php": "^3",
         "mozilla/pdfjs-dist": "6.4.299",
         "photoswipe/photoswipe": "5.4.4",
         "photoswipe/photoswipe-dynamic-caption-plugin": "1.2.7",
-        "popperjs/popperjs": "2.11.6",
         "progress-tracker/progress-tracker": "2.0.7",
         "rlanvin/php-rrule": "^3.0",
         "signature_pad/signature_pad": "2.3.0",
         "symfony/brevo-mailer": "^7.4",
-        "symfony/http-client": "^7.4",
-        "tabby/tabby": "12.0.3",
-        "tippyjs/tippyjs": "6.3.7"
+        "symfony/http-client": "^7.4"
     },
     "conflict": {
         "drupal/drupal": "*"
@@ -389,12 +389,12 @@
     },
     "scripts": {
         "post-install-cmd": [
-            "@php scripts/sync-bootstrap-assets.php",
-            "@php scripts/restore-aculta-htaccess.php"
+            "@php scripts/restore-aculta-htaccess.php",
+            "@php scripts/remove-optional-ai-modules.php"
         ],
         "post-update-cmd": [
-            "@php scripts/sync-bootstrap-assets.php",
-            "@php scripts/restore-aculta-htaccess.php"
+            "@php scripts/restore-aculta-htaccess.php",
+            "@php scripts/remove-optional-ai-modules.php"
         ]
     },
     "extra": {
@@ -462,34 +462,14 @@
                 "  * Remove the plugin that prints this message:",
                 "      composer remove drupal/core-project-message"
             ]
-        },
-        "patches": {
-            "drupal/address": [
-                {
-                    "description": "Address 2.0.4 compatibility with Diff 2.x (Drupal.org issue 3589015)",
-                    "url": "patches/address-diff-2-compatibility.patch",
-                    "sha256": "f362f4ba21676290011bcb588d1a9239f2fd9603113499891a6841d47b1fadd6"
-                }
-            ],
-            "drupal/social_api": [
-                {
-                    "description": "PHP 8.4 explicit nullable request type (Drupal.org issue 3593752, MR !17)",
-                    "url": "patches/social-api-php84-nullable-request.patch",
-                    "sha256": "4478ee62ceddaf3434da8758800453a49ad1322d623aa8c0831b1a30cbad90fd"
-                }
-            ],
-            "drupal/turnstile": [
-                {
-                    "description": "Fail closed when Turnstile credentials are missing; do not fall back to Math CAPTCHA",
-                    "url": "patches/turnstile-no-math-fallback.patch",
-                    "sha256": "9d3fe24474db08e380d3e048ae9bf794d99531411d765e708be4e5e85caf6feb"
-                }
-            ]
         }
     },
     "require-dev": {
-        "drupal/core-dev": "11.4.10",
+        "phpstan/phpstan": "^2.3",
+        "phpunit/phpunit": "^11.5.50",
+        "drupal/core-dev": "11.5.0-beta1",
         "drupal/sdc_devel": "^1.0",
-        "drupal/storybook": "^1.0"
+        "drupal/upgrade_status": "^5.0@alpha",
+        "palantirnet/drupal-rector": "^1.1"
     }
 }

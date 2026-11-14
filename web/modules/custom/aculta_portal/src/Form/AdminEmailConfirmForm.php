@@ -6,6 +6,7 @@ namespace Drupal\aculta_portal\Form;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\ConfirmFormBase;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Logger\LoggerChannelInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -23,10 +24,10 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 final class AdminEmailConfirmForm extends ConfirmFormBase {
 
   public function __construct(
-    private readonly EmailConfirmationPolicy $policy,
-    private readonly AccountInterface $currentUser,
-    private readonly LoggerChannelInterface $logger,
-    private readonly EntityTypeManagerInterface $entityTypeManagerService,
+    protected readonly EmailConfirmationPolicy $policy,
+    protected readonly AccountInterface $currentUser,
+    protected readonly LoggerChannelInterface $logger,
+    protected readonly EntityTypeManagerInterface $entityTypeManagerService,
   ) {}
 
   /**
@@ -51,15 +52,15 @@ final class AdminEmailConfirmForm extends ConfirmFormBase {
   /**
    * {@inheritdoc}
    */
-  public function getQuestion(): string {
-    return (string) $this->t('Confirmar o e-mail desta conta?');
+  public function getQuestion(): TranslatableMarkup {
+    return $this->t('Confirmar o e-mail desta conta?');
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getDescription(): string {
-    return (string) $this->t('Use somente quando a pessoa comprovou o endereço por outro meio. A conta passa a ter o papel "E-mail confirmado", como no fluxo normal. Nenhum e-mail é enviado.');
+  public function getDescription(): TranslatableMarkup {
+    return $this->t('Use somente quando a pessoa comprovou o endereço por outro meio. A conta passa a ter o papel "E-mail confirmado", como no fluxo normal. Nenhum e-mail é enviado.');
   }
 
   /**
@@ -74,7 +75,12 @@ final class AdminEmailConfirmForm extends ConfirmFormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state, ?UserInterface $user = NULL): array {
     $form_state->set('uid', (int) $user?->id());
-    $form['conta'] = ['#markup' => '<p>' . $this->t('Conta: @nome (uid @uid)', ['@nome' => $user?->getAccountName(), '@uid' => $user?->id()]) . '</p>'];
+    $form['conta'] = [
+      '#markup' => '<p>' . $this->t('Conta: @nome (uid @uid)', [
+        '@nome' => $user?->getAccountName(),
+        '@uid' => $user?->id(),
+      ]) . '</p>',
+    ];
     return parent::buildForm($form, $form_state);
   }
 
@@ -89,7 +95,10 @@ final class AdminEmailConfirmForm extends ConfirmFormBase {
       return;
     }
     $this->policy->markConfirmed($uid);
-    $this->logger->notice('Confirmação manual de e-mail: conta @conta confirmada pela administração (uid @admin).', ['@conta' => $uid, '@admin' => $this->currentUser->id()]);
+    $this->logger->notice('Confirmação manual de e-mail: conta @conta confirmada pela administração (uid @admin).', [
+      '@conta' => $uid,
+      '@admin' => $this->currentUser->id(),
+    ]);
     $this->messenger()->addStatus($this->t('E-mail confirmado para a conta @uid.', ['@uid' => $uid]));
     $form_state->setRedirect('aculta_portal.email_confirmacao_pendentes');
   }

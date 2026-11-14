@@ -52,6 +52,111 @@ final class ForumSettingsForm extends ConfigFormBase {
       '#required' => TRUE,
     ];
 
+    $config = $this->config('aculta_forum.settings');
+
+    $form['threading_fieldset'] = [
+      '#type' => 'details',
+      '#title' => $this->t('Níveis de Resposta e Encadeamento'),
+      '#open' => TRUE,
+    ];
+
+    $form['threading_fieldset']['reply_max_depth'] = [
+      '#type' => 'select',
+      '#title' => $this->t('Quantidade máxima de níveis de resposta com recuo automático'),
+      '#description' => $this->t('Define até que nível as respostas terão recuo visual automático em toda a discussão. Respostas além do limite máximo têm seu nível estrutural normalizado para o nível máximo permitido.'),
+      '#options' => [
+        0 => $this->t('Desligado (linear, sem recuo)'),
+        2 => $this->t('Até 2 níveis de resposta com recuo automático (Padrão)'),
+        3 => $this->t('Até 3 níveis de resposta com recuo automático'),
+      ],
+      '#default_value' => (int) ($config->get('reply_max_depth') ?? 2),
+      '#required' => TRUE,
+    ];
+
+    $form['topic_moderation_fieldset'] = [
+      '#type' => 'details',
+      '#title' => $this->t('Política de Exclusão de Tópicos pelo Autor'),
+      '#open' => TRUE,
+    ];
+
+    $form['topic_moderation_fieldset']['topic_author_delete_policy'] = [
+      '#type' => 'radios',
+      '#title' => $this->t('Regra de exclusão para o autor do tópico'),
+      '#description' => $this->t('Define o comportamento quando o autor do tópico clica no botão Excluir no Cartão de Abertura.'),
+      '#options' => [
+        'moderation_queue' => $this->t('Fila de Moderação (o autor solicita a exclusão e o tópico aguarda decisão da moderação na fila) — Padrão'),
+        'direct_delete' => $this->t('Exclusão direta (o autor pode apagar o próprio tópico imediatamente)'),
+        'disabled' => $this->t('Desativado (o autor não pode apagar o tópico; apenas moderadores/administradores)'),
+      ],
+      '#default_value' => (string) ($config->get('topic_author_delete_policy') ?? 'moderation_queue'),
+      '#required' => TRUE,
+    ];
+
+    $form['reactions_fieldset'] = [
+      '#type' => 'details',
+      '#title' => $this->t('Reações por Emoji (Discourse Reactions)'),
+      '#open' => TRUE,
+    ];
+
+    $form['reactions_fieldset']['reactions_enabled'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Habilitar reações por emoji nas discussões'),
+      '#description' => $this->t('Permite que participantes autenticados reajam a comentários e publicações de discussão.'),
+      '#default_value' => (bool) ($config->get('reactions_enabled') ?? TRUE),
+    ];
+
+    $allowedReactions = (array) ($config->get('allowed_reactions') ?? []);
+    $defaultReaction = (string) ($config->get('default_reaction') ?? 'broccoli');
+
+    $options = [];
+    foreach ($allowedReactions as $reaction) {
+      if (isset($reaction['id'], $reaction['label'])) {
+        $options[$reaction['id']] = $reaction['label'] . ' (' . $reaction['id'] . ')';
+      }
+    }
+
+    $form['reactions_fieldset']['default_reaction'] = [
+      '#type' => 'select',
+      '#title' => $this->t('Reação padrão de clique rápido'),
+      '#options' => $options,
+      '#default_value' => $defaultReaction,
+      '#description' => $this->t('Reação aplicada diretamente ao clicar no botão principal de curtir.'),
+    ];
+
+    $form['reactions_fieldset']['reactions_table'] = [
+      '#type' => 'table',
+      '#header' => [
+        $this->t('ID'),
+        $this->t('Ícone (Fluent Emoji)'),
+        $this->t('Rótulo (Acessibilidade)'),
+        $this->t('Ativo'),
+      ],
+      '#empty' => $this->t('Nenhuma reação configurada.'),
+    ];
+
+    foreach ($allowedReactions as $index => $item) {
+      $id = $item['id'] ?? '';
+      $form['reactions_fieldset']['reactions_table'][$index]['id'] = [
+        '#markup' => '<code>' . htmlspecialchars((string) $id, ENT_QUOTES, 'UTF-8') . '</code>',
+      ];
+      $form['reactions_fieldset']['reactions_table'][$index]['icon'] = [
+        '#type' => 'textfield',
+        '#default_value' => $item['icon'] ?? $id,
+        '#size' => 20,
+        '#required' => TRUE,
+      ];
+      $form['reactions_fieldset']['reactions_table'][$index]['label'] = [
+        '#type' => 'textfield',
+        '#default_value' => $item['label'] ?? '',
+        '#size' => 30,
+        '#required' => TRUE,
+      ];
+      $form['reactions_fieldset']['reactions_table'][$index]['enabled'] = [
+        '#type' => 'checkbox',
+        '#default_value' => (bool) ($item['enabled'] ?? TRUE),
+      ];
+    }
+
     return parent::buildForm($form, $form_state);
   }
 
@@ -59,10 +164,34 @@ final class ForumSettingsForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
-    $this->config('aculta_forum.settings')
-      ->set('edit_window_minutes', max(0, (int) $form_state->getValue('edit_window_minutes')))
-      ->save();
+    $config = $this->config('aculta_forum.settings');
+    $config->set('edit_window_minutes', max(0, (int) $form_state->getValue('edit_window_minutes')));
+    $config->set('reply_max_depth', (int) $form_state->getValue('reply_max_depth'));
+    $config->set('topic_author_delete_policy', (string) $form_state->getValue('topic_author_delete_policy'));
+    $config->set('reactions_enabled', (bool) $form_state->getValue('reactions_enabled'));
+    $config->set('default_reaction', (string) $form_state->getValue('default_reaction'));
+
+    $existing = (array) ($config->get('allowed_reactions') ?? []);
+    $submittedTable = (array) $form_state->getValue('reactions_table');
+    $updatedReactions = [];
+
+    foreach ($existing as $index => $item) {
+      if (isset($submittedTable[$index])) {
+        $updatedReactions[] = [
+          'id' => (string) $item['id'],
+          'icon' => trim((string) ($submittedTable[$index]['icon'] ?? $item['icon'] ?? $item['id'])),
+          'label' => trim((string) ($submittedTable[$index]['label'] ?? $item['label'] ?? '')),
+          'enabled' => (bool) ($submittedTable[$index]['enabled'] ?? FALSE),
+        ];
+      }
+    }
+    if ($updatedReactions !== []) {
+      $config->set('allowed_reactions', $updatedReactions);
+    }
+
+    $config->save();
     parent::submitForm($form, $form_state);
   }
+
 
 }

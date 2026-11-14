@@ -29,6 +29,7 @@ final class ImageFileUsageAccessKernelTest extends KernelTestBase {
    */
   protected static $modules = [
     'system', 'user', 'file', 'image', 'media', 'entity_usage', 'media_duplicates', 'aculta_image',
+    'aculta_file_uploader',
   ];
 
   /**

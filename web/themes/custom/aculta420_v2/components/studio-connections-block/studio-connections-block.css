@@ -1,0 +1,138 @@
+/**
+ * @file
+ * Estilos para o bloco Conexões do Studio Dashboard.
+ */
+
+.aculta-studio-connections-block {
+  box-sizing: border-box;
+  margin-block-start: var(--spacing-lg);
+  padding: var(--spacing-md);
+  border: 1px solid var(--color-border);
+  border-block-start: 4px solid var(--studio-stripe);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  inline-size: 100%;
+}
+
+.aculta-studio-connections-block__header {
+  margin-block-end: var(--spacing-md);
+  padding-block-end: var(--spacing-sm);
+  border-block-end: 1px solid var(--color-border);
+}
+
+.aculta-studio-connections-block__title {
+  margin: 0;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  color: var(--color-text-primary);
+  font-family: var(--font-display, inherit);
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+}
+
+.aculta-studio-connections-block__list {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  gap: var(--spacing-sm);
+}
+
+.aculta-studio-connections-block__item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.aculta-studio-connections-block__avatar {
+  flex-shrink: 0;
+}
+
+.aculta-studio-connections-block__avatar .aculta-avatar {
+  object-fit: cover;
+  border-radius: var(--radius-full, 50%);
+  block-size: 2.5rem;
+  inline-size: 2.5rem;
+}
+
+.aculta-studio-connections-block__avatar .aculta-avatar--fallback {
+  border: 1px solid var(--color-border);
+  background: var(--color-surface-raised);
+}
+
+.aculta-studio-connections-block__info {
+  display: flex;
+  flex-direction: column;
+  gap: .125rem;
+  min-inline-size: 0;
+}
+
+.aculta-studio-connections-block__name {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: var(--color-text-primary);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+}
+
+.aculta-studio-connections-block__profile-link {
+  text-decoration: none;
+  color: var(--color-brand-primary);
+  font-size: var(--font-size-xs);
+}
+
+.aculta-studio-connections-block__profile-link:hover {
+  text-decoration: underline;
+}
+
+.aculta-studio-connections-block__footer {
+  margin-block-start: var(--spacing-md);
+  padding-block-start: var(--spacing-sm);
+  text-align: center;
+  border-block-start: 1px solid var(--color-border);
+}
+
+.aculta-studio-connections-block__all-btn {
+  inline-size: 100%;
+}
+
+.aculta-studio-connections-block__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--spacing-sm);
+  padding-block: var(--spacing-sm);
+}
+
+.aculta-studio-connections-block__empty-msg {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+.aculta-studio-connections-block__find-btn {
+  inline-size: 100%;
+}
+
+/* Responsividade e posicionamento */
+/* Celular: o bloco Conexões aparece depois de "Suas experiências" */
+@media (max-width: 59.9375rem) {
+  .aculta-studio-connections-block {
+    order: 10;
+    margin-block-start: var(--spacing-xl);
+  }
+}
+
+/* Desktop: coluna direita, abaixo do calendário */
+@media (min-width: 60rem) {
+  .aculta-studio-connections-block {
+    inline-size: 20rem;
+    inset-block-start: 38rem;
+    inset-inline-end: 0;
+    position: absolute;
+    z-index: 5;
+  }
+}

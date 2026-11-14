@@ -22,9 +22,9 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 final class SalesPaymentRefreshForm extends FormBase {
 
   public function __construct(
-    private readonly ?PaymentOperationsInterface $pagamentos,
-    private readonly AccountInterface $usuario,
-    private readonly EntityTypeManagerInterface $entidades,
+    protected readonly ?PaymentOperationsInterface $pagamentos,
+    protected readonly AccountInterface $usuario,
+    protected readonly EntityTypeManagerInterface $entidades,
   ) {}
 
   /**

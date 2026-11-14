@@ -12,6 +12,7 @@ use Drupal\Core\Entity\Display\EntityFormDisplayInterface;
 use Drupal\Core\Entity\Entity\EntityFormDisplay;
 use Drupal\Core\EventSubscriber\AjaxResponseSubscriber;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Template\Attribute;
 use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -239,12 +240,13 @@ class DonationItemPaneBase extends CheckoutPaneBase {
     $renderArray = $viewBuilder->build($entityView);
     $build = [
       'summary' => [
-        '#theme' => 'aculta_donation_summary',
-        '#content' => $renderArray,
-        '#attributes' => [
-          'data-portal-ui' => 'donation-summary',
-          'data-donation-pane' => $this->getId(),
+        '#type' => 'component',
+        '#component' => 'aculta420_v2:donation-presentation',
+        '#props' => [
+          'variant' => 'summary',
+          'attributes' => new Attribute(['data-donation-pane' => $this->getId()]),
         ],
+        '#slots' => ['content' => $renderArray],
       ],
     ];
     return $build;

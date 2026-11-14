@@ -6,7 +6,7 @@ dependencies:
     - field.storage.node.body
     - node.type.aculta_notice
   module:
-    - text
+    - text_with_summary
 _core:
   default_config_hash: 3PgsBSPDwvK4houC8eHcViSa6FdR6wtR_TF1QeP7uy8
 id: node.aculta_notice.body

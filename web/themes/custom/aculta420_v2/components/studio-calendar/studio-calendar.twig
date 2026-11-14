@@ -1,0 +1,158 @@
+{#
+/**
+ * @file
+ * Componente SDC studio-calendar.
+ */
+#}
+<div class="aculta-studio-calendar" data-portal-ui="studio-calendar" id="aculta-studio-calendar-card">
+  <div class="aculta-studio-calendar__header">
+    <div class="aculta-studio-calendar__title-wrap">
+      <h2 class="aculta-studio-calendar__title">{{ title|default('Calendário'|t) }}</h2>
+      {% if can_add_event and add_event_url %}
+        {% set add_event_attributes = create_attribute({ class: ['aculta-studio-calendar__add-btn'], title: 'Propor novo evento'|t }) %}
+        {{ include('aculta420_v2:button', {
+          url: add_event_url,
+          variant: 'secondary',
+          icon_before: 'plus',
+          aria_label: 'Propor novo evento'|t,
+          attributes: add_event_attributes,
+        }, with_context = false) }}
+      {% endif %}
+    </div>
+
+    <div class="aculta-studio-calendar__nav">
+      {% if previous_url %}
+        {% set previous_attributes = create_attribute({ class: ['aculta-studio-calendar__nav-btn'], 'data-nav': 'prev' }) %}
+        {{ include('aculta420_v2:button', {
+          url: previous_url,
+          variant: 'ghost',
+          icon_before: 'caret-left',
+          aria_label: 'Mês anterior'|t,
+          attributes: previous_attributes,
+        }, with_context = false) }}
+      {% else %}
+        {% set previous_disabled_attributes = create_attribute({ class: ['aculta-studio-calendar__nav-btn'], 'aria-hidden': 'true' }) %}
+        {{ include('aculta420_v2:button', {
+          variant: 'ghost',
+          icon_before: 'caret-left',
+          aria_label: 'Mês anterior'|t,
+          disabled: true,
+          attributes: previous_disabled_attributes,
+        }, with_context = false) }}
+      {% endif %}
+
+      <span class="aculta-studio-calendar__month-label">{{ current_month_label }}</span>
+
+      {% if next_url %}
+        {% set next_attributes = create_attribute({ class: ['aculta-studio-calendar__nav-btn'], 'data-nav': 'next' }) %}
+        {{ include('aculta420_v2:button', {
+          url: next_url,
+          variant: 'ghost',
+          icon_before: 'caret-right',
+          aria_label: 'Próximo mês'|t,
+          attributes: next_attributes,
+        }, with_context = false) }}
+      {% else %}
+        {% set next_disabled_attributes = create_attribute({ class: ['aculta-studio-calendar__nav-btn'], 'aria-hidden': 'true' }) %}
+        {{ include('aculta420_v2:button', {
+          variant: 'ghost',
+          icon_before: 'caret-right',
+          aria_label: 'Próximo mês'|t,
+          disabled: true,
+          attributes: next_disabled_attributes,
+        }, with_context = false) }}
+      {% endif %}
+    </div>
+  </div>
+
+  {% if filters is not empty %}
+    <nav class="aculta-studio-calendar__filters" aria-label="{{ 'Filtrar calendário'|t }}">
+      <div class="aculta-studio-calendar__filter-group" role="tablist">
+        {% for filter in filters %}
+          <a href="{{ filter.url }}"
+             class="aculta-studio-calendar__filter-chip{% if filter.active %} is-active{% endif %}"
+             role="tab"
+             aria-selected="{{ filter.active ? 'true' : 'false' }}">
+            {{ filter.label }}
+          </a>
+        {% endfor %}
+      </div>
+    </nav>
+  {% endif %}
+
+  <div class="aculta-studio-calendar__grid-wrap">
+    <table class="aculta-studio-calendar__grid">
+      <thead>
+        <tr>
+          <th scope="col" title="{{ 'Segunda-feira'|t }}">{{ 'S'|t }}</th>
+          <th scope="col" title="{{ 'Terça-feira'|t }}">{{ 'T'|t }}</th>
+          <th scope="col" title="{{ 'Quarta-feira'|t }}">{{ 'Q'|t }}</th>
+          <th scope="col" title="{{ 'Quinta-feira'|t }}">{{ 'Q'|t }}</th>
+          <th scope="col" title="{{ 'Sexta-feira'|t }}">{{ 'S'|t }}</th>
+          <th scope="col" title="{{ 'Sábado'|t }}">{{ 'S'|t }}</th>
+          <th scope="col" title="{{ 'Domingo'|t }}">{{ 'D'|t }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for week in weeks %}
+          <tr>
+            {% for cell in week %}
+              <td class="aculta-studio-calendar__day{% if not cell.is_current_month %} is-outside{% endif %}{% if cell.is_today %} is-today{% endif %}{% if cell.is_selected %} is-selected{% endif %}{% if cell.count > 0 %} has-events{% endif %}">
+                {% if cell.day_number %}
+                  {% if cell.url %}
+                    <a href="{{ cell.url }}" class="aculta-studio-calendar__day-link" aria-label="{{ cell.date_string|default(cell.day_number) }}{% if cell.count > 0 %} ({{ cell.count }} {{ 'evento(s)'|t }}){% endif %}">
+                      <span class="aculta-studio-calendar__day-num">{{ cell.day_number }}</span>
+                      {% if cell.count > 0 %}
+                        <span class="aculta-studio-calendar__day-dot" aria-hidden="true"></span>
+                      {% endif %}
+                    </a>
+                  {% else %}
+                    <span class="aculta-studio-calendar__day-num">{{ cell.day_number }}</span>
+                    {% if cell.count > 0 %}
+                      <span class="aculta-studio-calendar__day-dot" aria-hidden="true"></span>
+                    {% endif %}
+                  {% endif %}
+                {% endif %}
+              </td>
+            {% endfor %}
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="aculta-studio-calendar__summary">
+    <h3 class="aculta-studio-calendar__summary-title">
+      {{ selected_date_label|default('Eventos do dia'|t) }}
+    </h3>
+
+    {% if selected_day_events is not empty %}
+      <ul class="aculta-studio-calendar__events-list">
+        {% for event in selected_day_events %}
+          <li class="aculta-studio-calendar__event-item{% if event.is_cancelled %} is-cancelled{% endif %}">
+            {% if event.url %}
+              <a href="{{ event.url }}" class="aculta-studio-calendar__event-link">
+                <span class="aculta-studio-calendar__event-name">{{ event.title }}</span>
+              </a>
+            {% else %}
+              <span class="aculta-studio-calendar__event-name">{{ event.title }}</span>
+            {% endif %}
+
+            {% if event.time or event.location %}
+              <div class="aculta-studio-calendar__event-meta">
+                {% if event.time %}
+                  <span class="aculta-studio-calendar__event-time">{{ event.time }}</span>
+                {% endif %}
+                {% if event.location %}
+                  <span class="aculta-studio-calendar__event-loc">{{ event.location }}</span>
+                {% endif %}
+              </div>
+            {% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="aculta-studio-calendar__empty-msg">{{ 'Nenhuma atividade ou evento para este dia.'|t }}</p>
+    {% endif %}
+  </div>
+</div>

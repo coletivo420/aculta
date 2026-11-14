@@ -1,0 +1,16 @@
+name: Layout com barra lateral
+description: Conteúdo seguido da área complementar no DOM; duas colunas a partir de 60rem.
+component: aculta420_v2:layout-page
+props:
+  variant: aside
+  has_aside: true
+slots:
+  title:
+    type: inline_template
+    template: '<h1>Artigo</h1>'
+  content:
+    type: inline_template
+    template: '<p>Texto principal do artigo.</p>'
+  aside:
+    type: inline_template
+    template: '<h2>Relacionados</h2><p>Links e informações complementares.</p>'

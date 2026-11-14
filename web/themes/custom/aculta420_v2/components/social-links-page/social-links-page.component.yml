@@ -1,0 +1,38 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Página de links sociais
+description: Apresentação de micropágina de links com dados e identidade autorizada preparados pelo Portal.
+status: experimental
+group: Páginas e vitrines
+props:
+  type: object
+  additionalProperties: false
+  required: [title, has_links, theme_preset]
+  properties:
+    title:
+      type: string
+      minLength: 1
+      title: Título da página
+      description: Título principal da micropágina, renderizado como heading de nível um.
+    description:
+      type: [string, 'null']
+      title: Descrição editorial
+      default: null
+      description: Texto editorial opcional apresentado abaixo do título.
+    has_links:
+      type: boolean
+      title: Há links publicados
+      default: false
+      description: Quando true, exibe o slot links; quando false, mostra a mensagem de página sem links.
+    theme_preset:
+      type: string
+      enum: [classic, soft, outline]
+      title: Apresentação
+      default: classic
+      description: Preset visual aplicado como modificador de classe na página.
+slots:
+  owner_identity:
+    title: Identidade pública do proprietário
+    description: Render array autorizado fornecido pelo Portal.
+  links:
+    title: Links publicados
+    description: Links renderizados pelo Portal com seus contratos de acesso.

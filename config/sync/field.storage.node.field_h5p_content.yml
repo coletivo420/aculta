@@ -7,7 +7,7 @@ dependencies:
     - node
   enforced:
     module:
-      - aculta_forum_lms
+      - aculta_lms
       - aculta_lms_h5p
 id: node.field_h5p_content
 field_name: field_h5p_content
@@ -19,6 +19,6 @@ module: core
 locked: false
 cardinality: 1
 translatable: false
-indexes: { }
+indexes: {  }
 persist_with_no_fields: false
 custom_storage: false

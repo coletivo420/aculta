@@ -1,0 +1,9 @@
+{
+  "front": "aculta-htmx-f1",
+  "purpose": "transversal",
+  "origin_env": "ACULTA_SITE_ORIGIN",
+  "source": "tests/browser/transversal/aculta-htmx-f1/README.md",
+  "auth": { "account": "teste_comum" },
+  "public_routes": [],
+  "notes": "Sem rota pública declarada. Cobertura de interações HTMX fica no script da frente."
+}

@@ -6,11 +6,11 @@ Resumo de onde estão as coisas. Confirme sempre no código e no git antes de af
 
 | Ambiente | O que é | Regra |
 | --- | --- | --- |
-| Produção | `*.aculta.org` (Hostinger, Beta) | Só recebe deploy depois de Alpha validado e com tudo em RC |
-| Servidor de desenvolvimento | `*.aculta.toca.net.br` (checkout `/home/piradopirata/projetos/aculta`) | Não é o Alpha. Banco `aculta_runtime`, testes Kernel em `aculta_simpletest` |
+| Produção | Não existe ainda | Nenhum host de produção definido; `*.aculta.org` é destino futuro, sem data |
+| Servidor de desenvolvimento | `*.aculta.toca.net.br` (checkout `<checkout-do-servidor>`) | Não é o Alpha. Banco `aculta_runtime`, testes Kernel em `aculta_simpletest` |
 | Local | `127.0.0.1` | Simula o servidor de desenvolvimento; não é ele |
 
-Estados de release: Dev → RC → Alpha (migração para `*.aculta.org`, depois do RC) → Beta (produção). Detalhes: `docs/operations/RELEASE-LIFECYCLE.md`.
+Estado atual: desenvolvimento, no servidor de desenvolvimento. RC, Alpha e Beta são etapas futuras, sem data. Detalhes: `docs/operations/RELEASE-LIFECYCLE.md`.
 
 ## Onde estão as decisões
 
@@ -32,9 +32,9 @@ Todos ficam em `web/modules/custom/aculta_portal/modules/`. O quadro de status (
 | LMS | `aculta_lms` (+ h5p, messenger, resources), `aculta_lms_agenda` | `aculta_lms/docs/ROADMAP.md` |
 | Fórum e Wiki | `aculta_forum` (+ lms, wiki), `aculta_wiki` (+ messenger) | `AGENTS.md` do módulo |
 | Eventos e calendário | `aculta_events`, `aculta_calendar`, `aculta_events_openstreetmap` (em andamento), `aculta_maps` (só docs) | `aculta_events/docs/ROADMAP.md`, `aculta_calendar/docs/ROADMAP.md` |
-| Conteúdo e mídia | `aculta_magazine`, `aculta_gallery`, `aculta_image`, `aculta_document_viewer`, `aculta_pdf_viewer`, `aculta_editor`, `aculta_faq`, `aculta_content_admin` | README de cada módulo |
+| Conteúdo e mídia | `aculta_magazine`, `aculta_gallery`, `aculta_image`, `aculta_document_viewer`, `aculta_editor`, `aculta_faq`, `aculta_content_admin` | README de cada módulo |
 | Plataforma | `aculta_deployer`, `aculta_secrets_manager`, `aculta_patcher`, `aculta_index`, `aculta_statistics`, `aculta_portal_sitemap`, `aculta_linkweed`, `aculta_qrcode`, `aculta_activity`, `aculta_game`, `aculta_studio` | README de cada módulo |
-| Tema | `web/themes/custom/aculta420` | `web/themes/custom/aculta420/AGENTS.md` |
+| Tema ativo | `web/themes/custom/aculta420_v2` | `web/themes/custom/aculta420_v2/AGENTS.md` |
 
 Observação: `aculta_ugc` existe só como documentação (`web/modules/custom/aculta_portal/modules/aculta_ugc/docs/README.md` e `.../docs/PLANO-IMPLANTACAO.md`), sem código. Não o trate como módulo instalado.
 
@@ -53,7 +53,7 @@ Carrinho da barra: um pedido por carrinho, com fluxo mais exigente entre as cate
 ## Testes e navegador
 
 - Kernel: banco `aculta_simpletest` (`SIMPLETEST_DB` em `secrets/simpletest-db.env`). Nunca `aculta_runtime`.
-- Navegador: Firefox ESR em `DISPLAY=:0`, via geckodriver. Scripts visuais em `tests/browser/<frente>/` com `README.md`. Artefatos em `$SUITE_OUT`.
+- Navegador: ordem de preferência em `docs/operations/NAVEGADOR-TESTES.md`: Playwright com Firefox, Chromium e WebKit, navegador embutido e X11 com Gecko/Firefox ESR em `DISPLAY=:0`. Scripts visuais em `tests/browser/<purpose>/<frente>/` com `README.md` (ex.: `tests/browser/forum/aculta-forum/`). Índice de todas as frentes, com caminho completo: `tests/browser/INDICE.md`. Artefatos em `$SUITE_OUT`.
 - Procedimento e histórico: `docs/operations/TESTING.md`, `docs/operations/NAVEGADOR-TESTES.md`, `tests/browser/README.md`.
 
 ## Quadro de status e documentos gerados
@@ -62,7 +62,13 @@ Carrinho da barra: um pedido por carrinho, com fluxo mais exigente entre as cate
 - Para regenerar: `php scripts/validate-project-status-index.php --write`. Para só validar: sem `--write`.
 - Cada componente tem um arquivo em `docs/operations/status/<módulo>.yml`. A versão precisa coincidir com o `info.yml`.
 
+## Governanca de agentes
+
+- Contrato atual: `AGENTS.md`; classes de revisao: `docs/operations/AGENT-REVIEW-POLICY.md`.
+- Skills canonicas: `.agents/skills/`; Claude e Codex usam symlinks, sem tres copias editaveis.
+- Handoff e TODO sao consulta de fase; nao substituem HEAD, manifests nem testes.
+
 ## Documentos que não são instrução padrão
 
-- `docs/operations/AGENT-GUARDRAILS-FULL.md`: histórico de auditoria. Não carregue por padrão.
+- `docs/history/operations/AGENT-GUARDRAILS-FULL.md`: histórico de auditoria. Não carregue por padrão.
 - Relatórios em `docs/history/` e entradas antigas de CHANGELOG: referência, não estado atual.

@@ -9,6 +9,7 @@ use Drupal\aculta_forum\Context\DiscussionContextResolver;
 use Drupal\comment\CommentInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -17,13 +18,13 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
  * Comment moderation adapter using Comment entity operations and access. */
 final class EditorialCommentModerationForm extends FormBase {
 
-  public function __construct(private readonly EditorialCapability $capabilities, private readonly DiscussionContextResolver $discussionContexts, private readonly AccountInterface $account) {}
+  public function __construct(protected readonly EditorialCapability $capabilities, protected readonly DiscussionContextResolver $discussionContexts, protected readonly AccountInterface $account, protected readonly EntityTypeManagerInterface $entities) {}
 
   /**
    * Creates the contextual moderation form with Magazine and Forum services.
    */
   public static function create(ContainerInterface $container): static {
-    return new static($container->get('aculta_magazine.capability'), $container->get('aculta_forum.discussion_context_resolver'), $container->get('current_user'));
+    return new static($container->get('aculta_magazine.capability'), $container->get('aculta_forum.discussion_context_resolver'), $container->get('current_user'), $container->get('entity_type.manager'));
   }
 
   /**
@@ -73,7 +74,7 @@ final class EditorialCommentModerationForm extends FormBase {
    * Revalidates contextual and Comment access immediately before mutation.
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
-    $comment = $this->entityTypeManager()->getStorage('comment')->load($form_state->getValue('comment_id'));
+    $comment = $this->entities->getStorage('comment')->load($form_state->getValue('comment_id'));
     if (!$comment instanceof CommentInterface || !$this->allowed($comment)) {
       throw new AccessDeniedHttpException();
     }

@@ -9,9 +9,13 @@ use Drupal\Core\Entity\EntityAccessControlHandler;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
 
-/** Denies direct entity access; internal services own access decisions. */
+/**
+ * Denies direct entity access; internal services own access decisions. */
 final class InternalLearningEntityAccessControlHandler extends EntityAccessControlHandler {
 
+  /**
+   * {@inheritdoc}
+   */
   protected function checkAccess(EntityInterface $entity, $operation, AccountInterface $account) {
     return AccessResult::forbidden()->addCacheableDependency($entity);
   }

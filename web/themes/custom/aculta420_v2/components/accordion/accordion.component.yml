@@ -1,0 +1,27 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Acordeão
+description: Resposta expansível com controles HTML nativos e sem JavaScript.
+status: experimental
+group: Conteúdo
+props:
+  type: object
+  additionalProperties: false
+  properties:
+    title:
+      type: string
+      minLength: 1
+      title: Pergunta
+      description: Texto do controle nativo que abre ou recolhe a resposta.
+    expanded:
+      type: boolean
+      default: false
+      title: Aberto inicialmente
+      description: Quando verdadeiro, renderiza o elemento details inicialmente aberto.
+slots:
+  content:
+    title: Resposta
+    description: Conteúdo renderizado da resposta.
+assets:
+  css:
+    component:
+      accordion.css: {}

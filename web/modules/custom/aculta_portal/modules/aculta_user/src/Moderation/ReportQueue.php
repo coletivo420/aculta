@@ -6,10 +6,11 @@ namespace Drupal\aculta_user\Moderation;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\flag\FlaggingInterface;
 use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\comment\CommentInterface;
 use Drupal\node\NodeInterface;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 
 /**
  * Fila de denúncias do Fórum (ACULTA Fórum, F5.1).
@@ -35,7 +36,7 @@ final class ReportQueue {
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly ?DomainPurposeManager $domainPurposeManager = NULL,
+    private readonly ?DomainSiteManager $siteManager = NULL,
   ) {}
 
   /**
@@ -59,6 +60,9 @@ final class ReportQueue {
     $flaggings = $storage->loadMultiple($ids);
     $target_ids = [];
     foreach ($flaggings as $flagging) {
+      if (!$flagging instanceof FlaggingInterface) {
+        continue;
+      }
       $entity_type = $flagging->getFlaggableType();
       if (in_array($entity_type, self::TARGET_TYPES, TRUE)) {
         $target_ids[$entity_type][] = $flagging->getFlaggableId();
@@ -72,6 +76,9 @@ final class ReportQueue {
 
     $grupos = [];
     foreach ($flaggings as $flagging) {
+      if (!$flagging instanceof FlaggingInterface) {
+        continue;
+      }
       $entity = $targets[$flagging->getFlaggableType()][$flagging->getFlaggableId()] ?? NULL;
       if ($entity === NULL || !$this->isPublicForumContent($entity)) {
         continue;
@@ -120,7 +127,7 @@ final class ReportQueue {
       || !$entity->hasField('topic')
       || $entity->get('topic')->isEmpty()
       || $this->hasHistoricalAuthor($entity)
-      || $this->domainPurposeManager === NULL) {
+      || $this->siteManager === NULL) {
       return FALSE;
     }
     $topic = $entity->get('topic')->entity;
@@ -128,7 +135,7 @@ final class ReportQueue {
       && $topic->bundle() === 'aculta_forum_topic'
       && $topic->hasField('field_domain_source')
       && !$topic->get('field_domain_source')->isEmpty()
-      && $this->domainPurposeManager->getPurposeForDomainId((string) $topic->get('field_domain_source')->target_id) === 'forum'
+      && $this->siteManager->getSiteKeyValueForDomainId((string) $topic->get('field_domain_source')->target_id) === 'forum'
       && !$this->hasHistoricalAuthor($topic);
   }
 

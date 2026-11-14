@@ -28,7 +28,10 @@ class EmailConfirmedRoleGuardTest extends UnitTestCase {
    * Remoção do papel é detectada.
    */
   public function testRemocaoEDetectada(): void {
-    $this->assertTrue(EmailConfirmedRoleGuard::isRemoval($this->account(['authenticated']), $this->account(['authenticated', 'email_confirmed'])));
+    $this->assertTrue(EmailConfirmedRoleGuard::isRemoval($this->account(['authenticated']), $this->account([
+      'authenticated',
+      'email_confirmed',
+    ])));
   }
 
   /**

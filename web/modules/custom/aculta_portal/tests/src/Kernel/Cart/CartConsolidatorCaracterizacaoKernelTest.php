@@ -32,7 +32,7 @@ final class CartConsolidatorCaracterizacaoKernelTest extends OrderKernelTestBase
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['commerce_cart', 'commerce_checkout'];
+  protected static $modules = ['commerce_cart', 'commerce_checkout', 'text', 'text_with_summary'];
 
   /**
    * Conta compradora dos carrinhos.

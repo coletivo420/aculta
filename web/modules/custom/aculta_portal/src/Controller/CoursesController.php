@@ -9,7 +9,8 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\views\ViewExecutableFactory;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
-/** Presents the course catalog on the COURSES Domain. */
+/**
+ * Presents the course catalog on the COURSES Domain. */
 final class CoursesController extends ControllerBase {
 
   private const CATALOG_VIEW = 'courses_catalog';
@@ -22,28 +23,30 @@ final class CoursesController extends ControllerBase {
     private readonly ViewExecutableFactory $viewExecutableFactory,
   ) {}
 
-  /** Builds the public course landing page from the configured catalog View. */
+  /**
+   * Builds the public course landing page from the configured catalog View. */
   public function home(): array {
     return [
-      '#type' => 'container',
-      '#attributes' => ['data-portal-ui' => 'courses-home'],
-      'intro' => [
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:courses-catalog',
+      '#props' => [],
+      '#slots' => [
+        'intro' => [
         '#type' => 'html_tag',
         '#tag' => 'p',
         '#value' => $this->t('Formação para ampliar conhecimento, fortalecer direitos e construir caminhos antiproibicionistas.'),
-        '#attributes' => ['data-portal-ui' => 'courses-home-intro'],
       ],
-      'catalog_title' => [
+        'catalog_title' => [
         '#type' => 'html_tag',
         '#tag' => 'h2',
         '#value' => $this->t('Cursos disponíveis'),
       ],
-      'catalog' => $this->catalog(),
-      'collaboration' => [
+        'catalog' => $this->catalog(),
+        'collaboration' => [
         '#type' => 'html_tag',
         '#tag' => 'p',
         '#value' => $this->t('Acesse sua conta para participar dos cursos.'),
-        '#attributes' => ['data-portal-ui' => 'courses-home-collaboration'],
+      ],
       ],
     ];
   }

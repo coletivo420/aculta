@@ -1,0 +1,15 @@
+uuid: 141c3fb8-f057-4ecb-b528-ae6cbc74e8d9
+langcode: en
+status: true
+dependencies:
+  config:
+    - group.type.lms_class
+    - node.type.aculta_lms_topic
+  module:
+    - gnode
+id: lms_class-3abb8caf7f7d526ecedeec
+group_type: lms_class
+relation_type: 'group_node:aculta_lms_topic'
+plugin_config:
+  group_cardinality: 0
+  entity_cardinality: 1

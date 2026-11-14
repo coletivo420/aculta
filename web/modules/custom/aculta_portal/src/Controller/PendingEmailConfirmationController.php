@@ -16,7 +16,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 final class PendingEmailConfirmationController extends ControllerBase {
 
-  /** Limite de contas listadas. */
+  /**
+   * Limite de contas listadas. */
   private const LIMIT = 200;
 
   public function __construct(
@@ -51,7 +52,11 @@ final class PendingEmailConfirmationController extends ControllerBase {
         $conta->getAccountName(),
         $conta->id(),
         $this->dateFormatter->format($conta->getCreatedTime(), 'short'),
-        ['data' => ['#type' => 'link', '#title' => $this->t('Confirmar e-mail'), '#url' => Url::fromRoute('aculta_portal.email_confirmar_manual', ['user' => $conta->id()])]],
+        ['data' => [
+          '#type' => 'link',
+          '#title' => $this->t('Confirmar e-mail'),
+          '#url' => Url::fromRoute('aculta_portal.email_confirmar_manual', ['user' => $conta->id()]),
+        ]],
       ];
     }
     return [

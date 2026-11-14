@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_gallery\Hook;
 
-use Drupal\aculta_image\ImageRenderer;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
@@ -15,11 +14,11 @@ use Drupal\views\ViewExecutableFactory;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /**
- * Página do álbum: as fotos aparecem numa sequência VVJS, uma por slide.
+ * Página do álbum.
  *
- * A view aculta_album_fotos traz as imagens do álbum com paginação real. O tema
- * apresenta o VVJS e a navegação por miniaturas. Aqui só entra o contexto do
- * álbum (argumento da view).
+ * Entrega imagens em grade SDC para o álbum editorial e o Fórum.
+ *
+ * PhotoSwipe e o controle de acesso/cache das imagens continuam no módulo.
  */
 final class GalleryViewHooks {
 
@@ -33,8 +32,6 @@ final class GalleryViewHooks {
     private readonly EntityTypeManagerInterface $entityTypeManager,
     #[Autowire(service: 'views.executable')]
     private readonly ViewExecutableFactory $viewExecutableFactory,
-    #[Autowire(service: 'aculta_image.render')]
-    private readonly ImageRenderer $imageRenderer,
   ) {}
 
   /**
@@ -45,27 +42,22 @@ final class GalleryViewHooks {
     if (!in_array($view_mode, ['default', 'full'], TRUE)) {
       return;
     }
-    $view_id = $entity->hasField('field_gallery_purpose')
-      && $entity->get('field_gallery_purpose')->value === 'forum'
-      ? 'aculta_forum_gallery_slides'
-      : self::VIEW_ID;
+    $is_forum_gallery = $entity->hasField('field_gallery_purpose')
+      && $entity->get('field_gallery_purpose')->value === 'forum';
+    $view_id = $is_forum_gallery ? 'aculta_forum_gallery_slides' : self::VIEW_ID;
     $view = $this->entityTypeManager->getStorage('view')->load($view_id);
     if ($view === NULL) {
       return;
     }
     $executable = $this->viewExecutableFactory->get($view);
-    $slideshow = $executable->buildRenderable('block_1', [$entity->id()]);
+    $gallery = $executable->buildRenderable('block_1', [$entity->id()]);
     $build['album_stage'] = [
       '#type' => 'container',
       '#weight' => -10,
-      // Comportamento e ligação com VVJS usam data-*; aparência é do tema.
-      // photoswipe-gallery agrupa as fotos para o PhotoSwipe.
-      '#attributes' => ['data-aculta-album-stage' => 'true', 'class' => ['photoswipe-gallery']],
-      'slideshow' => $slideshow,
-      'thumbs' => $this->thumbs($entity),
+      '#attributes' => ['class' => ['photoswipe-gallery']],
+      'gallery' => $gallery,
     ];
-    // Access decisions affect both the VVJS result and the thumbnail index.
-    // Bubble every dependency at the shared parent, including denied results.
+    // Bubble the access decision and every image dependency to the gallery.
     $cacheability = CacheableMetadata::createFromObject($entity);
     foreach ($entity->get('images')->referencedEntities() as $media) {
       $access = $media->access('view', NULL, TRUE);
@@ -78,47 +70,6 @@ final class GalleryViewHooks {
       }
     }
     $cacheability->applyTo($build['album_stage']);
-  }
-
-  /**
-   * Miniaturas do álbum. Cada botão leva o número do slide (1 a N) no VVJS.
-   *
-   * @return array<string, mixed>
-   *   Render array com um botão por foto do álbum, na mesma ordem da sequência.
-   */
-  private function thumbs(EntityInterface $entity): array {
-    $thumbs = [
-      '#type' => 'container',
-      '#attributes' => ['data-aculta-album-thumbs' => 'true'],
-      '#cache' => ['tags' => $entity->getCacheTags()],
-    ];
-    $position = 0;
-    foreach ($entity->get('images')->referencedEntities() as $media) {
-      $access = $media->access('view', NULL, TRUE);
-      if (!$access->isAllowed()) {
-        continue;
-      }
-      $field_name = $this->imageFieldName($media);
-      $file = $field_name !== NULL ? $media->get($field_name)->entity : NULL;
-      if ($file === NULL) {
-        continue;
-      }
-      $position++;
-      $image_field = $media->get($field_name);
-      $alt = (string) ($image_field->alt ?? $media->label());
-      $thumb_image = $this->imageRenderer->build('galeria_miniatura', $file->getFileUri(), $alt, ['loading' => 'lazy']);
-      $thumbs[$position] = [
-        '#type' => 'html_tag',
-        '#tag' => 'button',
-        '#attributes' => [
-          'type' => 'button',
-          'data-aculta-album-thumb' => (string) $position,
-          'aria-label' => 'Foto ' . $position,
-        ],
-        'image' => $thumb_image,
-      ];
-    }
-    return $thumbs;
   }
 
   /**

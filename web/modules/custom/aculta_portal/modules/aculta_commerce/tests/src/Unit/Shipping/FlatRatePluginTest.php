@@ -13,6 +13,9 @@ use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 
+/**
+ * Testa o plugin de frete de valor fixo.
+ */
 #[CoversClass(\Drupal\aculta_commerce\Plugin\Commerce\ShippingMethod\FlatRate::class)]
 #[Group('aculta_commerce')]
 final class FlatRatePluginTest extends UnitTestCase {

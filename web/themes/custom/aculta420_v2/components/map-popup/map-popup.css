@@ -1,0 +1,10 @@
+.map-popup { display: grid; overflow: hidden; grid-template-columns: minmax(0, 1fr); color: var(--color-text-primary); background: var(--color-surface); max-inline-size: 100%; min-inline-size: 0; }
+.map-popup__thumbnail img { display: block; block-size: auto; inline-size: 100%; max-block-size: 6rem; object-fit: cover; }
+.map-popup__body { display: grid; gap: var(--spacing-xs); min-inline-size: 0; padding: var(--spacing-sm); }
+.map-popup__category,
+.map-popup__address { margin: 0; color: var(--color-text-secondary); font-size: var(--font-size-xs); overflow-wrap: anywhere; }
+.map-popup__title { margin: 0; font-size: var(--font-size-sm); line-height: 1.35; overflow-wrap: anywhere; }
+.map-popup__title a { text-decoration: underline; color: var(--color-brand-primary); min-block-size: var(--tap-target-min); overflow-wrap: anywhere; text-underline-offset: .15em; }
+.map-popup__title a:focus-visible { outline: 3px solid var(--color-brand-highlight); outline-offset: 2px; }
+.map-popup__route { display: inline-flex; align-items: center; text-decoration: underline; color: var(--color-brand-primary); min-block-size: var(--tap-target-min); text-underline-offset: .15em; }
+.map-popup__route:focus-visible { outline: 3px solid var(--color-brand-highlight); outline-offset: 2px; }

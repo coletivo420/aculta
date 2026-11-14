@@ -1,0 +1,7 @@
+enabled_bundles:
+  revista: revista
+  wiki_entry: wiki_entry
+  activity: activity
+  document: document
+  editorial_highlight: editorial_highlight
+  page: page

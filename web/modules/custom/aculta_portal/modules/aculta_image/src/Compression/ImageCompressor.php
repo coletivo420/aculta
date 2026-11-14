@@ -196,7 +196,6 @@ final class ImageCompressor {
         imagealphablending($resized, FALSE);
         imagesavealpha($resized, TRUE);
         imagecopyresampled($resized, $image, 0, 0, 0, 0, $max_width, $target_height, $width, $height);
-        imagedestroy($image);
         $image = $resized;
       }
       $target_mime = $this->targetMime($mime, $config, FALSE);
@@ -217,7 +216,6 @@ final class ImageCompressor {
       return ['temporary' => $temporary, 'mime' => $target_mime];
     }
     finally {
-      imagedestroy($image);
     }
   }
 

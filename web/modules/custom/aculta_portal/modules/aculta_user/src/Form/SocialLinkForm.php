@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_user\Form;
 
+use Drupal\profile\Entity\ProfileInterface;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Drupal\Core\Access\CsrfTokenGenerator;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
@@ -21,11 +23,11 @@ use Drupal\aculta_portal\Profile\PerfilDoPapel;
 final class SocialLinkForm extends FormBase {
 
   public function __construct(
-    private readonly EntityTypeManagerInterface $entityTypeManagerService,
-    private readonly AccountProxyInterface $currentUserService,
-    private readonly SocialNetworks $networks,
-    private readonly CsrfTokenGenerator $csrfToken,
-    private readonly ?RouteMatchInterface $currentRouteMatch = NULL,
+    protected readonly EntityTypeManagerInterface $entityTypeManagerService,
+    protected readonly AccountProxyInterface $currentUserService,
+    protected readonly SocialNetworks $networks,
+    protected readonly CsrfTokenGenerator $csrfToken,
+    protected readonly ?RouteMatchInterface $currentRouteMatch = NULL,
   ) {}
 
   /**
@@ -53,7 +55,7 @@ final class SocialLinkForm extends FormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state, string $rede = ''): array {
     if (!isset(SocialNetworks::NETWORKS[$rede])) {
-      throw new \Symfony\Component\HttpKernel\Exception\NotFoundHttpException();
+      throw new NotFoundHttpException();
     }
     $definition = SocialNetworks::NETWORKS[$rede];
     $profile = $this->profile();
@@ -85,10 +87,15 @@ final class SocialLinkForm extends FormBase {
     ];
     $form['actions'] = ['#type' => 'container', '#attributes' => ['data-portal-ui' => 'account-bio-actions']];
     if (!$studio) {
+      // SDC com is_submit: o envio é capturado pelo JS (data-aculta-clear).
       $form['actions']['clear'] = [
-        '#type' => 'button',
-        '#value' => $this->t('Limpar'),
-        '#attributes' => ['data-aculta-clear' => '', 'data-portal-ui' => 'button-secondary'],
+        '#type' => 'aculta_portal_button',
+        '#props' => [
+          'text' => (string) $this->t('Limpar'),
+          'variant' => 'secondary',
+          'is_submit' => TRUE,
+        ],
+        '#attributes' => ['data-aculta-clear' => ''],
         '#weight' => -1,
       ];
     }
@@ -126,7 +133,7 @@ final class SocialLinkForm extends FormBase {
   /**
    * Perfil participante da conta atual, criado se ainda não existe.
    */
-  private function profile(): \Drupal\profile\Entity\ProfileInterface {
+  private function profile(): ProfileInterface {
     $storage = $this->entityTypeManagerService->getStorage('profile');
     $account = $this->currentUserService->getAccount();
     return PerfilDoPapel::obter($storage, $account);

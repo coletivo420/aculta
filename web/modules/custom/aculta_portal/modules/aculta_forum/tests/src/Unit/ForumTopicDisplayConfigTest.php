@@ -141,7 +141,7 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
     self::assertSame(['GET', 'HEAD', 'POST'], $routes['aculta_forum.settings']['methods']);
     self::assertTrue($permissions['administer aculta forum settings']['restrict access']);
     self::assertSame('aculta_forum.admin', $menu['aculta_forum.admin_settings']['parent']);
-    self::assertSame(FALSE, $install['comment_move_enabled']);
+    self::assertFalse($install['comment_move_enabled']);
     self::assertConfigSame($install, $sync);
     self::assertNotContains('administer aculta forum settings', $editor['permissions']);
     self::assertStringContainsString("'#config_target' => 'aculta_forum.settings:comment_move_enabled'", $form);
@@ -168,7 +168,7 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
   /**
    * The field display does not expose comment settings or legacy author data.
    */
-  public function testFormDoesNotExposeCommentStatusOrHistoricalAuthor(): void {
+  public function testFormDoesNotExposeCommentStatusOrCoAuthorWidget(): void {
     $config = Yaml::parseFile(
       dirname(__DIR__, 3) . '/config/install/core.entity_form_display.node.aculta_forum_topic.default.yml',
     );
@@ -176,7 +176,9 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
     self::assertSame(['body', 'field_aculta_categories', 'title'], array_keys($config['content']));
     self::assertArrayHasKey('field_aculta_discussion', $config['hidden']);
     self::assertArrayHasKey('field_autor_legado', $config['hidden']);
-    foreach (['co_authors', 'moderation_state', 'path', 'simple_sitemap', 'url_redirects'] as $field) {
+    self::assertArrayNotHasKey('co_authors', $config['hidden']);
+    self::assertTrue($config['hidden']['aculta_coauthors']);
+    foreach (['moderation_state', 'path', 'simple_sitemap', 'url_redirects'] as $field) {
       self::assertArrayHasKey($field, $config['hidden'], $field);
     }
   }
@@ -333,8 +335,21 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
     self::assertTrue($category_filter['hierarchy']);
     self::assertFalse($options['query']['options']['disable_sql_rewrite']);
     self::assertTrue($options['style']['options']['uses_fields']);
-    self::assertSame('fields', $options['row']['type']);
-    self::assertSame('teaser', $options['fields']['rendered_entity']['view_mode']);
+    self::assertSame('ui_patterns', $options['row']['type']);
+    $row_component = $options['row']['options']['ui_patterns'];
+    self::assertSame('aculta420_v2:forum-topic-row', $row_component['component_id']);
+    self::assertSame('title', $row_component['slots']['title']['sources'][0]['source']['ui_patterns_views_field']);
+    self::assertSame('author_card', $row_component['slots']['meta']['sources'][0]['source']['ui_patterns_views_field']);
+    self::assertSame('field_aculta_categories', $row_component['slots']['meta']['sources'][1]['source']['ui_patterns_views_field']);
+    self::assertSame('comment_count', $row_component['slots']['replies_content']['sources'][0]['source']['ui_patterns_views_field']);
+    self::assertSame('last_updated', $row_component['slots']['activity_content']['sources'][0]['source']['ui_patterns_views_field']);
+    self::assertSame('aculta_user_author_card', $options['fields']['author_card']['plugin_id']);
+    self::assertSame('uid', $options['fields']['author_card']['relationship']);
+    self::assertSame('author_forum', $options['fields']['author_card']['variant']);
+    self::assertSame('Fixo', $options['fields']['sticky']['settings']['format_custom_true']);
+    self::assertSame('', $options['fields']['sticky']['settings']['format_custom_false']);
+    self::assertArrayNotHasKey('user_picture', $options['fields'], 'Forum rows must use the public author-card policy, not read user_picture directly.');
+    self::assertArrayNotHasKey('rendered_entity', $options['fields'], 'The SDC row consumes selected View fields and does not render an unused node teaser.');
     self::assertSame('comment_entity_statistics', $options['fields']['comment_count']['table']);
     self::assertFalse($options['fields']['comment_count']['empty_zero']);
     self::assertFalse($options['fields']['comment_count']['format_plural']);
@@ -383,6 +398,29 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
       $install['display']['default']['display_options']['filters']['vid']['value'],
     );
     self::assertSame('fields', $install['display']['default']['display_options']['row']['type']);
+    self::assertSame('ui_patterns', $install['display']['page_categories']['display_options']['row']['type']);
+    self::assertSame('ui_patterns', $install['display']['block_landing']['display_options']['row']['type']);
+    foreach (['page_categories' => 'h3', 'block_landing' => 'h2'] as $display_id => $title_level) {
+      $display = $install['display'][$display_id]['display_options'];
+      self::assertSame(
+        'aculta420_v2:forum-category',
+        $display['row']['options']['ui_patterns']['component_id'],
+      );
+      self::assertSame(
+        $title_level,
+        $display['row']['options']['ui_patterns']['props']['title_level']['source']['value'],
+      );
+      self::assertSame('view_field', $display['row']['options']['ui_patterns']['slots']['title']['sources'][0]['source_id']);
+      self::assertSame('name', $display['row']['options']['ui_patterns']['slots']['title']['sources'][0]['source']['ui_patterns_views_field']);
+    }
+    self::assertTrue($install['display']['page_categories']['display_options']['fields']['parent_name']['exclude']);
+    self::assertFalse($install['display']['page_categories']['display_options']['fields']['parent_card']['exclude']);
+    self::assertSame(
+      'aculta_forum_category_topic_count',
+      $install['display']['page_categories']['display_options']['row']['options']['ui_patterns']['slots']['count']['sources'][0]['source']['ui_patterns_views_field'],
+    );
+    self::assertSame('some', $install['display']['default']['display_options']['pager']['type']);
+    self::assertSame('perm', $install['display']['default']['display_options']['access']['type']);
     $category_fields = $install['display']['default']['display_options']['fields'];
     self::assertTrue($category_fields['tid']['exclude']);
     self::assertSame('tid', $category_fields['tid']['field']);
@@ -414,11 +452,11 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
       '<p><a href="/categorias">Ver todas as categorias</a></p>',
       $install['display']['block_landing']['display_options']['header']['area_text_custom']['content'],
     );
-    $category_block = Yaml::parseFile($repository_path . '/config/sync/block.block.aculta_forum_categories_home.yml');
+    $category_block = Yaml::parseFile($repository_path . '/config/sync/block.block.aculta420_v2_aculta_forum_categories_home.yml');
     self::assertSame('views_block:aculta_forum_categories-block_landing', $category_block['plugin']);
-    self::assertSame('sidebar', $category_block['region']);
+    self::assertSame('sidebar_first', $category_block['region']);
     self::assertSame("/\n/discussoes", $category_block['visibility']['request_path']['pages']);
-    self::assertSame('forum', $category_block['visibility']['aculta_domain_purpose']['purpose']);
+    self::assertSame('forum', $category_block['visibility']['aculta_domain_site']['site_key']);
     self::assertSame(
       '<p><a href="/">Discussões recentes</a></p>',
       $install['display']['page_categories']['display_options']['header']['area_text_custom']['content'],
@@ -653,10 +691,10 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
   /**
    * Friendly topic creation uses Core's Node form and create access.
    */
-  public function testFriendlyTopicAddRouteUsesCoreEntityFormAccess(): void {
-    $route = Yaml::parseFile(dirname(__DIR__, 3) . '/aculta_forum.routing.yml')['aculta_forum.topic_add'];
+  public function testTopicComposerRouteUsesCoreEntityFormAccess(): void {
+    $route = Yaml::parseFile(dirname(__DIR__, 3) . '/aculta_forum.routing.yml')['aculta_forum.topic_composer'];
 
-    self::assertSame('/criar-topico', $route['path']);
+    self::assertSame('/discussoes/novo-topico', $route['path']);
     self::assertSame('node.default', $route['defaults']['_entity_form']);
     self::assertSame('aculta_forum_topic', $route['defaults']['node_type']);
     self::assertSame('node:{node_type}', $route['requirements']['_entity_create_access']);

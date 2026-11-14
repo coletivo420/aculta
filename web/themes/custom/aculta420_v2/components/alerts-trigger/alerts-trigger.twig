@@ -1,0 +1,31 @@
+{% set count = count|default(0) %}
+{% set counter_label = count_kind|default('active') == 'attention'
+  ? (count == 1 ? 'aviso ativo ou não lido'|t : 'avisos ativos ou não lidos'|t)
+  : (count == 1 ? 'aviso ativo'|t : 'avisos ativos'|t) %}
+{% set label = count > 0
+  ? '@count @kind. Abrir avisos'|t({'@count': count, '@kind': counter_label})
+  : 'Abrir avisos'|t %}
+<button type="button" class="aculta-utility-trigger aculta-alerts-trigger"
+  aria-controls="aculta-alerts-dialog" aria-expanded="false" aria-haspopup="dialog"
+  aria-label="{{ label }}" data-aculta-count-kind="{{ count_kind|default('active') }}" data-aculta-dialog-trigger>
+  <span class="aculta-utility-trigger__icon">
+    {{ include('aculta420_v2:icon', { name: 'bell-simple', variant: 'duotone', size: 'xl' }, with_context = false) }}
+    <span class="aculta-unread-count aculta-utility-trigger__count" data-aculta-alerts-count data-count="{{ count }}" aria-hidden="true">{{ count > 99 ? '99+' : count }}</span>
+  </span>
+</button>
+<dialog class="aculta-utility-dialog aculta-alerts-dialog" id="aculta-alerts-dialog"
+  aria-labelledby="aculta-alerts-dialog-title" data-aculta-utility-drawer
+  data-aculta-drawer-count="alerts" data-aculta-drawer-url="{{ href }}"
+  data-hx-get="{{ href }}" data-hx-trigger="aculta:drawer:open"
+  data-hx-target="find [data-aculta-drawer-content]" data-hx-swap="innerHTML"
+  data-hx-sync="this:replace"
+  data-aculta-drawer-label="{{ 'Não foi possível carregar os avisos. Tente novamente.'|t }}">
+  <header class="aculta-utility-dialog__header">
+    <h2 class="aculta-utility-dialog__title" id="aculta-alerts-dialog-title">{{ 'Avisos'|t }}</h2>
+    <button type="button" class="aculta-utility-dialog__close" data-aculta-dialog-close aria-label="{{ 'Fechar avisos'|t }}">{{ include('aculta420_v2:icon', { name: 'x', variant: 'duotone', size: 'md' }, with_context = false) }}</button>
+  </header>
+  <div class="aculta-utility-dialog__body" data-aculta-drawer-content aria-live="polite" aria-busy="false">
+    <p>{{ 'Abra para atualizar os avisos.'|t }}</p>
+  </div>
+  {% if all_href %}<footer class="aculta-alerts-dialog__footer"><a class="aculta-utility-dialog__action" href="{{ all_href }}">{{ 'Ver todos os avisos'|t }}</a></footer>{% endif %}
+</dialog>

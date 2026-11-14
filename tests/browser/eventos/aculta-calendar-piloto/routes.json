@@ -1,0 +1,8 @@
+{
+  "front": "aculta-calendar-piloto",
+  "purpose": "eventos",
+  "origin_env": "ACULTA_SITE_ORIGIN",
+  "source": "tests/browser/eventos/aculta-calendar-piloto/README.md",
+  "public_routes": [],
+  "notes": "Sem rota pública declarada na README; o piloto usa site local em site/ (index.html, viewport320.html). Cobertura fica no script da frente."
+}

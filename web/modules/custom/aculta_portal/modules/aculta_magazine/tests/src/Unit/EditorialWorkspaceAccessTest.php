@@ -44,6 +44,38 @@ final class EditorialWorkspaceAccessTest extends UnitTestCase {
   }
 
   /**
+   * Returns the content composer as content for the page-level Popup SDC.
+   */
+  public function testCreatePopupKeepsTheComposerInsideTheSharedPopup(): void {
+    $node = $this->createMock(NodeInterface::class);
+    $storage = $this->createMock(NodeStorageInterface::class);
+    $storage->expects(self::once())->method('create')->with(['type' => 'revista'])->willReturn($node);
+    $entities = $this->createMock(EntityTypeManagerInterface::class);
+    $entities->expects(self::once())->method('getStorage')->with('node')->willReturn($storage);
+    $entityFormBuilder = $this->createMock(EntityFormBuilderInterface::class);
+    $form = ['#type' => 'container'];
+    $entityFormBuilder->expects(self::once())->method('getForm')->with($node, 'default')->willReturn($form);
+    $configFactory = $this->createMock(ConfigFactoryInterface::class);
+
+    $workspace = new EditorialWorkspaceController(
+      $entities,
+      $entityFormBuilder,
+      $this->createMock(FormBuilderInterface::class),
+      new DiscussionContextResolver([]),
+      new EditorialCapability($configFactory),
+      $this->createMock(AccountInterface::class),
+      new RequestStack(),
+      $this->createMock(DateFormatterInterface::class),
+    );
+
+    $build = $workspace->createPopup();
+
+    self::assertSame('aculta420_v2:discussion-content-composer', $build['#component']);
+    self::assertFalse($build['#props']['standalone_popup']);
+    self::assertSame($form, $build['#slots']['form']);
+  }
+
+  /**
    * Builds a workspace where only the selected capability grants ACULTA access.
    *
    * @return array{0: \Drupal\aculta_magazine\Controller\EditorialWorkspaceController, 1: \Drupal\node\NodeInterface}

@@ -1,0 +1,36 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Cartão de indicador
+description: Indicador analítico com rótulo, valor, unidade e observação.
+status: experimental
+group: Estatísticas
+props:
+  type: object
+  additionalProperties: false
+  required: [label, value]
+  properties:
+    label:
+      title: Nome da métrica
+      description: Rótulo visível que identifica o indicador.
+      type: string
+      minLength: 1
+    value:
+      title: Valor da métrica
+      description: Valor textual principal do indicador, já formatado para exibição.
+      type: string
+      minLength: 1
+    unit:
+      title: Unidade da métrica
+      description: Unidade opcional exibida ao lado do valor, como porcentagem ou abreviação.
+      type: string
+      default: ''
+    hint:
+      title: Orientação sobre a métrica
+      description: Observação textual opcional exibida abaixo do valor.
+      type: string
+      default: ''
+    tone:
+      title: Tom visual da métrica
+      description: Variante visual que comunica estado neutro, positivo ou de atenção.
+      type: string
+      enum: [neutral, positive, warning]
+      default: neutral

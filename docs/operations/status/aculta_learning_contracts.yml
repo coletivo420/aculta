@@ -1,5 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 version: 0.1.0-dev.1
 state: Dev
-next_phase: 'Manter somente contratos e value objects neutros; B2 implementado com StudentLearningSummaryReaderInterface e os DTOs StudentLearningSummary/Course/Certificate. Próximo contrato de acesso por curso/aula/atividade apenas com consumidor real. Não adicionar dependência de lms, aculta_lms, aculta_studio ou aculta_portal.'
-progress_note: "Dev.1: camada criada para retirar os contratos educacionais de aculta_portal, que ainda exige lms:lms. Contém CourseJourneyReaderInterface, CourseJourney, CourseJourneyLesson e, na fase B2, StudentLearningSummaryReaderInterface com os DTOs StudentLearningSummary/StudentLearningCourse/StudentLearningCertificate. Sem dependências Drupal; disponível ainda que o contrib LMS seja removido do Portal. Consumidores: aculta_studio e aculta_lms. Kernel ContractsInstallTest 1/8 PASS instala o módulo com apenas system, sem aculta_portal nem lms. Unit Studio 62/597 e LMS 99/472 PASS. Runtime: módulo habilitado após snapshot com hash; config:status sem diferenças; Ganjalab 74/74 em 320-1440 px; Educador e formulário 200. Nenhum dado, storage ou rota."
+next_phase: 'Cobrir o contrato com Unit e Kernel e avaliar a migração do DTO de progresso.'
+progress_note: 'Contrato AccountCoursesReaderInterface e DTO AccountCourseSummary neutros; aculta_lms registra o alias do provedor e o Portal consome somente o contrato. Gate validate-aculta-portal-drupal12.php (P5.5) passa a aceitar a implementação.'

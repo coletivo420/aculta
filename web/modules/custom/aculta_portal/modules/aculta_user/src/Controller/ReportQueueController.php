@@ -9,7 +9,7 @@ use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Link;
 use Drupal\Core\Routing\LocalRedirectResponse;
 use Drupal\Core\Url;
-use Drupal\aculta_ugc\ModerationScope;
+use Drupal\aculta_cgu\ModerationScope;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -28,7 +28,7 @@ final class ReportQueueController extends ControllerBase {
    */
   public static function create(ContainerInterface $container): self {
     return new self(
-      $container->has('aculta_ugc.report_queue') ? $container->get('aculta_ugc.report_queue') : NULL,
+      $container->has('aculta_cgu.report_queue') ? $container->get('aculta_cgu.report_queue') : NULL,
     );
   }
 
@@ -111,6 +111,7 @@ final class ReportQueueController extends ControllerBase {
     }
 
     $build = [
+      '#attached' => ['library' => ['aculta_user/report-queue']],
       '#type' => 'container',
       '#attributes' => ['data-portal-ui' => 'forum-report-queue'],
       'title' => [
@@ -162,7 +163,7 @@ final class ReportQueueController extends ControllerBase {
 
     $cacheability = (new CacheableMetadata())
       ->addCacheContexts(['user.permissions', 'url.query_args:page'])
-      ->addCacheTags(['aculta_ugc_report_list', 'flagging_list']);
+      ->addCacheTags(['aculta_cgu_report_list', 'flagging_list']);
     $cacheability->applyTo($build);
 
     return $build;

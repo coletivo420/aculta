@@ -1,0 +1,9 @@
+{
+  "front": "aculta-mercadopago",
+  "purpose": "shop",
+  "origin_env": "CONTA_HOST",
+  "source": "tests/browser/shop/aculta-mercadopago/README.md",
+  "public_routes": [],
+  "auth": { "account": "teste_comum" },
+  "notes": "Sem rota pública declarada. A área de planos (/conta/mercado-pago/planos) exige login de teste no host de conta. Cobertura fica no script da frente."
+}

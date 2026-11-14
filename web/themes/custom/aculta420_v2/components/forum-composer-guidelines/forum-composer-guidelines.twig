@@ -1,0 +1,23 @@
+<div class="forum-composer-guidelines">
+  <div class="forum-composer-guidelines__stripe"></div>
+  <div class="forum-composer-guidelines__inner">
+    {% if collapsed %}
+      <details class="forum-composer-guidelines__details">
+        <summary class="forum-composer-guidelines__summary">
+          <span class="forum-composer-guidelines__title">{{ 'Diretrizes para Publicação de Tópico'|t }}</span>
+          <span class="forum-composer-guidelines__chevron" aria-hidden="true">
+            {{ include('aculta420_v2:icon', { name: 'caret-down', variant: 'duotone', size: 'sm' }, with_context = false) }}
+          </span>
+        </summary>
+        <div class="forum-composer-guidelines__content">
+          {% include '@aculta420_v2/components/forum-composer-guidelines/_content.twig' %}
+        </div>
+      </details>
+    {% else %}
+      <h2 class="forum-composer-guidelines__title">{{ 'Diretrizes para Publicação de Tópico'|t }}</h2>
+      <div class="forum-composer-guidelines__content">
+        {% include '@aculta420_v2/components/forum-composer-guidelines/_content.twig' %}
+      </div>
+    {% endif %}
+  </div>
+</div>

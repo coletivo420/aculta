@@ -1,0 +1,8 @@
+name: Removido pela moderação
+description: Comentário removido pela moderação, mantido no lugar da thread.
+props:
+  author_name: Participante
+  state_label: Removido pela moderação
+  created_label: 12/11/2026
+  reactions_total: 0
+  reply_count: 2

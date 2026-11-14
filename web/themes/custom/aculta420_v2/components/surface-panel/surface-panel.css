@@ -1,0 +1,182 @@
+/**
+ * SDC: Painel institucional (aculta420_v2:surface-panel)
+ * Fiel às referências 05 a 08: cabeçalho verde ocupando toda a largura superior,
+ * corpo neutro, cantos arredondados e sombra discreta.
+ */
+.aculta-surface-panel {
+  position: relative;
+  display: flex;
+  overflow: hidden;
+  flex-direction: column;
+  box-sizing: border-box;
+  transition:
+    background-color var(--motion-base) ease,
+    border-color var(--motion-base) ease,
+    box-shadow var(--motion-base) ease;
+  border: 1px solid var(--color-alpha-border-75, var(--color-border));
+  inline-size: 100%;
+  max-inline-size: 100%;
+}
+
+/* Fundo semântico do corpo */
+.aculta-surface-panel--tone-canvas {
+  color: var(--color-text-primary);
+  background-color: var(--color-canvas);
+}
+
+.aculta-surface-panel--tone-raised {
+  color: var(--color-text-primary);
+  background-color: var(--color-surface-raised);
+}
+
+.aculta-surface-panel--tone-subtle {
+  color: var(--color-text-primary);
+  background-color: var(--color-surface-subtle);
+}
+
+.aculta-surface-panel--tone-institution {
+  color: var(--color-text-primary);
+  background-color: var(--color-surface-institution);
+}
+
+/* Structural green tone with accessible border in both color modes. */
+.aculta-surface-panel--tone-green-soft {
+  color: var(--color-text-primary);
+  border-color: var(--color-surface-green-border);
+  background-color: var(--color-surface-green-soft);
+}
+
+/* Raio dos cantos */
+.aculta-surface-panel--radius-sm {
+  border-radius: var(--radius-sm, .25rem);
+}
+
+.aculta-surface-panel--radius-md {
+  border-radius: var(--radius-base, .5rem);
+}
+
+.aculta-surface-panel--radius-lg {
+  border-radius: var(--radius-lg, 1rem);
+}
+
+.aculta-surface-panel--radius-xl {
+  border-radius: var(--border-radius-xl, 1.5rem);
+}
+
+/* Elevação e sombra */
+.aculta-surface-panel--elevation-none {
+  box-shadow: none;
+}
+
+.aculta-surface-panel--elevation-subtle {
+  box-shadow: var(--surface-shadow-subtle);
+}
+
+.aculta-surface-panel--elevation-raised {
+  box-shadow: var(--surface-shadow-raised);
+}
+
+.aculta-surface-panel--elevation-floating {
+  box-shadow: var(--surface-shadow-floating);
+}
+
+/* ========================================================
+   CABEÇALHO INSTITUCIONAL (REFERÊNCIAS 05, 06, 07, 08)
+   ======================================================== */
+.aculta-surface-panel__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+  inline-size: 100%;
+  min-block-size: 3.5rem; /* Altura do bloco verde superior */
+  gap: var(--spacing-sm, .5rem);
+}
+
+.aculta-surface-panel--header-institutional .aculta-surface-panel__header {
+  color: var(--surface-panel-institutional-text);
+  border-block-end: 1px solid var(--color-border);
+  background-color: var(--surface-panel-institutional-bg);
+}
+
+.aculta-surface-panel--header-subtle .aculta-surface-panel__header {
+  color: var(--color-text-primary);
+  border-block-end: 1px solid var(--color-border);
+  background-color: var(--color-surface-subtle);
+}
+
+.aculta-surface-panel--header-transparent .aculta-surface-panel__header {
+  color: var(--color-text-primary);
+  border-block-end: 1px solid var(--color-border);
+  background-color: transparent;
+}
+
+/* ========================================================
+   CORPO DE CONTEÚDO, RODAPÉ E AÇÕES
+   ======================================================== */
+.aculta-surface-panel__content {
+  flex: 1 1 auto;
+  box-sizing: border-box;
+  inline-size: 100%;
+  overflow-wrap: break-word;
+}
+
+.aculta-surface-panel__footer {
+  box-sizing: border-box;
+  color: var(--color-text-secondary);
+  border-block-start: 1px solid var(--color-border);
+  inline-size: 100%;
+}
+
+.aculta-surface-panel__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  box-sizing: border-box;
+  border-block-start: 1px solid var(--color-border);
+  gap: var(--spacing-sm, .5rem);
+}
+
+/* Espaçamento interno (padding) */
+.aculta-surface-panel--spacing-none .aculta-surface-panel__header,
+.aculta-surface-panel--spacing-none .aculta-surface-panel__content,
+.aculta-surface-panel--spacing-none .aculta-surface-panel__footer,
+.aculta-surface-panel--spacing-none .aculta-surface-panel__actions {
+  padding: 0;
+}
+
+.aculta-surface-panel--spacing-compact .aculta-surface-panel__header,
+.aculta-surface-panel--spacing-compact .aculta-surface-panel__content,
+.aculta-surface-panel--spacing-compact .aculta-surface-panel__footer,
+.aculta-surface-panel--spacing-compact .aculta-surface-panel__actions {
+  padding: var(--spacing-sm, .5rem);
+}
+
+.aculta-surface-panel--spacing-normal .aculta-surface-panel__header,
+.aculta-surface-panel--spacing-normal .aculta-surface-panel__content,
+.aculta-surface-panel--spacing-normal .aculta-surface-panel__footer,
+.aculta-surface-panel--spacing-normal .aculta-surface-panel__actions {
+  padding: var(--spacing-base, 1rem);
+}
+
+.aculta-surface-panel--spacing-spacious .aculta-surface-panel__header,
+.aculta-surface-panel--spacing-spacious .aculta-surface-panel__content,
+.aculta-surface-panel--spacing-spacious .aculta-surface-panel__footer,
+.aculta-surface-panel--spacing-spacious .aculta-surface-panel__actions {
+  padding: var(--spacing-lg, 1.5rem);
+}
+
+@media (min-width: 48rem) {
+  .aculta-surface-panel--spacing-normal .aculta-surface-panel__header,
+  .aculta-surface-panel--spacing-normal .aculta-surface-panel__content,
+  .aculta-surface-panel--spacing-normal .aculta-surface-panel__footer,
+  .aculta-surface-panel--spacing-normal .aculta-surface-panel__actions {
+    padding: var(--spacing-lg, 1.5rem);
+  }
+  .aculta-surface-panel--spacing-spacious .aculta-surface-panel__header,
+  .aculta-surface-panel--spacing-spacious .aculta-surface-panel__content,
+  .aculta-surface-panel--spacing-spacious .aculta-surface-panel__footer,
+  .aculta-surface-panel--spacing-spacious .aculta-surface-panel__actions {
+    padding: var(--spacing-xl, 2rem);
+  }
+}

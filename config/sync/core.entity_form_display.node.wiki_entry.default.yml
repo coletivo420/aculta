@@ -15,12 +15,22 @@ dependencies:
   module:
     - link
     - path
-    - text
+    - text_with_summary
 id: node.wiki_entry.default
 targetEntityType: node
 bundle: wiki_entry
 mode: default
 content:
+  aculta_coauthors:
+    type: entity_reference_autocomplete_tags
+    weight: 17
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
   body:
     type: text_textarea_with_summary
     weight: 2
@@ -30,16 +40,6 @@ content:
       summary_rows: 3
       placeholder: ''
       show_summary: false
-    third_party_settings: {  }
-  co_authors:
-    type: entity_reference_autocomplete_tags
-    weight: 17
-    region: content
-    settings:
-      match_operator: CONTAINS
-      match_limit: 10
-      size: 60
-      placeholder: ''
     third_party_settings: {  }
   created:
     type: datetime_timestamp

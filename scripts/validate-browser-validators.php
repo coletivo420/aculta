@@ -1,13 +1,19 @@
 <?php
 
+/**
+ * @file
+ */
+
 declare(strict_types=1);
 
 /**
- * Gate for the browser validators (DT-T09): no DevTools port or site origin is hard-coded.
+ * Gate for the browser validators (DT-T09).
  *
- * Every scripts/*.mjs must read its endpoints through scripts/lib/browser-env.mjs, which
- * takes ACULTA_DEVTOOLS_PORT and ACULTA_SITE_ORIGIN from the environment. Run:
- *   php scripts/validate-browser-validators.php
+ * No DevTools port or site origin is hard-coded.
+ * Every scripts/*.mjs must read its endpoints through
+ * scripts/lib/browser-env.mjs, which takes ACULTA_DEVTOOLS_PORT and
+ * ACULTA_SITE_ORIGIN from the environment. Run:
+ *   php scripts/validate-browser-validators.php.
  */
 
 $root = dirname(__DIR__);
@@ -29,7 +35,8 @@ else {
   }
 }
 
-// Literal ports, localhost origins and the old 9223/8080 defaults must not appear in validators.
+// Literal ports, localhost origins and the old 9223/8080 defaults must not
+// appear in validators.
 $forbidden = '/localhost:\d{2,5}|127\.0\.0\.1:\d{2,5}|\b9223\b|\b9333\b/';
 foreach (glob($root . '/scripts/*.mjs') ?: [] as $file) {
   $checks++;

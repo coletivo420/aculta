@@ -19,7 +19,7 @@ use Drupal\Core\Session\UserSession;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\domain\DomainNegotiatorInterface;
 use Drupal\KernelTests\KernelTestBase;
 use PHPUnit\Framework\Attributes\Group;
@@ -46,6 +46,10 @@ final class ContentIndexRebuilderKernelTest extends KernelTestBase {
     'node',
     'aculta_index',
     'aculta_index_test',
+    'aculta_calendar',
+    'aculta_file_uploader',
+    'filter',
+    'file',
   ];
 
   /**
@@ -54,7 +58,7 @@ final class ContentIndexRebuilderKernelTest extends KernelTestBase {
   public function register(ContainerBuilder $container): void {
     parent::register($container);
     // Fixture providers do not use Domain-aware access policies.
-    $container->set('aculta_portal.domain_purpose', new DomainPurposeManager(
+    $container->set('aculta_portal.domain_site', new DomainSiteManager(
       $this->createMock(EntityTypeManagerInterface::class),
       $this->createMock(DomainNegotiatorInterface::class),
       $this->createMock(ConfigFactoryInterface::class),
@@ -132,16 +136,21 @@ final class ContentIndexRebuilderKernelTest extends KernelTestBase {
     $rebuilder = $this->container->get('aculta_index.rebuilder');
     $generationId = $rebuilder->start();
 
-    $first = $rebuilder->processNextBatch($generationId, 1);
-    $second = $rebuilder->processNextBatch($generationId, 1);
-    $last = $rebuilder->processNextBatch($generationId, 1);
+    $sampleBatches = [];
+    do {
+      $batch = $rebuilder->processNextBatch($generationId, 1);
+      if ($batch['provider_id'] === 'test_sample_content') {
+        $sampleBatches[] = $batch;
+      }
+    } while (!$batch['complete']);
 
-    $this->assertFalse($first['complete']);
-    $this->assertFalse($second['complete']);
-    $this->assertTrue($last['complete']);
-    $this->assertSame(1, $first['projected']);
-    $this->assertSame(1, $second['projected']);
-    $this->assertSame(0, $last['projected']);
+    $this->assertCount(3, $sampleBatches);
+    $this->assertFalse($sampleBatches[0]['complete']);
+    $this->assertFalse($sampleBatches[1]['complete']);
+    $this->assertTrue($sampleBatches[2]['complete']);
+    $this->assertSame(1, $sampleBatches[0]['projected']);
+    $this->assertSame(1, $sampleBatches[1]['projected']);
+    $this->assertSame(0, $sampleBatches[2]['projected']);
     $this->assertSame(2, (int) $this->container->get('database')->select('aculta_index_entry')
       ->condition('generation_id', $generationId)
       ->countQuery()
@@ -308,7 +317,11 @@ final class ContentIndexRebuilderKernelTest extends KernelTestBase {
   public function testActivationRejectsProviderInventoryDriftAfterValidation(): void {
     $rebuilder = $this->container->get('aculta_index.rebuilder');
     $generationId = $rebuilder->start();
-    $rebuilder->processNextBatch($generationId);
+    $complete = FALSE;
+    for ($batch = 0; $batch < 20 && !$complete; $batch++) {
+      $complete = $rebuilder->processNextBatch($generationId, 50)['complete'];
+    }
+    self::assertTrue($complete, 'The generation must finish before validation.');
     $rebuilder->validate($generationId);
     $this->container->get('database')->update('aculta_index_generation')
       ->fields(['provider_fingerprint' => str_repeat('0', 64)])
@@ -334,12 +347,16 @@ final class ContentIndexRebuilderKernelTest extends KernelTestBase {
     $generationId = trim($output->fetch());
     $this->assertNotSame('', $generationId);
 
-    $batchOutput = new BufferedOutput();
-    $this->assertSame(Command::SUCCESS, $command->run(new ArrayInput([
-      'action' => 'batch',
-      'generation-id' => $generationId,
-    ]), $batchOutput));
-    $this->assertStringContainsString('"complete":true', $batchOutput->fetch());
+    $complete = FALSE;
+    for ($batch = 0; $batch < 20 && !$complete; $batch++) {
+      $batchOutput = new BufferedOutput();
+      $this->assertSame(Command::SUCCESS, $command->run(new ArrayInput([
+        'action' => 'batch',
+        'generation-id' => $generationId,
+      ]), $batchOutput));
+      $complete = str_contains($batchOutput->fetch(), '"complete":true');
+    }
+    $this->assertTrue($complete, 'The empty generation must finish after all provider batches.');
 
     $validateOutput = new BufferedOutput();
     $this->assertSame(Command::SUCCESS, $command->run(new ArrayInput([
@@ -648,13 +665,13 @@ final class ContentIndexRebuilderKernelTest extends KernelTestBase {
     $this->assertSame(
       0,
       (int) $this->container->get('database')->select('aculta_index_entry', 'entry')
-      ->condition('generation_id', $generationId)
-      ->condition('provider_id', 'test_sample_content')
-      ->condition('entity_type', 'node')
-      ->condition('entity_id', (string) $node->id())
-      ->countQuery()
-      ->execute()
-      ->fetchField());
+        ->condition('generation_id', $generationId)
+        ->condition('provider_id', 'test_sample_content')
+        ->condition('entity_type', 'node')
+        ->condition('entity_id', (string) $node->id())
+        ->countQuery()
+        ->execute()
+        ->fetchField());
   }
 
   /**
@@ -683,7 +700,9 @@ final class ContentIndexRebuilderKernelTest extends KernelTestBase {
     $this->assertSame('relations', $state['phase']);
     $state = $checker->processAuditBatch(10);
     $this->assertSame('sources', $state['phase']);
-    $state = $checker->processAuditBatch(10);
+    while ($state['status'] === 'running') {
+      $state = $checker->processAuditBatch(10);
+    }
     $this->assertSame('complete', $state['status']);
     $this->assertSame(1, (int) $state['missing_catalog_entry_count']);
 
@@ -747,7 +766,15 @@ final class ContentIndexRebuilderKernelTest extends KernelTestBase {
     $this->assertSame('relations', $checker->processAuditBatch(10)['phase']);
     $sourcePhase = $checker->processAuditBatch(10);
     $this->assertSame('sources', $sourcePhase['phase']);
-    $this->assertSame('1', (string) $this->container->get('database')->select('aculta_index_audit', 'audit')
+    $database = $this->container->get('database');
+    while ((string) $database->select('aculta_index_audit', 'audit')
+      ->fields('audit', ['source_provider_cursor'])
+      ->condition('audit_id', 1)
+      ->execute()
+      ->fetchField() !== 'test_sample_content') {
+      $checker->processAuditBatch(10);
+    }
+    $this->assertSame('1', (string) $database->select('aculta_index_audit', 'audit')
       ->fields('audit', ['source_entity_max_id'])
       ->condition('audit_id', 1)
       ->execute()
@@ -756,14 +783,18 @@ final class ContentIndexRebuilderKernelTest extends KernelTestBase {
     // This ID is greater than the captured maximum for this provider/type.
     Node::create(['type' => 'sample_content', 'title' => 'Created after source window', 'status' => 1])->save();
     $firstCycle = $checker->processAuditBatch(10);
+    while ($firstCycle['status'] === 'running') {
+      $firstCycle = $checker->processAuditBatch(10);
+    }
     $this->assertSame('complete', $firstCycle['status']);
     $this->assertSame(0, (int) $firstCycle['missing_catalog_entry_count']);
 
     // The next daily cycle captures the new ceiling and discovers the source.
     $checker->startAudit();
-    $checker->processAuditBatch(10);
-    $checker->processAuditBatch(10);
-    $nextCycle = $checker->processAuditBatch(10);
+    $nextCycle = $checker->getAuditState();
+    while ($nextCycle['status'] === 'running') {
+      $nextCycle = $checker->processAuditBatch(10);
+    }
     $this->assertSame('complete', $nextCycle['status']);
     $this->assertSame(1, (int) $nextCycle['missing_catalog_entry_count']);
   }

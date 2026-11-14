@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_user\Hook;
 
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\aculta_portal\Render\PortalLinkElement;
 use Drupal\aculta_user\Account\AccountNames;
 use Drupal\aculta_user\Bio\AccountBioCard;
@@ -21,6 +22,8 @@ use Drupal\aculta_portal\Profile\PerfilDoPapel;
  */
 final class AccountDashboardHooks {
 
+  use \Drupal\Core\StringTranslation\StringTranslationTrait;
+
   public function __construct(
     #[Autowire(service: 'aculta_user.account_bio_card')]
     private readonly AccountBioCard $bioCard,
@@ -28,8 +31,8 @@ final class AccountDashboardHooks {
     private readonly SocialLinksCard $socialCard,
     #[Autowire(service: 'entity_type.manager')]
     private readonly EntityTypeManagerInterface $entityTypeManager,
-    #[Autowire(service: 'aculta_portal.domain_purpose')]
-    private readonly DomainPurposeManager $purposeManager,
+    #[Autowire(service: 'aculta_portal.domain_site')]
+    private readonly DomainSiteManager $siteManager,
   ) {}
 
   /**
@@ -54,7 +57,7 @@ final class AccountDashboardHooks {
     if ($publicSlug === NULL) {
       return [];
     }
-    $url = $this->purposeManager->routeUrl('main', 'aculta_user.perfil_publico', ['apelido' => $publicSlug]);
+    $url = $this->siteManager->routeUrl(SiteKey::Main, 'aculta_user.perfil_publico', ['apelido' => $publicSlug]);
     if ($url === NULL) {
       return [];
     }
@@ -66,9 +69,9 @@ final class AccountDashboardHooks {
       '#weight' => -10,
       '#cache' => ['tags' => $cache->getCacheTags()],
       'profile' => PortalLinkElement::build(
-        (string) t('Ver Perfil'),
+        (string) $this->t('Ver Perfil'),
         $url,
-        ['data-portal-ui' => 'account-view-profile', 'title' => (string) t('Abrir o perfil público')],
+        ['data-portal-ui' => 'account-view-profile', 'title' => (string) $this->t('Abrir o perfil público')],
       ),
     ];
   }

@@ -7,13 +7,17 @@ namespace Drupal\aculta_wiki\Hook;
 use Drupal\aculta_portal\Upload\UserUploadDialogBuilder;
 use Drupal\aculta_file_uploader\ConsumerUploadPolicy;
 use Drupal\aculta_file_uploader\RecentUploads;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\aculta_wiki\Service\WikiContributorWorkspace;
 use Drupal\aculta_wiki\Form\WikiEntryFormActions;
 use Drupal\aculta_wiki\Upload\WikiLeadImageUploader;
 use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Cache\Cache;
+use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Component\Utility\Html;
+use Drupal\Core\File\FileUrlGeneratorInterface;
+use Drupal\file\FileInterface;
 use Drupal\Core\Url;
 use Drupal\Core\Entity\ContentEntityFormInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -44,10 +48,11 @@ final class WikiEntryImageHooks {
     private readonly UserUploadDialogBuilder $dialogBuilder,
     private readonly WikiLeadImageUploader $uploader,
     private readonly WikiContributorWorkspace $workspace,
-    private readonly DomainPurposeManager $domainPurposes,
+    private readonly DomainSiteManager $siteManagers,
     private readonly AccountProxyInterface $currentUser,
     private readonly RouteProviderInterface $routeProvider,
     private readonly ?RecentUploads $recentUploads = NULL,
+    private readonly ?FileUrlGeneratorInterface $fileUrlGenerator = NULL,
   ) {
     $this->stringTranslation = $stringTranslation;
   }
@@ -213,12 +218,15 @@ final class WikiEntryImageHooks {
       }
       $form['actions']['submit']['#submit'] = $submitHandlers;
     }
-    $this->addReviewAction($form, $node);
+    if ($node instanceof NodeInterface) {
+      $this->addReviewAction($form, $node);
+    }
   }
 
   /**
    * Orders core fields and adds concise guidance for a new Wiki entry.
    */
+
   /**
    * Monta a prévia da imagem atual com a URL de query do core para arquivos privados.
    *
@@ -227,7 +235,7 @@ final class WikiEntryImageHooks {
    */
   private function previewMarkup(MediaInterface $media, string $alt): array {
     $file = $media->get('field_media_image')->entity;
-    if ($file === NULL) {
+    if (!$file instanceof FileInterface) {
       return ['#markup' => ''];
     }
     $uri = $file->getFileUri();
@@ -236,7 +244,7 @@ final class WikiEntryImageHooks {
       $src = Url::fromRoute('system.files', ['scheme' => 'private'], ['query' => ['file' => $relative]])->toString();
     }
     else {
-      $src = \Drupal::service('file_url_generator')->generateString($uri);
+      $src = $this->fileUrlGenerator?->generateString($uri) ?? '';
     }
     return ['#markup' => '<img src="' . Html::escape($src) . '" alt="' . Html::escape($alt) . '" class="img-fluid">'];
   }
@@ -252,6 +260,14 @@ final class WikiEntryImageHooks {
     return $relative === '' ? NULL : $relative;
   }
 
+  /**
+   * Ajusta os pesos dos campos do formulário de autoria.
+   *
+   * @param array $form
+   *   Estrutura do formulário, alterada no lugar.
+   * @param \Drupal\node\NodeInterface $node
+   *   Nó em edição.
+   */
   private function prepareAuthoringForm(array &$form, NodeInterface $node): void {
     $weights = [
       'title' => 0,
@@ -378,7 +394,7 @@ final class WikiEntryImageHooks {
       return NULL;
     }
     $targetId = $node->get(WikiLeadImageUploader::FIELD)->target_id;
-    return $targetId === NULL || $targetId === '' ? NULL : (int) $targetId;
+    return $targetId === '' ? NULL : (int) $targetId;
   }
 
   /**
@@ -393,21 +409,25 @@ final class WikiEntryImageHooks {
     }
 
     $access = $this->workspace->access($this->currentUser);
-    $url = $this->domainPurposes->routeUrl('wiki', 'aculta_studio.we_sativa');
+    $url = $this->siteManagers->routeUrl(SiteKey::Wiki, 'aculta_studio.we_sativa');
     if ($url === NULL) {
       return;
     }
 
     $form['wiki_workspace_return'] = [
-      '#type' => 'link',
-      '#title' => $this->t('Voltar para Meu Trabalho WE SATIVA'),
-      '#url' => $url,
+      '#type' => 'aculta_portal_button',
+      '#props' => [
+        'text' => (string) $this->t('Voltar para Meu Trabalho WE SATIVA'),
+        'url' => $url->toString(),
+        'variant' => 'secondary',
+      ],
       '#weight' => -100,
       '#access' => $access,
       '#attributes' => ['data-portal-ui' => 'wiki-workspace-return'],
     ];
-    $form['#cache']['contexts'] = Cache::mergeContexts($form['#cache']['contexts'] ?? [], $access->getCacheContexts());
-    $form['#cache']['tags'] = Cache::mergeTags($form['#cache']['tags'] ?? [], $access->getCacheTags());
+    $accessMetadata = CacheableMetadata::createFromObject($access);
+    $form['#cache']['contexts'] = Cache::mergeContexts($form['#cache']['contexts'] ?? [], $accessMetadata->getCacheContexts());
+    $form['#cache']['tags'] = Cache::mergeTags($form['#cache']['tags'] ?? [], $accessMetadata->getCacheTags());
   }
 
 }

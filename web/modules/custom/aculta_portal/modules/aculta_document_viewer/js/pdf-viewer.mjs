@@ -67,7 +67,7 @@ async function initialize(viewer) {
           const item = document.createElement('li');
           const button = document.createElement('button');
           button.type = 'button';
-          button.className = 'btn btn-outline-secondary d-inline-flex flex-column align-items-center';
+          button.className = 'button button--outline aculta-pdf-viewer__thumbnail-button';
           button.setAttribute('aria-label', `Abrir página ${pageNumber}`);
           const thumbnail = document.createElement('canvas');
           thumbnail.setAttribute('aria-hidden', 'true');

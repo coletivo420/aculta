@@ -107,7 +107,7 @@ final class PrivateMessageFormValidatorTest extends UnitTestCase {
     $thread->method('id')->willReturn('123');
     $freshThread = $this->createMock(PrivateMessageThreadInterface::class);
     $freshThread->method('id')->willReturn('123');
-    $freshThread->method('getMembersId')->willReturn([42, 84]);
+    $freshThread->method('getMemberIds')->willReturn([42, 84]);
     $freshThread->method('isMember')->with(42)->willReturn(TRUE);
     $freshThread->method('access')->with('view', self::isInstanceOf(UserInterface::class), TRUE)->willReturn(AccessResult::allowed());
     $storage = $this->createMock(EntityStorageInterface::class);
@@ -174,10 +174,10 @@ final class PrivateMessageFormValidatorTest extends UnitTestCase {
     $flood->expects(self::never())->method('register');
     $thread = $this->createMock(PrivateMessageThreadInterface::class);
     $thread->method('id')->willReturn('123');
-    $thread->method('getMembersId')->willReturn([42, 84]);
+    $thread->method('getMemberIds')->willReturn([42, 84]);
     $freshThread = $this->createMock(PrivateMessageThreadInterface::class);
     $freshThread->method('id')->willReturn('123');
-    $freshThread->method('getMembersId')->willReturn([42, 84]);
+    $freshThread->method('getMemberIds')->willReturn([42, 84]);
     $freshThread->method('isMember')->with(42)->willReturn(TRUE);
     $freshThread->method('access')->with('view', self::isInstanceOf(UserInterface::class), TRUE)->willReturn(AccessResult::allowed());
     $storage = $this->createMock(EntityStorageInterface::class);
@@ -415,7 +415,7 @@ final class PrivateMessageFormValidatorTest extends UnitTestCase {
     $currentUser = $this->createMock(AccountProxyInterface::class);
     $currentUser->method('id')->willReturn(42);
     $thread = $this->createMock(PrivateMessageThreadInterface::class);
-    $thread->method('getMembersId')->willReturn([42, 84]);
+    $thread->method('getMemberIds')->willReturn([42, 84]);
     $banManager = $this->createMock(PrivateMessageBanManagerInterface::class);
     $banManager->expects($this->once())
       ->method('isCurrentUserBannedByUser')
@@ -447,7 +447,7 @@ final class PrivateMessageFormValidatorTest extends UnitTestCase {
    */
   public function testFriendOnlyPreferenceDoesNotBlockRepliesToExistingThread(): void {
     $thread = $this->createMock(PrivateMessageThreadInterface::class);
-    $thread->method('getMembersId')->willReturn([42, 84]);
+    $thread->method('getMemberIds')->willReturn([42, 84]);
     $banManager = $this->createMock(PrivateMessageBanManagerInterface::class);
     $banManager->method('isBanned')->willReturn(FALSE);
     $banManager->method('isCurrentUserBannedByUser')->willReturn(FALSE);
@@ -486,7 +486,7 @@ final class PrivateMessageFormValidatorTest extends UnitTestCase {
    */
   public function testFriendOnlyPreferenceStillRestrictsNewThreads(): void {
     $thread = $this->createMock(PrivateMessageThreadInterface::class);
-    $thread->method('getMembersId')->willReturn([42, 84]);
+    $thread->method('getMemberIds')->willReturn([42, 84]);
     $currentUser = $this->createMock(AccountProxyInterface::class);
     $currentUser->method('id')->willReturn(42);
     $currentUser->method('hasRole')->willReturn(FALSE);
@@ -521,7 +521,7 @@ final class PrivateMessageFormValidatorTest extends UnitTestCase {
   public function testAdministratorAndEditorCanStartFriendOnlyConversations(): void {
     foreach (['administrator', 'content_editor'] as $staffRole) {
       $thread = $this->createMock(PrivateMessageThreadInterface::class);
-      $thread->method('getMembersId')->willReturn([42, 84]);
+      $thread->method('getMemberIds')->willReturn([42, 84]);
       $currentUser = $this->createMock(AccountProxyInterface::class);
       $currentUser->method('id')->willReturn(42);
       $currentUser->method('hasRole')->willReturnCallback(static fn(string $role): bool => $role === $staffRole);
@@ -556,7 +556,7 @@ final class PrivateMessageFormValidatorTest extends UnitTestCase {
    */
   public function testStaffCannotStartConversationWithMemberWhoBlockedThem(): void {
     $thread = $this->createMock(PrivateMessageThreadInterface::class);
-    $thread->method('getMembersId')->willReturn([42, 84]);
+    $thread->method('getMemberIds')->willReturn([42, 84]);
     $currentUser = $this->createMock(AccountProxyInterface::class);
     $currentUser->method('id')->willReturn(42);
     $currentUser->method('hasRole')->willReturn(TRUE);
@@ -594,7 +594,7 @@ final class PrivateMessageFormValidatorTest extends UnitTestCase {
    */
   public function testExistingValidationErrorSkipsRecipientLookup(): void {
     $thread = $this->createMock(PrivateMessageThreadInterface::class);
-    $thread->expects($this->never())->method('getMembersId');
+    $thread->expects($this->never())->method('getMemberIds');
     $banManager = $this->createMock(PrivateMessageBanManagerInterface::class);
     $banManager->expects($this->never())->method('isCurrentUserBannedByUser');
     $formState = $this->formState(TRUE);
@@ -659,7 +659,6 @@ final class PrivateMessageFormValidatorTest extends UnitTestCase {
    */
   private function formState(bool $hasErrors): FormStateInterface {
     $property = new \ReflectionProperty(FormState::class, 'anyErrors');
-    $property->setAccessible(TRUE);
     $property->setValue(NULL, $hasErrors);
     return new FormState();
   }

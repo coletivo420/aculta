@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_portal\Hook;
 
 use Drupal\Core\Hook\Attribute\Hook;
+use Drupal\Core\Template\Attribute;
 
 /**
  * Provides a semantic fallback for neutral portal components.
@@ -32,9 +33,13 @@ final class ComponentFallbackHooks {
     $slots = is_array($variables['slots'] ?? NULL) ? $variables['slots'] : [];
     $title = $props['title'] ?? NULL;
 
+    $attributes = $variables['attributes'] ?? [];
+    if ($attributes instanceof Attribute) {
+      $attributes = $attributes->toArray();
+    }
     $build = [
       '#type' => 'container',
-      '#attributes' => [],
+      '#attributes' => is_array($attributes) ? $attributes : [],
     ];
 
     switch ($name) {

@@ -6,8 +6,8 @@ aculta_forum.admin:
   requirements:
     _permission: 'access content overview'
 
-aculta_forum.topic_add:
-  path: '/criar-topico'
+aculta_forum.topic_composer:
+  path: '/discussoes/novo-topico'
   defaults:
     _entity_form: 'node.default'
     _title: 'Criar tópico'
@@ -17,6 +17,7 @@ aculta_forum.topic_add:
   requirements:
     _entity_create_access: 'node:{node_type}'
   options:
+    _htmx_route: TRUE
     parameters:
       node_type:
         type: 'entity:node_type'
@@ -134,6 +135,39 @@ aculta_forum.post_revision_history:
         type: 'entity:aculta_forum_post'
   methods: [GET, HEAD]
 
+aculta_forum.topic_deletion_queue:
+  path: '/painel-administrativo/forum/exclusoes-topicos'
+  defaults:
+    _controller: '\Drupal\aculta_forum\Controller\TopicDeletionQueueController::queue'
+    _title: 'Exclusões de tópicos aguardando moderação'
+  requirements:
+    _permission: 'moderate aculta forum topic deletions,administer nodes'
+  options:
+    _admin_route: TRUE
+  methods: [GET, HEAD]
+
+aculta_forum.topic_deletion_approve:
+  path: '/painel-administrativo/forum/exclusoes-topicos/{id}/aprovar'
+  defaults:
+    _controller: '\Drupal\aculta_forum\Controller\TopicDeletionQueueController::approve'
+  requirements:
+    _permission: 'moderate aculta forum topic deletions,administer nodes'
+    id: '\d+'
+  options:
+    _admin_route: TRUE
+  methods: [GET, HEAD, POST]
+
+aculta_forum.topic_deletion_reject:
+  path: '/painel-administrativo/forum/exclusoes-topicos/{id}/rejeitar'
+  defaults:
+    _controller: '\Drupal\aculta_forum\Controller\TopicDeletionQueueController::reject'
+  requirements:
+    _permission: 'moderate aculta forum topic deletions,administer nodes'
+    id: '\d+'
+  options:
+    _admin_route: TRUE
+  methods: [GET, HEAD, POST]
+
 aculta_forum.post_revision_compare:
   path: '/painel-administrativo/forum/publicacao/{aculta_forum_post}/revisoes/comparar/{left_revision}/{right_revision}'
   defaults:
@@ -152,20 +186,57 @@ aculta_forum.post_revision_compare:
         type: 'entity:aculta_forum_post'
   methods: [GET, HEAD]
 
-aculta_forum.post_create:
-  path: '/publicacao/nova'
+aculta_forum.discussion_composer:
+  path: '/discussoes/compositor/{entity_type}/{entity_id}'
   defaults:
-    _controller: 'aculta_forum.post_submission_controller:form'
+    _controller: 'aculta_forum.discussion_reply_controller:composer'
     _title: 'Responder à discussão'
   requirements:
-    _custom_access: 'aculta_forum.post_submission_access:access'
+    _custom_access: 'aculta_forum.discussion_reply_endpoint_access:access'
+  options:
+    _htmx_route: TRUE
+    _aculta_site_keys: [forum, magazine, courses, wiki]
   methods: [GET, HEAD, POST]
 
-aculta_forum.post_edit:
-  path: '/publicacao/editar'
+aculta_forum.reaction_react:
+  path: '/discussoes/reagir/{entity_type}/{entity_id}'
   defaults:
-    _controller: 'aculta_forum.post_edit_controller:edit'
-    _title: 'Editar publicação'
+    _controller: 'aculta_forum.discussion_reaction_controller:react'
+    _title: 'Reagir'
   requirements:
-    _custom_access: 'aculta_forum.post_public_edit_access:access'
-  methods: [GET, HEAD, POST]
+    _custom_access: 'aculta_forum.discussion_reaction_endpoint_access:access'
+    entity_type: 'comment|aculta_forum_post|node'
+    entity_id: '\d+'
+  options:
+    _htmx_route: TRUE
+    _aculta_site_keys: [forum, magazine, courses, wiki]
+  methods: [POST]
+
+aculta_forum.comment_delete:
+  path: '/discussoes/{comment}/excluir'
+  defaults:
+    _controller: 'Drupal\aculta_forum\Controller\DiscussionCommentDeleteController::delete'
+    _title: 'Excluir resposta'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+  options:
+    parameters:
+      comment:
+        type: 'entity:comment'
+    _aculta_site_keys: [forum, magazine, courses, wiki]
+  methods: [POST]
+
+aculta_forum.comment_moderation:
+  path: '/discussoes/{comment}/controles'
+  defaults:
+    _form: 'Drupal\aculta_forum\Form\DiscussionCommentModerationForm'
+    _title: 'Controles do comentário'
+  requirements:
+    _custom_access: 'aculta_forum.comment_moderation_access:access'
+  options:
+    parameters:
+      comment:
+        type: 'entity:comment'
+    _htmx_route: TRUE
+    _aculta_site_keys: [forum, magazine, courses, wiki]
+  methods: [GET, POST]

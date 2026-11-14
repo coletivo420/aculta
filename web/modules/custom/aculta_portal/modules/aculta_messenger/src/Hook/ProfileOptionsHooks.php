@@ -19,8 +19,11 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
- * The "Opções" box of a public profile (/u/): the same box as in a conversation, with "Iniciar conversa" in place of
- * "Limpar histórico". It replaces the profile's friendship button, because the box holds those actions.
+ * Caixa "Opções" do perfil público, com "Iniciar conversa".
+ *
+ * É a mesma caixa da conversa, com "Iniciar conversa" no lugar de "Limpar
+ * histórico". Substitui o botão de amizade do perfil, porque a caixa reúne
+ * essas ações.
  */
 final class ProfileOptionsHooks {
 
@@ -35,6 +38,14 @@ final class ProfileOptionsHooks {
     private readonly RequestStack $requestStack,
   ) {}
 
+  /**
+   * Troca o botão de amizade pela caixa de opções de mensagem.
+   *
+   * @param array $actions
+   *   Ações do perfil público.
+   * @param \Drupal\profile\Entity\ProfileInterface $profile
+   *   Perfil público exibido.
+   */
   #[Hook('aculta_user_public_profile_actions_alter')]
   public function alterActions(array &$actions, ProfileInterface $profile): void {
     if (!$this->currentUser->isAuthenticated()
@@ -43,13 +54,22 @@ final class ProfileOptionsHooks {
       return;
     }
     $owner = $profile->getOwner();
-    if (!$owner instanceof UserInterface || !$owner->isActive() || (int) $owner->id() === (int) $this->currentUser->id()) {
+    if (!$owner->isActive() || (int) $owner->id() === (int) $this->currentUser->id()) {
       return;
     }
     unset($actions['friendship']);
     $actions['messenger'] = $this->optionsBox($owner);
   }
 
+  /**
+   * Monta a caixa de opções para iniciar conversa com a pessoa.
+   *
+   * @param \Drupal\user\UserInterface $target
+   *   Conta de destino.
+   *
+   * @return array
+   *   Estrutura renderizável da caixa de opções.
+   */
   private function optionsBox(UserInterface $target): array {
     $returnPath = (string) $this->requestStack->getCurrentRequest()?->getPathInfo();
     $postUrl = Url::fromRoute('aculta_messenger.profile_relationship', ['user' => $target->id()])->toString();

@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Instalação e atualização do módulo aculta_portal.
+ */
+
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\profile\Entity\ProfileType;
@@ -36,7 +41,69 @@ function aculta_portal_install(): void {
         'entity_type' => 'profile',
         'type' => $type,
         'cardinality' => 1,
-        'settings' => $type === 'string' ? ['max_length' => $length, 'is_ascii' => FALSE, 'case_sensitive' => FALSE] : ['allowed_values' => array_combine(['AC','AL','AP','AM','BA','CE','DF','ES','GO','MA','MT','MS','MG','PA','PB','PR','PE','PI','RJ','RN','RS','RO','RR','SC','SP','SE','TO'], ['AC','AL','AP','AM','BA','CE','DF','ES','GO','MA','MT','MS','MG','PA','PB','PR','PE','PI','RJ','RN','RS','RO','RR','SC','SP','SE','TO'])],
+        'settings' => $type === 'string' ? [
+          'max_length' => $length,
+          'is_ascii' => FALSE,
+          'case_sensitive' => FALSE,
+        ] : [
+          'allowed_values' => array_combine([
+            'AC',
+            'AL',
+            'AP',
+            'AM',
+            'BA',
+            'CE',
+            'DF',
+            'ES',
+            'GO',
+            'MA',
+            'MT',
+            'MS',
+            'MG',
+            'PA',
+            'PB',
+            'PR',
+            'PE',
+            'PI',
+            'RJ',
+            'RN',
+            'RS',
+            'RO',
+            'RR',
+            'SC',
+            'SP',
+            'SE',
+            'TO',
+          ], [
+            'AC',
+            'AL',
+            'AP',
+            'AM',
+            'BA',
+            'CE',
+            'DF',
+            'ES',
+            'GO',
+            'MA',
+            'MT',
+            'MS',
+            'MG',
+            'PA',
+            'PB',
+            'PR',
+            'PE',
+            'PI',
+            'RJ',
+            'RN',
+            'RS',
+            'RO',
+            'RR',
+            'SC',
+            'SP',
+            'SE',
+            'TO',
+          ]),
+        ],
       ]);
       $storage->save();
     }
@@ -63,7 +130,10 @@ function aculta_portal_install(): void {
     ]);
   }
   foreach (array_keys($definitions) as $weight => $name) {
-    $form_display->setComponent($name, ['type' => $name === 'field_state' ? 'options_select' : 'string_textfield', 'weight' => $weight]);
+    $form_display->setComponent($name, [
+      'type' => $name === 'field_state' ? 'options_select' : 'string_textfield',
+      'weight' => $weight,
+    ]);
   }
   $form_display->save();
 
@@ -77,13 +147,22 @@ function aculta_portal_install(): void {
     ]);
   }
   foreach (array_keys($definitions) as $weight => $name) {
-    $view_display->setComponent($name, ['label' => 'hidden', 'type' => $name === 'field_state' ? 'list_default' : 'string', 'weight' => $weight]);
+    $view_display->setComponent($name, [
+      'label' => 'hidden',
+      'type' => $name === 'field_state' ? 'list_default' : 'string',
+      'weight' => $weight,
+    ]);
   }
   $view_display->save();
 
   $role = \Drupal\user\Entity\Role::load('authenticated');
   if ($role) {
-    foreach (['access aculta portal', 'create participante profile', 'update own participante profile', 'view own participante profile'] as $permission) {
+    foreach ([
+      'access aculta portal',
+      'create participante profile',
+      'update own participante profile',
+      'view own participante profile',
+    ] as $permission) {
       $role->grantPermission($permission);
     }
     $role->save();
@@ -96,7 +175,12 @@ function aculta_portal_install(): void {
 function aculta_portal_update_11001(): string {
   $role = \Drupal\user\Entity\Role::load('authenticated');
   if ($role) {
-    foreach (['access aculta portal', 'create participante profile', 'update own participante profile', 'view own participante profile'] as $permission) {
+    foreach ([
+      'access aculta portal',
+      'create participante profile',
+      'update own participante profile',
+      'view own participante profile',
+    ] as $permission) {
       $role->grantPermission($permission);
     }
     $role->save();
@@ -147,7 +231,11 @@ function aculta_portal_update_11003(): string {
   $profile_display = $form_displays->load('profile.participante.default');
   if ($profile_display) {
     $profile_display->setComponent('field_nickname', ['type' => 'string_textfield', 'weight' => -1]);
-    $profile_display->setComponent('field_address', ['type' => 'address_default', 'weight' => 20, 'settings' => ['wrapper_type' => 'details']]);
+    $profile_display->setComponent('field_address', [
+      'type' => 'address_default',
+      'weight' => 20,
+      'settings' => ['wrapper_type' => 'details'],
+    ]);
     $profile_display->save();
   }
   $profile_view = \Drupal::entityTypeManager()->getStorage('entity_view_display')->load('profile.participante.default');
@@ -182,8 +270,16 @@ function aculta_portal_update_11003(): string {
   $avatarStyle = $render->styleId('avatar');
   if ($render->styleEntity('avatar') === NULL) {
     $style = \Drupal\image\Entity\ImageStyle::create(['name' => $avatarStyle, 'label' => 'Avatar institucional ACULTA']);
-    $style->addImageEffect(['id' => 'crop_crop', 'weight' => 0, 'data' => ['crop_type' => 'aculta_avatar_1x1', 'automatic_crop_provider' => NULL]]);
-    $style->addImageEffect(['id' => 'image_scale', 'weight' => 1, 'data' => ['width' => 256, 'height' => 256, 'upscale' => FALSE]]);
+    $style->addImageEffect([
+      'id' => 'crop_crop',
+      'weight' => 0,
+      'data' => ['crop_type' => 'aculta_avatar_1x1', 'automatic_crop_provider' => NULL],
+    ]);
+    $style->addImageEffect([
+      'id' => 'image_scale',
+      'weight' => 1,
+      'data' => ['width' => 256, 'height' => 256, 'upscale' => FALSE],
+    ]);
     $style->save();
   }
 
@@ -207,7 +303,15 @@ function aculta_portal_update_11003(): string {
   }
   $user_view_display = \Drupal::entityTypeManager()->getStorage('entity_view_display')->load('user.user.default');
   if ($user_view_display) {
-    $user_view_display->setComponent('user_picture', ['type' => 'image', 'label' => 'hidden', 'settings' => $render->displaySettings('avatar') + ['image_link' => '', 'image_loading' => ['attribute' => 'lazy']], 'weight' => 0]);
+    $user_view_display->setComponent('user_picture', [
+      'type' => 'image',
+      'label' => 'hidden',
+      'settings' => $render->displaySettings('avatar') + [
+        'image_link' => '',
+        'image_loading' => ['attribute' => 'lazy'],
+      ],
+      'weight' => 0,
+    ]);
     $user_view_display->save();
   }
 
@@ -232,7 +336,11 @@ function aculta_portal_update_11004(): string {
         'description' => 'Environment-backed value; no credential is stored in exported configuration.',
         'key_type' => $type,
         'key_provider' => 'env',
-        'key_provider_settings' => ['env_variable' => $environment_variable, 'strip_line_breaks' => TRUE, 'base64_encoded' => FALSE],
+        'key_provider_settings' => [
+          'env_variable' => $environment_variable,
+          'strip_line_breaks' => TRUE,
+          'base64_encoded' => FALSE,
+        ],
         'key_input' => 'none',
       ])->save();
     }
@@ -240,8 +348,18 @@ function aculta_portal_update_11004(): string {
 
   $override_storage = \Drupal::entityTypeManager()->getStorage('key_config_override');
   $overrides = [
-    'google_client_id' => ['Google OAuth client ID', 'social_auth_google.settings', 'client_id', 'google_oauth_client_id'],
-    'google_client_secret' => ['Google OAuth client secret', 'social_auth_google.settings', 'client_secret', 'google_oauth_client_secret'],
+    'google_client_id' => [
+      'Google OAuth client ID',
+      'social_auth_google.settings',
+      'client_id',
+      'google_oauth_client_id',
+    ],
+    'google_client_secret' => [
+      'Google OAuth client secret',
+      'social_auth_google.settings',
+      'client_secret',
+      'google_oauth_client_secret',
+    ],
   ];
   foreach ($overrides as $id => [$label, $config_name, $config_item, $key_id]) {
     if (!$override_storage->load($id)) {
@@ -432,7 +550,10 @@ function aculta_portal_update_11008(&$sandbox): string {
       $storage->delete();
     }
   }
-  foreach (['entity_form_display' => ['profile.participante.default'], 'entity_view_display' => ['profile.participante.default']] as $entity_type => $ids) {
+  foreach ([
+    'entity_form_display' => ['profile.participante.default'],
+    'entity_view_display' => ['profile.participante.default'],
+  ] as $entity_type => $ids) {
     foreach ($ids as $id) {
       $display = \Drupal::entityTypeManager()->getStorage($entity_type)->load($id);
       if (!$display) {
@@ -521,4 +642,78 @@ function aculta_portal_update_11009(): string {
     $updated['basic_html'] ?? 0,
     $updated['full_html'] ?? 0,
   );
+}
+
+/**
+ * Migrates Group revision authors from the legacy field to revision_uid.
+ *
+ * Group revision rows use a shared table without a bundle column, so the
+ * migration uses the Schema API and verifies copied authors before removing
+ * the legacy column and installed-definition metadata.
+ */
+function aculta_portal_update_11010(): string {
+  $entity_type_id = 'group';
+  $table = 'groups_revision';
+  $manager = \Drupal::entityDefinitionUpdateManager();
+  $field_manager = \Drupal::service('entity_field.manager');
+  $database = \Drupal::database();
+  $schema = $database->schema();
+  $installed_schema = \Drupal::service('entity.last_installed_schema.repository');
+  $deleted_fields = \Drupal::service('entity_field.deleted_fields_repository');
+
+  $new_definition = $field_manager->getBaseFieldDefinitions($entity_type_id)['revision_uid'] ?? NULL;
+  if ($new_definition === NULL) {
+    throw new \Drupal\Core\Utility\UpdateException('The current Group revision_uid field definition is unavailable.');
+  }
+  $old_definition = $manager->getFieldStorageDefinition('revision_user', $entity_type_id);
+  $new_installed_definition = $manager->getFieldStorageDefinition('revision_uid', $entity_type_id);
+  if ($new_installed_definition === NULL) {
+    $manager->installFieldStorageDefinition('revision_uid', $entity_type_id, 'group', $new_definition);
+  }
+
+  // Group's shared revision table has no bundle column. Core's generic field
+  // deletion path assumes one while archiving a removed base field, so create
+  // and migrate the replacement column directly through the Schema API.
+  if (!$schema->tableExists($table)) {
+    throw new \Drupal\Core\Utility\UpdateException('The Group revision table is unavailable.');
+  }
+  if (!$schema->fieldExists($table, 'revision_uid')) {
+    $field_schema = $new_definition->getSchema();
+    $column = $field_schema['columns']['target_id'] ?? NULL;
+    if ($column === NULL) {
+      throw new \Drupal\Core\Utility\UpdateException('The Group revision_uid column schema is unavailable.');
+    }
+    $schema->addField($table, 'revision_uid', $column);
+    $schema->addIndex($table, 'revision_uid', ['revision_uid'], ['fields' => ['revision_uid' => $column]]);
+  }
+
+  $migrated = 0;
+  if ($schema->fieldExists($table, 'revision_user')) {
+    $conflicts = (int) $database->query("SELECT COUNT(*) FROM {{$table}} WHERE revision_user IS NOT NULL AND revision_uid IS NOT NULL AND revision_user <> revision_uid")->fetchField();
+    if ($conflicts !== 0) {
+      throw new \Drupal\Core\Utility\UpdateException('Group revision authors conflict between revision_user and revision_uid; the legacy field was retained.');
+    }
+    $migrated = (int) $database->query("SELECT COUNT(*) FROM {{$table}} WHERE revision_user IS NOT NULL")->fetchField();
+    $database->query("UPDATE {{$table}} SET revision_uid = revision_user WHERE revision_user IS NOT NULL AND revision_uid IS NULL");
+    $unmatched = (int) $database->query("SELECT COUNT(*) FROM {{$table}} WHERE revision_user IS NOT NULL AND (revision_uid IS NULL OR revision_uid <> revision_user)")->fetchField();
+    if ($unmatched !== 0) {
+      throw new \Drupal\Core\Utility\UpdateException('Group revision authors could not be copied without conflicts; the legacy field was retained.');
+    }
+    $schema->dropField($table, 'revision_user');
+  }
+
+  // Synchronize installed-definition metadata without invoking Core's generic
+  // delete-field archival, which cannot infer a bundle for groups_revision.
+  if ($old_definition !== NULL) {
+    $installed_schema->deleteLastInstalledFieldStorageDefinition($old_definition);
+    $deleted_fields->removeFieldStorageDefinition($old_definition);
+  }
+  foreach ($deleted_fields->getFieldDefinitions() as $deleted_definition) {
+    if ($deleted_definition->getTargetEntityTypeId() === $entity_type_id && $deleted_definition->getName() === 'revision_user') {
+      $deleted_fields->removeFieldDefinition($deleted_definition);
+    }
+  }
+  \Drupal::service('entity_field.manager')->clearCachedFieldDefinitions();
+
+  return sprintf('Installed Group revision_uid, migrated %d revision author value(s), and removed the obsolete revision_user column.', $migrated);
 }

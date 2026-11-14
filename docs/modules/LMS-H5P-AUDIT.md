@@ -2,7 +2,7 @@
 
 > **Snapshot histórico, anterior à conclusão da F10.** As pendências abaixo
 > registram etapas intermediárias da auditoria e não descrevem o estado atual.
-> A F10 foi concluída e homologada no Runtime de teste; consulte o
+> A F10 foi concluída e homologada no Runtime de desenvolvimento; consulte o
 > [README atual do módulo](../../web/modules/custom/aculta_portal/modules/aculta_lms_h5p/README.md)
 > e seu [changelog](../../web/modules/custom/aculta_portal/modules/aculta_lms_h5p/CHANGELOG.md)
 > para testes e limites vigentes. O escopo de integração com imagem, PDF e
@@ -11,7 +11,7 @@
 
 ## Estado verificado — 2026-10-21
 
-- A F10 continua homologada ponta a ponta no Runtime de teste conforme o
+- A F10 continua homologada ponta a ponta no Runtime de desenvolvimento conforme o
   histórico abaixo. No estado atual, o módulo está habilitado e só há a
   biblioteca preexistente `H5P.HelloWorld` (`embed_types=iframe`); não há
   conteúdo H5P nem tópico de Fórum associado. O player atual exige conteúdo
@@ -44,7 +44,7 @@ Composer. O código de integração foi copiado para o submódulo próprio
 pacotes `h5p/h5p-core` e `h5p/h5p-editor` permanecem como motor PHP Composer;
 o editor continua sujeito a um patch Composer de bloqueio de tipos restritos.
 
-O fork está habilitado no Runtime de testes. A rota `/h5p/{id}/embed` foi removida e o formatter
+O fork está habilitado no Runtime de desenvolvimentos. A rota `/h5p/{id}/embed` foi removida e o formatter
 recusa conteúdo que dependa de iframe independente. O armazenamento do player
 usa `private://`; conteúdo é servido por rota que confere matrícula/`takeAccess`
 e relação da atividade com o curso. Bibliotecas instaladas usam rota restrita
@@ -56,7 +56,7 @@ outras mídias usam os limites PHP do Drupal e a allowlist H5P. Os arquivos fica
 privados e seus usos são rastreados pelo File API. Administradores podem instalar
 pacotes `.h5p` locais pelo validador oficial, ignorando conteúdo e mantendo os
 assets privados gerenciados; instalação pelo Hub e descoberta remota continuam
-indisponíveis. O módulo está habilitado somente no Runtime de testes. O editor
+indisponíveis. O módulo está habilitado somente no Runtime de desenvolvimentos. O editor
 visual e o carregamento de semântica passaram por smoke test; salvamento completo
 e reprodução ainda dependem de validar um curso com aula, e a auditoria das APIs
 legadas continua aberta.
@@ -118,9 +118,9 @@ teste de isolamento antes de considerar o módulo apto a cursos privados.
    privada de estado do estudante e salvamento do resultado pelo endpoint real.
    Ainda falta verificar conteúdo Div no navegador, continuidade de tentativas
    entre sessões, CSP final, execução de biblioteca instalada e limpeza/remoção
-   de mídia. A habilitação registrada abaixo é apenas no Runtime de testes.
+   de mídia. A habilitação registrada abaixo é apenas no Runtime de desenvolvimentos.
 5. Não converter scores em notas LMS sem contrato autenticado e auditável.
-6. O módulo foi habilitado no Runtime de testes após inspeção do estado; a
+6. O módulo foi habilitado no Runtime de desenvolvimentos após inspeção do estado; a
    instalação criou schema e configuração H5P. Produção não foi alterada. Antes
    de qualquer habilitação em produção, exigir backup, plano de reversão e
    validação visual/fim a fim no host de cursos.

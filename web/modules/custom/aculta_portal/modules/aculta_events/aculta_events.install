@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * Instalação e atualização do módulo aculta_events.
+ *
+ * @file
+ */
+
 declare(strict_types=1);
 
 /**
@@ -14,6 +20,9 @@ declare(strict_types=1);
  */
 
 
+use Drupal\aculta_events\Entity\Event;
+use Drupal\Core\Entity\EntityDefinitionUpdateManagerInterface;
+use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\taxonomy\Entity\Vocabulary;
 
@@ -112,7 +121,7 @@ function _aculta_events_instala_campos_f3(): array {
     if ($registrado !== NULL) {
       $gerenciador->uninstallFieldStorageDefinition($registrado);
     }
-    $gerenciador->installFieldStorageDefinition($campo, 'aculta_event', 'aculta_events', $definicao);
+    _aculta_events_install_storage_definition($gerenciador, $campo, 'aculta_event', $definicao);
     $instalados[] = $campo;
   }
   return $instalados;
@@ -189,7 +198,7 @@ function _aculta_events_instala_local(): array {
     if ($definicao === NULL) {
       throw new \RuntimeException("$campo não está declarado em aculta_event_location.");
     }
-    $gerenciador->installFieldStorageDefinition($campo, 'aculta_event_location', 'aculta_events', $definicao);
+    _aculta_events_install_storage_definition($gerenciador, $campo, 'aculta_event_location', $definicao);
     $instalados[] = $campo;
   }
   return $instalados;
@@ -220,7 +229,7 @@ function aculta_events_update_10004(): string {
     if ($definition === NULL) {
       throw new \RuntimeException("$field_name não está declarado em aculta_event_date.");
     }
-    $manager->installFieldStorageDefinition($field_name, 'aculta_event_date', 'aculta_events', $definition);
+    _aculta_events_install_storage_definition($manager, $field_name, 'aculta_event_date', $definition);
     $installed[] = $field_name;
   }
 
@@ -247,7 +256,7 @@ function aculta_events_update_10005(): string {
     if ($definition === NULL) {
       throw new \RuntimeException("$fieldName não está declarado em aculta_event.");
     }
-    $manager->installFieldStorageDefinition($fieldName, 'aculta_event', 'aculta_events', $definition);
+    _aculta_events_install_storage_definition($manager, $fieldName, 'aculta_event', $definition);
     $installed[] = "aculta_event.$fieldName";
   }
 
@@ -261,7 +270,7 @@ function aculta_events_update_10005(): string {
     if ($definition === NULL) {
       throw new \RuntimeException("$fieldName não está declarado em aculta_event_date.");
     }
-    $manager->installFieldStorageDefinition($fieldName, 'aculta_event_date', 'aculta_events', $definition);
+    _aculta_events_install_storage_definition($manager, $fieldName, 'aculta_event_date', $definition);
     $installed[] = "aculta_event_date.$fieldName";
   }
 
@@ -280,14 +289,14 @@ function aculta_events_update_10006(): string {
 
   $eventDefs = $fieldManager->getBaseFieldDefinitions('aculta_event');
   if ($manager->getFieldStorageDefinition('field_allow_claiming', 'aculta_event') === NULL) {
-    $manager->installFieldStorageDefinition('field_allow_claiming', 'aculta_event', 'aculta_events', $eventDefs['field_allow_claiming']);
+    _aculta_events_install_storage_definition($manager, 'field_allow_claiming', 'aculta_event', $eventDefs['field_allow_claiming']);
     $installed[] = 'aculta_event.field_allow_claiming';
   }
 
   $locDefs = $fieldManager->getBaseFieldDefinitions('aculta_event_location');
   foreach (['field_allow_claiming', 'field_organizador'] as $fieldName) {
     if ($manager->getFieldStorageDefinition($fieldName, 'aculta_event_location') === NULL) {
-      $manager->installFieldStorageDefinition($fieldName, 'aculta_event_location', 'aculta_events', $locDefs[$fieldName]);
+      _aculta_events_install_storage_definition($manager, $fieldName, 'aculta_event_location', $locDefs[$fieldName]);
       $installed[] = "aculta_event_location.$fieldName";
     }
   }
@@ -310,7 +319,7 @@ function aculta_events_update_10007(): string {
     if ($manager->getFieldStorageDefinition($fieldName, 'aculta_event_location') === NULL) {
       $definition = $locDefs[$fieldName] ?? NULL;
       if ($definition !== NULL) {
-        $manager->installFieldStorageDefinition($fieldName, 'aculta_event_location', 'aculta_events', $definition);
+        _aculta_events_install_storage_definition($manager, $fieldName, 'aculta_event_location', $definition);
         $installed[] = "aculta_event_location.$fieldName";
       }
     }
@@ -444,7 +453,7 @@ function aculta_events_update_10011(): string {
     throw new \RuntimeException('field_peso não está declarado em aculta_event_date.');
   }
 
-  $manager->installFieldStorageDefinition('field_peso', 'aculta_event_date', 'aculta_events', $definition);
+  _aculta_events_install_storage_definition($manager, 'field_peso', 'aculta_event_date', $definition);
   return 'Campo field_peso instalado em aculta_event_date.';
 }
 
@@ -481,13 +490,13 @@ function aculta_events_update_10013(): string {
     $updateManager->installEntityType($entityType);
   }
 
-  $eventFields = \Drupal\aculta_events\Entity\Event::baseFieldDefinitions(
+  $eventFields = Event::baseFieldDefinitions(
     $entityTypeManager->getDefinition('aculta_event')
   );
 
   foreach (['field_organizacao', 'field_coorganizadores'] as $fieldName) {
     if ($updateManager->getFieldStorageDefinition($fieldName, 'aculta_event') === NULL && isset($eventFields[$fieldName])) {
-      $updateManager->installFieldStorageDefinition($fieldName, 'aculta_event', 'aculta_events', $eventFields[$fieldName]);
+      _aculta_events_install_storage_definition($updateManager, $fieldName, 'aculta_event', $eventFields[$fieldName]);
     }
   }
 
@@ -542,7 +551,7 @@ function aculta_events_update_10015(): string {
       if (!isset($definitions[$fieldName])) {
         throw new \RuntimeException(sprintf('Campo D-60 %s não está declarado em %s.', $fieldName, $entityTypeId));
       }
-      $updateManager->installFieldStorageDefinition($fieldName, $entityTypeId, 'aculta_events', $definitions[$fieldName]);
+      _aculta_events_install_storage_definition($updateManager, $fieldName, $entityTypeId, $definitions[$fieldName]);
       $instalados[] = $entityTypeId . '.' . $fieldName;
     }
   }
@@ -564,4 +573,14 @@ function aculta_events_update_10016(): string {
   $definition = \Drupal::entityTypeManager()->getDefinition('aculta_event_org_suggestion');
   $updateManager->installEntityType($definition);
   return 'Entidade de sugestões de organizações instalada; alterações públicas aguardam aprovação administrativa.';
+}
+
+/**
+ * Installs a field storage definition after validating its declared type.
+ */
+function _aculta_events_install_storage_definition(EntityDefinitionUpdateManagerInterface $manager, string $fieldName, string $entityTypeId, mixed $definition): void {
+  if (!$definition instanceof FieldStorageDefinitionInterface) {
+    throw new \RuntimeException(sprintf('Campo %s não possui definição de armazenamento instalável.', $fieldName));
+  }
+  _aculta_events_install_storage_definition($manager, $fieldName, $entityTypeId, $definition);
 }

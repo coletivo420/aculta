@@ -9,7 +9,8 @@ use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\file\FileUsage\FileUsageInterface;
 
-/** Catálogo configurável de critérios fechados; User preserva definições e fatos. */
+/**
+ * Catálogo configurável de critérios fechados; User preserva definições e fatos. */
 final class AchievementDefinitions {
 
   public const TRIGGERS = [
@@ -29,6 +30,12 @@ final class AchievementDefinitions {
     private readonly FileUsageInterface $fileUsage,
   ) {}
 
+  /**
+   * Retorna todas as conquistas, combinando padrões e configuração.
+   *
+   * @return array<string, array<string, mixed>>
+   *   Definições de conquistas indexadas pelo identificador.
+   */
   public function all(): array {
     $defaults = [];
     $triggers = [
@@ -41,12 +48,28 @@ final class AchievementDefinitions {
       BadgeCatalog::PERFIL_BASICO => ['profile_basic'],
     ];
     $legacy = [
-      BadgeCatalog::FUNDADORE => ['Reconhece quem participou da criação da Associação Cultural Antiproibicionista e da construção inicial do Coletivo 420.', 'fundadore'],
-      BadgeCatalog::ASSOCIADO => ['Reconhecimento da participação na categoria Membro Antiproibicionista do Coletivo 420.', 'associado'],
-      BadgeCatalog::APOIADOR => ['Reconhece o apoio e a participação nas atividades e nos ideais do Coletivo 420.', 'apoiador'],
+      BadgeCatalog::FUNDADORE => [
+        'Reconhece quem participou da criação da Associação Cultural Antiproibicionista e da construção inicial do Coletivo 420.',
+        'fundadore',
+      ],
+      BadgeCatalog::ASSOCIADO => [
+        'Reconhecimento da participação na categoria Membro Antiproibicionista do Coletivo 420.',
+        'associado',
+      ],
+      BadgeCatalog::APOIADOR => [
+        'Reconhece o apoio e a participação nas atividades e nos ideais do Coletivo 420.',
+        'apoiador',
+      ],
     ];
     foreach (BadgeCatalog::all() as $id => $definition) {
-      $defaults[$id] = $definition + ['description' => $legacy[$id][0] ?? '', 'enabled' => TRUE, 'triggers' => $triggers[$id], 'criterion_version' => 1, 'image' => $legacy[$id][1] ?? '', 'image_uuid' => ''];
+      $defaults[$id] = $definition + [
+        'description' => $legacy[$id][0] ?? '',
+        'enabled' => TRUE,
+        'triggers' => $triggers[$id],
+        'criterion_version' => 1,
+        'image' => $legacy[$id][1] ?? '',
+        'image_uuid' => '',
+      ];
     }
     foreach ($this->configs->get('aculta_user.achievement_definitions')->get('definitions') ?? [] as $id => $definition) {
       if (!preg_match('/^[a-z][a-z0-9_]{2,63}$/D', (string) $id) || !is_array($definition) || empty($definition['label'])) {
@@ -59,7 +82,8 @@ final class AchievementDefinitions {
     return $defaults;
   }
 
-  /** Salva um item sem sobrescrever edições concorrentes dos demais. */
+  /**
+   * Salva um item sem sobrescrever edições concorrentes dos demais. */
   public function save(string $id, array $definition): void {
     if (!preg_match('/^[a-z][a-z0-9_]{2,63}$/D', $id) || trim((string) ($definition['label'] ?? '')) === '') {
       throw new \InvalidArgumentException('Identificador ou nome de conquista inválido.');
@@ -107,7 +131,11 @@ final class AchievementDefinitions {
         'enabled' => !empty($definition['enabled']),
         'triggers' => $triggers,
         'criterion_version' => $version,
-        'image' => !empty($definition['remove_image']) ? '' : (in_array($definition['image'] ?? $previous['image'] ?? '', ['fundadore', 'associado', 'apoiador'], TRUE) ? ($definition['image'] ?? $previous['image']) : ''),
+        'image' => !empty($definition['remove_image']) ? '' : (in_array($definition['image'] ?? $previous['image'] ?? '', [
+          'fundadore',
+          'associado',
+          'apoiador',
+        ], TRUE) ? ($definition['image'] ?? $previous['image']) : ''),
         'image_uuid' => $imageUuid,
       ])->save();
       if ($imageChanged && $oldFile) {
@@ -125,7 +153,8 @@ final class AchievementDefinitions {
     }
   }
 
-  /** Detach the image and delete its managed file when it has no other usage. */
+  /**
+   * Detach the image and delete its managed file when it has no other usage. */
   public function removeImage(string $id): void {
     $definition = $this->all()[$id] ?? NULL;
     if ($definition === NULL) {

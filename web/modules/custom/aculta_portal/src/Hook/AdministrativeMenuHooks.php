@@ -14,14 +14,17 @@ use Drupal\Core\Hook\Attribute\Hook;
  */
 final class AdministrativeMenuHooks {
 
-  /** Itens do menu desativados por duplicarem uma aba de Pessoas. */
+  /**
+   * Itens do menu desativados por duplicarem uma aba de Pessoas. */
   private const DUPLICADOS = [
     'entity.profile_type.collection',
   ];
 
   /**
-   * Itens de Configurações > Pessoas que viram abas da própria página (ver aculta_portal.links.task.yml). Saem da lista
-   * da página para que cada ferramenta tenha um único nome.
+   * Itens de Configurações > Pessoas que viram abas da própria página.
+   *
+   * Ver aculta_portal.links.task.yml. Saem da lista da página para que cada
+   * ferramenta tenha um único nome.
    */
   private const EM_ABAS = [
     'aculta_portal.config_papeis_e_perfis',
@@ -34,6 +37,12 @@ final class AdministrativeMenuHooks {
     'entity.user.admin_form',
   ];
 
+  /**
+   * Desativa itens de menu que duplicam uma aba de Pessoas.
+   *
+   * @param array $links
+   *   Links descobertos, indexados pelo ID.
+   */
   #[Hook('menu_links_discovered_alter')]
   public function menuLinksDiscoveredAlter(array &$links): void {
     foreach (array_merge(self::DUPLICADOS, self::EM_ABAS) as $id) {

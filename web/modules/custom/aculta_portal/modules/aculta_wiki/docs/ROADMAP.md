@@ -57,7 +57,7 @@ update autorizado 10001 foram aplicados; as rotas WE SATIVA existem e as quatro
 tabelas da entidade de proposta foram instaladas. Em dev.117 o Index foi
 construído, validado, ativado e auditado; Firefox ESR/X11 passou público
 130/130, WE SATIVA 34/34, moderação 22/22, teclado 49/49 e sem-JS 16/16 no
-ACULTA420, e o equivalente em Olivero (130/130, 31/31, 20/20, 50/50, 16/16).
+ACULTA420,.
 Modo escuro confirmado e restaurado. Leitor de tela, WCAG 2.2 AA completa e zoom
 real do navegador seguem pendentes, assim como a divergência RBAC das permissões
 de proposta no Runtime. `/wiki` é caminho interno da raiz Wiki e responde 404
@@ -111,7 +111,7 @@ verbete deixou de retornar 500 ao mesclar os contextos de cache do hook de
 contribuição e passou a titular o `h1` a partir de `node.label`; as 6 URLs
 publicadas retornam 200 e o smoke público fechou **130/130** em oito larguras.
 O Index foi habilitado no Runtime, com geração validada, auditada sem órfãos e
-consulta pública sem expor rascunho ou autoria. Olivero, modo escuro e o
+consulta pública sem expor rascunho ou autoria. modo escuro e o
 formulário de decisão foram homologados; restam leitor de tela, WCAG completa,
 zoom real e a divergência RBAC das permissões de proposta.
 
@@ -203,7 +203,7 @@ retomada de um rascunho próprio atualizável, Meu Trabalho quando acessível e
 orientação editorial. O workspace inclui retorno à página inicial. Dois testes
 Kernel integrados passaram (208 asserções; 300 depreciações Core/contrib, uma
 PHP/Webform contrib e 3 PHPUnit). A rota/container do Runtime e a validação visual Firefox ESR/X11,
-320px e Olivero seguem pendentes. A página também foi renderizada no Kernel com
+320px segue pendente. A página também foi renderizada no Kernel com
 ACULTA420, incluindo CTA e guia.
 
 ### Revalidação WIKI-R1 — HEAD `03b840a7f` (2026-10-24)
@@ -693,7 +693,7 @@ visível e verifica foco visível e campo/submit dentro da viewport, em 1280 e
 1280 px; x=336 em 320 px), portanto o smoke falha 18/20. Carregando a folha
 candidata atual por GET no navegador, passa 22/22 e o submit fica em x=238–304
 em 320 px. O tema/agregado do Runtime não foi alterado; homologação publicada,
-Olivero e WCAG completa seguem pendentes.
+WCAG completa segue pendente.
 
 ### Incremento dev.70 — revisão concorrente no editor próprio
 
@@ -738,8 +738,7 @@ de teste. Antes da correção, mediu o submit da busca fora da página: o
 `.form-control` de largura 100% também ocupava um item flex próprio. O tema
 `aculta420` 0.6.1-dev.5 define `width: auto`; a folha foi carregada por GET no
 browser sem mexer no agregado do servidor. Resultado: 46/46, sem overflow a
-1280/390/320 CSS px, main/H1 presentes e sem erros visíveis. Runtime agregado,
-Olivero e WCAG completa não foram homologados.
+1280/390/320 CSS px, main/H1 presentes e sem erros visíveis. Runtime agregado e WCAG completa não foram homologados.
 
 ### Incremento dev.66 — limites do backend de propostas
 
@@ -755,7 +754,7 @@ PHP lint passaram. Concorrência multiprocesso permanece pendente.
 As rotas `/wiki`, `/wiki/busca` e `/wiki/busca/previa` agora declaram purpose
 `wiki`. A omissão anterior permitia que o subscriber compartilhado não
 rejeitasse esses caminhos no domínio principal. Kernel chama o
-`DomainPurposeRequestSubscriber` real e confirma resposta 404 para busca Wiki
+`DomainSiteRequestSubscriber` real e confirma resposta 404 para busca Wiki
 em `main`, mantendo a raiz pública e o caminho interno da Wiki (1 teste / 73
 asserções). PHPCS/lint passaram; Portal e Runtime não mudaram.
 
@@ -838,7 +837,7 @@ A tela privada usa os SDCs existentes `context-header` e `content-section`.
 Dados da proposta e histórico continuam protegidos pelas permissões de entidade
 e de revisão; a retirada é apresentada no cabeçalho somente à autoria e nos
 estados permitidos. Kernel focal: 1 teste / 148 asserções; PHPCS e PHP lint
-passaram. Revisão visual Firefox/Olivero e homologação Runtime seguem pendentes.
+passaram. Revisão visual Firefox e homologação Runtime seguem pendentes.
 
 ### Incremento dev.55 — revalidar R1 no HEAD atual
 
@@ -857,7 +856,7 @@ existentes `context-header`, `content-section`, `content-grid`, `card` e
 `empty-state`. Consulta, autorização, purpose/Domain e paginação continuam no
 serviço Wiki. Kernel focal: 2 testes / 89 asserções; classe completa MariaDB:
 21 testes / 923 asserções, com 291 depreciações upstream/PHPUnit. PHPCS e PHP
-lint passaram. Falta validar visualmente com Firefox ESR em ACULTA420 e Olivero;
+lint passaram. Falta validar visualmente com Firefox ESR em tema ACULTA ativo;
 Runtime não foi alterado.
 
 ### Incremento dev.53 — lotes rotativos para a limpeza de imagens
@@ -1337,7 +1336,7 @@ anexos, que permanece como dívida do projeto.
 - **Pacote LGPD no mesmo commit:** inventário, cláusulas de aceite, política de
   privacidade, `AGENT-CONTENT.md` e `AGENTS.md` do submódulo.
 - **Continua pendente:** importação de configuração com backup privado
-  verificado, reindexação no ambiente e revisão visual em ACULTA420 e Olivero.
+  verificado, reindexação no ambiente e revisão visual no tema ACULTA ativo.
 
 
 ## WE SATIVA — fundação aprovada (WES-UX 0.2, 2026-10-22)

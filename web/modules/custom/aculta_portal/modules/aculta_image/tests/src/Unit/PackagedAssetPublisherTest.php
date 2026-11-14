@@ -20,7 +20,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 /**
  * Tests validation and publication of packaged image assets.
  */
-#[CoversClass(\DefaultClass\Drupal\aculta_image\PackagedAssetPublisher::class)]
+#[CoversClass(PackagedAssetPublisher::class)]
 final class PackagedAssetPublisherTest extends UnitTestCase {
 
   /**

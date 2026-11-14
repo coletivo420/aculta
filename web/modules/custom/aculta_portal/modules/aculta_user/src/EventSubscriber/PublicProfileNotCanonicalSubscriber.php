@@ -27,10 +27,19 @@ final class PublicProfileNotCanonicalSubscriber implements EventSubscriberInterf
 
   public function __construct(private readonly RouteProviderInterface $routes) {}
 
+  /**
+   * {@inheritdoc}
+   */
   public static function getSubscribedEvents(): array {
     return [KernelEvents::REQUEST => [['desativarNormalizador', 31]]];
   }
 
+  /**
+   * Desativa o normalizador de rota para slugs de perfil fora do canônico.
+   *
+   * @param \Symfony\Component\HttpKernel\Event\RequestEvent $event
+   *   Evento da requisição do kernel.
+   */
   public function desativarNormalizador(RequestEvent $event): void {
     try {
       $modelo = $this->routes->getRouteByName(self::ROTA)->getPath();

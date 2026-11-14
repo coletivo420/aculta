@@ -4,13 +4,15 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_messenger\Plugin\QueueWorker;
 
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Queue\Attribute\QueueWorker;
 use Drupal\Core\Queue\QueueWorkerBase;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\message\MessageInterface;
 use Drupal\private_message\Entity\PrivateMessageInterface;
 use Drupal\private_message\Entity\PrivateMessageThreadInterface;
 use Drupal\private_message\Service\PrivateMessageServiceInterface;
@@ -54,15 +56,15 @@ final class PrivateMessageNotificationWorker extends QueueWorkerBase implements 
     array $configuration,
     string $plugin_id,
     mixed $plugin_definition,
-    private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly PrivateMessageServiceInterface $privateMessageService,
-    private readonly ConversationWriteLock $conversationWriteLock,
-    private readonly MessageNotifyInterface $messageNotify,
-    private readonly AcultaMailerInterface $mailer,
-    private readonly DomainPurposeManager $domainPurposeManager,
-    private readonly LockBackendInterface $lock,
-    private readonly AvisoPreferenciasInterface $preferences,
-    private readonly EmailConfirmationPolicy $emailPolicy,
+    protected readonly EntityTypeManagerInterface $entityTypeManager,
+    protected readonly PrivateMessageServiceInterface $privateMessageService,
+    protected readonly ConversationWriteLock $conversationWriteLock,
+    protected readonly MessageNotifyInterface $messageNotify,
+    protected readonly AcultaMailerInterface $mailer,
+    protected readonly DomainSiteManager $siteManager,
+    protected readonly LockBackendInterface $lock,
+    protected readonly AvisoPreferenciasInterface $preferences,
+    protected readonly EmailConfirmationPolicy $emailPolicy,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }
@@ -79,7 +81,7 @@ final class PrivateMessageNotificationWorker extends QueueWorkerBase implements 
       $container->get('aculta_messenger.conversation_write_lock'),
       $container->get('message_notify.sender'),
       $container->get('aculta_mailer.mailer'),
-      $container->get('aculta_portal.domain_purpose'),
+      $container->get('aculta_portal.domain_site'),
       $container->get('lock'),
       $container->get('aculta_messenger.aviso_preferencias'),
       $container->get('aculta_portal.email_confirmation_policy'),
@@ -104,7 +106,7 @@ final class PrivateMessageNotificationWorker extends QueueWorkerBase implements 
       return;
     }
 
-    $thread = $this->privateMessageService->getThreadFromMessage($privateMessage);
+    $thread = $this->getThreadFromMessage($privateMessage);
     if (!$thread instanceof PrivateMessageThreadInterface) {
       // The hook fires before a new thread is saved; allow the queue backend to
       // retry when a concurrent cron process claimed the item too early.
@@ -119,13 +121,13 @@ final class PrivateMessageNotificationWorker extends QueueWorkerBase implements 
     // and delivery so a dormant thread cannot be deleted after access was
     // checked but before its queued email is sent.
     $freshThread = $this->conversationWriteLock->acquire($thread);
-    if (!$freshThread instanceof PrivateMessageThreadInterface) {
+    if ($freshThread === NULL) {
       throw new \RuntimeException('Private message conversation is being updated.');
     }
     try {
       $senderId = (int) $privateMessage->getOwnerId();
       $mailerManaged = ($data['mailer_managed'] ?? FALSE) === TRUE;
-      foreach ($freshThread->getMembersId() as $recipientId) {
+      foreach ($freshThread->getMemberIds() as $recipientId) {
         $recipientId = (int) $recipientId;
         if ($recipientId === $senderId) {
           continue;
@@ -150,6 +152,17 @@ final class PrivateMessageNotificationWorker extends QueueWorkerBase implements 
   }
 
   /**
+   * Reads the thread despite a mismatch in the contrib service contract.
+   *
+   * The Private Message implementation returns FALSE when a message has not
+   * been attached to a thread yet, although its interface documents an entity.
+   * Preserve the queue retry path for that transient state.
+   */
+  private function getThreadFromMessage(PrivateMessageInterface $privateMessage): mixed {
+    return $this->privateMessageService->getThreadFromMessage($privateMessage);
+  }
+
+  /**
    * Creates or retries the persisted event for one authorized recipient. */
   private function notifyRecipient(PrivateMessageInterface $privateMessage, PrivateMessageThreadInterface $thread, int $messageId, int $senderId, int $recipientId, bool $mailerManaged): void {
     $recipient = $this->entityTypeManager->getStorage('user')->loadUnchanged($recipientId);
@@ -165,9 +178,8 @@ final class PrivateMessageNotificationWorker extends QueueWorkerBase implements 
     // cleared their history. Do not notify about an older message that the
     // Private Message module's per-member history filter still hides.
     $lastDeleteTimestamp = $thread->getLastDeleteTimestamp($recipient);
-    if (is_numeric($lastDeleteTimestamp)
-      && (int) $lastDeleteTimestamp > 0
-      && $privateMessage->getCreatedTime() <= (int) $lastDeleteTimestamp) {
+    if ($lastDeleteTimestamp > 0
+      && $privateMessage->getCreatedTime() <= $lastDeleteTimestamp) {
       return;
     }
 
@@ -178,9 +190,10 @@ final class PrivateMessageNotificationWorker extends QueueWorkerBase implements 
       ->condition(self::SOURCE_FIELD, $messageId)
       ->range(0, 1)
       ->execute();
-    $notification = $ids === []
+    $loaded = $ids === []
       ? NULL
       : $this->entityTypeManager->getStorage('message')->loadUnchanged(reset($ids));
+    $notification = $loaded instanceof MessageInterface ? $loaded : NULL;
 
     if ($notification !== NULL
       && !in_array((string) $notification->get(self::STATUS_FIELD)->value, ['pending', 'failed'], TRUE)) {
@@ -220,10 +233,7 @@ final class PrivateMessageNotificationWorker extends QueueWorkerBase implements 
         $directIdempotencyKey,
       )) {
         if ($notification === NULL) {
-          $notification = $this->entityTypeManager->getStorage('message')->create([
-            'template' => self::TEMPLATE,
-            'uid' => $recipientId,
-            self::SOURCE_FIELD => $messageId,
+          $notification = $this->newNotification($recipientId, $messageId, [
             self::STATUS_FIELD => 'sent',
             self::ATTEMPTS_FIELD => 1,
             self::MAILER_MANAGED_FIELD => TRUE,
@@ -238,10 +248,7 @@ final class PrivateMessageNotificationWorker extends QueueWorkerBase implements 
         return;
       }
       if ($notification === NULL) {
-        $notification = $this->entityTypeManager->getStorage('message')->create([
-          'template' => self::TEMPLATE,
-          'uid' => $recipientId,
-          self::SOURCE_FIELD => $messageId,
+        $notification = $this->newNotification($recipientId, $messageId, [
           self::STATUS_FIELD => 'pending',
           self::ATTEMPTS_FIELD => 0,
           self::MAILER_MANAGED_FIELD => $mailerManaged,
@@ -258,13 +265,10 @@ final class PrivateMessageNotificationWorker extends QueueWorkerBase implements 
 
     // Messages are read in the multidomain bar; the notice links to the
     // member's account home.
-    $url = $this->domainPurposeManager->routeUrl('account', 'aculta_portal.dashboard');
+    $url = $this->siteManager->routeUrl(SiteKey::Account, 'aculta_portal.dashboard');
     if ($url === NULL) {
       if ($notification === NULL) {
-        $notification = $this->entityTypeManager->getStorage('message')->create([
-          'template' => self::TEMPLATE,
-          'uid' => $recipientId,
-          self::SOURCE_FIELD => $messageId,
+        $notification = $this->newNotification($recipientId, $messageId, [
           self::STATUS_FIELD => 'failed_permanent',
           self::ATTEMPTS_FIELD => self::MAX_ATTEMPTS,
           self::MAILER_MANAGED_FIELD => $mailerManaged,
@@ -279,10 +283,7 @@ final class PrivateMessageNotificationWorker extends QueueWorkerBase implements 
     }
 
     if ($notification === NULL) {
-      $notification = $this->entityTypeManager->getStorage('message')->create([
-        'template' => self::TEMPLATE,
-        'uid' => $recipientId,
-        self::SOURCE_FIELD => $messageId,
+      $notification = $this->newNotification($recipientId, $messageId, [
         self::STATUS_FIELD => 'pending',
         self::ATTEMPTS_FIELD => 0,
         self::MAILER_MANAGED_FIELD => $mailerManaged,
@@ -356,6 +357,24 @@ final class PrivateMessageNotificationWorker extends QueueWorkerBase implements 
     $notification->set(self::STATUS_FIELD, 'sent');
     $notification->set(self::DIGEST_FIELD, 1);
     $notification->save();
+  }
+
+  /**
+   * Creates a notice message of the private-message template.
+   *
+   * @param array<string, mixed> $values
+   *   Template-specific values appended to the identity fields.
+   */
+  private function newNotification(int $recipientId, int $messageId, array $values): MessageInterface {
+    $notification = $this->entityTypeManager->getStorage('message')->create($values + [
+      'template' => self::TEMPLATE,
+      'uid' => $recipientId,
+      self::SOURCE_FIELD => $messageId,
+    ]);
+    if (!$notification instanceof MessageInterface) {
+      throw new \LogicException('The message storage returned an unexpected entity.');
+    }
+    return $notification;
   }
 
   /**

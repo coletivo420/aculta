@@ -50,6 +50,8 @@ final class AuthorCardBuilder {
       '#social_links' => [],
       '#designation' => NULL,
       '#actions' => [],
+      '#reactions_received' => 0,
+      '#reactions_given' => 0,
       '#source_label' => 'Acervo histórico Growroom',
     ];
     CacheableMetadata::createFromObject($author)->applyTo($build);
@@ -108,6 +110,8 @@ final class AuthorCardBuilder {
       '#social_links' => $data['social_links'],
       '#designation' => $designation,
       '#actions' => $actions,
+      '#reactions_received' => $data['reactions_received'],
+      '#reactions_given' => $data['reactions_given'],
       '#size' => in_array($size, ['sm', 'md', 'lg'], TRUE) ? $size : 'md',
     ];
     CacheableMetadata::createFromObject($identity)->applyTo($build);

@@ -139,25 +139,54 @@ final class MarleyController {
     $layout['main'] = [
       '#type' => 'container',
       '#attributes' => ['data-portal-ui' => 'studio-main', 'data-aculta-studio' => 'main'],
-      'heading' => $this->element('h2', $section['label'], 'studio-heading', 'heading'),
+      'section_header' => [
+        '#type' => 'container',
+        '#attributes' => ['data-portal-ui' => 'studio-section-header', 'data-aculta-studio' => 'section-header'],
+        'heading' => [
+          '#theme' => 'aculta_portal_element',
+          '#tag' => 'h2',
+          '#value' => $section['label'],
+          '#element_attributes' => new Attribute([
+            'data-portal-ui' => 'studio-heading',
+            'data-aculta-studio' => 'heading',
+            // O tema move o foco para este título após a troca HTMX.
+            'data-aculta-focus' => '',
+            'tabindex' => '-1',
+          ]),
+        ],
+      ],
     ];
-    // Ações da seção ficam abaixo do título, antes das abas de status.
+    // Ações da seção ficam junto ao título, antes das abas de status.
     $section_actions = [];
     foreach ($section['actions'] ?? [] as $action) {
       $section_actions[] = PortalLinkElement::build(
         $action['title'],
         $action['url'],
-        ['data-portal-ui' => 'studio-action', 'data-aculta-studio' => 'section-action'],
+        ['data-portal-ui' => 'studio-action', 'data-aculta-studio' => 'section-action'] + ($action['attributes'] ?? []),
       );
     }
     if ($section_actions !== []) {
-      $layout['main']['section_actions'] = [
+      $layout['main']['section_header']['actions'] = [
         '#theme' => 'item_list',
         '#items' => $section_actions,
         '#attributes' => ['data-portal-ui' => 'studio-actions', 'data-aculta-studio' => 'section-actions'],
       ];
     }
     $build['layout'] = $layout;
+    // Popup de criação de conteúdo (ação Nova publicação): diálogo e HTMX.
+    $build['#attached']['library'][] = 'aculta_studio/studio-create-popup';
+    $build['studio_create_popup'] = [
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:popup',
+      '#props' => [
+        'id' => 'aculta-studio-create-dialog',
+        'title' => (string) t('Nova publicação'),
+        'close_label' => (string) t('Fechar'),
+      ],
+      '#slots' => [
+        'content' => ['#markup' => '<div id="aculta-studio-create-body" class="aculta-reply-dialog__body"></div>'],
+      ],
+    ];
 
     // Nível 3: the requested subtab, or the first subtab in its section.
     if ($sub === '') {
@@ -168,10 +197,14 @@ final class MarleyController {
       static fn (string $id, array $tab): array => [
         'id' => $id,
         'label' => $tab['label'],
-        'url' => Url::fromRoute(
-          'aculta_studio.tab',
-          ['aba' => $area->getPluginId(), 'secao' => $secao, 'sub' => $id],
-        ),
+        // Aba com ação de popup (Nova publicação): o link abre o mesmo popup da ação.
+        'url' => ($tab['actions'][0]['attributes'] ?? NULL) !== NULL
+          ? $tab['actions'][0]['url']
+          : Url::fromRoute(
+            'aculta_studio.tab',
+            ['aba' => $area->getPluginId(), 'secao' => $secao, 'sub' => $id],
+          ),
+        'attributes' => $tab['actions'][0]['attributes'] ?? [],
       ],
       array_keys($section['tabs']),
       $section['tabs'],
@@ -189,7 +222,7 @@ final class MarleyController {
       $actions[] = PortalLinkElement::build(
         $action['title'],
         $action['url'],
-        ['data-portal-ui' => 'studio-action', 'data-aculta-studio' => 'action'],
+        ['data-portal-ui' => 'studio-action', 'data-aculta-studio' => 'action'] + ($action['attributes'] ?? []),
       );
     }
     // Each listing row respects the node's access result.
@@ -197,17 +230,15 @@ final class MarleyController {
       $build['layout']['main']['listing'] = $this->listings->build($tab['listing'], $this->account);
     }
     $build['layout']['main']['panel'] = [
-      '#type' => 'container',
-      '#attributes' => [
-        'data-portal-ui' => 'studio-panel',
-        'data-aculta-studio' => 'panel',
-        'data-aculta-studio-tab' => $sub,
-      ],
-      'actions' => [
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:surface-panel',
+      '#props' => ['tone' => 'raised', 'radius' => 'md', 'spacing' => 'compact', 'elevation' => 'none'],
+      '#attributes' => ['data-aculta-studio' => 'panel', 'data-aculta-studio-tab' => $sub],
+      '#slots' => ['content' => ['actions' => [
         '#theme' => 'item_list',
         '#items' => $actions,
         '#attributes' => ['data-portal-ui' => 'studio-actions', 'data-aculta-studio' => 'actions'],
-      ],
+      ]]],
     ];
     return $build;
   }
@@ -236,7 +267,7 @@ final class MarleyController {
                 'footer' => PortalLinkElement::build($action['title'], $action['url'], [
                   'data-portal-ui' => 'studio-action',
                   'data-aculta-studio' => 'action',
-                ]),
+                ] + ($action['attributes'] ?? [])),
               ],
             ];
           }
@@ -288,6 +319,7 @@ final class MarleyController {
         'data-portal-ui' => $behaviour === 'tab' ? 'studio-tab' : 'studio-link',
         'data-aculta-studio' => $behaviour,
       ];
+      $attributes += $item['attributes'] ?? [];
       if ($item['id'] === $activeId) {
         $attributes['aria-current'] = 'page';
       }

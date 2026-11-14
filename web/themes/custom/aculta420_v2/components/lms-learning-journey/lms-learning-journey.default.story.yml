@@ -1,0 +1,6 @@
+name: Jornada de aprendizagem
+description: Progresso e aulas acessíveis de um curso.
+component: aculta420_v2:lms-learning-journey
+slots:
+  content:
+    '#markup': <section data-portal-ui="aculta-learning-journey"><header><p data-portal-ui="aculta-learning-journey__eyebrow">ACULTA Studio Ganjalab</p><h2 data-portal-ui="aculta-learning-journey__title">Minha jornada</h2></header><div data-portal-ui="aculta-learning-journey__summary"><div data-portal-ui="aculta-learning-journey__progress"><p>2 de 4 aulas concluídas (50%)</p><progress max="100" value="50" aria-label="Progresso do curso"></progress></div></div><ol data-portal-ui="aculta-learning-journey__lessons"><li data-portal-ui="aculta-learning-journey__lesson" data-state="finished"><a href="/aula/1">Introdução</a><span data-portal-ui="aculta-learning-journey__state" data-state="finished">Concluída</span></li></ol></section>

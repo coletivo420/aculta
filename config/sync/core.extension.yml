@@ -2,11 +2,12 @@ _core:
   default_config_hash: 4GIX5Esnc_umpXUBj4IIocRX7Mt5fPhm4AgXfE3E56E
 module:
   aculta_calendar: 0
+  aculta_cgu: 0
   aculta_commerce: 0
   aculta_commerce_melhorenvio: 0
   aculta_content_admin: 0
-  aculta_contributions: 0
   aculta_document_viewer: 0
+  aculta_domain_config: 0
   aculta_donation: 0
   aculta_editor: 0
   aculta_events: 0
@@ -14,21 +15,17 @@ module:
   aculta_faq: 0
   aculta_file_uploader: 0
   aculta_forum: 0
-  aculta_forum_lms: 0
-  aculta_forum_wiki: 0
   aculta_gallery: 0
   aculta_game: 0
   aculta_id_cpf: 0
   aculta_image: 0
   aculta_index: 0
   aculta_learning_contracts: 0
+  aculta_linkweed: 0
   aculta_lms: 0
-  aculta_lms_agenda: 0
   aculta_lms_h5p: 0
-  aculta_lms_resources: 0
   aculta_magazine: 0
   aculta_mail_confirmer: 0
-  aculta_mail_confirmer_user: 0
   aculta_mailer: 0
   aculta_maps: 0
   aculta_mcp: 0
@@ -44,7 +41,6 @@ module:
   aculta_secrets_manager: 0
   aculta_statistics: 0
   aculta_studio: 0
-  aculta_ugc: 0
   aculta_user: 0
   aculta_wiki: 0
   address: 0
@@ -100,6 +96,9 @@ module:
   domain: 0
   domain_alias: 0
   domain_config: 0
+  domain_config_entity_ui: 0
+  domain_config_switcher: 0
+  domain_config_ui: 0
   dynamic_page_cache: 0
   editor: 0
   embed: 0
@@ -156,7 +155,6 @@ module:
   mysql: 0
   navigation: 0
   node: 0
-  node_co_authors: 0
   options: 0
   page_cache: 0
   path: 0
@@ -180,7 +178,6 @@ module:
   schema_web_page: 0
   schema_web_site: 0
   sdc_devel: 0
-  search: 0
   search_api: 0
   search_api_db: 0
   security_review: 0
@@ -200,9 +197,16 @@ module:
   system: 0
   taxonomy: 0
   text: 0
+  text_with_summary: 0
   token: 0
   tool: 0
   turnstile: 0
+  ui_icons: 0
+  ui_icons_field: 0
+  ui_icons_menu: 0
+  ui_icons_patterns: 0
+  ui_icons_picker: 0
+  ui_icons_popover: 0
   ui_patterns: 0
   ui_patterns_blocks: 0
   ui_patterns_field: 0
@@ -210,12 +214,17 @@ module:
   ui_patterns_layouts: 0
   ui_patterns_library: 0
   ui_patterns_views: 0
+  ui_skins: 0
   ui_styles: 0
   ui_styles_block: 0
+  ui_styles_ckeditor5: 0
+  ui_styles_entity_status: 0
   ui_styles_layout_builder: 0
+  ui_styles_page: 0
   ui_styles_ui_patterns: 0
   ui_styles_views: 0
   update: 0
+  upgrade_status: 0
   user: 0
   username_enumeration_prevention: 0
   views_bulk_operations: 0
@@ -237,10 +246,9 @@ module:
   views: 10
   domain_source: 30
   standard: 1000
-  aculta_linkweed: 0
 theme:
   claro: 0
-  stable9: 0
-  aculta420: 0
-  bootstrap: 0
+  gin: 0
+  aculta420_v2: 0
+  default_admin: 0
 profile: standard

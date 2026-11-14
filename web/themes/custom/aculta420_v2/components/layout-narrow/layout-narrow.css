@@ -1,0 +1,6 @@
+.layout-narrow {
+  inline-size: min(100%, 68ch);
+  margin-inline: auto;
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
+}

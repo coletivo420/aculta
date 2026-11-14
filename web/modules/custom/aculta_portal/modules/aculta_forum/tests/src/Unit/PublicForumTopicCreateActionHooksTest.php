@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_forum\Unit;
 
 use Drupal\aculta_forum\Hook\PublicForumTopicCreateActionHooks;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\Core\Access\AccessManagerInterface;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Config\ConfigFactoryInterface;
@@ -24,6 +24,17 @@ use Symfony\Component\HttpFoundation\RequestStack;
 #[Group('aculta_forum')]
 final class PublicForumTopicCreateActionHooksTest extends UnitTestCase {
 
+  protected function setUp(): void {
+    parent::setUp();
+    // Url::toString() precisa do gerador de URL; o teste unitário fornece um falso.
+    $generator = $this->createMock(\Drupal\Core\Routing\UrlGeneratorInterface::class);
+    $generator->method('generateFromRoute')->willReturn('/forum/topico/novo');
+    $container = new \Symfony\Component\DependencyInjection\ContainerBuilder();
+    $container->set('url_generator', $generator);
+    $container->set('string_translation', $this->getStringTranslationStub());
+    \Drupal::setContainer($container);
+  }
+
   /**
    * Tests the action and its cache metadata when route access allows it. */
   public function testActionAppearsOnlyAfterRouteAccessAllowsIt(): void {
@@ -32,13 +43,18 @@ final class PublicForumTopicCreateActionHooksTest extends UnitTestCase {
     $access_manager = $this->createMock(AccessManagerInterface::class);
     $access_manager->expects(self::once())
       ->method('checkNamedRoute')
-      ->with('aculta_forum.topic_add', [], NULL, TRUE)
+      ->with('aculta_forum.topic_composer', [], NULL, TRUE)
       ->willReturn(AccessResult::allowed()->addCacheContexts(['user.permissions']));
 
-    $hooks = new PublicForumTopicCreateActionHooks($access_manager, $this->domainPurposeManager('forum'));
+    $hooks = new PublicForumTopicCreateActionHooks($access_manager, $this->siteManager('forum'));
     $hooks->viewsPreRender($view);
 
-    self::assertSame('button-primary', $view->attachment_before['aculta_forum_create_topic']['#attributes']['data-portal-ui']);
+    $create = $view->attachment_before['aculta_forum_create_topic'];
+    self::assertSame('link', $create['#type']);
+    self::assertSame('topico-criar', $create['#attributes']['data-action']);
+    self::assertContains('use-htmx', $create['#attributes']['class']);
+    self::assertSame('#aculta-topic-dialog-body', $create['#attributes']['data-hx-target']);
+    self::assertContains('aculta_forum/topic-create-popup', $view->element['#attached']['library']);
     self::assertSame(['user.permissions'], $view->attachment_before['aculta_forum_create_topic']['#cache']['contexts']);
     self::assertEqualsCanonicalizing(['url.query_args', 'user.permissions'], $view->element['#cache']['contexts']);
   }
@@ -52,7 +68,7 @@ final class PublicForumTopicCreateActionHooksTest extends UnitTestCase {
       ->method('checkNamedRoute')
       ->willReturn(AccessResult::forbidden()->addCacheContexts(['user.permissions']));
 
-    $hooks = new PublicForumTopicCreateActionHooks($access_manager, $this->domainPurposeManager('forum'));
+    $hooks = new PublicForumTopicCreateActionHooks($access_manager, $this->siteManager('forum'));
     $hooks->viewsPreRender($view);
 
     self::assertArrayNotHasKey('aculta_forum_create_topic', $view->attachment_before);
@@ -66,7 +82,7 @@ final class PublicForumTopicCreateActionHooksTest extends UnitTestCase {
     $access_manager = $this->createMock(AccessManagerInterface::class);
     $access_manager->expects(self::never())->method('checkNamedRoute');
 
-    $hooks = new PublicForumTopicCreateActionHooks($access_manager, $this->domainPurposeManager('main'));
+    $hooks = new PublicForumTopicCreateActionHooks($access_manager, $this->siteManager('main'));
     $hooks->viewsPreRender($view);
 
     self::assertSame([], $view->attachment_before);
@@ -82,7 +98,7 @@ final class PublicForumTopicCreateActionHooksTest extends UnitTestCase {
       $access_manager = $this->createMock(AccessManagerInterface::class);
       $access_manager->expects(self::never())->method('checkNamedRoute');
 
-      $hooks = new PublicForumTopicCreateActionHooks($access_manager, $this->domainPurposeManager($purpose));
+      $hooks = new PublicForumTopicCreateActionHooks($access_manager, $this->siteManager($purpose));
       $hooks->viewsPreRender($view);
 
       self::assertSame([], $view->attachment_before);
@@ -102,13 +118,13 @@ final class PublicForumTopicCreateActionHooksTest extends UnitTestCase {
 
   /**
    * Creates a purpose manager backed by a test Domain negotiator. */
-  private function domainPurposeManager(string $purpose): DomainPurposeManager {
+  private function siteManager(string $purpose): DomainSiteManager {
     $domain = $this->createMock(DomainInterface::class);
     $domain->method('id')->willReturn($purpose === 'forum' ? 'forum_aculta_org' : 'aculta_org');
     $negotiator = $this->createMock(DomainNegotiatorInterface::class);
     $negotiator->method('getActiveDomain')->willReturn($domain);
 
-    return new DomainPurposeManager(
+    return new DomainSiteManager(
       $this->createMock(EntityTypeManagerInterface::class),
       $negotiator,
       $this->createMock(ConfigFactoryInterface::class),

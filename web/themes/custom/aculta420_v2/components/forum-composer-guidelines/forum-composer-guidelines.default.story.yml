@@ -1,0 +1,12 @@
+name: Diretrizes do Compositor do Fórum
+props:
+  collapsed: false
+  tips:
+    - Escolha a categoria mais adequada para sua dúvida ou relato.
+    - Seja específico no título, evitando termos genéricos como "Ajuda urgente".
+    - Descreva setup, iluminação, substrato e regas para facilitar o diagnóstico.
+  community_rules:
+    - title: Respeito e colaboração
+      text: O Growroom420 é um espaço de apoio mútuo. Trate todos os cultivadores com cordialidade.
+    - title: Proibição de comércio
+      text: É estritamente vedada a compra, venda, troca ou oferta de substâncias e produtos ilícitos.

@@ -24,7 +24,7 @@ final class WikiSettingsForm extends ConfigFormBase {
   public function __construct(
     ConfigFactoryInterface $config_factory,
     TypedConfigManagerInterface $typed_config_manager,
-    private readonly ModuleHandlerInterface $moduleHandler,
+    protected readonly ModuleHandlerInterface $moduleHandler,
   ) {
     parent::__construct($config_factory, $typed_config_manager);
   }

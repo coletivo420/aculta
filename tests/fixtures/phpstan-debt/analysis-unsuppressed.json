@@ -1,0 +1,19 @@
+{
+  "totals": {
+    "errors": 1,
+    "file_errors": 1
+  },
+  "files": {
+    "web/modules/custom/mod_c/src/C.php": {
+      "errors": 1,
+      "messages": [
+        {
+          "message": "C message.",
+          "line": 1,
+          "ignorable": true,
+          "identifier": "method.notFound"
+        }
+      ]
+    }
+  }
+}

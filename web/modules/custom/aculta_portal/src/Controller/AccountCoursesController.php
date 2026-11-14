@@ -4,15 +4,14 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Controller;
 
-use Drupal\Core\Template\Attribute;
-use Drupal\aculta_portal\Render\PortalLinkElement;
 use Drupal\aculta_portal\Presentation\AccountCoursePresenter;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-/** Presents the current user's LMS memberships inside ACCOUNT. */
+/**
+ * Presents the current user's LMS memberships inside ACCOUNT. */
 final class AccountCoursesController implements ContainerInjectionInterface {
 
   public function __construct(
@@ -21,6 +20,9 @@ final class AccountCoursesController implements ContainerInjectionInterface {
     private readonly TranslationInterface $translation,
   ) {}
 
+  /**
+   * {@inheritdoc}
+   */
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('aculta_portal.presentation.account_course'),
@@ -29,12 +31,20 @@ final class AccountCoursesController implements ContainerInjectionInterface {
     );
   }
 
+  /**
+   * Monta a página de cursos do usuário atual.
+   *
+   * @return array
+   *   Array de renderização da lista de cursos.
+   */
   public function page(): array {
     $view = $this->presenter->present($this->currentAccount);
     $items = $view['items'];
     $build = [
-      '#type' => 'container',
-      '#attributes' => ['data-portal-ui' => 'account-courses'],
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:account-courses',
+      '#props' => [],
+      '#slots' => ['content' => []],
       '#cache' => [
         'contexts' => ['user', 'user.permissions'],
         'max-age' => 0,
@@ -42,12 +52,12 @@ final class AccountCoursesController implements ContainerInjectionInterface {
     ];
 
     if ($items === []) {
-      $build['empty'] = [
+      $build['#slots']['content']['empty'] = [
         '#type' => 'container',
         'message' => ['#plain_text' => $view['empty']['message']],
       ];
       if ($view['empty']['action'] !== NULL) {
-        $build['empty']['link'] = PortalLinkElement::build($view['empty']['action']['label'], $view['empty']['action']['url'], ['data-portal-ui' => 'button-primary']);
+        $build['#slots']['content']['empty']['link'] = ['#type' => 'aculta_portal_button', '#props' => ['text' => (string) $view['empty']['action']['label'], 'url' => $view['empty']['action']['url']->toString(), 'variant' => 'primary']];
       }
       return $build;
     }
@@ -76,9 +86,9 @@ final class AccountCoursesController implements ContainerInjectionInterface {
         $card['meta']['score'] = ['#plain_text' => $course['score_label']];
       }
       if ($course['action'] !== NULL) {
-        $card['action'] = PortalLinkElement::build($course['action']['label'], $course['action']['url'], ['data-portal-ui' => 'button-primary']);
+        $card['action'] = ['#type' => 'aculta_portal_button', '#props' => ['text' => (string) $course['action']['label'], 'url' => $course['action']['url']->toString(), 'variant' => 'primary']];
       }
-      $build['course_' . $delta] = $card;
+      $build['#slots']['content']['course_' . $delta] = $card;
     }
 
     return $build;

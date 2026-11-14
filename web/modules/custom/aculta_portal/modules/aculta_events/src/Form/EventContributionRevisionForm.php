@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_events\Form;
 
-use Drupal\aculta_contributions\Adapter\ContributionAdapterRegistry;
-use Drupal\aculta_contributions\Entity\Contribution;
-use Drupal\aculta_contributions\Service\ContributionLifecycle;
+use Drupal\aculta_cgu\Adapter\ContributionAdapterRegistry;
+use Drupal\aculta_cgu\Entity\Contribution;
+use Drupal\aculta_cgu\Service\ContributionLifecycle;
 use Drupal\aculta_events\Entity\EventLocation;
 use Drupal\aculta_events\Entity\EventOrganization;
 use Drupal\aculta_portal\Account\AccountAddressForm;
@@ -28,15 +28,15 @@ final class EventContributionRevisionForm extends FormBase {
   /**
    * The contribution being revised in the current form build.
    */
-  private ?Contribution $proposal = NULL;
+  protected ?Contribution $proposal = NULL;
 
   public function __construct(
     #[Autowire(service: 'entity_type.manager')]
-    private readonly EntityTypeManagerInterface $entities,
-    #[Autowire(service: 'aculta_contributions.lifecycle')]
-    private readonly ContributionLifecycle $lifecycle,
-    #[Autowire(service: 'aculta_contributions.adapter_registry')]
-    private readonly ContributionAdapterRegistry $adapters,
+    protected readonly EntityTypeManagerInterface $entities,
+    #[Autowire(service: 'aculta_cgu.contribution_lifecycle')]
+    protected readonly ContributionLifecycle $lifecycle,
+    #[Autowire(service: 'aculta_cgu.contribution_adapter_registry')]
+    protected readonly ContributionAdapterRegistry $adapters,
   ) {}
 
   /**
@@ -152,8 +152,6 @@ final class EventContributionRevisionForm extends FormBase {
   /**
    * Adds a typed widget for each field in the allowlisted proposal payload.
    *
-   * @param array<string, mixed> $form
-   *   Payload fieldset.
    * @param string $field
    *   Allowlisted payload field name.
    * @param mixed $value
@@ -196,7 +194,7 @@ final class EventContributionRevisionForm extends FormBase {
       ],
       default => [],
     };
-    if (!in_array($field, $allowedFields, TRUE) || !isset($labels[$field])) {
+    if (!in_array($field, $allowedFields, TRUE)) {
       throw new UnprocessableEntityHttpException('A proposta contém um campo não suportado para revisão.');
     }
     if ($field === 'ocultar_localidade') {

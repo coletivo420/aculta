@@ -20,6 +20,17 @@ use PHPUnit\Framework\Attributes\Group;
 #[Group('aculta_commerce')]
 final class ShopCheckoutProviderTest extends UnitTestCase {
 
+  /**
+   * Cria o provider com storages simulados.
+   *
+   * @param string|null $flow
+   *   Checkout flow do tipo de pedido, ou NULL.
+   * @param array $settings
+   *   Configurações de checkout.
+   *
+   * @return \Drupal\aculta_commerce\Checkout\ShopCheckoutProvider
+   *   Provider do contexto Shop.
+   */
   private function provider(?string $flow, array $settings = []): ShopCheckoutProvider {
     $type = $this->createMock(ConfigEntityInterface::class);
     $type->method('getThirdPartySetting')->willReturn($flow);
@@ -31,6 +42,9 @@ final class ShopCheckoutProviderTest extends UnitTestCase {
     return new ShopCheckoutProvider(new OrderTypeCheckoutFlows($manager), new CheckoutSettings($this->getConfigFactoryStub([CheckoutSettings::CONFIG => $settings])));
   }
 
+  /**
+   * Confirma que o provider declara contexto, modo, tipo e fluxo.
+   */
   public function testDeclaraContextoModoTipoEFluxo(): void {
     $provider = $this->provider('default');
     $this->assertSame('shop', $provider->id());
@@ -41,10 +55,16 @@ final class ShopCheckoutProviderTest extends UnitTestCase {
     $this->assertSame(['default'], $config->checkoutFlowIds);
   }
 
+  /**
+   * Confirma que o tipo sem fluxo usa o fallback nativo do Commerce.
+   */
   public function testTipoSemFluxoUsaOFallbackNativoDoCommerce(): void {
     $this->assertSame(['default'], $this->provider(NULL)->configuration()->checkoutFlowIds);
   }
 
+  /**
+   * Confirma que o tipo configurado substitui o default.
+   */
   public function testTipoConfiguradoSubstituiODefault(): void {
     $config = $this->provider('loja', ['shop_order_type' => 'loja'])->configuration();
     $this->assertSame(['loja'], $config->orderTypeIds);

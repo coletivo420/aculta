@@ -1,0 +1,65 @@
+name: Reply compacto (mobile)
+props:
+  density: compact
+  author_name: PiradoPirata
+  timestamp: Há 1 hora
+  reacted: true
+slots:
+  admin:
+    '#type': component
+    '#component': aculta420_v2:comment-admin-trigger
+    '#props':
+      url: /discussoes/1/controles
+      author_name: PiradoPirata
+  received_slot:
+    '#type': component
+    '#component': aculta420_v2:discussion-reactions-received
+    '#props':
+      target_id: discussion-reactions-received-reply-story
+      reactions:
+        broccoli:
+          id: broccoli
+          count: 3
+        heart:
+          id: heart
+          count: 2
+      allowed_reactions:
+        broccoli:
+          icon: broccoli
+          label: Brócolis
+        heart:
+          icon: heart
+          label: Curtir
+
+  reactions_slot:
+    '#type': component
+    '#component': aculta420_v2:discussion-reaction-bar
+    '#props':
+      target_id: discussion-reactions-reply-story
+      entity_type: comment
+      entity_id: '2'
+      user_reaction: broccoli
+      default_reaction: broccoli
+      can_react: true
+      react_url: '#'
+      csrf_token: story-token
+      reactions:
+        broccoli:
+          id: broccoli
+          count: 3
+          user_reacted: true
+  actions:
+    '#type': component
+    '#component': aculta420_v2:content-reply-bar
+    '#props':
+      permalink_url: /forum/topico/123#post-789
+      reply_url: /discussoes/responder/comment/789
+      edit_url: /discussoes/editar/comment/789
+      delete_url: /discussoes/apagar/comment/789
+      quote_url: /discussoes/citar/comment/789
+      target_id: aculta-reply-dialog-body
+
+  avatar:
+    '#markup': '<img src="/themes/custom/aculta420_v2/assets/avatars/pirates-002-polvo-pirata.png" alt="Avatar de PiradoPirata" width="128" height="128">'
+  content:
+    '#markup': '<p class="forum-reply-compact__line">Boa dica! Para o solo, também vale checar a drenagem antes do plantio.</p>'

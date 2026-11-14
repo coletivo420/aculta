@@ -1,11 +1,4 @@
 services:
-  aculta_forum.comment_canonical_route_subscriber:
-    class: Drupal\aculta_forum\EventSubscriber\CommentCanonicalRouteSubscriber
-    tags:
-      - { name: event_subscriber }
-  aculta_forum.comment_permalink_access:
-    class: Drupal\aculta_forum\Access\CommentPermalinkAccessCheck
-
   aculta_forum.content_index_provider:
     class: Drupal\aculta_forum\ContentIndex\ForumContentIndexProvider
     tags:
@@ -21,41 +14,64 @@ services:
     arguments: ['@database']
   aculta_forum.comment_migration_audit:
     class: Drupal\aculta_forum\Migration\ForumCommentMigrationAudit
-    arguments: ['@entity_type.manager', '@aculta_portal.domain_purpose', '@module_handler']
+    arguments: ['@entity_type.manager', '@aculta_portal.domain_site', '@module_handler']
 
   aculta_forum.flagging_migration_context:
     class: Drupal\aculta_forum\Migration\ForumFlaggingMigrationContext
-    arguments: ['@entity_type.manager', '@aculta_portal.domain_purpose', '@migrate.lookup']
+    arguments: ['@entity_type.manager', '@aculta_portal.domain_site', '@migrate.lookup']
 
-  aculta_forum.post_submission_controller:
-    class: Drupal\aculta_forum\Controller\ForumPostSubmissionController
-    arguments: ['@entity_type.manager', '@entity.form_builder', '@request_stack', '@current_user', '@aculta_forum.discussion_context_resolver']
-    public: true
-  aculta_forum.post_edit_controller:
-    class: Drupal\aculta_forum\Controller\ForumPostEditController
-    arguments: ['@entity.form_builder', '@aculta_forum.post_public_edit_access']
-    public: true
   Drupal\aculta_forum\Controller\ForumPostModerationFormController:
     class: Drupal\aculta_forum\Controller\ForumPostModerationFormController
     arguments: ['@entity_type.manager', '@entity.form_builder']
   Drupal\aculta_forum\Controller\ForumPostModerationQueueController:
     class: Drupal\aculta_forum\Controller\ForumPostModerationQueueController
-    arguments: ['@entity_type.manager', '@current_user', '@date.formatter', '@aculta_portal.domain_purpose']
+    arguments: ['@entity_type.manager', '@current_user', '@date.formatter', '@aculta_portal.domain_site']
   Drupal\aculta_forum\Controller\ForumPostRevisionHistoryController:
     class: Drupal\aculta_forum\Controller\ForumPostRevisionHistoryController
     arguments: ['@entity_type.manager', '@date.formatter', '@form_builder']
   Drupal\aculta_forum\Hook\ForumActivityEventHooks:
     class: Drupal\aculta_forum\Hook\ForumActivityEventHooks
-    arguments: ['@event_dispatcher', '@datetime.time']
+    arguments: ['@event_dispatcher', '@datetime.time', '@aculta_forum.activity_ledger']
+  aculta_forum.activity_ledger:
+    class: Drupal\aculta_forum\Analytics\ForumActivityLedger
+    arguments: ['@database', '@datetime.time']
+  Drupal\aculta_forum\Analytics\ForumActivityLedger: '@aculta_forum.activity_ledger'
+  aculta_forum.analytics_ledger_hooks:
+    class: Drupal\aculta_forum\Hook\ForumAnalyticsLedgerHooks
+    arguments: ['@aculta_forum.activity_ledger']
+  Drupal\aculta_forum\Hook\ForumDiscoveryHooks:
+    class: Drupal\aculta_forum\Hook\ForumDiscoveryHooks
+    arguments: ['@event_dispatcher']
   Drupal\aculta_forum\Hook\ForumAttachmentCleanupHooks:
     class: Drupal\aculta_forum\Hook\ForumAttachmentCleanupHooks
     arguments: ['@aculta_forum.attachment_cleanup', '@aculta_forum.gallery_publication', '@datetime.time']
   Drupal\aculta_forum\Hook\ForumAttachmentAccessHooks:
     class: Drupal\aculta_forum\Hook\ForumAttachmentAccessHooks
-    arguments: ['@aculta_portal.domain_purpose', '@aculta_forum.attachment_publication']
+    arguments: ['@aculta_portal.domain_site', '@aculta_forum.attachment_publication']
   Drupal\aculta_forum\Hook\ForumAttachmentPublicationHooks:
     class: Drupal\aculta_forum\Hook\ForumAttachmentPublicationHooks
     arguments: ['@aculta_forum.attachment_publication', '@aculta_forum.gallery_publication']
+  Drupal\aculta_forum\Hook\DiscussionReplyActionsHooks:
+    class: Drupal\aculta_forum\Hook\DiscussionReplyActionsHooks
+    arguments: ['@current_user', '@aculta_forum.discussion_reply_access', '@aculta_forum.discussion_reply_url_builder', '@string_translation', '@keyvalue']
+  Drupal\aculta_forum\Hook\TopicComposerFormHooks:
+    class: Drupal\aculta_forum\Hook\TopicComposerFormHooks
+    arguments:
+      - '@current_route_match'
+      - '@request_stack'
+      - '@string_translation'
+  Drupal\aculta_forum\Hook\DiscussionReplyFormHooks:
+    class: Drupal\aculta_forum\Hook\DiscussionReplyFormHooks
+    arguments:
+      - '@aculta_forum.discussion_context_resolver'
+      - '@current_user'
+      - '@aculta_forum.discussion_reply_url_builder'
+      - '@request_stack'
+      - '@aculta_forum.discussion_thread_depth_resolver'
+      - '@entity_type.manager'
+      - '@aculta_forum.discussion_reply_idempotency_manager'
+      - '@aculta_forum.discussion_comment_permalink_builder'
+      - '@string_translation'
   Drupal\aculta_forum\Hook\ForumCommentMoveHooks:
     class: Drupal\aculta_forum\Hook\ForumCommentMoveHooks
     arguments: ['@aculta_forum.comment_mover', '@current_user']
@@ -70,20 +86,31 @@ services:
     arguments: ['@datetime.time', '@aculta_user.participation_rules']
   Drupal\aculta_forum\Hook\ForumPostAccessHooks:
     class: Drupal\aculta_forum\Hook\ForumPostAccessHooks
-    arguments: ['@aculta_portal.domain_purpose']
+    arguments: ['@aculta_portal.domain_site']
   Drupal\aculta_forum\Hook\ForumThemeHooks:
     class: Drupal\aculta_forum\Hook\ForumThemeHooks
+    arguments: ['@current_user', '@entity_type.manager', '@aculta_user.avatar_resolver', '@aculta_user.author_card_builder']
   Drupal\aculta_forum\Hook\DiscussionModerationHooks:
     class: Drupal\aculta_forum\Hook\DiscussionModerationHooks
+  Drupal\aculta_forum\Hook\DiscussionCommentActionIconHooks:
+    class: Drupal\aculta_forum\Hook\DiscussionCommentActionIconHooks
+    arguments: ['@extension.list.theme']
+
   Drupal\aculta_forum\Hook\DiscussionProgressHooks:
     class: Drupal\aculta_forum\Hook\DiscussionProgressHooks
+    arguments: ['@entity_type.manager', '@entity.form_builder', '@renderer']
+  aculta_forum.comment_moderation_access:
+    class: Drupal\aculta_forum\Access\CommentModerationAccess
+  Drupal\aculta_forum\Form\DiscussionCommentModerationForm:
+    class: Drupal\aculta_forum\Form\DiscussionCommentModerationForm
+    arguments: ['@current_route_match', '@keyvalue', '@logger.factory', '@current_user', '@date.formatter', '@entity_type.manager', '@aculta_forum.discussion_reaction_manager']
+  Drupal\aculta_forum\Hook\RevistaDiscussionPageHooks:
+    class: Drupal\aculta_forum\Hook\RevistaDiscussionPageHooks
+    arguments: ['@current_route_match', '@current_user']
   Drupal\aculta_forum\Hook\ForumPostBundleHooks:
     class: Drupal\aculta_forum\Hook\ForumPostBundleHooks
   Drupal\aculta_forum\Hook\PublicForumViewsDataHooks:
     class: Drupal\aculta_forum\Hook\PublicForumViewsDataHooks
-  Drupal\aculta_forum\Hook\ForumPostThreadHooks:
-    class: Drupal\aculta_forum\Hook\ForumPostThreadHooks
-    arguments: ['@aculta_forum.post_thread_builder']
   Drupal\aculta_forum\Hook\ForumPostMigrationFieldHooks:
     class: Drupal\aculta_forum\Hook\ForumPostMigrationFieldHooks
   Drupal\aculta_forum\Hook\ForumQuoteHooks:
@@ -94,26 +121,26 @@ services:
     arguments: ['@aculta_forum.topic_mover', '@current_user']
   Drupal\aculta_forum\Hook\HistoricForumFlagAccessHooks:
     class: Drupal\aculta_forum\Hook\HistoricForumFlagAccessHooks
-    arguments: ['@entity_type.manager', '@current_user', '@aculta_portal.domain_purpose', '@aculta_forum.flagging_migration_context']
+    arguments: ['@entity_type.manager', '@current_user', '@aculta_portal.domain_site', '@aculta_forum.flagging_migration_context']
   Drupal\aculta_forum\Hook\PublicForumExposedFormHooks:
     class: Drupal\aculta_forum\Hook\PublicForumExposedFormHooks
     arguments: ['@entity_type.manager', '@current_user', '@entity.repository', '@string_translation']
   Drupal\aculta_forum\Hook\PublicForumFrontNavigationHooks:
     class: Drupal\aculta_forum\Hook\PublicForumFrontNavigationHooks
-    arguments: ['@plugin.manager.menu.local_task', '@request_stack', '@aculta_portal.domain_purpose']
+    arguments: ['@plugin.manager.menu.local_task', '@request_stack', '@aculta_portal.domain_site']
   Drupal\aculta_forum\Hook\PublicForumLastActivityAuthorHooks:
     class: Drupal\aculta_forum\Hook\PublicForumLastActivityAuthorHooks
     arguments: ['@entity_type.manager', '@aculta_user.author_card_builder', '@aculta_forum.public_post_statistics']
   Drupal\aculta_forum\Hook\PublicForumTopicCreateActionHooks:
     class: Drupal\aculta_forum\Hook\PublicForumTopicCreateActionHooks
-    arguments: ['@access_manager', '@aculta_portal.domain_purpose']
+    arguments: ['@access_manager', '@aculta_portal.domain_site']
   Drupal\aculta_forum\Hook\PublicForumTopicHooks:
     class: Drupal\aculta_forum\Hook\PublicForumTopicHooks
-    arguments: ['@aculta_portal.domain_purpose']
+    arguments: ['@aculta_portal.domain_site']
 
   aculta_forum.attachment_publication:
     class: Drupal\aculta_forum\Attachment\ForumAttachmentPublication
-    arguments: ['@entity_type.manager', '@aculta_portal.domain_purpose']
+    arguments: ['@entity_type.manager', '@aculta_portal.domain_site']
   aculta_forum.gallery_publication:
     class: Drupal\aculta_forum\Attachment\ForumGalleryPublication
     arguments: ['@entity_type.manager', '@aculta_forum.attachment_publication']
@@ -122,20 +149,14 @@ services:
     arguments: ['@entity_type.manager', '@entity_usage.usage', '@database', '@datetime.time', '@aculta_portal.unused_media_cleaner', '@aculta_file_uploader.unused_file_cleaner', '@config.factory', '@lock']
   aculta_forum.attachment_upload_access:
     class: Drupal\aculta_forum\Access\ForumAttachmentUploadAccess
-    arguments: ['@aculta_portal.domain_purpose']
-  aculta_forum.post_public_edit_access:
-    class: Drupal\aculta_forum\Access\ForumPostPublicEditAccess
-    arguments: ['@entity_type.manager', '@request_stack']
+    arguments: ['@aculta_portal.domain_site']
   aculta_forum.post_moderation_access:
     class: Drupal\aculta_forum\Access\ForumPostModerationAccess
-    arguments: ['@entity_type.manager', '@aculta_portal.domain_purpose']
-  aculta_forum.post_submission_access:
-    class: Drupal\aculta_forum\Access\ForumPostSubmissionAccess
-    arguments: ['@entity_type.manager', '@aculta_forum.discussion_context_resolver', '@request_stack']
+    arguments: ['@entity_type.manager', '@aculta_portal.domain_site']
 
   aculta_forum.search_query_subscriber:
     class: Drupal\aculta_forum\EventSubscriber\ForumSearchQuerySubscriber
-    arguments: ['@aculta_portal.domain_purpose']
+    arguments: ['@aculta_portal.domain_site']
     tags:
       - { name: event_subscriber }
   aculta_forum.quote_builder:
@@ -143,10 +164,10 @@ services:
 
   aculta_forum.topic_mover:
     class: Drupal\aculta_forum\Service\ForumTopicMover
-    arguments: ['@entity_type.manager', '@aculta_portal.domain_purpose', '@logger.channel.aculta_forum']
+    arguments: ['@entity_type.manager', '@aculta_portal.domain_site', '@logger.channel.aculta_forum']
   aculta_forum.comment_mover:
     class: Drupal\aculta_forum\Service\ForumCommentMover
-    arguments: ['@entity_type.manager', '@config.factory', '@aculta_forum.discussion_write_guard', '@aculta_portal.domain_purpose', '@lock', '@database', '@comment.statistics', '@cache_tags.invalidator', '@event_dispatcher', '@logger.channel.aculta_forum']
+    arguments: ['@entity_type.manager', '@config.factory', '@aculta_forum.discussion_write_guard', '@aculta_portal.domain_site', '@lock', '@database', '@comment.statistics', '@cache_tags.invalidator', '@event_dispatcher', '@logger.channel.aculta_forum']
   aculta_forum.discussion_write_guard:
     class: Drupal\aculta_forum\Service\ForumDiscussionWriteGuard
     arguments: ['@entity_type.manager', '@lock', '@database']
@@ -155,7 +176,7 @@ services:
     arguments: ['@database', '@current_user']
   aculta_forum.post_thread_builder:
     class: Drupal\aculta_forum\Service\ForumPostThreadBuilder
-    arguments: ['@entity_type.manager', '@current_user', '@aculta_portal.domain_purpose', '@aculta_forum.discussion_context_resolver', '@pager.manager']
+    arguments: ['@entity_type.manager', '@aculta_portal.domain_site']
   logger.channel.aculta_forum:
     parent: logger.channel_base
     arguments: ['aculta_forum']
@@ -165,7 +186,7 @@ services:
 
   aculta_forum.discussion_context_provider.public_forum:
     class: Drupal\aculta_forum\Context\Provider\PublicForumContextProvider
-    arguments: ['@aculta_portal.domain_purpose']
+    arguments: ['@aculta_portal.domain_site', '@aculta_forum.analytics_scope_resolver']
     tags:
       - { name: aculta_forum.discussion_context_provider }
 
@@ -174,10 +195,28 @@ services:
     tags:
       - { name: aculta_forum.discussion_context_provider }
 
+  aculta_forum.discussion_context_provider.wiki:
+    class: Drupal\aculta_forum\Context\Provider\WikiDiscussionContextProvider
+    tags:
+      - { name: aculta_forum.discussion_context_provider }
+
   aculta_forum.read_access:
     class: Drupal\aculta_forum\Access\ForumReadAccess
-    arguments: ['@aculta_portal.domain_purpose']
+    arguments: ['@aculta_portal.domain_site']
 
+  aculta_forum.analytics_scope_resolver:
+    class: Drupal\aculta_forum\Analytics\ForumAnalyticsScopeResolver
+    arguments: ['@aculta_forum.restricted_group_resolver', '@aculta_portal.domain_site', '@database', '@logger.channel.aculta_forum']
+  Drupal\aculta_forum\Analytics\ForumAnalyticsScopeResolver: '@aculta_forum.analytics_scope_resolver'
+  aculta_forum.reaction_reconciliation:
+    class: Drupal\aculta_forum\Analytics\ForumReactionReconciliation
+    arguments: ['@database', '@entity_type.manager', '@aculta_forum.analytics_scope_resolver', '@lock', '@datetime.time', '@logger.channel.aculta_forum']
+  Drupal\aculta_forum\Analytics\ForumReactionReconciliation: '@aculta_forum.reaction_reconciliation'
+  aculta_forum.metrics_provider:
+    class: Drupal\aculta_forum\Analytics\ForumMetricsProvider
+    arguments: ['@database', '@aculta_forum.analytics_scope_resolver', '@datetime.time']
+    tags:
+      - { name: aculta_statistics.metric_provider }
   aculta_forum.restricted_group_resolver:
     class: Drupal\aculta_forum\RestrictedForum\RestrictedForumGroupResolver
     arguments: ['@config.factory', '@entity_type.manager', '@logger.channel.aculta_forum']
@@ -202,13 +241,163 @@ services:
 
   aculta_forum.read_marker:
     class: Drupal\aculta_forum\Service\ForumReadMarker
-    arguments: ['@entity_type.manager', '@aculta_portal.domain_purpose', '@current_user', '@string_translation', '@messenger']
+    arguments: ['@entity_type.manager', '@aculta_portal.domain_site', '@current_user', '@string_translation', '@messenger']
 
-  Drupal\aculta_forum\Hook\ForumReportUgcBridgeHooks:
-    class: Drupal\aculta_forum\Hook\ForumReportUgcBridgeHooks
-    arguments: ['@entity_type.manager', '@?aculta_ugc.moderation_notifier', '@lock', '@datetime.time', '@?logger.channel.aculta_forum']
+  Drupal\aculta_forum\Hook\ForumReportCguBridgeHooks:
+    class: Drupal\aculta_forum\Hook\ForumReportCguBridgeHooks
+    arguments: ['@entity_type.manager', '@?aculta_cgu.moderation_notifier', '@lock', '@datetime.time', '@?logger.channel.aculta_forum']
     public: true
 
-  aculta_forum.report_ugc_bridge:
-    alias: Drupal\aculta_forum\Hook\ForumReportUgcBridgeHooks
-    public: true
+  Drupal\aculta_forum\Context\Provider\LmsDiscussionContextProvider:
+    arguments: ['@entity_type.manager']
+    tags:
+      - { name: aculta_forum.discussion_context_provider }
+
+  aculta_forum.lms_edit_window_exemption:
+    class: Drupal\aculta_forum\Access\LmsEditWindowExemption
+    arguments: ['@Drupal\aculta_forum\Context\Provider\LmsDiscussionContextProvider']
+    tags:
+      - { name: aculta_user.edit_window_exemption, priority: 0 }
+
+  Drupal\aculta_forum\Hook\LmsDiscussionEntityAccessHooks:
+    arguments: ['@Drupal\aculta_forum\Context\Provider\LmsDiscussionContextProvider']
+
+  Drupal\aculta_forum\Hook\LmsCommentModerationAccessHooks:
+    arguments: ['@aculta_forum.discussion_context_resolver']
+
+  aculta_forum.comment_reply_permalink_controller:
+    class: Drupal\aculta_forum\Controller\CommentReplyPermalinkController
+    arguments: ['@aculta_forum.discussion_comment_permalink_builder']
+
+  aculta_forum.discussion_comment_permalink_builder:
+    class: Drupal\aculta_forum\Service\DiscussionCommentPermalinkBuilder
+    arguments: ['@entity_type.manager']
+
+  Drupal\aculta_forum\Hook\PublicForumListViewHooks:
+    arguments: ['@entity_type.manager']
+
+  Drupal\aculta_forum\Hook\TopicOpeningPostHooks:
+    arguments: ['@current_user', '@aculta_forum.topic_deletion_moderation_manager', '@aculta_forum.discussion_reply_access']
+
+  Drupal\aculta_forum\Hook\DiscussionCommentPermalinkHooks:
+    arguments: ['@aculta_forum.discussion_comment_permalink_builder', '@extension.list.theme', '@aculta_forum.discussion_thread_depth_resolver']
+
+  Drupal\aculta_forum\Hook\DiscussionReactionEntityViewHooks:
+    arguments: ['@aculta_forum.discussion_reaction_builder', '@aculta_forum.discussion_reaction_manager', '@current_user', '@entity_type.manager', '@keyvalue', '@csrf_token']
+
+  Drupal\aculta_forum\Hook\ForumProfileReactionHooks:
+    arguments: ['@aculta_forum.discussion_reaction_manager']
+
+
+
+
+  aculta_forum.discussion_reply_access:
+    class: Drupal\aculta_forum\Service\DiscussionReplyAccess
+    arguments:
+      - '@aculta_forum.discussion_context_resolver'
+      - '@entity_type.manager'
+
+  aculta_forum.discussion_reply_url_builder:
+    class: Drupal\aculta_forum\Service\DiscussionReplyUrlBuilder
+
+  aculta_forum.discussion_thread_depth_resolver:
+    class: Drupal\aculta_forum\Service\DiscussionThreadDepthResolver
+    arguments:
+      - '@config.factory'
+
+  aculta_forum.topic_deletion_moderation_manager:
+    class: Drupal\aculta_forum\Service\TopicDeletionModerationManager
+    arguments:
+      - '@database'
+      - '@entity_type.manager'
+      - '@config.factory'
+      - '@current_user'
+      - '@logger.channel.aculta_forum'
+      - '@datetime.time'
+
+  aculta_forum.discussion_reply_idempotency_manager:
+    class: Drupal\aculta_forum\Service\DiscussionReplyIdempotencyManager
+    arguments:
+      - '@database'
+      - '@datetime.time'
+
+  aculta_forum.discussion_reply_form_builder:
+    class: Drupal\aculta_forum\Service\DiscussionReplyFormBuilder
+    arguments:
+      - '@aculta_forum.discussion_context_resolver'
+      - '@entity_type.manager'
+      - '@entity.form_builder'
+      - '@aculta_forum.discussion_reply_access'
+      - '@aculta_forum.quote_builder'
+      - '@aculta_forum.discussion_thread_depth_resolver'
+
+  aculta_forum.discussion_reply_lazy_builder:
+    class: Drupal\aculta_forum\Service\DiscussionReplyLazyBuilder
+    arguments:
+      - '@entity_type.manager'
+      - '@current_user'
+      - '@aculta_forum.discussion_reply_form_builder'
+
+  aculta_forum.discussion_reply_endpoint_access:
+    class: Drupal\aculta_forum\Access\DiscussionReplyEndpointAccess
+    arguments:
+      - '@entity_type.manager'
+      - '@aculta_forum.discussion_reply_access'
+      - '@aculta_forum.topic_deletion_moderation_manager'
+
+  aculta_forum.discussion_reply_controller:
+    class: Drupal\aculta_forum\Controller\DiscussionReplyController
+    arguments:
+      - '@entity_type.manager'
+      - '@aculta_forum.discussion_reply_form_builder'
+      - '@aculta_forum.discussion_reply_access'
+      - '@aculta_forum.discussion_context_resolver'
+      - '@aculta_forum.quote_builder'
+      - '@current_user'
+      - '@keyvalue'
+
+  aculta_forum.discussion_reaction_access:
+    class: Drupal\aculta_forum\Service\DiscussionReactionAccess
+    arguments:
+      - '@aculta_forum.discussion_context_resolver'
+      - '@entity_type.manager'
+      - '@config.factory'
+
+  aculta_forum.discussion_reaction_manager:
+    class: Drupal\aculta_forum\Service\DiscussionReactionManager
+    arguments:
+      - '@database'
+      - '@config.factory'
+      - '@aculta_forum.analytics_scope_resolver'
+      - '@event_dispatcher'
+      - '@datetime.time'
+
+  aculta_forum.discussion_reaction_endpoint_access:
+    class: Drupal\aculta_forum\Access\DiscussionReactionEndpointAccess
+    arguments:
+      - '@entity_type.manager'
+      - '@aculta_forum.discussion_reaction_access'
+
+  aculta_forum.discussion_reaction_builder:
+    class: Drupal\aculta_forum\Service\DiscussionReactionBuilder
+    arguments:
+      - '@aculta_forum.discussion_reaction_manager'
+      - '@aculta_forum.discussion_reaction_endpoint_access'
+      - '@csrf_token'
+
+  aculta_forum.discussion_reaction_controller:
+    class: Drupal\aculta_forum\Controller\DiscussionReactionController
+    arguments:
+      - '@entity_type.manager'
+      - '@aculta_forum.discussion_reaction_manager'
+      - '@aculta_forum.discussion_reaction_builder'
+      - '@aculta_forum.discussion_reaction_endpoint_access'
+      - '@current_user'
+      - '@csrf_token'
+
+  aculta_forum.comment_route_subscriber:
+    class: Drupal\aculta_forum\EventSubscriber\CommentRouteSubscriber
+    tags:
+      - { name: event_subscriber }
+  aculta_forum.popup_only_access:
+    class: Drupal\aculta_forum\Access\ForumPopupOnlyAccess

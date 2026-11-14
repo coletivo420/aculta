@@ -14,7 +14,7 @@ use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\aculta_index\Queue\ContentIndexWorkManager;
 use Drupal\aculta_forum\Entity\ForumPost;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\domain\DomainNegotiatorInterface;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\node\Entity\Node;
@@ -46,6 +46,10 @@ final class ContentIndexForumTopicProviderKernelTest extends KernelTestBase {
     'comment',
     'aculta_index',
     'aculta_index_forum_test',
+    'aculta_calendar',
+    'aculta_file_uploader',
+    'filter',
+    'file',
   ];
 
   /**
@@ -53,7 +57,7 @@ final class ContentIndexForumTopicProviderKernelTest extends KernelTestBase {
    */
   public function register(ContainerBuilder $container): void {
     parent::register($container);
-    $container->set('aculta_portal.domain_purpose', new DomainPurposeManager(
+    $container->set('aculta_portal.domain_site', new DomainSiteManager(
       $this->createMock(EntityTypeManagerInterface::class),
       $this->createMock(DomainNegotiatorInterface::class),
       $this->createMock(ConfigFactoryInterface::class),
@@ -152,7 +156,7 @@ final class ContentIndexForumTopicProviderKernelTest extends KernelTestBase {
 
     $registry = $this->container->get('aculta_index.provider_registry');
     self::assertSame('forum', $registry->findProviderIdForBundle('node', 'aculta_forum_topic'));
-    self::assertSame('forum', $registry->get('forum')->getAccessPurpose($topic));
+    self::assertSame('forum', $registry->access('forum')->getAccessSiteKey($topic));
 
     $rebuilder = $this->container->get('aculta_index.rebuilder');
     $generationId = $rebuilder->start();
@@ -257,7 +261,7 @@ final class ContentIndexForumTopicProviderKernelTest extends KernelTestBase {
 
     $registry = $this->container->get('aculta_index.provider_registry');
     self::assertSame('forum', $registry->findProviderIdForBundle('aculta_forum_post', 'aculta_forum_post'));
-    self::assertSame('forum', $registry->get('forum')->getAccessPurpose($reply));
+    self::assertSame('forum', $registry->access('forum')->getAccessSiteKey($reply));
 
     $generationId = $this->buildAndActivateGeneration();
     self::assertSame('Resposta raiz', $this->entryLabel($generationId, (string) $root->id(), 'aculta_forum_post'));

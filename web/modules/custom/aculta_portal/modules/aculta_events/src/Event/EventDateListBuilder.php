@@ -30,6 +30,7 @@ final class EventDateListBuilder {
   public function __construct(
     private readonly EntityTypeManagerInterface $entities,
     TranslationInterface $translation,
+    private readonly EventRouteContext $eventRouteContext,
   ) {
     $this->stringTranslation = $translation;
   }
@@ -42,11 +43,12 @@ final class EventDateListBuilder {
     $rows = [];
     foreach ($dates as $date) {
       $quando = $date->get('field_quando')->first();
+      $quandoValues = $quando?->getValue() ?? [];
       $local = $date->get('field_local')->entity;
       $rows[] = [
         (string) $date->label(),
-        $this->formatDate($quando?->value),
-        $this->formatDate($quando?->end_value),
+        $this->formatDate(isset($quandoValues['value']) ? (string) $quandoValues['value'] : NULL),
+        $this->formatDate(isset($quandoValues['end_value']) ? (string) $quandoValues['end_value'] : NULL),
         $local instanceof EventLocation ? (string) $local->label() : '',
         ['data' => $this->buildActions($event, $date)],
       ];
@@ -76,14 +78,14 @@ final class EventDateListBuilder {
     $build['actions']['add'] = [
       '#type' => 'link',
       '#title' => $this->t('Adicionar data a este evento'),
-      '#url' => Url::fromRoute(EventRouteContext::route('aculta_events.event_date_add', 'aculta_events.organizer_event_date_add'), ['aculta_event' => $event->id()]),
+      '#url' => Url::fromRoute($this->eventRouteContext->route('aculta_events.event_date_add', 'aculta_events.organizer_event_date_add'), ['aculta_event' => $event->id()]),
       '#attributes' => $this->dialogAttributes('button-primary'),
     ];
     if (count($dates) > 1) {
       $build['actions']['order'] = [
         '#type' => 'link',
         '#title' => $this->t('Ordenar datas'),
-        '#url' => Url::fromRoute(EventRouteContext::route('aculta_events.event_date_order', 'aculta_events.organizer_event_date_order'), ['aculta_event' => $event->id()]),
+        '#url' => Url::fromRoute($this->eventRouteContext->route('aculta_events.event_date_order', 'aculta_events.organizer_event_date_order'), ['aculta_event' => $event->id()]),
         '#attributes' => $this->dialogAttributes('button'),
       ];
     }
@@ -103,7 +105,10 @@ final class EventDateListBuilder {
       ->accessCheck(FALSE)
       ->condition('field_evento', (int) $event->id())
       ->execute();
-    $dates = $storage->loadMultiple($ids);
+    $dates = array_values(array_filter(
+      $storage->loadMultiple($ids),
+      static fn ($date): bool => $date instanceof EventDate,
+    ));
     usort($dates, static function (EventDate $a, EventDate $b): int {
       $pa = (int) ($a->get('field_peso')->value ?? 0);
       $pb = (int) ($b->get('field_peso')->value ?? 0);
@@ -112,7 +117,7 @@ final class EventDateListBuilder {
       }
       return (string) $a->get('field_quando')->value <=> (string) $b->get('field_quando')->value;
     });
-    return array_values($dates);
+    return $dates;
   }
 
   /**
@@ -137,7 +142,7 @@ final class EventDateListBuilder {
       'edit' => [
         '#type' => 'link',
         '#title' => $this->t('Editar'),
-        '#url' => Url::fromRoute(EventRouteContext::route('aculta_events.event_date_edit', 'aculta_events.organizer_event_date_edit'), [
+        '#url' => Url::fromRoute($this->eventRouteContext->route('aculta_events.event_date_edit', 'aculta_events.organizer_event_date_edit'), [
           'aculta_event' => $event->id(),
           'aculta_event_date' => $date->id(),
         ]),
@@ -146,7 +151,7 @@ final class EventDateListBuilder {
       'delete' => [
         '#type' => 'link',
         '#title' => $this->t('Remover'),
-        '#url' => Url::fromRoute(EventRouteContext::route('aculta_events.event_date_delete', 'aculta_events.organizer_event_date_delete'), [
+        '#url' => Url::fromRoute($this->eventRouteContext->route('aculta_events.event_date_delete', 'aculta_events.organizer_event_date_delete'), [
           'aculta_event' => $event->id(),
           'aculta_event_date' => $date->id(),
         ]),

@@ -39,12 +39,12 @@ final class MessageSubscribeEventWorker extends QueueWorkerBase implements Conta
     array $configuration,
     string $plugin_id,
     mixed $plugin_definition,
-    private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly ForumNoticeEventProducerInterface $events,
-    private readonly AliasManagerInterface $aliasManager,
-    private readonly TimeInterface $time,
-    private readonly LockBackendInterface $lock,
-    private readonly LoggerChannelFactoryInterface $loggerFactory,
+    protected readonly EntityTypeManagerInterface $entityTypeManager,
+    protected readonly ForumNoticeEventProducerInterface $events,
+    protected readonly AliasManagerInterface $aliasManager,
+    protected readonly TimeInterface $time,
+    protected readonly LockBackendInterface $lock,
+    protected readonly LoggerChannelFactoryInterface $loggerFactory,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }

@@ -27,7 +27,7 @@ require __DIR__ . '/../vendor/autoload.php';
 
 use Symfony\Component\Yaml\Yaml;
 
-$root = dirname(__DIR__) . '/web/themes/custom/aculta420';
+$root = dirname(__DIR__) . '/web/themes/custom/aculta420_v2';
 $failures = [];
 $checks = 0;
 $assert = static function (bool $condition, string $message) use (&$failures, &$checks): void {
@@ -53,31 +53,47 @@ $supportedClassTypes = [
 $components = [];
 $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($root . '/components', FilesystemIterator::SKIP_DOTS));
 foreach ($iterator as $file) {
+  if (!$file instanceof SplFileInfo) {
+    continue;
+  }
   if (!str_ends_with($file->getFilename(), '.component.yml')) {
     continue;
   }
   $name = basename($file->getPath());
   $relative = str_replace($root . '/', '', $file->getPathname());
   $meta = Yaml::parseFile($file->getPathname());
+  if (!is_array($meta)) {
+    $failures[] = "$relative: component metadata must be a YAML map.";
+    continue;
+  }
   $components[$name] = ['meta' => $meta, 'path' => $file->getPathname()];
 
   $assert(is_string($meta['name'] ?? NULL) && $meta['name'] !== '', "$relative: missing name.");
   $assert(in_array($meta['status'] ?? NULL, $allowedStatus, TRUE), "$relative: status must be stable, experimental or deprecated.");
   $assert(is_string($meta['group'] ?? NULL) && $meta['group'] !== '', "$relative: missing group.");
-  $assert(is_string($meta['description'] ?? NULL) && trim((string) $meta['description']) !== '', "$relative: missing description.");
+  $assert(is_string($meta['description'] ?? NULL) && trim($meta['description']) !== '', "$relative: missing description.");
   if (($meta['status'] ?? NULL) === 'stable') {
-    $assert(trim((string) ($meta['description'] ?? '')) !== '', "$relative: stable component needs a description.");
+    $assert(is_string($meta['description'] ?? NULL) && trim($meta['description']) !== '', "$relative: stable component needs a description.");
   }
 
-  $props = $meta['props']['properties'] ?? NULL;
-  $assert(($meta['props']['type'] ?? NULL) === 'object', "$relative: props must be an object schema.");
+  $propsSchema = $meta['props'] ?? NULL;
+  $propsSchema = is_array($propsSchema) ? $propsSchema : [];
+  $props = $propsSchema['properties'] ?? NULL;
+  $assert(($propsSchema['type'] ?? NULL) === 'object', "$relative: props must be an object schema.");
   $props = is_array($props) ? $props : [];
   foreach ($props as $propName => $prop) {
+    if (!is_array($prop)) {
+      $assert(FALSE, "$relative: prop '$propName' must be a schema map.");
+      continue;
+    }
+    if (is_string($prop['$ref'] ?? NULL) && str_starts_with($prop['$ref'], 'ui-patterns://')) {
+      continue;
+    }
     $type = $prop['type'] ?? NULL;
     $types = is_array($type) ? $type : [$type];
     $ok = TRUE;
     foreach ($types as $t) {
-      if ($t !== 'null' && !isset($typeMap[(string) $t]) && !in_array((string) $t, $supportedClassTypes, TRUE)) {
+      if ($t !== 'null' && (!is_string($t) || (!isset($typeMap[$t]) && !in_array($t, $supportedClassTypes, TRUE)))) {
         $ok = FALSE;
       }
     }
@@ -90,28 +106,135 @@ foreach ($iterator as $file) {
     }
   }
 
+  if (isset($meta['variants'])) {
+    $variants = $meta['variants'];
+    $variantProp = $props['variant'] ?? NULL;
+    $variantProp = is_array($variantProp) ? $variantProp : [];
+    $assert(is_array($variants) && $variants !== [], "$relative: variants metadata must be a non-empty map.");
+    $assert(is_array($variantProp['enum'] ?? NULL), "$relative: variants metadata requires a declared SDC variant enum for direct Core rendering.");
+    if (is_array($variants) && is_array($variantProp['enum'] ?? NULL)) {
+      $assert(array_keys($variants) === $variantProp['enum'], "$relative: variants metadata keys must match the SDC variant enum in the same order.");
+      foreach ($variants as $variantId => $variant) {
+        $assert(is_array($variant) && is_string($variant['title'] ?? NULL) && trim($variant['title']) !== '', "$relative: variant '$variantId' needs a non-empty title.");
+      }
+    }
+  }
+
   $slots = $meta['slots'] ?? [];
   $assert(is_array($slots), "$relative: slots must be a map.");
   foreach (is_array($slots) ? $slots : [] as $slotName => $slot) {
-    $assert(is_array($slot) && isset($slot['title']) && is_string($slot['title']), "$relative: slot '$slotName' needs a title.");
+    $assert(is_array($slot) && is_string($slot['title'] ?? NULL), "$relative: slot '$slotName' needs a title.");
   }
 
   $components[$name]['declared'] = array_merge(array_keys($props), array_keys(is_array($slots) ? $slots : []));
 }
 
+$extractIncludeArguments = static function (string $source, int $openBraceOffset): ?array {
+  $depth = 0;
+  $quote = NULL;
+  $escaped = FALSE;
+  $length = strlen($source);
+  for ($index = $openBraceOffset; $index < $length; $index++) {
+    $char = $source[$index];
+    if ($quote !== NULL) {
+      if ($escaped) {
+        $escaped = FALSE;
+      }
+      elseif ($char === '\\') {
+        $escaped = TRUE;
+      }
+      elseif ($char === $quote) {
+        $quote = NULL;
+      }
+      continue;
+    }
+    if ($char === "'" || $char === '"') {
+      $quote = $char;
+      continue;
+    }
+    if ($char === '{') {
+      $depth++;
+    }
+    elseif ($char === '}') {
+      $depth--;
+      if ($depth === 0) {
+        return [substr($source, $openBraceOffset + 1, $index - $openBraceOffset - 1), $index];
+      }
+    }
+  }
+  return NULL;
+};
+
+$extractObjectKeys = static function (string $source): array {
+  $keys = [];
+  $parts = [];
+  $start = 0;
+  $depth = 0;
+  $quote = NULL;
+  $escaped = FALSE;
+  $length = strlen($source);
+  for ($index = 0; $index <= $length; $index++) {
+    $char = $source[$index] ?? ',';
+    if ($quote !== NULL) {
+      if ($escaped) {
+        $escaped = FALSE;
+      }
+      elseif ($char === '\\') {
+        $escaped = TRUE;
+      }
+      elseif ($char === $quote) {
+        $quote = NULL;
+      }
+      continue;
+    }
+    if ($char === "'" || $char === '"') {
+      $quote = $char;
+    }
+    elseif (in_array($char, ['{', '[', '('], TRUE)) {
+      $depth++;
+    }
+    elseif (in_array($char, ['}', ']', ')'], TRUE)) {
+      $depth--;
+    }
+    elseif ($char === ',' && $depth === 0) {
+      $parts[] = substr($source, $start, $index - $start);
+      $start = $index + 1;
+    }
+  }
+  foreach ($parts as $part) {
+    if (preg_match('/^\s*([a-z_][a-z0-9_]*)\s*:/i', $part, $match)) {
+      $keys[] = strtolower($match[1]);
+    }
+  }
+  return array_values(array_unique($keys));
+};
+
 $calls = [];
 foreach (['templates', 'components'] as $dir) {
   $walker = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($root . '/' . $dir, FilesystemIterator::SKIP_DOTS));
   foreach ($walker as $file) {
+    if (!$file instanceof SplFileInfo) {
+      continue;
+    }
     if (!str_ends_with($file->getFilename(), '.twig')) {
       continue;
     }
     $source = file_get_contents($file->getPathname());
-    preg_match_all("/include\\(\\s*'aculta420:([a-z0-9-]+)'\\s*,\\s*\\{(.*?)\\}\\s*,/s", $source, $matches, PREG_SET_ORDER);
-    foreach ($matches as $match) {
+    if ($source === FALSE) {
+      $failures[] = str_replace($root . '/', '', $file->getPathname()) . ': could not read Twig template.';
+      continue;
+    }
+    preg_match_all("/include\\(\\s*'aculta420(?:_v2)?:([a-z0-9-]+)'\\s*,\\s*\\{/", $source, $matches, PREG_OFFSET_CAPTURE);
+    foreach ($matches[0] as $index => $match) {
+      $openBraceOffset = strpos($match[0], '{') + $match[1];
+      $arguments = $extractIncludeArguments($source, $openBraceOffset);
+      if ($arguments === NULL) {
+        $failures[] = str_replace($root . '/', '', $file->getPathname()) . ': unclosed SDC include props object.';
+        continue;
+      }
       $calls[] = [
-        'component' => $match[1],
-        'keys' => $match[2],
+        'component' => $matches[1][$index][0],
+        'keys' => $arguments[0],
         'file' => str_replace($root . '/', '', $file->getPathname()),
       ];
     }
@@ -124,11 +247,7 @@ foreach ($calls as $call) {
   if (!isset($components[$call['component']])) {
     continue;
   }
-  // Ternary branches (`? value :`) are values, not keys. Drop them before
-  // matching keys.
-  $objectKeys = preg_replace('/\?\s*[^,?]*?\s*:/', '?', $call['keys']);
-  preg_match_all('/([a-z_][a-z0-9_]*)\s*:/', $objectKeys, $keys);
-  foreach (array_unique($keys[1]) as $key) {
+  foreach ($extractObjectKeys($call['keys']) as $key) {
     $assert(in_array($key, $components[$call['component']]['declared'], TRUE), "$label: variable '$key' is not declared by the component.");
   }
 }

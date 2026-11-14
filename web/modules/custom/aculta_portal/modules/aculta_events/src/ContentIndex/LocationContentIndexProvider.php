@@ -12,16 +12,11 @@ use Drupal\aculta_portal\ContentIndex\ContentIndexProjection;
 use Drupal\aculta_portal\ContentIndex\ContentIndexProviderInterface;
 use Drupal\aculta_portal\ContentIndex\ContentIndexRelation;
 use Drupal\Core\Entity\ContentEntityInterface;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
 
 /**
  * Projeta locais de evento na infraestrutura transversal aculta_index.
  */
 final class LocationContentIndexProvider implements ContentIndexProviderInterface, ContentIndexIndexabilityProviderInterface, ContentIndexAccessContextProviderInterface {
-
-  public function __construct(
-    private readonly EntityTypeManagerInterface $entityTypeManager,
-  ) {}
 
   /**
    * {@inheritdoc}
@@ -47,7 +42,7 @@ final class LocationContentIndexProvider implements ContentIndexProviderInterfac
   /**
    * {@inheritdoc}
    */
-  public function getAccessPurpose(ContentEntityInterface $entity): ?string {
+  public function getAccessSiteKey(ContentEntityInterface $entity): ?string {
     return $entity instanceof EventLocation ? 'eventos' : NULL;
   }
 

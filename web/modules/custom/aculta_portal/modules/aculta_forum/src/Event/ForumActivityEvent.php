@@ -34,6 +34,7 @@ final class ForumActivityEvent extends Event {
   public function __construct(
     public readonly int $entityId,
     public readonly int $occurredAt,
+    public readonly int $hostEntityId = 0,
   ) {}
 
 }

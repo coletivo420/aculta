@@ -13,7 +13,8 @@ use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\user\EntityOwnerInterface;
 use Drupal\user\UserInterface;
 use Drupal\views\EntityViewsData;
@@ -62,22 +63,19 @@ final class EventOrganization extends ContentEntityBase implements EntityOwnerIn
    */
   public function getOwner(): ?UserInterface {
     $titular = $this->get('titular')->entity;
-    if ($titular !== NULL) {
+    if ($titular instanceof UserInterface) {
       return $titular;
     }
-    return $this->get('field_organizador')->entity;
+    $organizer = $this->get('field_organizador')->entity;
+    return $organizer instanceof UserInterface ? $organizer : NULL;
   }
 
   /**
    * {@inheritdoc}
    */
   public function getOwnerId(): ?int {
-    $titularId = $this->get('titular')->target_id;
-    if ($titularId !== NULL && $titularId !== '') {
-      return (int) $titularId;
-    }
-    $orgId = $this->get('field_organizador')->target_id;
-    return $orgId !== NULL && $orgId !== '' ? (int) $orgId : NULL;
+    $ownerId = $this->getOwner()?->id();
+    return $ownerId !== NULL ? (int) $ownerId : NULL;
   }
 
   /**
@@ -136,10 +134,10 @@ final class EventOrganization extends ContentEntityBase implements EntityOwnerIn
   /**
    * Retorna a URL canônica absoluta no purpose eventos.
    */
-  public function toCanonicalUrl(?DomainPurposeManager $purposes = NULL): Url {
+  public function toCanonicalUrl(?DomainSiteManager $purposes = NULL): Url {
     $slug = $this->getSlug();
     if ($purposes !== NULL && $slug !== '') {
-      $canonical = $purposes->canonicalRouteUrl('eventos', 'aculta_events.organization_page', ['slug' => $slug]);
+      $canonical = $purposes->canonicalRouteUrl(SiteKey::Eventos, 'aculta_events.organization_page', ['slug' => $slug]);
       if ($canonical !== NULL) {
         return $canonical;
       }

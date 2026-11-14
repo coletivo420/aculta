@@ -28,7 +28,6 @@ final class OrganizationContributionOutcomeRecordedEventTest extends UnitTestCas
       'schema_version' => 1,
       'event' => OrganizationContributionOutcomeRecordedEvent::NAME,
       'source' => 'events_organization',
-      'source' => 'events_organization',
       'source_uuid' => 'f6be4a3e-6d93-40c8-a47a-379d170dc852',
       'source_revision_id' => 12,
       'recipient_uid' => 7,

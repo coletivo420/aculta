@@ -22,14 +22,14 @@ Adapters permanecem no aculta_events; aculta_index não ganha entidades de orige
 No branch `refactor/opencultures-codigo-visual`, as suítes atuais no MariaDB
 `aculta_simpletest` passaram: Unit Index 51 testes / 265 assertions; Kernel
 Index 120 / 2.020, com 270 depreciações Core/contrib/PHPUnit; Unit opcional
-`aculta_index_file` 2 / 21. O lint dos 85 arquivos PHP e PHPCS
+`aculta_index` Unit File 2 / 21. O lint dos 85 arquivos PHP e PHPCS
 Drupal/DrupalPractice passaram depois de corrigir os docblocks do painel de
 status. A revalidação confirma o harness, não a ativação completa dos owners.
 Grants operacionais e carga representativa continuam pendentes; nenhum rebuild
 ou escrita no Runtime foi executado. O módulo permanece Dev.
 
-Consulta read-only repetida em 2026-10-29 no Runtime de teste: código ativo
-dev.177, `aculta_index_file` Disabled, fila vazia e pronta; uma auditoria já
+Consulta read-only repetida em 2026-10-29 no Runtime de desenvolvimento: código ativo
+dev.177, provider `file:file` integrado, fila vazia e pronta; uma auditoria já
 existente (id 1) permanece `running`, com 1 projeção stale e `valid=false`.
 Não avancei essa auditoria nem iniciei rebuild. Resolver a auditoria pendente
 com operador autorizado é pré-requisito para nova homologação do catálogo.
@@ -40,7 +40,7 @@ com operador autorizado é pré-requisito para nova homologação do catálogo.
 **Auditoria e matriz de reaproveitamento:** [IDX 0.1-A](ACULTA-CONTENT-INDEX-AUDIT-0.1-A.md).
 **Schema IDX 0.1-C:** [modelo inicial e gates pendentes](ACULTA-CONTENT-INDEX-SCHEMA-0.1-C.md).
 **Benchmarks IDX 0.1-G/R:** [matriz, operações e evidências](ACULTA-CONTENT-INDEX-BENCHMARK.md).
-**Bridge de Statistics:** [contrato opcional e estratégia de correlação](ACULTA-CONTENT-INDEX-STATISTICS-BRIDGE.md). Uma página incompatível com a métrica selecionada é rejeitada integralmente; não há totais parciais nem descarte silencioso de itens. O submódulo opcional `aculta_index_file` registra `file:file` (somente permanentes, sem nome/URI/MIME/tamanho) e torna `media.files.requests` alcançável quando habilitado e a conta tem `administer aculta_statistics`.
+**Bridge de Statistics:** [contrato opcional e estratégia de correlação](ACULTA-CONTENT-INDEX-STATISTICS-BRIDGE.md). Uma página incompatível com a métrica selecionada é rejeitada integralmente; não há totais parciais nem descarte silencioso de itens. O provider nativo `file:file` de `aculta_index` registra `file:file` (somente permanentes, sem nome/URI/MIME/tamanho) e torna `media.files.requests` alcançável quando a conta tem `administer aculta_statistics`.
 
 **Validação dev.152 (2026-10-23):** suíte Kernel completa MariaDB 102/1.518, sem falhas (39 depreciações Core/contrib; 54 PHPUnit). Os benchmarks 10k, 100k e 1M passaram; em 1M, rebuild 2.137,817 s, auditoria 724,020 s, pico 214,5 MiB e zero divergências. As 2.001 páginas usaram descoberta `base_table`. Medição sintética única, sem SLO. Ver [relatório de escala](benchmarks/ACULTA-CONTENT-INDEX-MAINTENANCE-2026-10-23.md).
 
@@ -70,7 +70,7 @@ com operador autorizado é pré-requisito para nova homologação do catálogo.
 
 **Validação dev.165 (2026-10-23):** o Portal agora instala e mantém como owner o bundle `media:remote_video` (`oembed:video`) e registra seu provider mínimo no Index. Service-map: 1/3; boot/DI owner com o tipo Media e o campo de origem: 1/46 (239 depreciações Core/contrib); Kernel Media: 5/101, incluindo CRUD pela fila e confirmação de que a URL não entra na projeção. A configuração da Media Library fica opcional quando o módulo Core correspondente está habilitado. Entity Access de vídeo é revalidado no contexto da consulta; o provider não força um purpose de consumidor. A configuração editorial da Revista já permite `remote_video`; `filter.format.forum` permite apenas `forum_attachment` e `filter.format.wiki` apenas `document`. Não foi identificado ainda um campo/relação de curso LMS para Media. **Decisão do responsável:** adiar todas as relações de vídeo até fechar os formatos editoriais e os contratos de acesso dos consumidores; nenhum adapter de relação será implementado antes dessa definição. Não indexar corpo nem URL oEmbed.
 
-**Runtime de teste (2026-10-23):** no host `toca`, URI `aculta.toca.net.br`, Drupal 11.4.10/Drush 13.8.0 e banco `aculta_runtime`, confirmei o Index desinstalado e zero tabelas antes da operação. A ativação temporária criou apenas o schema inicial: zero entradas, relações, jobs ou gerações; `audit status` e `queue status` responderam e o help de `aculta-index:rebuild` foi resolvido. Desinstalei em seguida; o módulo voltou a Disabled e a consulta final encontrou zero tabelas `aculta_index`. Não executei rebuild sobre conteúdo original. Isso valida instalação/descoberta dos comandos e rollback do schema vazio; a operação sobre catálogo com conteúdo segue pendente.
+**Runtime de desenvolvimento (2026-10-23):** no host `toca`, URI `aculta.toca.net.br`, Drupal 11.4.10/Drush 13.8.0 e banco `aculta_runtime`, confirmei o Index desinstalado e zero tabelas antes da operação. A ativação temporária criou apenas o schema inicial: zero entradas, relações, jobs ou gerações; `audit status` e `queue status` responderam e o help de `aculta-index:rebuild` foi resolvido. Desinstalei em seguida; o módulo voltou a Disabled e a consulta final encontrou zero tabelas `aculta_index`. Não executei rebuild sobre conteúdo original. Isso valida instalação/descoberta dos comandos e rollback do schema vazio; a operação sobre catálogo com conteúdo segue pendente.
 
 **Validação de 2026-10-26 (proposta dev.176):** o `ContentIndexAccessFilter` passou a limpar
 o cache interno de Entity Access dos tipos candidatos no início de cada página.
@@ -89,7 +89,7 @@ estados, atualização e exclusão) passou em duas execuções com rebuild
 pico 82,5 MiB. Runtime local somente
 leitura: 145 entradas, 110 relações, uma geração ativa válida, fila vazia e
 auditoria sem achados. Detalhes em
-[worklog do Agente 3](../operations/ACULTA-AGENT3-INDEX-WORKLOG.md),
+[worklog do Agente 3](../history/operations/ACULTA-AGENT3-INDEX-WORKLOG.md),
 [benchmark de acesso](benchmarks/ACULTA-CONTENT-INDEX-ACCESS-2026-10-26.md) e
 [fixture representativa](benchmarks/ACULTA-CONTENT-INDEX-REPRESENTATIVE-2026-10-26.md).
 Grants operacionais, carga real dos owners e execução sobre catálogo no Runtime
@@ -105,8 +105,8 @@ relação `course_video` e teste Kernel com membro/educador e terceiro negado
 (provider v4 com o plugin PDF Group, v3 sem ele; update `8001` para sites
 existentes). Detalhes em
 [ACULTA-CONTENT-INDEX-VIDEO-RELATIONS](ACULTA-CONTENT-INDEX-VIDEO-RELATIONS.md).
-Para `media.files.requests`, o submódulo opcional `aculta_index_file` fornece
-`file:file`; sem ele a métrica segue sem provider.
+Para `media.files.requests`, o provider nativo de arquivos do `aculta_index` fornece
+`file:file`.
 
 ## Propósito e propriedade
 

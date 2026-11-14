@@ -1,0 +1,6 @@
+.aculta-cep-sources {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+  color: var(--color-text-muted);
+}

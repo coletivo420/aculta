@@ -1,0 +1,3 @@
+'entity_reference_selection.aculta_lms_resources:published_gallery':
+  type: entity_reference_selection.default
+  label: 'Configuração da seleção de galerias publicadas do LMS'

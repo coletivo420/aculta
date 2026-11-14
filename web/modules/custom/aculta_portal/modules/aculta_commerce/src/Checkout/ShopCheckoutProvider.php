@@ -12,7 +12,9 @@ use Drupal\aculta_portal\Checkout\OrderTypeCheckoutFlows;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 
 /**
- * Contexto Loja: pedidos do tipo configurado em `aculta_portal.checkout_settings` (padrão `default`), no carrinho e no checkout comuns do Commerce.
+ * Contexto Loja: pedidos do tipo configurado em `aculta_portal.checkout_settings` (padrão `default`).
+ *
+ * Vale no carrinho e no checkout comuns do Commerce.
  */
 final class ShopCheckoutProvider implements CheckoutContextProviderInterface {
 
@@ -21,18 +23,30 @@ final class ShopCheckoutProvider implements CheckoutContextProviderInterface {
     private readonly CheckoutSettings $settings,
   ) {}
 
+  /**
+   * {@inheritdoc}
+   */
   public function id(): string {
     return 'shop';
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function label(): TranslatableMarkup {
     return new TranslatableMarkup('Loja');
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function weight(): int {
     return 10;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function configuration(): CheckoutContextConfiguration {
     $tipo = $this->settings->shopOrderType();
     return new CheckoutContextConfiguration('shop', CheckoutMode::Common, [$tipo], array_filter([$this->flows->flowId($tipo)]));

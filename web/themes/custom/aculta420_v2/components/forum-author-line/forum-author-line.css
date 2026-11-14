@@ -1,0 +1,59 @@
+.forum-author-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-xs);
+  min-inline-size: 0;
+}
+
+/* Avatar redondo e proporcional: o tamanho segue --avatar-size (menor no celular, maior no desktop). */
+.forum-author-line {
+  --avatar-size: 2.75rem;
+}
+
+.forum-author-line__avatar {
+  display: inline-flex;
+  flex: 0 0 auto;
+  inline-size: var(--avatar-size);
+  block-size: var(--avatar-size);
+  border-radius: var(--radius-full);
+}
+
+.forum-author-line__avatar .aculta-avatar,
+.forum-author-line__avatar .aculta-avatar__media,
+.forum-author-line__avatar img {
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+  border-radius: var(--radius-full);
+}
+
+.forum-author-line__name {
+  color: var(--color-text-primary);
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.forum-author-line__time {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+/* Link para o perfil: avatar e nome juntos; sem sublinhado, com foco visível. */
+.forum-author-line__identity {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  text-decoration: none;
+  color: inherit;
+}
+
+.forum-author-line__link:hover .forum-author-line__name {
+  text-decoration: underline;
+}
+
+.forum-author-line__link:focus-visible {
+  border-radius: var(--radius-sm);
+  outline: 2px solid var(--button-focus-ring);
+  outline-offset: 2px;
+}

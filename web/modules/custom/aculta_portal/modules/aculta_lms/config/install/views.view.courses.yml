@@ -1,0 +1,137 @@
+uuid: 65b50bec-48e4-4a5e-9497-54e111688403
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - group.type.lms_course
+  module:
+    - views
+    - group
+    - user
+    - ui_patterns_views
+_core:
+  default_config_hash: 8G8IYgl3ZlVpyNetip_TMiN1pzHJlDrgm_9Mo_mGuPg
+id: courses
+label: Cursos
+module: views
+description: 'Public listing of available courses.'
+tag: 'LMS Public'
+base_table: groups_field_data
+base_field: id
+display:
+  default:
+    id: default
+    display_title: Master
+    display_plugin: default
+    position: 0
+    display_options:
+      title: Cursos
+      fields: {  }
+      pager:
+        type: mini
+        options:
+          offset: 0
+          pagination_heading_level: h4
+          items_per_page: 6
+          total_pages: null
+          id: 0
+          tags:
+            next: ››
+            previous: ‹‹
+          expose:
+            items_per_page: false
+            items_per_page_label: 'Items per page'
+            items_per_page_options: '6, 9, 12, 15'
+            items_per_page_options_all: false
+            items_per_page_options_all_label: '- All -'
+            offset: false
+            offset_label: Offset
+      access:
+        type: perm
+        options:
+          perm: 'access content'
+      cache:
+        type: tag
+        options: {  }
+      empty:
+        area:
+          id: area
+          table: views
+          field: area
+          plugin_id: text
+          empty: true
+          content:
+            value: 'No courses are currently available. Please add a course.'
+            format: plain_text
+      filters:
+        type:
+          id: type
+          table: groups_field_data
+          field: type
+          plugin_id: bundle
+          value:
+            lms_course: lms_course
+        status:
+          id: status
+          table: groups_field_data
+          field: status
+          plugin_id: boolean
+          value: '1'
+      style:
+        type: ui_patterns
+        options:
+          ui_patterns:
+            ui_patterns:
+              component_id: 'aculta420_v2:layout-grid'
+              variant_id: null
+              props:
+                min_item_width:
+                  source_id: select
+                  source:
+                    value: 16rem
+                max_columns:
+                  source_id: number
+                  source:
+                    value: '3'
+              slots:
+                content:
+                  sources:
+                    -
+                      source_id: view_rows
+                      source: {  }
+      row:
+        type: entity:group
+        options:
+          relationship: none
+          view_mode: default
+      query:
+        type: views_query
+        options:
+          query_comment: ''
+          disable_sql_rewrite: false
+          distinct: false
+          replica: false
+          query_tags: {  }
+      display_extenders: {  }
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_interface'
+        - url.query_args
+        - user.permissions
+      tags: {  }
+  page_1:
+    id: page_1
+    display_title: Página
+    display_plugin: page
+    position: 1
+    display_options:
+      display_extenders: {  }
+      path: courses
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_interface'
+        - url.query_args
+        - user.permissions
+      tags: {  }

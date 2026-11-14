@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal_cep\Local;
 
+use Drupal\Core\File\FileExists;
 use Drupal\Core\File\FileSystemInterface;
 
 /**
@@ -113,7 +114,7 @@ final class CepLocalStore {
   public function writeManifest(string $version, int $records, string $source): void {
     $manifest = ['version' => $version, 'records' => $records, 'source' => $source];
     $this->fileSystem->prepareDirectory(dirname(self::MANIFEST), FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS);
-    $this->fileSystem->saveData((string) json_encode($manifest, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT), self::MANIFEST, FileSystemInterface::EXISTS_REPLACE);
+    $this->fileSystem->saveData((string) json_encode($manifest, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT), self::MANIFEST, FileExists::Replace);
     $this->makeReadable();
   }
 
@@ -169,7 +170,7 @@ final class CepLocalStore {
    */
   private function writeShard(string $prefix, string $content): void {
     $uri = self::DIRECTORY . '/' . $prefix . '.tsv';
-    $this->fileSystem->saveData($content, $uri, FileSystemInterface::EXISTS_REPLACE);
+    $this->fileSystem->saveData($content, $uri, FileExists::Replace);
   }
 
   /**

@@ -28,13 +28,15 @@ final class ColorModePreference {
     private readonly UserDataInterface $userData,
   ) {}
 
-  /** Padrão do site, definido pelo administrador. */
+  /**
+   * Padrão do site, definido pelo administrador. */
   public function siteDefault(): string {
     $mode = (string) $this->configFactory->get('aculta_portal.appearance')->get('default_mode');
     return in_array($mode, self::MODES, TRUE) ? $mode : self::DEFAULT_MODE;
   }
 
-  /** Escolha salva pela pessoa usuária, ou NULL se nunca escolheu. Uid 0 nunca tem escolha. */
+  /**
+   * Escolha salva pela pessoa usuária, ou NULL se nunca escolheu. Uid 0 nunca tem escolha. */
   public function forUser(int $uid): ?string {
     if ($uid === 0) {
       return NULL;
@@ -43,11 +45,20 @@ final class ColorModePreference {
     return is_string($mode) && in_array($mode, self::MODES, TRUE) ? $mode : NULL;
   }
 
-  /** Modo efetivo: escolha da pessoa usuária, senão o padrão do site. */
+  /**
+   * Modo efetivo: escolha da pessoa usuária, senão o padrão do site. */
   public function resolve(int $uid): string {
     return $this->forUser($uid) ?? $this->siteDefault();
   }
 
+  /**
+   * Salva o modo de cor escolhido pela pessoa usuária.
+   *
+   * @param int $uid
+   *   Identificador da pessoa usuária.
+   * @param string $mode
+   *   Modo de cor a salvar.
+   */
   public function save(int $uid, string $mode): void {
     if (!in_array($mode, self::MODES, TRUE)) {
       throw new \InvalidArgumentException('Modo de cor inválido.');

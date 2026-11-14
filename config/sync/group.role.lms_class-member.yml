@@ -7,7 +7,7 @@ dependencies:
     - group.relationship_type.lms_class-3abb8caf7f7d526ecedeec
     - user.role.authenticated
   module:
-    - aculta_forum_lms
+    - aculta_lms
 id: lms_class-member
 label: Estudante
 weight: -6
@@ -18,4 +18,3 @@ group_type: lms_class
 permissions:
   - 'view group_node:aculta_lms_topic entity'
   - 'view group'
-

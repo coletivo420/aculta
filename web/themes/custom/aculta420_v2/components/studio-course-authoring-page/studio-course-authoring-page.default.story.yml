@@ -1,0 +1,7 @@
+name: Criar curso como educador
+description: Formulário e retorno para o painel do educador, fornecidos pelo LMS.
+component: aculta420_v2:studio-course-authoring-page
+slots:
+  content:
+    type: inline_template
+    template: '<section class="studio-course-authoring"><a class="studio-course-authoring__back" href="#educador">Voltar ao educador</a><div class="studio__main"><form><label for="course-name">Nome do curso</label><input id="course-name"><div class="form-actions"><button class="form-submit">Criar curso</button></div></form></div></section>'

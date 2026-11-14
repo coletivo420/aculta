@@ -1,3 +1,15 @@
+## Catálogo público de cursos
+
+As Views `courses` e `courses_catalog` são configuração padrão deste módulo,
+com cópias sincronizadas em `config/sync`. Elas consultam grupos do tipo
+`lms_course`, preservam as rotas `/courses` e `/cursos/catalogo` e renderizam
+cada Group pelo modo de exibição padrão (`entity:group`). A capa e a descrição
+seguem o display `group.lms_course.default`; UI Patterns Views compõe as rows
+com o SDC `layout-grid` (mínimo de 16rem, máximo de três colunas). Os filtros,
+permissão, renderização de Group, pager e cache permanecem na View. O row plugin
+legado `course_card_row` não é mais necessário. Config Sync e Runtime ainda
+precisam ser alinhados/homologados antes de remover qualquer fallback adicional.
+
 # ACULTA LMS
 
 ## ACULTA Studio Ganjalab (ADR-038)
@@ -16,34 +28,59 @@ substitui um teste de instalação limpa da closure completa. Uma depreciação
 reportada pertence ao contrib `webform_score`. Nenhum serviço fictício foi
 adicionado ao produto e Runtime não foi alterado.
 
-Submódulo opcional de integração educacional do Portal. Drupal LMS e Group são
-as fontes de verdade; `aculta_lms` não cria matrícula, resposta, nota,
-progresso, certificado, mensagem ou amizade paralelos.
+Submódulo opcional de aprendizagem do Portal. Group mantém cursos, turmas,
+relações e memberships. O `aculta_lms` é dono das entidades ACULTA de aula,
+atividade, resposta, progresso, tentativa e certificado; não depende dos
+módulos Drupal LMS contrib. Mensagens, pagamento e identidade continuam nos
+módulos owners correspondentes, sem storage duplicado.
+
+## Ganjalab Educador — estrutura de curso
+
+O workspace `/ganjalab/educador` oferece a estrutura de cada curso em
+`/ganjalab/educador/cursos/{course}/estrutura`. A página lista aulas e
+atividades das entidades ACULTA; Form API permite criar/editar aula e criar ou
+editar atividade com os tipos atendidos pela submissão do aluno (`true_false`,
+`select`, `fill_blanks`, `free_text`, `file_upload`). Enunciado, gabarito,
+opções, respostas aceitas e mínimo de caracteres são gravados no `answer_config`
+já consumido pela sala e pelo formulário de resposta. O tipo fica imutável
+depois da criação; enunciado/gabarito não podem ser alterados após haver
+respostas, para não reescrever o contexto histórico das notas.
+
+A autorização exige `grade students` contextual ao Group de curso ou
+`administer lms`. A rota verifica que aula pertence ao curso e atividade à aula;
+os formulários repetem essa checagem no servidor ao carregar e salvar. Turmas,
+matrículas e prazos permanecem separados da estrutura curricular. Reordenação
+O Educador pode mover aulas e atividades por arraste dentro da própria lista;
+os comandos confirmados de mover acima/abaixo continuam disponíveis para
+teclado e sem JavaScript. A gravação confirma novamente a permissão, a
+ancestralidade e a coleção completa sob lock e transação; a ordem compartilhada
+afeta imediatamente as turmas do curso. A exclusão é confirmada e bloqueia
+conteúdo com dependências ou histórico. Módulos pedagógicos e homologação
+visual integral continuam pendentes.
 
 ## Integração de avisos — contrato vigente
 
 O `aculta_lms` é dono dos cursos, matrículas, status e da elegibilidade dos
 destinatários. A conclusão é publicada pelo provider atual como o evento neutro
-`aculta_learning_contracts\Event\CourseCompletedEvent`; Game concede a conquista
-por esse contrato e Messenger encaminha o aviso ao fluxo centralizado.
+`Drupal\aculta_lms\Event\CourseCompletedEvent` (incorporado do antigo `aculta_learning_contracts`);
+Game concede a conquista por esse contrato e Messenger encaminha o aviso ao fluxo centralizado.
 Consumidores, avisos no site, persistência, central, deduplicação, preferências
 e a orquestração de e-mail são centralizados no `aculta_messenger`.
 O aviso no site é obrigatório; o membro pode escolher e-mail desligado, direto
 ou digest/resumo, sempre sujeito às políticas administrativas. Transporte,
-templates e logs de entrega permanecem no `aculta_mailer`. O adapter executável
-foi migrado para o núcleo; o antigo `aculta_lms_messenger` não mantém fluxo
-legado ativo. Consulte [`docs/ROADMAP.md`](docs/ROADMAP.md).
+templates e logs de entrega permanecem no `aculta_mailer`. O `aculta_lms` é consumidor
+direto do `aculta_messenger`, publicando eventos de aviso através dos contratos centrais. Consulte [`docs/ROADMAP.md`](docs/ROADMAP.md).
 
 
 ## Administração organizada por curso
 
-O curso é o primeiro nível da administração. A sequência de aulas pertence ao
-curso e suas atividades pertencem às aulas, usando as referências nativas do
-Drupal LMS. A navegação não oferece atalhos globais de aulas, atividades ou
-turmas. Painel e prazo de turma usam `/painel-administrativo/lms/curso/{course}/`
-e conferem o vínculo entre curso, turma e atividade. Fóruns e filas de
-moderação também ficam sob o curso; o adapter valida o Group da discussão em
-cada request.
+O curso é o primeiro nível da administração. A sequência de aulas e atividades
+usa as entidades próprias do `aculta_lms`; seus IDs são referências internas
+opacas e não vêm de entidades Drupal LMS contrib. A navegação não oferece
+atalhos globais de aulas, atividades ou turmas. Painel e prazo de turma usam
+`/painel-administrativo/lms/curso/{course}/` e conferem o vínculo entre curso,
+turma e atividade. Fóruns e filas de moderação também ficam sob o curso; o
+adapter valida o Group da discussão em cada request.
 
 ## F7/F16 — preservação de matrículas por compra
 
@@ -104,8 +141,10 @@ bloqueado e revalida após bloqueio e revogação da membership.
 A rota atual de anexos recebe apenas `AnswerEntity` ACULTA, valida arquivo
 permanente em `private://` e revalida matrícula/permissão a cada requisição.
 O plugin de upload e a rota de download vinculados a `lms_answer` foram
-removidos no P5. A interface de submissão para criar referências de arquivo
-ACULTA ainda precisa ser conectada ao payload.
+removidos no P5. A interface ACULTA de submissão para `file_upload` grava a
+referência do arquivo no payload JSON da resposta, torna o arquivo permanente
+e registra seu uso. Kernel cobre submissão privada pelo dono e recusa de
+conteúdo que não corresponde à extensão.
 O resolvedor tipa entidades de referência com `FieldableEntityInterface`; o
 PHPCS Drupal/DrupalPractice passou nos arquivos novos de resolução e no
 `AttemptArchiveManager`.
@@ -115,13 +154,12 @@ removido na limpeza assíncrona, o manager responde 422 e o formulário omite a
 conclusão, sem erro 500. Os prazos por turma seguem resolvidos pelo manager
 ACULTA e cobertos por `ClassActivityDeadlineTest`; o hook contrib que alterava
 o formulário de resposta e o componente LMS de início de curso foram removidos.
-A interface ACULTA de submissão ainda está pendente. Runtime `cursos`: sem updates pendentes, rebuild do
-cache concluiu e o container resolveu o hook; houve warning preexistente de
-cópia dos assets H5P. Não foi importada configuração e ainda falta um smoke
-HTTP/visual com resposta real. Unit LMS/Messenger: 84 testes / 445 assertions PASS, com
-8 depreciações PHPUnit. F11 executa emissão/revogação com educador contextual e
-confirma a opção elegível no formulário: Kernel focal 5/159. Smoke Runtime
-autenticado e revisão visual permanecem pendentes.
+A interface ACULTA de submissão está implementada. O Kernel do formulário
+confirma armazenamento do payload e do uso de arquivo; smoke HTTP/visual com
+resposta real permanece pendente. Unit LMS/Messenger: 84 testes / 445
+assertions PASS, com 8 depreciações PHPUnit. F11 executa emissão/revogação com
+educador contextual e confirma a opção elegível no formulário: Kernel focal
+5/159. Smoke Runtime autenticado e revisão visual permanecem pendentes.
 No Runtime de teste, Drush confirmou o módulo habilitado e sem updates; após
 rebuild do cache, o loader resolveu os dois usuários de teste por `UserSession`.
 O rebuild teve warning de assets H5P e terminou com sucesso. Nenhuma fixture foi
@@ -141,11 +179,10 @@ criada, então o download real de resposta continua sem smoke positivo.
   Group e o viewer `aculta_pdf_viewer`; o acesso ao arquivo é revalidado pela
   rota privada do Core. O módulo declara a dependência do submódulo Group do
   viewer para evitar configuração de curso sem o plugin correspondente.
-- Discussões LMS usam o adapter opcional `aculta_forum_lms`, com Node e Comment
+- Discussões LMS consom os serviços e o motor de discussão do `aculta_forum`, com Node e Comment
   compartilhado em Group de curso/turma, access contextual, membership
   revalidada e moderação por `grade students` do curso. `lms_classes.settings`
-  herda essa permissão Group Node para turmas. O adapter e suas permissões estão
-  ativos no Runtime de teste. Desde `aculta_forum_lms` dev.24, tópicos podem
+  herda essa permissão Group Node para turmas. As permissões estão ativas no Runtime de teste. Tópicos podem
   referenciar `field_lms_activity`; o formulário de resposta lista discussões
   autorizadas no Group do curso ou turma da atividade. Config Sync parcial e
   resolução do serviço/hook foram confirmadas, mas o Runtime ainda não tem
@@ -217,8 +254,14 @@ não cria progresso, matrícula, resposta ou armazenamento.
 
 O campo extra pode ser posicionado no Manage Display do bundle `lms_course`.
 Render arrays incluem cacheability do curso, lições e resultados de acesso,
-variando por usuário e permissões do Group. F6 ainda precisa de smoke test
-integrado com usuário matriculado, visitante e não membro no Runtime.
+variando por usuário e permissões do Group. Em 2026-11-04, smoke somente leitura
+no Runtime confirmou que membro matriculado abre aula, atividade e link; não
+membro e visitante recebem acesso negado sem revelar o título. O Kernel cobre a
+renderização de atividade e link. Firefox ESR visível confirmou home, jornada,
+aula e atividade em larguras internas de 500 e 1270 px (sem rolagem horizontal);
+o formulário de atividade contém o ID esperado e controles `answer` habilitados.
+Nenhuma resposta foi enviada e nenhum aceite de termos foi realizado. Isso não
+valida a interface de compra F7.
 
 ## F7 — Matrícula em turmas
 
@@ -247,6 +290,26 @@ pagamento inválido, o acesso também é negado sem erro 500.
 Na dev.71, Unit LMS/Messenger: 86 testes / 460 assertions; o Kernel confirma
 DI do novo verificador de compras (4/40) e a regressão LMS/Messenger passa com
 23 testes / 730 assertions, com 95 depreciações upstream.
+
+Na dev.200, Unit `CourseEnrollmentPurchaseFormTest` cobre a turma sem publicação
+e o curso sem produto válido (2 testes / 20 assertions); nenhum desses estados
+renderiza ação de checkout. Na dev.201, `CourseEnrollmentPurchaseKernelTest`
+usa entidades Group e Commerce reais: só oferece turma publicada, apresenta o
+preço/ação e submete a compra para confirmar variação e turma no item do
+carrinho. MariaDB `aculta_simpletest`: 1 teste / 45 assertions PASS, com 65
+depreciações upstream de Core/contrib. Na dev.202, curso despublicado não
+oferece formulário de compra; validação e submit repetem a regra e recusam uma
+submissão forjada sem criar carrinho. Unit: 3 testes / 24 assertions PASS;
+Kernel: 2 testes / 87 assertions PASS, com 65 depreciações upstream de
+Core/contrib. O Runtime continua sem produto/turma de negócio para smoke HTTP;
+checkout real e sandbox permanecem pendentes.
+Na cobertura Kernel adicional de F7, o teste percorre o hook real de atualização de pedido:
+pedido gratuito em rascunho não matricula; depois da transição para concluído,
+é criada a membership da turma com a origem do pedido. Submissões forjadas de
+turma fechada ou de outra turma/curso não criam carrinho. A suíte Kernel focal
+passou com 4 testes / 173 assertions; as 67 depreciações vieram de Core/contrib.
+O checkout pago, o sandbox e o smoke HTTP seguem pendentes para a etapa de
+pagamentos.
 
 Uma pessoa administradora cria o produto e a variação Commerce do curso e associa
 esse produto ao Group do curso. A variação possui preço zero ou pago; a página
@@ -283,6 +346,16 @@ arredondada para percentual inteiro pelo LMS. Múltipla seleção dá crédito
 proporcional aos acertos, desconta opções erradas e limita o resultado mínimo
 a zero. O educador pode ajustar a nota de respostas abertas pela avaliação
 nativa do LMS.
+
+No painel de cada turma, **Ver respostas e avaliações** abre a lista de
+tentativas dos estudantes atualmente matriculados naquela turma. A lista é
+isolada por curso e turma, ordenada da mais recente para a mais antiga e
+apresentada em páginas de 50 respostas. O detalhe mostra o conteúdo enviado e,
+quando houver um anexo válido, usa a rota privada da própria resposta. Somente
+um educador com `grade students` no curso e com a turma relacionada ao curso
+pode consultar ou avaliar. A nota deve estar entre 0 e 100; feedback não vazio
+é salvo como comentário publicado do Core e mantém a notificação existente.
+Rotas em `/painel-administrativo` permanecem restritas ao domínio principal.
 
 **F8 está implementada nesta branch e seus testes automatizados passaram.** A
 suíte Unit e Kernel do `aculta_lms` passou (15 testes, 259 assertions), cobrindo
@@ -384,7 +457,7 @@ assertions; Kernel MariaDB 20 testes/634 assertions PASS. O Kernel registrou 90
 depreciações de Core/contrib e uma de `webform_score`; a Unit registrou 8
 depreciações do PHPUnit.
 
-Regressão combinada atual do LMS e `aculta_lms_messenger`: Unit 84 testes/445
+Regressão combinada do LMS com `aculta_messenger`: Unit 84 testes/445
 assertions; Kernel MariaDB 23 testes/719 assertions PASS. No total, houve 8
 depreciações PHPUnit e 95 de Core/contrib, sem falhas.
 
@@ -490,7 +563,13 @@ Estado ADR-038: `/ganjalab` em purpose `courses` está implementada; a antiga `/
 
 O `LearningDashboardManager` continua lendo entidades Group/Drupal LMS e certificados, mas publica `StudentLearningSummaryReaderInterface` com DTOs neutros. O `AccountCoursesReader` implementa `AccountCoursesReaderInterface` e fornece cursos autorizados para a Conta; o Portal recebe esse provider como opcional. `LmsFriendlySlugs`, o conversor, o route processor e o subscriber da rota foram movidos para este módulo, preservando os IDs de serviço `aculta_portal.lms_friendly_*` e os tipos de parâmetro existentes. O `aculta_portal` não declara mais `lms:lms`.
 
-A composição de render arrays do estudante pertence a `aculta_studio\Learning\\LearnerDashboardComposer`; as rotas Ganjalab são declaradas no Studio e mantêm IDs históricos `aculta_lms.*`. A rota nativa de atividade ainda é uma integração temporária. A separação remove a dependência Portal → Drupal LMS no metadata; o próprio `aculta_lms` continua dependente do contrib. Lint, testes e rebuild de rotas/container ainda precisam ser confirmados no checkout local; Runtime permanece sob a validação já delegada.
+A composição de render arrays do estudante e a autoria do curso ficam em módulos
+owners diferentes: `aculta_studio` apresenta o workspace e suas rotas; o
+`aculta_lms` lê e grava as entidades ACULTA e revalida permissões. Rotas do
+Ganjalab ficam em `aculta_studio.routing.yml` com IDs `aculta_lms.*` por
+compatibilidade. A rota nativa de atividade ainda é integração temporária. A
+dependência dos módulos Drupal LMS contrib foi removida do Composer, metadata e
+código customizado; Group continua como infraestrutura deliberada.
 
 A conclusão neutra remove o import direto do evento LMS nos consumidores Game e
 Messenger. O provider ainda lê `CourseStatusInterface` e permanece dependente

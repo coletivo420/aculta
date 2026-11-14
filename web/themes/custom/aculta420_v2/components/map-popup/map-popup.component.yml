@@ -1,0 +1,37 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Map popup
+status: stable
+description: Cartão compacto para informação associada a um marcador de mapa.
+group: Mapas
+props:
+  type: object
+  additionalProperties: false
+  required: [title]
+  properties:
+    title:
+      title: Título do ponto no mapa
+      type: string
+      minLength: 1
+      description: Nome principal do local ou evento mostrado no popup e usado como texto do link quando url está informada.
+    url:
+      title: Endereço da página do ponto
+      type: [string, 'null']
+      format: uri-reference
+      description: URL opcional, filtrada pelo producer para aceitar caminhos relativos do site ou HTTPS, usada como link do título.
+    category:
+      title: Categoria do ponto
+      type: [string, 'null']
+      description: Rótulo opcional da categoria, apresentado como badge acima do título.
+    address:
+      title: Endereço ou localização
+      type: [string, 'null']
+      description: Endereço ou referência textual opcional exibida abaixo do título.
+    route_url:
+      title: Endereço para traçar rota
+      type: [string, 'null']
+      format: uri-reference
+      description: URL opcional de rota, filtrada pelo producer para aceitar caminhos relativos do site ou HTTPS e aberta em outra página.
+slots:
+  thumbnail:
+    title: Miniatura
+    description: Imagem opcional do local ou evento.

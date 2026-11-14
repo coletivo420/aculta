@@ -1,0 +1,42 @@
+<header class="forum-category-header">
+  <div class="forum-category-header__top-bar"></div>
+  <div class="forum-category-header__inner">
+    <div class="forum-category-header__eyebrow">
+      {% if icon %}
+        {{ include('aculta420_v2:icon', { name: icon, variant: 'duotone', size: 'sm' }, with_context = false) }}
+      {% endif %}
+      <span>{{ 'GROWROOM420 / COMUNIDADE'|t }}</span>
+    </div>
+    {% set title_level = title_level|default('h1') %}
+    {% if title_level not in ['h1', 'h2'] %}
+      {% set title_level = 'h1' %}
+    {% endif %}
+    {{ include('aculta420_v2:heading', {
+      text: title,
+      level: title_level == 'h1' ? 1 : 2,
+      style: 'stripe'
+    }, with_context = false) }}
+    {% if description %}
+      <div class="forum-category-header__description">{{ description }}</div>
+    {% endif %}
+    {% if actions %}
+      <div class="forum-category-header__actions">{{ actions|raw }}</div>
+    {% endif %}
+    {% if stats and stats|length > 0 %}
+      <dl class="forum-category-header__stats">
+        {% for stat in stats %}
+          <div class="forum-category-header__stat">
+            <dt class="forum-category-header__stat-label">{{ stat.label }}</dt>
+            <dd class="forum-category-header__stat-value">
+              {% if stat.value is not empty %}
+                {{ stat.value }}
+              {% else %}
+                —<span class="visually-hidden">{{ 'Dado indisponível'|t }}</span>
+              {% endif %}
+            </dd>
+          </div>
+        {% endfor %}
+      </dl>
+    {% endif %}
+  </div>
+</header>

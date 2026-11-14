@@ -5,7 +5,7 @@ dependencies:
   module:
     - aculta_user
 id: authenticated
-label: Usuário autenticado
+label: 'Usuário autenticado'
 display_label: 'Perfil de usuário autenticado'
 multiple: false
 registration: false
@@ -13,4 +13,3 @@ roles:
   - authenticated
 allow_revisions: false
 new_revision: false
-

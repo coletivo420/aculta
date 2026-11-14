@@ -1,0 +1,11 @@
+name: Download de documento
+description: Link de arquivo com formato e tamanho do arquivo.
+component: aculta420_v2:document-download
+props:
+  format: PDF
+  size: 2,4 MB
+  format_token: pdf
+slots:
+  link:
+    type: inline_template
+    template: '<a class="document-download__link" href="#">Manual do curso</a>'

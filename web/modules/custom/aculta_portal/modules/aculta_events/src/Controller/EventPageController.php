@@ -5,15 +5,24 @@ declare(strict_types=1);
 namespace Drupal\aculta_events\Controller;
 
 use Drupal\aculta_events\Cache\EventCacheTags;
+use Drupal\aculta_events\Catalogue\LocationCatalogue;
 use Drupal\aculta_events\Entity\Event;
 use Drupal\aculta_events\Entity\EventLocation;
 use Drupal\aculta_events\Entity\EventOrganization;
 use Drupal\aculta_events\Occurrence\UpcomingDates;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_events\Service\WebsiteUrl;
+use Drupal\aculta_maps\MapRenderer;
+use Drupal\aculta_maps\RouteLinkBuilder;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
+use Drupal\aculta_user\Identity\AuthorIdentityResolver;
+use Drupal\address\AddressInterface;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Url;
+use Drupal\user\UserInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Component\Utility\Html;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -44,7 +53,12 @@ final class EventPageController extends ControllerBase {
     private readonly EntityTypeManagerInterface $entities,
     private readonly UpcomingDates $proximas,
     private readonly TimeInterface $tempo,
-    private readonly ?DomainPurposeManager $purposes = NULL,
+    private readonly ?DomainSiteManager $purposes = NULL,
+    private readonly ?AuthorIdentityResolver $identities = NULL,
+    private readonly ?MapRenderer $mapRenderer = NULL,
+    private readonly ?RouteLinkBuilder $routeLinks = NULL,
+    private readonly ?LocationCatalogue $locationCatalogue = NULL,
+    private readonly ?RendererInterface $renderer = NULL,
   ) {}
 
   /**
@@ -55,7 +69,12 @@ final class EventPageController extends ControllerBase {
       $container->get('entity_type.manager'),
       $container->get('aculta_events.upcoming'),
       $container->get('datetime.time'),
-      $container->has('aculta_portal.domain_purpose') ? $container->get('aculta_portal.domain_purpose') : NULL,
+      $container->has('aculta_portal.domain_site') ? $container->get('aculta_portal.domain_site') : NULL,
+      $container->has('aculta_user.author_identity_resolver') ? $container->get('aculta_user.author_identity_resolver') : NULL,
+      $container->has('aculta_maps.renderer') ? $container->get('aculta_maps.renderer') : NULL,
+      $container->has('aculta_maps.route_link_builder') ? $container->get('aculta_maps.route_link_builder') : NULL,
+      $container->has('aculta_events.locations') ? $container->get('aculta_events.locations') : NULL,
+      $container->has('renderer') ? $container->get('renderer') : NULL,
     );
   }
 
@@ -74,7 +93,7 @@ final class EventPageController extends ControllerBase {
 
     $linhas = [];
     $podeEditarRecorrencia = $this->currentUser()->hasPermission('administer aculta events')
-      && ($this->purposes === NULL || $this->purposes->getCurrentPurpose() === 'main');
+      && ($this->purposes === NULL || $this->purposes->getCurrentSiteKey()?->value === 'main');
     // A tag de lista cobre data criada, editada ou excluída. Access results
     // below also contribute their contexts, including owner-only locations.
     $cacheability = (new CacheableMetadata())
@@ -128,6 +147,14 @@ final class EventPageController extends ControllerBase {
     $urlEvento = Url::fromRoute('aculta_events.page', ['slug' => (string) $evento->get('field_slug')->value], ['absolute' => TRUE])->toString();
     $descricao = mb_substr(trim(strip_tags((string) $evento->get('body')->value)), 0, 500);
     $organizador = $evento->get('field_organizador')->entity;
+    $organizadorIdentidade = NULL;
+    if ($organizador instanceof UserInterface) {
+      $cacheability->addCacheableDependency($organizador);
+      if ($this->identities !== NULL) {
+        $organizadorIdentidade = $this->identities->resolvePublic($organizador);
+        $cacheability->addCacheableDependency($organizadorIdentidade);
+      }
+    }
     $org = $evento->getOrganization();
     $orgAccess = $org?->access('view', $this->currentUser(), TRUE);
     if ($org !== NULL && $orgAccess !== NULL) {
@@ -187,9 +214,9 @@ final class EventPageController extends ControllerBase {
           ], ['absolute' => TRUE])->toString();
 
           $addressItem = $local->get('field_endereco')->first();
-          if ($addressItem !== NULL) {
-            $locality = (string) $addressItem->locality;
-            $adminArea = (string) $addressItem->administrative_area;
+          if ($addressItem instanceof AddressInterface) {
+            $locality = (string) $addressItem->getLocality();
+            $adminArea = (string) $addressItem->getAdministrativeArea();
             if ($locality !== '' || $adminArea !== '') {
               $postalAddress = [
                 '@type' => 'PostalAddress',
@@ -203,8 +230,8 @@ final class EventPageController extends ControllerBase {
               }
               $precisao = (string) ($local->get('field_precisao')->value ?? 'exato');
               if ($precisao !== 'aproximado') {
-                $street = (string) $addressItem->address_line1;
-                $postalCode = (string) $addressItem->postal_code;
+                $street = (string) $addressItem->getAddressLine1();
+                $postalCode = (string) $addressItem->getPostalCode();
                 if ($street !== '') {
                   $postalAddress['streetAddress'] = $street;
                 }
@@ -216,12 +243,9 @@ final class EventPageController extends ControllerBase {
             }
           }
 
-          if (isset($entrada['location']) && is_array($entrada['location']) && ($entrada['location']['@type'] ?? '') === 'VirtualLocation') {
-            $entrada['location'] = [$entrada['location'], $placeData];
-          }
-          else {
-            $entrada['location'] = $placeData;
-          }
+          $entrada['location'] = isset($entrada['location'])
+            ? [$entrada['location'], $placeData]
+            : $placeData;
         }
       }
 
@@ -237,10 +261,10 @@ final class EventPageController extends ControllerBase {
         }
         $entrada['organizer'] = $orgLd;
       }
-      elseif ($organizador !== NULL) {
+      elseif ($organizadorIdentidade !== NULL) {
         $entrada['organizer'] = [
           '@type' => 'Person',
-          'name' => $organizador->getDisplayName(),
+          'name' => $organizadorIdentidade->toArray()['display_name'],
         ];
       }
 
@@ -286,91 +310,260 @@ final class EventPageController extends ControllerBase {
     }
 
     $prefix = '';
-    if ($this->purposes?->getCurrentPurpose() === 'main' && $evento->access('update')) {
+    if ($this->purposes?->getCurrentSiteKey()?->value === 'main' && $evento->access('update')) {
       // A administração vive no MAIN; a página pública no purpose eventos.
       $adminPath = '/painel-administrativo/eventos/' . $evento->id() . '/editar';
-      $adminUrl = $this->purposes?->environmentPathUrl('main', $adminPath);
+      $adminUrl = $this->purposes->environmentPathUrl(SiteKey::Main, $adminPath);
       $editUrl = $adminUrl?->toString()
         ?? Url::fromRoute('aculta_events.event_edit', ['aculta_event' => $evento->id()])->toString();
-      $prefix = '<div class="event-admin-actions mb-4"><a href="' . Html::escape($editUrl) . '" class="button button--primary">' . $this->t('Editar evento e datas') . '</a></div>';
-    }
-
-    $organizador = $evento->get('field_organizador')->entity;
-
-    // Organização verificada e coorganizadores (ARQ-05 / OC-C).
-    $orgData = NULL;
-    if ($org !== NULL && $orgAccess?->isAllowed()) {
-      $orgSlug = (string) $org->get('field_slug')->value;
-      $orgUrl = $orgSlug !== ''
-        ? Url::fromRoute('aculta_events.organization_page', ['slug' => $orgSlug])
-        : NULL;
-      $orgData = [
-        'label' => (string) $org->label(),
-        'url' => $orgUrl?->toString(),
+      $adminButton = [
+        '#type' => 'aculta_portal_button',
+        '#props' => [
+          'text' => (string) $this->t('Editar evento e datas'),
+          'url' => $editUrl,
+          'variant' => 'primary',
+        ],
       ];
+      $buttonHtml = $this->renderer !== NULL ? (string) $this->renderer->renderInIsolation($adminButton) : '';
+      $prefix = '<div class="event-admin-actions mb-4">' . $buttonHtml . '</div>';
     }
 
-    $coOrgs = [];
+    // Coorganizadores mantêm a dependência de acesso mesmo quando não há saída
+    // própria nesta página.
     foreach ($evento->get('field_coorganizadores')->referencedEntities() as $coOrg) {
-      if (!$coOrg instanceof EventOrganization) {
-        continue;
-      }
-      $coOrgAccess = $coOrg->access('view', $this->currentUser(), TRUE);
-      $cacheability->addCacheableDependency($coOrg)->addCacheableDependency($coOrgAccess);
-      if ($coOrgAccess->isAllowed()) {
-        $coOrgSlug = (string) $coOrg->get('field_slug')->value;
-        $coUrl = $coOrgSlug !== ''
-          ? Url::fromRoute('aculta_events.organization_page', ['slug' => $coOrgSlug])
-          : NULL;
-        $coOrgs[] = [
-          'label' => (string) $coOrg->label(),
-          'url' => $coUrl?->toString(),
-        ];
+      if ($coOrg instanceof EventOrganization) {
+        $cacheability->addCacheableDependency($coOrg)
+          ->addCacheableDependency($coOrg->access('view', $this->currentUser(), TRUE));
       }
     }
 
-    // Campos estruturados de acessibilidade, segurança e classificação
-    // (ARQ-04).
-    $acessibilidadeTexto = (string) $evento->get('field_acessibilidade')->value;
-    $selosAcessibilidade = [];
-    if ($acessibilidadeTexto !== '') {
-      $linhasAcess = preg_split('/[\r\n;]+/', $acessibilidadeTexto);
-      if ($linhasAcess !== FALSE) {
-        foreach ($linhasAcess as $item) {
-          $trimmed = trim($item);
-          if ($trimmed !== '') {
-            $selosAcessibilidade[] = $trimmed;
-          }
-        }
-      }
-    }
-
-    $classificacao = (string) $evento->get('field_classificacao_etaria')->value;
-    $seguranca = (string) $evento->get('field_seguranca')->value;
     $cacheability->setCacheMaxAge($validade);
 
+    // Mapa contextual: se houver locais físicos autorizados com coordenadas,
+    // renderiza o mapa com marcadores dos locais deste evento.
+    $mapaRender = NULL;
+    if ($this->mapRenderer !== NULL) {
+      $marcadores = [];
+      $locaisProcessados = [];
+      foreach ($ocorrencias as $ocorrencia) {
+        $loc = $ocorrencia['data']->get('field_local')->entity;
+        if (!$loc instanceof EventLocation) {
+          continue;
+        }
+        $locId = (string) $loc->id();
+        if (isset($locaisProcessados[$locId])) {
+          continue;
+        }
+        $locaisProcessados[$locId] = TRUE;
+        $locAccess = $localViewAccess[$locId] ?? $loc->access('view', $this->currentUser(), TRUE);
+        if (!$locAccess->isAllowed()) {
+          continue;
+        }
+        $coords = $loc->get('field_coordenadas')->first()?->getValue();
+        if (!is_numeric($coords['lat'] ?? NULL) || !is_numeric($coords['lon'] ?? NULL)) {
+          continue;
+        }
+        $casas = (string) $loc->get('field_precisao')->value === 'aproximado' ? 2 : 6;
+        $enderecoLoc = $this->locationCatalogue !== NULL ? $this->locationCatalogue->enderecoPublico($loc) : '';
+        $locUrl = Url::fromRoute('aculta_events.location_canonical', [
+          'aculta_event_location' => $loc->id(),
+        ])->toString();
+        $routeUrl = ($enderecoLoc !== '' && $this->routeLinks !== NULL)
+          ? $this->routeLinks->build($enderecoLoc)->toString()
+          : '';
+        $categoriaLoc = '';
+        $tipoLoc = $loc->get('field_tipo')->entity;
+        if ($tipoLoc !== NULL && $tipoLoc->access('view')) {
+          $categoriaLoc = (string) $tipoLoc->label();
+        }
+        $marcadores[] = [
+          'label' => (string) $loc->label(),
+          'lat' => round((float) $coords['lat'], $casas),
+          'lng' => round((float) $coords['lon'], $casas),
+          'description' => $enderecoLoc,
+          'url' => $locUrl,
+          'category' => $categoriaLoc,
+          'precision' => $casas === 2 ? 'approximate' : 'exact',
+          'routeUrl' => $routeUrl,
+        ];
+      }
+      if ($marcadores !== []) {
+        $mapaRender = $this->mapRenderer->build([
+          'id' => 'event-page-map',
+          'label' => (string) $this->t('Mapa do local do evento'),
+          'markers' => $marcadores,
+        ]);
+      }
+    }
+
+    $websiteUrl = (string) $evento->get('field_url')->value;
+    if (!WebsiteUrl::isValid($websiteUrl)) {
+      $websiteUrl = '';
+    }
+
+    $eventType = $evento->get('field_tipo')->entity?->label();
+    $eventType = $eventType !== NULL ? (string) $eventType : NULL;
+    $description = (string) $evento->get('body')->value;
+    $organizer = $organizadorIdentidade?->toArray()['display_name'] ?? NULL;
+    $slots = [
+      'title' => $this->buildTitleSlot(
+        (string) $evento->label(),
+        (string) $evento->get('field_subtitulo')->value,
+        $evento->get('field_status')->value === 'cancelado',
+      ),
+    ];
+    $essentials = $this->buildEssentialsSlot(
+      $eventType,
+      $linhas,
+      $websiteUrl !== '' ? Url::fromUri($websiteUrl) : NULL,
+    );
+    if ($essentials !== []) {
+      $slots['essentials'] = $essentials;
+    }
+    if ($description !== '') {
+      $slots['content'] = $this->buildDescriptionSlot($description);
+    }
+    if ($organizer !== NULL && $organizer !== '') {
+      $slots['sidebar'] = $this->buildOrganizerSlot($organizer);
+    }
+    if ($mapaRender !== NULL) {
+      $slots['highlight'] = $mapaRender;
+    }
+
     return [
-      '#theme' => 'aculta_event_page',
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:event-page-layout',
+      '#attributes' => ['class' => ['aculta-event']],
+      '#props' => [],
+      '#slots' => $slots,
       '#prefix' => $prefix !== '' ? $prefix : NULL,
-      '#titulo' => (string) $evento->label(),
-      '#subtitulo' => (string) $evento->get('field_subtitulo')->value,
-      '#descricao' => (string) $evento->get('body')->value,
-      '#tipo' => $evento->get('field_tipo')->entity?->label(),
-      '#organizador' => $organizador?->getDisplayName(),
-      '#organizacao' => $orgData,
-      '#coorganizadores' => $coOrgs,
-      '#classificacao_etaria' => $classificacao !== '' ? $classificacao : NULL,
-      '#selos_acessibilidade' => $selosAcessibilidade,
-      '#seguranca' => $seguranca !== '' ? $seguranca : NULL,
-      '#url' => (string) $evento->get('field_url')->value,
-      '#datas' => $linhas,
-      '#cancelado' => $evento->get('field_status')->value === 'cancelado',
       '#cache' => [
         'contexts' => $cacheability->getCacheContexts(),
         'tags' => $cacheability->getCacheTags(),
         'max-age' => $cacheability->getCacheMaxAge(),
       ],
       '#attached' => $anexos,
+    ];
+  }
+
+  /**
+   * Builds the title slot without moving event data into component props.
+   */
+  private function buildTitleSlot(string $title, string $subtitle, bool $cancelled): array {
+    $slot = [
+      '#type' => 'container',
+      'heading' => [
+        '#type' => 'html_tag',
+        '#tag' => 'h1',
+        '#value' => $title,
+      ],
+    ];
+    if ($subtitle !== '') {
+      $slot['subtitle'] = [
+        '#type' => 'html_tag',
+        '#tag' => 'p',
+        '#attributes' => ['class' => ['aculta-event-page-layout__subtitle']],
+        '#value' => $subtitle,
+      ];
+    }
+    if ($cancelled) {
+      $slot['cancelled'] = [
+        '#type' => 'html_tag',
+        '#tag' => 'p',
+        '#attributes' => [
+          'class' => ['aculta-event-page-layout__cancelled'],
+          'role' => 'status',
+        ],
+        '#value' => $this->t('Este evento foi cancelado.'),
+      ];
+    }
+    return $slot;
+  }
+
+  /**
+   * Builds the event type, dates and validated external link slot.
+   *
+   * @param string|null $type
+   *   Event type label, when available.
+   * @param array<int, array<string, mixed>> $dates
+   *   Formatted date render arrays, including access-aware links.
+   * @param \Drupal\Core\Url|null $website
+   *   Validated external event URL, when available.
+   */
+  private function buildEssentialsSlot(?string $type, array $dates, ?Url $website): array {
+    $slot = ['#type' => 'container'];
+    if ($type !== NULL && $type !== '') {
+      $slot['type'] = [
+        '#type' => 'inline_template',
+        '#template' => '<p><strong>{{ label }}</strong> {{ type }}</p>',
+        '#context' => [
+          'label' => $this->t('Tipo:'),
+          'type' => $type,
+        ],
+      ];
+    }
+    if ($dates !== []) {
+      $items = [];
+      foreach ($dates as $index => $date) {
+        $items['date_' . $index] = $date + [
+          '#prefix' => '<li>',
+          '#suffix' => '</li>',
+        ];
+      }
+      $slot['dates'] = [
+        '#type' => 'container',
+        'heading' => [
+          '#type' => 'html_tag',
+          '#tag' => 'h2',
+          '#value' => $this->t('Datas'),
+        ],
+        'items' => [
+          '#type' => 'html_tag',
+          '#tag' => 'ul',
+          ...$items,
+        ],
+      ];
+    }
+    if ($website !== NULL) {
+      $slot['website'] = [
+        '#type' => 'container',
+        'link' => [
+          '#type' => 'link',
+          '#title' => $this->t('Site do evento'),
+          '#url' => $website,
+        ],
+      ];
+    }
+    return count($slot) > 1 ? $slot : [];
+  }
+
+  /**
+   * Builds the description slot using Twig's escaped text rendering.
+   */
+  private function buildDescriptionSlot(string $description): array {
+    return [
+      '#type' => 'inline_template',
+      '#template' => '<div class="aculta-event-page-layout__description">{{ description|nl2br }}</div>',
+      '#context' => ['description' => $description],
+    ];
+  }
+
+  /**
+   * Builds the organizer slot with plain-text identity data only.
+   */
+  private function buildOrganizerSlot(?string $organizer): array {
+    return [
+      '#type' => 'container',
+      'heading' => [
+        '#type' => 'html_tag',
+        '#tag' => 'h2',
+        '#value' => $this->t('Organizador'),
+      ],
+      'name' => [
+        '#type' => 'html_tag',
+        '#tag' => 'p',
+        '#value' => $organizer,
+      ],
     ];
   }
 

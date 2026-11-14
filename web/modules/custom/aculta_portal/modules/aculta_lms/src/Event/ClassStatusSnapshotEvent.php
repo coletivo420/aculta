@@ -17,6 +17,8 @@ final readonly class ClassStatusSnapshotEvent {
   public const NAME = 'aculta_lms.class_status_snapshot';
 
   /**
+   * Constrói o instantâneo com as linhas de contagem.
+   *
    * @param list<array{course: int, class: int, situation: string, count: int}> $rows
    *   Uma linha por turma e situação.
    */

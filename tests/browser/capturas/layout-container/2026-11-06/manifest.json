@@ -1,0 +1,43 @@
+{
+  "metodo": "Firefox visible via WebDriver BiDi; captures by purpose, color mode and viewport",
+  "motor": "Firefox ESR",
+  "viewport": [
+    320,
+    1440
+  ],
+  "modo": [
+    "light",
+    "dark"
+  ],
+  "url_relativa": "/ em cada host de purpose do deploy.json (ambiente test)",
+  "capturas_dir": "tests/browser/capturas/layout-container/2026-11-06",
+  "resultados": {
+    "purposes": [
+      "main",
+      "account",
+      "support",
+      "magazine",
+      "wiki",
+      "shop",
+      "courses",
+      "forum",
+      "links",
+      "eventos"
+    ],
+    "casos": 40,
+    "verificacoes": 300,
+    "passaram": 300,
+    "falharam": 0,
+    "falhas": [],
+    "assertions": {
+      "purpose": "PASS",
+      "mode": "PASS",
+      "viewport": "PASS",
+      "has_container_width_var": "PASS",
+      "has_narrow_width_var": "PASS",
+      "has_layout_attribute": "PASS",
+      "no_horizontal_overflow": "PASS",
+      "mobile_100_percent": "PASS"
+    }
+  }
+}

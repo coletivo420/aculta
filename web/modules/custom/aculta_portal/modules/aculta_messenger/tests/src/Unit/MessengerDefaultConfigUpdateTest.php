@@ -12,6 +12,7 @@ use Drupal\Core\Config\FileStorage;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Extension\ExtensionPathResolver;
 use Drupal\Tests\UnitTestCase;
 use Drupal\field\FieldStorageConfigInterface;
 use PHPUnit\Framework\Attributes\CoversNothing;
@@ -170,16 +171,7 @@ final class MessengerDefaultConfigUpdateTest extends UnitTestCase {
     $entity_type_manager->expects(self::exactly(count($names)))->method('getStorage')
       ->willReturnCallback(static fn(string $type): ConfigEntityStorageInterface => $storages[$type]);
     $container = new ContainerBuilder();
-    $container->set('extension.list.module', new class {
-
-      /**
-       * Returns the Messenger module path for the update fixture.
-       */
-      public function getPath(string $module): string {
-        return dirname(__DIR__, 3);
-      }
-
-    });
+    $container->set('extension.path.resolver', $this->extensionPathResolver(dirname(__DIR__, 3)));
     $container->set('config.manager', $config_manager);
     $container->set('entity_type.manager', $entity_type_manager);
     require_once dirname(__DIR__, 3) . '/aculta_messenger.install';
@@ -260,16 +252,7 @@ final class MessengerDefaultConfigUpdateTest extends UnitTestCase {
     $entity_type_manager->expects(self::exactly(count($names)))->method('getStorage')
       ->willReturnCallback(static fn(string $type): ConfigEntityStorageInterface => $storages[$type]);
     $container = new ContainerBuilder();
-    $container->set('extension.list.module', new class {
-
-      /**
-       * Returns the Messenger module path for the update fixture.
-       */
-      public function getPath(string $module): string {
-        return dirname(__DIR__, 3);
-      }
-
-    });
+    $container->set('extension.path.resolver', $this->extensionPathResolver(dirname(__DIR__, 3)));
     $container->set('config.manager', $config_manager);
     $container->set('entity_type.manager', $entity_type_manager);
     require_once dirname(__DIR__, 3) . '/aculta_messenger.install';
@@ -358,19 +341,8 @@ final class MessengerDefaultConfigUpdateTest extends UnitTestCase {
         ['field_storage_config', $field_storage],
         ['field_config', $field_config],
       ]);
-    $extension_list = new class ($module_path) {
-
-      /** Constructs the extension-list path fixture. */
-      public function __construct(private string $modulePath) {}
-
-      /** Returns the fixture module path. */
-      public function getPath(string $module): string {
-        return $this->modulePath;
-      }
-
-    };
     $container = new ContainerBuilder();
-    $container->set('extension.list.module', $extension_list);
+    $container->set('extension.path.resolver', $this->extensionPathResolver($module_path));
     $container->set('entity_type.manager', $entity_type_manager);
     require_once dirname(__DIR__, 3) . '/aculta_messenger.install';
     \Drupal::setContainer($container);
@@ -415,19 +387,8 @@ final class MessengerDefaultConfigUpdateTest extends UnitTestCase {
         ['field_storage_config', $field_storage],
         ['field_config', $field_config],
       ]);
-    $extension_list = new class ($module_path) {
-
-      /** Constructs the extension-list path fixture. */
-      public function __construct(private string $modulePath) {}
-
-      /** Returns the fixture module path. */
-      public function getPath(string $module): string {
-        return $this->modulePath;
-      }
-
-    };
     $container = new ContainerBuilder();
-    $container->set('extension.list.module', $extension_list);
+    $container->set('extension.path.resolver', $this->extensionPathResolver($module_path));
     $container->set('entity_type.manager', $entity_type_manager);
     require_once dirname(__DIR__, 3) . '/aculta_messenger.install';
     \Drupal::setContainer($container);
@@ -437,6 +398,15 @@ final class MessengerDefaultConfigUpdateTest extends UnitTestCase {
     finally {
       \Drupal::unsetContainer();
     }
+  }
+
+  /**
+   * Creates the public Drupal resolver used by update hooks.
+   */
+  private function extensionPathResolver(string $modulePath): ExtensionPathResolver {
+    $resolver = $this->createStub(ExtensionPathResolver::class);
+    $resolver->method('getPath')->with('module', 'aculta_messenger')->willReturn($modulePath);
+    return $resolver;
   }
 
 }

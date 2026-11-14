@@ -25,15 +25,16 @@
                 "data-aculta-pdf-control": "toolbar"
             },
             "previous": {
-                "#type": "html_tag",
-                "#tag": "button",
-                "#value": {
-                    "__translatable": "Página anterior"
+                "#type": "aculta_portal_button",
+                "#props": {
+                    "text": {
+                        "__translatable": "Página anterior"
+                    },
+                    "variant": "ghost",
+                    "disabled": true
                 },
                 "#attributes": {
-                    "type": "button",
-                    "data-aculta-pdf-control": "previous",
-                    "disabled": "disabled"
+                    "data-aculta-pdf-control": "previous"
                 }
             },
             "status": {
@@ -48,15 +49,16 @@
                 }
             },
             "next": {
-                "#type": "html_tag",
-                "#tag": "button",
-                "#value": {
-                    "__translatable": "Próxima página"
+                "#type": "aculta_portal_button",
+                "#props": {
+                    "text": {
+                        "__translatable": "Próxima página"
+                    },
+                    "variant": "ghost",
+                    "disabled": true
                 },
                 "#attributes": {
-                    "type": "button",
-                    "data-aculta-pdf-control": "next",
-                    "disabled": "disabled"
+                    "data-aculta-pdf-control": "next"
                 }
             }
         },
@@ -71,17 +73,15 @@
                     "data-aculta-pdf-control": "zoom-controls"
                 },
                 "zoom_out": {
-                    "#type": "html_tag",
-                    "#tag": "button",
-                    "#value": {
-                        "__translatable": "Reduzir zoom"
+                    "#type": "aculta_portal_button",
+                    "#props": {
+                        "text": {
+                            "__translatable": "Reduzir zoom"
+                        },
+                        "variant": "ghost"
                     },
                     "#attributes": {
-                        "type": "button",
-                        "data-aculta-pdf-control": "zoom-out",
-                        "aria-label": {
-                            "__translatable": "Reduzir zoom"
-                        }
+                        "data-aculta-pdf-control": "zoom-out"
                     }
                 },
                 "zoom_status": {
@@ -94,57 +94,55 @@
                     }
                 },
                 "zoom_in": {
-                    "#type": "html_tag",
-                    "#tag": "button",
-                    "#value": {
-                        "__translatable": "Aumentar zoom"
+                    "#type": "aculta_portal_button",
+                    "#props": {
+                        "text": {
+                            "__translatable": "Aumentar zoom"
+                        },
+                        "variant": "ghost"
                     },
                     "#attributes": {
-                        "type": "button",
-                        "data-aculta-pdf-control": "zoom-in",
-                        "aria-label": {
-                            "__translatable": "Aumentar zoom"
-                        }
+                        "data-aculta-pdf-control": "zoom-in"
                     }
                 },
                 "zoom_reset": {
-                    "#type": "html_tag",
-                    "#tag": "button",
-                    "#value": {
-                        "__translatable": "Restaurar zoom"
+                    "#type": "aculta_portal_button",
+                    "#props": {
+                        "text": {
+                            "__translatable": "Restaurar zoom"
+                        },
+                        "variant": "ghost"
                     },
                     "#attributes": {
-                        "type": "button",
                         "data-aculta-pdf-control": "zoom-reset"
                     }
                 }
             },
             "rotate": {
-                "#type": "html_tag",
-                "#tag": "button",
-                "#value": {
-                    "__translatable": "Girar página 90 graus"
+                "#type": "aculta_portal_button",
+                "#props": {
+                    "text": {
+                        "__translatable": "Girar página 90 graus"
+                    },
+                    "variant": "ghost"
                 },
                 "#attributes": {
-                    "type": "button",
-                    "data-aculta-pdf-control": "rotate",
-                    "aria-label": {
-                        "__translatable": "Girar página 90 graus"
-                    }
+                    "data-aculta-pdf-control": "rotate"
                 }
             },
             "fullscreen": {
-                "#type": "html_tag",
-                "#tag": "button",
-                "#value": {
-                    "__translatable": "Tela cheia"
-                },
-                "#attributes": {
-                    "type": "button",
-                    "data-aculta-pdf-control": "fullscreen",
-                    "aria-label": {
+                "#type": "aculta_portal_button",
+                "#props": {
+                    "text": {
+                        "__translatable": "Tela cheia"
+                    },
+                    "aria_label": {
                         "__translatable": "Abrir leitor em tela cheia"
                     },
+                    "variant": "ghost"
+                },
+                "#attributes": {
+                    "data-aculta-pdf-control": "fullscreen",
                     "aria-pressed": "false"
                 }
             }
@@ -166,38 +164,41 @@
                 }
             },
             "submit": {
-                "#type": "html_tag",
-                "#tag": "button",
-                "#value": {
-                    "__translatable": "Buscar"
+                "#type": "aculta_portal_button",
+                "#props": {
+                    "text": {
+                        "__translatable": "Buscar"
+                    },
+                    "variant": "secondary"
                 },
                 "#attributes": {
-                    "type": "button",
                     "data-aculta-pdf-control": "search-submit"
                 }
             },
             "previous": {
-                "#type": "html_tag",
-                "#tag": "button",
-                "#value": {
-                    "__translatable": "Resultado anterior"
+                "#type": "aculta_portal_button",
+                "#props": {
+                    "text": {
+                        "__translatable": "Resultado anterior"
+                    },
+                    "variant": "ghost",
+                    "disabled": true
                 },
                 "#attributes": {
-                    "type": "button",
-                    "data-aculta-pdf-control": "search-previous",
-                    "disabled": "disabled"
+                    "data-aculta-pdf-control": "search-previous"
                 }
             },
             "next": {
-                "#type": "html_tag",
-                "#tag": "button",
-                "#value": {
-                    "__translatable": "Próximo resultado"
+                "#type": "aculta_portal_button",
+                "#props": {
+                    "text": {
+                        "__translatable": "Próximo resultado"
+                    },
+                    "variant": "ghost",
+                    "disabled": true
                 },
                 "#attributes": {
-                    "type": "button",
-                    "data-aculta-pdf-control": "search-next",
-                    "disabled": "disabled"
+                    "data-aculta-pdf-control": "search-next"
                 }
             },
             "status": {
@@ -372,15 +373,16 @@
                 "data-aculta-pdf-control": "toolbar"
             },
             "previous": {
-                "#type": "html_tag",
-                "#tag": "button",
-                "#value": {
-                    "__translatable": "Página anterior"
+                "#type": "aculta_portal_button",
+                "#props": {
+                    "text": {
+                        "__translatable": "Página anterior"
+                    },
+                    "variant": "ghost",
+                    "disabled": true
                 },
                 "#attributes": {
-                    "type": "button",
-                    "data-aculta-pdf-control": "previous",
-                    "disabled": "disabled"
+                    "data-aculta-pdf-control": "previous"
                 }
             },
             "status": {
@@ -395,15 +397,16 @@
                 }
             },
             "next": {
-                "#type": "html_tag",
-                "#tag": "button",
-                "#value": {
-                    "__translatable": "Próxima página"
+                "#type": "aculta_portal_button",
+                "#props": {
+                    "text": {
+                        "__translatable": "Próxima página"
+                    },
+                    "variant": "ghost",
+                    "disabled": true
                 },
                 "#attributes": {
-                    "type": "button",
-                    "data-aculta-pdf-control": "next",
-                    "disabled": "disabled"
+                    "data-aculta-pdf-control": "next"
                 }
             }
         },
@@ -418,17 +421,15 @@
                     "data-aculta-pdf-control": "zoom-controls"
                 },
                 "zoom_out": {
-                    "#type": "html_tag",
-                    "#tag": "button",
-                    "#value": {
-                        "__translatable": "Reduzir zoom"
+                    "#type": "aculta_portal_button",
+                    "#props": {
+                        "text": {
+                            "__translatable": "Reduzir zoom"
+                        },
+                        "variant": "ghost"
                     },
                     "#attributes": {
-                        "type": "button",
-                        "data-aculta-pdf-control": "zoom-out",
-                        "aria-label": {
-                            "__translatable": "Reduzir zoom"
-                        }
+                        "data-aculta-pdf-control": "zoom-out"
                     }
                 },
                 "zoom_status": {
@@ -441,57 +442,55 @@
                     }
                 },
                 "zoom_in": {
-                    "#type": "html_tag",
-                    "#tag": "button",
-                    "#value": {
-                        "__translatable": "Aumentar zoom"
+                    "#type": "aculta_portal_button",
+                    "#props": {
+                        "text": {
+                            "__translatable": "Aumentar zoom"
+                        },
+                        "variant": "ghost"
                     },
                     "#attributes": {
-                        "type": "button",
-                        "data-aculta-pdf-control": "zoom-in",
-                        "aria-label": {
-                            "__translatable": "Aumentar zoom"
-                        }
+                        "data-aculta-pdf-control": "zoom-in"
                     }
                 },
                 "zoom_reset": {
-                    "#type": "html_tag",
-                    "#tag": "button",
-                    "#value": {
-                        "__translatable": "Restaurar zoom"
+                    "#type": "aculta_portal_button",
+                    "#props": {
+                        "text": {
+                            "__translatable": "Restaurar zoom"
+                        },
+                        "variant": "ghost"
                     },
                     "#attributes": {
-                        "type": "button",
                         "data-aculta-pdf-control": "zoom-reset"
                     }
                 }
             },
             "rotate": {
-                "#type": "html_tag",
-                "#tag": "button",
-                "#value": {
-                    "__translatable": "Girar página 90 graus"
+                "#type": "aculta_portal_button",
+                "#props": {
+                    "text": {
+                        "__translatable": "Girar página 90 graus"
+                    },
+                    "variant": "ghost"
                 },
                 "#attributes": {
-                    "type": "button",
-                    "data-aculta-pdf-control": "rotate",
-                    "aria-label": {
-                        "__translatable": "Girar página 90 graus"
-                    }
+                    "data-aculta-pdf-control": "rotate"
                 }
             },
             "fullscreen": {
-                "#type": "html_tag",
-                "#tag": "button",
-                "#value": {
-                    "__translatable": "Tela cheia"
-                },
-                "#attributes": {
-                    "type": "button",
-                    "data-aculta-pdf-control": "fullscreen",
-                    "aria-label": {
+                "#type": "aculta_portal_button",
+                "#props": {
+                    "text": {
+                        "__translatable": "Tela cheia"
+                    },
+                    "aria_label": {
                         "__translatable": "Abrir leitor em tela cheia"
                     },
+                    "variant": "ghost"
+                },
+                "#attributes": {
+                    "data-aculta-pdf-control": "fullscreen",
                     "aria-pressed": "false"
                 }
             }
@@ -513,38 +512,41 @@
                 }
             },
             "submit": {
-                "#type": "html_tag",
-                "#tag": "button",
-                "#value": {
-                    "__translatable": "Buscar"
+                "#type": "aculta_portal_button",
+                "#props": {
+                    "text": {
+                        "__translatable": "Buscar"
+                    },
+                    "variant": "secondary"
                 },
                 "#attributes": {
-                    "type": "button",
                     "data-aculta-pdf-control": "search-submit"
                 }
             },
             "previous": {
-                "#type": "html_tag",
-                "#tag": "button",
-                "#value": {
-                    "__translatable": "Resultado anterior"
+                "#type": "aculta_portal_button",
+                "#props": {
+                    "text": {
+                        "__translatable": "Resultado anterior"
+                    },
+                    "variant": "ghost",
+                    "disabled": true
                 },
                 "#attributes": {
-                    "type": "button",
-                    "data-aculta-pdf-control": "search-previous",
-                    "disabled": "disabled"
+                    "data-aculta-pdf-control": "search-previous"
                 }
             },
             "next": {
-                "#type": "html_tag",
-                "#tag": "button",
-                "#value": {
-                    "__translatable": "Próximo resultado"
+                "#type": "aculta_portal_button",
+                "#props": {
+                    "text": {
+                        "__translatable": "Próximo resultado"
+                    },
+                    "variant": "ghost",
+                    "disabled": true
                 },
                 "#attributes": {
-                    "type": "button",
-                    "data-aculta-pdf-control": "search-next",
-                    "disabled": "disabled"
+                    "data-aculta-pdf-control": "search-next"
                 }
             },
             "status": {
@@ -730,15 +732,16 @@
                 "data-aculta-pdf-control": "toolbar"
             },
             "previous": {
-                "#type": "html_tag",
-                "#tag": "button",
-                "#value": {
-                    "__translatable": "Página anterior"
+                "#type": "aculta_portal_button",
+                "#props": {
+                    "text": {
+                        "__translatable": "Página anterior"
+                    },
+                    "variant": "ghost",
+                    "disabled": true
                 },
                 "#attributes": {
-                    "type": "button",
-                    "data-aculta-pdf-control": "previous",
-                    "disabled": "disabled"
+                    "data-aculta-pdf-control": "previous"
                 },
                 "#access": false
             },
@@ -754,15 +757,16 @@
                 }
             },
             "next": {
-                "#type": "html_tag",
-                "#tag": "button",
-                "#value": {
-                    "__translatable": "Próxima página"
+                "#type": "aculta_portal_button",
+                "#props": {
+                    "text": {
+                        "__translatable": "Próxima página"
+                    },
+                    "variant": "ghost",
+                    "disabled": true
                 },
                 "#attributes": {
-                    "type": "button",
-                    "data-aculta-pdf-control": "next",
-                    "disabled": "disabled"
+                    "data-aculta-pdf-control": "next"
                 },
                 "#access": false
             }
@@ -778,17 +782,15 @@
                     "data-aculta-pdf-control": "zoom-controls"
                 },
                 "zoom_out": {
-                    "#type": "html_tag",
-                    "#tag": "button",
-                    "#value": {
-                        "__translatable": "Reduzir zoom"
+                    "#type": "aculta_portal_button",
+                    "#props": {
+                        "text": {
+                            "__translatable": "Reduzir zoom"
+                        },
+                        "variant": "ghost"
                     },
                     "#attributes": {
-                        "type": "button",
-                        "data-aculta-pdf-control": "zoom-out",
-                        "aria-label": {
-                            "__translatable": "Reduzir zoom"
-                        }
+                        "data-aculta-pdf-control": "zoom-out"
                     }
                 },
                 "zoom_status": {
@@ -801,59 +803,57 @@
                     }
                 },
                 "zoom_in": {
-                    "#type": "html_tag",
-                    "#tag": "button",
-                    "#value": {
-                        "__translatable": "Aumentar zoom"
+                    "#type": "aculta_portal_button",
+                    "#props": {
+                        "text": {
+                            "__translatable": "Aumentar zoom"
+                        },
+                        "variant": "ghost"
                     },
                     "#attributes": {
-                        "type": "button",
-                        "data-aculta-pdf-control": "zoom-in",
-                        "aria-label": {
-                            "__translatable": "Aumentar zoom"
-                        }
+                        "data-aculta-pdf-control": "zoom-in"
                     }
                 },
                 "zoom_reset": {
-                    "#type": "html_tag",
-                    "#tag": "button",
-                    "#value": {
-                        "__translatable": "Restaurar zoom"
+                    "#type": "aculta_portal_button",
+                    "#props": {
+                        "text": {
+                            "__translatable": "Restaurar zoom"
+                        },
+                        "variant": "ghost"
                     },
                     "#attributes": {
-                        "type": "button",
                         "data-aculta-pdf-control": "zoom-reset"
                     }
                 },
                 "#access": false
             },
             "rotate": {
-                "#type": "html_tag",
-                "#tag": "button",
-                "#value": {
-                    "__translatable": "Girar página 90 graus"
+                "#type": "aculta_portal_button",
+                "#props": {
+                    "text": {
+                        "__translatable": "Girar página 90 graus"
+                    },
+                    "variant": "ghost"
                 },
                 "#attributes": {
-                    "type": "button",
-                    "data-aculta-pdf-control": "rotate",
-                    "aria-label": {
-                        "__translatable": "Girar página 90 graus"
-                    }
+                    "data-aculta-pdf-control": "rotate"
                 },
                 "#access": false
             },
             "fullscreen": {
-                "#type": "html_tag",
-                "#tag": "button",
-                "#value": {
-                    "__translatable": "Tela cheia"
-                },
-                "#attributes": {
-                    "type": "button",
-                    "data-aculta-pdf-control": "fullscreen",
-                    "aria-label": {
+                "#type": "aculta_portal_button",
+                "#props": {
+                    "text": {
+                        "__translatable": "Tela cheia"
+                    },
+                    "aria_label": {
                         "__translatable": "Abrir leitor em tela cheia"
                     },
+                    "variant": "ghost"
+                },
+                "#attributes": {
+                    "data-aculta-pdf-control": "fullscreen",
                     "aria-pressed": "false"
                 },
                 "#access": false
@@ -876,38 +876,41 @@
                 }
             },
             "submit": {
-                "#type": "html_tag",
-                "#tag": "button",
-                "#value": {
-                    "__translatable": "Buscar"
+                "#type": "aculta_portal_button",
+                "#props": {
+                    "text": {
+                        "__translatable": "Buscar"
+                    },
+                    "variant": "secondary"
                 },
                 "#attributes": {
-                    "type": "button",
                     "data-aculta-pdf-control": "search-submit"
                 }
             },
             "previous": {
-                "#type": "html_tag",
-                "#tag": "button",
-                "#value": {
-                    "__translatable": "Resultado anterior"
+                "#type": "aculta_portal_button",
+                "#props": {
+                    "text": {
+                        "__translatable": "Resultado anterior"
+                    },
+                    "variant": "ghost",
+                    "disabled": true
                 },
                 "#attributes": {
-                    "type": "button",
-                    "data-aculta-pdf-control": "search-previous",
-                    "disabled": "disabled"
+                    "data-aculta-pdf-control": "search-previous"
                 }
             },
             "next": {
-                "#type": "html_tag",
-                "#tag": "button",
-                "#value": {
-                    "__translatable": "Próximo resultado"
+                "#type": "aculta_portal_button",
+                "#props": {
+                    "text": {
+                        "__translatable": "Próximo resultado"
+                    },
+                    "variant": "ghost",
+                    "disabled": true
                 },
                 "#attributes": {
-                    "type": "button",
-                    "data-aculta-pdf-control": "search-next",
-                    "disabled": "disabled"
+                    "data-aculta-pdf-control": "search-next"
                 }
             },
             "status": {
@@ -1086,15 +1089,16 @@
                 "data-aculta-pdf-control": "toolbar"
             },
             "previous": {
-                "#type": "html_tag",
-                "#tag": "button",
-                "#value": {
-                    "__translatable": "Página anterior"
+                "#type": "aculta_portal_button",
+                "#props": {
+                    "text": {
+                        "__translatable": "Página anterior"
+                    },
+                    "variant": "ghost",
+                    "disabled": true
                 },
                 "#attributes": {
-                    "type": "button",
-                    "data-aculta-pdf-control": "previous",
-                    "disabled": "disabled"
+                    "data-aculta-pdf-control": "previous"
                 }
             },
             "status": {
@@ -1109,15 +1113,16 @@
                 }
             },
             "next": {
-                "#type": "html_tag",
-                "#tag": "button",
-                "#value": {
-                    "__translatable": "Próxima página"
+                "#type": "aculta_portal_button",
+                "#props": {
+                    "text": {
+                        "__translatable": "Próxima página"
+                    },
+                    "variant": "ghost",
+                    "disabled": true
                 },
                 "#attributes": {
-                    "type": "button",
-                    "data-aculta-pdf-control": "next",
-                    "disabled": "disabled"
+                    "data-aculta-pdf-control": "next"
                 }
             }
         },
@@ -1132,17 +1137,15 @@
                     "data-aculta-pdf-control": "zoom-controls"
                 },
                 "zoom_out": {
-                    "#type": "html_tag",
-                    "#tag": "button",
-                    "#value": {
-                        "__translatable": "Reduzir zoom"
+                    "#type": "aculta_portal_button",
+                    "#props": {
+                        "text": {
+                            "__translatable": "Reduzir zoom"
+                        },
+                        "variant": "ghost"
                     },
                     "#attributes": {
-                        "type": "button",
-                        "data-aculta-pdf-control": "zoom-out",
-                        "aria-label": {
-                            "__translatable": "Reduzir zoom"
-                        }
+                        "data-aculta-pdf-control": "zoom-out"
                     }
                 },
                 "zoom_status": {
@@ -1155,57 +1158,55 @@
                     }
                 },
                 "zoom_in": {
-                    "#type": "html_tag",
-                    "#tag": "button",
-                    "#value": {
-                        "__translatable": "Aumentar zoom"
+                    "#type": "aculta_portal_button",
+                    "#props": {
+                        "text": {
+                            "__translatable": "Aumentar zoom"
+                        },
+                        "variant": "ghost"
                     },
                     "#attributes": {
-                        "type": "button",
-                        "data-aculta-pdf-control": "zoom-in",
-                        "aria-label": {
-                            "__translatable": "Aumentar zoom"
-                        }
+                        "data-aculta-pdf-control": "zoom-in"
                     }
                 },
                 "zoom_reset": {
-                    "#type": "html_tag",
-                    "#tag": "button",
-                    "#value": {
-                        "__translatable": "Restaurar zoom"
+                    "#type": "aculta_portal_button",
+                    "#props": {
+                        "text": {
+                            "__translatable": "Restaurar zoom"
+                        },
+                        "variant": "ghost"
                     },
                     "#attributes": {
-                        "type": "button",
                         "data-aculta-pdf-control": "zoom-reset"
                     }
                 }
             },
             "rotate": {
-                "#type": "html_tag",
-                "#tag": "button",
-                "#value": {
-                    "__translatable": "Girar página 90 graus"
+                "#type": "aculta_portal_button",
+                "#props": {
+                    "text": {
+                        "__translatable": "Girar página 90 graus"
+                    },
+                    "variant": "ghost"
                 },
                 "#attributes": {
-                    "type": "button",
-                    "data-aculta-pdf-control": "rotate",
-                    "aria-label": {
-                        "__translatable": "Girar página 90 graus"
-                    }
+                    "data-aculta-pdf-control": "rotate"
                 }
             },
             "fullscreen": {
-                "#type": "html_tag",
-                "#tag": "button",
-                "#value": {
-                    "__translatable": "Tela cheia"
-                },
-                "#attributes": {
-                    "type": "button",
-                    "data-aculta-pdf-control": "fullscreen",
-                    "aria-label": {
+                "#type": "aculta_portal_button",
+                "#props": {
+                    "text": {
+                        "__translatable": "Tela cheia"
+                    },
+                    "aria_label": {
                         "__translatable": "Abrir leitor em tela cheia"
                     },
+                    "variant": "ghost"
+                },
+                "#attributes": {
+                    "data-aculta-pdf-control": "fullscreen",
                     "aria-pressed": "false"
                 }
             }
@@ -1227,38 +1228,41 @@
                 }
             },
             "submit": {
-                "#type": "html_tag",
-                "#tag": "button",
-                "#value": {
-                    "__translatable": "Buscar"
+                "#type": "aculta_portal_button",
+                "#props": {
+                    "text": {
+                        "__translatable": "Buscar"
+                    },
+                    "variant": "secondary"
                 },
                 "#attributes": {
-                    "type": "button",
                     "data-aculta-pdf-control": "search-submit"
                 }
             },
             "previous": {
-                "#type": "html_tag",
-                "#tag": "button",
-                "#value": {
-                    "__translatable": "Resultado anterior"
+                "#type": "aculta_portal_button",
+                "#props": {
+                    "text": {
+                        "__translatable": "Resultado anterior"
+                    },
+                    "variant": "ghost",
+                    "disabled": true
                 },
                 "#attributes": {
-                    "type": "button",
-                    "data-aculta-pdf-control": "search-previous",
-                    "disabled": "disabled"
+                    "data-aculta-pdf-control": "search-previous"
                 }
             },
             "next": {
-                "#type": "html_tag",
-                "#tag": "button",
-                "#value": {
-                    "__translatable": "Próximo resultado"
+                "#type": "aculta_portal_button",
+                "#props": {
+                    "text": {
+                        "__translatable": "Próximo resultado"
+                    },
+                    "variant": "ghost",
+                    "disabled": true
                 },
                 "#attributes": {
-                    "type": "button",
-                    "data-aculta-pdf-control": "search-next",
-                    "disabled": "disabled"
+                    "data-aculta-pdf-control": "search-next"
                 }
             },
             "status": {

@@ -1,0 +1,23 @@
+{
+  "front": "revista-listing-sdc-smoke",
+  "date": "2026-11-11",
+  "commit": "c78f6da29",
+  "environment": "development",
+  "method": "Firefox ESR visible X11 with WebDriver BiDi; anonymous read-only browser smoke",
+  "requested_route": "/revista on magazine Domain",
+  "route_result": "HTTP 301 normalized to the Domain homepage (/); the View page itself was not reached",
+  "observed_route": "/ on magazine Domain",
+  "checks": {
+    "component": "4 visible .revista-teaser cards",
+    "h1": "exactly one: Revista",
+    "main_landmark": "exactly one",
+    "horizontal_overflow": "none at each exact CSS viewport",
+    "viewports_css_px": [320, 390, 768, 1024, 1440],
+    "title_link_min_height_px": 49,
+    "keyboard_accessibility": "not tested",
+    "dark_mode": "not tested",
+    "zoom_200_percent": "not tested"
+  },
+  "result": "PASS for homepage SDC smoke; NOT ACCEPTED as runtime evidence for revista_sessoes page displays",
+  "screenshots": "none; DOM metrics only"
+}

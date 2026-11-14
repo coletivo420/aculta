@@ -1,0 +1,7 @@
+name: Conteúdo estreito
+description: Coluna de leitura centralizada.
+component: aculta420_v2:layout-narrow
+slots:
+  content:
+    type: inline_template
+    template: '<h2>Leitura</h2><p>Texto editorial em coluna estreita para leitura confortável.</p>'

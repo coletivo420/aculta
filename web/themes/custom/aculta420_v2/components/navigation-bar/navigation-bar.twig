@@ -1,0 +1,33 @@
+<div{{ attributes.addClass('navigation-bar') }} data-aculta-navigation>
+  <div class="navigation-bar__inner">
+    <div class="navigation-bar__brand">
+      {% if brand_logo_url %}
+        <a class="navigation-bar__brand-link" href="{{ brand_home_url }}" rel="home" aria-label="{{ brand_title }}">
+          <img class="navigation-bar__logo" src="{{ brand_logo_url }}"{% if brand_logo_srcset %} srcset="{{ brand_logo_srcset }}" sizes="18rem"{% endif %} alt="{{ brand_logo_alt }}" fetchpriority="high" decoding="async">
+        </a>
+      {% elseif brand %}
+        {{ brand }}
+      {% elseif site_name %}
+        <a class="navigation-bar__brand-link" href="{{ brand_home_url }}" rel="home">
+          {% if site_logo_url %}<img class="navigation-bar__logo" src="{{ site_logo_url }}" alt="">{% endif %}
+          <span>{{ site_name }}</span>
+        </a>
+      {% endif %}
+    </div>
+    {% if wiki_search %}
+      <div class="navigation-bar__search">{{ wiki_search }}</div>
+    {% endif %}
+    <button class="navigation-bar__toggle" type="button" aria-expanded="false" aria-controls="{{ menu_id|default('aculta-primary-navigation') }}" data-aculta-navigation-toggle>
+      <span class="navigation-bar__toggle-label">{{ 'Menu'|t }}</span>
+      <span class="navigation-bar__icon" aria-hidden="true">
+        <span data-navigation-icon="menu">{{ include('aculta420_v2:icon', { name: 'list', variant: 'duotone', size: 'md' }, with_context = false) }}</span>
+        <span data-navigation-icon="close">{{ include('aculta420_v2:icon', { name: 'x', variant: 'duotone', size: 'md' }, with_context = false) }}</span>
+      </span>
+    </button>
+    <nav class="navigation-bar__panel" id="{{ menu_id|default('aculta-primary-navigation') }}" role="navigation" aria-label="{{ 'Primary navigation'|t }}" data-aculta-navigation-panel>
+      <button class="navigation-bar__close" type="button" data-aculta-navigation-close>{{ include('aculta420_v2:icon', { name: 'x', variant: 'duotone', size: 'md' }, with_context = false) }}<span>{{ 'Close menu'|t }}</span></button>
+      <div class="navigation-bar__menu">{{ menu_items }}</div>
+      {% if utility_items %}<div class="navigation-bar__utility">{{ utility_items }}</div>{% endif %}
+    </nav>
+  </div>
+</div>

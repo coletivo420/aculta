@@ -44,7 +44,7 @@ final class WikiEntryCreateController extends ControllerBase {
   public function createEntry(): array {
     $access = $this->entities->getAccessControlHandler('node')
       ->createAccess('wiki_entry', $this->account, [], TRUE);
-    if (!$access instanceof AccessResultInterface || !$access->isAllowed()) {
+    if (!$access->isAllowed()) {
       throw new AccessDeniedHttpException();
     }
 

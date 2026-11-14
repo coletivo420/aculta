@@ -11,7 +11,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
- * Edições de perfil (bio e redes sociais) só existem dentro do modal: abertura por AJAX (drupal_modal) ou envio do próprio formulário.
+ * Edições de perfil (bio e redes sociais) só existem dentro do modal.
+ *
+ * A abertura é por AJAX (drupal_modal) ou pelo envio do próprio formulário.
  *
  * Mesmo padrão do modal de foto (UserPictureForm, #action na rota): visita direta à URL responde 403.
  */
@@ -29,7 +31,7 @@ final class AccountModalAccess {
    */
   public function access(): AccessResult {
     $result = AccessResult::allowedIfHasPermission($this->currentUser, 'access aculta portal')
-      ->addCacheContexts(['user.permissions', 'request_format', 'url.query_args:_wrapper_format']);
+      ->addCacheContexts(['user.permissions', 'request_format', 'headers:HX-Request', 'url.query_args:_wrapper_format']);
     $request = $this->requestStack->getCurrentRequest();
     return $result->andIf(AccessResult::allowedIf($request instanceof Request && $this->isModalRequest($request)));
   }
@@ -39,6 +41,7 @@ final class AccountModalAccess {
    */
   private function isModalRequest(Request $request): bool {
     return $request->isXmlHttpRequest()
+      || $request->headers->has('HX-Request')
       || $request->query->get('_wrapper_format') === 'drupal_modal'
       || $request->isMethod('POST');
   }

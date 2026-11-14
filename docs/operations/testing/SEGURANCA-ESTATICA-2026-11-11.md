@@ -1,0 +1,164 @@
+# Segurança estática: triagem e resultados (2026-11-11)
+
+Skill responsável: `aculta-seguranca-estatica`. Base: `origin/dev` em `9d06d2167`, com entregas `87bec2be4` e `257adfb03`.
+
+Relatórios brutos (JSON do Semgrep, saída do `composer audit`, gitleaks) ficam em `SUITE_OUT`, fora do repositório. Nenhum valor de segredo foi impresso nem versionado.
+
+## 1. Semgrep com regras locais
+
+- Comando: `semgrep --metrics=off --config .agents/skills/aculta-seguranca-estatica/rules/aculta-php.yml` com exclusões de `vendor`, `web/core`, `web/modules/contrib`, `web/libraries` e `node_modules`, sobre `web/modules/custom`, `web/themes/custom` e `scripts`.
+- Primeira rodada (2026-11-11): **474 achados** em 118 arquivos; esta contagem é histórica.
+- Revalidação final (2026-11-12): **40 achados** (29 sinks `#markup`, 10 chamadas dinâmicas e 1 `unserialize`); nenhuma chamada estática global restante em classe ou trait.
+- A diferença da regra estática veio de escopo incorreto: scripts CLI e hooks procedurais não permitem injeção por construtor; a fixture agora exige classe e rejeita o contexto procedural. Dos 77 matches da regra anterior, 45 eram chamadas `aculta_H5PDrupal::` do fork H5P, não a fachada global; a fixture negativa foi acrescentada. Os 32 matches reais foram refatorados em fases, incluindo Shipment: tipos de pacote agora são resolvidos por definições puras e a limpeza de perfis anônimos usa hook OOP com serviço injetado. A análise da regra cobre classes e traits.
+
+| Regra | Achados | Classe |
+|---|---:|---|
+| `aculta-php-static-drupal-service` (`\Drupal::` dentro de classes e traits) | 0 | sem chamadas estáticas globais restantes |
+| `aculta-php-markup-raw-output` | 29 | 27 FALSO POSITIVO, 1 REAL corrigido, 1 ACEITO |
+| `aculta-php-eval-or-dynamic-exec` | 10 | 9 ACEITO COM JUSTIFICATIVA, 1 FALSO POSITIVO reavaliado |
+| `aculta-php-unserialize-untrusted` | 1 | FALSO POSITIVO (com mitigação) |
+| `aculta-php-raw-sql-concat` | 0 | sem achado; coberta por fixture |
+| `aculta-php-superglobal-input` | 0 | sem achado; coberta por fixture |
+| `aculta-php-raw-redirect-cross-host` | 0 | sem achado após correção da regra (ver 1.3) |
+
+Não há comparação direta com a baseline de 127 achados de 2026-11-05: o conjunto de regras mudou e a baseline não tinha triagem.
+
+### 1.1 Execução dinâmica (10)
+
+| Arquivo:linha | Sink | Classe | Justificativa |
+|---|---|---|---|
+| `scripts/validate-aculta420-layouts.php:29` | `passthru` | ACEITO COM JUSTIFICATIVA | script de validação de dev; `escapeshellarg`; comando fixo |
+| `scripts/validate-aculta420-layout-builder-batch.php:34` | `passthru` | ACEITO COM JUSTIFICATIVA | mesmo padrão |
+| `scripts/validate-aculta-ui-library.php:30` | `passthru` | ACEITO COM JUSTIFICATIVA | mesmo padrão |
+| `scripts/validate-aculta420-foundation.php:31` | `passthru` | ACEITO COM JUSTIFICATIVA | mesmo padrão |
+| `scripts/validate-browser-index.php:34` | `exec` | ACEITO COM JUSTIFICATIVA | comando fixo, caminho com `escapeshellarg` |
+| `scripts/validate-domain-front-paths.php:62` | `shell_exec` | ACEITO COM JUSTIFICATIVA | `escapeshellarg`; lista interna de domínios |
+| `scripts/validate-agent-economy-paths.php:57` | `shell_exec` | ACEITO COM JUSTIFICATIVA | `escapeshellarg`; leitura de tamanho |
+| `scripts/validate-aculta-portal-drupal12.php:950` | `exec` | ACEITO COM JUSTIFICATIVA | `escapeshellarg` em `PHP_BINARY` e caminho do validador |
+| `scripts/validate-session-cookie-policy.php:29` | `exec` | ACEITO COM JUSTIFICATIVA | comando fixo com `escapeshellarg` |
+| `aculta_deployer/src/Cli.php:1539` | `proc_open` (array, sem shell) | PENDENTE | falta provar que `$cmd` vem só de configuração do operador da CLI |
+
+Reavaliação em 2026-11-12: FALSO POSITIVO. `ACULTA_DOMAIN_CONFIG_CMD` é configuração explícita do operador para a CLI de deploy, validada com `is_executable()`. A chamada usa array de argumentos (`[$cmd, ...$args]`) em `proc_open`, sem shell; nenhum dado de requisição web controla o executável ou os argumentos.
+
+### 1.2 `#markup` sem escape (31 na primeira rodada; 29 na revalidação)
+
+**FALSO POSITIVO (17):** o valor passa por `$this->t()`, `translate()`, `formatPlural()`, `htmlspecialchars` (`plainText`), formatação numérica/de data, ou é ternário de `t()`.
+
+| Arquivo:linha | Motivo |
+|---|---|
+| `aculta_donation/.../DonationSummaryFormatter.php:74` | valor monetário formatado a partir de `PriceItem` (conferir retorno de `viewValue` se houver mudança) |
+| `aculta_events/.../EventContributionWorkspaceController.php:124,129,156` | `plainText()` = `htmlspecialchars(ENT_QUOTES)` |
+| `aculta_events/.../EventOrganizationRecoveryForm.php:95` | ternário de `$this->t()` |
+| `aculta_events/.../DateRangeUpcomingFormatter.php:93` | datas formatadas pelo próprio `texto()` |
+| `aculta_events_openstreetmap/.../OpenStreetMapStatusController.php:44,49` | ternário de `$this->t()` |
+| `aculta_forum/.../MoveForumTopicsAction.php:98` | `formatPlural()` |
+| `aculta_lms/.../EnrollmentFormHooks.php:173,190` | `translate()` com texto fixo |
+| `aculta_portal/src/Form/EmailResendForm.php:56` | `translate()` com texto fixo |
+| `aculta_portal/src/Plugin/Commerce/CheckoutPane/FiscalIdentityPane.php:103,108` | `unavailableMessage()` retorna `$this->t()` |
+| `aculta_studio/.../SavedContentController.php:220` | `$this->t()` para data; `purpose` com `htmlspecialchars` |
+| `aculta_lms/.../FreeTextAnswerPluginBase.php:98` | `Html::escape()` aplicado a cada mensagem antes do `#markup` |
+| `aculta_mailer/.../MailImapSettingsForm.php:131` | `errorText()` passa `error_class` pelo placeholder `@error` de `$this->t()`, que escapa |
+
+**PENDENTE (2) na primeira triagem (2026-11-11), ambos resolvidos nesta fase:** a origem da variável ou o tipo do campo não tinham sido provados. O risco de XSS foi removido na renderização.
+
+| Arquivo:linha | O que falta provar | Prioridade |
+|---|---|---|
+| `aculta_messenger/.../MessagesController.php:1528` | `$site_alert->getMessage()` era renderizado como markup. A integração documenta `message` como `text_long`; agora usa `Xss::filter()` | alta |
+| `aculta_mailer/.../MailTemplateForm.php:136` | `$preview['body']` é corpo de template de e-mail editado por administrador | média |
+| `aculta_events_openstreetmap/.../OpenStreetMapImportWizard.php:189` | `lat`/`lon` vinham do XML OSM. Cliente valida números e limites geográficos; renderização usa `Html::escape()` | baixa |
+| `aculta_wiki/.../WikiEntryImageHooks.php:147` | ramo com `$current['alt']`: texto de alt de imagem, possivelmente editado por usuário | média |
+
+Reclassificados na rodada final (2026-11-11, após leitura das origens):
+- FALSO POSITIVO: `EventPageController.php:137` (base escapada com `Html::escape`); `LocationListController.php:78` (rótulo por `Link`, endereço escapado); `LocationPageController.php:352` (`Link` e `Html::escape`); `EventEditorialPresenter.php:68` (`htmlspecialchars` em nome e cota); `OpenStreetMapStatusController.php:37` (ramo é `$this->t()`); `ImageSettingsForm.php:85` (rótulos vêm de mapa de código); `SurfaceEditForm.php:131` (hostname de entidade Domain); `PaymentInformationWithoutAddress.php:25` (rótulo de plugin de código); `TopicDeletionQueueController.php:80` (ramo com nó usa `Link`; sem nó usa `t()`).
+- REAL, corrigido: `aculta_lms/.../ProximosEventosBlock.php:83`. O título do evento era concatenado sem escape no `#markup`. Corrigido com `htmlspecialchars(..., ENT_QUOTES, 'UTF-8')`.
+
+Triagem final dos pendentes (2026-11-11, rodada de origem verificada):
+- FALSO POSITIVO: `aculta_wiki/.../WikiEntryImageHooks.php:147`. Nome e alt entram por placeholders `@` de `$this->t()`, que escapam.
+- ACEITO COM JUSTIFICATIVA: `aculta_mailer/.../MailTemplateForm.php:136`. `$preview['body']` é o corpo HTML do template de e-mail, editado por administrador em rota `/painel-administrativo/...`. A saída é HTML por desenho. Risco: XSS por administrador, aceito; quem edita é o papel administrativo.
+- CORRIGIDO: `aculta_events_openstreetmap/.../OpenStreetMapImportWizard.php:189`. A resposta XML é validada para coordenadas numéricas e limites geográficos no `OpenStreetMapApiClient::coordinates()`; a renderização também aplica `Html::escape()` para impedir interpretação HTML.
+- CORRIGIDO: `aculta_messenger/.../MessagesController.php:1528`. `site_alert.message` é campo `text_long`, editável por usuários com permissões administrativas do módulo; a renderização agora aplica `Xss::filter()`.
+
+### 1.3 Correção de regra quebrada
+
+- `aculta-php-raw-redirect-cross-host` usava `pattern:` com o nome totalmente qualificado de `RedirectResponse`. Esse padrão não casa no parser PHP do Semgrep. Verificado com fixture isolada.
+- Trocado por `pattern-regex`, com caso positivo e negativo em `tests/rules/aculta-php.php`. O zero achado anterior não provava ausência do problema.
+
+### 1.4 Fixtures das regras
+
+- Arquivo: `.agents/skills/aculta-seguranca-estatica/tests/rules/aculta-php.php`. Verificador: `tests/check-rule-fixtures.py`.
+- Resultado: **20 expectativas, 0 falhas**.
+- `semgrep --test` nativo falhou com `IndexError` interno do harness; o verificador próprio é o gate.
+- O mesmo verificador roda no CI (`quality-static.yml`, job `security-static`).
+
+## 2. Dependências
+
+### 2.1 `composer audit --locked` (antes da correção)
+
+3 advisories em 2 pacotes:
+
+| Pacote | Versão travada | Advisory | Severidade | Consumidores | Correção aplicada |
+|---|---|---|---|---|---|
+| `drupal/entity_print` | 2.19.0 | CVE-2026-126736 (inserção de informação sensível). Título: "Moderately critical" | moderada | módulos que usam Entity Print (`composer.json`, `config/sync`) | **2.20.0** |
+| `symfony/http-client` | v7.4.22 | CVE-2026-121971 (credenciais do escopo padrão enviadas a outras origens) | não informada no texto obtido | transitiva (Drupal core e componentes) | **v7.4.23** |
+| `symfony/http-client` | v7.4.22 | CVE-2026-123119 (NoPrivateNetworkHttpClient, DNS rebinding) | não informada | mesmo | **v7.4.23** |
+
+Atualização feita com `composer update drupal/entity_print symfony/http-client --minimal-changes --no-install`, autorizada pelo responsável. Diff do lock: 2 pacotes atualizados, nenhum removido. `composer.json` não foi alterado.
+
+**Após a correção:** `composer audit --locked` → "No security vulnerability advisories found." (exit 0).
+
+**Pendente de verificação:** o lock foi alterado, mas a aplicação em Runtime (`composer install` + `updatedb` se houver mudança de schema) segue a regra de migrações; não rodei nada no Runtime.
+
+### 2.2 `npm audit` (`tests/browser`, dev e prod)
+
+0 vulnerabilidades.
+
+## 3. Segredos (gitleaks 8.30.1)
+
+- Instalado do release oficial `gitleaks_8.30.1_linux_x64.tar.gz`, com SHA256 verificado contra o `checksums.txt` publicado.
+- Escaneado: arquivos desta entrega (`.agents`, `docs/operations/testing`, `.github/workflows`, `tests/browser`, `web/themes/custom/aculta420_v2/src/styles/content.css`, `docs/operations/GATES.md`).
+- Resultado: **4 achados `generic-api-key`** fora dos arquivos desta entrega:
+  - `docs/portal/STUDIO-MAGAZINE-ROADMAP.md:171`
+  - `web/libraries/photoswipe/demo-docs-website/src/theme/Navbar/index.js:263` (biblioteca de terceiros)
+  - `web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Unit/XapiAttemptTokenTest.php:17` (fixture de teste)
+  - `web/modules/custom/aculta_portal/modules/aculta_secrets_manager/tests/src/Unit/SecretsRevealTest.php:50` (fixture de teste)
+- Classificação:
+  - `docs/portal/STUDIO-MAGAZINE-ROADMAP.md:171`: FALSO POSITIVO. Texto de roadmap em prosa, sem atribuição de credencial.
+  - `web/libraries/photoswipe/...`: FALSO POSITIVO de escopo. Biblioteca de terceiros, fora do código do projeto.
+  - `SecretsRevealTest.php:50`: FALSO POSITIVO. Constante `FAKE` de fixture de teste.
+  - `XapiAttemptTokenTest.php:17`: FALSO POSITIVO CONFIRMADO pelo responsável (2026-11-11): constantes de fixture de teste. Duas constantes de teste com forma de fixture (32 caracteres minúsculos e dígitos; um UUID). Não comparei com segredos reais do cofre do Runtime, o que não faço. Se algum valor estiver em uso real, é incidente e exige rotação, decisão do responsável.
+  Valores não impressos.
+- O scan de histórico Git (`gitleaks git`) foi recusado pelo guarda de worktree e **não foi executado**.
+
+## 4. Drupal Security Review (`drupal/security_review`)
+
+- Declarado em `composer.json` (`^3.1`), travado em 3.1.3, habilitado no Config Sync.
+- Execução: **DEFERRED**. Não há `vendor/` nem Drush consultável nesta worktree.
+
+## 5. Resumo
+
+| Item | Resultado |
+|---|---|
+| Semgrep local (474 achados na rodada histórica) | revalidação final: 40 achados; todos triados (27 FP, 1 corrigido e 1 ACEITO em `#markup`, 9 ACEITO e 1 FP em dinâmicos, 1 FP em `unserialize`); zero uso estático global pendente |
+| Fixtures das regras | PASS: 20 expectativas, 0 falhas |
+| `composer audit --locked` | antes: 3 advisories; depois: 0 (após atualização autorizada) |
+| `npm audit` | 0 vulnerabilidades |
+| gitleaks (arquivos da entrega) | executado: 4 achados classificados, todos falsos positivos (XapiAttemptTokenTest confirmado pelo responsável); histórico não executado |
+| Drupal Security Review | DEFERRED (sem Drush/Runtime) |
+
+## 6. Próximas ações
+
+- `XapiAttemptTokenTest.php:17` foi confirmado pelo responsável como fixture em 2026-11-11 e classificado como falso positivo; reabrir somente se houver evidência de uso real.
+1. Aplicar `entity_print` 2.20.0 e `symfony/http-client` 7.4.23 no Runtime por fluxo controlado, e registrar o resultado.
+2. Executar `drupal/security_review` com Drush em modo somente leitura quando houver acesso ao Runtime.
+
+## 7. Reavaliação ampla de achados JavaScript (2026-11-13)
+
+- A varredura ampla anterior registrava dois achados `react-unsanitized-method` nos popups de criação de tópico do Fórum e de publicação do Studio. Ambos reanexavam mensagens Drupal capturadas da resposta HTMX convertendo nós parseados em string HTML e usando `insertAdjacentHTML`.
+- Corrigido: os dois popups agora clonam a região `[data-drupal-messages]` com `document.importNode()` e a anexam com `prepend()`, preservando a mensagem renderizada pelo Drupal sem reconstruir uma string HTML.
+- Revalidação dos dois arquivos com Semgrep `p/security-audit`: **0 achados**. `node --check` passou nos dois arquivos.
+- Também triados os sinks `href` dos templates de popup de mapa: `MapRenderer::safePopupUrl()` rejeita esquemas fora de HTTPS e URLs relativas malformadas; `RouteLinkBuilder::build()` restringe o destino a HTTPS em hosts/caminhos do Google Maps, e codifica o destino. A validação do formulário de configuração aplica as mesmas restrições. FALSO POSITIVO: a regra não acompanha essas guardas PHP.
+- FALSO POSITIVO: links sociais de perfil passam por `SocialNetworks::linksOf()`/`keyForUri()`, que aceitam apenas HTTP(S) e hosts das redes suportadas; o teaser da Revista recebe a URL canônica gerada pelo template Drupal de nó.
+- FALSO POSITIVO: o `url` do cartão cultural vem de `EventCatalogueController` via `$evento->toUrl('canonical')`; o template apenas o apresenta, sem receber URL editorial livre.
+- Corrigido o `href` configurável do aviso de pagamento: `PortalController` limita o URL a HTTPS nos hosts `mercadopago.com.br` e passa um objeto `Url`; ambos os templates usam a função Drupal `link()` em vez de montar `<a href>` diretamente.
+- Revalidação focal de `p/security-audit` nos dois templates e no controller: **0 achados**; `php -l` do controller passou.
+- Esta rodada não reconcilia a contagem histórica de 427 achados informada pelo responsável. O Code Scanning API retornou `no analysis found`; a varredura ampla disponível usa outro conjunto de regras e não é uma comparação direta.

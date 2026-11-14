@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_index\Kernel;
 
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\domain\Entity\Domain;
 use Drupal\field\Entity\FieldConfig;
@@ -50,6 +50,9 @@ final class ContentIndexCourseDocumentAccessKernelTest extends KernelTestBase {
     'domain',
     'aculta_document_viewer',
     'aculta_index',
+    'aculta_calendar',
+    'aculta_file_uploader',
+    'filter',
   ];
 
   /**
@@ -57,7 +60,7 @@ final class ContentIndexCourseDocumentAccessKernelTest extends KernelTestBase {
    */
   public function register(ContainerBuilder $container): void {
     parent::register($container);
-    $container->setDefinition('aculta_portal.domain_purpose', (new Definition(DomainPurposeManager::class, [
+    $container->setDefinition('aculta_portal.domain_site', (new Definition(DomainSiteManager::class, [
       new Reference('entity_type.manager'),
       new Reference('domain.negotiator'),
       new Reference('config.factory'),
@@ -152,13 +155,13 @@ final class ContentIndexCourseDocumentAccessKernelTest extends KernelTestBase {
 
     $providers = $this->container->get('aculta_index.provider_registry');
     self::assertSame('course_document', $providers->findProviderIdForBundle('media', 'course_document'));
-    self::assertSame('courses', $providers->get('course_document')->getAccessPurpose($document));
+    self::assertSame('courses', $providers->access('course_document')->getAccessSiteKey($document));
 
     $mainDomain = Domain::load('aculta_org');
     self::assertInstanceOf(Domain::class, $mainDomain);
     $negotiator = $this->container->get('domain.negotiator');
     $negotiator->getActiveDomain();
-    $negotiator->setActiveDomain($mainDomain);
+    $negotiator->getContext()->setDomain($mainDomain);
     $candidate = [
       [
         'entity_type' => 'media',

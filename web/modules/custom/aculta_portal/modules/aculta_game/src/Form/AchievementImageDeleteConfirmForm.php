@@ -22,11 +22,11 @@ final class AchievementImageDeleteConfirmForm extends ConfirmFormBase {
    *
    * @var string|null
    */
-  private ?string $achievementId = NULL;
+  protected ?string $achievementId = NULL;
 
   public function __construct(
-    private readonly AchievementDefinitions $definitions,
-    private readonly AchievementPresentation $presentation,
+    protected readonly AchievementDefinitions $definitions,
+    protected readonly AchievementPresentation $presentation,
   ) {}
 
   /**

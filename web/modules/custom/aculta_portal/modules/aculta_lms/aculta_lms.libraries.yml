@@ -2,3 +2,16 @@ admin_toolbar_icon:
   css:
     theme:
       css/admin-toolbar-icon.css: {}
+course_structure:
+  js:
+    js/course-structure-sort.js: {}
+  dependencies:
+    - core/drupal
+    - core/once
+    - aculta_lms/unsaved_changes
+unsaved_changes:
+  js:
+    js/unsaved-changes.js: {}
+  dependencies:
+    - core/drupal
+    - core/once

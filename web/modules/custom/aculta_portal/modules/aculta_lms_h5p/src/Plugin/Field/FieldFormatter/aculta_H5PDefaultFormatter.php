@@ -159,9 +159,12 @@ class aculta_H5PDefaultFormatter extends FormatterBase {
       // initializes an about:blank document; it does not use that endpoint.
       if ($embedType === NULL) {
         $element[$delta] = [
-          '#type' => 'container',
-          '#attributes' => ['data-portal-ui' => 'h5p-content-unavailable'],
-          'message' => ['#plain_text' => $this->t('Esta atividade interativa não está disponível neste curso.')],
+          '#type' => 'component',
+          '#component' => 'aculta420_v2:empty-state',
+          '#props' => ['compact' => TRUE],
+          '#slots' => [
+            'message' => ['#plain_text' => $this->t('Esta atividade interativa não está disponível neste curso.')],
+          ],
         ];
         continue;
       }
@@ -272,9 +275,9 @@ class aculta_H5PDefaultFormatter extends FormatterBase {
         }
         if ($documents) {
           $element[$delta]['course_documents'] = [
-            '#type' => 'container',
-            '#attributes' => ['data-portal-ui' => 'lms-h5p-course-documents'],
-            'items' => $documents,
+            '#type' => 'component',
+            '#component' => 'aculta420_v2:layout-section',
+            '#slots' => ['content' => $documents],
           ];
           $cacheability->applyTo($element[$delta]['course_documents']);
         }

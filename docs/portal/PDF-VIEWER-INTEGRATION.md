@@ -147,7 +147,7 @@ access da entidade no Core, então esconder o link ou validar Media não protege
 URL direta existente.
 
 PDFPreview 1.2.0 e ImageMagick contrib 4.0.2 foram resolvidos e adicionados ao
-Composer, com configurações versionadas para uso opcional. No Runtime de teste,
+Composer, com configurações versionadas para uso opcional. No Runtime de desenvolvimento,
 os módulos permanecem desativados. O host tem Ghostscript 10.05.1 e os dados
 comuns do ImageMagick 7, mas não os executáveis `magick`, `convert` ou
 `identify`. A policy instalada foi inspecionada: mantém `Undefined` sem acesso,

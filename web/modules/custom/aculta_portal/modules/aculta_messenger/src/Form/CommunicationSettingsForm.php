@@ -20,9 +20,9 @@ final class CommunicationSettingsForm extends FormBase {
    * Constructs the shared email preference form.
    */
   public function __construct(
-    private readonly AccountProxyInterface $currentUser,
-    private readonly AvisoPreferencias $preferences,
-    private readonly SettingsTabs $settingsTabs,
+    protected readonly AccountProxyInterface $currentUser,
+    protected readonly AvisoPreferencias $preferences,
+    protected readonly SettingsTabs $settingsTabs,
   ) {}
 
   /**

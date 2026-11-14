@@ -7,6 +7,7 @@ namespace Drupal\aculta_user\Form;
 use Drupal\aculta_image\ImageRenderer;
 use Drupal\aculta_user\Avatar\AvatarPool;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\crop\Entity\CropType;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element;
@@ -32,7 +33,8 @@ use Symfony\Component\HttpFoundation\RequestStack;
  */
 final class AvatarCropForm extends FormBase {
 
-  /** Tipo de recorte do avatar (config/sync/crop.type.aculta_avatar_1x1.yml). */
+  /**
+   * Tipo de recorte do avatar (config/sync/crop.type.aculta_avatar_1x1.yml). */
   public const CROP_TYPE = 'aculta_avatar_1x1';
 
   /**
@@ -40,19 +42,28 @@ final class AvatarCropForm extends FormBase {
    */
   public const DIALOG_OPTIONS = ['title' => 'Recortar foto'];
 
-  /** Estilo de imagem usado pela visualização do avatar. */
+  /**
+   * Estilo de imagem usado pela visualização do avatar. */
   public const STYLE = 'aculta_avatar';
 
-
   public function __construct(
-    private ImageWidgetCropInterface $cropManager,
-    private EntityTypeManagerInterface $entityTypeManagerService,
-    private AccountInterface $currentUserService,
-    private UserDataInterface $userData,
-    private RequestStack $cropRequestStack,
-    private readonly ImageRenderer $imageRenderer,
+    protected ImageWidgetCropInterface $cropManager,
+    protected EntityTypeManagerInterface $entityTypeManagerService,
+    protected AccountInterface $currentUserService,
+    protected UserDataInterface $userData,
+    protected RequestStack $cropRequestStack,
+    protected readonly ImageRenderer $imageRenderer,
   ) {}
 
+  /**
+   * Cria a instância do formulário com os serviços necessários.
+   *
+   * @param \Symfony\Component\DependencyInjection\ContainerInterface $container
+   *   Container de serviços.
+   *
+   * @return static
+   *   Instância do formulário.
+   */
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('image_widget_crop.manager'),
@@ -64,6 +75,12 @@ final class AvatarCropForm extends FormBase {
     );
   }
 
+  /**
+   * Devolve o ID do formulário.
+   *
+   * @return string
+   *   ID do formulário.
+   */
   public function getFormId(): string {
     return 'aculta_user_avatar_crop_form';
   }
@@ -87,11 +104,23 @@ final class AvatarCropForm extends FormBase {
     return $file;
   }
 
-  /** Imagem que não é do acervo do sistema. */
+  /**
+   * Imagem que não é do acervo do sistema. */
   private function isCroppable(FileInterface $file): bool {
     return !str_starts_with($file->getFileUri(), AvatarPool::DIRECTORY . '/');
   }
 
+  /**
+   * Monta o formulário de recorte da foto.
+   *
+   * @param array $form
+   *   Estrutura do formulário.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Estado atual do formulário.
+   *
+   * @return array
+   *   Estrutura do formulário.
+   */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $form['#attributes']['data-portal-ui'] = 'avatar-crop-dialog';
     $file = $this->targetFile();
@@ -120,9 +149,12 @@ final class AvatarCropForm extends FormBase {
       '#value' => $this->t('Aplicar recorte'),
     ];
     $form['actions']['cancelar'] = [
-      '#type' => 'link',
-      '#title' => $this->t('Cancelar'),
-      '#url' => Url::fromRoute('aculta_portal.dashboard'),
+      '#type' => 'aculta_portal_button',
+      '#props' => [
+        'text' => (string) $this->t('Cancelar'),
+        'url' => Url::fromRoute('aculta_portal.dashboard')->toString(),
+        'variant' => 'secondary',
+      ],
     ];
     return $form;
   }
@@ -141,7 +173,8 @@ final class AvatarCropForm extends FormBase {
     return $form;
   }
 
-  /** Troca a moldura (tipo e theme_wrappers) de details/vertical_tabs por container, em todos os níveis. */
+  /**
+   * Troca a moldura (tipo e theme_wrappers) de details/vertical_tabs por container, em todos os níveis. */
   private static function flattenElement(array &$element): void {
     foreach (Element::children($element) as $key) {
       if (!is_array($element[$key])) {
@@ -163,11 +196,19 @@ final class AvatarCropForm extends FormBase {
     }
   }
 
+  /**
+   * Aplica o recorte, torna o arquivo permanente e troca a foto da conta.
+   *
+   * @param array $form
+   *   Estrutura do formulário.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Estado atual do formulário.
+   */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $file = $this->targetFile();
     $wrapper = $form_state->getValue('image_crop')['crop_wrapper'] ?? [];
     $cropType = $this->entityTypeManagerService->getStorage('crop_type')->load(self::CROP_TYPE);
-    if ($file === NULL || $cropType === NULL || !isset($wrapper[self::CROP_TYPE]['crop_container']['values'])) {
+    if ($file === NULL || !$cropType instanceof CropType || !isset($wrapper[self::CROP_TYPE]['crop_container']['values'])) {
       $this->messenger()->addError($this->t('Não foi possível aplicar o recorte.'));
       return;
     }
@@ -187,7 +228,8 @@ final class AvatarCropForm extends FormBase {
 
     $this->flushDerivatives($file);
 
-    // Aplicar o recorte já troca a foto da conta: o arquivo recortado vira a foto e a página recarrega (sem reabrir o popup).
+    // Aplicar o recorte já troca a foto da conta: o arquivo recortado vira a foto e a página recarrega (sem reabrir o
+    // popup).
     $file->setPermanent();
     $file->save();
     $account = $this->entityTypeManagerService->getStorage('user')->load($this->currentUserService->id());
@@ -199,7 +241,8 @@ final class AvatarCropForm extends FormBase {
     $form_state->setRedirect('aculta_portal.dashboard');
   }
 
-  /** Apaga os derivados do estilo de avatar deste arquivo, para não servir recorte antigo. */
+  /**
+   * Apaga os derivados do estilo de avatar deste arquivo, para não servir recorte antigo. */
   private function flushDerivatives(FileInterface $file): void {
     $style = $this->imageRenderer->styleEntity('avatar');
     if ($style !== NULL) {

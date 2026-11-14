@@ -65,7 +65,6 @@ class RestrictedForumAccessPolicy {
       return AccessResult::neutral();
     }
 
-    $allowed = FALSE;
     try {
       $allowed = $this->activeAssociate->isActiveAssociate($account)
         && $this->hasMembership($account, $groupIds);

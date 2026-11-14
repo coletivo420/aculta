@@ -10,6 +10,9 @@ use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 
+/**
+ * Testa os tipos de embalagem usados no cálculo de frete.
+ */
 #[CoversClass(\Drupal\aculta_commerce\Shipping\PackageTypeManager::class)]
 #[Group('aculta_commerce')]
 final class PackageTypeManagerTest extends UnitTestCase {
@@ -37,6 +40,16 @@ final class PackageTypeManagerTest extends UnitTestCase {
   public function testUnknownPackageTypeFallsBack(): void {
     $manager = new PackageTypeManager();
     $this->assertSame('custom_box', $manager->getPackageType('unknown')->getId());
+  }
+
+  /**
+   * Entities can resolve the canonical built-in definitions without a service.
+   */
+  public function testBuiltInPackageTypeCanBeResolvedStatically(): void {
+    $this->assertSame(
+      (new PackageTypeManager())->getPackageType('letter')->getLength()->getNumber(),
+      PackageTypeManager::getBuiltInPackageType('letter')->getLength()->getNumber(),
+    );
   }
 
 }

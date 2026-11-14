@@ -1,0 +1,39 @@
+{
+  "frente": "menu-hamburguer (account-menu, ACULTA420 V2)",
+  "data": "2026-11-06",
+  "metodo": "Firefox ESR visivel (DISPLAY=:0), script tests/browser/transversal/aculta420-v2-account-menu/account-menu-visual.py",
+  "motor": "firefox",
+  "viewports_css_px": [
+    320,
+    1440
+  ],
+  "modos_de_cor": [
+    "light",
+    "dark"
+  ],
+  "estados": [
+    "anon",
+    "auth"
+  ],
+  "url_testada": "https://aculta.toca.net.br/",
+  "commit_testado": {
+    "antes": "239550cd7c",
+    "depois": "5b921297a7"
+  },
+  "antes": {
+    "itens_observados": 8
+  },
+  "depois": {
+    "itens": 178,
+    "aprovados": 178,
+    "falhas": []
+  },
+  "pendencias": [
+    "Termos e Informações legais fora, a pedido.",
+    "Sessão autenticada do primeiro teste (claro, 320 px) validada nesta rodada."
+  ],
+  "arquivos": {
+    "antes": "before/*.png, before/results.json",
+    "depois": "after/*.png, after/results.json"
+  }
+}

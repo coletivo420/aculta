@@ -1,0 +1,4 @@
+name: Diálogo de Autenticação - Faixa Institucional Verde
+description: Modal de autenticação SDC na variante institucional com o formulário real do Drupal.
+component: aculta420_v2:auth-dialog
+class: Drupal\aculta420_v2\Story\AuthDialogStory

@@ -1,0 +1,23 @@
+{#
+/**
+ * @file
+ * Citação do fórum com autoria, conteúdo e faixas de acento laterais.
+ */
+#}
+<blockquote{% if theme == 'dark' %} data-theme="dark"{% endif %} class="forum-quote forum-quote--density-{{ density|default('default') }}{% if density == 'compact' %} aculta-mobile-frame{% endif %}{% if accent_side == 'end' %} forum-quote--side-end{% endif %}">
+  <div class="forum-quote__body">
+    <span class="forum-quote__mark" aria-hidden="true">
+      {{ include('aculta420_v2:icon', { name: 'quotes', variant: 'regular', size: 'lg' }, with_context = false) }}
+    </span>
+    <div class="forum-quote__text">
+      {% if author_name %}
+        <div class="forum-quote__author-row">
+                    {{ include('aculta420_v2:avatar', { size: 'sm', media: avatar ? avatar|raw : avatar_media }, with_context = false) }}
+          <cite class="forum-quote__author">{{ author_name }}</cite>
+          {% if timestamp %}<time class="forum-quote__time">· {{ timestamp }}</time>{% endif %}
+        </div>
+      {% endif %}
+      {{ content }}
+    </div>
+  </div>
+</blockquote>

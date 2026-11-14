@@ -1,0 +1,11 @@
+{
+  "front": "aculta420-v2-data-table",
+  "purpose": "transversal",
+  "origin_env": "ACULTA_SITE_ORIGIN",
+  "source": "tests/browser/transversal/aculta420-v2-data-table/README.md",
+  "public_routes": [
+    { "path": "/" }
+  ],
+  "auth": { "account": "teste_comum" },
+  "notes": "Sem rota pública própria: verifica a tabela de dados do tema ACULTA420 em telas administrativas. Cobertura fica no script da frente."
+}

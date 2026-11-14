@@ -20,7 +20,7 @@ provedor comercial com qualidade de mapa conhecida, e pediu que o mapa apareça 
    com link para a política de privacidade do site.
 3. **Chave de API por ambiente:**
    - Produção: chave no banco, criptografada, provisionada pelo `aculta_deployer` após o deploy.
-   - Teste: `secrets/`, somente no servidor de testes.
+   - Teste: `secrets/`, somente no servidor de desenvolvimento.
    - Restrição de referenciador por host (`eventos.aculta.org`, `eventos.aculta.toca.net.br` e os demais hosts do
      ambiente), e restrição de API às duas APIs acima.
 4. **Hosts da restrição** são endereços dependentes de ambiente: ficam no mapeamento do `aculta_deployer`

@@ -17,6 +17,9 @@ checkout_popup:
   version: VERSION
   js:
     js/checkout_popup.js: {}
+  css:
+    theme:
+      css/checkout-help.css: {}
   dependencies:
     - core/drupal
     - core/once

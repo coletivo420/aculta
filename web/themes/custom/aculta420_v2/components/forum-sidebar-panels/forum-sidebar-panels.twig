@@ -1,0 +1,131 @@
+<aside class="forum-sidebar-panels">
+  {# Panel 1: Estatísticas (Faixa vermelha) #}
+  <section class="forum-sidebar-panel forum-sidebar-panel--red">
+    <div class="forum-sidebar-panel__stripe"></div>
+    <div class="forum-sidebar-panel__inner">
+      <h3 class="forum-sidebar-panel__title">{{ 'Estatísticas da Comunidade'|t }}</h3>
+      {% if stats and stats|length > 0 %}
+        <dl class="forum-sidebar-panel__stats">
+          {% for stat in stats %}
+            <div class="forum-sidebar-panel__stat">
+              <dt>{{ stat.label }}</dt>
+              <dd>
+                {% if stat.value is not empty %}
+                  {{ stat.value }}
+                {% else %}
+                  —<span class="visually-hidden">{{ 'Dado indisponível'|t }}</span>
+                {% endif %}
+              </dd>
+            </div>
+          {% endfor %}
+        </dl>
+      {% else %}
+        <p class="forum-sidebar-panel__placeholder">—<span class="visually-hidden">{{ 'Dado indisponível'|t }}</span></p>
+      {% endif %}
+    </div>
+  </section>
+
+  {# Panel 2: Tópicos em destaque (Faixa amarela) #}
+  <section class="forum-sidebar-panel forum-sidebar-panel--yellow">
+    <div class="forum-sidebar-panel__stripe"></div>
+    <div class="forum-sidebar-panel__inner">
+      <h3 class="forum-sidebar-panel__title">{{ 'Tópicos em Destaque'|t }}</h3>
+      {% if featured and featured|length > 0 %}
+        <ul class="forum-sidebar-panel__featured-list" role="list">
+          {% for item in featured %}
+            <li class="forum-sidebar-panel__featured-item">
+              {% if item.thumbnail %}
+                <img src="{{ item.thumbnail }}" alt="" class="forum-sidebar-panel__featured-thumb" loading="lazy">
+              {% else %}
+                <span class="forum-sidebar-panel__featured-icon" aria-hidden="true">
+                  {{ include('aculta420_v2:icon', { name: 'sparkle', variant: 'duotone', size: 'sm' }, with_context = false) }}
+                </span>
+              {% endif %}
+              <div class="forum-sidebar-panel__featured-text">
+                <a href="{{ item.url }}" class="forum-sidebar-panel__featured-link">{{ item.title }}</a>
+                {% if item.replies %}
+                  <span class="forum-sidebar-panel__featured-replies">{{ item.replies }} {{ 'respostas'|t }}</span>
+                {% endif %}
+              </div>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="forum-sidebar-panel__placeholder">—<span class="visually-hidden">{{ 'Dado indisponível'|t }}</span></p>
+      {% endif %}
+    </div>
+  </section>
+
+  {# Panel 3: Moderadores (Faixa vermelha) #}
+  <section class="forum-sidebar-panel forum-sidebar-panel--red">
+    <div class="forum-sidebar-panel__stripe"></div>
+    <div class="forum-sidebar-panel__inner">
+      <div class="forum-sidebar-panel__header-row">
+        <h3 class="forum-sidebar-panel__title">{{ 'Moderadores'|t }}</h3>
+        <span class="forum-sidebar-panel__disabled-badge">{{ 'Em breve'|t }}</span>
+      </div>
+      {% if moderators and moderators|length > 0 %}
+        <ul class="forum-sidebar-panel__moderators-list" role="list">
+          {% for mod in moderators %}
+            <li class="forum-sidebar-panel__moderator-item">
+              <span class="forum-sidebar-panel__mod-avatar" aria-hidden="true">
+                {{ include('aculta420_v2:icon', { name: 'shield-check', variant: 'duotone', size: 'sm' }, with_context = false) }}
+              </span>
+              <span class="forum-sidebar-panel__mod-name">{{ mod.name }}</span>
+              {% if mod.role %}
+                <span class="forum-sidebar-panel__mod-role">{{ mod.role }}</span>
+              {% endif %}
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="forum-sidebar-panel__placeholder">—<span class="visually-hidden">{{ 'Dado indisponível'|t }}</span></p>
+      {% endif %}
+    </div>
+  </section>
+
+  {# Panel 4: Regras (Faixa amarela) #}
+  <section class="forum-sidebar-panel forum-sidebar-panel--yellow">
+    <div class="forum-sidebar-panel__stripe"></div>
+    <div class="forum-sidebar-panel__inner">
+      <h3 class="forum-sidebar-panel__title">{{ 'Diretrizes da Comunidade'|t }}</h3>
+      {% if rules and rules|length > 0 %}
+        <ul class="forum-sidebar-panel__rules-list" role="list">
+          {% for rule in rules %}
+            <li class="forum-sidebar-panel__rule-item">
+              <span class="forum-sidebar-panel__check-icon" aria-hidden="true">
+                {{ include('aculta420_v2:icon', { name: 'check-circle', variant: 'duotone', size: 'sm' }, with_context = false) }}
+              </span>
+              <span>{{ rule }}</span>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="forum-sidebar-panel__placeholder">—<span class="visually-hidden">{{ 'Dado indisponível'|t }}</span></p>
+      {% endif %}
+    </div>
+  </section>
+
+  {# Panel 5: Categorias relacionadas (Faixa vermelha) #}
+  <section class="forum-sidebar-panel forum-sidebar-panel--red">
+    <div class="forum-sidebar-panel__stripe"></div>
+    <div class="forum-sidebar-panel__inner">
+      <h3 class="forum-sidebar-panel__title">{{ 'Categorias Relacionadas'|t }}</h3>
+      {% if related and related|length > 0 %}
+        <ul class="forum-sidebar-panel__related-list" role="list">
+          {% for cat in related %}
+            <li class="forum-sidebar-panel__related-item">
+              <span class="forum-sidebar-panel__cat-dot" aria-hidden="true"></span>
+              <a href="{{ cat.url }}" class="forum-sidebar-panel__related-link">{{ cat.name }}</a>
+              {% if cat.count %}
+                <span class="forum-sidebar-panel__related-count">{{ cat.count }}</span>
+              {% endif %}
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="forum-sidebar-panel__placeholder">—<span class="visually-hidden">{{ 'Dado indisponível'|t }}</span></p>
+      {% endif %}
+    </div>
+  </section>
+</aside>

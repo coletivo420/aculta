@@ -62,8 +62,8 @@ final class MagazineContentIndexProviderTest extends UnitTestCase {
     $node = $this->createMock(NodeInterface::class);
     $node->method('bundle')->willReturn('revista');
 
-    self::assertSame('magazine', $provider->getAccessPurpose($node));
-    self::assertNull($provider->getAccessPurpose($this->createMock(ContentEntityInterface::class)));
+    self::assertSame('magazine', $provider->getAccessSiteKey($node));
+    self::assertNull($provider->getAccessSiteKey($this->createMock(ContentEntityInterface::class)));
   }
 
   /**

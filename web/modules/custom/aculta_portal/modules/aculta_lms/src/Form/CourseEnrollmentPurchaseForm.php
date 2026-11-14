@@ -6,7 +6,8 @@ namespace Drupal\aculta_lms\Form;
 
 use CommerceGuys\Intl\Formatter\CurrencyFormatterInterface;
 use Drupal\aculta_portal\Checkout\CheckoutSettings;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\commerce_cart\CartManagerInterface;
 use Drupal\commerce_cart\CartProviderInterface;
 use Drupal\commerce_order\Entity\OrderInterface;
@@ -25,40 +26,55 @@ use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupRelationshipInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
-/** Adds a course and the learner's chosen class to a Commerce cart. */
+/**
+ * Adds a course and the learner's chosen class to a Commerce cart.
+ */
 final class CourseEnrollmentPurchaseForm extends FormBase {
 
+  /**
+   * Constructs a course enrollment purchase form.
+   */
   public function __construct(
     #[Autowire(service: 'entity_type.manager')]
-    private readonly EntityTypeManagerInterface $entityTypeManager,
+    protected readonly EntityTypeManagerInterface $entityTypeManager,
     #[Autowire(service: 'commerce_cart.cart_provider')]
-    private readonly CartProviderInterface $cartProvider,
+    protected readonly CartProviderInterface $cartProvider,
     #[Autowire(service: 'commerce_cart.cart_manager')]
-    private readonly CartManagerInterface $cartManager,
+    protected readonly CartManagerInterface $cartManager,
     #[Autowire(service: 'commerce_store.current_store')]
-    private readonly CurrentStoreInterface $currentStore,
+    protected readonly CurrentStoreInterface $currentStore,
     #[Autowire(service: 'commerce_price.currency_formatter')]
-    private readonly CurrencyFormatterInterface $currencyFormatter,
+    protected readonly CurrencyFormatterInterface $currencyFormatter,
     #[Autowire(service: 'current_user')]
-    private readonly AccountProxyInterface $account,
+    protected readonly AccountProxyInterface $account,
     #[Autowire(service: 'messenger')]
-    private readonly MessengerInterface $messengerService,
+    protected readonly MessengerInterface $messengerService,
     #[Autowire(service: 'string_translation')]
     TranslationInterface $translation,
-    #[Autowire(service: 'aculta_portal.domain_purpose')]
-    private readonly DomainPurposeManager $purposeManager,
+    #[Autowire(service: 'aculta_portal.domain_site')]
+    protected readonly DomainSiteManager $siteManager,
     #[Autowire(service: 'aculta_portal.checkout_settings')]
-    private readonly ?CheckoutSettings $checkoutSettings = NULL,
+    protected readonly ?CheckoutSettings $checkoutSettings = NULL,
   ) {
     $this->stringTranslation = $translation;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function getFormId(): string {
     return 'aculta_lms_course_enrollment_purchase';
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function buildForm(array $form, FormStateInterface $form_state, ?GroupInterface $course = NULL): array {
     if (!$course instanceof GroupInterface || $course->bundle() !== 'lms_course') {
+      return $form;
+    }
+    if (!$course->isPublished()) {
+      $form['message'] = ['#plain_text' => $this->t('A inscrição online não está disponível para este curso.')];
       return $form;
     }
     $form_state->set('aculta_lms_course_id', (string) $course->id());
@@ -69,7 +85,7 @@ final class CourseEnrollmentPurchaseForm extends FormBase {
 
     $options = [];
     foreach ($course->getRelationships('lms_classes') as $relationship) {
-      $class = $relationship instanceof GroupRelationshipInterface ? $relationship->getEntity() : NULL;
+      $class = $relationship->getEntity();
       if (!$class instanceof GroupInterface || $class->bundle() !== 'lms_class') {
         continue;
       }
@@ -113,22 +129,28 @@ final class CourseEnrollmentPurchaseForm extends FormBase {
     return $form;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
     $course = $this->loadCourse($form_state);
     $class_id = (string) $form_state->getValue('course_class');
-    if (!$course instanceof GroupInterface || $course->bundle() !== 'lms_course' || !$this->classIsAvailable($course, $class_id)) {
+    if (!$this->isPurchasableCourse($course) || !$this->classIsAvailable($course, $class_id)) {
       $form_state->setErrorByName('course_class', $this->t('Selecione uma turma disponível deste curso.'));
     }
-    if (!$course instanceof GroupInterface || !$this->courseVariation($course) instanceof ProductVariationInterface) {
+    if (!$this->isPurchasableCourse($course) || !$this->courseVariation($course) instanceof ProductVariationInterface) {
       $form_state->setErrorByName('course_class', $this->t('A inscrição online não está disponível para este curso.'));
     }
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $course = $this->loadCourse($form_state);
     $variation = $course instanceof GroupInterface ? $this->courseVariation($course) : NULL;
     $class = $this->entityTypeManager->getStorage('group')->load((string) $form_state->getValue('course_class'));
-    if (!$course instanceof GroupInterface || $course->bundle() !== 'lms_course'
+    if (!$this->isPurchasableCourse($course)
       || !$variation instanceof ProductVariationInterface
       || !$class instanceof GroupInterface
       || !$this->classIsAvailable($course, (string) $class->id())) {
@@ -146,7 +168,7 @@ final class CourseEnrollmentPurchaseForm extends FormBase {
     $item->set('field_course_class', ['target_id' => $class->id()]);
     $this->cartManager->addOrderItem($cart, $item, FALSE);
 
-    $checkoutUrl = $this->purposeManager->routeUrl('main', 'aculta_portal.cart_checkout');
+    $checkoutUrl = $this->siteManager->routeUrl(SiteKey::Main, 'aculta_portal.cart_checkout');
     if ($checkoutUrl === NULL) {
       $this->messengerService->addError($this->t('Não foi possível abrir o checkout agora. O curso foi adicionado ao carrinho.'));
       return;
@@ -154,18 +176,33 @@ final class CourseEnrollmentPurchaseForm extends FormBase {
     $form_state->setResponse(new TrustedRedirectResponse($checkoutUrl->toString()));
   }
 
+  /**
+   * Loads the course recorded in trusted form state.
+   */
   private function loadCourse(FormStateInterface $form_state): ?GroupInterface {
     $course = $this->entityTypeManager->getStorage('group')->load($form_state->get('aculta_lms_course_id'));
     return $course instanceof GroupInterface && $course->bundle() === 'lms_course' ? $course : NULL;
   }
 
+  /**
+   * Checks that the course itself is eligible for online enrollment.
+   */
+  private function isPurchasableCourse(?GroupInterface $course): bool {
+    return $course instanceof GroupInterface
+      && $course->bundle() === 'lms_course'
+      && $course->isPublished();
+  }
+
+  /**
+   * Checks that the selected class is published and belongs to the course.
+   */
   private function classIsAvailable(GroupInterface $course, string $class_id): bool {
     $class = $this->entityTypeManager->getStorage('group')->load($class_id);
     if (!$class instanceof GroupInterface || $class->bundle() !== 'lms_class' || !$class->isPublished()) {
       return FALSE;
     }
     foreach ($course->getRelationships('lms_classes') as $relationship) {
-      $courseClass = $relationship instanceof GroupRelationshipInterface ? $relationship->getEntity() : NULL;
+      $courseClass = $relationship->getEntity();
       if ($courseClass instanceof GroupInterface && (string) $courseClass->id() === $class_id) {
         return TRUE;
       }
@@ -173,6 +210,9 @@ final class CourseEnrollmentPurchaseForm extends FormBase {
     return FALSE;
   }
 
+  /**
+   * Gets the published course variation available for enrollment.
+   */
   private function courseVariation(GroupInterface $course, ?CacheableMetadata $cacheability = NULL): ?ProductVariationInterface {
     if (!$course->hasField('field_course_product') || $course->get('field_course_product')->isEmpty()) {
       return NULL;
@@ -185,11 +225,8 @@ final class CourseEnrollmentPurchaseForm extends FormBase {
       return NULL;
     }
     foreach ($product->getVariations() as $variation) {
-      if ($variation instanceof ProductVariationInterface) {
-        $cacheability?->addCacheableDependency($variation);
-      }
-      if ($variation instanceof ProductVariationInterface
-        && $variation->bundle() === 'curso'
+      $cacheability?->addCacheableDependency($variation);
+      if ($variation->bundle() === 'curso'
         && $variation->isPublished()
         && $variation->getPrice() !== NULL) {
         return $variation;

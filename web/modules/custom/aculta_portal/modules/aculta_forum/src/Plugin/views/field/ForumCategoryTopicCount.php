@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace Drupal\aculta_forum\Plugin\views\field;
 
 use Drupal\Core\Database\Connection;
+use Drupal\Component\Utility\Html;
+use Drupal\Component\Render\MarkupInterface;
+use Drupal\Core\Render\Markup;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\views\Attribute\ViewsField;
 use Drupal\views\Plugin\views\field\FieldPluginBase;
@@ -27,13 +30,13 @@ final class ForumCategoryTopicCount extends FieldPluginBase implements Container
    *
    * @var array<int, int>
    */
-  private array $counts = [];
+  protected array $counts = [];
 
   public function __construct(
     array $configuration,
     $plugin_id,
     $plugin_definition,
-    private readonly Connection $database,
+    protected readonly Connection $database,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }
@@ -65,6 +68,9 @@ final class ForumCategoryTopicCount extends FieldPluginBase implements Container
    * {@inheritdoc}
    */
   public function preRender(&$values): void {
+    if ($this->view !== NULL) {
+      $this->view->element['#cache']['contexts'][] = 'user.node_grants:view';
+    }
     $term_ids = [];
     foreach ($values as $row) {
       $term_ids[] = (int) $this->getValue($row, 'tid');
@@ -75,7 +81,7 @@ final class ForumCategoryTopicCount extends FieldPluginBase implements Container
   /**
    * {@inheritdoc}
    */
-  public function render(ResultRow $values) {
+  public function render(ResultRow $values): MarkupInterface|string {
     $term_id = (int) $this->getValue($values, 'tid');
     $count = $this->counts[$term_id] ?? 0;
     // Portuguese plural rules treat zero as singular, so the zero case needs
@@ -83,15 +89,7 @@ final class ForumCategoryTopicCount extends FieldPluginBase implements Container
     $label = $count === 0
       ? $this->t('Nenhum tópico')
       : $this->formatPlural($count, '1 tópico', '@count tópicos');
-    return [
-      '#type' => 'html_tag',
-      '#tag' => 'span',
-      '#attributes' => ['data-portal-ui' => 'forum-category-count'],
-      '#value' => $label,
-      '#cache' => [
-        'contexts' => ['user.node_grants:view'],
-      ],
-    ];
+    return Markup::create('<span data-portal-ui="forum-category-count">' . Html::escape((string) $label) . '</span>');
   }
 
   /**

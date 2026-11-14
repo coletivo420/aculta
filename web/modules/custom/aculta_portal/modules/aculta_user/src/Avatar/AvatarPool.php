@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_user\Avatar;
 
+use Drupal\Core\Url;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ExtensionList;
-use Drupal\Core\File\FileExists;
 use Drupal\Core\File\FileSystemInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Drupal\user\UserDataInterface;
@@ -18,7 +18,7 @@ use Drupal\user\UserInterface;
  * Fonte da verdade: assets/avatars/meta/avatars.json, com entradas ativas e arquivo existente. A escolha fica em
  * user.data (aculta_user, avatar_id), para que a rotação futura saiba o que já foi sorteado.
  */
-final class AvatarPool {
+class AvatarPool {
 
   public const DIRECTORY = 'public://pictures/acervo';
 
@@ -31,7 +31,7 @@ final class AvatarPool {
     private readonly EntityTypeManagerInterface $entityTypeManager,
     #[Autowire(service: 'user.data')]
     private readonly UserDataInterface $userData,
-    #[Autowire('%app.root%')]
+    #[Autowire(param: 'app.root')]
     private readonly string $appRoot,
   ) {}
 
@@ -53,7 +53,8 @@ final class AvatarPool {
     return $ok;
   }
 
-  /** Copia a imagem da entrada para o acervo público e a grava em user_picture. */
+  /**
+   * Copia a imagem da entrada para o acervo público e a grava em user_picture. */
   private function assignEntry(UserInterface $account, array $entry): bool {
     $root = $this->appRoot . '/' . $this->modules->getPath('aculta_user') . '/assets/avatars/';
     $basename = basename($entry['file']);
@@ -91,8 +92,10 @@ final class AvatarPool {
   }
 
   /**
-   * Atribui um avatar do acervo dentro de user_presave, sem salvar a conta (salvar dentro de hook de usuário
-   * quebra outros módulos, como group, porque o original fica nulo).
+   * Atribui um avatar do acervo dentro de user_presave, sem salvar a conta.
+   *
+   * Salvar dentro de hook de usuário quebra outros módulos, como group, porque
+   * o original fica nulo.
    */
   public function assignPresave(UserInterface $account): bool {
     if (!$account->hasField('user_picture') || !$account->get('user_picture')->isEmpty()) {
@@ -103,10 +106,12 @@ final class AvatarPool {
   }
 
   /**
-   * Sorteia outro avatar do acervo para a conta (botão "sortear outro" do popup de foto).
+   * Sorteia outro avatar do acervo para a conta.
    *
-   * Substitui a foto atual. A cópia anterior do acervo é apagada quando nenhuma outra conta a usa; fotos enviadas
-   * pela pessoa não são tocadas aqui (ver PictureReplacementHooks). Retorna o uri da nova foto, ou NULL.
+   * Corresponde ao botão "sortear outro" do popup de foto. Substitui a foto
+   * atual; a cópia anterior do acervo é apagada quando nenhuma outra conta a
+   * usa, e fotos enviadas pela pessoa não são tocadas aqui (ver
+   * PictureReplacementHooks). Retorna o uri da nova foto, ou NULL.
    */
   public function reroll(UserInterface $account): ?string {
     $current = (string) $this->userData->get('aculta_user', (int) $account->id(), 'avatar_id');
@@ -130,8 +135,11 @@ final class AvatarPool {
   }
 
   /**
-   * Sorteio em duas etapas: escolhe uma entrada e a guarda como pendente, sem alterar a foto da conta. Só vale quando
-   * a pessoa clica em "Salvar foto do perfil" (applyPending). Fechar o modal descarta a escolha.
+   * Sorteia em duas etapas e guarda a escolha como pendente.
+   *
+   * Escolhe uma entrada sem alterar a foto da conta; só vale quando a pessoa
+   * clica em "Salvar foto do perfil" (applyPending). Fechar o modal descarta a
+   * escolha.
    */
   public function preview(UserInterface $account): ?array {
     $current = (string) $this->userData->get('aculta_user', (int) $account->id(), 'avatar_id');
@@ -142,7 +150,8 @@ final class AvatarPool {
     return $entry;
   }
 
-  /** Entrada sorteada e ainda não salva, ou NULL. */
+  /**
+   * Entrada sorteada e ainda não salva, ou NULL. */
   public function pendingEntry(UserInterface $account): ?array {
     $id = (string) $this->userData->get('aculta_user', (int) $account->id(), 'sorteio_pendente');
     if ($id === '') {
@@ -156,17 +165,20 @@ final class AvatarPool {
     return NULL;
   }
 
-  /** Limpa a escolha pendente (ao abrir o modal, ao salvar e ao sortear de novo). */
+  /**
+   * Limpa a escolha pendente (ao abrir o modal, ao salvar e ao sortear de novo). */
   public function clearPending(UserInterface $account): void {
     $this->userData->delete('aculta_user', (int) $account->id(), 'sorteio_pendente');
   }
 
-  /** URL pública da imagem de uma entrada do catálogo (prévia, sem copiar para o acervo). */
+  /**
+   * URL pública da imagem de uma entrada do catálogo (prévia, sem copiar para o acervo). */
   public function previewUrl(array $entry): string {
-    return \Drupal\Core\Url::fromUri('base:' . $this->modules->getPath('aculta_user') . '/assets/avatars/' . $entry['file'])->toString();
+    return Url::fromUri('base:' . $this->modules->getPath('aculta_user') . '/assets/avatars/' . $entry['file'])->toString();
   }
 
-  /** Avatar ilustrativo estável para apresentações públicas sem foto de conta. */
+  /**
+   * Avatar ilustrativo estável para apresentações públicas sem foto de conta. */
   public function fallbackEntry(int $seed = 0): ?array {
     $available = $this->available();
     if ($available === []) {
@@ -177,8 +189,11 @@ final class AvatarPool {
   }
 
   /**
-   * Salva a escolha pendente: copia para o acervo, troca a foto e apaga a cópia anterior do acervo se ninguém mais a usa.
-   * Quem chama é responsável por salvar a conta; aqui a conta é salva para a troca valer.
+   * Salva a escolha pendente e troca a foto da conta.
+   *
+   * Copia para o acervo, troca a foto e apaga a cópia anterior do acervo se
+   * ninguém mais a usa. Quem chama é responsável por salvar a conta; aqui a
+   * conta é salva para a troca valer.
    */
   public function applyPending(UserInterface $account): bool {
     $entry = $this->pendingEntry($account);
@@ -200,13 +215,15 @@ final class AvatarPool {
     return TRUE;
   }
 
-  /** Verdadeiro se outra conta ainda usa a foto. */
+  /**
+   * Verdadeiro se outra conta ainda usa a foto. */
   private function isUsedByOthers(int $fid, int $uid): bool {
     return $this->entityTypeManager->getStorage('user')->getQuery()
       ->accessCheck(FALSE)->condition('user_picture.target_id', $fid)->condition('uid', $uid, '<>')->range(0, 1)->count()->execute() > 0;
   }
 
-  /** Entradas ativas do catálogo cujo arquivo existe. */
+  /**
+   * Entradas ativas do catálogo cujo arquivo existe. */
   private function available(): array {
     $catalog = json_decode((string) file_get_contents($this->appRoot . '/' . $this->modules->getPath('aculta_user') . '/assets/avatars/meta/avatars.json'), TRUE);
     $root = $this->appRoot . '/' . $this->modules->getPath('aculta_user') . '/assets/avatars/';
@@ -216,7 +233,8 @@ final class AvatarPool {
     ));
   }
 
-  /** Sorteia uma entrada ativa cujo arquivo existe, diferente da atual quando possível. */
+  /**
+   * Sorteia uma entrada ativa cujo arquivo existe, diferente da atual quando possível. */
   private function pick(string $exclude = ''): ?array {
     $available = $this->available();
     $others = array_values(array_filter($available, static fn (array $item): bool => (string) ($item['id'] ?? '') !== $exclude));

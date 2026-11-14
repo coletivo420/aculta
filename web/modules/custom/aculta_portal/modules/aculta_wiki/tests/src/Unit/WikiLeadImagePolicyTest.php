@@ -24,5 +24,4 @@ final class WikiLeadImagePolicyTest extends UnitTestCase {
     self::assertArrayHasKey('wiki', $constant->getValue());
   }
 
-
 }

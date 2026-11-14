@@ -78,7 +78,7 @@ final class aculta_H5PLibraryPackageInstaller {
     try {
       // Bound entries, decompressed size and ratio before any extraction.
       $limits = $this->ingestionLimits ?? IngestionLimits::defaults();
-      (new aculta_H5PArchiveResourceLimits(
+      (new AcultaH5PArchiveResourceLimits(
         maxEntryBytes: $limits->bytes(IngestionLimits::H5P_MAX_ENTRY_MB),
         maxTotalBytes: $limits->bytes(IngestionLimits::H5P_MAX_TOTAL_MB),
       ))->assertWithinLimits($zip);

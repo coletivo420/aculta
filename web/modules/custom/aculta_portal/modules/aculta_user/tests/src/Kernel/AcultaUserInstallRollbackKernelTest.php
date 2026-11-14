@@ -98,7 +98,7 @@ final class AcultaUserInstallRollbackKernelTest extends KernelTestBase {
     // Domain negotiation and the unused-file cleaner belong to aculta_portal
     // and are never instantiated by this test; they only need to exist so the
     // container compiles while aculta_user is being installed.
-    $container->register('aculta_portal.domain_purpose', \stdClass::class);
+    $container->register('aculta_portal.domain_site', \stdClass::class);
     $container->register('aculta_file_uploader.unused_file_cleaner', \stdClass::class);
   }
 
@@ -117,6 +117,7 @@ final class AcultaUserInstallRollbackKernelTest extends KernelTestBase {
     $this->installEntitySchema('profile');
     $this->installEntitySchema('node');
     $this->installEntitySchema('comment');
+    $this->installEntitySchema('path_alias');
     $this->installSchema('user', ['users_data']);
     $this->installSchema('node', ['node_access']);
     $this->installSchema('comment', ['comment_entity_statistics']);
@@ -226,11 +227,17 @@ final class AcultaUserInstallRollbackKernelTest extends KernelTestBase {
       $installer->uninstall(['aculta_user']);
       $this->fail('Uninstall must be blocked while friendship records remain.');
     }
-    catch (\RuntimeException $exception) {
-      $this->assertSame(
-        'ACULTA User cannot be uninstalled while friendship records remain. Export or remove the records explicitly first.',
-        $exception->getMessage(),
-      );
+    // Two guards may refuse this: the core validator for entity types that
+    // still hold content (ModuleUninstallValidatorException) and the module's
+    // own module_preuninstall hook (RuntimeException). Either one must block.
+    catch (\InvalidArgumentException | \RuntimeException $exception) {
+      if ($exception instanceof \RuntimeException && !$exception instanceof \InvalidArgumentException) {
+        $this->assertSame(
+          'ACULTA User cannot be uninstalled while friendship records remain. Export or remove the records explicitly first.',
+          $exception->getMessage(),
+        );
+      }
+      $this->assertNotSame('', $exception->getMessage());
     }
 
     // The refused rollback changes nothing.

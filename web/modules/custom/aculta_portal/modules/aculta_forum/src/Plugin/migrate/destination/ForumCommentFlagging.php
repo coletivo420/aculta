@@ -28,12 +28,12 @@ final class ForumCommentFlagging extends EntityContentBase {
   /**
    * Current source Flagging ID, scoped to one import call.
    */
-  private ?int $sourceFlaggingId = NULL;
+  protected ?int $sourceFlaggingId = NULL;
 
   /**
    * Current source Comment ID, scoped to one import call.
    */
-  private ?int $sourceCommentId = NULL;
+  protected ?int $sourceCommentId = NULL;
 
   public function __construct(
     array $configuration,
@@ -44,7 +44,7 @@ final class ForumCommentFlagging extends EntityContentBase {
     array $bundles,
     EntityFieldManagerInterface $entity_field_manager,
     FieldTypePluginManagerInterface $field_type_manager,
-    private readonly ForumFlaggingMigrationContext $migration_context,
+    protected readonly ForumFlaggingMigrationContext $migration_context,
     ?AccountSwitcherInterface $account_switcher = NULL,
     ?EntityTypeBundleInfoInterface $entity_type_bundle_info = NULL,
   ) {

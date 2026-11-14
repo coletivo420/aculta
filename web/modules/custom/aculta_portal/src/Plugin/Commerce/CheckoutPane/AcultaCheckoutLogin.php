@@ -6,7 +6,8 @@ namespace Drupal\aculta_portal\Plugin\Commerce\CheckoutPane;
 
 use Drupal\Component\Utility\Html;
 use Drupal\aculta_portal\Auth\AuthIntegrationManager;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManagerInterface;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\commerce_checkout\Plugin\Commerce\CheckoutFlow\CheckoutFlowInterface;
 use Drupal\commerce_checkout\Plugin\Commerce\CheckoutPane\Login;
 use Drupal\Core\Ajax\AjaxResponse;
@@ -30,26 +31,26 @@ final class AcultaCheckoutLogin extends Login {
 
   /**
    * Domain-purpose URL resolver. */
-  private ?DomainPurposeManager $domainPurpose = NULL;
+  protected ?DomainSiteManagerInterface $domainSiteManager = NULL;
 
   /**
    * Configured Social Auth integrations. */
-  private ?AuthIntegrationManager $authIntegration = NULL;
+  protected ?AuthIntegrationManager $authIntegration = NULL;
 
   /**
    * Module availability checker. */
-  private ?ModuleHandlerInterface $portalModuleHandler = NULL;
+  protected ?ModuleHandlerInterface $portalModuleHandler = NULL;
 
   /**
    * Per-IP rate limiter for anonymous account lookup. */
-  private ?FloodInterface $flood = NULL;
+  protected ?FloodInterface $flood = NULL;
 
   /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition, ?CheckoutFlowInterface $checkout_flow = NULL): static {
     $instance = parent::create($container, $configuration, $plugin_id, $plugin_definition, $checkout_flow);
-    $instance->domainPurpose = $container->get('aculta_portal.domain_purpose');
+    $instance->domainSiteManager = $container->get('aculta_portal.domain_site');
     $instance->authIntegration = $container->get('aculta_portal.auth_integration');
     $instance->portalModuleHandler = $container->get('module_handler');
     $instance->flood = $container->get('flood');
@@ -95,12 +96,13 @@ final class AcultaCheckoutLogin extends Login {
     $pane_form['register']['#access'] = FALSE;
     $pane_form['guest']['text']['#markup'] = $this->t('Se este e-mail ainda não tiver conta, o Commerce criará uma automaticamente ao concluir o pedido e enviará um link para definir a senha.');
     $pane_form['new_customer'] = [
+      '#attached' => ['library' => ['aculta_portal/checkout-presentation']],
       '#type' => 'fieldset',
       '#title' => $this->t('Cadastro de novo cliente'),
       '#attributes' => [
         'id' => 'aculta-checkout-new-customer',
         'hidden' => $known_account,
-        'data-portal-ui' => 'checkout-guest-registration',
+        'class' => ['aculta-checkout__guest'],
       ],
       'email' => ['#plain_text' => $mail],
       'description' => ['#markup' => $this->t('Ao concluir o pedido, uma conta será criada em segundo plano e enviaremos um link para você definir sua senha.')],
@@ -232,19 +234,24 @@ final class AcultaCheckoutLogin extends Login {
     if (!$this->portalModuleHandler?->moduleExists('social_auth') || !$this->authIntegration?->isGoogleConfigured()) {
       return [];
     }
-    $url = $this->domainPurpose?->routeUrl('account', 'social_auth.network.redirect', ['network' => 'google']);
+    $siteManager = $this->domainSiteManager;
+    if ($siteManager === NULL) {
+      return [];
+    }
+    $url = $siteManager->routeUrl(SiteKey::Account, 'social_auth.network.redirect', ['network' => 'google']);
     if (!$url instanceof Url) {
       return [];
     }
     $destination = '/checkout/' . $this->order->id() . '/' . $this->getStepId();
     $query = ['destination' => $destination];
-    $purpose = $this->domainPurpose->getCurrentPurpose();
-    if ($purpose !== NULL) {
-      $query['aculta_destination_purpose'] = $purpose;
+    $siteKey = $siteManager->getCurrentSiteKey();
+    if ($siteKey !== NULL) {
+      $query['aculta_destination_site_key'] = $siteKey->value;
     }
     $url->setOption('query', $query);
-    $link = sprintf('<a href="%s" data-portal-ui="auth-google">%s <strong>Google</strong></a>', Html::escape($url->toString()), Html::escape((string) $this->t('Continuar com')));
+    $link = sprintf('<a class="aculta-checkout__google-link" href="%s">%s <strong>Google</strong></a>', Html::escape($url->toString()), Html::escape((string) $this->t('Continuar com')));
     return [
+      '#attached' => ['library' => ['aculta_portal/checkout-presentation']],
       '#type' => 'container',
       '#weight' => -30,
       '#attributes' => ['data-portal-ui' => 'checkout-google'],

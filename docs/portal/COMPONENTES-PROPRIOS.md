@@ -45,13 +45,13 @@ conferência do que é do projeto. A regra é de navegação administrativa; nen
 |---|---|---|
 | Rótulo de pacote | Módulo próprio com rótulo diferente de `ACULTA Portal` | `php scripts/validate-own-module-packages.php` |
 | Mapa módulo x tema | Módulo sem registro no mapa | `php scripts/validate-module-theme-map.php` |
-| Gate Drupal 11+ do Portal | Regressões de arquitetura | `php scripts/validate-aculta-portal-drupal11.php` |
+| Gate Drupal 11+ do Portal | Regressões de arquitetura | `php scripts/validate-aculta-portal-drupal12.php` |
 
 O gate de rótulo é estático: lê os `.info.yml` com o parser YAML, não inicia o Drupal e roda em qualquer checkout.
 Ele foi testado nos dois sentidos: passa com a configuração atual e falha quando um submódulo recebe o rótulo
 `Associação Cultural Antiproibicionista`.
 
-Após mudar um rótulo no Runtime de teste, limpar o cache (`php vendor/drush/drush/drush.php cr`) e conferir com
+Após mudar um rótulo no Runtime de desenvolvimento, limpar o cache (`php vendor/drush/drush/drush.php cr`) e conferir com
 `extension.list.module`. O painel só reflete a mudança depois do cache.
 
 ## 5. O que esta orientação não cobre

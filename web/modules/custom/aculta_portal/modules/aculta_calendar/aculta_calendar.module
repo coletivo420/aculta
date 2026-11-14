@@ -5,6 +5,7 @@
  * Hooks for the ACULTA Calendar module.
  */
 
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\Core\Url;
 
 /**
@@ -23,11 +24,11 @@ function aculta_calendar_metatags_alter(array &$tags, array $context): void {
 
   $request = \Drupal::requestStack()->getCurrentRequest();
   $container = \Drupal::getContainer();
-  if ($request === NULL || !$container->has('aculta_portal.domain_purpose')) {
+  if ($request === NULL || !$container->has('aculta_portal.domain_site')) {
     return;
   }
-  $canonical = $container->get('aculta_portal.domain_purpose')
-    ->environmentPathUrl('eventos', $request->getPathInfo());
+  $canonical = $container->get('aculta_portal.domain_site')
+    ->environmentPathUrl(SiteKey::Eventos, $request->getPathInfo());
   if (!$canonical instanceof Url) {
     return;
   }

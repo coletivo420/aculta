@@ -26,10 +26,24 @@ final class ProfileRelationshipController extends ControllerBase {
     private readonly MessengerInterface $statusMessenger,
   ) {}
 
+  /**
+   * {@inheritdoc}
+   */
   public static function create(ContainerInterface $container): static {
     return new static($container->get('form_builder'), $container->get('messenger'));
   }
 
+  /**
+   * Processa a ação de relacionamento e devolve a pessoa ao perfil.
+   *
+   * @param \Drupal\user\UserInterface $user
+   *   Conta do perfil de destino.
+   * @param \Symfony\Component\HttpFoundation\Request $request
+   *   Requisição POST recebida.
+   *
+   * @return \Symfony\Component\HttpFoundation\RedirectResponse
+   *   Resposta com redirect de volta ao perfil.
+   */
   public function post(UserInterface $user, Request $request): RedirectResponse {
     // Back to the profile only: a path of /u/<apelido>, never another address.
     $return = (string) $request->request->get('return', '');
@@ -37,12 +51,17 @@ final class ProfileRelationshipController extends ControllerBase {
       $return = '/';
     }
     $postUrl = Url::fromRoute('aculta_messenger.profile_relationship', ['user' => $user->id()])->toString();
-    // The action runs with the posted input, as the drawer's does; its result message goes to the member on the profile.
+    // The action runs with the posted input, as the drawer's does; its result message goes to the member
+    // on the profile.
     $formState = new FormState();
     $formState->setRequestMethod('POST');
     $formState->setUserInput($request->request->all());
     $formState->set('profile', TRUE);
-    $this->forms->buildForm(ConversationRelationshipForm::class, $formState, (int) $user->id(), $postUrl);
+    // FormBuilderInterface::buildForm() only accepts the form and form state;
+    // the target and action must travel inside the form state.
+    $formState->set('target', (int) $user->id());
+    $formState->set('post_url', $postUrl);
+    $this->forms->buildForm(ConversationRelationshipForm::class, $formState);
     $message = $formState->get('message');
     if ($message !== NULL) {
       $this->statusMessenger->addStatus((string) $message);

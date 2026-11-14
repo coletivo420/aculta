@@ -1,0 +1,11 @@
+{
+  "front": "aculta-conta-raiz",
+  "purpose": "account",
+  "origin_env": "CONTA_HOST",
+  "source": "tests/browser/account/aculta-conta-raiz/README.md, tabela de rotas (raiz e /conta-legada redirecionam para /entrar)",
+  "public_routes": [
+    { "path": "/" },
+    { "path": "/entrar" }
+  ],
+  "notes": "/minha-conta e /studio respondem 404 por desenho; não são cobertura positiva. A entrada logada e o editor de endereço ficam no script da frente. Defina CONTA_HOST=https://conta.aculta.toca.net.br."
+}

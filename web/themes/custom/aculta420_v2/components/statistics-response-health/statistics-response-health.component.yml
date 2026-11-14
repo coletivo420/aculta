@@ -1,0 +1,42 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Saúde das respostas
+description: Resumo analítico em lista de definição, sem dados pessoais.
+status: experimental
+group: Estatísticas
+assets:
+  css: {}
+props:
+  type: object
+  additionalProperties: false
+  required: [title, rows]
+  properties:
+    title:
+      title: Título do resumo de respostas
+      type: string
+      minLength: 1
+      description: Cabeçalho do resumo de saúde das respostas.
+    note:
+      title: Observação do resumo
+      type: string
+      default: ''
+      description: Contexto opcional sobre a população ou o método usado nos indicadores.
+    rows:
+      title: Linhas de saúde das respostas
+      type: array
+      description: Indicadores agregados de respostas apresentados como lista de definição.
+      items:
+        type: object
+        additionalProperties: false
+        description: Uma linha de indicador de saúde das respostas.
+        required: [label, value]
+        properties:
+          label:
+            type: string
+            description: Nome do indicador apresentado como termo da definição.
+          value:
+            type: string
+            description: Valor textual do indicador.
+          description:
+            type: string
+            default: ''
+            description: Contexto opcional apresentado junto ao valor do indicador.

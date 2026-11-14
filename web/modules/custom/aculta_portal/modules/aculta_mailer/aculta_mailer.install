@@ -7,10 +7,21 @@
 
 declare(strict_types=1);
 
-/** Instala a entidade de registro de envios (aculta_mail_log). */
+/**
+ * Instala a entidade de registro de envios (aculta_mail_log). */
 function aculta_mailer_update_10001(): void {
   $manager = \Drupal::entityDefinitionUpdateManager();
   $manager->installEntityType(\Drupal::entityTypeManager()->getDefinition('aculta_mail_log'));
+}
+
+/**
+ * Installs a field storage definition after checking the field manager contract.
+ */
+function aculta_mailer_install_field_storage_definition(string $name, \Drupal\Core\Field\FieldDefinitionInterface $field): void {
+  if (!$field instanceof \Drupal\Core\Field\FieldStorageDefinitionInterface) {
+    throw new \UnexpectedValueException('O campo informado não fornece uma definição de armazenamento.');
+  }
+  \Drupal::entityDefinitionUpdateManager()->installFieldStorageDefinition($name, 'aculta_mail_log', 'aculta_mailer', $field);
 }
 
 /**
@@ -18,7 +29,7 @@ function aculta_mailer_update_10001(): void {
  */
 function aculta_mailer_update_10002(): void {
   $fields = \Drupal::service('entity_field.manager')->getBaseFieldDefinitions('aculta_mail_log');
-  \Drupal::entityDefinitionUpdateManager()->installFieldStorageDefinition('error_message', 'aculta_mail_log', 'aculta_mailer', $fields['error_message']);
+  aculta_mailer_install_field_storage_definition('error_message', $fields['error_message']);
 }
 
 /**
@@ -26,7 +37,7 @@ function aculta_mailer_update_10002(): void {
  */
 function aculta_mailer_update_10003(): void {
   $fields = \Drupal::service('entity_field.manager')->getBaseFieldDefinitions('aculta_mail_log');
-  \Drupal::entityDefinitionUpdateManager()->installFieldStorageDefinition('provider_message_id', 'aculta_mail_log', 'aculta_mailer', $fields['provider_message_id']);
+  aculta_mailer_install_field_storage_definition('provider_message_id', $fields['provider_message_id']);
 }
 
 /**
@@ -34,7 +45,7 @@ function aculta_mailer_update_10003(): void {
  */
 function aculta_mailer_update_10004(): void {
   $fields = \Drupal::service('entity_field.manager')->getBaseFieldDefinitions('aculta_mail_log');
-  \Drupal::entityDefinitionUpdateManager()->installFieldStorageDefinition('payload_cipher', 'aculta_mail_log', 'aculta_mailer', $fields['payload_cipher']);
+  aculta_mailer_install_field_storage_definition('payload_cipher', $fields['payload_cipher']);
 }
 
 /**
@@ -42,7 +53,7 @@ function aculta_mailer_update_10004(): void {
  */
 function aculta_mailer_update_10005(): void {
   $fields = \Drupal::service('entity_field.manager')->getBaseFieldDefinitions('aculta_mail_log');
-  \Drupal::entityDefinitionUpdateManager()->installFieldStorageDefinition('payload_expires', 'aculta_mail_log', 'aculta_mailer', $fields['payload_expires']);
+  aculta_mailer_install_field_storage_definition('payload_expires', $fields['payload_expires']);
 }
 
 /**
@@ -50,8 +61,27 @@ function aculta_mailer_update_10005(): void {
  */
 function aculta_mailer_update_10006(): void {
   $fields = \Drupal::service('entity_field.manager')->getBaseFieldDefinitions('aculta_mail_log');
-  $manager = \Drupal::entityDefinitionUpdateManager();
   foreach (['opens', 'clicks', 'first_opened', 'first_clicked'] as $name) {
-    $manager->installFieldStorageDefinition($name, 'aculta_mail_log', 'aculta_mailer', $fields[$name]);
+    aculta_mailer_install_field_storage_definition($name, $fields[$name]);
   }
+}
+
+/**
+ * Installs the Mailer transport, template, layout, and brand entity types.
+ */
+function aculta_mailer_update_10008(): string {
+  $manager = \Drupal::entityDefinitionUpdateManager();
+  $entity_type_manager = \Drupal::entityTypeManager();
+  foreach ([
+    'aculta_mailer_transport',
+    'aculta_mailer_template',
+    'aculta_mailer_layout',
+    'aculta_mailer_brand',
+  ] as $entity_type_id) {
+    if ($manager->getEntityType($entity_type_id) === NULL) {
+      $manager->installEntityType($entity_type_manager->getDefinition($entity_type_id));
+    }
+  }
+
+  return 'Installed the ACULTA Mailer configuration entity types.';
 }

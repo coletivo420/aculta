@@ -1,4 +1,4 @@
-uuid: e130cd34-723e-4104-b69d-200bcb71ecb2
+uuid: 58b80181-4226-4a34-a46c-8028f4d15626
 langcode: pt-br
 status: true
 dependencies:
@@ -11,6 +11,14 @@ targetEntityType: aculta_forum_post
 bundle: aculta_forum_post
 mode: default
 content:
+  subject:
+    type: string_textfield
+    weight: -5
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
   body:
     type: text_textarea
     weight: 0
@@ -25,14 +33,6 @@ content:
     region: content
     settings: {  }
     third_party_settings: {  }
-  subject:
-    type: string_textfield
-    weight: -5
-    region: content
-    settings:
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
 hidden:
   changed: true
   created: true
@@ -40,6 +40,7 @@ hidden:
   langcode: true
   legacy_author: true
   parent: true
+  revision_log: true
   revision_timestamp: true
   revision_uid: true
   status: true

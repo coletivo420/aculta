@@ -1,0 +1,28 @@
+<article{{ attributes.addClass('lms-learning-course-card') }}{% if finished %} data-state="finished"{% endif %}>
+  <header class="lms-learning-course-card__header">
+    <h3 class="lms-learning-course-card__title">{{ title }}</h3>
+    {% if finished %}<p class="lms-learning-course-card__status lms-learning-course-card__status--finished">{{ finished_text }}</p>{% endif %}
+  </header>
+
+  {% if current_lesson %}<p class="lms-learning-course-card__lesson">{{ current_lesson }}</p>{% endif %}
+
+  <div class="lms-learning-course-card__progress">
+    {% if has_lessons %}
+      {{ include('aculta420_v2:progress', {
+        id: progress_id,
+        label: progress_label,
+        value: progress_value,
+        max: 100
+      }, with_context: false) }}
+      <p class="lms-learning-course-card__progress-text">{{ progress_text }}</p>
+    {% else %}
+      <p class="lms-learning-course-card__progress-text">{{ progress_text }}</p>
+    {% endif %}
+    {% if pending_evaluation %}<p class="lms-learning-course-card__status lms-learning-course-card__status--pending">{{ pending_text }}</p>{% endif %}
+  </div>
+
+  <footer class="lms-learning-course-card__actions">
+    {{ journey_action }}
+    {% if continue_action %}{{ continue_action }}{% endif %}
+  </footer>
+</article>

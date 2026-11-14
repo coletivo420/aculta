@@ -1,0 +1,16 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Formulário de apoio
+status: stable
+description: Apresentação do Form API de apoio, sem alterar seus elementos ou fluxo.
+group: Formulários
+props:
+  type: object
+  additionalProperties: false
+slots:
+  content:
+    title: Formulário
+    description: Render array do Form API de apoio, com handlers e cache originais.
+assets:
+  css:
+    component:
+      support-form.css: {}

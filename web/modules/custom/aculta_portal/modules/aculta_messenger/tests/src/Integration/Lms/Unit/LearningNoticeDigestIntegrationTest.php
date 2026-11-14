@@ -16,7 +16,7 @@ use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\Site\Settings;
 use Drupal\domain\DomainNegotiatorInterface;
 use Drupal\flag\FlagServiceInterface;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\aculta_mailer\Api\AcultaMailerInterface;
 use Drupal\aculta_mailer\Delivery\DeliveryError;
 use Drupal\aculta_mailer\Delivery\SendResult;
@@ -852,7 +852,7 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
         $this->createMock(FlagServiceInterface::class),
         new ForumNoticeAccessPolicy(
           $entityTypeManager,
-          new DomainPurposeManager(
+          new DomainSiteManager(
             $entityTypeManager,
             $this->createMock(DomainNegotiatorInterface::class),
             $this->createMock(ConfigFactoryInterface::class),

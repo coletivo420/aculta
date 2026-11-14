@@ -169,7 +169,7 @@
     if (!$alert.length) {
       $alert = $('<div>', {
         'data-h5p-editor-error': '',
-        'class': 'messages messages--error',
+        'class': 'h5p-editor-validation-error',
         'role': 'alert'
       }).insertAfter($target);
     }

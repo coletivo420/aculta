@@ -8,7 +8,7 @@ dependencies:
     - user.role.authenticated
   module:
     - aculta_document_viewer
-    - aculta_forum_lms
+    - aculta_lms
 id: lms_course-member
 label: Estudante
 weight: 0

@@ -1,15 +1,29 @@
 # Conta and Perfil stay separate; the legacy Portal dashboard remains at
-# /conta-legada and the account purpose root serves the Conta entry page.
-aculta_studio.account:
-  path: /conta
+# /conta-legada and the account purpose root serves this Studio dashboard.
+aculta_studio.dashboard:
+  path: /aculta-studio-dashboard
   defaults:
     _controller: 'aculta_studio.account_controller:page'
-    _title: 'Minha Conta'
+    _title: 'Studio Dashboard'
   requirements:
     _permission: 'access aculta portal'
     _user_is_logged_in: 'TRUE'
   options:
-    _aculta_domain_purpose: account
+    _aculta_site_key: account
+
+aculta_studio.account:
+  path: /conta
+  defaults:
+    _controller: 'aculta_studio.account_section_controller:data'
+    _title: 'Dados cadastrais (privados)'
+    # `conta` may also be the Domain's configured front path. Keep the direct
+    # account section reachable; only `/` is rewritten to the Studio dashboard.
+    _disable_route_normalizer: TRUE
+  requirements:
+    _permission: 'access aculta portal'
+    _user_is_logged_in: 'TRUE'
+  options:
+    _aculta_site_key: account
 
 # S-R3-B2: Portal Profile Form API narrowed by route to private account fields.
 aculta_studio.account_data:
@@ -21,7 +35,7 @@ aculta_studio.account_data:
     _permission: 'access aculta portal'
     _user_is_logged_in: 'TRUE'
   options:
-    _aculta_domain_purpose: account
+    _aculta_site_key: account
     no_cache: true
 
 # Only the community profile is edited here; private account data is separate.
@@ -36,7 +50,7 @@ aculta_studio.account_address:
     _permission: 'access aculta portal'
     _user_is_logged_in: 'TRUE'
   options:
-    _aculta_domain_purpose: account
+    _aculta_site_key: account
     no_cache: true
 
 # S-R3-B1: CPF/CNPJ remains owned by Portal + optional aculta_id_cpf.
@@ -50,7 +64,7 @@ aculta_studio.account_documents:
     _permission: 'access aculta portal'
     _user_is_logged_in: 'TRUE'
   options:
-    _aculta_domain_purpose: account
+    _aculta_site_key: account
     no_cache: true
 
 aculta_studio.account_security:
@@ -62,7 +76,7 @@ aculta_studio.account_security:
     _permission: 'access aculta portal'
     _user_is_logged_in: 'TRUE'
   options:
-    _aculta_domain_purpose: account
+    _aculta_site_key: account
     no_cache: true
 
 aculta_studio.account_password:
@@ -74,7 +88,7 @@ aculta_studio.account_password:
     _permission: 'access aculta portal'
     _user_is_logged_in: 'TRUE'
   options:
-    _aculta_domain_purpose: account
+    _aculta_site_key: account
     no_cache: true
 
 aculta_studio.account_connections:
@@ -86,7 +100,7 @@ aculta_studio.account_connections:
     _permission: 'access aculta portal'
     _user_is_logged_in: 'TRUE'
   options:
-    _aculta_domain_purpose: account
+    _aculta_site_key: account
     no_cache: true
 
 # S-R3-B3: keep Commerce orders, support history and appearance Form API
@@ -100,7 +114,7 @@ aculta_studio.account_orders:
     _permission: 'access aculta portal'
     _user_is_logged_in: 'TRUE'
   options:
-    _aculta_domain_purpose: account
+    _aculta_site_key: account
     no_cache: true
 
 aculta_studio.account_support:
@@ -112,7 +126,7 @@ aculta_studio.account_support:
     _permission: 'access aculta portal'
     _user_is_logged_in: 'TRUE'
   options:
-    _aculta_domain_purpose: account
+    _aculta_site_key: account
     no_cache: true
 
 aculta_studio.account_preferences:
@@ -124,53 +138,56 @@ aculta_studio.account_preferences:
     _permission: 'access aculta portal'
     _user_is_logged_in: 'TRUE'
   options:
-    _aculta_domain_purpose: account
+    _aculta_site_key: account
     no_cache: true
 
 aculta_studio.profile:
-  path: /perfil
+  path: /meu-perfil
   defaults:
     _controller: 'aculta_studio.profile_controller:page'
     _title: 'Meu Perfil'
   requirements:
     _custom_access: 'aculta_studio.profile_access:access'
   options:
-    _aculta_domain_purpose: account
+    _aculta_site_key: account
+    no_cache: true
 
 # ACULTA User owns the standalone public-nickname Form API.
 aculta_studio.profile_nickname:
-  path: /perfil/apelido
+  path: /meu-perfil/apelido
   defaults:
     _form: '\Drupal\aculta_user\Form\NicknameForm'
     _title: 'Editar apelido público'
   requirements:
     _custom_access: 'aculta_studio.profile_access:access'
   options:
-    _aculta_domain_purpose: account
+    _aculta_site_key: account
     no_cache: true
 
 aculta_studio.profile_privacy:
-  path: /perfil/privacidade
+  path: /meu-perfil/privacidade
   defaults:
     _form: '\Drupal\aculta_user\Form\ProfileVisibilityForm'
     _title: 'Privacidade do perfil'
   requirements:
     _custom_access: 'aculta_studio.profile_access:access'
   options:
-    _aculta_domain_purpose: account
+    _aculta_site_key: account
+    no_cache: true
 
 aculta_studio.profile_bio:
-  path: /perfil/bio
+  path: /meu-perfil/bio
   defaults:
     _form: '\Drupal\aculta_user\Form\AccountBioForm'
     _title: 'Editar biografia'
   requirements:
     _custom_access: 'aculta_studio.profile_access:access'
   options:
-    _aculta_domain_purpose: account
+    _aculta_site_key: account
+    no_cache: true
 
 aculta_studio.profile_social:
-  path: /perfil/redes/{rede}
+  path: /meu-perfil/redes/{rede}
   defaults:
     _form: '\Drupal\aculta_user\Form\SocialLinkForm'
     _title: 'Editar rede social'
@@ -178,7 +195,8 @@ aculta_studio.profile_social:
     _custom_access: 'aculta_studio.profile_access:access'
     rede: 'instagram|facebook|reddit'
   options:
-    _aculta_domain_purpose: account
+    _aculta_site_key: account
+    no_cache: true
 
 aculta_studio.we_sativa:
   path: /we-sativa
@@ -188,7 +206,7 @@ aculta_studio.we_sativa:
   requirements:
     _permission: access aculta portal
   options:
-    _aculta_domain_purpose: wiki
+    _aculta_site_key: wiki
 
 aculta_studio.we_sativa_start:
   path: /we-sativa/inicio
@@ -198,7 +216,7 @@ aculta_studio.we_sativa_start:
   requirements:
     _permission: access aculta portal
   options:
-    _aculta_domain_purpose: wiki
+    _aculta_site_key: wiki
 
 aculta_studio.home:
   path: /marley
@@ -211,7 +229,7 @@ aculta_studio.home:
   requirements:
     _permission: access aculta portal
   options:
-    _aculta_domain_purpose: account
+    _aculta_site_key: account
 
 aculta_studio.area:
   path: /marley/{aba}
@@ -224,7 +242,7 @@ aculta_studio.area:
     _permission: access aculta portal
     aba: '[a-z0-9-]+'
   options:
-    _aculta_domain_purpose: account
+    _aculta_site_key: account
 
 aculta_studio.section:
   path: /marley/{aba}/{secao}
@@ -237,7 +255,7 @@ aculta_studio.section:
     aba: '[a-z0-9-]+'
     secao: '[a-z0-9-]+'
   options:
-    _aculta_domain_purpose: account
+    _aculta_site_key: account
 
 aculta_studio.tab:
   path: /marley/{aba}/{secao}/{sub}
@@ -250,7 +268,7 @@ aculta_studio.tab:
     secao: '[a-z0-9-]+'
     sub: '[a-z0-9-]+'
   options:
-    _aculta_domain_purpose: account
+    _aculta_site_key: account
 
 aculta_studio.salvos:
   path: /salvos
@@ -261,7 +279,7 @@ aculta_studio.salvos:
     _permission: access aculta portal
     _user_is_logged_in: 'TRUE'
   options:
-    _aculta_domain_purpose: account
+    _aculta_site_key: account
 
 # Ganjalab learner and educator experiences are owned by Studio. Route IDs remain stable during migration.
 aculta_lms.student_dashboard:
@@ -274,7 +292,7 @@ aculta_lms.student_dashboard:
     _user_is_logged_in: 'TRUE'
   options:
     no_cache: true
-    _aculta_domain_purpose: courses
+    _aculta_site_key: courses
 
 # Keep the Group owner's add Form API inside the educator workspace, purpose
 # and theme. The generated entity.group.add_form is an admin route on purpose
@@ -289,7 +307,7 @@ aculta_lms.course_create:
     _user_is_logged_in: 'TRUE'
   options:
     no_cache: true
-    _aculta_domain_purpose: courses
+    _aculta_site_key: courses
 
 aculta_lms.educator_dashboard:
   path: '/ganjalab/educador'
@@ -301,7 +319,216 @@ aculta_lms.educator_dashboard:
     _user_is_logged_in: 'TRUE'
   options:
     no_cache: true
-    _aculta_domain_purpose: courses
+    _aculta_site_key: courses
+
+# The LMS owns curriculum data and Form API; Studio owns the educator routes.
+aculta_lms.course_structure:
+  path: '/ganjalab/educador/cursos/{course}/estrutura'
+  defaults:
+    _controller: 'aculta_lms.course_structure_controller:structure'
+    _title: 'Estrutura do curso'
+  requirements:
+    _custom_access: 'aculta_lms.course_authoring_access:access'
+  options:
+    no_cache: true
+    _aculta_site_key: courses
+    parameters:
+      course:
+        type: entity:group
+
+aculta_lms.course_materials_edit:
+  path: '/ganjalab/educador/cursos/{course}/materiais'
+  defaults:
+    _form: '\Drupal\aculta_lms\Resources\Form\CourseMaterialsForm'
+    _title: 'Materiais do curso'
+  requirements:
+    _custom_access: 'aculta_lms.course_authoring_access:access'
+  options:
+    no_cache: true
+    _aculta_site_key: courses
+    parameters:
+      course:
+        type: entity:group
+
+aculta_lms.course_document_add:
+  path: '/ganjalab/educador/cursos/{course}/materiais/documentos/novo'
+  defaults:
+    _controller: 'aculta_lms.course_document_controller:add'
+    _title: 'Adicionar documento ao curso'
+  requirements:
+    _custom_access: 'aculta_lms.course_document_access:createAccess'
+  options:
+    no_cache: true
+    _aculta_site_key: courses
+    parameters:
+      course:
+        type: entity:group
+
+aculta_lms.course_document_edit:
+  path: '/ganjalab/educador/cursos/{course}/materiais/documentos/{media}/editar'
+  defaults:
+    _controller: 'aculta_lms.course_document_controller:edit'
+    _title: 'Editar documento do curso'
+  requirements:
+    _custom_access: 'aculta_lms.course_document_access:updateAccess'
+  options:
+    no_cache: true
+    _aculta_site_key: courses
+    parameters:
+      course:
+        type: entity:group
+      media:
+        type: entity:media
+
+aculta_lms.lesson_add:
+  path: '/ganjalab/educador/cursos/{course}/aulas/nova'
+  defaults:
+    _form: '\Drupal\aculta_lms\Form\LessonAuthoringForm'
+    _title: 'Nova aula'
+  requirements:
+    _custom_access: 'aculta_lms.course_authoring_access:access'
+  options:
+    no_cache: true
+    _aculta_site_key: courses
+    parameters:
+      course:
+        type: entity:group
+
+aculta_lms.lesson_edit:
+  path: '/ganjalab/educador/cursos/{course}/aulas/{lesson}/editar'
+  defaults:
+    _form: '\Drupal\aculta_lms\Form\LessonAuthoringForm'
+    _title: 'Editar aula'
+  requirements:
+    _custom_access: 'aculta_lms.course_authoring_access:access'
+  options:
+    no_cache: true
+    _aculta_site_key: courses
+    parameters:
+      course:
+        type: entity:group
+      lesson:
+        type: entity:aculta_lms_lesson
+
+aculta_lms.lesson_preview:
+  path: '/ganjalab/educador/cursos/{course}/aulas/{lesson}/previa'
+  defaults:
+    _controller: 'aculta_lms.course_lesson_preview_controller:preview'
+    _title: 'Prévia da aula'
+  requirements:
+    _custom_access: 'aculta_lms.course_lesson_preview_access:access'
+  options:
+    no_cache: true
+    _aculta_site_key: courses
+    parameters:
+      course:
+        type: entity:group
+      lesson:
+        type: entity:aculta_lms_lesson
+
+aculta_lms.lesson_delete:
+  path: '/ganjalab/educador/cursos/{course}/aulas/{lesson}/excluir'
+  defaults:
+    _form: '\Drupal\aculta_lms\Form\LessonDeleteForm'
+    _title: 'Excluir aula'
+  requirements:
+    _custom_access: 'aculta_lms.course_authoring_access:access'
+  options:
+    no_cache: true
+    _aculta_site_key: courses
+    parameters:
+      course:
+        type: entity:group
+      lesson:
+        type: entity:aculta_lms_lesson
+
+aculta_lms.lesson_move:
+  path: '/ganjalab/educador/cursos/{course}/aulas/{lesson}/mover/{direcao}'
+  defaults:
+    _form: '\Drupal\aculta_lms\Form\CourseStructureMoveForm'
+    _title: 'Mover aula'
+  requirements:
+    _custom_access: 'aculta_lms.course_authoring_access:accessForReorder'
+    direcao: 'acima|abaixo'
+  options:
+    no_cache: true
+    _aculta_site_key: courses
+    parameters:
+      course:
+        type: entity:group
+      lesson:
+        type: entity:aculta_lms_lesson
+
+aculta_lms.activity_add:
+  path: '/ganjalab/educador/cursos/{course}/aulas/{lesson}/atividades/nova'
+  defaults:
+    _form: '\Drupal\aculta_lms\Form\ActivityAuthoringForm'
+    _title: 'Nova atividade'
+  requirements:
+    _custom_access: 'aculta_lms.course_authoring_access:access'
+  options:
+    no_cache: true
+    _aculta_site_key: courses
+    parameters:
+      course:
+        type: entity:group
+      lesson:
+        type: entity:aculta_lms_lesson
+
+aculta_lms.activity_edit:
+  path: '/ganjalab/educador/cursos/{course}/aulas/{lesson}/atividades/{activity}/editar'
+  defaults:
+    _form: '\Drupal\aculta_lms\Form\ActivityAuthoringForm'
+    _title: 'Editar atividade'
+  requirements:
+    _custom_access: 'aculta_lms.course_authoring_access:access'
+  options:
+    no_cache: true
+    _aculta_site_key: courses
+    parameters:
+      course:
+        type: entity:group
+      lesson:
+        type: entity:aculta_lms_lesson
+      activity:
+        type: entity:aculta_lms_activity
+
+aculta_lms.activity_delete:
+  path: '/ganjalab/educador/cursos/{course}/aulas/{lesson}/atividades/{activity}/excluir'
+  defaults:
+    _form: '\Drupal\aculta_lms\Form\ActivityDeleteForm'
+    _title: 'Excluir atividade'
+  requirements:
+    _custom_access: 'aculta_lms.course_authoring_access:access'
+  options:
+    no_cache: true
+    _aculta_site_key: courses
+    parameters:
+      course:
+        type: entity:group
+      lesson:
+        type: entity:aculta_lms_lesson
+      activity:
+        type: entity:aculta_lms_activity
+
+aculta_lms.activity_move:
+  path: '/ganjalab/educador/cursos/{course}/aulas/{lesson}/atividades/{activity}/mover/{direcao}'
+  defaults:
+    _form: '\Drupal\aculta_lms\Form\CourseStructureMoveForm'
+    _title: 'Mover atividade'
+  requirements:
+    _custom_access: 'aculta_lms.course_authoring_access:accessForReorder'
+    direcao: 'acima|abaixo'
+  options:
+    no_cache: true
+    _aculta_site_key: courses
+    parameters:
+      course:
+        type: entity:group
+      lesson:
+        type: entity:aculta_lms_lesson
+      activity:
+        type: entity:aculta_lms_activity
 
 
 # Drop zone embutida: uma página por integração, na casca do Studio. A regra de
@@ -316,5 +543,16 @@ aculta_studio.upload_embed:
     _user_is_logged_in: 'TRUE'
     integracao: 'wiki|forum|galeria|revista|lms'
   options:
-    _aculta_domain_purpose: account
+    _aculta_site_key: account
+    no_cache: true
+
+aculta_studio.calendar_fragment:
+  path: '/estudio/calendario-fragmento'
+  defaults:
+    _controller: 'aculta_studio.calendar_controller:fragment'
+    _title: 'Calendário do Studio'
+  requirements:
+    _permission: 'access aculta portal'
+  options:
+    _aculta_site_key: account
     no_cache: true

@@ -1,0 +1,19 @@
+aculta_cgu.admin_reports:
+  path: '/painel-administrativo/moderacao/denuncias'
+  defaults:
+    _controller: '\Drupal\aculta_cgu\Controller\CguModerationDashboardController::overview'
+    _title: 'Fila de denúncias'
+  requirements:
+    _custom_access: '\Drupal\aculta_cgu\Controller\CguModerationDashboardController::access'
+  options:
+    _admin_route: true
+
+aculta_cgu.report_decide:
+  path: '/painel-administrativo/moderacao/denuncias/{aculta_cgu_report}/decidir'
+  defaults:
+    _form: '\Drupal\aculta_cgu\Form\CguReportDecisionForm'
+    _title: 'Decidir denúncia de conteúdo'
+  requirements:
+    _custom_access: '\Drupal\aculta_cgu\Form\CguReportDecisionForm::access'
+  options:
+    _admin_route: true

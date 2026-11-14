@@ -40,9 +40,9 @@ final class MoveForumTopicsAction extends ViewsBulkOperationsActionBase implemen
     array $configuration,
     $plugin_id,
     $plugin_definition,
-    private readonly ForumTopicMover $mover,
-    private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly AccountInterface $currentUser,
+    protected readonly ForumTopicMover $mover,
+    protected readonly EntityTypeManagerInterface $entityTypeManager,
+    protected readonly AccountInterface $currentUser,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }
@@ -200,7 +200,10 @@ final class MoveForumTopicsAction extends ViewsBulkOperationsActionBase implemen
       if ($term instanceof TermInterface
         && $term->bundle() === 'aculta_forum_categories'
         && $term->access('view', $this->currentUser)) {
-        $options[(int) $term->id()] = str_repeat('— ', (int) $term->depth) . $term->label();
+        $treeProperties = get_object_vars($term);
+        $depth = $treeProperties['depth'] ?? 0;
+        $depth = is_int($depth) ? $depth : 0;
+        $options[(int) $term->id()] = str_repeat('— ', $depth) . $term->label();
       }
     }
     return $options;

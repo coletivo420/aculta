@@ -1,0 +1,22 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Calendário interativo
+description: Envolve a grade DHTMLX, controles acessíveis e agenda de fallback em lista.
+status: stable
+group: Conteúdo
+props:
+  type: object
+  additionalProperties: false
+  properties:
+    attributes:
+      type: Drupal\Core\Template\Attribute
+      title: Atributos HTML opcionais
+      default: null
+      description: Atributos mesclados ao elemento section que envolve calendário, controles e fallback acessível.
+slots:
+  content:
+    title: Calendário e conteúdo alternativo
+    description: Render arrays do calendário, controles e agenda acessível sem JavaScript.
+assets:
+  css:
+    component:
+      calendar-interactive.css: {}

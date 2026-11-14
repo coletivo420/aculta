@@ -1,0 +1,56 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Título
+description: Título semântico H1–H6 do ACULTA420 V2 com escala Oswald, superfície semântica e destaque tricolor ou barra lateral colorida.
+status: stable
+group: Conteúdo
+props:
+  type: object
+  additionalProperties: false
+  properties:
+    attributes:
+      type: Drupal\Core\Template\Attribute
+      title: Atributos HTML opcionais
+      description: Atributos aplicados ao elemento h1–h6 renderizado.
+      default: null
+    text:
+      type: string
+      title: Texto do título
+      description: Texto simples do título. Para markup já renderizado, use o slot content.
+    level:
+      type: integer
+      enum: [1, 2, 3, 4, 5, 6]
+      default: 2
+      title: Nível do título
+      description: Elemento h1–h6. O H1 é único por página.
+    style:
+      type: string
+      enum: [auto, plain, bar, stripe]
+      default: auto
+      title: Estilo de destaque
+      description: '`auto` aplica faixa tricolor em H1/H2 e barra lateral em H3–H6; `plain` remove o destaque.'
+    accent:
+      type: string
+      enum: [green, yellow, red, dark-green]
+      default: green
+      title: Cor do destaque
+      description: Cor da barra lateral quando o estilo é `bar`.
+    surface:
+      type: string
+      enum: [none, canvas, raised, institution, highlight]
+      default: none
+      title: Superfície
+      description: Fundo semântico atrás do título; troca de valor sozinho em modo escuro.
+    align:
+      type: string
+      enum: [start, center]
+      default: start
+      title: Alinhamento
+      description: Alinhamento do texto e da faixa tricolor.
+slots:
+  content:
+    title: Conteúdo do título
+    description: Markup já renderizado usado quando a prop text está vazia.
+assets:
+  css:
+    component:
+      heading.css: {}

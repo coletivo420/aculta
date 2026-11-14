@@ -1,0 +1,36 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Item do menu do Studio
+description: Link autorizado reutilizável nas navegações lateral e móvel do dashboard Studio.
+status: stable
+group: Studio
+props:
+  type: object
+  additionalProperties: false
+  required: [title, url]
+  properties:
+    title:
+      type: string
+      title: Texto do link
+      description: Rótulo público da rota autorizada.
+      minLength: 1
+    url:
+      type: string
+      format: iri-reference
+      title: Destino
+      description: Destino do item após a checagem de acesso do provider Studio.
+    current:
+      type: boolean
+      title: Página atual
+      description: Quando true, marca o link com aria-current="page".
+      default: false
+    icon:
+      type: string
+      title: Ícone do item
+      description: ID de ícone Phosphor usado na navegação lateral.
+      pattern: '^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$'
+      default: squares-four
+    show_icon:
+      type: boolean
+      title: Exibir ícone
+      description: Oculta o ícone quando o item é mostrado na lista de texto do diálogo móvel.
+      default: true

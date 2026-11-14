@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  bootstrap="tests/phpunit-bootstrap.php"
+  colors="true"
+  failOnWarning="true"
+  cacheDirectory=".phpunit.cache"
+  xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/11.5/phpunit.xsd">
+  <php>
+    <ini name="error_reporting" value="32767"/>
+    <ini name="memory_limit" value="-1"/>
+  </php>
+  <testsuites>
+    <testsuite name="unit">
+      <directory suffix="Test.php">web/modules/custom/aculta_mcp/tests/src/Unit/Hook</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_activity/tests/src/Unit/ContentIndex</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_activity/tests/src/Unit/Hook</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_calendar/tests/src/Unit</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_cgu/tests/src/Unit</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_commerce/modules/aculta_commerce_melhorenvio/tests/src/Unit</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_commerce/tests/src/Unit</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_content_admin/tests/src/Unit</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_document_viewer/tests/src/Unit/Document</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_document_viewer/tests/src/Unit/Docx</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_document_viewer/tests/src/Unit/EventSubscriber</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_document_viewer/tests/src/Unit/Pdf</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_document_viewer/tests/src/Unit/Plugin/Field/FieldFormatter</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_document_viewer/tests/src/Unit/Spreadsheet</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_domain_config/tests/src/Unit</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_donation/tests/src/Unit</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_editor/tests/src/Unit</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_events/tests/src/Unit</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_file_uploader/tests/src/Unit</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_forum/tests/src/Unit</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_gallery/tests/src/Unit/ContentIndex</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_gallery/tests/src/Unit/ListBuilder</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_game/tests/src/Unit</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_id_cpf/tests/src/Unit</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_image/tests/src/Unit</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_index/tests/src/Unit</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_linkweed/tests/src/Unit</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Unit</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_lms_h5p/tests/src/Unit</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_magazine/tests/src/Unit</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_mailer/tests/src/Unit</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_maps/tests/src/Unit</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Integration/Commerce/Unit</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Integration/Donation/Unit</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Integration/Lms/Unit</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Integration/Magazine/Unit</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Integration/Wiki/Unit</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Unit</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_pagamentos_mercadopago/tests/src/Unit</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_patcher/tests/src/Unit</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_paths/tests/src/Unit</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_portal_cep/tests/src/Unit</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_portal_sitemap/tests/src/Unit</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_qrcode/tests/src/Unit</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_secrets_manager/tests/src/Unit</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_statistics/tests/src/Unit</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_studio/tests/src/Unit</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_user/tests/src/Unit</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_wiki/tests/src/Unit</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/tests/src/Unit</directory>
+      <directory suffix="Test.php">web/themes/custom/aculta420_v2/tests/src/Unit</directory>
+    </testsuite>
+    <testsuite name="kernel">
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_activity/tests/src/Kernel</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_calendar/tests/src/Kernel</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_cgu/tests/src/Kernel</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_commerce/modules/aculta_commerce_melhorenvio/tests/src/Kernel</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_commerce/tests/src/Kernel</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_content_admin/tests/src/Kernel</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_document_viewer/tests/src/Kernel</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_domain_config/tests/src/Kernel</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_donation/tests/src/Kernel</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_editor/tests/src/Kernel</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_events/tests/src/Kernel</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_events_openstreetmap/tests/src/Kernel</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_faq/tests/src/Kernel</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_forum/tests/src/Kernel</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_game/tests/src/Kernel</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_id_cpf/tests/src/Kernel</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_image/tests/src/Kernel</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_index/tests/src/Kernel</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_linkweed/tests/src/Kernel</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_lms_h5p/tests/src/Kernel</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_magazine/tests/src/Kernel</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_mail_confirmer/tests/src/Kernel</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_mailer/tests/src/Kernel</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_maps/tests/src/Kernel</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Integration/Commerce/Kernel</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Integration/Donation/Kernel</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Integration/Game/Kernel</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Integration/Lms/Kernel</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Integration/Magazine/Kernel</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Integration/Wiki/Kernel</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Kernel</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_pagamentos_mercadopago/tests/src/Kernel</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_paths/tests/src/Kernel</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_portal_sitemap/tests/src/Kernel</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_qrcode/tests/src/Kernel</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_secrets_manager/tests/src/Kernel</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_statistics/tests/src/Kernel</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_studio/tests/src/Kernel</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_user/tests/src/Kernel</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_wiki/tests/src/Kernel</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/tests/src/Kernel</directory>
+    </testsuite>
+    <testsuite name="functional">
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_forum/tests/src/Functional</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Functional</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_statistics/tests/src/Functional</directory>
+    </testsuite>
+    <testsuite name="functionaljs">
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/tests/src/FunctionalJavascript</directory>
+    </testsuite>
+  </testsuites>
+</phpunit>

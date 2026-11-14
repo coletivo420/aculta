@@ -1,0 +1,8 @@
+.aculta-map-fallback-notice {
+  margin-block: .75rem;
+  padding: .75rem 1rem;
+  color: var(--color-status-warning-text, #664d03);
+  border-inline-start: .25rem solid var(--color-warning, #ffc107);
+  border-radius: var(--radius-sm, .25rem);
+  background: var(--color-status-warning-surface, #fff3cd);
+}

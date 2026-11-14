@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Validates centralized Commerce and donation route ownership.
+ */
+
 declare(strict_types=1);
 
 /**
@@ -26,12 +31,12 @@ foreach ($routes as $name => $route) {
   }
   $centralRoutes[(string) $name] = $route;
   $assert(
-    $route->getOption('_aculta_domain_purpose') === 'main',
+    $route->getOption('_aculta_site_key') === 'main',
     'Central commerce route belongs to MAIN: ' . $name,
   );
   if ($name !== 'commerce_payment.notify') {
     $assert(
-      $route->getOption('_aculta_cross_domain_canonical_purpose') === 'main',
+      $route->getOption('_aculta_cross_domain_canonical_site_key') === 'main',
       'Browser-facing central commerce route advertises MAIN canonical navigation: ' . $name,
     );
   }
@@ -55,7 +60,7 @@ foreach (['commerce_payment.checkout.return', 'commerce_payment.checkout.cancel'
 $notify = $routes['commerce_payment.notify'] ?? NULL;
 $assert($notify !== NULL, 'Commerce payment notify route exists.');
 $assert(
-  $notify->getOption('_aculta_domain_purpose') === 'main',
+  $notify->getOption('_aculta_site_key') === 'main',
   'Commerce payment notify belongs to MAIN.',
 );
 $methods = $notify->getMethods();
@@ -66,7 +71,8 @@ $assert(
 
 $modules = \Drupal::moduleHandler();
 if ($modules->moduleExists('aculta_donation')) {
-  // Escolha do valor no apoio (SUPPORT); etapa de checkout da doação no MAIN (decisão de 2026-10-17).
+  // Escolha do valor no apoio (SUPPORT); etapa de checkout da doação
+  // no MAIN (decisão de 2026-10-17).
   $donationRoutes = \Drupal::service('router.route_provider')->getRoutesByNames([
     'aculta_donation.donation.default',
     'aculta_donation.donation.quick',
@@ -74,13 +80,13 @@ if ($modules->moduleExists('aculta_donation')) {
   ]);
   $assert(count($donationRoutes) === 3, 'Donation flow routes exist.');
   foreach ($donationRoutes as $name => $route) {
-    $esperado = \Drupal\aculta_portal\Domain\DomainRoutePolicy::purposeForDonationRoute($name);
-    $assert($route->getOption('_aculta_domain_purpose') === $esperado, "Donation route {$name} belongs to the {$esperado} purpose.");
+    $esperado = DomainRoutePolicy::siteKeyForDonationRoute($name);
+    $assert($route->getOption('_aculta_site_key') === $esperado, "Donation route {$name} belongs to the {$esperado} purpose.");
   }
 }
 
-$domainPurpose = \Drupal::service('aculta_portal.domain_purpose');
-$checkoutUrl = $domainPurpose->routeUrl('main', 'commerce_checkout.checkout');
+$domainSite = \Drupal::service('aculta_portal.domain_site');
+$checkoutUrl = $domainSite->routeUrl('main', 'commerce_checkout.checkout');
 $assert($checkoutUrl !== NULL, 'Portal can generate absolute MAIN checkout URL.');
 $assert(
   preg_match('#^https?://[^/]+/checkout(?:/)?$#', $checkoutUrl->toString()) === 1,
@@ -90,7 +96,7 @@ $assert(
 $portalRoot = DRUPAL_ROOT . '/modules/custom/aculta_portal';
 $routePolicySource = file_get_contents($portalRoot . '/src/Domain/DomainRoutePolicy.php');
 $routeSubscriberSource = file_get_contents($portalRoot . '/src/EventSubscriber/DomainRouteSubscriber.php');
-$requestSubscriberSource = file_get_contents($portalRoot . '/src/EventSubscriber/DomainPurposeRequestSubscriber.php');
+$requestSubscriberSource = file_get_contents($portalRoot . '/src/EventSubscriber/DomainSiteRequestSubscriber.php');
 $hooksSource = file_get_contents($portalRoot . '/src/Hook/PortalHooks.php');
 
 foreach ([
@@ -112,9 +118,10 @@ $assert(
 );
 $assert(
   str_contains($requestSubscriberSource, 'getRouteCollectionForRequest')
-    && str_contains($requestSubscriberSource, "getOption('_aculta_cross_domain_canonical_purpose')")
+    && str_contains($requestSubscriberSource, 'DomainRoutePolicy::canonicalSiteKey($route)')
     && str_contains($requestSubscriberSource, "getOption('_admin_route')")
-    && str_contains($requestSubscriberSource, "getOption('_aculta_domain_purpose')")
+    && str_contains($requestSubscriberSource, 'DomainRoutePolicy::declaredSiteKey($candidate)')
+    && str_contains($requestSubscriberSource, 'DomainRoutePolicy::hasInvalidSiteKeyOptions')
     && str_contains($requestSubscriberSource, "['GET', 'HEAD']"),
   'Wrong-host transaction routing uses route metadata, canonicalizes safe navigation, and fails mutations closed.',
 );

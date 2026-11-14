@@ -12,15 +12,22 @@ use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Config\Config;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\aculta_file_uploader\ImageDimensionReader;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 
+/**
+ * Testa os hooks de imagem de envio de respostas do LMS.
+ */
 #[CoversClass(SubmissionImageHooks::class)]
 #[Group('aculta_lms')]
 final class SubmissionImageHooksTest extends UnitTestCase {
 
+  /**
+   * Confirma que a restrição de imagem é adicionada ao envio de resposta.
+   */
   public function testAddsAcultaImageConstraintToManagedAnswerUpload(): void {
     $form = [
       'file_upload' => [
@@ -33,11 +40,16 @@ final class SubmissionImageHooksTest extends UnitTestCase {
 
     $this->hooks('png jpg pdf docx', 10)->answerFormAlter($form, $this->createMock(FormStateInterface::class));
 
-    self::assertArrayHasKey('AcultaLmsSubmissionImage', $form['file_upload']['#upload_validators']);
-    self::assertSame([], $form['file_upload']['#upload_validators']['AcultaLmsSubmissionImage']);
-    self::assertSame('png jpg pdf', $form['file_upload']['#upload_validators']['FileExtension']['extensions']);
+    $validators = $this->validators($form);
+    self::assertArrayHasKey('AcultaLmsSubmissionImage', $validators);
+    self::assertSame([], $validators['AcultaLmsSubmissionImage']);
+    $extensionValidator = $this->stringKeyedMap($validators['FileExtension'] ?? NULL);
+    self::assertSame('png jpg pdf', $extensionValidator['extensions'] ?? NULL);
   }
 
+  /**
+   * Confirma que o texto de ajuda lista apenas as extensões aceitas.
+   */
   public function testHelpTextListsOnlyTheExtensionsAccepted(): void {
     $form = [
       'file_upload' => [
@@ -51,9 +63,15 @@ final class SubmissionImageHooksTest extends UnitTestCase {
 
     $this->hooks('png pdf docx', 10)->answerFormAlter($form, $this->createMock(FormStateInterface::class));
 
-    self::assertSame('Envie um arquivo. Extensões permitidas: png pdf.', (string) $form['file_upload']['#description']);
+    $fileUpload = $this->stringKeyedMap($form['file_upload'] ?? NULL);
+    $description = $fileUpload['#description'] ?? NULL;
+    self::assertInstanceOf(TranslatableMarkup::class, $description);
+    self::assertSame('Envie um arquivo. Extensões permitidas: png pdf.', (string) $description);
   }
 
+  /**
+   * Confirma que a atividade não amplia extensões nem tamanho além da política do LMS.
+   */
   public function testActivityCannotWidenExtensionsOrSizeBeyondTheLmsPolicy(): void {
     $form = [
       'file_upload' => [
@@ -67,10 +85,16 @@ final class SubmissionImageHooksTest extends UnitTestCase {
 
     $this->hooks('pdf docx', 5)->answerFormAlter($form, $this->createMock(FormStateInterface::class));
 
-    self::assertSame('pdf', $form['file_upload']['#upload_validators']['FileExtension']['extensions']);
-    self::assertSame(5 * 1048576, $form['file_upload']['#upload_validators']['FileSizeLimit']['fileLimit']);
+    $validators = $this->validators($form);
+    $extensionValidator = $this->stringKeyedMap($validators['FileExtension'] ?? NULL);
+    $sizeValidator = $this->stringKeyedMap($validators['FileSizeLimit'] ?? NULL);
+    self::assertSame('pdf', $extensionValidator['extensions'] ?? NULL);
+    self::assertSame(5 * 1048576, $sizeValidator['fileLimit'] ?? NULL);
   }
 
+  /**
+   * Confirma que formulários sem upload gerenciado não são alterados.
+   */
   public function testLeavesFormsWithoutManagedUploadAlone(): void {
     $form = ['answer' => ['#type' => 'textarea']];
     $original = $form;
@@ -80,6 +104,9 @@ final class SubmissionImageHooksTest extends UnitTestCase {
     self::assertSame($original, $form);
   }
 
+  /**
+   * Confirma que os validadores nativos são mantidos sem a política do Portal.
+   */
   public function testKeepsNativeValidatorsWhenThePortalPolicyIsAbsent(): void {
     $form = [
       'file_upload' => [
@@ -92,12 +119,23 @@ final class SubmissionImageHooksTest extends UnitTestCase {
 
     (new SubmissionImageHooks($this->getStringTranslationStub(), NULL))->answerFormAlter($form, $this->createMock(FormStateInterface::class));
 
-    self::assertSame('pdf exe', $form['file_upload']['#upload_validators']['FileExtension']['extensions']);
-    self::assertArrayHasKey('AcultaLmsSubmissionImage', $form['file_upload']['#upload_validators']);
+    $validators = $this->validators($form);
+    $extensionValidator = $this->stringKeyedMap($validators['FileExtension'] ?? NULL);
+    self::assertSame('pdf exe', $extensionValidator['extensions'] ?? NULL);
+    self::assertArrayHasKey('AcultaLmsSubmissionImage', $validators);
   }
 
   /**
-   * Builds the hook over the real Portal policy with a fixed site-wide config. */
+   * Monta o hook sobre a política real do Portal com configuração fixa.
+   *
+   * @param string $extensions
+   *   Extensões permitidas na configuração do site.
+   * @param int $megabytes
+   *   Tamanho máximo em megabytes.
+   *
+   * @return \Drupal\aculta_lms\Hook\SubmissionImageHooks
+   *   Hook configurado para os testes.
+   */
   private function hooks(string $extensions, int $megabytes): SubmissionImageHooks {
     $config = $this->createMock(Config::class);
     $config->method('get')->willReturnCallback(static fn (string $key) => match ($key) {
@@ -110,6 +148,39 @@ final class SubmissionImageHooksTest extends UnitTestCase {
 
     $policy = new ConsumerUploadPolicy($configFactory, new FileUploadPolicy(), new MimeTypeVerifier(), $this->createMock(FileSystemInterface::class), $this->createMock(ImageDimensionReader::class));
     return new SubmissionImageHooks($this->getStringTranslationStub(), $policy);
+  }
+
+  /**
+   * Validates and returns managed-file upload validators.
+   *
+   * @param array<array-key, mixed> $form
+   *   The altered Form API structure.
+   *
+   * @return array<string, mixed>
+   *   The upload validators keyed by validator ID.
+   */
+  private function validators(array $form): array {
+    $fileUpload = $this->stringKeyedMap($form['file_upload'] ?? NULL);
+    return $this->stringKeyedMap($fileUpload['#upload_validators'] ?? NULL);
+  }
+
+  /**
+   * Validates a string-keyed Form API map.
+   *
+   * @param mixed $value
+   *   The value to validate.
+   *
+   * @return array<string, mixed>
+   *   The validated map.
+   */
+  private function stringKeyedMap(mixed $value): array {
+    self::assertIsArray($value);
+    $map = [];
+    foreach ($value as $key => $item) {
+      self::assertIsString($key);
+      $map[$key] = $item;
+    }
+    return $map;
   }
 
 }

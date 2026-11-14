@@ -2,8 +2,8 @@ name: 'ACULTA File Uploader (uploads)'
 type: module
 description: 'Pipeline único de upload do Portal: política, verificação de MIME por conteúdo, destinos com tokens e ingestão via File API do Core. Fase 1: núcleo sem consumidores migrados. Submódulo do aculta_portal.'
 package: 'ACULTA Portal'
-core_version_requirement: ^11.3
-version: '0.1.0-dev.33'
+core_version_requirement: ^11 || ^12
+version: '0.1.0-dev.34'
 dependencies:
   - crop:crop
   - image_widget_crop:image_widget_crop

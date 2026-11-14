@@ -1,5 +1,9 @@
 <?php
-/** Read-only local diagnostics; never prints settings or credentials. */
+
+/**
+ * @file
+ * Read-only local diagnostics; never prints settings or credentials. */
+
 echo 'Contact enabled: ' . (int) \Drupal::moduleHandler()->moduleExists('contact') . PHP_EOL;
 echo 'Contact entity known: ' . (int) \Drupal::entityTypeManager()->hasDefinition('contact_form') . PHP_EOL;
 $query = \Drupal::database()->select('watchdog', 'w')->fields('w', ['variables'])->condition('type', 'php')->orderBy('wid', 'DESC')->range(0, 1);

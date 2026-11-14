@@ -5,11 +5,14 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_commerce\Kernel;
 
 use Drupal\Core\Entity\Entity\EntityFormDisplay;
+use Drupal\aculta_events\Occurrence\EventDateOccurrences;
 use Drupal\commerce_order\Entity\Order;
 use Drupal\commerce_store\Entity\Store;
 use Drupal\KernelTests\KernelTestBase;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Reference;
 
 /**
  * Cutover do frete: instalação do motor e migração de FlatRate.
@@ -22,6 +25,7 @@ use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 #[Group('aculta_commerce')]
 #[RunTestsInSeparateProcesses]
 class ShippingCutoverKernelTest extends KernelTestBase {
+
 
   /**
    * Whether the legacy commerce_shipping module is available in this checkout.
@@ -53,11 +57,13 @@ class ShippingCutoverKernelTest extends KernelTestBase {
   protected static $modules = [
     'aculta_commerce',
     'aculta_document_viewer',
+    'aculta_calendar',
+    'aculta_file_uploader',
+    'aculta_lms',
     'aculta_forum',
     'aculta_gallery',
     'aculta_image',
     'aculta_mail_confirmer',
-    'aculta_mail_confirmer_user',
     'aculta_mailer',
     'aculta_messenger',
     'aculta_pagamentos_mercadopago',
@@ -107,7 +113,6 @@ class ShippingCutoverKernelTest extends KernelTestBase {
     'key',
     'language',
     'link',
-    'lms',
     'login_emailusername',
     'media',
     'media_duplicates',
@@ -158,6 +163,15 @@ class ShippingCutoverKernelTest extends KernelTestBase {
   ];
 
   /**
+   * {@inheritdoc}
+   */
+  public function register(ContainerBuilder $container): void {
+    parent::register($container);
+    $container->register('aculta_events.occurrences', EventDateOccurrences::class)
+      ->addArgument(new Reference('entity_type.manager'));
+  }
+
+  /**
    * Instala o schema do motor e do contrib.
    *
    * Como no estado do Runtime antes do cutover.
@@ -177,6 +191,10 @@ class ShippingCutoverKernelTest extends KernelTestBase {
     $this->installSchema('file', ['file_usage']);
     $this->installSchema('entity_usage', ['entity_usage']);
     $this->installEntitySchema('path_alias');
+    $this->installEntitySchema('group');
+    $this->installEntitySchema('group_relationship');
+    $this->installEntitySchema('group_config_wrapper');
+    $this->installConfig(['group']);
     $this->installConfig([
       'commerce_order',
       'commerce_store',

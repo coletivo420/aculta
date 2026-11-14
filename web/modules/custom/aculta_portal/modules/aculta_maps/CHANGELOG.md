@@ -5,6 +5,28 @@
 
 # Changelog — aculta_maps
 
+## 0.1.0-dev.7 — marcadores SDC inline (2026-11-04)
+
+- O renderer fornece dados neutros e templates inertes para os ícones de
+  marcadores; o tema ativo decide a apresentação e o JS clona SVG inline em
+  `L.divIcon`, mantendo o Leaflet local e o agrupamento próprio.
+- O behavior usa `core/once`; variantes de cor são allowlist e conteúdo SVG não
+  é transferido por `drupalSettings`.
+- Validação: Unit Maps 4/26 PASS, integração renderizada no Runtime e cache
+  rebuild PASS; `updatedb:status` e `config:status` limpos. Revisão visual
+  continua pendente.
+
+## 0.1.0-dev.6 — popup com apresentação selecionada pelo tema (2026-11-04)
+
+- Cada marcador válido recebe um identificador local para seu template de popup.
+- Renderiza conteúdo neutro via hooks de tema; ACULTA420 V2 seleciona o SDC
+  `map-popup`. Leaflet e Google usam o mesmo template inerte clonado no clique.
+- URLs de popup aceitam apenas caminhos relativos same-site ou HTTPS antes da
+  renderização; conteúdo textual permanece sujeito ao autoescape Twig.
+- Composer não mudou: Geofield já é dependência do projeto e de Events; Maps
+  usa Leaflet 1.9.4 local, não o módulo Drupal contrib Leaflet.
+- Validação automática, Runtime e revisão visual ainda pendentes.
+
 ## 2026-10-31 — conformidade com tiles e transparência
 
 - Leaflet passou a requisitar tiles pelo endpoint HTTPS canônico

@@ -12,6 +12,7 @@ use Drupal\aculta_events\Entity\EventLocation;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Cache\CacheableMetadata;
+use Drupal\address\AddressInterface;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Link;
 use Drupal\Core\Url;
@@ -106,12 +107,15 @@ final class LocationPageController extends ControllerBase {
         '#type' => 'container',
         '#attributes' => ['data-portal-ui' => 'event-location-actions'],
         'edit_link' => [
-          '#type' => 'link',
-          '#title' => $this->t('Editar este local'),
-          '#url' => Url::fromRoute('aculta_events.location_edit', [
-            'aculta_event_location' => $aculta_event_location->id(),
-          ]),
-          '#attributes' => ['data-portal-ui' => 'event-location-button-secondary-small'],
+          '#type' => 'aculta_portal_button',
+          '#props' => [
+            'text' => (string) $this->t('Editar este local'),
+            'url' => Url::fromRoute('aculta_events.location_edit', [
+              'aculta_event_location' => $aculta_event_location->id(),
+            ])->toString(),
+            'variant' => 'secondary',
+            'size' => 'small',
+          ],
         ],
       ];
     }
@@ -152,8 +156,8 @@ final class LocationPageController extends ControllerBase {
       ];
     }
 
-    $site = (string) ($aculta_event_location->get('field_site')->value ?? '');
-    if ($site !== '') {
+    $site = self::safeSiteUrl((string) ($aculta_event_location->get('field_site')->value ?? ''));
+    if ($site !== NULL) {
       $details['site'] = [
         '#type' => 'item',
         '#title' => $this->t('Site oficial'),
@@ -169,10 +173,12 @@ final class LocationPageController extends ControllerBase {
         '#type' => 'container',
         '#attributes' => ['data-portal-ui' => 'event-location-admin-actions'],
         'edit' => [
-          '#type' => 'link',
-          '#title' => $this->t('Editar local'),
-          '#url' => Url::fromRoute('aculta_events.location_edit', ['aculta_event_location' => $aculta_event_location->id()]),
-          '#attributes' => ['data-portal-ui' => 'event-location-button-action'],
+          '#type' => 'aculta_portal_button',
+          '#props' => [
+            'text' => (string) $this->t('Editar local'),
+            'url' => Url::fromRoute('aculta_events.location_edit', ['aculta_event_location' => $aculta_event_location->id()])->toString(),
+            'variant' => 'primary',
+          ],
         ],
       ];
     }
@@ -210,9 +216,9 @@ final class LocationPageController extends ControllerBase {
     }
 
     $addressItem = $aculta_event_location->get('field_endereco')->first();
-    if ($addressItem !== NULL) {
-      $locality = (string) $addressItem->locality;
-      $adminArea = (string) $addressItem->administrative_area;
+    if ($addressItem instanceof AddressInterface) {
+      $locality = (string) $addressItem->getLocality();
+      $adminArea = (string) $addressItem->getAdministrativeArea();
       if ($locality !== '' || $adminArea !== '') {
         $postalAddress = [
           '@type' => 'PostalAddress',
@@ -226,8 +232,8 @@ final class LocationPageController extends ControllerBase {
         }
         $precisao = (string) ($aculta_event_location->get('field_precisao')->value ?? 'exato');
         if ($precisao !== 'aproximado') {
-          $street = (string) $addressItem->address_line1;
-          $postalCode = (string) $addressItem->postal_code;
+          $street = (string) $addressItem->getAddressLine1();
+          $postalCode = (string) $addressItem->getPostalCode();
           if ($street !== '') {
             $postalAddress['streetAddress'] = $street;
           }
@@ -254,6 +260,7 @@ final class LocationPageController extends ControllerBase {
 
     $jsonLd = json_encode($placeLd, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     $json = str_replace('</', '<\\/', (string) $jsonLd);
+    $build['#attached']['library'][] = 'aculta_events/events-portal-ui';
     $build['#attached']['html_head'][] = [
       [
         '#type' => 'html_tag',
@@ -265,6 +272,21 @@ final class LocationPageController extends ControllerBase {
     ];
 
     return $build;
+  }
+
+  /**
+   * Returns a site URL safe for public HTML and structured data.
+   */
+  private static function safeSiteUrl(string $value): ?string {
+    $value = trim($value);
+    $scheme = parse_url($value, PHP_URL_SCHEME);
+    if ($value === '' || !is_string($scheme)
+      || !in_array(strtolower($scheme), ['http', 'https'], TRUE)
+      || preg_match('/[\x00-\x20<\x22\x3e\x7f]/', $value) === 1
+      || filter_var($value, FILTER_VALIDATE_URL) === FALSE) {
+      return NULL;
+    }
+    return $value;
   }
 
   /**
