@@ -1,9 +1,9 @@
 {
-    "generated_at": "2026-11-13T21:41:21+00:00",
+    "generated_at": "2026-11-14T00:04:04+00:00",
     "generator": "scripts/audit-custom-tests.php",
-    "total_files": 947,
+    "total_files": 945,
     "by_type": {
-        "unit": 686,
+        "unit": 684,
         "kernel": 250,
         "functional": 3,
         "performance": 4,
@@ -11,16 +11,16 @@
         "functionaljs": 1
     },
     "by_extension": {
-        "src": 943,
+        "src": 941,
         "processor": 1,
         "fixtures": 3
     },
     "flag_counts": {
-        "doc_comment_metadata": 4,
+        "static_config_contract": 42,
+        "mock_isolated": 454,
         "environment_skip": 16,
-        "mock_isolated": 456,
         "review_by_name": 24,
-        "static_config_contract": 42
+        "doc_comment_metadata": 3
     },
     "files": [
         {
@@ -12240,39 +12240,6 @@
             "fixture": false,
             "flags": [
                 "mock_isolated"
-            ]
-        },
-        {
-            "path": "web/modules/custom/aculta_portal/modules/aculta_ui_library/tests/src/Unit/UiLibraryAccessCheckTest.php",
-            "extension": "src",
-            "type": "unit",
-            "base_class": "UnitTestCase",
-            "groups": [],
-            "test_methods": 6,
-            "assertions": 6,
-            "assertions_per_test": 1,
-            "first_import": "Drupal\\aculta_ui_library\\Access\\UiLibraryAccessCheck",
-            "fixture": false,
-            "flags": [
-                "mock_isolated"
-            ]
-        },
-        {
-            "path": "web/modules/custom/aculta_portal/modules/aculta_ui_library/tests/src/Unit/UiPatternsLibraryRedirectControllerTest.php",
-            "extension": "src",
-            "type": "unit",
-            "base_class": "UnitTestCase",
-            "groups": [
-                "aculta_ui_library"
-            ],
-            "test_methods": 1,
-            "assertions": 4,
-            "assertions_per_test": 4,
-            "first_import": "Drupal\\aculta_ui_library\\Controller\\UiPatternsLibraryRedirectController",
-            "fixture": false,
-            "flags": [
-                "mock_isolated",
-                "doc_comment_metadata"
             ]
         },
         {

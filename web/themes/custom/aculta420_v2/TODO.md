@@ -13,7 +13,7 @@ Estado: Dev · versão 1.5.0 (`aculta420_v2.info.yml`) · ADR-056 aceita; plano 
 
 ## Marcos e pendências
 
-- UI Patterns Library: 136 manifests/216 stories no checkout; Runtime ainda não revalidado. Todos os SDCs são descobertos pelo provider e têm stories. `aculta_ui_library` será removido por completo após desinstalação estrutural; a configuração Sync já deixou de habilitá-lo.
+- UI Patterns Library: 136 manifests/216 stories no checkout; Runtime ainda não revalidado. Todos os SDCs são descobertos pelo provider e têm stories. A remoção local de `aculta_ui_library` está preparada em branch isolada e aguarda desinstalação estrutural no Runtime antes da publicação; Config Sync já não o habilita.
 - Pendem cruzamento completo de consumidores dos SDCs, tentativa de remoção dos templates, cache/configuração ativa e aceite visual/acessível por domínio.
 
 ## Leitura e entrega

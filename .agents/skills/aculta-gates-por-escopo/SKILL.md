@@ -29,7 +29,7 @@ Escolha pelo arquivo alterado e pelas integrações realmente presentes no Compo
 | CSS, tokens, tema claro/escuro ou contraste | `validate-aculta420-v2-foundations.php`, `validate-aculta420-ui-styles.php`; lint CSS do tema se aplicável |
 | `aculta420_v2.ui_styles.yml` | `validate-aculta420-ui-styles.php` e schema SDC somente se contrato de componentes também mudar |
 | mapa `data-portal-ui` ou módulo/tema | `validate-module-theme-boundary.php`, `validate-aculta420-mapped-classes.php` |
-| UI Patterns Library, preview, acesso ou descoberta de componente | `validate-aculta-ui-library.php` e testes focais existentes do `aculta_ui_library` |
+| UI Patterns Library, SDC, preview ou descoberta de componente | `validate-aculta420-sdc-library-contract.php`, schema SDC e testes focais dos consumidores alterados; Runtime/browser quando aplicável |
 | stories/previews, modos e reflow | browser script existente em `tests/browser/`; não invente uma frente nem relaxe assertions |
 | UI Icons ou `.icons.yml` | teste focal de pack existente, análise dos assets/paths e gate do tema pertinente; não há gate específico de UI Icons no inventário auditado |
 

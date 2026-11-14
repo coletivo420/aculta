@@ -34,7 +34,7 @@ Preserve Layout Builder, Views, os layouts existentes, ADR-054, as cinco regiõe
 
 ## Bibliotecas e segurança
 
-UI Patterns Library cataloga todos os SDCs e stories, inclusive internos e editoriais. Não ocultar componentes para resolver performance. `aculta_ui_library` agora mantém somente um redirecionamento administrativo legado para UI Patterns Library; catálogo e previews de blocos próprios foram removidos. SEC-01 das prévias deixa de se aplicar porque o módulo não renderiza plugins de bloco.
+UI Patterns Library cataloga todos os SDCs e stories, inclusive internos e editoriais. Não ocultar componentes para resolver performance. `aculta_ui_library` foi removido por completo; não há redirect, catálogo ou preview paralelo. A UI Patterns Library oficial é a única biblioteca de SDCs.
 
 ## Referência
 

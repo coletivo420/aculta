@@ -217,7 +217,7 @@ Com JavaScript desligado, os links dos gatilhos continuam válidos: o login e a 
 - O bloco `system_menu_block:main` é envolvido pelo SDC `navigation-bar` no mesmo peso e posição do cabeçalho. O render array original fica como slot, com access e cache preservados.
 - O menu de conta (`account-menu`) fica dentro da barra. Visitante vê "Entrar"; autenticado vê o disclosure com avatar e as ações de conta (ver [components.md](components.md)).
 - A barra institucional convive com a barra administrativa Gin e com o toolbar Core: a faixa fica acima das duas camadas, e cada uma começa após a altura medida da faixa.
-- A UI Patterns Library é o catálogo único de SDCs e stories. `aculta_ui_library` não mantém catálogo nem prévias de blocos; a rota administrativa ACULTA antiga apenas redireciona ao catálogo oficial sob acesso restrito no MAIN.
+- A UI Patterns Library é o catálogo único de SDCs e stories. O código de `aculta_ui_library` está removido nesta branch isolada; sua publicação aguarda a desinstalação no Runtime.
 - UI Patterns Library (`overview`, `provider` e `single`) é uma exceção administrativa: `ComponentLibraryRoutes::isComponentLibraryRoute()` identifica as rotas e `PagePresentationHooks` usa a variante `full`, sem container legado. A classe `aculta-component-library-page` estiliza cada `.ui_patterns_component` como bloco de largura ampla, sem impor grid às stories; a barra institucional mantém a marca e oculta a faixa de utilidades só nessas rotas. `UiPatternsStoryHooks` instancia stories PHP declaradas pelos componentes e passa props/slots resolvidas ao `component_story`, mantendo a barra e o menu do Studio ligados aos providers reais.
 - A overview anexa `ui-library-admin`, que carrega `ui-library-admin.css`, `ui-library-tabs.js` e `ui-library-bulk-preview.js`, com Drupal behaviors, `core/once` e HTMX. As abas selecionam o grupo via `data-group-id`/`data-group-name`; a busca filtra por componente e grupo. O lote busca prévias sob demanda com concorrência limitada. Os cartões formam duas colunas quando a largura útil alcança 60rem; abaixo disso, uma coluna.
 
@@ -242,7 +242,7 @@ Com JavaScript desligado, os links dos gatilhos continuam válidos: o login e a 
 
 - Drupal `^11.5 || ^12`. O desenvolvimento roda no 11.5 do servidor de desenvolvimento. Compatibilidade com 12 é meta, sem validação ainda (ADR-045).
 - Ícones Phosphor (MIT, Core 2.1.1) estão vendorizados em `assets/icons/phosphor/` e são injetados inline pelo componente `icon`.
-- O Config Sync habilita UI Styles e as integrações de Block, Layout Builder, Page, UI Patterns, Views e Entity Status. Isso confirma a configuração versionada, não a descoberta nem o funcionamento no Runtime. A UI Patterns Library cataloga SDCs/stories; `aculta_ui_library` só mantém um redirecionamento administrativo legado para ela. CTools permanece no Portal conforme ADR-044.
+- O Config Sync habilita UI Styles e as integrações de Block, Layout Builder, Page, UI Patterns, Views e Entity Status. Isso confirma a configuração versionada, não a descoberta nem o funcionamento no Runtime. A UI Patterns Library cataloga SDCs/stories; não há catálogo ou redirecionamento ACULTA paralelo. CTools permanece no Portal conforme ADR-044.
 
 
 ## Fórum Growroom420 — placeholders pendentes (seção 5 do plano)

@@ -6,7 +6,7 @@
  *
  * Every SDC must have its own Twig template and at least one UI Patterns
  * story. The official UI Patterns Library is the only component catalog; the
- * custom ACULTA module is scheduled for complete removal.
+ * custom ACULTA library module must remain absent.
  *
  * Usage: `php scripts/validate-aculta420-sdc-library-contract.php`.
  */
@@ -15,6 +15,7 @@ declare(strict_types=1);
 
 $root = dirname(__DIR__);
 $componentsRoot = $root . '/web/themes/custom/aculta420_v2/components';
+$coreExtension = $root . '/config/sync/core.extension.yml';
 $moduleRoot = $root . '/web/modules/custom/aculta_portal/modules/aculta_ui_library';
 $errors = [];
 $componentCount = 0;
@@ -85,63 +86,22 @@ foreach (glob($componentsRoot . '/*/*.twig') ?: [] as $template) {
   }
 }
 
-// Keep the custom module as a compatibility redirect, never as a second UI.
-$routeFile = $moduleRoot . '/aculta_ui_library.routing.yml';
-$redirectFile = $moduleRoot . '/src/Controller/UiPatternsLibraryRedirectController.php';
-$expectedSourceFiles = [
-  'src/Access/UiLibraryAccessCheck.php',
-  'src/Controller/UiPatternsLibraryRedirectController.php',
-];
-$sourceFiles = [];
-if (!is_file($routeFile) || !is_file($redirectFile)) {
-  $errors[] = 'Rota/controller de compatibilidade para UI Patterns Library ausente.';
+// The ACULTA duplicate library has been retired; only UI Patterns Library is
+// allowed to provide the SDC catalog and stories.
+if (file_exists($moduleRoot)) {
+  $errors[] = 'O módulo legado aculta_ui_library deve permanecer removido.';
+}
+if (!is_file($coreExtension)) {
+  $errors[] = 'Config Sync core.extension.yml não encontrado.';
 }
 else {
-  $routes = (string) file_get_contents($routeFile);
-  $routeNames = [];
-  preg_match_all('/^([a-zA-Z0-9_.]+):\s*$/m', $routes, $routeNames);
-  if (($routeNames[1] ?? []) !== ['aculta_ui_library.blocks']) {
-    $errors[] = 'aculta_ui_library deve expor somente a rota legada aculta_ui_library.blocks.';
+  $extensions = (string) file_get_contents($coreExtension);
+  if (preg_match('/^\s*aculta_ui_library\s*:/m', $extensions)) {
+    $errors[] = 'Config Sync não pode habilitar aculta_ui_library.';
   }
-  if (str_contains($routes, 'aculta_ui_library.block_preview')) {
-    $errors[] = 'A rota própria de prévia de bloco não pode ser reintroduzida.';
+  if (!preg_match('/^\s*ui_patterns_library\s*:/m', $extensions)) {
+    $errors[] = 'Config Sync deve manter ui_patterns_library habilitado.';
   }
-  if (!str_contains($routes, 'UiPatternsLibraryRedirectController::redirectToLibrary')) {
-    $errors[] = 'A rota legada não aponta para o controller de redirecionamento.';
-  }
-
-  $redirect = (string) file_get_contents($redirectFile);
-  if (!str_contains($redirect, "'ui_patterns_library.overview'")) {
-    $errors[] = 'O redirect não usa a rota oficial ui_patterns_library.overview.';
-  }
-}
-
-if (is_dir($moduleRoot . '/src')) {
-  $moduleIterator = new RecursiveIteratorIterator(
-    new RecursiveDirectoryIterator($moduleRoot . '/src', FilesystemIterator::SKIP_DOTS),
-  );
-  foreach ($moduleIterator as $source) {
-    if (!$source->isFile() || $source->getExtension() !== 'php') {
-      continue;
-    }
-    $relativePath = substr($source->getPathname(), strlen($moduleRoot) + 1);
-    $sourceFiles[] = $relativePath;
-    $contents = (string) file_get_contents($source->getPathname());
-    if (str_contains($contents, "getStorage('block')") || str_contains($contents, '->build()')) {
-      $errors[] = "Catálogo/renderização própria de blocos detectado em {$source->getPathname()}.";
-    }
-  }
-}
-
-sort($sourceFiles);
-sort($expectedSourceFiles);
-if ($sourceFiles !== $expectedSourceFiles) {
-  $errors[] = 'aculta_ui_library deve conter somente o access check e o controller de redirecionamento; não adicionar catálogo ou renderer próprio.';
-}
-
-$routeFiles = glob($moduleRoot . '/*.routing.yml') ?: [];
-if ($routeFiles !== [$routeFile]) {
-  $errors[] = 'aculta_ui_library deve declarar somente uma rota de compatibilidade, sem rotas paralelas.';
 }
 
 if ($errors !== []) {

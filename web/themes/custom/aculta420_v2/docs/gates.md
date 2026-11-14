@@ -9,7 +9,7 @@ Os caminhos são relativos à raiz do repositório. Gates "Drush" rodam com `php
 | Gate | Como rodar | O que verifica | Quando |
 | --- | --- | --- | --- |
 | `validate-aculta420-sdc-schemas.php` | `php scripts/validate-aculta420-sdc-schemas.php` | schemas dos componentes SDC | toda mudança em `components/` |
-| `validate-aculta420-sdc-library-contract.php` | `php scripts/validate-aculta420-sdc-library-contract.php` | cada SDC tem Twig e story, sem exceção storyless; impede catálogo/prévia paralela em `aculta_ui_library` durante sua retirada | criação, remoção ou alteração de SDC, story, ou da ponte UI Patterns |
+| `validate-aculta420-sdc-library-contract.php` | `php scripts/validate-aculta420-sdc-library-contract.php` | cada SDC tem Twig e story, sem exceção storyless; não há catálogo ou prévia paralela | criação, remoção ou alteração de SDC, story, ou da ponte UI Patterns |
 | `validate-aculta420-design-foundations.php` | `php scripts/validate-aculta420-design-foundations.php` | fundações de design do tema | mudança em tokens, base ou layout |
 | `validate-browser-validators.php` | `php scripts/validate-browser-validators.php` | validadores de navegador | mudança em JavaScript ou em formulários |
 | `validate-aculta420-v2-foundations.php` | `php scripts/validate-aculta420-v2-foundations.php` | tokens e pares de contraste da V2 em claro/escuro, incluindo texto do cabeçalho `surface-panel` (mínimo 4,5:1), foco e bordas (mínimo 3:1) | mudança em tokens ou cores |
@@ -203,9 +203,9 @@ Este registro não autoriza `drush cim`, `updatedb` ou alterações destrutivas;
 - `php scripts/audit-aculta420-layout-builder.php`: informativo. 95 displays: 24 `COMPATÍVEL`, 48 `COMPATÍVEL COM ADAPTADOR`, 23 `INCOMPATÍVEL`; 0 habilitados. Nenhuma configuração alterada.
 - Habilitação do Layout Builder por display: **DEFERRED**. Exige importação de configuração em ambiente isolado e teste de renderização/rollback por display; não executar `drush cim` no Runtime de desenvolvimento com drift.
 
-## Execução Recente — ADR-054 P6/P7 prévias e escopo de CSS (2026-11-09)
+## Registro histórico — ADR-054 P6/P7 prévias e escopo de CSS (2026-11-09)
 
-- `php scripts/validate-aculta-ui-library.php`: PASS (23 checks). Rotas `_admin_route` com `_aculta_domain_purpose=main` e `administer blocks`; visitante e autenticado sem permissão negados; administrador autorizado; catálogo com blocos reais e `max-age 0`; prévia real de `site_branding` com `max-age 0`; sem `\Drupal::` no controlador.
+- Histórico do gate removido `validate-aculta-ui-library.php`: PASS (23 checks). Rotas `_admin_route` com `_aculta_domain_purpose=main` e `administer blocks`; visitante e autenticado sem permissão negados; administrador autorizado; catálogo com blocos reais e `max-age 0`; prévia real de `site_branding` com `max-age 0`; sem `\Drupal::` no controlador.
 - HTTP: `/painel-administrativo/aculta/ui-library/blocos` responde **403 no MAIN** e **404** em `links` e `wiki420` para visitante (confirmado com `--resolve`).
 - `php scripts/validate-aculta420-css-scope.php`: PASS (8 checks). `statistics.css` saiu do `global-styling` e é anexado só em `aculta_statistics.dashboard`/`aculta_statistics.area`; os seletores de estatísticas saíram de `portal-ui-map.css`.
 - Requisição real na home do MAIN após `drush cr`: nenhum CSS servido contém `.aculta-statistics` (antes continha). Redução de ~2,7 KB por página, além do CSS agregado correspondente.

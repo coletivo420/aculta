@@ -58,7 +58,6 @@
       <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_secrets_manager/tests/src/Unit</directory>
       <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_statistics/tests/src/Unit</directory>
       <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_studio/tests/src/Unit</directory>
-      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_ui_library/tests/src/Unit</directory>
       <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_user/tests/src/Unit</directory>
       <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_wiki/tests/src/Unit</directory>
       <directory suffix="Test.php">web/modules/custom/aculta_portal/tests/src/Unit</directory>

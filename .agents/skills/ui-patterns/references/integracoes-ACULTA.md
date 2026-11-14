@@ -16,7 +16,7 @@ Pacote `drupal/ui_patterns_settings` não aparece em `composer.json` nem em `com
 ## Recursos próprios ACULTA
 
 - UI Patterns Library é usada pelo tema e possui catálogo de componentes e stories. As rotas e page presentation são tratadas no tema V2.
-- `web/modules/custom/aculta_portal/modules/aculta_ui_library` é um módulo ACULTA separado para preview de blocos configurados. Seu controller verifica permissão/acesso e usa cache `max-age 0` para a preview. Ele não substitui a Library de SDCs.
+- `aculta_ui_library` foi removido. A UI Patterns Library oficial é a única fonte de catálogo e preview de SDCs; não há módulo ACULTA paralelo para preview de blocos.
 - O projeto preserva todos os SDCs, inclusive itens internos, e evita esconder componentes universalmente. Visibilidade editorial depende dos mecanismos existentes e da intenção do componente.
 
 Fonte upstream: https://project.pages.drupalcode.org/ui_patterns/ e https://www.drupal.org/project/ui_patterns. Verifique documentação 2.x e releases compatíveis com a versão lockada antes de aconselhar mudanças de integração.

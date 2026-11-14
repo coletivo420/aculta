@@ -101,14 +101,12 @@ anteriores e não substituem a conferência do código atual.
 O módulo não possui entidade/configuração própria nem schema de banco: contém
 redirect, access check, serviços, metadados e testes. O Config Sync já foi
 atualizado para retirar `aculta_ui_library`; `ui_patterns_library` é extensão
-separada e permanece habilitada. Ordem segura: (1) registrar os arquivos
-afetados no plano estrutural; (2) com
+separada e permanece habilitada. Ordem segura: (1) manter o diff isolado e não publicado; (2) com
 backup/restore comprovados e preflight liberado, desinstalar o módulo no Runtime
-enquanto seu código continua disponível; (3) sincronizar a desinstalação e
-verificar estado/cache; (4) remover pasta do módulo, alias, testes exclusivos,
-gates que o carregam, status e referências operacionais; (5) confirmar que a
-rota oficial da UI Patterns Library continua habilitada. Não apagar os arquivos
-do módulo antes da desinstalação, pois o checkout é compartilhado com Apache.
+enquanto o código ainda está presente no checkout servido; (3) verificar estado
+e cache; (4) publicar este diff, que remove pasta, alias, testes exclusivos,
+gate e referências operacionais; (5) confirmar que a rota oficial da UI Patterns
+Library continua habilitada. O Runtime atual ainda não permite a etapa (2).
 
 ### Primeira lista de arquivos que exigem classificação individual em P3
 
