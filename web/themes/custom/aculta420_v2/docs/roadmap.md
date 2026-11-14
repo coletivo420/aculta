@@ -108,19 +108,23 @@ e cache; (4) publicar este diff, que remove pasta, alias, testes exclusivos,
 gate e referências operacionais; (5) confirmar que a rota oficial da UI Patterns
 Library continua habilitada. O Runtime atual ainda não permite a etapa (2).
 
-### Primeira lista de arquivos que exigem classificação individual em P3
+### Inventário completo de templates no checkout (51)
 
-`aculta-mailer-wrap.html.twig`, `aculta-maps-marker-icon-template.html.twig`,
-`aculta-maps-popup-content.html.twig`,
-`aculta-portal-account-terms-modal.html.twig`,
-`aculta-portal-photo-editor.html.twig`, `comment--comments.html.twig`,
-`comment--field-aculta-discussion.html.twig`, `layout/html.html.twig`,
-`layout/page.html.twig`, `misc/status-messages.html.twig`,
-`navigation/breadcrumb.html.twig`, `navigation/pager.html.twig`,
-`page-title.html.twig`, `portal-cart-panel.html.twig`,
-`portal-component.html.twig`, `ui-patterns-overview-page.html.twig`,
-`ui-patterns-single-page.html.twig`, `ui-patterns-stories-compact.html.twig` e
-`ui-patterns-stories-full.html.twig`.
+Contagem confirmada em `HEAD` por `git ls-tree`. A lista é completa; a classificação por consumidor e substituição funcional continua pendente arquivo a arquivo. Os templates não devem ser removidos apenas por estarem nesta pasta.
+
+**raiz:** `aculta-donation-back.html.twig`, `aculta-donation-donate.html.twig`, `aculta-donation-quick.html.twig`, `aculta-links-landing.html.twig`, `aculta-links-page.html.twig`, `aculta-mailer-wrap.html.twig`, `aculta-maps-marker-icon-template.html.twig`, `aculta-maps-popup-content.html.twig`, `aculta-portal-account-terms-modal.html.twig`, `aculta-portal-button.html.twig`, `aculta-portal-photo-editor.html.twig`, `aculta-portal-shell.html.twig`, `aculta-section.html.twig`, `aculta-user-author-card.html.twig`, `comment--comments.html.twig`, `comment--field-aculta-discussion.html.twig`, `discussion-reaction-picker.html.twig`, `discussion-reply-composer.html.twig`, `input--submit.html.twig`, `page-title.html.twig`, `portal-cart-panel.html.twig`, `portal-cart-status.html.twig`, `portal-component.html.twig`, `portal-payment-notice.html.twig`, `portal-search-trigger.html.twig`, `ui-patterns-overview-page.html.twig`, `ui-patterns-single-page.html.twig`, `ui-patterns-stories-compact.html.twig`, `ui-patterns-stories-full.html.twig`.
+
+**commerce:** `commerce-product--produto-loja--catalog.html.twig`.
+
+**content:** `node--aculta-faq--full.html.twig`, `node--aculta-forum-topic.html.twig`, `node--document--teaser.html.twig`, `node--revista--full.html.twig`, `node--revista--teaser.html.twig`, `node--wiki-entry--full.html.twig`, `node--wiki-entry--teaser.html.twig`, `node-add-form--aculta-forum-topic.html.twig`.
+
+**layout:** `html.html.twig`, `page--shell-v2.html.twig`, `page.html.twig`.
+
+**misc:** `status-messages.html.twig`.
+
+**navigation:** `breadcrumb.html.twig`, `pager.html.twig`.
+
+**views:** `views-view--aculta-forum-public-topics--page-category-term.html.twig`, `views-view--aculta-forum-public-topics.html.twig`, `views-view--aculta-forum-search--page-search.html.twig`, `views-view--revista-sessoes--page-revista.html.twig`, `views-view-fields--aculta-forum-categories--page-categories.html.twig`, `views-view-fields--aculta-forum-public-topics.html.twig`, `views-view-unformatted--aculta-forum-categories--page-categories.html.twig`.
 
 ### Classificação inicial de uma primeira amostra de templates pelo código
 
