@@ -89,6 +89,7 @@ services:
     arguments: ['@aculta_portal.domain_site']
   Drupal\aculta_forum\Hook\ForumThemeHooks:
     class: Drupal\aculta_forum\Hook\ForumThemeHooks
+    arguments: ['@current_user', '@entity_type.manager', '@aculta_user.avatar_resolver']
   Drupal\aculta_forum\Hook\DiscussionModerationHooks:
     class: Drupal\aculta_forum\Hook\DiscussionModerationHooks
   Drupal\aculta_forum\Hook\DiscussionCommentActionIconHooks:

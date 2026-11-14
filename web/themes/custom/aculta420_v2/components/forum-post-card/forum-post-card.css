@@ -650,3 +650,19 @@
   align-items: center;
   white-space: nowrap;
 }
+
+/* Desktop: linha de posts e data à direita; avatar e nome à esquerda, com espaçamento menor entre eles. */
+@media (min-width: 48rem) {
+  .forum-post-card .forum-post-card__author-info {
+    flex: 1 1 auto;
+    inline-size: 100%;
+  }
+
+  .forum-post-card .forum-post-card__author-meta {
+    margin-inline-start: auto;
+  }
+
+  .forum-post-card .forum-post-card__author .forum-author-line__identity {
+    gap: .125rem;
+  }
+}

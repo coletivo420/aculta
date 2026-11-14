@@ -10,11 +10,7 @@
   <{{ tag }} class="forum-author-line__identity{% if profile_url %} forum-author-line__link{% endif %}"{% if profile_url %} href="{{ profile_url }}" aria-label="{{ 'Ver perfil de @name'|t|replace({'@name': author_name}) }}"{% endif %}>
   <span class="forum-author-line__avatar">
     {% set avatar_markup = avatar is iterable ? render_var(avatar) : avatar %}
-    {% if avatar_markup and avatar_markup|trim != '' %}
-      <span class="aculta-avatar aculta-avatar--md"><span class="aculta-avatar__media">{{ avatar_markup|raw }}</span></span>
-    {% else %}
-      {{ include('aculta420_v2:avatar', { size: 'md', label: author_name }, with_context = false) }}
-    {% endif %}
+    {{ include('aculta420_v2:avatar', { size: 'md', label: author_name, media: avatar_markup and avatar_markup|trim != '' ? avatar_markup|raw : null }, with_context = false) }}
   </span>
   <span class="forum-author-line__name">{{ author_name }}</span>
   </{{ tag }}>

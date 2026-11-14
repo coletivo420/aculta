@@ -1,7 +1,7 @@
 $schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
 name: Avatar
 status: stable
-description: Apresenta a mídia de avatar fornecida pelo módulo responsável ou um ícone neutro.
+description: Apresenta a mídia do sistema de avatar do ACULTA (acervo, via AvatarResolver). Sem mídia, a forma fica vazia; não há ícone, inicial ou letra gerada do nome.
 group: Elementos básicos
 props:
   type: object

@@ -15,11 +15,11 @@
         {% for item in connections %}
           <li class="aculta-studio-connections-block__item">
             <div class="aculta-studio-connections-block__avatar">
-              {% if item.avatar_url %}
-                <img src="{{ item.avatar_url }}" alt="{{ item.avatar_alt|default(item.name) }}" class="aculta-avatar aculta-avatar--md" />
-              {% else %}
-                <div class="aculta-avatar aculta-avatar--md aculta-avatar--fallback" aria-hidden="true"></div>
-              {% endif %}
+              {{ include('aculta420_v2:avatar', {
+                size: 'md',
+                label: item.name,
+                media: item.avatar_url ? ('<img src="' ~ item.avatar_url|e('html_attr') ~ '" alt="' ~ (item.avatar_alt|default(item.name))|e('html_attr') ~ '" loading="lazy">')|raw : null
+              }, with_context = false) }}
             </div>
             <div class="aculta-studio-connections-block__info">
               <span class="aculta-studio-connections-block__name">{{ item.name }}</span>

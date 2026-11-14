@@ -1,10 +1,7 @@
+{# Sem fallback próprio: a mídia vem do sistema de avatar do ACULTA (acervo, via AvatarResolver). Sem mídia, a forma fica vazia; nunca há ícone, inicial ou letra gerada do nome. #}
 {% set size = size|default('md') %}
 <span{{ attributes.addClass('aculta-avatar', 'aculta-avatar--' ~ size) }}>
   {% if media %}
     <span class="aculta-avatar__media">{{ media }}</span>
-  {% else %}
-    <span class="aculta-avatar__fallback" role="img" aria-label="{{ label|default('Avatar') }}">
-      {{ include('aculta420_v2:icon', { name: 'user-circle', variant: 'duotone', size: 'lg' }, with_context = false) }}
-    </span>
   {% endif %}
 </span>

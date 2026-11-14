@@ -9,11 +9,7 @@
   <div class="forum-post-card__inner">
     <header class="forum-post-card__header discussion-reply-composer__header">
       <div class="forum-post-card__author">
-        <div class="forum-post-card__avatar">
-          <div class="forum-post-card__avatar-fallback" aria-hidden="true">
-            {{ include('aculta420_v2:icon', { name: 'user-circle', variant: 'duotone', size: 'md' }, with_context = false) }}
-          </div>
-        </div>
+        {{ include('aculta420_v2:avatar', { size: 'md', label: 'Seu avatar'|t, media: avatar }, with_context = false) }}
         <div class="forum-post-card__author-info">
           <div class="forum-post-card__author-name-row">
             <span class="forum-post-card__author-name">{{ mode == 'editar' ? 'Editar'|t : (mode == 'excluir' ? 'Excluir'|t : 'Sua Resposta'|t) }}</span>

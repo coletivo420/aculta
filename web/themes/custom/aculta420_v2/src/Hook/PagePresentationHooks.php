@@ -1177,6 +1177,7 @@ final class PagePresentationHooks {
       '#slots' => [
         'messages' => $variables['messages'] ?? [],
         'form' => $variables['form'] ?? [],
+        'avatar' => $variables['avatar'] ?? [],
         'context' => [],
       ],
     ];

@@ -18,11 +18,7 @@
       <section class="aculta-account-menu__col aculta-account-menu__col--account" aria-label="{{ 'Conta'|t }}">
         {% if authenticated %}
           <div class="aculta-account-menu__identity">
-            {% if avatar is not empty %}
-              {{ include('aculta420_v2:avatar', { media: avatar, size: 'sm' }, with_context = false) }}
-            {% else %}
-              {{ include('aculta420_v2:avatar', { size: 'sm', label: 'Avatar'|t }, with_context = false) }}
-            {% endif %}
+            {{ include('aculta420_v2:avatar', { media: avatar, size: 'sm' }, with_context = false) }}
             {% if account_name %}<span>{{ account_name }}</span>{% endif %}
           </div>
         {% endif %}
