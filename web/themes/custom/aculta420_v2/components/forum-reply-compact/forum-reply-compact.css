@@ -157,3 +157,9 @@
 .forum-reply-compact--side-end .forum-reply-compact__text {
   text-align: end;
 }
+
+/* Espelhado: ações na borda esquerda, reações na borda direita (o inverso da ordem normal). */
+.forum-reply-compact--side-end .forum-reply-compact__actions {
+  margin-inline-start: 0;
+  margin-inline-end: auto;
+}

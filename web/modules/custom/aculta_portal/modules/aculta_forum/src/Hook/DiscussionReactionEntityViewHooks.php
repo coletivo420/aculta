@@ -80,6 +80,16 @@ final class DiscussionReactionEntityViewHooks {
         }
         $variables['sort_total'] = $total;
         $variables['sort_created'] = (int) $threadComment->getCreatedTime();
+        // Ações da resposta: permalink sempre; editar e excluir só quando a conta pode.
+        $cid = (int) $threadComment->id();
+        $actions = ['permalink_url' => '/comment/' . $cid];
+        if ($threadComment->access('update', $this->currentUser)) {
+          $actions['edit_url'] = '/comment/' . $cid . '/edit';
+        }
+        if ($threadComment->access('delete', $this->currentUser)) {
+          $actions['delete_url'] = '/comment/' . $cid . '/delete';
+        }
+        $variables['revista_actions'] = $actions;
       }
       // Primeira resposta entre irmãos do mesmo pai (mostra a seta de resposta).
       if ($variables['reply_depth'] >= 1) {

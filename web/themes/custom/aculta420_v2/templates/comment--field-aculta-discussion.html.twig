@@ -13,6 +13,14 @@
 
 {% if publication_comment|default(false) %}
   {% set author_avatar = author_card and author_card['#avatar'] is defined ? render_var(author_card['#avatar']) : null %}
+  {% set revista_actions_markup %}
+    {{ include('aculta420_v2:content-reply-bar', {
+      permalink_url: revista_actions.permalink_url|default(null),
+      edit_url: revista_actions.edit_url|default(null),
+      delete_url: revista_actions.delete_url|default(null),
+      target_id: 'aculta-reply-dialog-body'
+    }, with_context = false) }}
+  {% endset %}
   {% set reply_card %}
     <article class="comment comment--discussion js-comment">
     {{ include('aculta420_v2:forum-reply-compact', {
@@ -24,7 +32,7 @@
       content: comment_body,
       reactions_slot: reaction_bar_val,
       received_slot: reactions_received|default(null),
-      actions: actions_markup
+      actions: revista_actions_markup
     }, with_context = false) }}
     </article>
   {% endset %}
