@@ -38,19 +38,25 @@ slots:
     description: Render array cacheável do módulo aculta_magazine.
   cover:
     title: Imagem de capa
+    description: Imagem principal da publicação.
   subtitle:
     title: Chamada editorial
+    description: Linha de apoio exibida abaixo do título da publicação.
   summary:
     title: Resumo
+    description: Resumo editorial da publicação.
   body:
     title: Corpo da publicação
+    description: Conteúdo completo renderizado da publicação.
   footer:
     title: Categorias, tags, referências e créditos
+    description: Metadados editoriais exibidos ao final da publicação.
   authors:
     title: Caixa de autoria
     description: Render array cacheável do módulo aculta_user.
   discussion:
     title: Discussão
+    description: Discussão renderizada pelo módulo proprietário.
 assets:
   css:
     component:

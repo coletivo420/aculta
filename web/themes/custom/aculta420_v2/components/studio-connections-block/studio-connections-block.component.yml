@@ -9,9 +9,11 @@ props:
   required: [title, empty_message, find_connections_label, find_connections_url]
   properties:
     title:
+      title: Título do bloco de conexões
       type: string
       default: CONEXÕES
     connections:
+      title: Conexões aceitas
       type: array
       items:
         type: object
@@ -26,15 +28,20 @@ props:
           avatar_alt:
             type: [string, 'null']
     empty_message:
+      title: Mensagem sem conexões
       type: string
       default: Você ainda não tem conexões
     find_connections_label:
+      title: Texto do link para buscar conexões
       type: string
       default: Encontrar conexões
     find_connections_url:
+      title: Endereço para buscar conexões
       type: string
     all_connections_label:
+      title: Texto do link para todas as conexões
       type: string
       default: Ver todas
     all_connections_url:
+      title: Endereço de todas as conexões
       type: [string, 'null']

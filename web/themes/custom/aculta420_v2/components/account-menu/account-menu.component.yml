@@ -52,16 +52,7 @@ props:
       title: Links legais
       description: Links neutros de busca, política e privacidade. Somente rotas confirmadas.
       default: []
-      items:
-        type: object
-        additionalProperties: false
-        required: [title, url]
-        properties:
-          title:
-            type: string
-            minLength: 1
-          url:
-            type: string
+      $ref: 'ui-patterns://links'
 slots:
   avatar:
     title: Avatar

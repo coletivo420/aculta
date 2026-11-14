@@ -1,5 +1,11 @@
 # Status dos componentes (G1)
 
+> **Inventário histórico, em reconciliação (ADR-056):** as seções abaixo
+> registram implementações verificadas em datas anteriores, mas não afirmam que
+> todos os consumers continuam ativos nem que todos migraram para fallbacks.
+> Confira cada consumer em código e Config Sync. O estado vigente e a sequência
+> do cruzamento ficam no início de `roadmap.md`.
+
 Status por componente extraído do roadmap em 2026-11-05. O estado geral das fases fica em `roadmap.md`.
 
 ## Avatar — G1 implementado e integrado ao menu de conta

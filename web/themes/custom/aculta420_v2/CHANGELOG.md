@@ -1,6 +1,8 @@
 ## Não versionado — corte SDC-first de CSS e LMS (2026-11-13)
 
-- ADR-056: removidos o catálogo e as prévias próprias de blocos de `aculta_ui_library`; a rota administrativa legada agora redireciona para UI Patterns Library, fonte única de SDCs/stories.
+- ADR-056: o módulo customizado `aculta_ui_library` será removido por completo; seu nome saiu de `core.extension` no Config Sync. A desinstalação no Runtime deve anteceder a exclusão do código; o cache/runtime ainda não foi atualizado.
+- Auditoria SDC: adicionadas stories representativas para `hint`, `sales-panel` e `secret-reveal`; o guardrail agora exige story para todo SDC. Inventário: 136 manifests e 216 stories.
+- ADR-056: primeiro foram removidos catálogo e prévias próprias de blocos; decisão posterior determinou aposentar também o redirect e o módulo `aculta_ui_library`, após desinstalação estrutural. A UI Patterns Library permanece como catálogo único.
 - ADR-056 registrada: UI Patterns 2 é o contrato de apresentação; a revisão dos
   roadmaps parte do código e Config Sync. A primeira passada conferiu 136 SDCs,
   212 stories, três componentes sem story e classificou preliminarmente os 19

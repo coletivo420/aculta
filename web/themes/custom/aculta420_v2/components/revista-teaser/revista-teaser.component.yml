@@ -47,7 +47,10 @@ slots:
     description: Render array da mídia editorial.
   category:
     title: Categoria editorial
+    description: Categoria ou seção da publicação.
   subtitle:
     title: Chamada
+    description: Texto de chamada apresentado junto à capa.
   summary:
     title: Resumo
+    description: Resumo curto da publicação.

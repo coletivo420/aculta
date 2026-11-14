@@ -1,16 +1,24 @@
 # Catálogo de componentes do tema V2
 
-Componentes SDC com schemas estritos (`additionalProperties: false`). Os nomes de prop e slot abaixo são os do `*.component.yml`. "Estado" indica o que foi entregue e verificado. Auditoria do catálogo em 2026-11-13: 117 diretórios têm metadados SDC; schemas e renderização isolada são conferidos pelos gates de `docs/gates.md`. Stories exemplificam variantes quando disponíveis.
+Componentes SDC com schemas estritos (`additionalProperties: false`). Os nomes de prop e slot abaixo são os do `*.component.yml`. "Estado" indica o que foi entregue e verificado. Auditoria do checkout em 2026-11-13: 136 manifests SDC e 216 stories; schemas e renderização isolada são conferidos pelos gates de `docs/gates.md`. A existência do manifest/story não prova, por si só, que um consumidor de produção esteja configurado.
 
 Prefixo de uso: `aculta420_v2:<nome>`. Em Twig, use `include` com `with_context = false`, ou `embed` quando o componente tem slots.
+
+> **Mudança de consumers em 2026-11-13:** foram removidos os templates de
+> apresentação de node, Views e vários blocos que eram citados como consumers
+> neste catálogo. As descrições de uso abaixo são históricas até os displays e
+> Views serem configurados com UI Patterns; existência/story no catálogo não
+> comprova renderização ativa. Consulte o relatório do corte para os nomes e
+> estado atual.
 
 ## UI Patterns Library e Biblioteca de Layouts
 
 A UI Patterns Library descobre os componentes diretamente dos arquivos
 `*.component.yml` e suas stories; não há uma lista paralela para manter. Neste
-checkout há 127 manifests SDC e 188 stories. O Drupal precisa reconstruir seus
-caches de descoberta para refletir alterações no Runtime. Dois SDCs ainda não
-têm story (`sales-panel` e `secret-reveal`); os demais têm exemplos catalogados.
+checkout há 136 manifests SDC e 216 stories. O Drupal precisa reconstruir seus
+caches de descoberta para refletir alterações no Runtime. Todos os SDCs têm ao
+menos uma story. A configuração habilita
+`ui_patterns_library`; descoberta no Runtime não foi confirmada nesta revisão.
 
 O grupo `Layouts` também alimenta os plugins de `ui_patterns_layouts`, usados
 pelo Layout Builder. Os sete layouts declarados são `event-page-layout`, `layout-page`, `layout-section`, `layout-two-columns`, `layout-grid`, `layout-narrow` e `layout-full`. O rodapé institucional (`site-footer`) também é um item desta biblioteca, com regiões `brand`, `nav`, `content` e `legal`; ele está posicionado no layout de blocos do display `footer` do bloco `aculta_institution`. O gate de Runtime cobre hoje seis layouts
@@ -414,9 +422,7 @@ Inclui botão Google com ícone de marca, divisor centralizado "ou entre com sua
 
 Resposta expansível baseada em details/summary, sem JavaScript e operável por
 teclado nativamente. Props: title e expanded; slot: content. Story:
-accordion.default.story.yml. Usado pelo template node--aculta-faq--full; quando
-o cache SDC Drupal ainda não conhece o componente, o template mantém uma saída
-equivalente com HTML nativo.
+accordion.default.story.yml. Não encontramos consumidor PHP, Twig ou Config Sync no checkout atual; a afirmação de uso por `node--aculta-faq--full.html.twig` está obsoleta. O display `node.aculta_faq.default` usa Layout Builder com `layout-section` e o formatter `text_default` para o campo body.
 
 ### form-field
 
@@ -471,11 +477,11 @@ no módulo proprietário. Usa tokens semânticos V2 e não depende de JavaScript
 Regiões semânticas para o detalhe público de evento em ordem mobile-first.
 Props: nenhuma (`additionalProperties: false`). Slots: `title`, `highlight`,
 `essentials`, `content` e `sidebar`. Story: `event-page-layout.default.story.yml`.
-O CSS local também apresenta os render arrays de apoiadores e citações
-identificados por `EventEditorialPresenter` via `data-portal-ui`.
-Sem JavaScript. O componente não consulta entidade, mídia, datas ou acesso; o
-consumidor entrega os render arrays prontos e o `aculta_events` mantém tipo,
-permissões e cache.
+O CSS local apresenta render arrays de apoiadores e citações identificados por
+`EventEditorialPresenter` via `data-portal-ui`. Sem JavaScript. No checkout
+atual não foi encontrado consumidor PHP/Twig nem referência no Config Sync para
+`event-page-layout`; a story é documentação, não prova de uso. A implementação
+fica candidata a P2/P3 até confirmar a composição real do detalhe do Evento.
 
 ### lms-lesson-page
 
@@ -673,7 +679,7 @@ autorizada.
 - **Papel:** cartão para eventos e pontos culturais.
 - **Props:** `title`, `url`, `category`, `date`, `location`, `summary`, `variant` (`default` ou `compact`), `accent` (`green`, `yellow`, `red` ou ausente), `cancelled` e `cancel_label`. Stories DRAFT de acento: `card-cultural.accent-draft.story.yml`, `card-cultural.accent-yellow-draft.story.yml` e `card-cultural.accent-red-draft.story.yml`; story de cancelamento: `card-cultural.event-cancelled.story.yml`. O tema recebe dados resolvidos pelo Portal; stories não são selecionadas pelo tema.
 - **Slots:** `image`, `actions`.
-- **Estado:** apresentação consumida pelo catálogo público de Eventos via override fino no tema; estilos de título, metadados e cancelamento são locais ao SDC. Dados, ACL, filtro e cache continuam no módulo owner. Faixa de acento permanece separada e DRAFT até D1 (`domain_presentation.accent`). Browser visual aguarda validação autenticada/runtime.
+- **Estado:** a row de `eventos_publicos` compõe `card-cultural` como SDC; a View usa UI Patterns Views com `layout-grid`. O plugin `PublicCatalogueCard` prepara props mínimas; dados, ACL, filtro e metadados de cache continuam no módulo owner. HTTP 200 foi confirmado após correção do template ausente; aceite visual completo ainda pendente. Faixa de acento permanece separada e DRAFT até D1 (`domain_presentation.accent`). Browser visual aguarda validação autenticada/runtime.
 
 ### forum-topic — Tópico do Fórum
 - **Papel:** teaser e conteúdo completo do tópico, preservando autoria, categorias, favoritos e discussão nos render arrays Drupal.

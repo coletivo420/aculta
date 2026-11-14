@@ -101,6 +101,7 @@ $component_ids = [
   'green-stash-page',
   'heading',
   'hero-banner',
+  'hint',
   'icon',
   'image-audit-report',
   'layout-section',
@@ -201,7 +202,13 @@ $samples = [
     ],
   ],
   'account-menu' => [
-    '#props' => ['authenticated' => TRUE],
+    '#props' => [
+      'authenticated' => TRUE,
+      'legal_links' => [
+        ['title' => 'Busca', 'url' => '/busca'],
+        ['title' => 'Privacidade', 'url' => '/politica-de-privacidade'],
+      ],
+    ],
     '#slots' => ['avatar' => '', 'menu_items' => '<ul><li><a href="/conta">Minha conta</a></li></ul>'],
   ],
   'account-shell' => [
@@ -425,6 +432,10 @@ $samples = [
   'hero-banner' => [
     '#props' => ['title' => 'Agenda cultural', 'cta_text' => 'Ver eventos', 'cta_url' => '/eventos'],
     '#slots' => ['background_media' => ''],
+  ],
+  'hint' => [
+    '#props' => ['tone' => 'muted'],
+    '#slots' => ['content' => Markup::create('Texto auxiliar fictício.')],
   ],
   'icon' => ['#props' => ['name' => 'map-pin', 'variant' => 'duotone', 'size' => 'md']],
   'layout-page' => [

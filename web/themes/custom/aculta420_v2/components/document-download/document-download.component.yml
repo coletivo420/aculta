@@ -9,12 +9,15 @@ props:
   required: [format, size, format_token]
   properties:
     format:
+      title: Formato do documento
       type: string
       minLength: 1
     size:
+      title: Tamanho do arquivo
       type: string
       minLength: 1
     format_token:
+      title: Identificador de formato para exibição
       type: string
       minLength: 1
 slots:

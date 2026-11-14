@@ -9,15 +9,19 @@ props:
   required: [title, status, status_text, issued_text]
   properties:
     title:
+      title: Título do certificado
       type: string
       minLength: 1
     status:
+      title: Estado do certificado
       type: string
       enum: [active, revoked]
     status_text:
+      title: Texto do estado do certificado
       type: string
       minLength: 1
     issued_text:
+      title: Texto da data de emissão
       type: string
       minLength: 1
 slots:

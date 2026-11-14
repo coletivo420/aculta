@@ -106,7 +106,7 @@ class AddToCartAjaxHtmxResponseTest extends UnitTestCase {
     $this->assertInstanceOf(Response::class, $captured);
     $this->assertStringContainsString('id="portal-cart-status-', (string) $captured->getContent());
     $this->assertSame('component', $rendered[0]['#type']);
-    $this->assertSame('aculta420_v2:cart-status', $rendered[0]['#component']);
+    $this->assertSame('aculta420_v2:cart-feedback', $rendered[0]['#component']);
     $this->assertSame('success', $rendered[0]['#props']['status_type']);
     $this->assertSame('aculta420_v2:cart-offcanvas-body', $rendered[1]['#component']);
     $trigger = json_decode((string) $captured->headers->get('HX-Trigger'), TRUE);

@@ -14,9 +14,9 @@ Plano de execução: [layouts-plan.md](layouts-plan.md). Telas do Studio:
 
 ## 0. Como ler
 
-**Estado implementado (2026-11-13):** os shells clássico e `shell-v2` compõem
-diretamente o SDC `layout-page`; o fallback de markup e CSS `.page__main` foi
-removido. A homologação visual no Runtime ainda está pendente.
+**Estado implementado (2026-11-13):** o shell único em `page.html.twig` compõe
+diretamente o SDC `layout-page`; o template paralelo e o fallback de markup/CSS
+`.page__main` foram removidos. A homologação visual no Runtime ainda está pendente.
 
 - **Alvo:** o layout que a V2 deve ter ao fim da fase P1 do ADR-048.
 - **Hoje:** o que o `page.html.twig` faz agora. Onde difere do alvo, está marcado **muda**.

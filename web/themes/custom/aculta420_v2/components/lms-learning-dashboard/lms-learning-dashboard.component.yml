@@ -9,17 +9,23 @@ props:
   required: [title, introduction, continue_title, courses_title, empty_courses_message, certificates_title]
   properties:
     title:
+      title: Título do painel de aprendizagem
       type: string
       minLength: 1
     introduction:
+      title: Introdução do painel
       type: string
     continue_title:
+      title: Título da seção de continuidade
       type: string
     courses_title:
+      title: Título da lista de cursos
       type: string
     empty_courses_message:
+      title: Mensagem sem cursos
       type: string
     certificates_title:
+      title: Título da lista de certificados
       type: string
 slots:
   resume:

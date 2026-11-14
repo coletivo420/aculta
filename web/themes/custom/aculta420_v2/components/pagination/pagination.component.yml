@@ -9,12 +9,15 @@ props:
   required: [current_page, links]
   properties:
     current_page:
+      title: Página atual
       type: integer
       minimum: 1
     total_pages:
+      title: Total de páginas
       type: [integer, 'null']
       minimum: 1
     links:
+      title: Links de navegação entre páginas
       type: array
       items:
         type: object

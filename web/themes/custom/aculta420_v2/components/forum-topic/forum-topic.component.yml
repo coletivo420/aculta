@@ -27,6 +27,7 @@ slots:
     description: Heading e link processados pelo template Drupal.
   meta:
     title: Data de publicação
+    description: Data e metadados de publicação do tópico.
   bookmark:
     title: Ação de favorito
     description: Render array de ação com acesso validado pelo Drupal.

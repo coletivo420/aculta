@@ -13,6 +13,7 @@ props:
       title: Atributos HTML opcionais
       default: null
     type:
+      title: Tipo do aviso
       type: string
       enum: [status, info, warning, error]
     role:
@@ -32,6 +33,7 @@ props:
       title: Rótulo do controle de fechamento
       minLength: 1
     messages:
+      title: Mensagens exibidas
       type: array
       minItems: 0
       default: []

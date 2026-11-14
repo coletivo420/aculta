@@ -9,25 +9,33 @@ props:
   required: [connections_title, search_title, search_input_placeholder, search_hint]
   properties:
     connections_title:
+      title: Título da lista de conexões
       type: string
       default: Suas conexões
     search_title:
+      title: Título da busca de conexões
       type: string
       default: Buscar novas conexões
     filter_placeholder:
+      title: Texto de exemplo do filtro
       type: string
       default: Filtrar suas conexões...
     search_input_placeholder:
+      title: Texto de exemplo da busca
       type: string
       default: Digite o nome ou apelido...
     search_hint:
+      title: Orientação da busca
       type: string
       default: Digite pelo menos 3 caracteres para buscar.
     empty_connections_message:
+      title: Mensagem sem conexões
       type: string
       default: Você ainda não tem conexões.
 slots:
   connections_list:
     title: Lista de conexões aceitas
+    description: Lista de conexões já aceitas pelo usuário.
   search_results:
     title: Resultados da busca de conexões
+    description: Resultados da pesquisa de novas conexões.

@@ -55,7 +55,6 @@ salva para exportar e nenhum `cex` foi executado.
 | `aculta_radius_field` | select | `base` | `sm` (4px), `base` (8px) | campos de formulário |
 | `aculta_accent_override` | select | `mapping` | `mapping` (padrão: pelo tipo de conteúdo), `green`, `yellow`, `red` (forçam uma cor para todos) | cor da faixa de acento |
 | `aculta_show_accent_stripe` | boolean | `true` | sim, não | faixa de acento dos cartões de área |
-| `aculta_shell_variant` | select | `classic` | `classic` (shell atual), `v2` (cinco áreas finais, em homologação) | estrutura da página |
 
 `aculta_accent_override` só fica ativo com a faixa visível. Com `mapping`, o tema
 usa o valor `accent` que o Portal envia, por tipo (`docs/superficies.md`, seção 8.3).
@@ -65,9 +64,9 @@ Não há opção de "sem faixa" aqui: para isso, use `aculta_show_accent_stripe`
 
 Os valores seguem `docs/superficies.md`, seção 1.
 
-### 2.0 Shell da página (ADR-054)
+### 2.0 Shell da página
 
-A seção **Shell da página** oferece `classic` e `v2`. O padrão é `classic`, que mantém `templates/layout/page.html.twig` e as nove regiões atuais. `v2` ativa `templates/layout/page--shell-v2.html.twig`, que compõe as cinco áreas finais (institution, header, content, sidebar_first, footer) e usa as regiões antigas `navigation`, `highlighted`, `help` e `breadcrumb` como ponte até o corte homologado. A troca é reversível pela mesma opção, sem migração de dados nem alteração do `info.yml` nesta fase.
+O tema mantém um único shell em `templates/layout/page.html.twig`, composto pelo SDC `layout-page` e pelas regiões declaradas em `aculta420_v2.info.yml`. Não há seletor de variante nem template de shell paralelo.
 
 ### 2.1 Skin visual por domínio (UI Skins)
 
@@ -79,9 +78,9 @@ O campo `aculta_purpose_palette`, seu formulário e schemas foram removidos, sem
 
 Por decisão ADR-054 (2026-11-09), a seção **Layout de container** foi retirada de `theme-settings.php`. Portanto, o administrador não dispõe mais de selects para modo, estilo e largura por purpose.
 
-**Descontinuado no corte P9 (2026-11-09):** a leitura de `aculta_purpose_container`, o schema e a classe `PurposeContainerLayout` foram removidos. Larguras e estilos vêm dos layouts SDC, do Layout Builder e do shell v2, que é o padrão.
+**Descontinuado no corte P9 (2026-11-09):** a leitura de `aculta_purpose_container`, o schema e a classe `PurposeContainerLayout` foram removidos. Larguras e estilos vêm dos layouts SDC e do Layout Builder no shell único do tema.
 
-A implementação e os testes de 2026-11-06 pertencem ao histórico, em `docs/architecture/PLANO-LAYOUT-CONTAINER-POR-PURPOSE.md`. O plano vigente é `docs/architecture/ACULTA420-V2-REFATORACAO-SDC-LAYOUT-BUILDER.md` na raiz do repositório.
+A implementação e os testes de 2026-11-06 pertencem ao histórico, em `docs/architecture/PLANO-LAYOUT-CONTAINER-POR-PURPOSE.md`. O plano histórico fica em `../../../../docs/architecture/ACULTA420-V2-REFATORACAO-SDC-LAYOUT-BUILDER.md`; consulte a decisão vigente na ADR-056 antes de executar novos cortes.
 
 
 ## 3. O que não é do tema

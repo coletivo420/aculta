@@ -1,8 +1,10 @@
-# UI Styles do tema V2 (Fase 4)
+# UI Styles do tema V2 — inventário e pendências
 
-Estilos que o administrador Drupal pode aplicar pelo módulo `ui_styles`, sem
-código. Cada opção aponta para uma variante que já existe no componente, com
-tokens e contraste medidos. Nenhum estilo novo é criado nesta fase.
+Este documento começou como plano da Fase 4. O Config Sync atual habilita UI
+Styles e integrações de Block, Layout Builder, Page, UI Patterns, Views e Entity
+Status. Use o inventário abaixo como registro histórico até a reconciliação P0
+da ADR-056 confirmar cada opção contra código e Runtime; presença no YAML não
+prova homologação.
 
 ## 1. Decisões do responsável (2026-11-05)
 

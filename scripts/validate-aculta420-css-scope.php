@@ -143,12 +143,12 @@ $assert(str_contains($hook, "'public-profile', 'public-profile-page'"), 'A rota 
 $accountTermsComponent = (string) file_get_contents($theme . '/components/account-terms-modal/account-terms-modal.component.yml');
 $accountTermsCss = (string) file_get_contents($theme . '/components/account-terms-modal/account-terms-modal.css');
 $accountTermsTwig = (string) file_get_contents($theme . '/components/account-terms-modal/account-terms-modal.twig');
-$accountTermsTemplate = (string) file_get_contents($theme . '/templates/aculta-portal-account-terms-modal.html.twig');
+$accountAgreementHooks = (string) file_get_contents($root . '/web/modules/custom/aculta_portal/src/Hook/AcultaUserAgreementHooks.php');
 $accountCss = (string) file_get_contents($theme . '/src/styles/portal-account.css');
 $assert(str_contains($accountTermsComponent, 'account-terms-modal.css'), 'O SDC account-terms-modal não declara seu CSS local.');
 $assert(str_contains($accountTermsCss, '.account-terms-modal .portal-terms-modal__documents'), 'O SDC account-terms-modal perdeu o estilo da lista de documentos.');
 $assert(!str_contains($accountCss, '.portal-terms-modal__documents'), 'O estilo do modal de termos permaneceu na folha geral da Conta.');
-$assert(str_contains($accountTermsTemplate, "include('aculta420_v2:account-terms-modal'"), 'O template do Portal não compõe o SDC account-terms-modal.');
+$assert(str_contains($accountAgreementHooks, "'aculta420_v2:account-terms-modal'"), 'O hook de acordo do Portal não compõe diretamente o SDC account-terms-modal.');
 $assert(str_contains($accountTermsTwig, "setAttribute('id', 'aculta-account-terms')") && str_contains($accountTermsTwig, "setAttribute('data-dialog-title', title)") && str_contains($accountTermsTwig, "setAttribute('hidden', 'hidden')"), 'O SDC account-terms-modal perdeu atributos consumidos pelo diálogo.');
 
 $accountDashboardComponent = Yaml::parseFile($theme . '/components/account-experience-dashboard/account-experience-dashboard.component.yml');
@@ -200,10 +200,10 @@ $assert(!str_contains($baseCss, '.htmx-indicator') && !str_contains($baseCss, '.
 $assert(!str_contains($baseCss, '.flex-column'), 'A utilidade flex-column do visualizador PDF voltou ao CSS global.');
 $assert(!str_contains($baseCss, '.container {') && !str_contains($baseCss, '.grid {'), 'Utilidades sem emissores voltaram ao CSS global.');
 $pageTemplate = (string) file_get_contents($theme . '/templates/layout/page.html.twig');
-$pageShellTemplate = (string) file_get_contents($theme . '/templates/layout/page--shell-v2.html.twig');
 $pageLayoutCss = (string) file_get_contents($theme . '/src/styles/layout.css');
-$assert(str_contains($pageTemplate, "include('aculta420_v2:layout-page'") && str_contains($pageShellTemplate, "include('aculta420_v2:layout-page'"), 'Os templates de página devem compor diretamente o SDC layout-page.');
-$assert(!str_contains($pageTemplate, 'aculta_layout_page_sdc_available') && !str_contains($pageShellTemplate, 'aculta_layout_page_sdc_available') && !str_contains($pageTemplate, 'page__main--') && !str_contains($pageShellTemplate, 'page__main--'), 'O fallback de markup page__main permaneceu nos templates.');
+$assert(str_contains($pageTemplate, "include('aculta420_v2:layout-page'"), 'O shell único deve compor diretamente o SDC layout-page.');
+$assert(!is_file($theme . '/templates/layout/page--shell-v2.html.twig'), 'O template paralelo de shell voltou ao tema.');
+$assert(!str_contains($pageTemplate, 'aculta_layout_page_sdc_available') && !str_contains($pageTemplate, 'page__main--'), 'O fallback de markup page__main permaneceu no template único.');
 $assert(!str_contains($pageLayoutCss, '.page__main'), 'O CSS global ainda contém apresentação do fallback page__main.');
 $forumPostCardCss = (string) file_get_contents($theme . '/components/forum-post-card/forum-post-card.css');
 $forumQuoteHooks = (string) file_get_contents($root . '/web/modules/custom/aculta_portal/modules/aculta_forum/src/Hook/ForumQuoteHooks.php');

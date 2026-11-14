@@ -9,12 +9,15 @@ props:
   required: [caption, rows]
   properties:
     caption:
+      title: Título do ranking por categoria
       type: string
       minLength: 1
     empty:
+      title: Mensagem sem categorias
       type: string
       default: Sem dados no período.
     rows:
+      title: Categorias do ranking
       type: array
       items:
         type: object

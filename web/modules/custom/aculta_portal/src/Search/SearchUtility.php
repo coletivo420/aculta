@@ -36,7 +36,7 @@ final class SearchUtility {
   public function build(): array {
     return [
       '#type' => 'component',
-      '#component' => 'aculta420_v2:search-trigger',
+      '#component' => 'aculta420_v2:site-search-trigger',
       '#props' => [
         'label' => (string) $this->t('Buscar no site'),
         'url' => Url::fromRoute('aculta_portal.search_popup')->toString(),

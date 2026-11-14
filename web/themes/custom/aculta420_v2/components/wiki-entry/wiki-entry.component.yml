@@ -2,11 +2,11 @@ $schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schema
 name: Verbete da Wiki
 description: Apresenta um verbete completo ou um cartão de listagem usando campos e ações renderizados pelo Drupal.
 status: experimental
-group: Conteúdo
+group: Layouts
 props:
   type: object
   additionalProperties: false
-  required: [variant, has_summary, has_image, has_categories]
+  required: [variant]
   properties:
     variant:
       type: string
@@ -23,6 +23,11 @@ props:
       title: URL canônica do verbete
       format: uri-reference
       default: null
+    entity_title:
+      type: string
+      title: Título do verbete
+      description: Título vindo do contexto da entidade no Layout Builder.
+      default: ''
     has_summary:
       type: boolean
       title: Resumo visível
@@ -32,19 +37,10 @@ props:
     has_categories:
       type: boolean
       title: Categorias visíveis
-    has_related:
-      type: boolean
-      title: Verbetes relacionados visíveis
-      default: false
-    has_references:
-      type: boolean
-      title: Referências visíveis
-      default: false
-    has_discussion:
-      type: boolean
-      title: Discussão visível
-      default: false
 slots:
+  body:
+    title: Corpo do verbete
+    description: Corpo renderizado pelo Drupal.
   title:
     title: Título
     description: Texto simples no artigo ou título vinculado no cartão.
@@ -57,13 +53,12 @@ slots:
   categories:
     title: Categorias
     description: Termos renderizados e autorizados pelo Drupal.
-  body:
-    title: Corpo do verbete
-    description: Corpo renderizado pelo Drupal.
   related:
     title: Verbetes relacionados
+    description: Lista de verbetes relacionados autorizados e renderizados pelo Drupal.
   references:
     title: Referências
+    description: Referências bibliográficas renderizadas para o verbete.
   discussion:
     title: Discussão
     description: Render array de discussão fornecido pelo módulo proprietário.

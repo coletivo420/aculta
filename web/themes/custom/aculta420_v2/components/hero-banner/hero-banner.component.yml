@@ -9,13 +9,17 @@ props:
   required: [title]
   properties:
     title:
+      title: Título principal
       type: string
       minLength: 1
     tagline:
+      title: Texto de apoio
       type: [string, 'null']
     cta_text:
+      title: Texto do botão de ação
       type: [string, 'null']
     cta_url:
+      title: Endereço do botão de ação
       type: [string, 'null']
       format: uri-reference
 slots:

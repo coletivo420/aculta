@@ -9,8 +9,10 @@ props:
   required: [message]
   properties:
     message:
+      title: Mensagem do estado vazio
       type: string
       minLength: 1
     hint:
+      title: Orientação complementar
       type: string
       default: ''

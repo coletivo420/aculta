@@ -9,6 +9,7 @@ props:
   required: [label]
   properties:
     label:
+      title: Texto do selo
       type: string
       minLength: 1
     variant:

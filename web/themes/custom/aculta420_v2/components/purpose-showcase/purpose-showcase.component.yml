@@ -8,10 +8,12 @@ props:
   additionalProperties: false
   properties:
     heading:
+      title: Título da apresentação
       type: string
       minLength: 1
       default: Ecossistema ACULTA
     links:
+      title: Links disponíveis
       type: array
       default: []
       items:

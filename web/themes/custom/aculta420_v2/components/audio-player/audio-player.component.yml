@@ -9,10 +9,13 @@ props:
   required: [src, title]
   properties:
     src:
+      title: Endereço do arquivo de áudio
       type: string
       format: uri-reference
     title:
+      title: Título do áudio
       type: string
       minLength: 1
     artist:
+      title: Artista ou autoria
       type: [string, 'null']

@@ -9,12 +9,15 @@ props:
   required: [title]
   properties:
     title:
+      title: Título da página da conta
       type: string
       minLength: 1
     section_title:
+      title: Título da seção da conta
       type: string
       default: ''
     menu_items:
+      title: Itens de navegação da conta
       type: array
       default: []
       items:
@@ -30,6 +33,7 @@ props:
             type: boolean
             default: false
     accordion_items:
+      title: Seções expansíveis da conta
       type: array
       default: []
       items:
@@ -45,6 +49,7 @@ props:
             type: boolean
             default: false
     logout:
+      title: Ação para sair da conta
       type: object
       additionalProperties: false
       required: [label, href]
@@ -56,6 +61,7 @@ props:
 slots:
   content:
     title: Conteúdo da seção
+    description: Conteúdo principal fornecido pelo módulo da área da conta.
 assets:
   css:
     component:

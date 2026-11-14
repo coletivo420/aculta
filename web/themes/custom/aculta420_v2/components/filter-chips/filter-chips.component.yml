@@ -9,6 +9,7 @@ props:
   required: [items]
   properties:
     items:
+      title: Filtros ativos a exibir
       type: array
       items:
         type: object

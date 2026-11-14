@@ -36,5 +36,7 @@ props:
 slots:
   content:
     title: Conteudo da etapa
+    description: Conteúdo renderizado da etapa atual do tour.
   actions:
     title: Botoes de navegacao
+    description: Controles para avançar, voltar ou encerrar o tour.

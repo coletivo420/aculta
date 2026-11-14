@@ -135,7 +135,7 @@ class AddToCartAjax {
     $errors = array_map(static fn($error): string => strip_tags((string) $error), array_values($formState->getErrors()));
     return [
       '#type' => 'component',
-      '#component' => 'aculta420_v2:cart-status',
+      '#component' => 'aculta420_v2:cart-feedback',
       '#props' => [
         'status_type' => $errors === [] ? 'success' : 'error',
         'status_role' => $errors === [] ? 'status' : 'alert',

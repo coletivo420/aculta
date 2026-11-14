@@ -9,12 +9,15 @@ props:
   required: [action, options, selected, submit_label]
   properties:
     action:
+      title: Endereço de envio do filtro
       type: string
       minLength: 1
     label:
+      title: Rótulo do filtro de período
       type: string
       default: Período
     options:
+      title: Períodos disponíveis
       type: array
       items:
         type: object
@@ -26,11 +29,14 @@ props:
           label:
             type: string
     selected:
+      title: Período selecionado
       type: string
     submit_label:
+      title: Texto do botão de aplicação
       type: string
       minLength: 1
     hidden:
+      title: Campos ocultos do formulário
       type: array
       items:
         type: object

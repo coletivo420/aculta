@@ -11,10 +11,21 @@ props:
   additionalProperties: false
   required: [href]
   properties:
-    href: { type: string, format: uri-reference }
-    all_href: { type: string, default: '' }
-    count: { type: integer, minimum: 0, default: 0 }
+    href:
+      type: string
+      format: uri-reference
+      title: Endereço da central de alertas
+    all_href:
+      type: string
+      default: ''
+      title: Endereço de todos os alertas
+    count:
+      type: integer
+      minimum: 0
+      default: 0
+      title: Quantidade de alertas
     count_kind:
       type: string
+      title: Tipo de contagem dos alertas
       enum: [active, attention]
       default: active

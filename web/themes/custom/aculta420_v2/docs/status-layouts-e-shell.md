@@ -1,6 +1,6 @@
 # Status de layouts, shell e Studio
 
-Status por bloco de layout, shell e Studio, extraído do roadmap em 2026-11-05. O estado geral das fases fica em `roadmap.md`.
+Snapshot de status extraído do roadmap em 2026-11-05; os registros abaixo não descrevem automaticamente o checkout atual. O shell paralelo e os presenters de Evento/FAQ já não existem no código. Refaça as afirmações por código/Config Sync conforme ADR-056; a fila vigente fica no início de `roadmap.md`.
 
 ## H2 — Meu Perfil privado em `/meu-perfil`
 

@@ -1,6 +1,6 @@
 name: Erro ao adicionar item
 description: Erro anunciado como alerta, sem link para o carrinho.
-component: aculta420_v2:cart-status
+component: aculta420_v2:cart-feedback
 props:
   status_type: error
   status_role: alert

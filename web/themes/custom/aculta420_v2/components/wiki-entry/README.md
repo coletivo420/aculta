@@ -19,4 +19,6 @@ composição de slot em Views.
   com coluna de informações a partir de `48rem`.
 
 A UI Patterns Library descobre este SDC e suas stories automaticamente.
+O módulo customizado `aculta_ui_library` está em retirada completa; este
+componente permanece no catálogo oficial UI Patterns Library.
 A validação visual em páginas Wiki reais ainda depende do Runtime.

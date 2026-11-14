@@ -5,7 +5,7 @@
 **Branch de trabalho:** `dev`.
 **Corte de auditoria estática:** `c599f9363dbb36ca0586c0a6ead9c39f4c4d79dd` (revalidado e entregue no HEAD do dev).
 **Owners:** apresentação e SDCs em `aculta420_v2`; catálogo único de SDCs/stories na UI Patterns Library; integrações contrib em UI Patterns/UI Styles; regras de negócio nos módulos proprietários.
-**Revisão posterior (ADR-056, 2026-11-13):** o plano abaixo preserva evidências históricas, mas a decisão de manter catálogo próprio de blocos em `aculta_ui_library` foi revogada. O módulo agora apenas redireciona a rota administrativa legada para UI Patterns Library; catálogo e previews próprios foram removidos.
+**Revisão posterior (ADR-056, 2026-11-13):** o plano abaixo preserva evidências históricas. O catálogo/prévias próprios foram removidos primeiro; por decisão posterior do responsável, o módulo `aculta_ui_library` inteiro, inclusive o redirect, será removido após desinstalação estrutural. Somente UI Patterns Library permanece como catálogo.
 **Relacionamento:** ADR-050 (HTMX), ADR-054 (SDC First, Layout Builder e purposes), ADR-055 (UI Icons/UI Styles Page/emojis) e [plano P7 da ADR-054](ACULTA420-V2-REFATORACAO-SDC-LAYOUT-BUILDER.md).
 
 ## 1. Decisão vinculante: UI Patterns universal
@@ -13,7 +13,7 @@
 1. **100% dos SDCs internos, reutilizáveis e editoriais permanecem registrados no UI Patterns**, pesquisáveis, documentados e acessíveis nas integrações tecnicamente compatíveis.
 2. Não remover, ocultar por categoria, desregistrar, desabilitar descoberta, converter em componente privado ou aplicar `status: deprecated` para forçar a redução do catálogo. Categorias/tags/famílias/purpose são metadados de navegação, **não ACL nem filtro excludente**.
    **Adendo ADR-055 (2026-11-10):** isso proíbe usar depreciação como artifício para esconder SDCs. A classificação `LEGACY_DEPRECATED` e `LEGACY_OBSOLETE` agora é obrigatória para apresentações legadas fora da UI Suite. `status: deprecated` em SDC só é cabível quando for um SDC efetivamente substituído e ainda descobrível; nenhum componente pode sumir da biblioteca por essa classificação. Ver `docs/architecture/ACULTA-UI-SUITE-MIGRACAO-LEGADO-SKINS.md`.
-3. UI Patterns Library é o catálogo único de SDCs/stories. `aculta_ui_library` não mantém catálogo nem prévias próprias; não criar catálogo concorrente.
+3. UI Patterns Library é o catálogo único de SDCs/stories. Não criar catálogo concorrente. `aculta_ui_library` está em retirada completa, após desinstalação estrutural.
 4. UI Styles, UI Icons (Phosphor e Fluent Emoji), UI Styles Page, UI Patterns Blocks, Field, Field Formatters, Layouts, Views e Layout Builder mantêm seus contratos. Não apagar fontes ou opções existentes para melhorar benchmark.
 5. Otimização atua em **trabalho desnecessário**, cache válido, resolução de fontes, apresentação paginada, pesquisa e **prévia sob demanda**. A página pode exibir todos os metadados sem materializar todas as stories.
 6. Respeitar a fronteira Portal -> contrato de apresentação neutro -> tema/SDCs. HTMX antes de novo Drupal AJAX, sem carregar jQuery globalmente, sem dependência de hostname no tema.
@@ -96,7 +96,7 @@ Há três icon packs declarados pelo tema e nove grupos UI Styles. Grande númer
 
 ### PERF-06 - P3: catálogo de blocos reais (retirado pela ADR-056)
 
-O catálogo e as prévias de blocos do `aculta_ui_library` foram removidos. A rota antiga é um alias protegido para UI Patterns Library. Não reimplementar esse índice ou preview dentro do módulo.
+O catálogo e as prévias de blocos do `aculta_ui_library` foram removidos. O responsável decidiu remover também o alias restante e o módulo inteiro após desinstalação segura no Runtime. Não reimplementar esse índice ou preview.
 
 ## 4. Desenho-alvo sem exclusão de componentes
 

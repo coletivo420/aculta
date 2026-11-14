@@ -9,31 +9,42 @@ props:
   required: [title, progress_id, progress_label, progress_text, has_lessons, finished, pending_evaluation, pending_text, finished_text]
   properties:
     title:
+      title: Título do curso
       type: string
       minLength: 1
     progress_id:
+      title: Identificador da barra de progresso
       type: string
       pattern: '^[A-Za-z][A-Za-z0-9_-]*$'
     progress_label:
+      title: Nome acessível do progresso
       type: string
       minLength: 1
     progress_text:
+      title: Texto do progresso
       type: string
     progress_value:
+      title: Progresso percentual
       type: [number, 'null']
       minimum: 0
       maximum: 100
     has_lessons:
+      title: Curso possui aulas
       type: boolean
     finished:
+      title: Curso concluído
       type: boolean
     pending_evaluation:
+      title: Há avaliação pendente
       type: boolean
     pending_text:
+      title: Texto de avaliação pendente
       type: string
     finished_text:
+      title: Texto de conclusão
       type: string
     current_lesson:
+      title: Aula atual
       type: string
       default: ''
 slots:

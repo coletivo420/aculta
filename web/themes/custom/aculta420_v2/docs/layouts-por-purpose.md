@@ -1,5 +1,13 @@
 # Layouts por purpose e consumo dos componentes
 
+> **Inventário histórico em revisão (2026-11-13):** o corte de overrides tornou
+> várias linhas abaixo obsoletas, mas consumidores não migraram todos para um
+> único fallback: alguns usam displays/Views/UI Patterns e outros mantêm
+> presenters do módulo. Os nomes da tabela são hipóteses antigas, não evidência
+> atual. Refaça cada linha por meio de código e Config Sync segundo ADR-056; o
+> SDC `event-page-layout` e o `accordion` não têm consumidor encontrado no
+> checkout atual.
+
 Inventário de 2026-11-05: quais templates de página cada purpose usa e quais
 componentes SDC eles consomem. Serve de base para a adoção dos componentes
 visuais, purpose a purpose, sem repetir a regressão de `91549bc7`.
@@ -62,7 +70,7 @@ Componentes com consumo: `accordion`, `alerts-trigger`, `author-card`, `avatar`,
 `forum-topic`, `icon`, `layout-page`, `lms-lesson-page`, `map-popup`,
 `messenger-trigger`, `multidomain-bar`, `pagination`, `purpose-showcase`,
 `revista-listing`, `revista-publication`, `revista-teaser`, `site-footer`,
-`donation-quick`, `donation-presentation`, `social-links-page`, `status-messages`, `tabs`, `wiki-entry`.
+`social-links-page`, `status-messages`, `tabs`, `wiki-entry`.
 
 ## 2. Páginas por purpose
 
@@ -70,14 +78,14 @@ Componentes com consumo: `accordion`, `alerts-trigger`, `author-card`, `avatar`,
 | --- | --- | --- | --- |
 | `main` | `templates/layout/page.html.twig` (`layout-page`), `site-footer`, `multidomain-bar` | `layout-page`, `site-footer`, `multidomain-bar` | Shell usa componentes; página interna de conteúdo sem `hero-banner` |
 | `account` | Não localizado no repositório como template de página; Studio usa `context-tabs` e os componentes de perfil | `tabs`, `author-card` e `profile-details` consumidos para abas, identidade, bio e redes | `form-field` e `progress` sem consumer de Studio |
-| `support` (Apoio) | Hooks neutros do `aculta_donation`; templates do módulo são fallbacks para outros temas | `button`, `donation-quick`, `donation-presentation` | Blocos Doar/Voltar e valores rápidos emitem SDCs; formulários e resumo da doação continuam no módulo |
-| `magazine` (Revista) | `content/node--revista--full`, `content/node--revista--teaser`, `views/views-view--revista-sessoes--page-revista` | `revista-publication`, `revista-teaser`, `revista-listing`, `author-card` | Principal candidato a `card-cultural` com faixa de acento |
-| `wiki` | `content/node--wiki-entry--full`, `content/node--wiki-entry--teaser` | `wiki-entry`, `breadcrumb` | Aguarda confirmação da F2 para faixa de acento da Wiki |
+| `support` (Apoio) | Blocos `aculta_donation_*`; sem presenter Twig do tema | `donation-presentation`, `button` | Os render arrays dos blocos emitem SDCs diretamente; cálculo e configuração continuam no módulo |
+| `magazine` (Revista) | `content/node--revista--full`, `content/node--revista--teaser`, `views/views-view--revista-sessoes--page-revista` | `revista-publication`, `revista-teaser`, `revista-listing`, `author-card` | Full e teaser ainda usam presenters Twig; `revista_sessoes` permanece em Views default e precisa de migração UI Patterns Views |
+| `wiki` | Full via Layout Builder + UI Patterns em `core.entity_view_display.node.wiki_entry.full`; teaser em `content/node--wiki-entry--teaser` | `wiki-entry`, `breadcrumb` | Full já publica o SDC `wiki-entry` em Layout Builder; teaser ainda não tem substituto UI Patterns |
 | `shop` (Loja) | Não localizado no repositório do tema | Nenhum | Aguarda autorização da Loja (ver `price`) |
 | `courses` (Cursos/LMS) | `lms-lesson-page` (SDC); `aculta_lms` sem templates próprios localizados | `lms-lesson-page`, `progress` (sem consumo) | Falta `progress` e `tabs` |
-| `forum` | `content/node--aculta-forum-topic`; displays de categorias usam row UI Patterns e wrappers padrão de Views | `forum-topic`, `forum-category`, `pagination` | Falta `empty-state` e `data-table` |
-| `eventos` | View `eventos_publicos` na raiz; `aculta-event-page.html.twig` para detalhe | `card-cultural` na listagem; `event-page-layout` no detalhe | Listagem pública validada; estado vazio ainda sem consumer real |
-| `links` (LinkWeed) | Hook neutro do LinkWeed; templates do módulo são fallback para outros temas | `social-links-page` na micropágina; `layout-section` na landing | Avaliar `hero-banner` na landing após homologar os dois consumidores atuais |
+| `forum` | Tópico full e formulário de criação usam presenters do tema; listagens públicas, categorias e busca têm overrides Views | `forum-topic`, `forum-opening-post`, `forum-topic-row`, `forum-list-page`, `forum-category-page`, `forum-search-page`, `pagination` | Remoções foram revertidas onde não havia substituto equivalente; Views ainda usam style/row default e exigem migração para UI Patterns Views |
+| `eventos` | View `eventos_publicos` na raiz; nenhum presenter de detalhe encontrado | `card-cultural` na row da listagem; sem consumidor encontrado para `event-page-layout` | Listagem configurada; apresentação do detalhe pendente de rastreio; estado vazio sem consumer real |
+| `links` (LinkWeed) | O módulo emite diretamente o SDC `social-links-page`; não há presenter de página do tema | `social-links-page` | Migração de template concluída; verificar consumer do `hero-banner` separadamente |
 
 ## 3. Ordem sugerida de adoção
 

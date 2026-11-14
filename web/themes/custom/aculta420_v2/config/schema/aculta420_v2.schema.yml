@@ -31,6 +31,3 @@ aculta420_v2.settings:
         extra:
           type: string
           label: 'Classes extras'
-    aculta_shell_variant:
-      type: string
-      label: 'Variante do shell da página (classic ou v2)'

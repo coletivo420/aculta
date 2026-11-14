@@ -6,7 +6,6 @@ aculta_show_accent_stripe: true
 aculta_revista_accent:
   selected: {  }
   extra: ''
-aculta_shell_variant: v2
 third_party_settings:
   ui_skins:
     css_variables:

@@ -2,6 +2,8 @@
 
 **Estado:** arquitetura decidida; implementacao por pacotes e homologacao pendentes. Decisao: ADR-054. Branch dev. Referencia inicial: 2026-11-09.
 
+> **Substituído em 2026-11-13:** este plano registra a estratégia anterior de rollout paralelo, homologação visual antes do corte e fallback. A seção “Decisão vigente — corte radical da apresentação legada” da ADR-054 prevalece: conversão direta, sem exigir paridade visual nem piloto bloqueante. Reaproveite deste plano somente os contratos de segurança, acesso, cache, ownership e integridade que não conflitem com a decisão vigente.
+
 ## 1. Objetivo e limites
 
 Um so tema ACULTA420 V2, com cinco regioes, shell compartilhado, componentes SDC reutilizaveis, bibliotecas CSS/JS seletivas, Layout Builder nos displays compativeis, landing pages especificas para dez purposes e catalogo de SDCs/blocos Drupal com previas reais apenas para administradores. Migracao paralela no mesmo tema e sem criar nova branch/PR. A funcao administrativa 'Layout de container' deixa de existir; interpretacao de configuracoes antigas persiste apenas ate o corte.

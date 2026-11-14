@@ -103,14 +103,6 @@ statistics:
   dependencies:
     - aculta420_v2/global-styling
 
-shell-v2:
-  version: 0.1.0
-  css:
-    theme:
-      src/styles/shell-v2.css: {}
-  dependencies:
-    - aculta420_v2/global-styling
-
 global-styling:
   version: 1.2.0-dev.3
   css:

@@ -24,8 +24,7 @@ function aculta420_v2_preprocess(array &$variables): void {
 /**
  * Implements hook_theme_suggestions_page_alter().
  *
- * A sugestão do shell paralelo é apresentação: fica no arquivo do tema, não
- * em src/Hook. O padrão continua page.html.twig quando a opção é classic.
+ * Retained until the shared Runtime hook cache is rebuilt safely.
  */
 function aculta420_v2_theme_suggestions_page_alter(array &$suggestions, array $variables): void {
   if (theme_get_setting('aculta_shell_variant') === 'v2') {

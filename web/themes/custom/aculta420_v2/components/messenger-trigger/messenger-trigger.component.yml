@@ -11,9 +11,19 @@ props:
   additionalProperties: false
   required: [href]
   properties:
-    href: { type: string, format: uri-reference }
-    all_href: { type: string, default: '' }
-    count: { type: integer, minimum: 0, default: 0 }
+    href:
+      type: string
+      format: uri-reference
+      title: Endereço da caixa de mensagens
+    all_href:
+      type: string
+      default: ''
+      title: Endereço de todas as mensagens
+    count:
+      type: integer
+      minimum: 0
+      default: 0
+      title: Quantidade de mensagens não lidas
 assets:
   css:
     component:

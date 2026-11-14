@@ -111,7 +111,7 @@ Beneficios tangiveis:
 
 ### 5.5 Bibliotecas e exemplos
 
-- Manter UI Patterns Library universal, suas stories e preview sob demanda. `aculta_ui_library` não mantém lista nem prévia própria; a rota antiga redireciona ao catálogo oficial.
+- Manter UI Patterns Library universal, suas stories e preview sob demanda. O módulo customizado `aculta_ui_library` será removido por completo, inclusive a rota antiga, após sua desinstalação no Runtime em janela estrutural aprovada.
 - Reunir navegacao administrativa entre padrões, icones, estilos, skins e, se aprovado, exemplos; **nao criar outra biblioteca de SDCs**.
 - UI Examples pode fornecer demonstracoes completas de paginas compostas, mas e **opcional** e nao autoriza a exposicao de dados reais.
 - Display Builder e Drupal Canvas sao opcoes para estudo futuro, **fora deste cutover**; nao substituir Layout Builder sem ADR e benchmark.

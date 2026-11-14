@@ -23,12 +23,12 @@ Este arquivo registra cenários de comportamento e o que precisa ser observado. 
 | G9 | Recomendar Display Builder/UI Skins | Reconhecer não instalados e opcionais; sem instalação/migração automática; analisar ADR-054/tokens. |
 | G10 | Validar alias de UI Patterns | Verificar o redirecionamento ao overview oficial, guarda administrativa no MAIN e ausência de rota de preview própria. |
 | G11 | Conteúdo multidomínio/purposes | Preservar host MAIN para rotas administrativas, purposes e `data-theme`; não expor config em host de conteúdo indevido. |
-| G12 | Prevenir sobreposição de biblioteca | UI Patterns Library é a biblioteca única de SDCs e stories; não criar catálogos/previews paralelos nem ocultar componentes para performance. |
+| G12 | Prevenir sobreposição de biblioteca | UI Patterns Library mantém os SDCs; remover `aculta_ui_library` completamente após desinstalação estrutural; não criar catálogo/previews paralelos nem ocultar componentes. |
 
 ## Execução local
 
 - Estática: `python3 scripts/validate-agent-skills.py` verifica frontmatter, nomes, referências, symlinks e casos documentados.
-- Fonte: revisar `composer.json`, `composer.lock`, `config/sync/core.extension.yml` e YAML/arquivos do tema.
+- Fonte: revisar `composer.json`, `composer.lock`, `config/sync/core.extension.yml`, YAML/arquivos de tema e código/testes `aculta_ui_library`.
 - Runtime/browser: DEFERRED nesta auditoria neste worktree sem Core/contrib/vendor executáveis. O registro de sessão de 10-11 relata PHPUnit da UI Library 9/9 e homologação das prévias no runtime em trabalho anterior; isso não é uma execução desta avaliação.
 - Smoke test executado: Claude Code `2.1.322`, `/ui-patterns` com ferramenta Read permitida retornou a regra de não passar entidades/dados sensíveis indiscriminadamente às props. Codex CLI `0.167.0`, `debug prompt-input '$ui-patterns'` incluiu os nomes `ui-patterns`, `sdc`, `ui-styles` e `ui-icons` no contexto. Isto comprova um caso explícito por agente e descoberta estrutural/amostral; a invocação explícita de cada uma das 18 Skills em ambos os CLIs não foi executada, portanto avaliação F completa permanece DEFERRED.
 - Não rodar conteúdo de Graphify que apague artefatos. A avaliação de análise de grafo só pode usar modo não destrutivo autorizado e corpus restrito.

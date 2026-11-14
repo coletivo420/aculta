@@ -33,10 +33,13 @@ props:
 slots:
   avatar:
     title: Avatar ou cartão de autor
+    description: Identificação visual do autor da resposta.
   body:
     title: Corpo da resposta
+    description: Conteúdo renderizado da resposta.
   actions:
     title: Ações (link, editar, citar, responder)
     description: Markup das ações, à esquerda no layout espelhado.
   reactions_slot:
     title: Barra de reações
+    description: Controles de reação autorizados para a resposta.

@@ -1,6 +1,6 @@
 name: Item adicionado
 description: Confirmação com acesso ao carrinho e controle de dispensa.
-component: aculta420_v2:cart-status
+component: aculta420_v2:cart-feedback
 props:
   status_type: success
   status_role: status

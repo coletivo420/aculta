@@ -17,38 +17,48 @@ props:
   required: [brand_home_url, logo_base_url]
   properties:
     brand_home_url:
+      title: Endereço inicial da marca
       type: string
       minLength: 1
       format: uri-reference
     logo_base_url:
+      title: Endereço base dos logotipos
       type: string
       minLength: 1
       format: uri-reference
     logo_alt:
+      title: Texto alternativo do logotipo
       type: string
       minLength: 1
       default: ACULTA
     is_account_domain:
+      title: Exibir no domínio da conta
       type: boolean
       default: false
     show_utility_bar:
+      title: Exibir barra de utilidades
       type: boolean
       default: true
     cart_url:
+      title: Endereço do carrinho
       type: [string, 'null']
       format: uri-reference
       default: null
     cart_count:
+      title: Quantidade de itens no carrinho
       type: integer
       minimum: 0
       default: 0
     cart_empty:
+      title: Carrinho sem itens
       type: boolean
       default: true
     cart_total:
+      title: Valor total do carrinho
       type: string
       default: ''
     cart_sites:
+      title: Carrinhos por site
       type: array
       default: []
       items:
@@ -71,32 +81,40 @@ props:
                 quantity: { type: string }
                 total: { type: string }
     cart_checkout_url:
+      title: Endereço para finalizar compra
       type: string
       default: ''
     messages_url:
+      title: Endereço da caixa de mensagens
       type: [string, 'null']
       format: uri-reference
       default: null
     messages_count:
+      title: Quantidade de mensagens não lidas
       type: integer
       minimum: 0
       default: 0
     messages_all_url:
+      title: Endereço de todas as mensagens
       type: string
       default: ''
     alerts_url:
+      title: Endereço da central de alertas
       type: [string, 'null']
       format: uri-reference
       default: null
     alerts_count:
+      title: Quantidade de alertas
       type: integer
       minimum: 0
       default: 0
     alerts_count_kind:
+      title: Tipo de contagem dos alertas
       type: string
       enum: [active, attention]
       default: active
     alerts_all_url:
+      title: Endereço de todos os alertas
       type: string
       default: ''
 slots:

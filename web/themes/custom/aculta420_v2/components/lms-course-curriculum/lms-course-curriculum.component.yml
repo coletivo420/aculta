@@ -18,6 +18,7 @@ slots:
     description: Ações autorizadas para o educador.
   lessons_heading:
     title: Título da lista de aulas
+    description: Cabeçalho que identifica a lista de aulas e atividades.
   lessons:
     title: Aulas e atividades
     description: Lista ordenável com formulários e ações autorizadas do LMS.

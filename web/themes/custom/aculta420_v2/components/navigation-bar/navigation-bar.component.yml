@@ -12,29 +12,37 @@ props:
   additionalProperties: false
   properties:
     site_name:
+      title: Nome do site
       type: [string, 'null']
       default: null
     site_logo_url:
+      title: Endereço do logotipo do site
       type: [string, 'null']
       format: uri-reference
     brand_home_url:
+      title: Endereço inicial da marca
       type: string
       format: uri-reference
       default: /
     brand_title:
+      title: Nome da marca
       type: string
       default: ACULTA
     brand_logo_url:
+      title: Endereço do logotipo da marca
       type: [string, 'null']
       format: uri-reference
       default: null
     brand_logo_srcset:
+      title: Variações de tamanho do logotipo
       type: string
       default: ''
     brand_logo_alt:
+      title: Texto alternativo do logotipo da marca
       type: string
       default: ''
     menu_id:
+      title: Identificador do menu
       type: string
       pattern: '^[A-Za-z][A-Za-z0-9_-]*$'
       default: aculta-primary-navigation

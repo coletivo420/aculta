@@ -9,16 +9,22 @@ props:
 slots:
   title:
     title: Título da seção
+    description: Título da área de materiais do curso.
   description:
     title: Orientação sobre os documentos
+    description: Texto de apoio sobre os materiais disponíveis.
   add:
     title: Ação de inclusão
+    description: Ação autorizada para adicionar material ao curso.
   items:
     title: Lista de documentos autorizados
+    description: Lista renderizada de materiais que o usuário pode acessar.
   empty:
     title: Estado sem documentos
+    description: Mensagem apresentada quando não há materiais disponíveis.
   unavailable:
     title: Estado indisponível
+    description: Mensagem apresentada quando a área não pode ser acessada.
 assets:
   css:
     component:

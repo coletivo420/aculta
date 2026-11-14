@@ -12,15 +12,19 @@ props:
   required: [map_id]
   properties:
     map_id:
+      title: Identificador HTML do mapa
       type: string
       minLength: 1
     label:
+      title: Nome acessível do mapa
       type: string
       default: Mapa interativo
     privacy_notice_url:
+      title: Endereço da política de privacidade
       type: [string, 'null']
       format: uri-reference
     privacy_notice_text:
+      title: Texto do aviso de privacidade
       type: string
       default: Política de privacidade
 slots:

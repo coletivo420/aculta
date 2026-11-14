@@ -57,13 +57,23 @@ final class PublicCatalogueCard extends FieldPluginBase implements ContainerFact
     $request = $this->requestStack->getCurrentRequest();
     $items = $request->attributes->get('_aculta_events_catalogue_cards', []);
     $item = is_array($items) ? ($items[$eventId] ?? NULL) : NULL;
-    if (!is_array($item)) {
+    if (!is_array($item) || !is_string($item['title'] ?? NULL) || trim($item['title']) === '') {
       return '';
     }
 
     $build = [
-      '#theme' => 'aculta_event_catalogue_card',
-      '#item' => $item,
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:card-cultural',
+      '#props' => [
+        'title' => $item['title'] ?? '',
+        'url' => $item['url'] ?? NULL,
+        'category' => $item['category'] ?? NULL,
+        'date' => $item['date'] ?? NULL,
+        'location' => $item['location'] ?? NULL,
+        'summary' => $item['summary'] ?? NULL,
+        'cancelled' => (bool) ($item['cancelled'] ?? FALSE),
+        'cancel_label' => $item['cancel_label'] ?? 'Evento cancelado',
+      ],
       '#cache' => [
         'contexts' => ['url.query_args', 'user', 'languages:language_interface'],
         'tags' => [EventCacheTags::LISTA],

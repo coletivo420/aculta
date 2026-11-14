@@ -12,19 +12,24 @@ props:
   additionalProperties: false
   properties:
     count:
+      title: Quantidade total de itens
       type: integer
       minimum: 0
       default: 0
     empty:
+      title: Carrinho sem itens
       type: boolean
       default: true
     url:
+      title: Endereço do carrinho
       type: string
       default: ''
     total:
+      title: Valor total do carrinho
       type: string
       default: ''
     sites:
+      title: Carrinhos separados por site
       type: array
       default: []
       items:
@@ -49,8 +54,10 @@ props:
                 quantity: { type: string }
                 total: { type: string }
     checkout_url:
+      title: Endereço para finalizar a compra
       type: string
       default: ''
     banner:
+      title: Mensagem de apoio à compra
       type: string
       default: 'Compre na loja e apoie a luta antiproibicionista!'

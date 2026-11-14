@@ -38,6 +38,7 @@ Regra: rode **somente** os gates do escopo do diff e dos módulos que dependem d
 | Aceite único de termos | `validate-single-acceptance.php` | |
 | Wiki | Unit do `aculta_wiki` (comando em `web/modules/custom/aculta_portal/modules/aculta_wiki/AGENTS.md`) | |
 | Tema ACULTA420 V2 | Gates listados em `web/themes/custom/aculta420_v2/docs/gates.md` | Regras do tema ficam lá |
+| Prop types UI Patterns do tema V2 | `php:script scripts/validate-aculta420-ui-pattern-prop-types.php` | Falha quando o provider atual muda o inventário de props `unknown` sem revisão; requer Drush/Runtime |
 | Tema ACULTA420 (V1 removido) | `validate-aculta420-sdc-schemas.php`, `validate-aculta420-design-foundations.php`, `validate-browser-validators.php`; foundation via `php:script` | O V1 não existe mais no checkout: o design-foundations valida o `aculta420_v2`. O antigo `validate-aculta420-shell-contract.php` foi aposentado |
 | Qualquer teste PHPUnit, `phpunit.xml`, `phpunit.performance.xml` ou `scripts/phpunit-suites.php` | `php scripts/phpunit-suites.php --check` e `vendor/bin/phpunit --testsuite unit` | A guarda falha se um `*Test.php` ficar fora das suítes ou se uma suíte obrigatória esvaziar. Benchmarks: `vendor/bin/phpunit -c phpunit.performance.xml` (opt-in) |
 | Análise estática PHP | `vendor/bin/phpstan analyse` | Usa `phpstan-baseline.neon` revisado; não regenere o baseline no CI. Dívida por módulo/identificador: `docs/operations/testing/phpstan-debt.md` |

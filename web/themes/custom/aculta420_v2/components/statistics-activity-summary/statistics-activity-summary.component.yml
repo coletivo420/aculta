@@ -9,12 +9,15 @@ props:
   required: [title, rows]
   properties:
     title:
+      title: Título do resumo de atividade
       type: string
       minLength: 1
     note:
+      title: Observação do resumo
       type: string
       default: ''
     rows:
+      title: Linhas de atividade
       type: array
       items:
         type: object

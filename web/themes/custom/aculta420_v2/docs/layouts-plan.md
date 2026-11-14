@@ -1,9 +1,11 @@
-# Plano: sistema de layouts de página do tema V2
+# Plano histórico: sistema de layouts de página do tema V2
 
 - **Status:** decisões principais aprovadas em 2026-11-04 (opção A, variante escolhida pelo tema, mapeamento da seção 5.5). Breakpoint e área da conta em proposta. Nenhum código foi alterado por este plano.
 - **Data:** 2026-11-04 (atualizado no mesmo dia).
 - **Relaciona-se com:** ADR-046 (shell, fundações e Fase 4), ADR-047 (menu de conta), [architecture.md](architecture.md), [components.md](components.md), [roadmap.md](roadmap.md).
 - **Fica para:** ADR-048, a ser redigido com as decisões aprovadas (seção 9).
+
+> Este plano antecede o corte radical e as recomendações da ADR-056. Use-o como contexto histórico; contratos e próximos passos devem ser conferidos contra o código e o roadmap atual.
 
 ## 1. Objetivo
 

@@ -4,14 +4,11 @@ component: aculta420_v2:wiki-entry
 props:
   variant: article
   url: /wiki/exemplo
+  entity_title: Exemplo de verbete
   has_summary: true
   has_image: true
   has_categories: true
-  has_related: true
-  has_references: true
-  has_discussion: true
 slots:
-  title: Exemplo de verbete
   summary:
     markup: '<p>Resumo do verbete com uma apresentação direta do assunto.</p>'
   image:

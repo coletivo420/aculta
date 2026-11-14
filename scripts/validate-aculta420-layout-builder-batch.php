@@ -69,12 +69,7 @@ $targets = [
   'node.aculta_notice.default',
 ];
 
-// The Wiki full display has a purpose-built Twig adapter that composes the
-// existing wiki-entry SDC directly instead of rendering Layout Builder's
-// content wrapper. Preserve and verify that established UI Suite contract.
-$directSdcDisplays = [
-  'node.wiki_entry.full' => 'aculta-wiki-article',
-];
+$wikiComponent = 'node.wiki_entry.full';
 
 $displayStorage = \Drupal::entityTypeManager()->getStorage('entity_view_display');
 $syncStorage = \Drupal::service('config.storage.sync');
@@ -116,18 +111,43 @@ foreach ($targets as $id) {
   foreach ($rawSections as $delta => $rawSection) {
     $layoutSettings = $rawSection['layout_settings'] ?? [];
     $patternSettings = $layoutSettings['ui_patterns'] ?? [];
-    $assert(
-      ($rawSection['layout_id'] ?? NULL) === 'ui_patterns:aculta420_v2:layout_section',
-      "$id seção $delta não usa o ComponentLayout UI Patterns."
-    );
-    $assert(
-      ($patternSettings['component_id'] ?? NULL) === 'aculta420_v2:layout-section',
-      "$id seção $delta não referencia o SDC layout-section."
-    );
-    $assert(
-      ($patternSettings['props'] ?? NULL) === [] && ($patternSettings['slots'] ?? NULL) === [],
-      "$id seção $delta contém props/slots inesperados."
-    );
+    $expectedLayout = $id === $wikiComponent
+      ? 'ui_patterns:aculta420_v2:wiki_entry'
+      : 'ui_patterns:aculta420_v2:layout_section';
+    $expectedComponent = $id === $wikiComponent
+      ? 'aculta420_v2:wiki-entry'
+      : 'aculta420_v2:layout-section';
+    $assert(($rawSection['layout_id'] ?? NULL) === $expectedLayout, "$id seção $delta não usa o ComponentLayout UI Patterns esperado.");
+    $assert(($patternSettings['component_id'] ?? NULL) === $expectedComponent, "$id seção $delta não referencia o SDC esperado.");
+    if ($id !== $wikiComponent) {
+      $assert(
+        ($patternSettings['props'] ?? NULL) === [] && ($patternSettings['slots'] ?? NULL) === [],
+        "$id seção $delta contém props/slots inesperados."
+      );
+    }
+    else {
+      $assert(isset($patternSettings['props']['url'], $patternSettings['props']['entity_title']), "$id não mapeia URL canônica e título da entidade.");
+      $expectedRegions = [
+        'field_wiki_summary' => 'summary',
+        'body' => 'body',
+        'field_wiki_categories' => 'categories',
+        'field_wiki_image' => 'image',
+        'field_wiki_references' => 'references',
+        'field_wiki_related' => 'related',
+        'field_aculta_discussion' => 'discussion',
+      ];
+      $foundFields = [];
+      foreach ($rawSection['components'] ?? [] as $component) {
+        $plugin = $component['configuration']['id'] ?? '';
+        foreach ($expectedRegions as $field => $region) {
+          if (str_ends_with($plugin, ':' . $field)) {
+            $foundFields[$field] = TRUE;
+            $assert(($component['region'] ?? NULL) === $region, "$id: $field fora da região SDC $region.");
+          }
+        }
+      }
+      $assert(array_diff_key($expectedRegions, $foundFields) === [], "$id não compõe todos os campos do artigo nos slots SDC.");
+    }
   }
 
   // Renderização real de uma entidade publicada do bundle.
@@ -160,17 +180,14 @@ foreach ($targets as $id) {
   foreach ($classMatches[1] as $classList) {
     $classes = [...$classes, ...preg_split('/\s+/', $classList, -1, PREG_SPLIT_NO_EMPTY)];
   }
-  if (isset($directSdcDisplays[$id])) {
-    $assert(
-      in_array($directSdcDisplays[$id], $classes, TRUE),
-      "$id: saída renderizada sem o adapter SDC direto."
-    );
-  }
-  else {
+  if ($id !== $wikiComponent) {
     $assert(
       in_array('layout-section', $classes, TRUE),
       "$id: saída renderizada sem o wrapper SDC layout-section."
     );
+  }
+  else {
+    $assert(in_array('aculta-wiki-article', $classes, TRUE), "$id: saída sem o SDC wiki-entry.");
   }
 }
 

@@ -13,7 +13,7 @@ anteriores e não substituem a conferência do código atual.
   tema. Callback antigo de sugestão pode permanecer temporariamente por causa
   do cache do Runtime compartilhado; removê-lo depende de janela segura para
   rebuild.
-- 141 manifests SDC e 223 stories. Todos têm story: `hint` exemplifica os tons
+- 136 manifests SDC e 216 stories. Todos têm story: `hint` exemplifica os tons
   normal/muted; `sales-panel` e `secret-reveal` usam dados demonstrativos
   fictícios.
 - Config Sync habilita UI Patterns, Blocks, Field, Field Formatters, Layouts,
@@ -31,7 +31,7 @@ anteriores e não substituem a conferência do código atual.
 - A UI Patterns Library upstream monta a página de provider percorrendo as
   definições agrupadas do component plugin manager. Não localizei filtro
   oficial para ocultar SDCs individuais. O inventário revisado detecta
-  referências literais de produção para 87 dos 141 SDCs; 54 não têm referência
+  referências literais de produção para 82 dos 136 SDCs; 54 não têm referência
   literal encontrada após excluir testes, stories e arquivos do próprio SDC.
   A busca ainda não prova ausência de uso editorial/runtime nem reconhece IDs
   dinâmicos; não remover componentes pelo resultado isolado. Todos os SDCs têm
@@ -42,22 +42,15 @@ anteriores e não substituem a conferência do código atual.
   Library oficial. `config/sync/core.extension.yml` já foi atualizado para não
   habilitar o módulo; a exportação ainda não foi importada no Runtime. A
   desinstalação precisa ocorrer antes de apagar o código. O Runtime
-  atual bloqueia janela estrutural: risco RX, worktree suja e
+  atual bloqueia janela estrutural: risco cumulativo RX/R4, worktree suja e
   compartilhada com Apache, três itens de drift (`aculta420_v2.settings`,
   `core.entity_view_display.block_content.aculta_institution.footer` e
   `core.extension`) e baseline validada/cache em
-  `e37f3d8d45ecba9719d4b97dde67effc2236b13f`, com checkout servido atrás do
-  remote, worktree suja e compartilhada. Nenhuma alteração de Runtime será
-  feita até a reconciliação dos drifts e liberação do preflight.
-- Restam 33 templates Twig no tema neste branch. O inventário completo abaixo
-  registra os 51 originais e classifica os consumidores; painel/status do
-  carrinho, aviso de pagamento, gatilho de busca, modal de termos, autoria,
-  seções editoriais, páginas Links, doação, botão do Portal, shell e editor de
-  foto da Conta, popup do mapa e compositor de respostas do Fórum já são
-  emitidos diretamente como SDCs.
-  O override redundante de `portal-component` também saiu; a ponte genérica e
-  seu fallback semântico seguem disponíveis no módulo Portal.
-  Nenhum outro será removido só por pertencer a `templates/`.
+  `e37f3d8d45ecba9719d4b97dde67effc2236b13f`; checkout `7344db09249f8645f7d8dcee503fa5bbe96af9a3`, remoto `a849b26466e6fa290cca74d54f19c90b28b3357a`. O checkout permanece sujo e compartilhado com Apache; nenhuma importação/migração estrutural foi executada.
+- Restam 31 templates Twig no tema depois desta rodada. Foram removidos somente
+  o shell paralelo e o presenter `node.wiki_entry.full`, ambos substituídos por
+  composição SDC/UI Patterns verificada. Os demais permanecem até o consumidor
+  ter substituição equivalente, inclusive Views e formulários do Fórum.
 - O catálogo de Eventos compõe `card-cultural` pela row de Views; não depende do
   antigo template de card. A verificação HTTP recente respondeu 200; a
   homologação visual completa continua pendente.
@@ -80,20 +73,20 @@ anteriores e não substituem a conferência do código atual.
    descrição específica, em 93 SDCs. A checagem do provider instalado encontrou
    22 props com tipo `unknown`, em 13 SDCs; três são obrigatórias e não há
    Sources UI Patterns para esse tipo. A auditoria classificou os produtores
-   encontrados e registrou as fontes na ADR-056. Os presenters de Eventos e
-   Reações agora chamam seus SDCs existentes e preservam dados, acesso e cache
-   nos módulos proprietários; as saídas do Runtime ainda não foram homologadas.
-   Restam descrições específicas das props e confirmação de uso editorial
-   persistido no Runtime. Avançar na
+   encontrados e registrou as fontes na ADR-056; restam as migrações de presenter
+   de Eventos/Reações, descrições específicas das props e confirmação de uso
+   editorial persistido no Runtime. Os presenters de Eventos/Reações foram
+   migrados para SDC direto neste lote; os contratos preservam cálculo, acesso e
+   cache nos módulos. O resultado no Runtime ainda precisa de homologação. Avançar na
    auditoria semântica restante: nomes, tipagem, slots/props,
    variants/defaults, includes e escaping. Renomear apenas conceitos realmente
    reutilizáveis com plano de compatibilidade das referências persistidas.
-3. **P2 — cruzar integrações:** produzir matriz dos 141 SDCs e consumidores em
+3. **P2 — cruzar integrações:** produzir matriz dos 136 SDCs e consumidores em
    Config Sync/PHP/Twig: Manage Display, Layout Builder, Views, Field Formatters,
    Blocks, Library ou uso interno. Confirmar Sources da versão instalada e
    manter consulta, acesso, cache e negócio nos donos atuais.
-4. **P3 — continuar removendo os 33 templates restantes:** a matriz abaixo
-   classifica o inventário completo. Buscar substituição por displays/UI Patterns ou render arrays SDC em cada
+4. **P3 — tentar eliminar os 31 templates:** a triagem por fonte está abaixo.
+   Buscar substituição por displays/UI Patterns ou render arrays SDC em cada
    arquivo. Testar fallback Core e preservar apenas presenters mínimos quando
    não houver display builder ou plugin substituto.
 5. **P4 — homologar:** gates focais e comparação real por consumidor, incluindo
@@ -105,56 +98,68 @@ anteriores e não substituem a conferência do código atual.
 O módulo não possui entidade/configuração própria nem schema de banco: contém
 redirect, access check, serviços, metadados e testes. O Config Sync já foi
 atualizado para retirar `aculta_ui_library`; `ui_patterns_library` é extensão
-separada e permanece habilitada. Ordem segura: (1) manter o diff isolado e não publicado; (2) com
+separada e permanece habilitada. Ordem segura: (1) registrar os arquivos
+afetados no plano estrutural; (2) com
 backup/restore comprovados e preflight liberado, desinstalar o módulo no Runtime
-enquanto o código ainda está presente no checkout servido; (3) verificar estado
-e cache; (4) publicar este diff, que remove pasta, alias, testes exclusivos,
-gate e referências operacionais; (5) confirmar que a rota oficial da UI Patterns
-Library continua habilitada. O Runtime atual ainda não permite a etapa (2).
+enquanto seu código continua disponível; (3) sincronizar a desinstalação e
+verificar estado/cache; (4) remover pasta do módulo, alias, testes exclusivos,
+gates que o carregam, status e referências operacionais; (5) confirmar que a
+rota oficial da UI Patterns Library continua habilitada. Não apagar os arquivos
+do módulo antes da desinstalação, pois o checkout é compartilhado com Apache.
 
-### Inventário completo de templates no checkout (33)
+### Arquivos que exigem classificação individual em P3
 
-O inventário inicial de 51 caminhos foi confirmado em `HEAD` por `git ls-tree`; os lotes de UI removeram `portal-cart-panel.html.twig`, `portal-cart-status.html.twig`, `portal-payment-notice.html.twig`, `portal-search-trigger.html.twig`, `aculta-portal-account-terms-modal.html.twig`, `aculta-user-author-card.html.twig`, `aculta-section.html.twig`, `aculta-links-landing.html.twig`, `aculta-links-page.html.twig`, `aculta-donation-back.html.twig`, `aculta-donation-donate.html.twig`, `aculta-donation-quick.html.twig`, `aculta-portal-button.html.twig`, `aculta-portal-shell.html.twig`, `aculta-portal-photo-editor.html.twig`, `aculta-maps-popup-content.html.twig`, `discussion-reply-composer.html.twig` e `portal-component.html.twig` após migrar seus consumidores. A lista abaixo contém os 33 caminhos restantes neste checkout. A classificação por consumidor e substituição funcional continua pendente arquivo a arquivo. Os templates não devem ser removidos apenas por estarem nesta pasta.
+`aculta-mailer-wrap.html.twig`, `aculta-maps-marker-icon-template.html.twig`,
+`comment--comments.html.twig`, `comment--field-aculta-discussion.html.twig`,
+`commerce/commerce-product--produto-loja--catalog.html.twig`,
+`content/node--aculta-faq--full.html.twig`,
+`content/node--aculta-forum-topic.html.twig`,
+`content/node--document--teaser.html.twig`,
+`content/node--revista--full.html.twig`,
+`content/node--revista--teaser.html.twig`,
+`content/node--wiki-entry--teaser.html.twig`,
+`content/node-add-form--aculta-forum-topic.html.twig`,
+`discussion-reaction-picker.html.twig`, `input--submit.html.twig`,
+`layout/html.html.twig`, `layout/page.html.twig`,
+`misc/status-messages.html.twig`, `navigation/breadcrumb.html.twig`,
+`navigation/pager.html.twig`, `page-title.html.twig`,
+`ui-patterns-overview-page.html.twig`, `ui-patterns-single-page.html.twig`,
+`ui-patterns-stories-compact.html.twig`,
+`ui-patterns-stories-full.html.twig`,
+`views/views-view--aculta-forum-public-topics--page-category-term.html.twig`,
+`views/views-view--aculta-forum-public-topics.html.twig`,
+`views/views-view--aculta-forum-search--page-search.html.twig`,
+`views/views-view--revista-sessoes--page-revista.html.twig`,
+`views/views-view-fields--aculta-forum-categories--page-categories.html.twig`,
+`views/views-view-fields--aculta-forum-public-topics.html.twig` e
+`views/views-view-unformatted--aculta-forum-categories--page-categories.html.twig`.
 
-**raiz:** `aculta-mailer-wrap.html.twig`, `aculta-maps-marker-icon-template.html.twig`, `comment--comments.html.twig`, `comment--field-aculta-discussion.html.twig`, `discussion-reaction-picker.html.twig`, `input--submit.html.twig`, `page-title.html.twig`, `ui-patterns-overview-page.html.twig`, `ui-patterns-single-page.html.twig`, `ui-patterns-stories-compact.html.twig`, `ui-patterns-stories-full.html.twig`.
+### Classificação inicial dos 31 templates pelo código
 
-**commerce:** `commerce-product--produto-loja--catalog.html.twig`.
+| Grupo/arquivos | Evidência encontrada | Direção de planejamento |
+| --- | --- | --- |
+| `layout/html.html.twig`, `layout/page.html.twig` | Infraestrutura de documento/página Drupal; `page.html.twig` compõe `layout-page`. | Tentar remover os overrides e validar fallback Core. `page.html.twig` é exceção oficial válida se for o único ponto de composição das regiões; se permanecer, deve ser presenter mínimo, sem markup de domínio. |
+| `ui-patterns-overview-page.html.twig`, `ui-patterns-single-page.html.twig`, `ui-patterns-stories-compact.html.twig`, `ui-patterns-stories-full.html.twig` | Overrides da Library; implementam catálogo e prévias progressivas/HTMX e hidratam stories. | Tentar voltar ao template upstream e remover CSS/JS acoplados. Se a experiência administrativa custom for necessária, migrá-la para API suportada; não consolidar dependência em hook_theme que upstream planeja substituir em 2.1/2.2. |
+| `aculta-maps-marker-icon-template.html.twig`, `aculta-maps-popup-content.html.twig`, `aculta-portal-account-terms-modal.html.twig`, `page-title.html.twig`, `misc/status-messages.html.twig`, `navigation/breadcrumb.html.twig`, `navigation/pager.html.twig` | Composição leve de SDCs (`icon`, `map-popup`, `account-terms-modal`, `heading`, `status-messages`, `breadcrumb`, `pagination`) com dados/atributos Drupal. | Para cada um, tentar chamada direta de SDC em render array/configuração ou integração UI Patterns. Manter presenter fino apenas se o hook Drupal/Core for inevitável; revisar prop type `links` e atributos. |
+| `aculta-mailer-wrap.html.twig` | Hook `aculta_mailer_wrap`, enviado pelo `AcultaMailerMail`; adapta tokens/logo a HTML de e-mail. | Tentar devolver composição pelo módulo como render array SDC compatível com mail. Se o pipeline de e-mail exigir hook template, manter ponte mínima sem lógica de domínio. |
+| `comment--comments.html.twig`, `comment--field-aculta-discussion.html.twig` | Overrides de comentário preservam atributos, prefix/suffix, permalink, pai e discussão; compõem `forum-post-card`. | Tentar Manage Display/Field Formatters de comentário. Remover somente depois de cobrir wrapper, respostas, acesso e ações Drupal. |
+| `aculta-portal-photo-editor.html.twig` | Wrapper do `photo_form` e do contrato `data-aculta-photo-editor`; Form API e comportamento pertencem ao Portal. | Substituir por SDC com slot Form API ou render array de componente; manter o Form API/comportamento no Portal. |
+| `portal-cart-panel.html.twig` | Monta agrupamento do carrinho e mantém ID, classe e `hx-swap-oob="outerHTML"` para respostas HTMX. | Converter em SDC de apresentação invocado pelo módulo; preservar resposta OOB, escaping e metadados. Cálculo permanece no Commerce. |
+| `portal-component.html.twig` | Ponte genérica; `PagePresentationHooks::preprocessPortalComponent()` converte nomes neutros permitidos nos SDCs do tema e mantém fallback do Portal. | Tentar substituir a ponte por render arrays SDC emitidos pelos módulos. Remover só após todos os emissores deixarem o hook neutro sem quebrar fallback do Portal. |
+| `content/node--aculta-forum-topic.html.twig`, `content/node-add-form--aculta-forum-topic.html.twig` | O primeiro compõe `forum-topic` e `forum-opening-post`; o segundo envolve Form API, mensagens, ações e contratos de criação do módulo Fórum. | A revisão R3 reverteu suas remoções: não há configuração Layout Builder/Views ou render array SDC equivalente. Migrar com o módulo Fórum mantendo acesso, ações, cache e Form API; só então apagar os presenters. |
+| `views/views-view--aculta-forum-public-topics*.html.twig`, `views/views-view-fields--aculta-forum-public-topics.html.twig`, `views/views-view-fields--aculta-forum-categories--page-categories.html.twig`, `views/views-view-unformatted--aculta-forum-categories--page-categories.html.twig`, `views/views-view--aculta-forum-search--page-search.html.twig` | Views Sync usa style/row `default`/`fields`; hooks calculam contexto/contagens e os presenters compõem categorias, busca e `forum-topic-row`. | A revisão R3 reverteu as remoções que perdiam categorias, contadores e SDCs de row. Migrar os displays para UI Patterns Views e prover dados cacheáveis no módulo antes de remover qualquer wrapper. |
+| `content/node--revista--full.html.twig` | Compõe `revista-publication` com metadados/autoria cacheáveis do módulo e slots para mídia, resumo, corpo, créditos e discussão. | A revisão do gate reverteu a remoção: o display Layout Builder atual ainda usa `layout-section`, não o SDC `revista-publication`. Migrar o display ou manter o presenter SDC até mapear os slots sem perder conteúdo. |
+| `commerce/commerce-product--produto-loja--catalog.html.twig`, `content/node--document--teaser.html.twig`, `content/node--revista--teaser.html.twig`, `content/node--wiki-entry--teaser.html.twig` | Os displays catalog/teaser seguem expondo fields sem UI Patterns/SDC; os presenters compõem `product-card`, `document-card`, `revista-teaser` e `wiki-entry`. | Mantidos na revisão R3: migrar cada view mode/row para UI Patterns ou render array SDC antes de remover o consumidor visual. |
+| `content/node--aculta-faq--full.html.twig` | Compõe FAQ com SDC `accordion` e mantém fallback nativo `<details>`. | Mantido: o Layout Builder atual só dispõe o body dentro de `layout-section`; migrar a coleção de perguntas para accordion por UI Patterns sem remover o fallback acessível. |
+| `discussion-reaction-picker.html.twig`, `input--submit.html.twig` | O picker mantém o form/CSRF/HTMX; o submit genérico converte controles Drupal para o SDC `button`, preservando atributos. | Mantidos: o fallback do módulo ainda imprime IDs de emoji como texto e o fallback Core do submit perde o visual SDC. Migrar os produtores mantendo contratos Form API, ícones e atributos. |
+| `views/views-view--revista-sessoes--page-revista.html.twig` | A View continua com style `default` e row entity teaser; o presenter compõe `revista-listing`, filtros, vazio, pager e attachments. | Mantido: a configuração UI Patterns existente pertence a outra View; habilitar UI Patterns Views nesta View e validar cache/pager antes de retirar. |
 
-**content:** `node--aculta-faq--full.html.twig`, `node--aculta-forum-topic.html.twig`, `node--document--teaser.html.twig`, `node--revista--full.html.twig`, `node--revista--teaser.html.twig`, `node--wiki-entry--full.html.twig`, `node--wiki-entry--teaser.html.twig`, `node-add-form--aculta-forum-topic.html.twig`.
-
-**layout:** `html.html.twig`, `page--shell-v2.html.twig`, `page.html.twig`.
-
-**misc:** `status-messages.html.twig`.
-
-**navigation:** `breadcrumb.html.twig`, `pager.html.twig`.
-
-**views:** `views-view--aculta-forum-public-topics--page-category-term.html.twig`, `views-view--aculta-forum-public-topics.html.twig`, `views-view--aculta-forum-search--page-search.html.twig`, `views-view--revista-sessoes--page-revista.html.twig`, `views-view-fields--aculta-forum-categories--page-categories.html.twig`, `views-view-fields--aculta-forum-public-topics.html.twig`, `views-view-unformatted--aculta-forum-categories--page-categories.html.twig`.
-
-### Matriz completa de classificação dos 51 templates originais (18 removidos)
-
-A listagem acima foi cruzada com Twig, hooks PHP e Config Sync no HEAD desta branch. A evidência comprova contrato de código/configuração, não uso editorial persistido nem o estado carregado no Runtime. “Migrar” significa emitir SDC/UI Patterns pelo render array ou display; não significa trocar Twig por cópia de markup.
-
-| Qtd. | Templates | Evidência no código/configuração | Direção por arquivo |
-| ---: | --- | --- | --- |
-| 3 | aculta-donation-back.html.twig, aculta-donation-donate.html.twig, aculta-donation-quick.html.twig | `DonationThemeHooks` registra hooks consumidos por três plugins; `button` cobre as duas ações simples, e o SDC `donation-quick` compõe a lista com botões. | Migrados por preprocess do tema; decisões, valores, links e ordem continuam nos blocos do módulo. O template do módulo mantém fallback neutro para outros temas. |
-| 2 | aculta-links-landing.html.twig, aculta-links-page.html.twig | `AcultaLinksThemeHooks` registra as páginas públicas; os preprocesses do tema agora emitem `layout-section` e `social-links-page` diretamente. Controllers e presenter mantêm acesso, URLs, preset, attachments e cache; templates do módulo permanecem como fallback para outros temas. | Migrados no tema; manter fallback neutro do módulo e homologar os dois estados no Runtime. |
-| 1 | aculta-mailer-wrap.html.twig | MailThemeHooks declara aculta_mailer_wrap, chamado por AcultaMailerMail; é envelope de e-mail, não página web. | Manter como fronteira de e-mail até haver renderer com HTML independente de CSS/JS do navegador. SDC só se for seguro e legível em clientes de e-mail; preview de UI Patterns não substitui envio real. |
-| 1 | aculta-maps-popup-content.html.twig | `MapRenderer` emite `aculta_maps_popup_content`; o preprocess agora mapeia título, URL, categoria, endereço e rota para o SDC `map-popup`, preservando o fallback neutro no módulo. | Migrado diretamente via preprocess. O popup segue dentro do `<template>` inerte clonado pelo Leaflet; sem markup no `drupalSettings`. |
-| 1 | aculta-maps-marker-icon-template.html.twig | `MapRenderer` emite o hook do ícone; o fragmento `<template>` é consumido pelo JavaScript e tem ID dinâmico. | Manter como fragmento até substituir por SDC/renderização compatível que preserve `template[data-aculta-map-marker-icon-template]` e os IDs do JS. |
-| 1 | aculta-portal-shell.html.twig | `AccountShellBuilder` prepara título, menu, acordeão, saída e conteúdo renderizado; o preprocess mapeia esses dados ao SDC `account-shell` e conserva o render array do conteúdo no slot. | Migrado via preprocess do tema. O template neutro do módulo mantém fallback para outros temas; cache e biblioteca de navegação permanecem no render array externo. |
-| 2 | aculta-section.html.twig, portal-component.html.twig | PortalHooks declara os hooks; EditorialHooks emite `aculta_section` e o preprocess monta `layout-section`. A ponte genérica já é resolvida por preprocess do Portal/tema e o template do módulo imprime o componente ou fallback semântico. | Removidos os dois overrides; a ponte genérica do módulo permanece porque tem consumidores reais em Fórum, Studio, Wiki e Conta. |
-| 1 | aculta-user-author-card.html.twig | `AuthorCardBuilder` e o campo Views emitem o hook neutro; o preprocess do tema agora o encaminha diretamente ao SDC `author-card`. O template do módulo permanece como fallback sem tema ACULTA420. | Migrado no tema; preservar fallback do módulo e cache do usuário. |
-| 3 | comment--comments.html.twig, comment--field-aculta-discussion.html.twig, discussion-reaction-picker.html.twig | Comentários preservam render arrays/atributos Core e incluem forum-post-card; ForumThemeHooks/builders emitem o picker, que usa CSRF/HTMX. | Migrar picker para SDC preservando CSRF/HTMX. Para comentários, provar formatter/display UI Patterns equivalente a links, replies, permalink, parent e atributos antes de retirar adapter. |
-| 1 | discussion-reply-composer.html.twig | `DiscussionReplyController` e `DiscussionReplyFormBuilder` emitem o hook; o preprocess mapeia props estritas ao SDC e mantém mensagens/formulário/contexto como render arrays nos slots. | Migrado diretamente para `discussion-reply-composer`; CSRF, HTMX e Form API permanecem nos elementos originais. |
-| 2 | content/node-add-form--aculta-forum-topic.html.twig, input--submit.html.twig | Sugestões Form API/Core; cobrem formulário de criação do fórum e submit global Drupal. | Não remover mecanicamente. Testar fallback Core em todos os domínios. Adotar SDC para submit só por elemento/formatter suportado, sem mudar validação, label, disabled, AJAX ou destino. |
-| 8 | commerce/commerce-product--produto-loja--catalog.html.twig; content/node--aculta-faq--full.html.twig, content/node--aculta-forum-topic.html.twig, content/node--document--teaser.html.twig, content/node--revista--full.html.twig, content/node--revista--teaser.html.twig, content/node--wiki-entry--full.html.twig, content/node--wiki-entry--teaser.html.twig | Sugestões de entity view mode; Config Sync contém produto_loja.catalog, aculta_forum_topic full/teaser, document full/teaser, revista full/teaser e wiki_entry full/teaser; FAQ tem display default, sem display full dedicado no Sync. Existem SDCs como document-card, revista-publication, forum-opening-post e cartões Wiki. | Migrar cada display para UI Patterns field formatter/SDC com slots de render arrays. Auditar revisão, tradução, acesso, metatags, discussão, anexos e cache; conservar adapter mínimo quando formatter não representar o contrato. |
-| 7 | layout/html.html.twig, layout/page--shell-v2.html.twig, layout/page.html.twig, misc/status-messages.html.twig, navigation/breadcrumb.html.twig, navigation/pager.html.twig, page-title.html.twig | Overrides Drupal Core; page--shell-v2 ainda tem sugestão em aculta420_v2.theme; layout/page.html.twig compõe layout-page; mensagens/título já incluem SDCs. | Preservar layout/page.html.twig como shell até provar equivalência Core das cinco regiões/atributos. Remover page--shell-v2 após remover sugestão/config antiga e reconstruir cache. Avaliar html/messages/breadcrumb/pager/title separadamente, preservando metadados, links e pager AJAX. |
-| 4 | ui-patterns-overview-page.html.twig, ui-patterns-single-page.html.twig, ui-patterns-stories-compact.html.twig, ui-patterns-stories-full.html.twig | Overrides da interface administrativa oficial; UiPatternsStoryHooks acrescenta navegação e hidrata props/slots das stories. | Não converter a interface administrativa em SDC próprio. Testar templates upstream; manter somente overrides sem substituto suportado, sobretudo hidratação de stories. Remover CSS/JS/preprocess junto com o último override. |
-| 7 | views/views-view--aculta-forum-public-topics--page-category-term.html.twig, views/views-view--aculta-forum-public-topics.html.twig, views/views-view--aculta-forum-search--page-search.html.twig, views/views-view--revista-sessoes--page-revista.html.twig, views/views-view-fields--aculta-forum-categories--page-categories.html.twig, views/views-view-fields--aculta-forum-public-topics.html.twig, views/views-view-unformatted--aculta-forum-categories--page-categories.html.twig | Views/displays homônimos estão no Config Sync. Categorias já tem display com row ui_patterns; outros usam fields/Search API/entity teaser conforme a config. | Por display, migrar row/style/fields a UI Patterns Views e SDCs existentes; revalidar exposed filters, empty, pager, agrupamento, acesso e cache. Remover wrappers/fields/unformatted só quando a view real deixar de usar a sugestão. |
-
-**Ordem de execução:** priorizar adapters restantes que já incluem SDC (shell e composer); depois presenters genéricos e componentes interativos; em seguida displays de entidade e Views; por último overrides Core, UI Patterns Library e e-mail. Cada remoção exige consumidor comprovado em Config Sync e Runtime autorizado, comparação de markup e gate de escopo. Não remover shell estrutural, envelope de e-mail ou hooks Form API sem substituto equivalente.
-
-A matriz cobre os 51 arquivos originais; dezoito foram removidos após migração e as linhas restantes classificam 33 consumidores. Consumidores editoriais persistidos, exceções por domínio e renderização no Runtime seguem pendentes. A classificação ainda não autoriza outras remoções por proximidade de um SDC.
+Esta classificação é somente uma triagem por fonte encontrada. Ela não prova que
+um template tenha consumidor ativo em cada domínio/Runtime. O objetivo é testar a
+remoção de cada um; a exceção é um presenter mínimo quando não houver API de
+display/substituição adequada. A migração de `comment`, `photo-editor` e
+`cart-panel` depende da matriz completa de chamadas, displays, respostas HTMX,
+acesso e cache da fase P2.
 
 ## Continuação do corte CSS SDC-first (2026-11-13)
 
@@ -861,10 +866,9 @@ e CSS scope passaram. Verificação visual autenticada pendente.
   seletores repetidos entre arquivos caíram de 7 para 5. Validação autenticada
   da Conta pendente.
 - A lista de documentos do modal de termos passou de `portal-account.css` para
-  o asset local do SDC `account-terms-modal`. O hook de aceite agora emite o
-  SDC diretamente e preserva o ID, `hidden`, `data-dialog-title`, JavaScript
-  do Portal e cache por usuário. Lint PHP, contrato SDC/UI Patterns Library e
-  revisão independente R2: PASS; validação autenticada da Conta pendente.
+  o asset do SDC `account-terms-modal`, usado pelo template de tema que mantém
+  o ID, `hidden` e `data-dialog-title` esperados pelo JS do Portal. Validação
+  isolada e de escopo pendente.
 - `lms-lesson-page.css` deixou de repetir o anel local de `:focus-visible`;
   `base.css` já aplica o indicador acessível global com tokens semânticos.
   A rolagem da tabela Form API da aula e a apresentação específica do preview

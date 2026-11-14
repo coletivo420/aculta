@@ -9,16 +9,21 @@ props:
   required: [title]
   properties:
     title:
+      title: Título do ponto no mapa
       type: string
       minLength: 1
     url:
+      title: Endereço da página do ponto
       type: [string, 'null']
       format: uri-reference
     category:
+      title: Categoria do ponto
       type: [string, 'null']
     address:
+      title: Endereço ou localização
       type: [string, 'null']
     route_url:
+      title: Endereço para traçar rota
       type: [string, 'null']
       format: uri-reference
 slots:

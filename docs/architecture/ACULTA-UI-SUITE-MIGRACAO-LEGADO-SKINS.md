@@ -3,6 +3,8 @@
 **Estado:** plano executivo; corte do motor visual por purpose implementado em código, homologação Runtime/visual DEFERRED. **Data:** 2026-11-10. **Branch:** `dev`.
 **Referencias:** `docs/decisions/ADR-054-refatoracao-aculta420-v2-sdc-layout-builder.md`, `docs/decisions/ADR-055-integracao-ui-icons-ui-styles-page-e-sistema-unificado-de-emojis.md`, `docs/architecture/ACULTA420-V2-UI-SUITE-INTEGRACAO-VISUAL-PLANO.md`.
 
+> **Estrategia de corte substituida em 2026-11-13:** a ADR-054 vigente autoriza substituicao direta da apresentacao, sem migracao paralela, reversao visual obrigatoria ou paridade como bloqueio. Este documento permanece como inventario historico e fonte de contratos funcionais; em conflito, seguir a decisao vigente da ADR-054.
+
 ## 1. Decisoes do responsavel
 
 1. UI Suite sera a **arquitetura visual canonica de TODO o site**, incluindo paginas publicas, dashboards privados, UI administrativa ACULTA, Revista, Forum, Wiki, GanjaLab, Culturas, Green Stash, Links, Apoio e integracoes transversais.

@@ -1,5 +1,5 @@
 $schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
-name: Gatilho de busca
+name: Gatilho de busca do site
 status: stable
 description: Link acessível que abre a busca contextual da barra institucional.
 group: Navegação

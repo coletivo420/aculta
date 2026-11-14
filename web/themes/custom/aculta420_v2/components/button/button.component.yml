@@ -19,9 +19,11 @@ props:
       minLength: 1
       title: Nome acessível. Obrigatório quando text não existir.
     url:
+      title: Endereço de destino
       type: [string, 'null']
       format: uri-reference
     variant:
+      title: Estilo do botão
       type: string
       enum: [primary, secondary, outline, ghost, danger]
       default: primary
@@ -31,9 +33,11 @@ props:
       enum: [default, small]
       default: default
     is_submit:
+      title: Enviar formulário ao ativar
       type: boolean
       default: false
     disabled:
+      title: Desativar o botão
       type: boolean
       default: false
     icon_before:

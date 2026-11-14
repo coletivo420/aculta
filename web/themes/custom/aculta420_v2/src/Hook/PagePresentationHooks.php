@@ -70,11 +70,6 @@ final class PagePresentationHooks {
     $routeName = (string) $this->currentRouteMatch?->getRouteName();
     $variables['aculta_studio_account_dashboard'] = $routeName === 'aculta_studio.account';
     $variables['aculta_layout_variant'] = $this->getPageLayoutVariant();
-    // ADR-054: shell paralelo, opt-in pela configuração do tema.
-    $variables['aculta_shell_variant'] = $this->shellVariant();
-    if ($variables['aculta_shell_variant'] === 'v2') {
-      $variables['#attached']['library'][] = 'aculta420_v2/shell-v2';
-    }
     // ADR-054 P7: CSS de estatísticas carregado só nas rotas do painel.
     if (in_array($this->currentRouteMatch?->getRouteName(), self::STATISTICS_ROUTES, TRUE)) {
       $variables['#attached']['library'][] = 'aculta420_v2/statistics';
@@ -242,9 +237,7 @@ final class PagePresentationHooks {
     $variables['aculta_account_avatar'] = $variables['aculta_account_avatar'] ?? NULL;
     $variables['aculta_account_name'] = $variables['aculta_account_name'] ?? NULL;
     $this->composeDomainHeader($variables);
-    if ($variables['aculta_shell_variant'] === 'v2') {
-      $this->composeShellTitle($variables);
-    }
+    $this->composeShellTitle($variables);
     if ($variables['aculta_lms_lesson_route']) {
       // The LMS render array owns the lesson H1; avoid a second route-title H1.
       $variables['aculta_page_title'] = [];
@@ -284,19 +277,11 @@ final class PagePresentationHooks {
   }
 
   /**
-   * Returns the configured shell variant, restricted to the supported values.
-   */
-  private function shellVariant(): string {
-    $value = $this->configFactory->get('aculta420_v2.settings')->get('aculta_shell_variant');
-    return $value === 'v2' ? 'v2' : 'classic';
-  }
-
-  /**
-   * Moves a page title block out of legacy regions in the parallel shell.
+   * Moves a page title block out of legacy regions into the main content title slot.
    *
-   * Overrides de Domain Config podem colocar page_title_block em navigation.
-   * No shell v2 o H1 pertence à área de conteúdo, junto do layout-page, para
-   * não duplicar título nem deixar o H1 fora do landmark principal.
+   * Overrides de Domain Config ainda podem colocar page_title_block em regiões
+   * antigas. O H1 pertence à área de conteúdo, junto do layout-page, para não
+   * duplicar título nem deixar o H1 fora do landmark principal.
    *
    * @param array<string, mixed> $variables
    *   Page theme variables.

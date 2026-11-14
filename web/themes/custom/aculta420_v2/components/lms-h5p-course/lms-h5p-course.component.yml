@@ -9,8 +9,10 @@ props:
 slots:
   title:
     title: Título do curso
+    description: Título do curso associado às atividades H5P.
   course_link:
     title: Link do curso
+    description: Link autorizado para abrir o curso.
   activities:
     title: Atividades H5P
     description: Atividades renderizadas conforme o acesso ao curso.

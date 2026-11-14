@@ -9,6 +9,7 @@ props:
   required: [privacy_url]
   properties:
     privacy_url:
+      title: Endereço da política de privacidade
       type: string
       minLength: 1
       format: uri-reference

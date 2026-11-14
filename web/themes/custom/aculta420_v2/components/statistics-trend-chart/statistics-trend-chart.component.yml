@@ -9,15 +9,19 @@ props:
   required: [title, bars]
   properties:
     title:
+      title: Título do gráfico de tendência
       type: string
       minLength: 1
     caption:
+      title: Legenda do gráfico
       type: string
       default: ''
     summary:
+      title: Resumo acessível dos dados
       type: string
       default: ''
     bars:
+      title: Barras de dados do gráfico
       type: array
       items:
         type: object

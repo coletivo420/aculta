@@ -9,18 +9,23 @@ props:
   required: [label, value]
   properties:
     label:
+      title: Nome da métrica
       type: string
       minLength: 1
     value:
+      title: Valor da métrica
       type: string
       minLength: 1
     unit:
+      title: Unidade da métrica
       type: string
       default: ''
     hint:
+      title: Orientação sobre a métrica
       type: string
       default: ''
     tone:
+      title: Tom visual da métrica
       type: string
       enum: [neutral, positive, warning]
       default: neutral

@@ -9,13 +9,16 @@ props:
 slots:
   intro:
     title: Apresentação
+    description: Texto introdutório do catálogo de cursos.
   catalog_title:
     title: Título do catálogo
+    description: Título da listagem de cursos.
   catalog:
     title: View do catálogo
     description: View nativa com verificações de acesso e cache próprias.
   collaboration:
     title: Orientação para participação
+    description: Orientação contextual exibida junto ao catálogo.
 assets:
   css:
     component:

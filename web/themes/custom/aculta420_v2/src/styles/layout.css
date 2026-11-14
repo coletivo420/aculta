@@ -1,49 +1,34 @@
-/* Mobile-first page shell; individual regions keep their configured content. */
+/* Shell de página único: cinco regiões declaradas pelo tema. */
 .page {
   display: grid;
   grid-template-areas:
     "institution"
     "header"
-    "navigation"
     "showcase"
-    "highlighted"
-    "help"
-    "breadcrumb"
+    "contextual"
     "main"
     "footer";
-  grid-template-rows: auto auto auto auto auto auto auto 1fr auto;
+  grid-template-rows: auto auto auto auto 1fr auto;
   grid-template-columns: minmax(0, 1fr);
   gap: 0;
   min-block-size: 100vh;
   min-block-size: 100dvh;
   min-inline-size: 0;
 }
+
 .page__institution { grid-area: institution; min-inline-size: 0; }
 .page__header { grid-area: header; min-inline-size: 0; }
-.page__navigation { grid-area: navigation; min-inline-size: 0; }
 .page__showcase { grid-area: showcase; min-inline-size: 0; padding-block: var(--spacing-lg); }
-.page__highlighted { grid-area: highlighted; min-inline-size: 0; }
-.page__help { grid-area: help; min-inline-size: 0; }
-.page__breadcrumb { grid-area: breadcrumb; min-inline-size: 0; }
-
-/* Trilha no mesmo contêiner do conteúdo (--page-content-max, igual ao .page__help),
-   centralizada e com o mesmo padding, para o início do texto coincidir com o título. */
-.page .page__breadcrumb {
-  inline-size: min(100%, var(--page-content-max));
-  max-inline-size: none;
-  margin-inline: auto;
-  padding-inline: var(--page-gutter);
+.page__contextual {
+  display: grid;
+  grid-area: contextual;
+  gap: var(--spacing-sm);
+  min-inline-size: 0;
 }
+.page__contextual > * { min-inline-size: 0; }
+.page > .layout-page { grid-area: main; min-inline-size: 0; }
+.page__footer { grid-area: footer; min-inline-size: 0; }
 
-/* Trilha dentro do título: ocupa a coluna do título, sem recuo próprio. */
-.page .layout-page__title .page__breadcrumb {
-  inline-size: 100%;
-  margin-inline: 0;
-  padding-inline: 0;
-}
-
-.page__navigation,
-.page__highlighted,
 .page__help,
 .page__breadcrumb {
   inline-size: min(100%, var(--page-content-max));
@@ -52,30 +37,27 @@
   padding-inline: var(--page-gutter);
 }
 
-/* Desktop: nenhuma região do site passa de --page-content-max (1200 px),
-   centralizada. O rodapé já é contido no próprio .site-footer__inner.
-   Exceções são declaradas no seletor :not(...) abaixo. */
+/* A trilha inserida no título do layout já compartilha sua coluna e padding. */
+.page .layout-page__title .page__breadcrumb {
+  inline-size: 100%;
+  margin-inline: 0;
+  padding-inline: 0;
+}
+
 @media (min-width: 60rem) {
-  /* Regiões filhas diretas do grid: precisam de largura explícita. Com
-     max-inline-size, o item encolhe ao conteúdo e sai da coluna do rodapé. */
-  :is(.page__institution, .page__header, .page__navigation, .page__showcase, .page__highlighted, .page__help, .page__breadcrumb, .page-shell-v2__contextual):not(.layout-page--studio-dashboard) {
+  :is(.page__institution, .page__header, .page__showcase, .page__contextual):not(.layout-page--studio-dashboard) {
     inline-size: min(100%, var(--page-content-max));
     margin-inline: auto;
   }
 
-  /* Conteúdo principal mantém a variante (stack, aside, full); só limita o teto. */
   .layout-page:not(.layout-page--studio-dashboard) {
     max-inline-size: var(--page-content-max);
     margin-inline: auto;
   }
 }
 
-/* Celular (abaixo de 60 rem): largura sempre 100%, ignorando sliders.
-   Exceção justificada: os containers podem receber inline-size de CSS SDC
-   (component) e de módulos; o !important garante ausência de overflow
-   horizontal em telas estreitas, conforme docs/layouts-plan.md 5.3. */
 @media (max-width: 59.9375rem) {
-  :is(.layout-page, .page__navigation, .page__highlighted, .page__help, .page__breadcrumb) {
+  :is(.layout-page, .page__contextual, .page__help, .page__breadcrumb) {
     inline-size: 100% !important;
     max-inline-size: 100% !important;
   }
