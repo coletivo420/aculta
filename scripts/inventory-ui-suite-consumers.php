@@ -147,9 +147,10 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
     $isDocumentsPilot = $isDocumentCardSdc
       && $stylePlugin === 'ui_patterns'
       && ($stylePatterns['component_id'] ?? NULL) === 'aculta420_v2:layout-grid';
-    $productCatalogTemplate = $theme . '/templates/commerce/commerce-product--produto-loja--catalog.html.twig';
-    $isProductCardAdapter = is_file($productCatalogTemplate)
-      && str_contains((string) file_get_contents($productCatalogTemplate), "aculta420_v2:product-card");
+    $productCatalogHook = $theme . '/src/Hook/PagePresentationHooks.php';
+    $isProductCardAdapter = is_file($productCatalogHook)
+      && str_contains((string) file_get_contents($productCatalogHook), "aculta420_v2:product-card")
+      && str_contains((string) file_get_contents($productCatalogHook), 'preprocessCommerceProduct');
     $isShopCatalogPilot = $viewId === 'aculta_shop_catalog'
       && $stylePlugin === 'ui_patterns'
       && ($stylePatterns['component_id'] ?? NULL) === 'aculta420_v2:layout-grid'
@@ -190,6 +191,7 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
     // Code-level adapter changes invalidate older Runtime/browser snapshots.
     $runtimeEvidenceDateFloor = [
       'aculta_documents' => '2026-11-14',
+      'aculta_shop_catalog' => '2026-11-14',
       'wiki_entries' => '2026-11-14',
     ];
     $runtimeEvidenceCurrent = ($runtimeEvidenceDateFloor[$viewId] ?? '0000-00-00') <= $runtimeObservedDate;
@@ -245,7 +247,8 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
     $shopRuntimeDisplay = $isShopCatalogPilot && is_array($runtimeView)
       ? ($runtimeView['displays'][$displayId] ?? NULL)
       : NULL;
-    $shopRuntimeVerified = is_array($shopRuntimeDisplay)
+    $shopRuntimeVerified = $runtimeEvidenceCurrent
+      && is_array($shopRuntimeDisplay)
       && ($shopRuntimeDisplay['status'] ?? '') === 'runtime_verified_sdc_grid'
       && ($shopRuntimeDisplay['style_component'] ?? '') === 'aculta420_v2:layout-grid';
     $productGalleryRuntimeConfigured = $isProductGalleryPilot
@@ -295,7 +298,7 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
         ? 'BLOCKED_UPSTREAM'
         : (($isWikiEntriesPilot || $isWikiCategoriesPilot) && $displayId === 'default'
         ? 'FUNCTIONAL_NATIVE_EXCEPTION'
-        : ($isForumTopicsSdc || $isRevistaTeaserSdc || $isForumGalleryPilot || $isProductGalleryPilot || ($isForumCategoryPilot && (string) $displayId === 'block_landing') || $isDocumentsPilot || $isWikiEntriesPilot || $documentRuntimeVerified || $shopRuntimeVerified || $wikiRuntimeVerified || $wikiCategoriesRuntimeVerified
+        : ($isForumTopicsSdc || $isRevistaTeaserSdc || $isForumGalleryPilot || $isProductGalleryPilot || ($isForumCategoryPilot && (string) $displayId === 'block_landing') || $isDocumentsPilot || $isShopCatalogPilot || $isWikiEntriesPilot || $documentRuntimeVerified || $shopRuntimeVerified || $wikiRuntimeVerified || $wikiCategoriesRuntimeVerified
         ? 'UI_SUITE_NATIVE'
         : (($isViewsFunctionalBase || $isEventsBase || $isAdminViewNative || $isWebformSubmissions || $isNativeCoreView)
         ? 'FUNCTIONAL_NATIVE_EXCEPTION'
@@ -335,6 +338,7 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
         $isWikiEntriesPilot && $wikiRuntimeVerified => 'Anonymous Runtime returned six published wiki-entry teaser rows through the SDC adapter; Firefox browser comparison passed for the page and canonical article; zoom, cache-hit, other roles and assistive technology remain pending',
         $isWikiCategoriesPilot && $wikiCategoriesRuntimeVerified => 'Anonymous Runtime retained 15 taxonomy category rows; Firefox home comparison verified layout-grid, responsive columns and row count; zoom, cache-hit, other roles and assistive technology remain pending',
         $isDocumentsPilot => 'UI Patterns layout-grid and document-card SDC are confirmed in current source; Runtime/browser snapshot predates the preprocess migration and must be repeated',
+        $isShopCatalogPilot => 'UI Patterns layout-grid and product-card SDC are confirmed in current source; Runtime/browser snapshot predates the Commerce preprocess migration and must be repeated',
         $isWikiEntriesPilot => 'UI Patterns layout-grid and wiki-entry SDC are confirmed in current source; Runtime/browser snapshot predates the preprocess migration and must be repeated',
         $isDocumentCardSdc => 'Document SDC adapter is present; Runtime row rendering and grid integration are pending',
         $isForumTopicsSdc && is_array($runtimeView) && is_array($runtimeView['displays'][$displayId] ?? NULL) => 'Runtime config matches Sync; executable View returns 10 rows; access-profile and browser visual evidence not re-run in this inventory pass',
@@ -376,6 +380,7 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
         $isUpstreamVvjsExample => 'upstream contributed demonstration; Runtime status not changed or claimed',
         $isDocumentsPilot && $documentRuntimeVerified => 'active; UI Patterns layout-grid; 3 published document rows; anonymous View output with Field API slots; visual browser acceptance pending',
         $isShopCatalogPilot && $shopRuntimeVerified => sprintf('active; UI Patterns layout-grid; %d product rows; Commerce catalog view mode and native add-to-cart retained', $shopRuntimeDisplay['result_count']),
+        $isShopCatalogPilot => 'configured in Sync/source; SDC hook adapter changed after the Runtime snapshot; Runtime price/access/cache validation pending',
         $isWikiEntriesPilot && $wikiRuntimeVerified => sprintf('active; UI Patterns layout-grid; %d published node teaser rows; wiki-entry SDC adapter and native access retained', $runtimeView['anonymous_render']['result_count_before_after'] ?? 0),
         $isWikiCategoriesPilot && $wikiCategoriesRuntimeVerified => sprintf('active; UI Patterns layout-grid; %d native taxonomy term rows; anonymous category links and editorial order retained', $runtimeViewDisplays['wiki_categories']['displays']['block_1']['result_count_before_after'] ?? 0),
         $isDocumentsPilot => 'configured in Sync/source; SDC hook adapter changed after the Runtime snapshot; Runtime access/render/cache validation pending',

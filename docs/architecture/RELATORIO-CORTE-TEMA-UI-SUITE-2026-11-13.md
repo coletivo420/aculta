@@ -16,7 +16,7 @@ O lote publicado em `6537d1083a1ee100c457c48219e04a62a70403f4` removeu dois pres
 
 A revisão R3 identificou perda funcional em remoções mais amplas de Fórum, Revista, catálogo de produto, teasers e formulários; esses templates foram mantidos até existir substituição equivalente. Portanto a afirmação anterior de que 35 templates foram retirados e `templates/` caiu de 55 para 20 **não descreve o checkout atual** e fica substituída por este registro.
 
-Na revisão inicial havia **31 templates Twig em `web/themes/custom/aculta420_v2/templates/`**, além dos templates internos dos SDCs. Após os cortes dos teasers da Revista, Wiki e Documentos, restam 28. O corte ainda não converteu todos os consumidores nem homologou a saída renderizada no Runtime. Não há alegação de PASS funcional/visual pós-commit.
+Na revisão inicial havia **31 templates Twig em `web/themes/custom/aculta420_v2/templates/`**, além dos templates internos dos SDCs. Após os cortes dos teasers da Revista, Wiki e Documentos e do catálogo da Loja, restam 27. O corte ainda não converteu todos os consumidores nem homologou a saída renderizada no Runtime. Não há alegação de PASS funcional/visual pós-commit.
 
 ### Atualização de implementação — 2026-11-14
 
@@ -28,16 +28,18 @@ O presenter `node--wiki-entry--teaser.html.twig` também foi removido: `PagePres
 
 O presenter `node--document--teaser.html.twig` foi removido e substituído por render array do SDC existente `document-card`. Título/URL canônicos vêm do node; categoria, resumo e arquivo permanecem render arrays Field API com controle de acesso e cache. O resultado ainda não foi homologado no Runtime.
 
+O template do view mode `catalog` de Commerce também foi removido. `PagePresentationHooks::preprocessCommerceProduct()` passa o render array `product` ao slot do SDC `product-card`, retirando somente `variation_attributes`, como fazia o Twig anterior; o template Core mantém o `<article>` do produto e `title_prefix/title_suffix`. Preço, variações, formulário, acesso e cache continuam nos arrays originais. A revisão R2 não encontrou bloqueadores; Runtime e visual ainda precisam de homologação.
+
 ## 2. Fotografia encontrada no commit atual
 
 - **141 manifests SDC e 223 stories** no checkout. Os gates de schema e contrato da UI Patterns Library passaram para esse conjunto; isso prova metadados/stories no código, não uso editorial nem renderização de todas as combinações.
-- **31 templates Twig** na fotografia inicial; após os cortes dos teasers da Revista, Wiki e Documentos restam 28 sob `web/themes/custom/aculta420_v2/templates/`. Os 141 SDCs têm seus próprios templates, que são implementação dos componentes e não devem ser contados como presenters Drupal legados.
+- **31 templates Twig** na fotografia inicial; após os cortes dos teasers da Revista, Wiki e Documentos e do catálogo da Loja restam 27 sob `web/themes/custom/aculta420_v2/templates/`. Os 141 SDCs têm seus próprios templates, que são implementação dos componentes e não devem ser contados como presenters Drupal legados.
 - O diretório contém shell, templates de conteúdo/Views, formulários/fragmentos, quatro templates da UI Patterns Library, e-mail e adapters de módulos. A classificação individual vigente continua no roadmap do tema.
 - `node.wiki_entry.full` usa agora Layout Builder + `ui_patterns:aculta420_v2:wiki_entry`; oito regiões/slots recebem summary, body, categories, image, references, related, discussion e actions. A revisão independente confirmou o mapeamento no Config Sync e o contrato do SDC.
 - `views.view.revista_sessoes` foi configurada no Config Sync com UI Patterns Views style `aculta420_v2:revista-listing` no display base; os seis displays de página herdam a seleção. O row nativo `entity:node`/teaser, query, filtros, acesso, pager e cache permanecem. O template da Página Revista preserva title/contextual links e os demais elementos da View; ele imprime o style SDC sem embrulhar novamente e usa o embed anterior como fallback. Configuração ainda não importada nem homologada no Runtime.
 - O único shell é `templates/layout/page.html.twig`, com cinco regiões declaradas em `aculta420_v2.info.yml`; o SDC `layout-page` fornece o landmark `main`.
 - O inventário de integrações/consumidores fica em `docs/architecture/inventarios/ui-suite-consumidores-iniciais.csv`; foi regenerado para os arquivos do checkout atual. Não confundir os campos de Runtime capturados em snapshots de 2026-11-10/11 com estado atual.
-- A matriz foi regenerada neste lote após a remoção do presenter de Documentos: **460 linhas**, com 28 overrides Twig do tema. A busca encontrou referências literais de produção a 107 SDCs; 34 não têm referência literal no código ou configuração varridos. Isso não demonstra que sejam órfãos: a UI Patterns Library cataloga todos, e usos editoriais/dinâmicos não são enumeráveis pela busca. Campos `runtime_status` da matriz são snapshots antigos ou “not observed”, não estado atual.
+- A matriz foi regenerada neste lote após a remoção do presenter da Loja: 459 linhas (458 consumidores e cabeçalho), com 27 overrides Twig do tema. A busca encontrou referências literais de produção a 107 SDCs; 34 não têm referência literal no código ou configuração varridos. Isso não demonstra que sejam órfãos: a UI Patterns Library cataloga todos, e usos editoriais/dinâmicos não são enumeráveis pela busca. Campos `runtime_status` da matriz são snapshots antigos ou “not observed”, não estado atual.
 - `runtime-sync doctor --format=json`, executado após `7e2833abd3bb75c10aa66a126be6edc12144fea3`, retornou **BLOCKED/RX**: 0 updates e 0 deploy hooks pendentes; quatro configurações em drift (`aculta420_v2.settings`, `core.entity_view_display.block_content.aculta_institution.footer`, `core.entity_view_display.node.revista.full` e `views.view.revista_sessoes`); schema ausente para 11 módulos, incluindo `aculta_ui_library`; checkout compartilhado com Apache e arquivo local `.twig-cs-fixer.cache`; cache/baseline ainda em `e37f3d8d45ecba9719d4b97dde67effc2236b13f`. A View da Revista aguarda importação e homologação. Não executar sincronização, importação, desinstalação ou rebuild com esse preflight.
 - “UI Suite habilitado” não significa “todas as páginas compostas pelo UI Suite”. O plano continua por domínio e exige inventário, migração e homologação por consumidor.
 
@@ -53,7 +55,7 @@ Converter para entity displays/view modes e UI Patterns Field/Field Formatters, 
 - `document-card` já é integrado diretamente pelo preprocess com todos os fields renderizados; seu antigo presenter Twig foi removido.
 - `templates/content/node--revista--full.html.twig` — integrar Layout Builder com `revista-publication`, preservando metadados e autoria cacheáveis. O presenter do teaser já foi removido e convertido para render array do SDC `revista-teaser`.
 - `templates/content/node--wiki-entry--full.html.twig` — usar display/formatter do `wiki-entry` e Layout Builder/UI Patterns. O teaser foi removido e é composto por render array SDC pelo preprocess do tema.
-- `templates/commerce/commerce-product--produto-loja--catalog.html.twig` — configurar `product-card` no view mode `catalog`, mantendo formulário, variações, preço, cache privado e acesso do Commerce.
+- `product-card` agora é integrado pelo preprocess no view mode `catalog`; o presenter Twig foi removido, mantendo o formulário, variações, preço, cache e acesso do Commerce.
 
 Não remover um template até o display equivalente estar presente no Config Sync/runtime e não depender dele. O formato final pode ficar visualmente diferente.
 

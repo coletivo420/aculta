@@ -32,12 +32,14 @@ final class ProductCardComponentTest extends UnitTestCase {
   /**
    * Ensures Commerce render arrays are passed through slots without rebuilding.
    */
-  public function testCommerceCatalogTemplatePreservesNativeFields(): void {
+  public function testCommerceCatalogCompositionPreservesNativeFields(): void {
     $themeDir = dirname(__DIR__, 3);
-    $template = (string) file_get_contents($themeDir . '/templates/commerce/commerce-product--produto-loja--catalog.html.twig');
-    self::assertStringContainsString("include('aculta420_v2:product-card'", $template);
-    self::assertStringContainsString("content: product|without('variation_attributes')", $template);
-    self::assertStringNotContainsString('|raw', $template);
+    $hook = (string) file_get_contents($themeDir . '/src/Hook/PagePresentationHooks.php');
+    self::assertStringContainsString("'#component' => 'aculta420_v2:product-card'", $hook);
+    self::assertStringContainsString('($elements[\'#view_mode\'] ?? NULL) !== \'catalog\'', $hook);
+    self::assertStringContainsString('unset($fields[\'variation_attributes\'])', $hook);
+    self::assertStringContainsString("'#slots' => ['content' => $fields]", $hook);
+    self::assertFileDoesNotExist($themeDir . '/templates/commerce/commerce-product--produto-loja--catalog.html.twig');
   }
 
   /**

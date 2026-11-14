@@ -8,4 +8,4 @@ slot `content`, preservando fields e formulário sem reconstrução.
 
 - `content`: fields, variações, preço e formulário de adicionar ao carrinho.
 
-Story sintética: `product-card.default.story.yml`. Sem JavaScript.
+O view mode Commerce `catalog` entrega o render array completo ao slot `content` via `PagePresentationHooks::preprocessCommerceProduct()`. O template Core mantém o `article` semântico; a story apresenta o conteúdo do SDC isoladamente. Sem JavaScript.

@@ -6,6 +6,7 @@ namespace Drupal\aculta420_v2\Hook;
 
 use Drupal\aculta420_v2\Support\ComponentLibraryRoutes;
 use Drupal\aculta420_v2\Presentation\WikiBrandMediaProps;
+use Drupal\commerce_product\Entity\ProductInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Cache\CacheableDependencyInterface;
@@ -369,6 +370,34 @@ final class PagePresentationHooks {
       && ($variables['view_mode'] ?? NULL) === 'teaser') {
       $this->composeDocumentTeaser($variables);
     }
+  }
+
+  /**
+   * Composes the Commerce catalog view mode with the product-card SDC.
+   */
+  #[Hook('preprocess_commerce_product')]
+  public function preprocessCommerceProduct(array &$variables): void {
+    $product = $variables['product_entity'] ?? NULL;
+    $elements = $variables['elements'] ?? [];
+    $fields = $variables['product'] ?? [];
+    if (!$product instanceof ProductInterface
+      || $product->bundle() !== 'produto_loja'
+      || ($elements['#view_mode'] ?? NULL) !== 'catalog'
+      || !is_array($fields)) {
+      return;
+    }
+
+    unset($fields['variation_attributes']);
+    $component = [
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:product-card',
+      '#props' => ['attributes' => new Attribute()],
+      '#slots' => ['content' => $fields],
+    ];
+    CacheableMetadata::createFromRenderArray($elements)
+      ->addCacheableDependency($product)
+      ->applyTo($component);
+    $variables['product'] = $component;
   }
 
   /**
