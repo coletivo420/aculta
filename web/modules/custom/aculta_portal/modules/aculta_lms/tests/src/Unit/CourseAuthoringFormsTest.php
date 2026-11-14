@@ -17,6 +17,7 @@ use Drupal\Core\Form\FormState;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Routing\CurrentRouteMatch;
 use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\Core\Url;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -47,8 +48,12 @@ final class CourseAuthoringFormsTest extends UnitTestCase {
 
     $build = $form->buildForm([], new FormState());
 
-    self::assertTrue($build['#attributes']['data-aculta-unsaved-changes']);
-    self::assertContains('aculta_lms/unsaved_changes', $build['#attached']['library']);
+    $attributes = $this->stringKeyedMap($build['#attributes'] ?? NULL);
+    self::assertTrue($attributes['data-aculta-unsaved-changes'] ?? NULL);
+    $attached = $this->stringKeyedMap($build['#attached'] ?? NULL);
+    $libraries = $attached['library'] ?? NULL;
+    self::assertIsArray($libraries);
+    self::assertContains('aculta_lms/unsaved_changes', $libraries);
   }
 
   /**
@@ -69,8 +74,12 @@ final class CourseAuthoringFormsTest extends UnitTestCase {
 
     $build = $form->buildForm([], new FormState());
 
-    self::assertTrue($build['#attributes']['data-aculta-unsaved-changes']);
-    self::assertContains('aculta_lms/unsaved_changes', $build['#attached']['library']);
+    $attributes = $this->stringKeyedMap($build['#attributes'] ?? NULL);
+    self::assertTrue($attributes['data-aculta-unsaved-changes'] ?? NULL);
+    $attached = $this->stringKeyedMap($build['#attached'] ?? NULL);
+    $libraries = $attached['library'] ?? NULL;
+    self::assertIsArray($libraries);
+    self::assertContains('aculta_lms/unsaved_changes', $libraries);
   }
 
   /**
@@ -103,8 +112,10 @@ final class CourseAuthoringFormsTest extends UnitTestCase {
     $formArray = [];
     $form->submitForm($formArray, $state);
 
-    self::assertSame('aculta_lms.course_structure', $state->getRedirect()->getRouteName());
-    self::assertSame(['course' => '3'], $state->getRedirect()->getRouteParameters());
+    $redirect = $state->getRedirect();
+    self::assertInstanceOf(Url::class, $redirect);
+    self::assertSame('aculta_lms.course_structure', $redirect->getRouteName());
+    self::assertSame(['course' => '3'], $redirect->getRouteParameters());
   }
 
   /**
@@ -156,9 +167,19 @@ final class CourseAuthoringFormsTest extends UnitTestCase {
    * Tests accepting supported lesson text formats.
    */
   public function testLessonAcceptsSupportedBodyFormats(): void {
-    LessonEntity::assertBodyFormat('plain_text');
-    LessonEntity::assertBodyFormat('aculta_lms_lesson');
-    self::assertTrue(TRUE);
+    $acceptedFormats = [];
+    $supportedFormats = ['plain_text', 'aculta_lms_lesson'];
+    foreach ($supportedFormats as $format) {
+      try {
+        LessonEntity::assertBodyFormat($format);
+        $acceptedFormats[] = $format;
+      }
+      catch (\InvalidArgumentException) {
+        self::fail(sprintf('The supported format "%s" was rejected.', $format));
+      }
+    }
+    self::assertContains('plain_text', $acceptedFormats);
+    self::assertContains('aculta_lms_lesson', $acceptedFormats);
   }
 
   /**
@@ -194,7 +215,9 @@ final class CourseAuthoringFormsTest extends UnitTestCase {
     $formArray = [];
     $form->submitForm($formArray, $state);
 
-    self::assertSame('aculta_lms.course_structure', $state->getRedirect()->getRouteName());
+    $redirect = $state->getRedirect();
+    self::assertInstanceOf(Url::class, $redirect);
+    self::assertSame('aculta_lms.course_structure', $redirect->getRouteName());
   }
 
   /**
@@ -227,6 +250,9 @@ final class CourseAuthoringFormsTest extends UnitTestCase {
 
   /**
    * Creates a route match fixture.
+   *
+   * @param array<string, \Drupal\group\Entity\GroupInterface|\Drupal\Core\Entity\ContentEntityInterface|null> $parameters
+   *   Route parameters used by the authoring forms.
    */
   private function route(array $parameters): CurrentRouteMatch {
     $route = $this->createMock(CurrentRouteMatch::class);
@@ -259,6 +285,9 @@ final class CourseAuthoringFormsTest extends UnitTestCase {
 
   /**
    * Creates a field item list fixture.
+   *
+   * @return \Drupal\Core\Field\FieldItemListInterface<\Drupal\Core\Field\FieldItemInterface>
+   *   The field item list.
    */
   private function field(mixed $value): FieldItemListInterface {
     return new class($value) extends FieldItemList {
@@ -268,13 +297,35 @@ final class CourseAuthoringFormsTest extends UnitTestCase {
       /**
        * Returns the fixture field value.
        */
-      public function __get($property_name) {
+      public function __get(mixed $property_name): mixed {
+        if ($property_name !== 'value' && !is_string($property_name)) {
+          return NULL;
+        }
         return is_array($this->fieldValue)
           ? ($this->fieldValue[$property_name] ?? NULL)
           : ($property_name === 'value' ? $this->fieldValue : NULL);
       }
 
     };
+  }
+
+  /**
+   * Validates a string-keyed form or render array map.
+   *
+   * @param mixed $value
+   *   The map to validate.
+   *
+   * @return array<string, mixed>
+   *   The validated map.
+   */
+  private function stringKeyedMap(mixed $value): array {
+    self::assertIsArray($value);
+    $map = [];
+    foreach ($value as $key => $item) {
+      self::assertIsString($key);
+      $map[$key] = $item;
+    }
+    return $map;
   }
 
 }

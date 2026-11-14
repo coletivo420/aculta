@@ -9,9 +9,9 @@ use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Field\EntityReferenceFieldItemListInterface;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\domain\DomainInterface;
 use Drupal\domain\DomainNegotiatorInterface;
 use Drupal\group\Plugin\Group\Relation\GroupRelationTypeManagerInterface;
@@ -20,8 +20,9 @@ use Drupal\media\MediaInterface;
 use Drupal\media_gallery\MediaGalleryInterface;
 use Drupal\node\NodeInterface;
 use Drupal\Tests\UnitTestCase;
-use Symfony\Component\HttpFoundation\RequestStack;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\MockObject\MockObject;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Tests the allowlisted LMS course and resource projection.
@@ -148,13 +149,25 @@ final class LmsCourseContentIndexProviderTest extends UnitTestCase {
 
   /**
    * Creates a course fixture with optional resource field lists.
+   *
+   * @param \Drupal\Core\Field\EntityReferenceFieldItemListInterface<\Drupal\Core\Entity\EntityInterface>|null $readings
+   *   Optional reading references.
+   * @param \Drupal\Core\Field\EntityReferenceFieldItemListInterface<\Drupal\Core\Entity\EntityInterface>|null $galleries
+   *   Optional gallery references.
+   * @param list<\Drupal\media\MediaInterface> $documents
+   *   Course document references.
+   * @param \Drupal\Core\Field\EntityReferenceFieldItemListInterface<\Drupal\Core\Entity\EntityInterface>|null $videos
+   *   Optional video references.
+   *
+   * @return \Drupal\group\Entity\GroupInterface&MockObject
+   *   The course Group mock.
    */
   private function createCourse(
     ?EntityReferenceFieldItemListInterface $readings = NULL,
     ?EntityReferenceFieldItemListInterface $galleries = NULL,
     array $documents = [],
     ?EntityReferenceFieldItemListInterface $videos = NULL,
-  ): GroupInterface {
+  ): GroupInterface&MockObject {
     $language = $this->createMock(LanguageInterface::class);
     $language->method('getId')->willReturn('pt-br');
     $course = $this->createMock(GroupInterface::class);
@@ -188,6 +201,9 @@ final class LmsCourseContentIndexProviderTest extends UnitTestCase {
 
   /**
    * Creates the provider with a canonical courses Domain fixture.
+   *
+   * @param (\Drupal\group\Plugin\Group\Relation\GroupRelationTypeManagerInterface&MockObject)|null $relationTypeManager
+   *   Optional relation type manager mock.
    */
   private function createProvider(?GroupRelationTypeManagerInterface $relationTypeManager = NULL): LmsCourseContentIndexProvider {
     $domain = $this->createMock(DomainInterface::class);
