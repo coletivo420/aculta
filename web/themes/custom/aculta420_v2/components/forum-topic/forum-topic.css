@@ -163,3 +163,8 @@
   min-block-size: 1.75rem;
   padding-inline: .6rem;
 }
+
+/* Tópico completo: margens laterais menores, para a discussão ocupar o bloco de 1200 px. */
+article.node.aculta-forum-topic--full {
+  padding-inline: var(--spacing-sm);
+}
