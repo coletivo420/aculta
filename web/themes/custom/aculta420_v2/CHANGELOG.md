@@ -1884,3 +1884,11 @@ State: Dev. No RC, production deployment, or release tag is declared.
   fallback semântico do módulo permanecem preservados.
 - Removido o override `aculta-section.html.twig`. Restam 44 templates no tema;
   validação visual no Runtime continua pendente.
+
+## Atualização — páginas LinkWeed encaminhadas diretamente a SDCs (2026-11-14)
+
+- A landing Links usa `layout-section`; a micropágina usa `social-links-page`.
+  Controllers e presenter preservam dados, acesso, URLs, attachments e cache.
+- Removidos os dois overrides Twig do tema. Os templates neutros do módulo
+  continuam como fallback para outros temas. Restam 42 templates no tema;
+  validação visual e autenticada no Runtime segue pendente.

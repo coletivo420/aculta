@@ -7,6 +7,9 @@
  * conteúdo. Renderizar um segundo landmark ou título aqui duplicaria ambos.
  */
 #}
+{% if component %}
+  {{ component }}
+{% else %}
 <div class="aculta-links-landing">
   {% if description %}
     <p>{{ description }}</p>
@@ -15,3 +18,4 @@
     {{ links }}
   {% endif %}
 </div>
+{% endif %}

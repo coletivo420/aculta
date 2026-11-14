@@ -77,7 +77,7 @@ Componentes com consumo: `accordion`, `alerts-trigger`, `author-card`, `avatar`,
 | `courses` (Cursos/LMS) | `lms-lesson-page` (SDC); `aculta_lms` sem templates próprios localizados | `lms-lesson-page`, `progress` (sem consumo) | Falta `progress` e `tabs` |
 | `forum` | `content/node--aculta-forum-topic`; displays de categorias usam row UI Patterns e wrappers padrão de Views | `forum-topic`, `forum-category`, `pagination` | Falta `empty-state` e `data-table` |
 | `eventos` | View `eventos_publicos` na raiz; `aculta-event-page.html.twig` para detalhe | `card-cultural` na listagem; `event-page-layout` no detalhe | Listagem pública validada; estado vazio ainda sem consumer real |
-| `links` (LinkWeed) | `aculta-links-page.html.twig` (tema e módulo), `aculta-links-landing.html.twig`, `social-links-page` | `social-links-page` | Candidato a `hero-banner` na landing |
+| `links` (LinkWeed) | Hook neutro do LinkWeed; templates do módulo são fallback para outros temas | `social-links-page` na micropágina; `layout-section` na landing | Avaliar `hero-banner` na landing após homologar os dois consumidores atuais |
 
 ## 3. Ordem sugerida de adoção
 

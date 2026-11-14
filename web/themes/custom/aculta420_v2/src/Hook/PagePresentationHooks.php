@@ -459,6 +459,84 @@ final class PagePresentationHooks {
   }
 
   /**
+   * Sends the LinkWeed landing's neutral values to the layout SDC.
+   */
+  #[Hook('preprocess_aculta_linkweed_landing')]
+  public function preprocessLinkWeedLanding(array &$variables): void {
+    if (!$this->componentAvailable('layout-section')) {
+      return;
+    }
+
+    $header = [];
+    if (is_string($variables['description'] ?? NULL) && $variables['description'] !== '') {
+      $header['description'] = [
+        '#type' => 'html_tag',
+        '#tag' => 'p',
+        '#value' => $variables['description'],
+      ];
+    }
+    $attributes = $variables['attributes'] ?? [];
+    if ($attributes instanceof Attribute) {
+      $attributes = $attributes->toArray();
+    }
+
+    $variables['component'] = [
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:layout-section',
+      '#props' => [
+        'tone' => 'default',
+        'section_variant' => 'default',
+        'section_color' => 'default',
+      ],
+      '#slots' => [
+        'header' => $header,
+        'content' => !empty($variables['has_links']) && is_array($variables['links'] ?? NULL)
+          ? $variables['links']
+          : [],
+      ],
+      '#attributes' => is_array($attributes) ? $attributes : [],
+    ];
+  }
+
+  /**
+   * Sends the LinkWeed microsite contract directly to its page SDC.
+   */
+  #[Hook('preprocess_aculta_linkweed_page')]
+  public function preprocessLinkWeedPage(array &$variables): void {
+    if (!$this->componentAvailable('social-links-page')) {
+      return;
+    }
+
+    $themePreset = (string) ($variables['theme_preset'] ?? 'classic');
+    if (!in_array($themePreset, ['classic', 'soft', 'outline'], TRUE)) {
+      $themePreset = 'classic';
+    }
+    $attributes = $variables['attributes'] ?? [];
+    if ($attributes instanceof Attribute) {
+      $attributes = $attributes->toArray();
+    }
+    $slots = [];
+    foreach (['owner_identity', 'links'] as $slot) {
+      if (is_array($variables[$slot] ?? NULL) && !empty($variables[$slot])) {
+        $slots[$slot] = $variables[$slot];
+      }
+    }
+
+    $variables['component'] = [
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:social-links-page',
+      '#props' => [
+        'title' => (string) ($variables['title'] ?? ''),
+        'description' => isset($variables['description']) ? (string) $variables['description'] : NULL,
+        'has_links' => (bool) ($variables['has_links'] ?? FALSE),
+        'theme_preset' => $themePreset,
+      ],
+      '#slots' => $slots,
+      '#attributes' => is_array($attributes) ? $attributes : [],
+    ];
+  }
+
+  /**
    * Maps compatible Portal components to V2 SDCs.
    *
    * The Portal fallback preprocess runs before theme preprocess and fills a
