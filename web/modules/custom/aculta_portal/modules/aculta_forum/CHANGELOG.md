@@ -3,6 +3,16 @@
 - Mensagens Drupal capturadas da resposta HTMX são clonadas do documento parseado
   e anexadas como nós DOM, sem converter o conteúdo em string HTML.
 
+## Não versionado — style UI Patterns nas categorias do Fórum
+
+- `page_categories` usa o style UI Patterns Views com o SDC `layout-grid` e
+  mantém `forum-category` como componente de cada row. O agrupamento por
+  categoria-pai foi retirado; o nome da categoria-pai continua visível em cada
+  cartão.
+- Config Sync e configuração de instalação estão alinhados. Os templates de
+  compatibilidade permanecem até o Runtime receber a configuração e validar
+  filtros, acesso, cache, paginação e composição visual.
+
 ## Não versionado — migração SDC da View de categorias (2026-11-10)
 
 - A página pública e o bloco de categorias passam a mapear campos da View ao

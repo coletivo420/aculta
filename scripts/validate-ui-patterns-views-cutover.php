@@ -118,14 +118,19 @@ foreach (['cover', 'title', 'published_at', 'credits'] as $slot) {
 }
 
 $forumView = Yaml::parseFile($root . '/config/sync/views.view.aculta_forum_categories.yml');
+$forumInstall = Yaml::parseFile($root . '/web/modules/custom/aculta_portal/modules/aculta_forum/config/install/views.view.aculta_forum_categories.yml');
 $forumPage = $forumView['display']['page_categories']['display_options'];
+$forumInstallPage = $forumInstall['display']['page_categories']['display_options'];
 $forumDefault = $forumView['display']['default']['display_options'];
 $forumStyle = $forumPage['style'] ?? [];
 $assert(($forumPage['defaults']['ui_patterns'] ?? NULL) === FALSE, 'Categorias deve selecionar explicitamente o componente de display sem herdar config vazia.');
 $assert(($forumPage['row']['type'] ?? NULL) === 'ui_patterns', 'A View de categorias deve manter UI Patterns no nível row.');
 $assert(($forumPage['row']['options']['ui_patterns']['component_id'] ?? NULL) === 'aculta420_v2:forum-category', 'A View de categorias deve reutilizar forum-category.');
-$assert(($forumStyle['type'] ?? NULL) === 'default', 'O estilo nativo de categorias deve permanecer para preservar agrupamento.');
-$assert(isset($forumStyle['options']['grouping'][0]), 'O agrupamento nativo por categoria principal deve permanecer.');
+$assert(($forumStyle['type'] ?? NULL) === 'ui_patterns', 'Categorias deve usar o estilo UI Patterns.');
+$assert(($forumStyle['options']['ui_patterns']['ui_patterns']['component_id'] ?? NULL) === 'aculta420_v2:layout-grid', 'A listagem de categorias deve compor os cartões pelo SDC layout-grid.');
+$assert(($forumStyle['options']['ui_patterns']['ui_patterns']['slots']['content']['sources'][0]['source_id'] ?? NULL) === 'view_rows', 'A grade deve receber as rows já renderizadas por UI Patterns.');
+$assert(($forumInstallPage['style'] ?? NULL) === ($forumPage['style'] ?? NULL), 'Config Sync e instalação devem usar o mesmo style UI Patterns para page_categories.');
+$assert(($forumInstallPage['row'] ?? NULL) === ($forumPage['row'] ?? NULL), 'Config Sync e instalação devem manter a mesma composição UI Patterns por row.');
 $assert(($forumDefault['pager']['type'] ?? NULL) === 'some', 'O pager nativo herdado pela página de categorias deve permanecer.');
 $assert(($forumDefault['access']['type'] ?? NULL) === 'perm' && ($forumDefault['access']['options']['perm'] ?? NULL) === 'access content', 'A página de categorias deve manter controle de acesso nativo herdado.');
 $assert(isset($forumDefault['filters']['vid'], $forumDefault['sorts']['weight']), 'Vocabulário e ordenação editorial herdados da View de categorias devem permanecer.');

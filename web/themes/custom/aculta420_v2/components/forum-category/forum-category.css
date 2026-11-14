@@ -7,6 +7,13 @@
 
 .view-aculta-forum-categories .view-content > * { min-inline-size: 0; }
 
+/* A composição UI Patterns Views distribui os cartões dentro de layout-grid. */
+.view-aculta-forum-categories .layout-grid {
+  --layout-grid-min: 18rem;
+
+  gap: var(--spacing-base);
+}
+
 .aculta-forum-category {
   position: relative;
   overflow: hidden;
@@ -39,6 +46,10 @@
 }
 
 .layout-page .view-aculta-forum-categories.view-display-id-block_landing .view-content > * { min-inline-size: 0; }
+.layout-page .view-aculta-forum-categories.view-display-id-block_landing .layout-grid {
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--spacing-md);
+}
 .view-aculta-forum-categories .views-display__header a { display: inline-flex; align-items: center; min-block-size: var(--tap-target-min); }
 .layout-page .view-aculta-forum-categories.view-display-id-block_landing .aculta-forum-category__parent { display: none; }
 .layout-page .view-aculta-forum-categories.view-display-id-block_landing .aculta-forum-category { padding: var(--spacing-md); }

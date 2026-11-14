@@ -374,14 +374,19 @@ display:
             trim: false
             html: false
       style:
-        type: default
+        type: ui_patterns
         options:
-          grouping:
-            -
-              field: parent_name
-              rendered: false
-              rendered_strip: false
-          default_row_class: true
+          ui_patterns:
+            ui_patterns:
+              component_id: 'aculta420_v2:layout-grid'
+              variant_id: null
+              slots:
+                content:
+                  sources:
+                    -
+                      source: {  }
+                      source_id: view_rows
+              props: {  }
       row:
         type: ui_patterns
         options:
