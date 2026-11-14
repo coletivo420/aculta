@@ -1,10 +1,10 @@
 # Dívida PHPStan — ACULTA
 
-Gerado em 2026-11-14T22:16:59+00:00 por `scripts/phpstan-debt-report.php`.
+Gerado em 2026-11-14T22:52:07+00:00 por `scripts/phpstan-debt-report.php`.
 
 | Item | Valor |
 | --- | --- |
-| Commit | `HEAD` |
+| Commit | `581ebae8457456c613ac1213e78f7c115e9c8828` |
 | PHP | 8.4.27 |
 | PHPStan | PHPStan - PHP Static Analysis Tool 2.3.5 |
 | Nível | 10 |
@@ -15,27 +15,27 @@ Gerado em 2026-11-14T22:16:59+00:00 por `scripts/phpstan-debt-report.php`.
 
 | Medida | Ocorrências |
 | --- | ---: |
-| Total bruto no nível 10 | 25752 |
-| Dívida congelada no baseline | 25752 |
+| Total bruto no nível 10 | 25639 |
+| Dívida congelada no baseline | 25639 |
 | Erros não suprimidos | 0 |
-| Entradas no baseline | 15062 |
-| Produção | 15497 |
-| Testes | 10255 |
+| Entradas no baseline | 15010 |
+| Produção | 15385 |
+| Testes | 10254 |
 
 ## Criticidade funcional
 
 | Criticidade | Ocorrências |
 | --- | ---: |
 | alta | 231 |
-| media | 22599 |
-| baixa | 2922 |
+| media | 22489 |
+| baixa | 2919 |
 
 ## Evolução desde o baseline de referência
 
 | Classificação | Entradas |
 | --- | ---: |
-| Dívida removida | 22 |
-| Dívida mantida | 15062 |
+| Dívida removida | 33 |
+| Dívida mantida | 15010 |
 | Nova dívida (bloqueante) | 0 |
 | Contagem aumentada (bloqueante) | 0 |
 | Contagem reduzida | 0 |
@@ -52,9 +52,9 @@ Gerado em 2026-11-14T22:16:59+00:00 por `scripts/phpstan-debt-report.php`.
 | aculta_events | 1792 |
 | aculta_wiki | 1461 |
 | aculta_lms_h5p | 1299 |
-| aculta_lms | 1195 |
-| aculta_index | 1112 |
-| aculta_user | 899 |
+| aculta_lms | 1165 |
+| aculta_index | 1030 |
+| aculta_user | 898 |
 | aculta_commerce | 839 |
 | aculta_mailer | 665 |
 | aculta_studio | 622 |
@@ -80,18 +80,18 @@ Gerado em 2026-11-14T22:16:59+00:00 por `scripts/phpstan-debt-report.php`.
 
 | Identificador | Ocorrências |
 | --- | ---: |
-| `offsetAccess.nonOffsetAccessible` | 7898 |
-| `argument.type` | 4536 |
-| `method.nonObject` | 2787 |
-| `missingType.iterableValue` | 2712 |
-| `cast.string` | 2029 |
-| `cast.int` | 1318 |
-| `method.notFound` | 914 |
-| `property.nonObject` | 663 |
-| `return.type` | 367 |
-| `foreach.nonIterable` | 351 |
+| `offsetAccess.nonOffsetAccessible` | 7881 |
+| `argument.type` | 4523 |
+| `method.nonObject` | 2778 |
+| `missingType.iterableValue` | 2709 |
+| `cast.string` | 2009 |
+| `cast.int` | 1298 |
+| `method.notFound` | 910 |
+| `property.nonObject` | 648 |
+| `return.type` | 365 |
+| `foreach.nonIterable` | 347 |
 | `binaryOp.invalid` | 299 |
-| `offsetAccess.invalidOffset` | 196 |
+| `offsetAccess.invalidOffset` | 195 |
 | `missingType.return` | 135 |
 | `property.notFound` | 134 |
 | `encapsedStringPart.nonString` | 115 |
