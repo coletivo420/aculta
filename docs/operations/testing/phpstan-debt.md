@@ -1,10 +1,10 @@
 # Dívida PHPStan — ACULTA
 
-Gerado em 2026-11-14T22:03:31+00:00 por `scripts/phpstan-debt-report.php`.
+Gerado em 2026-11-14T22:08:24+00:00 por `scripts/phpstan-debt-report.php`.
 
 | Item | Valor |
 | --- | --- |
-| Commit | `PENDENTE` |
+| Commit | `HEAD` |
 | PHP | 8.4.27 |
 | PHPStan | PHPStan - PHP Static Analysis Tool 2.3.5 |
 | Nível | 10 |
@@ -15,11 +15,11 @@ Gerado em 2026-11-14T22:03:31+00:00 por `scripts/phpstan-debt-report.php`.
 
 | Medida | Ocorrências |
 | --- | ---: |
-| Total bruto no nível 10 | 25824 |
-| Dívida congelada no baseline | 25824 |
+| Total bruto no nível 10 | 25789 |
+| Dívida congelada no baseline | 25789 |
 | Erros não suprimidos | 0 |
-| Entradas no baseline | 15104 |
-| Produção | 15569 |
+| Entradas no baseline | 15084 |
+| Produção | 15534 |
 | Testes | 10255 |
 
 ## Criticidade funcional
@@ -27,15 +27,15 @@ Gerado em 2026-11-14T22:03:31+00:00 por `scripts/phpstan-debt-report.php`.
 | Criticidade | Ocorrências |
 | --- | ---: |
 | alta | 231 |
-| media | 22654 |
-| baixa | 2939 |
+| media | 22626 |
+| baixa | 2932 |
 
 ## Evolução desde o baseline de referência
 
 | Classificação | Entradas |
 | --- | ---: |
-| Dívida removida | 23 |
-| Dívida mantida | 15104 |
+| Dívida removida | 20 |
+| Dívida mantida | 15084 |
 | Nova dívida (bloqueante) | 0 |
 | Contagem aumentada (bloqueante) | 0 |
 | Contagem reduzida | 0 |
@@ -52,7 +52,7 @@ Gerado em 2026-11-14T22:03:31+00:00 por `scripts/phpstan-debt-report.php`.
 | aculta_events | 1792 |
 | aculta_wiki | 1461 |
 | aculta_lms_h5p | 1299 |
-| aculta_lms | 1267 |
+| aculta_lms | 1232 |
 | aculta_index | 1112 |
 | aculta_user | 899 |
 | aculta_commerce | 839 |
@@ -80,14 +80,14 @@ Gerado em 2026-11-14T22:03:31+00:00 por `scripts/phpstan-debt-report.php`.
 
 | Identificador | Ocorrências |
 | --- | ---: |
-| `offsetAccess.nonOffsetAccessible` | 7906 |
-| `argument.type` | 4539 |
-| `method.nonObject` | 2804 |
-| `missingType.iterableValue` | 2729 |
-| `cast.string` | 2043 |
-| `cast.int` | 1328 |
+| `offsetAccess.nonOffsetAccessible` | 7901 |
+| `argument.type` | 4537 |
+| `method.nonObject` | 2796 |
+| `missingType.iterableValue` | 2722 |
+| `cast.string` | 2035 |
+| `cast.int` | 1324 |
 | `method.notFound` | 914 |
-| `property.nonObject` | 664 |
+| `property.nonObject` | 663 |
 | `return.type` | 367 |
 | `foreach.nonIterable` | 351 |
 | `binaryOp.invalid` | 299 |

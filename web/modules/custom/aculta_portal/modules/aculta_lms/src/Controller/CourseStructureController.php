@@ -30,7 +30,11 @@ final class CourseStructureController {
   }
 
   /**
-   * Builds a course curriculum page from ACULTA-owned learning entities. */
+   * Builds a course curriculum page from ACULTA-owned learning entities.
+   *
+   * @return array<array-key, mixed>
+   *   The course curriculum render array.
+   */
   public function structure(GroupInterface $course): array {
     $lessonStorage = $this->entityTypeManager->getStorage('aculta_lms_lesson');
     $lessonIds = $lessonStorage->getQuery()
@@ -69,7 +73,7 @@ final class CourseStructureController {
       $activityCards = [];
       foreach ($activities as $activityIndex => $activity) {
         $activityCount++;
-        $question = $this->activityQuestion((string) $activity->get('answer_config')->value);
+        $question = $this->activityQuestion($activity->get('answer_config')->value);
         $answerCount = $this->entityTypeManager->getStorage('aculta_lms_answer')->getQuery()
           ->accessCheck(FALSE)
           ->condition('activity_id', (int) $activity->id())
@@ -124,14 +128,14 @@ final class CourseStructureController {
           ],
           'title' => $answerCount === 0
             ? Link::fromTextAndUrl(
-              $this->activityLabel((string) $activity->get('type')->value),
+              $this->activityLabel(self::stringValue($activity->get('type')->value)),
               Url::fromRoute('aculta_lms.activity_edit', [
                 'course' => $course->id(),
                 'lesson' => $lesson->id(),
                 'activity' => $activity->id(),
               ]),
             )->toRenderable()
-            : ['#plain_text' => $this->activityLabel((string) $activity->get('type')->value)],
+            : ['#plain_text' => $this->activityLabel(self::stringValue($activity->get('type')->value))],
           'question' => ['#plain_text' => $question !== '' ? $question : $this->t('Sem enunciado')],
           'answers' => $answerCount > 0
             ? ['#plain_text' => $this->t('@count resposta(s); edição bloqueada para preservar o histórico.', ['@count' => $answerCount])]
@@ -204,7 +208,7 @@ final class CourseStructureController {
           '#type' => 'container',
           '#attributes' => ['class' => ['aculta-lms-course-builder__lesson-heading']],
           'title' => Link::fromTextAndUrl(
-            (string) $lesson->get('title')->value,
+            self::stringValue($lesson->get('title')->value),
             Url::fromRoute('aculta_lms.lesson_edit', ['course' => $course->id(), 'lesson' => $lesson->id()]),
           )->toRenderable(),
           'sort_handle' => [
@@ -315,7 +319,10 @@ final class CourseStructureController {
   /**
    * Gets the plain-text question stored in an activity configuration.
    */
-  private function activityQuestion(string $json): string {
+  private function activityQuestion(mixed $json): string {
+    if (!is_string($json)) {
+      return '';
+    }
     try {
       $config = json_decode($json, TRUE, 512, JSON_THROW_ON_ERROR);
       return is_array($config) && is_string($config['question'] ?? NULL) ? $config['question'] : '';
@@ -337,6 +344,13 @@ final class CourseStructureController {
       'file_upload' => (string) $this->t('Envio de arquivo'),
       default => (string) $this->t('Atividade'),
     };
+  }
+
+  /**
+   * Reads a known string field value without coercing mixed data.
+   */
+  private static function stringValue(mixed $value): string {
+    return is_string($value) ? $value : '';
   }
 
 }

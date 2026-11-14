@@ -50,11 +50,17 @@ final class LessonAuthoringForm extends FormBase {
 
   /**
    * Builds the lesson authoring form.
+   *
+   * @param array<array-key, mixed> $form
+   *   The form render array being built.
+   *
+   * @return array<array-key, mixed>
+   *   The completed form render array.
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     [$course, $lesson] = $this->routeEntities();
-    $form['#attributes']['data-aculta-unsaved-changes'] = TRUE;
-    $form['#attached']['library'][] = 'aculta_lms/unsaved_changes';
+    $form['#attributes'] = ['data-aculta-unsaved-changes' => TRUE];
+    $form['#attached'] = ['library' => ['aculta_lms/unsaved_changes']];
     $form['title'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Título da aula'),
@@ -64,8 +70,8 @@ final class LessonAuthoringForm extends FormBase {
     ];
     $bodyItem = $lesson?->get('body');
     $body = self::prepareBodyForEditor(
-      (string) ($bodyItem->value ?? ''),
-      (string) ($bodyItem->format ?? 'plain_text'),
+      self::stringValue($bodyItem->value ?? NULL),
+      self::stringValue($bodyItem->format ?? NULL, 'plain_text'),
     );
     // Existing plain-text values can contain strings that resemble HTML. Make
     // them literal source before the editor interprets them as rich text.
@@ -92,17 +98,19 @@ final class LessonAuthoringForm extends FormBase {
       '#default_value' => (bool) ($lesson?->get('published')->value ?? FALSE),
       '#description' => $this->t('A aula só aparece na jornada de estudantes quando estiver publicada.'),
     ];
-    $form['actions']['submit'] = [
-      '#type' => 'submit',
-      '#value' => $lesson ? $this->t('Salvar aula') : $this->t('Criar aula'),
-      '#button_type' => 'primary',
-    ];
-    $form['actions']['cancel'] = [
-      '#type' => 'aculta_portal_button',
-      '#props' => [
-        'text' => (string) $this->t('Voltar à estrutura do curso'),
-        'url' => Url::fromRoute('aculta_lms.course_structure', ['course' => $course->id()])->toString(),
-        'variant' => 'secondary',
+    $form['actions'] = [
+      'submit' => [
+        '#type' => 'submit',
+        '#value' => $lesson ? $this->t('Salvar aula') : $this->t('Criar aula'),
+        '#button_type' => 'primary',
+      ],
+      'cancel' => [
+        '#type' => 'aculta_portal_button',
+        '#props' => [
+          'text' => (string) $this->t('Voltar à estrutura do curso'),
+          'url' => Url::fromRoute('aculta_lms.course_structure', ['course' => $course->id()])->toString(),
+          'variant' => 'secondary',
+        ],
       ],
     ];
     return $form;
@@ -110,9 +118,12 @@ final class LessonAuthoringForm extends FormBase {
 
   /**
    * Validates lesson fields before save.
+   *
+   * @param array<array-key, mixed> $form
+   *   The form render array being validated.
    */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
-    if (trim((string) $form_state->getValue('title')) === '') {
+    if (trim(self::stringValue($form_state->getValue('title'))) === '') {
       $form_state->setErrorByName('title', $this->t('Informe o título da aula.'));
     }
     $body = $form_state->getValue('body');
@@ -132,20 +143,23 @@ final class LessonAuthoringForm extends FormBase {
 
   /**
    * Saves the lesson and returns to course structure.
+   *
+   * @param array<array-key, mixed> $form
+   *   The submitted form render array.
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     [$course, $lesson] = $this->routeEntities();
+    $body = $form_state->getValue('body');
+    $bodyValue = is_array($body) ? self::stringValue($body['value'] ?? NULL) : self::stringValue($body);
     $values = [
-      'course_id' => (int) $course->id(),
-      'title' => trim((string) $form_state->getValue('title')),
+      'course_id' => self::nonNegativeInteger($course->id()),
+      'title' => trim(self::stringValue($form_state->getValue('title'))),
       'body' => [
-        'value' => is_array($form_state->getValue('body')) && is_string($form_state->getValue('body')['value'] ?? NULL)
-          ? $form_state->getValue('body')['value']
-          : '',
+        'value' => $bodyValue,
         'format' => 'aculta_lms_lesson',
       ],
       'published' => (bool) $form_state->getValue('published'),
-      'weight' => (int) $form_state->getValue('weight'),
+      'weight' => self::nonNegativeInteger($form_state->getValue('weight')),
     ];
     if ($lesson === NULL) {
       $lesson = $this->entityTypeManager->getStorage('aculta_lms_lesson')->create($values);
@@ -184,8 +198,41 @@ final class LessonAuthoringForm extends FormBase {
       $this->entityTypeManager->getStorage('aculta_lms_lesson')->loadByProperties(['course_id' => $courseId]),
       static fn($lesson): bool => $lesson instanceof ContentEntityInterface,
     ));
-    $weights = array_map(static fn(ContentEntityInterface $lesson): int => (int) $lesson->get('weight')->value, $lessons);
+    $weights = array_map(static fn(ContentEntityInterface $lesson): int => self::signedInteger($lesson->get('weight')->value), $lessons);
     return $weights === [] ? 0 : max($weights) + 1;
+  }
+
+  /**
+   * Converts a known scalar text value, rejecting unexpected structures.
+   */
+  private static function stringValue(mixed $value, string $default = ''): string {
+    return is_string($value) ? $value : $default;
+  }
+
+  /**
+   * Converts a valid non-negative integer representation, defaulting safely.
+   */
+  private static function nonNegativeInteger(mixed $value): int {
+    if (is_int($value) && $value >= 0) {
+      return $value;
+    }
+    if (is_string($value) && preg_match('/^\d+$/D', $value) === 1) {
+      return (int) $value;
+    }
+    return 0;
+  }
+
+  /**
+   * Converts a stored signed integer representation, defaulting safely.
+   */
+  private static function signedInteger(mixed $value): int {
+    if (is_int($value)) {
+      return $value;
+    }
+    if (is_string($value) && preg_match('/^-?\d+$/D', $value) === 1) {
+      return (int) $value;
+    }
+    return 0;
   }
 
   /**

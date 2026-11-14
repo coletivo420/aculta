@@ -50,7 +50,9 @@ final class CourseStructureMoveForm extends ConfirmFormBase {
    * {@inheritdoc} */
   public function getQuestion(): TranslatableMarkup {
     [, $lesson, $activity, $direction] = $this->routeEntities();
-    $label = $activity ? $this->t('Atividade @id', ['@id' => $activity->id()]) : $lesson->get('title')->value;
+    $label = $activity !== NULL
+      ? $this->t('Atividade @id', ['@id' => (string) $activity->id()])
+      : self::stringValue($lesson->get('title')->value);
     return $this->t('Mover “@item” @direction?', [
       '@item' => $label,
       '@direction' => $direction === 'acima' ? $this->t('uma posição acima') : $this->t('uma posição abaixo'),
@@ -77,13 +79,17 @@ final class CourseStructureMoveForm extends ConfirmFormBase {
   }
 
   /**
-   * {@inheritdoc} */
+   * {@inheritdoc}
+   *
+   * @param array<array-key, mixed> $form
+   *   The submitted confirmation form render array.
+   */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     [$course, $lesson, $activity, $direction] = $this->routeEntities();
     $direction = $direction === 'acima' ? 'up' : 'down';
-    $entityType = $activity ? 'aculta_lms_activity' : 'aculta_lms_lesson';
-    $parentId = (int) ($activity ? $lesson->id() : $course->id());
-    $itemId = (int) ($activity ? $activity->id() : $lesson->id());
+    $entityType = $activity !== NULL ? 'aculta_lms_activity' : 'aculta_lms_lesson';
+    $parentId = (int) ($activity !== NULL ? $lesson->id() : $course->id());
+    $itemId = (int) ($activity !== NULL ? $activity->id() : $lesson->id());
 
     try {
       if ($this->orderManager->move($entityType, $parentId, $itemId, $direction)) {
@@ -103,7 +109,11 @@ final class CourseStructureMoveForm extends ConfirmFormBase {
   }
 
   /**
-   * Resolves and revalidates the full course ancestry for the POST. */
+   * Resolves and revalidates the full course ancestry for the POST.
+   *
+   * @return array{0: \Drupal\group\Entity\GroupInterface, 1: \Drupal\Core\Entity\ContentEntityInterface, 2: ?\Drupal\Core\Entity\ContentEntityInterface, 3: 'acima'|'abaixo'}
+   *   The course, lesson, optional activity, and validated move direction.
+   */
   private function routeEntities(): array {
     $course = $this->currentRouteMatch->getParameter('course');
     $lesson = $this->currentRouteMatch->getParameter('lesson');
@@ -120,6 +130,13 @@ final class CourseStructureMoveForm extends ConfirmFormBase {
       throw new AccessDeniedHttpException();
     }
     return [$course, $lesson, $activity, $direction];
+  }
+
+  /**
+   * Reads a known string field value without coercing mixed data.
+   */
+  private static function stringValue(mixed $value): string {
+    return is_string($value) ? $value : '';
   }
 
 }
