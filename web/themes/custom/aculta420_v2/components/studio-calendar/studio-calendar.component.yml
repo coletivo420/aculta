@@ -13,78 +13,108 @@ props:
       type: string
       minLength: 1
       default: Calendário
+      description: Título da seção do calendário exibido como cabeçalho de nível dois.
     current_month_label:
       title: Mês atualmente exibido
       type: string
       minLength: 1
+      description: Nome localizado do mês e ano apresentados na grade.
     previous_url:
       title: Endereço do mês anterior
       type: [string, 'null']
+      description: Destino para navegar ao mês anterior; null apresenta o controle anterior desabilitado.
     next_url:
       title: Endereço do próximo mês
       type: [string, 'null']
+      description: Destino para navegar ao mês seguinte; null apresenta o controle seguinte desabilitado.
     filters:
       title: Filtros disponíveis
       type: array
+      description: Links que selecionam o tipo de agenda mostrado na grade e identificam o filtro ativo.
       items:
         type: object
+        description: Um filtro de calendário disponível.
         required: [id, label, url, active]
         properties:
           id:
             type: string
+            description: Chave estável do filtro, como cursos, eventos ou meus_eventos.
           label:
             type: string
+            description: Texto localizado exibido no controle do filtro.
           url:
             type: string
+            description: Destino que aplica o filtro à agenda do calendário.
           active:
             type: boolean
+            description: Indica qual filtro está selecionado e recebe aria-selected=true.
     weeks:
       title: Semanas e dias do calendário
       type: array
+      description: Grade mensal organizada em semanas, com células de dias e espaços vazios.
       items:
         type: array
+        description: Células dos dias de uma semana, na ordem de segunda a domingo.
         items:
           type: object
+          description: Dados visuais e de navegação de um dia ou célula vazia da grade.
           required: [day_number, is_current_month, is_today, is_selected, count]
           properties:
             day_number:
               type: [integer, string, 'null']
+              description: Número mostrado no dia; null representa uma célula de espaçamento.
             date_string:
               type: [string, 'null']
+              description: Data completa usada no nome acessível do link do dia, quando disponível.
             is_current_month:
               type: boolean
+              description: Indica se a célula pertence ao mês exibido, distinguindo dias de preenchimento.
             is_today:
               type: boolean
+              description: Indica se o dia corresponde à data atual no fuso de Brasília.
             is_selected:
               type: boolean
+              description: Indica o dia selecionado para mostrar a lista de eventos abaixo da grade.
             count:
               type: integer
+              description: Quantidade de eventos naquele dia, incluída no nome acessível do link quando positiva.
             url:
               type: [string, 'null']
+              description: Destino para selecionar o dia; null deixa a data sem link.
     selected_date_label:
       title: Data selecionada
       type: [string, 'null']
+      description: Texto do cabeçalho que identifica a data cujos eventos aparecem no resumo.
     selected_day_events:
       title: Eventos da data selecionada
       type: array
+      description: Eventos da data selecionada, preparados pelo presenter para a lista de resumo.
       items:
         type: object
+        description: Dados de apresentação de um evento na lista da data selecionada.
         required: [title]
         properties:
           title:
             type: string
+            description: Título do evento, usado como texto do link quando url estiver disponível.
           time:
             type: [string, 'null']
+            description: Horário localizado ou indicação de dia inteiro, se informado pelo evento.
           location:
             type: [string, 'null']
+            description: Local do evento quando disponível.
           url:
             type: [string, 'null']
+            description: Destino opcional associado ao título do evento.
           is_cancelled:
             type: boolean
+            description: Indica cancelamento e aplica o estado visual de evento cancelado.
     can_add_event:
       title: Permitir inclusão de evento
       type: boolean
       default: false
+      description: Indica se o producer permite mostrar a ação de propor evento para a conta atual.
     add_event_url:
       title: Endereço para incluir evento
       type: [string, 'null']
+      description: Destino preparado pelo producer para propor evento; a ação só aparece quando este campo e can_add_event estão ativos.

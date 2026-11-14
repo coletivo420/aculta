@@ -12,27 +12,33 @@ props:
       type: string
       title: ID unico do tour
       pattern: '^[A-Za-z][A-Za-z0-9_-]*$'
+      description: Identificador HTML único encaminhado ao diálogo nativo e usado para o wrapper do tour.
     title:
       type: string
       title: Titulo do tour
       minLength: 1
+      description: Título visível e acessível do diálogo que apresenta a etapa atual.
     trigger_label:
       type: string
       title: Rotulo do link de abertura
       minLength: 1
+      description: Nome acessível do controle que abre o diálogo do tour.
     trigger_url:
       type: string
       title: Destino sem JavaScript
       minLength: 1
       format: uri-reference
+      description: Destino de fallback do link de abertura quando o comportamento JavaScript não estiver disponível.
     current_step:
       type: string
       title: Etapa atual
       default: welcome
+      description: Rótulo da etapa atual exibido antes da quantidade total no indicador do tour.
     total_steps:
       type: integer
       title: Total de etapas
       default: 4
+      description: Quantidade total de etapas exibida no indicador junto ao rótulo current_step.
 slots:
   content:
     title: Conteudo da etapa

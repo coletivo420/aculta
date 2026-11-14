@@ -101,9 +101,9 @@ anteriores e não substituem a conferência do código atual.
    habilitada e ausência de catálogo customizado. O validator Drupal passou
    isoladamente em 95 SDCs; essa validação não cobre `forum-quote` nem `reply-indent`.
    Auditoria atual do worktree (150 manifests): 556 props de topo, das quais
-   74 ainda não têm descrição em 13 SDCs. Considerando todos os nós de schema
+   58 ainda não têm descrição em 11 SDCs. Considerando todos os nós de schema
    tipados sob essas props, incluindo itens de arrays e schemas aninhados, são
-   720 nós tipados, com 142 sem descrição em 20 SDCs. Há 80 SDCs com 159 props
+   720 nós tipados, com 106 sem descrição em 18 SDCs. Há 80 SDCs com 159 props
    obrigatórias e 13 SDCs
    com prop `variant` enum; nenhum manifest declara `tags`, `links`, metadados
    de `variants` ou `slots.expected`. A leitura inicial classifica sete
