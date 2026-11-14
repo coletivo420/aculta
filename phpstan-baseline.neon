@@ -49537,18 +49537,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Unit/CourseLessonPreviewAccessCheckTest.php
 
 		-
-			rawMessage: 'Call to an undefined method Drupal\commerce_order\Entity\OrderInterface::method().'
-			identifier: method.notFound
-			count: 15
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Unit/CourseOrderEnrollmentManagerTest.php
-
-		-
-			rawMessage: 'Cannot call method willReturn() on mixed.'
-			identifier: method.nonObject
-			count: 15
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Unit/CourseOrderEnrollmentManagerTest.php
-
-		-
 			rawMessage: Cannot access offset 'classes' on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1

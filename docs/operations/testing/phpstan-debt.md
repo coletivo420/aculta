@@ -1,10 +1,10 @@
 # Dívida PHPStan — ACULTA
 
-Gerado em 2026-11-14T20:08:42+00:00 por `scripts/phpstan-debt-report.php`.
+Gerado em 2026-11-14T20:10:34+00:00 por `scripts/phpstan-debt-report.php`.
 
 | Item | Valor |
 | --- | --- |
-| Commit | `24fe47aa461692f6b00fede813afda524d9b410e` |
+| Commit | `ecdce598769cfecd169d866ff724660634ffbcc9` |
 | PHP | 8.4.27 |
 | PHPStan | PHPStan - PHP Static Analysis Tool 2.3.5 |
 | Nível | 10 |
@@ -15,27 +15,27 @@ Gerado em 2026-11-14T20:08:42+00:00 por `scripts/phpstan-debt-report.php`.
 
 | Medida | Ocorrências |
 | --- | ---: |
-| Total bruto no nível 10 | 26378 |
-| Dívida congelada no baseline | 26378 |
+| Total bruto no nível 10 | 26348 |
+| Dívida congelada no baseline | 26348 |
 | Erros não suprimidos | 0 |
-| Entradas no baseline | 15410 |
+| Entradas no baseline | 15408 |
 | Produção | 15696 |
-| Testes | 10682 |
+| Testes | 10652 |
 
 ## Criticidade funcional
 
 | Criticidade | Ocorrências |
 | --- | ---: |
 | alta | 231 |
-| media | 23132 |
+| media | 23102 |
 | baixa | 3015 |
 
 ## Evolução desde o baseline de referência
 
 | Classificação | Entradas |
 | --- | ---: |
-| Dívida removida | 16 |
-| Dívida mantida | 15410 |
+| Dívida removida | 2 |
+| Dívida mantida | 15408 |
 | Nova dívida (bloqueante) | 0 |
 | Contagem aumentada (bloqueante) | 0 |
 | Contagem reduzida | 0 |
@@ -50,7 +50,7 @@ Gerado em 2026-11-14T20:08:42+00:00 por `scripts/phpstan-debt-report.php`.
 | aculta_messenger | 2073 |
 | aculta_portal | 2020 |
 | aculta_events | 1792 |
-| aculta_lms | 1790 |
+| aculta_lms | 1760 |
 | aculta_wiki | 1461 |
 | aculta_lms_h5p | 1299 |
 | aculta_index | 1112 |
@@ -82,11 +82,11 @@ Gerado em 2026-11-14T20:08:42+00:00 por `scripts/phpstan-debt-report.php`.
 | --- | ---: |
 | `offsetAccess.nonOffsetAccessible` | 8044 |
 | `argument.type` | 4619 |
-| `method.nonObject` | 2922 |
+| `method.nonObject` | 2907 |
 | `missingType.iterableValue` | 2792 |
 | `cast.string` | 2075 |
 | `cast.int` | 1344 |
-| `method.notFound` | 982 |
+| `method.notFound` | 967 |
 | `property.nonObject` | 666 |
 | `return.type` | 369 |
 | `foreach.nonIterable` | 354 |
