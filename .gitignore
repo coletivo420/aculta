@@ -45,6 +45,7 @@ secrets.env
 /tmp/
 temp/
 .cache/
+/.twig-cs-fixer.cache
 
 # IDEs/editors
 .idea/
