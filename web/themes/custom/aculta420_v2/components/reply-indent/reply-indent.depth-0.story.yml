@@ -1,0 +1,8 @@
+name: Resposta nível 0
+description: Resposta de conversa no nível 0, com recuo e faixa de resposta conforme o nível.
+component: aculta420_v2:reply-indent
+props:
+  depth: 0
+slots:
+  content:
+    '#markup': '<p>Exemplo de resposta no nível 0 da conversa.</p>'

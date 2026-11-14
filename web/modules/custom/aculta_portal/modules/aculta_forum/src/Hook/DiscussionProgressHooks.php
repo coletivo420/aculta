@@ -54,9 +54,10 @@ final class DiscussionProgressHooks {
     }
 
     $build['field_aculta_discussion']['#attributes']['data-aculta-discussion-thread'] = '';
-    $build['field_aculta_discussion']['#attached']['library'][] = 'aculta_forum/discussion-progress';
     // Comportamento do popup de Responder/Citar e do botão Comentar (código no módulo; visual no tema).
     $build['field_aculta_discussion']['#attached']['library'][] = 'aculta_forum/discussion-reply-popup';
+    // Alternância normal/espelhado pela ordem exibida das respostas.
+    $build['field_aculta_discussion']['#attached']['library'][] = 'aculta_forum/discussion-side';
     // O compositor do popup é carregado por HTMX, que não leva as configurações do editor.
     // Os anexos (biblioteca e drupalSettings do CKEditor) vêm do formulário de comentário do nó,
     // renderizado em isolamento: o HTML do formulário não entra na página.

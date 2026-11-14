@@ -275,7 +275,7 @@ services:
     arguments: ['@aculta_forum.discussion_comment_permalink_builder', '@extension.list.theme', '@aculta_forum.discussion_thread_depth_resolver']
 
   Drupal\aculta_forum\Hook\DiscussionReactionEntityViewHooks:
-    arguments: ['@aculta_forum.discussion_reaction_builder', '@aculta_forum.discussion_reaction_manager', '@current_user']
+    arguments: ['@aculta_forum.discussion_reaction_builder', '@aculta_forum.discussion_reaction_manager', '@current_user', '@entity_type.manager']
 
   Drupal\aculta_forum\Hook\ForumProfileReactionHooks:
     arguments: ['@aculta_forum.discussion_reaction_manager']

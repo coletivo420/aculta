@@ -18,14 +18,17 @@
   author_name: author_name_val|default('Participante'|t),
   author_posts: author_posts_val,
   author_reactions: author_reactions_val,
-  timestamp: created|default(null)
+  timestamp: created|default(null),
+  accent_side: accent_side|default('start'),
+  reply_depth: reply_depth|default(0),
+  reply_first: reply_first|default(false)
 } %}
   {% block title_prefix %}{{ title_prefix }}{% endblock %}
   {% block context %}
     {% if parent %}<p class="visually-hidden">{{ parent }}</p>{% endif %}
   {% endblock %}
   {% block avatar %}{% if author_card and author_card['#avatar'] is defined %}{{ render_var(author_card['#avatar']) }}{% endif %}{% endblock %}
-  {% block body %}{{ comment_body }}{% endblock %}
+  {% block body %}{{ comment_body }}{{ reactions_received }}{% endblock %}
   {% block actions %}{{ actions_markup }}{% endblock %}
   {% block reactions_slot %}{{ reaction_bar_val }}{% endblock %}
   {% block title_suffix %}{{ title_suffix }}{% endblock %}

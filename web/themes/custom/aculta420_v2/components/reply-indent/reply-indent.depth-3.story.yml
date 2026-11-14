@@ -1,0 +1,9 @@
+name: Resposta nível 3
+description: Resposta de conversa no nível 3, com recuo e faixa de resposta conforme o nível.
+component: aculta420_v2:reply-indent
+props:
+  depth: 3
+  first: true
+slots:
+  content:
+    '#markup': '<p>Exemplo de resposta no nível 3 da conversa.</p>'

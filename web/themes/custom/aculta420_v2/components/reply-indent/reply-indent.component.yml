@@ -1,0 +1,25 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Resposta recuada
+description: Recua uma resposta em nível e marca a faixa de resposta à esquerda, com a cor do tema. Usado nas respostas de uma conversa; nível 0 é a resposta raiz.
+status: stable
+group: Comunidade
+props:
+  type: object
+  additionalProperties: false
+  properties:
+    first:
+      type: boolean
+      title: Primeira resposta do nível
+      default: false
+      description: Mostra a seta de resposta à esquerda do cartão (Phosphor arrow-elbow-down-right).
+    depth:
+      type: integer
+      title: Nível da resposta
+      minimum: 0
+      maximum: 3
+      default: 0
+      description: 0 = resposta raiz (sem recuo); 1 a 3 = respostas em nível, com recuo e faixa de resposta. Níveis acima de 3 ficam no nível 3.
+slots:
+  content:
+    title: Conteúdo da resposta
+    description: Cartão da resposta (forum-comment ou outro cartão de conversa).

@@ -28,6 +28,8 @@ final class DiscussionReactionEntityViewHooks {
     private readonly DiscussionReactionManager $reactionManager,
     #[Autowire(service: 'current_user')]
     private readonly AccountProxyInterface $currentUser,
+    #[Autowire(service: 'entity_type.manager')]
+    private readonly \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager,
   ) {}
 
   /**
@@ -60,6 +62,27 @@ final class DiscussionReactionEntityViewHooks {
    */
   #[Hook('preprocess_comment')]
   public function preprocessComment(array &$variables): void {
+    // Nível real da resposta: o Drupal grava um ponto por nível na coluna thread.
+    $threadComment = $variables['comment'] ?? NULL;
+    if ($threadComment instanceof \Drupal\comment\CommentInterface) {
+      $variables['reply_depth'] = min(3, substr_count((string) $threadComment->get('thread')->value, '.'));
+      // Resposta em nível: lado oposto ao cartão ao qual responde (pai). A raiz segue a alternância da conversa.
+      $variables['accent_side'] = $this->discussionSide($threadComment);
+      // Primeira resposta entre irmãos do mesmo pai (mostra a seta de resposta).
+      if ($variables['reply_depth'] >= 1) {
+        $parentId = (int) ($threadComment->get('pid')->target_id ?? 0);
+        $siblings = $this->entityTypeManager->getStorage('comment')->getQuery()
+          ->accessCheck(FALSE)
+          ->condition('pid', $parentId)
+          ->condition('entity_id', $threadComment->getCommentedEntityId())
+          ->condition('field_name', 'field_aculta_discussion')
+          ->condition('status', 1)
+          ->sort('thread', 'ASC')
+          ->execute();
+        $position = array_search((int) $threadComment->id(), array_values(array_map('intval', $siblings)), TRUE);
+        $variables['reply_first'] = $position === 0;
+      }
+    }
     $comment = $variables['elements']['#comment'] ?? NULL;
     if (!$comment instanceof CommentInterface
       || $comment->bundle() !== 'aculta_discussion_post'
@@ -84,6 +107,19 @@ final class DiscussionReactionEntityViewHooks {
       $variables['content']['reaction_bar'] = $this->reactionBuilder->build($comment, $this->currentUser) + ['#weight' => 20];
     }
     $variables['reaction_bar'] = $variables['content']['reaction_bar'];
+    // Contador de reações recebidas (somente leitura), com os dados da própria barra de reação.
+    $barProps = $variables['reaction_bar']['#props'] ?? [];
+    if (!empty($barProps['reactions'])) {
+      $variables['reactions_received'] = [
+        '#type' => 'component',
+        '#component' => 'aculta420_v2:discussion-reactions-received',
+        '#props' => [
+          'target_id' => 'discussion-reactions-comment-' . $comment->id(),
+          'reactions' => $barProps['reactions'],
+          'allowed_reactions' => $barProps['allowed_reactions'] ?? [],
+        ],
+      ];
+    }
   }
 
   /**
@@ -136,6 +172,33 @@ final class DiscussionReactionEntityViewHooks {
       $build['author_card']['#reactions_given'] = $stats['reactions_given'];
       $build['author_card']['#cache']['tags'][] = 'aculta_user_reactions:' . $uid;
     }
+  }
+
+  /**
+   * Lado do cartão de uma resposta: a raiz alterna (1.ª espelhada); uma resposta em nível é o oposto do pai.
+   */
+  private function discussionSide(CommentInterface $comment, int $guard = 0): string {
+    if ($guard > 20) {
+      return 'start';
+    }
+    $pid = (int) ($comment->get('pid')->target_id ?? 0);
+    if ($pid === 0) {
+      $roots = $this->entityTypeManager->getStorage('comment')->getQuery()
+        ->accessCheck(FALSE)
+        ->condition('pid', NULL, 'IS NULL')
+        ->condition('entity_id', $comment->getCommentedEntityId())
+        ->condition('field_name', 'field_aculta_discussion')
+        ->condition('status', 1)
+        ->sort('thread', 'ASC')
+        ->execute();
+      $position = array_search((int) $comment->id(), array_values(array_map('intval', $roots)), TRUE);
+      return ($position !== FALSE && $position % 2 === 0) ? 'end' : 'start';
+    }
+    $parent = $this->entityTypeManager->getStorage('comment')->load($pid);
+    if (!$parent instanceof CommentInterface) {
+      return 'start';
+    }
+    return $this->discussionSide($parent, $guard + 1) === 'end' ? 'start' : 'end';
   }
 
 }

@@ -59,7 +59,7 @@ final class DiscussionProgressHooksTest extends UnitTestCase {
 
     self::assertSame('', $build['field_aculta_discussion']['#attributes']['data-aculta-discussion-thread']);
     self::assertSame(
-      ['aculta_forum/discussion-progress', 'aculta_forum/discussion-reply-popup'],
+      ['aculta_forum/discussion-reply-popup', 'aculta_forum/discussion-side'],
       $build['field_aculta_discussion']['#attached']['library'],
     );
   }

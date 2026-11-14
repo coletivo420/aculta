@@ -1,11 +1,11 @@
 name: Reply compacto espelhado
-description: Mesmo cartão de resposta, com a faixa de acento do lado oposto.
+description: "Mesmo cartão de resposta, espelhado: avatar à direita, faixa de acento do lado oposto e ações invertidas."
 props:
+  accent_side: end
   author_name: PiradoPirata
   timestamp: Há 1 hora
   reacted: true
   reaction_count: 3
-  accent_side: end
 slots:
   received_slot:
     '#type': component
@@ -55,5 +55,7 @@ slots:
       quote_url: /discussoes/citar/comment/789
       target_id: aculta-reply-dialog-body
 
+  avatar:
+    '#markup': '<img src="/themes/custom/aculta420_v2/assets/avatars/pirates-002-polvo-pirata.png" alt="Avatar de PiradoPirata" width="128" height="128">'
   content:
     '#markup': '<p class="forum-reply-compact__line">Boa dica! Para o solo, também vale checar a drenagem antes do plantio.</p>'

@@ -8,6 +8,24 @@ props:
   additionalProperties: false
   required: [composer_target_id, author_name]
   properties:
+    reply_first:
+      type: boolean
+      title: Primeira resposta do nível
+      default: false
+      description: Verdadeiro quando é a primeira resposta entre irmãos; mostra a seta de resposta.
+    reply_depth:
+      type: integer
+      title: Nível da resposta
+      minimum: 0
+      maximum: 3
+      default: 0
+      description: Nível real na conversa (0 = resposta raiz); o cartão é recuado pelo SDC reply-indent.
+    accent_side:
+      type: string
+      title: Lado do cartão
+      enum: [start, end]
+      default: start
+      description: start = normal (faixa à esquerda); end = espelhado (faixa e autoria à direita). Definido pelo módulo do fórum pela ordem da resposta.
     attributes:
       type: Drupal\Core\Template\Attribute
       title: Atributos do comentário
