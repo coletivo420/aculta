@@ -642,3 +642,11 @@
 .forum-post-card--density-compact .forum-author-line {
   --avatar-size: 2.25rem;
 }
+
+/* Quantidade de posts e data do autor em uma só linha, em qualquer largura. */
+.forum-post-card .forum-post-card__author-meta {
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  white-space: nowrap;
+}
