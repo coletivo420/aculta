@@ -33,6 +33,7 @@ final class MapsThemeHooks {
           'category' => NULL,
           'address' => NULL,
           'route_url' => NULL,
+          'component' => NULL,
         ],
       ],
       'aculta_maps_marker_icon_template' => [

@@ -694,7 +694,7 @@ autorizada.
 - **Props:** `title`, `url`, `category`, `address`, `route_url`.
 - **Slots:** `thumbnail`.
 - **Estado:** entregue. Os tiles de mapa não mudam sem revisão de privacidade (ver roadmap).
-- **Ponte com `aculta_maps`:** `templates/aculta-maps-popup-content.html.twig` inclui o SDC com as props do hook `aculta_maps_popup_content`; sem o tema, o módulo usa o fallback neutro. O conteúdo fica num `<template>` inerte clonado pelo Leaflet; nada de HTML ou SVG vai por `drupalSettings`.
+- **Ponte com `aculta_maps`:** o preprocess do tema mapeia as props do hook `aculta_maps_popup_content` ao SDC; o fallback neutro do módulo permanece para outros temas. O conteúdo fica num `<template>` inerte clonado pelo Leaflet; nada de HTML ou SVG vai por `drupalSettings`.
 - **Stories:** `default` (todas as props) e `minimal` (só título).
 
 ### map-canvas — Superfície de mapa

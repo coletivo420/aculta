@@ -1914,3 +1914,9 @@ State: Dev. No RC, production deployment, or release tag is declared.
 - Mantidos os templates do módulo como fallback para outros temas; removidos
   os três overrides do tema. O catálogo passa a 140 SDCs/222 stories e o tema
   fica com 39 templates; homologação visual no Runtime pendente.
+## Atualização — popup de mapa encaminhado diretamente ao SDC (2026-11-13)
+
+- O preprocess do tema envia as props do hook `aculta_maps_popup_content` ao SDC
+  `map-popup`; o fallback neutro do módulo continua disponível para outros
+  temas. Removido o override Twig; restam 35 templates.
+

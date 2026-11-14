@@ -189,6 +189,7 @@ foreach ($files($module . '/templates', ['twig']) as $path) {
     'aculta-portal-button.html.twig',
     'aculta-portal-shell.html.twig',
     'aculta-portal-photo-editor.html.twig',
+    'aculta-maps-popup-content.html.twig',
     'aculta-section.html.twig',
   ];
   $assert(is_file($themeTemplate) || in_array(basename($path), $neutralFallbacks, TRUE), 'Template do módulo sem correspondente no tema (ACULTA420 deve sobrescrever): ' . basename($path));

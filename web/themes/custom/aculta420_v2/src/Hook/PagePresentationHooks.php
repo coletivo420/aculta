@@ -692,6 +692,32 @@ final class PagePresentationHooks {
   }
 
   /**
+   * Maps the map module's popup data to the existing popup SDC.
+   */
+  #[Hook('preprocess_aculta_maps_popup_content')]
+  public function preprocessMapPopupContent(array &$variables): void {
+    if (!$this->componentAvailable('map-popup')) {
+      return;
+    }
+
+    $title = trim((string) ($variables['title'] ?? ''));
+    if ($title === '') {
+      return;
+    }
+    $variables['component'] = [
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:map-popup',
+      '#props' => [
+        'title' => $title,
+        'url' => isset($variables['url']) ? (string) $variables['url'] : NULL,
+        'category' => isset($variables['category']) ? (string) $variables['category'] : NULL,
+        'address' => isset($variables['address']) ? (string) $variables['address'] : NULL,
+        'route_url' => isset($variables['route_url']) ? (string) $variables['route_url'] : NULL,
+      ],
+    ];
+  }
+
+  /**
    * Builds a SDC render array for the neutral donation action hook.
    */
   private function preprocessDonationButton(array &$variables, string $variant): void {
