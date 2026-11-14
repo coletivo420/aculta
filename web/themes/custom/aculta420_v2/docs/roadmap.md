@@ -49,7 +49,7 @@ anteriores e não substituem a conferência do código atual.
   11 módulos sem schema e baseline de cache/validação em
   `e37f3d8d45ecba9719d4b97dde67effc2236b13f`. Não há updates ou deploy hooks
   pendentes. Nenhuma importação/migração estrutural foi executada.
-- Restam 25 templates Twig Drupal no tema. O shell paralelo foi removido e
+- Restam 24 templates Twig Drupal no tema. O shell paralelo foi removido e
   `node.wiki_entry.full` usa ComponentLayout UI Patterns com o SDC `wiki-entry`.
   O Config Sync também prepara `node.revista.full` com o SDC `revista-publication`;
   o preprocess preserva a composição SDC quando o ComponentLayout ainda não está ativo no Runtime. Os demais
@@ -89,8 +89,8 @@ anteriores e não substituem a conferência do código atual.
    variants/defaults, includes e escaping. Renomear apenas conceitos realmente
    reutilizáveis com plano de compatibilidade das referências persistidas.
 3. **P2 — cruzar integrações:** matriz estática regenerada em 2026-11-14 com
-   457 linhas: 141 SDCs, 159 displays Views, 52 instâncias de bloco, 22
-   displays com Layout Builder e 25 overrides Twig do tema. Foram achadas
+   456 linhas: 141 SDCs, 159 displays Views, 52 instâncias de bloco, 22
+   displays com Layout Builder e 24 overrides Twig do tema. Foram achadas
    referências literais a 107 SDCs; os 34 sem referência literal não são
    candidatos automáticos a exclusão, pois a Library os publica e usos
    editoriais/dinâmicos não aparecem nessa busca. Ainda falta reconciliar as
@@ -102,7 +102,7 @@ anteriores e não substituem a conferência do código atual.
    entrar no Runtime. A API do Component Display Extender não oferece Source
    para `title_prefix/title_suffix`/contextual links. Runtime, cache e os seis
    paths ainda precisam de homologação após liberar o preflight.
-4. **P3 — tentar eliminar os 25 templates:** a triagem por fonte está abaixo.
+4. **P3 — tentar eliminar os 24 templates:** a triagem por fonte está abaixo.
    Buscar substituição por displays/UI Patterns ou render arrays SDC em cada
    arquivo. Testar fallback Core e preservar apenas presenters mínimos quando
    não houver display builder ou plugin substituto.
@@ -124,19 +124,20 @@ gates que o carregam, status e referências operacionais; (5) confirmar que a
 rota oficial da UI Patterns Library continua habilitada. Não apagar os arquivos
 do módulo antes da desinstalação, pois o checkout é compartilhado com Apache.
 
-### Arquivos que exigem classificação individual em P3
+### Templates restantes no tema para P3
+
+Conferidos por `find web/themes/custom/aculta420_v2/templates -name '*.twig'`
+em 2026-11-14 (24 arquivos):
 
 `aculta-mailer-wrap.html.twig`, `aculta-maps-marker-icon-template.html.twig`,
 `comment--comments.html.twig`, `comment--field-aculta-discussion.html.twig`,
-`content/node--aculta-faq--full.html.twig`,
 `content/node--aculta-forum-topic.html.twig`,
 `content/node-add-form--aculta-forum-topic.html.twig`,
 `discussion-reaction-picker.html.twig`, `input--submit.html.twig`,
 `layout/html.html.twig`, `layout/page.html.twig`,
 `misc/status-messages.html.twig`, `navigation/breadcrumb.html.twig`,
 `navigation/pager.html.twig`, `page-title.html.twig`,
-`ui-patterns-overview-page.html.twig`, `ui-patterns-single-page.html.twig`,
-`ui-patterns-stories-compact.html.twig`,
+`ui-patterns-overview-page.html.twig`, `ui-patterns-stories-compact.html.twig`,
 `ui-patterns-stories-full.html.twig`,
 `views/views-view--aculta-forum-public-topics--page-category-term.html.twig`,
 `views/views-view--aculta-forum-public-topics.html.twig`,
@@ -146,18 +147,26 @@ do módulo antes da desinstalação, pois o checkout é compartilhado com Apache
 `views/views-view-fields--aculta-forum-public-topics.html.twig` e
 `views/views-view-unformatted--aculta-forum-categories--page-categories.html.twig`.
 
-### Classificação atual dos 25 templates pelo código
+O FAQ e o override `ui-patterns-single-page.html.twig` saíram desta fila em
+2026-11-14. A single page usa novamente o template upstream instalado; o loader
+de prévias agora extrai `.ui_patterns_component__stories`. Não contar templates dos módulos como
+overrides do tema; os presenters Twig module-owned relacionados são
+`aculta-portal-photo-editor.html.twig`, `portal-component.html.twig`,
+`aculta-mailer-wrap.html.twig`, `aculta-maps-popup-template.html.twig`,
+`aculta-maps-popup-content.html.twig` e `discussion-reaction-picker.html.twig`.
+Cada um exige revisão de fronteira com seu módulo owner antes de remoção.
+
+### Classificação dos presenters pelo código
 
 | Grupo/arquivos | Evidência encontrada | Direção de planejamento |
 | --- | --- | --- |
 | `layout/html.html.twig`, `layout/page.html.twig` | Infraestrutura de documento/página Drupal; `page.html.twig` compõe `layout-page`. | Tentar remover os overrides e validar fallback Core. `page.html.twig` é exceção oficial válida se for o único ponto de composição das regiões; se permanecer, deve ser presenter mínimo, sem markup de domínio. |
-| `ui-patterns-overview-page.html.twig`, `ui-patterns-single-page.html.twig`, `ui-patterns-stories-compact.html.twig`, `ui-patterns-stories-full.html.twig` | Overrides da Library; implementam catálogo e prévias progressivas/HTMX e hidratam stories. | Tentar voltar ao template upstream e remover CSS/JS acoplados. Se a experiência administrativa custom for necessária, migrá-la para API suportada; não consolidar dependência em hook_theme que upstream planeja substituir em 2.1/2.2. |
-| `aculta-maps-marker-icon-template.html.twig`, `aculta-maps-popup-content.html.twig`, `aculta-portal-account-terms-modal.html.twig`, `page-title.html.twig`, `misc/status-messages.html.twig`, `navigation/breadcrumb.html.twig`, `navigation/pager.html.twig` | Composição leve de SDCs (`icon`, `map-popup`, `account-terms-modal`, `heading`, `status-messages`, `breadcrumb`, `pagination`) com dados/atributos Drupal. | Para cada um, tentar chamada direta de SDC em render array/configuração ou integração UI Patterns. Manter presenter fino apenas se o hook Drupal/Core for inevitável; revisar prop type `links` e atributos. |
+| `ui-patterns-overview-page.html.twig`, `ui-patterns-stories-compact.html.twig`, `ui-patterns-stories-full.html.twig` | Overrides remanescentes da Library; implementam catálogo e prévias progressivas/HTMX, exibem metadados e hidratam props/slots de stories. `ui-patterns-single-page.html.twig` foi removido em 2026-11-14 e voltou ao template upstream. | Tentar voltar os overrides restantes ao upstream ou migrá-los para API suportada. O hook_theme permanece dependência que upstream planeja substituir em 2.1/2.2; preservar todos os SDCs e stories catalogados. |
+| Overrides do tema `aculta-maps-marker-icon-template.html.twig`, `page-title.html.twig`, `misc/status-messages.html.twig`, `navigation/breadcrumb.html.twig`, `navigation/pager.html.twig`; template owner `aculta-maps-popup-content.html.twig` | Composição leve de SDCs (`icon`, `map-popup`, `heading`, `status-messages`, `breadcrumb`, `pagination`) com dados/atributos Drupal. O popup é template do módulo Maps, não override do tema; o modal de termos já compõe SDC direto pelo tema. | Para os overrides do tema, tentar render array SDC/configuração ou integração UI Patterns. Manter presenter fino apenas se o hook Drupal/Core for inevitável; revisar prop type `links` e atributos. Migrar o template owner apenas respeitando a fronteira do módulo Maps. |
 | `aculta-mailer-wrap.html.twig` | Hook `aculta_mailer_wrap`, enviado pelo `AcultaMailerMail`; adapta tokens/logo a HTML de e-mail. | Tentar devolver composição pelo módulo como render array SDC compatível com mail. Se o pipeline de e-mail exigir hook template, manter ponte mínima sem lógica de domínio. |
 | `comment--comments.html.twig`, `comment--field-aculta-discussion.html.twig` | Overrides de comentário preservam atributos, prefix/suffix, permalink, pai e discussão; compõem `forum-post-card`. | Tentar Manage Display/Field Formatters de comentário. Remover somente depois de cobrir wrapper, respostas, acesso e ações Drupal. |
-| `aculta-portal-photo-editor.html.twig` | Wrapper do `photo_form` e do contrato `data-aculta-photo-editor`; Form API e comportamento pertencem ao Portal. | Substituir por SDC com slot Form API ou render array de componente; manter o Form API/comportamento no Portal. |
-| `portal-cart-panel.html.twig` | Monta agrupamento do carrinho e mantém ID, classe e `hx-swap-oob="outerHTML"` para respostas HTMX. | Converter em SDC de apresentação invocado pelo módulo; preservar resposta OOB, escaping e metadados. Cálculo permanece no Commerce. |
-| `portal-component.html.twig` | Ponte genérica; `PagePresentationHooks::preprocessPortalComponent()` converte nomes neutros permitidos nos SDCs do tema e mantém fallback do Portal. | Tentar substituir a ponte por render arrays SDC emitidos pelos módulos. Remover só após todos os emissores deixarem o hook neutro sem quebrar fallback do Portal. |
+| Template owner `aculta-portal-photo-editor.html.twig` | Wrapper do `photo_form` e do contrato `data-aculta-photo-editor`; Form API e comportamento pertencem ao Portal. | Substituir por SDC com slot Form API ou render array de componente; manter o Form API/comportamento no Portal. Não entra na contagem dos templates do tema. |
+| Template owner `portal-component.html.twig` | Ponte neutra de fallback fornecida pelo Portal; `PagePresentationHooks::preprocessPortalComponent()` converte contratos permitidos para SDCs do tema. | Tentar substituir emissores por render arrays SDC e preservar fallback semântico. Não entra na contagem dos templates do tema. |
 | `content/node--aculta-forum-topic.html.twig`, `content/node-add-form--aculta-forum-topic.html.twig` | O primeiro compõe `forum-topic` e `forum-opening-post`; o segundo envolve Form API, mensagens, ações e contratos de criação do módulo Fórum. | A revisão R3 reverteu suas remoções: não há configuração Layout Builder/Views ou render array SDC equivalente. Migrar com o módulo Fórum mantendo acesso, ações, cache e Form API; só então apagar os presenters. |
 | `views/views-view--aculta-forum-public-topics*.html.twig`, `views/views-view-fields--aculta-forum-public-topics.html.twig`, `views/views-view-fields--aculta-forum-categories--page-categories.html.twig`, `views/views-view-unformatted--aculta-forum-categories--page-categories.html.twig`, `views/views-view--aculta-forum-search--page-search.html.twig` | Views Sync usa style/row `default`/`fields`; hooks calculam contexto/contagens e os presenters compõem categorias, busca e `forum-topic-row`. | A revisão R3 reverteu as remoções que perdiam categorias, contadores e SDCs de row. Migrar os displays para UI Patterns Views e prover dados cacheáveis no módulo antes de remover qualquer wrapper. |
 | `aculta_portal` Revista full | `PagePresentationHooks::composeRevistaFull()` preserva fields renderizados e compõe o SDC `revista-publication` como render array quando o ComponentLayout UI Patterns ainda não está ativo; quando ativo, encaminha `post_meta` e `article_authors` aos slots existentes. O Twig específico foi removido; o wrapper Core mantém artigo, contextual links e title prefix/suffix. | Corte no código concluído; importação da configuração e homologação de layout, acesso e cache no Runtime continuam pendentes. |
@@ -171,8 +180,9 @@ Esta classificação é somente uma triagem por fonte encontrada. Ela não prova
 um template tenha consumidor ativo em cada domínio/Runtime. O objetivo é testar a
 remoção de cada um; a exceção é um presenter mínimo quando não houver API de
 display/substituição adequada. A migração de `comment`, `photo-editor` e
-`cart-panel` depende da matriz completa de chamadas, displays, respostas HTMX,
-acesso e cache da fase P2.
+templates owner de reação/email/mapas depende da matriz completa de chamadas,
+displays, respostas HTMX, acesso e cache da fase P2. `portal-cart-panel` não foi
+encontrado no checkout e foi retirado da classificação vigente.
 
 ## Continuação do corte CSS SDC-first (2026-11-13)
 

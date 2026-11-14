@@ -85,7 +85,9 @@
       })
       .then((html) => {
         const doc = new DOMParser().parseFromString(html, 'text/html');
-        const fragment = doc.querySelector('#component-stories-wrapper');
+        // The UI Patterns Library upstream single-page template renders the
+        // stories container; avoid depending on a theme-specific wrapper ID.
+        const fragment = doc.querySelector('.ui_patterns_component__stories');
         if (!fragment) {
           throw new Error('fragment');
         }

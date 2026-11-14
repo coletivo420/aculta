@@ -1944,3 +1944,12 @@ State: Dev. No RC, production deployment, or release tag is declared.
   Core `details` com o mesmo título e resposta.
 - Validação no Runtime e aceite visual/acessível permanecem pendentes devido ao
   preflight Runtime bloqueado.
+## Atualização — template upstream da UI Patterns Library single page (2026-11-14)
+
+- Removido o override `templates/ui-patterns-single-page.html.twig`.
+- `ui-library-bulk-preview.js` seleciona `.ui_patterns_component__stories`, a
+  classe já fornecida pelo template upstream e pelos stories da Library, sem
+  depender dos wrappers/IDs específicos do tema.
+- A hidratação de props/slots das stories continua no override
+  `ui-patterns-stories-full.html.twig`; overview e prévias progressivas seguem
+  inalteradas.
