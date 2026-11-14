@@ -247,7 +247,7 @@ final class XapiProgressDeriverTest extends UnitTestCase {
    * @param string $timestamp
    *   Data e hora da declaração.
    *
-   * @return array
+   * @return array<string, mixed>
    *   Declaração xAPI montada.
    */
   private function statement(string $verb, array $result, string $registration, string $timestamp): array {

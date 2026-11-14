@@ -49915,54 +49915,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Unit/StudentTourWizardTest.php
 
 		-
-			rawMessage: Cannot access offset '#description' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Unit/SubmissionImageHooksTest.php
-
-		-
-			rawMessage: Cannot access offset '#upload_validators' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 5
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Unit/SubmissionImageHooksTest.php
-
-		-
-			rawMessage: Cannot access offset 'FileExtension' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Unit/SubmissionImageHooksTest.php
-
-		-
-			rawMessage: Cannot access offset 'FileSizeLimit' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Unit/SubmissionImageHooksTest.php
-
-		-
-			rawMessage: Cannot access offset 'extensions' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 3
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Unit/SubmissionImageHooksTest.php
-
-		-
-			rawMessage: Cannot access offset 'fileLimit' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Unit/SubmissionImageHooksTest.php
-
-		-
-			rawMessage: Cannot cast mixed to string.
-			identifier: cast.string
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Unit/SubmissionImageHooksTest.php
-
-		-
-			rawMessage: 'Parameter #2 $array of static method PHPUnit\Framework\Assert::assertArrayHasKey() expects array<mixed>|ArrayAccess<(int|string), mixed>, mixed given.'
-			identifier: argument.type
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Unit/SubmissionImageHooksTest.php
-
-		-
 			rawMessage: 'Cannot call method getPath() on Symfony\Component\Routing\Route|null.'
 			identifier: method.nonObject
 			count: 1
@@ -50021,36 +49973,6 @@ parameters:
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Unit/XapiBatchIngestorTest.php
-
-		-
-			rawMessage: 'Method Drupal\Tests\aculta_lms\Unit\XapiProgressDeriverTest::statement() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Unit/XapiProgressDeriverTest.php
-
-		-
-			rawMessage: 'Parameter #1 $statements of method Drupal\aculta_lms\Xapi\XapiProgressDeriver::attempts() expects list<array<string, mixed>>, array{array, array} given.'
-			identifier: argument.type
-			count: 3
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Unit/XapiProgressDeriverTest.php
-
-		-
-			rawMessage: 'Parameter #1 $statements of method Drupal\aculta_lms\Xapi\XapiProgressDeriver::attempts() expects list<array<string, mixed>>, array{array} given.'
-			identifier: argument.type
-			count: 3
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Unit/XapiProgressDeriverTest.php
-
-		-
-			rawMessage: 'Parameter #1 $statements of method Drupal\aculta_lms\Xapi\XapiProgressDeriver::result() expects list<array<string, mixed>>, array{array, array} given.'
-			identifier: argument.type
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Unit/XapiProgressDeriverTest.php
-
-		-
-			rawMessage: 'Parameter #1 $statements of method Drupal\aculta_lms\Xapi\XapiProgressDeriver::result() expects list<array<string, mixed>>, array{array} given.'
-			identifier: argument.type
-			count: 9
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Unit/XapiProgressDeriverTest.php
 
 		-
 			rawMessage: 'Method Drupal\Tests\aculta_lms\Unit\XapiStatementValidatorTest::statement() should return array<string, mixed> but returns array.'
