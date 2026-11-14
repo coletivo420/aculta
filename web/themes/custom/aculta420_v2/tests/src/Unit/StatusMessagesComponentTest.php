@@ -28,7 +28,7 @@ final class StatusMessagesComponentTest extends UnitTestCase {
     self::assertTrue($story['props']['dismissible']);
     self::assertSame('Fechar aviso do carrinho', $story['props']['close_label']);
 
-    $template = (string) file_get_contents($themeDir . '/templates/portal-cart-status.html.twig');
+    $template = (string) file_get_contents($themeDir . '/components/cart-feedback/cart-feedback.twig');
     self::assertStringContainsString("include('aculta420_v2:status-messages'", $template);
     self::assertStringContainsString("type: status_type == 'error' ? 'error' : 'status'", $template);
     self::assertStringContainsString("'data-portal-cart-status': ''", $template);

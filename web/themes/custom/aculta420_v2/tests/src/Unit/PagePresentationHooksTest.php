@@ -8,11 +8,13 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Config\ImmutableConfig;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Extension\ExtensionList;
+use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Path\PathMatcherInterface;
 use Drupal\Core\Routing\CurrentRouteMatch;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\Template\Attribute;
 use Drupal\Core\Theme\ComponentPluginManager;
+use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
 use Drupal\Tests\UnitTestCase;
 use Drupal\aculta420_v2\Hook\PagePresentationHooks;
@@ -72,6 +74,16 @@ final class PagePresentationHooksTest extends UnitTestCase {
       ->willReturn($config);
     $node = $this->createMock(NodeInterface::class);
     $node->method('bundle')->willReturn('revista');
+    $node->method('get')->willReturnCallback(function (string $fieldName): FieldItemListInterface {
+      $field = $this->createMock(FieldItemListInterface::class);
+      $field->method('isEmpty')->willReturn(FALSE);
+      return $field;
+    });
+    $node->method('label')->willReturn('Publicação de teste');
+    $node->method('toUrl')->willReturn(Url::fromUri('internal:/revista/teste'));
+    $node->method('getCacheTags')->willReturn([]);
+    $node->method('getCacheContexts')->willReturn([]);
+    $node->method('getCacheMaxAge')->willReturn(Cache::PERMANENT);
     $hooks = new PagePresentationHooks(
       $configFactory,
       $this->createMock(ExtensionList::class),

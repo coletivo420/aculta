@@ -38,7 +38,7 @@ final class ProductCardComponentTest extends UnitTestCase {
     self::assertStringContainsString("'#component' => 'aculta420_v2:product-card'", $hook);
     self::assertStringContainsString('($elements[\'#view_mode\'] ?? NULL) !== \'catalog\'', $hook);
     self::assertStringContainsString('unset($fields[\'variation_attributes\'])', $hook);
-    self::assertStringContainsString("'#slots' => ['content' => $fields]", $hook);
+    self::assertStringContainsString("'#slots' => ['content' => \$fields]", $hook);
     self::assertFileDoesNotExist($themeDir . '/templates/commerce/commerce-product--produto-loja--catalog.html.twig');
   }
 
