@@ -97,6 +97,39 @@ Triagem automática refinada: dos 16 candidatos lexicais, 11 são de conversão/
 | P3 — Corte de apresentação | Tentar eliminar todos os templates de tema com substituição UI Patterns/display builder ou render arrays SDC. Testar o fallback Core no shell e a Library upstream. | Lotes pequenos; cada template removido tem substituição real. Exceções limitadas aos hooks sem display builder; não perder acesso, cache, tradução, attachments, semântica ou interação. |
 | P4 — Homologação | Rodar gates focais, comparar páginas públicas e autenticadas, revisar Library/stories e confirmar cache-hit, teclado, claro/escuro e larguras relevantes. | Evidência por consumidor e Runtime status explícito. Sem sincronização ou rebuild bloqueado por preflight. |
 
+### Fotografia de configurações ativas com SDCs — 2026-11-14
+
+Consulta somente leitura ao `config.storage` do Runtime de desenvolvimento,
+limitada a `views.view.*`, `block.block.*`, `core.entity_view_display.*` e
+`core.entity_form_display.*`, encontrou 40 configurações com IDs
+`aculta420_v2:*`: 18 Views, 22 displays de entidade, nenhuma placement de bloco
+nesse recorte e 11 SDCs distintos. Configurações `field.*` não foram consultadas.
+Os dados abaixo vêm da
+configuração ativa, não do Sync. A classificação de domínio é inferida dos IDs
+das Views, seus caminhos e bundles; essas 40 configurações não carregam uma
+condição explícita `site_key`. Por isso, a associação é evidência de consumo
+por superfície, não prova isolada do host efetivo.
+
+| Domínio inferido | Configurações ativas com referências | SDCs encontrados |
+| --- | --- | --- |
+| `forum` | Views `aculta_forum_categories`, `aculta_forum_gallery_slides`, `aculta_forum_public_topics` e `aculta_forum_search` | `forum-category`, `forum-search-page`, `forum-topic-row`, `layout-grid`, `views-display` |
+| `magazine` | Views `aculta_albuns`, `aculta_news`, `media_galleries`, `revista_sessoes`; displays `node.revista.default/full` e `taxonomy_term.editorial_author.default` | `layout-grid`, `layout-section`, `revista-album-card`, `revista-listing`, `revista-publication`, `views-display` |
+| `shop` | Views `aculta_shop_catalog` e `galeria_produto` | `layout-grid` |
+| `courses` | Views `courses` e `courses_catalog` | `layout-grid` |
+| `eventos` | View `eventos_publicos` | `layout-grid` |
+| `wiki` | Views `wiki_categories` e `wiki_entries`; displays `node.wiki_entry.default/full` | `layout-grid`, `layout-section`, `wiki-entry` |
+| `main`/compartilhado ou domínio não resolvido | Views `aculta_album_fotos`, `aculta_documents`, `home_editorial_highlights`; displays de `block_content.aculta_editorial`, `block_content.aculta_institution.*`, nós `activity`, `aculta_adm`, `aculta_faq`, `aculta_notice`, `document`, `editorial_highlight`, `page` e footer institucional | `layout-grid`, `layout-section`, `site-footer` |
+
+Este recorte não encontrou referências SDC em configuração ativa para `account`,
+`support` ou `links`; a matriz estática registra consumers PHP nesses domínios,
+portanto essa ausência não significa ausência de uso. A consulta também não
+varreu valores serializados de Layout Builder em conteúdo/revisões, campos
+UI Patterns persistidos, código PHP/Twig dinâmico, descoberta da Library ou
+hosts autenticados. A Library Runtime continua sem descoberta atual confirmada:
+o último registro tem 145 definições, contra 150 manifests no worktree. Completar
+o mapa por domínio exige cruzar essas fontes sem rebuild ou importação enquanto
+o preflight permanecer bloqueado.
+
 ## Estado e próxima ação
 
 P0 foi atualizado com código, Config Sync e consulta Runtime read-only. O worktree atual tem 150 SDCs e 243 stories, incluindo componentes/story ainda não rastreados; os gates SDC/Library passaram nessa fotografia. P1 removeu o slot morto de `forum-quote` e adicionou a story `reply-indent.first: false`; preview visual segue pendente. O validator isolado atual renderiza 95 componentes, incluindo `delete-confirm` e os três componentes da autoria do Fórum; `forum-quote` e `reply-indent` ainda não estão nessa lista. Core e UI Patterns Library convertem `#slots` em overrides de block; não migrar consumers por uma incompatibilidade inexistente. `delete-confirm` agora anuncia diálogo não modal corretamente, descreve a mensagem, tem props documentadas e usa destino não destrutivo na story; foco/teclado e Library publicada ainda dependem de validação Runtime. P2 tem matriz estática e auditoria de Sources/dados editoriais/runtime ainda parcial. As 11 ações de slot triadas estão concluídas no worktree: `forum-author-line.avatar`, `forum-post-card.avatar`, `forum-comment.avatar`, `forum-comment.reactions_slot`, `forum-topic-row.pinned_content`, `forum-topic-row.replies_content`, `forum-topic-row.activity_content`, `forum-topic.content`, `layout-page.aside`, `studio-form.content` e `studio-shell.content`. Permanecem pendentes o preview visual e a validação Runtime/browser depois que a rotina de sincronização liberar o checkout. A remoção do seletor preserva acesso, token CSRF e dados no módulo Fórum; as duas barras de reações mantêm seus contratos. A purga de `aculta_ui_library` no código/Sync está concluída; resta limpeza focal da chave órfã no Runtime, sujeita a plano e backup. O roadmap do tema é a fila executável; só marcar migrações como concluídas com evidência de código, configuração e Runtime.
