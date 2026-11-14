@@ -106,13 +106,19 @@ anteriores e não substituem a conferência do código atual.
    candidatos automáticos a exclusão, pois a Library os publica e usos
    editoriais/dinâmicos não aparecem nessa busca. Ainda falta reconciliar as
    escolhas editoriais persistidas no Runtime e revisar a lista por consumidor.
-   `revista_sessoes` foi configurada no Sync para UI Patterns Views style com
-   `revista-listing`; os seis displays herdam a seleção e mantêm rows nativos
-   de node teaser. O template da Página Revista permanece como adapter fino
-   para os slots externos, mantém contextual links e usa fallback até o Sync
-   entrar no Runtime. A API do Component Display Extender não oferece Source
-   para `title_prefix/title_suffix`/contextual links. Runtime, cache e os seis
-   paths ainda precisam de homologação após liberar o preflight.
+   Leituras Drush somente no Runtime em 2026-11-14 confirmaram estado ativo
+   diferente do Sync: `aculta_forum_categories.page_categories` usa row UI
+   Patterns + `forum-category`, mas estilo `default` agrupado por `parent_name`;
+   `aculta_forum_public_topics.default` usa row `fields`; `revista_sessoes`
+   mantém estilo `default` com rows `entity:node` teaser; Cursos mantém
+   `grid_responsive` + `entity:group`; Perfis usa row `fields`. Os cortes devem
+   seguir o estado ativo até alinhar/homologar a configuração. Para Revista, o
+   template de página preserva title/contextual links, filtros, empty, pager,
+   attachments, more, footer e feed, e apresenta `revista-listing` como fallback
+   quando a style UI Patterns ainda não está ativa. A API do Component Display
+   Extender não oferece Source para `title_prefix/title_suffix`/contextual
+   links. Runtime, cache e os seis paths ainda precisam de homologação após
+   liberar o preflight.
 4. **P3 — reduzir os 19 templates com substituição comprovada:** a triagem por
    fonte está abaixo. Para cada arquivo, classificar se é markup de domínio
    removível, adapter Drupal→SDC/UI Patterns ou infraestrutura do hook Core.
