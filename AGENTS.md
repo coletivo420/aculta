@@ -51,4 +51,5 @@ Politica PHPStan nivel 10:
 - Erro novo **nunca** pode ser suprimido: `@phpstan-ignore`, `@phpstan-ignore-next-line` ou `@phpstan-ignore-line` adicionado no diff falha o gate. Apenas a divida ja congelada permanece suprimida, pelo baseline.
 - Stub ou exclusao nova exige identificador exato, motivo e revisao; sem mecanismo generico de bypass.
 - Antes de publicar: `vendor/bin/phpstan analyse`, `phpstan-debt-guard.php check` e `diff` com `--analysis` da execucao canonica. Relatar erros preexistentes, introduzidos e corrigidos; falha de infraestrutura e distinta de falha de analise.
-- Job estavel do CI: **PHPStan level 10 gate**; `skipped`/`cancelled` nao e PASS.
+- Push para `dev` executa `.githooks/pre-push` (`git config core.hooksPath .githooks`): o hook roda `analyse`, `check` e `diff` quando o incremento toca PHP. Nao usar `--no-verify` para contornar.
+- Job estavel do CI: **PHPStan level 10 gate**; `skipped`/`cancelled` nao e PASS. A protecao da branch `dev` exige esse check e nao permite force push nem exclusao.

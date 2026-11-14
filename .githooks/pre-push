@@ -1,0 +1,65 @@
+#!/usr/bin/env bash
+
+# Gate local antes de publicar em dev. O CI e a autoridade final; o hook evita
+# que um push dispare a validacao remota com erro PHPStan novo ou crescimento
+# de divida.
+#
+# Instalacao (uma vez por clone):
+#   git config core.hooksPath .githooks
+#
+# Nao use `git push --no-verify` para contornar: a protecao da branch dev
+# exige o check "PHPStan level 10 gate".
+
+set -euo pipefail
+
+remote_name="${1:-origin}"
+zero="0000000000000000000000000000000000000000"
+
+while read -r _local_ref local_sha remote_ref remote_sha; do
+  if [ "$remote_ref" != "refs/heads/dev" ]; then
+    continue
+  fi
+  if [ "$local_sha" = "$zero" ]; then
+    continue
+  fi
+
+  repo_root=$(git rev-parse --show-toplevel)
+  cd "$repo_root"
+
+  if [ "$remote_sha" = "$zero" ]; then
+    base=$(git merge-base "$local_sha" "refs/remotes/$remote_name/dev" 2>/dev/null || true)
+  else
+    base="$remote_sha"
+  fi
+  if [ -z "${base:-}" ]; then
+    echo "pre-push: nao foi possivel resolver a base do push; bloqueado." >&2
+    exit 1
+  fi
+
+  if git diff --quiet "$base" "$local_sha" -- '*.php' 'phpstan.neon' 'phpstan-baseline.neon' 'scripts'; then
+    exit 0
+  fi
+
+  echo "pre-push: executando gate PHPStan nivel 10 para dev..." >&2
+  tmp_dir=$(mktemp -d)
+  trap 'rm -rf "$tmp_dir"' EXIT
+
+  set +e
+  vendor/bin/phpstan analyse --configuration=phpstan.neon --no-progress \
+    --error-format=json --memory-limit=2G > "$tmp_dir/phpstan.json"
+  rc=$?
+  set -e
+  if [ "$rc" -gt 1 ]; then
+    echo "pre-push: falha de execucao do PHPStan (rc=$rc); bloqueado." >&2
+    exit 1
+  fi
+
+  php scripts/phpstan-debt-guard.php check \
+    --baseline=phpstan-baseline.neon \
+    --config=phpstan.neon \
+    --git-base="$base" \
+    --analysis="$tmp_dir/phpstan.json"
+  php scripts/phpstan-debt-guard.php diff \
+    --baseline=phpstan-baseline.neon \
+    --git-base="$base"
+done

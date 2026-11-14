@@ -6,6 +6,8 @@ Regra: rode **somente** os gates do escopo do diff e dos módulos que dependem d
 
 `.github/workflows/php-quality.yml` roda lint PHP, descoberta PHPUnit e as suítes Unit e Kernel (Kernel com MariaDB de serviço) em push e PR para `main` e `dev`. O PHPStan roda `analyse` com `phpstan-baseline.neon`: novos erros e entradas de baseline resolvidas falham o job. Os validadores de contratos dos agentes rodam tambem no job PHP lint; os demais validadores de `scripts/validate-*.php` sao por escopo. Verificar execucao efetiva dos jobs: skipped/cancelled nao equivalem a PASS.
 
+A branch `dev` esta protegida com o check **PHPStan level 10 gate** obrigatorio, inclusive para administradores, sem force push nem exclusao. Push direto continua permitido; o hook local `.githooks/pre-push` roda `analyse`, `check` e `diff` quando o incremento toca PHP. Instale com `git config core.hooksPath .githooks` e nao use `--no-verify` para contornar.
+
 ## Como rodar
 
 - Gate que depende do Drupal bootstrap: `php vendor/drush/drush/drush.php php:script scripts/<gate>.php`.
