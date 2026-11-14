@@ -718,6 +718,39 @@ final class PagePresentationHooks {
   }
 
   /**
+   * Sends reply composer data and original form render arrays to its SDC.
+   */
+  #[Hook('preprocess_discussion_reply_composer')]
+  public function preprocessDiscussionReplyComposer(array &$variables): void {
+    if (!$this->componentAvailable('discussion-reply-composer')) {
+      return;
+    }
+
+    $targetId = trim((string) ($variables['target_id'] ?? ''));
+    if ($targetId === '') {
+      return;
+    }
+    $variables['component'] = [
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:discussion-reply-composer',
+      '#props' => [
+        'target_id' => $targetId,
+        'status' => (string) ($variables['status'] ?? 'editando'),
+        'mode' => (string) ($variables['mode'] ?? 'responder'),
+        'parent_id' => isset($variables['parent_id']) ? $variables['parent_id'] : NULL,
+        'parent_author' => isset($variables['parent_author']) ? (string) $variables['parent_author'] : NULL,
+        'parent_subject' => isset($variables['parent_subject']) ? (string) $variables['parent_subject'] : NULL,
+        'host_title' => isset($variables['host_title']) ? (string) $variables['host_title'] : NULL,
+      ],
+      '#slots' => [
+        'messages' => $variables['messages'] ?? [],
+        'form' => $variables['form'] ?? [],
+        'context' => [],
+      ],
+    ];
+  }
+
+  /**
    * Builds a SDC render array for the neutral donation action hook.
    */
   private function preprocessDonationButton(array &$variables, string $variant): void {

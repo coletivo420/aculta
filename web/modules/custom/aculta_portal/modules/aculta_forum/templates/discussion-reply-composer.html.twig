@@ -1,4 +1,7 @@
 {# Default neutral theme hook for discussion-reply-composer #}
+{% if component %}
+  {{ component }}
+{% else %}
 <div id="{{ target_id }}" class="discussion-reply-composer discussion-reply-composer--{{ status }}" data-discussion-reply-composer data-status="{{ status }}" data-parent-id="{{ parent_id|default('') }}">
   {% if messages %}
     <div class="discussion-reply-composer__messages" role="status" aria-live="polite">
@@ -19,3 +22,4 @@
     </div>
   {% endif %}
 </div>
+{% endif %}

@@ -1920,3 +1920,9 @@ State: Dev. No RC, production deployment, or release tag is declared.
   `map-popup`; o fallback neutro do módulo continua disponível para outros
   temas. Removido o override Twig; restam 35 templates.
 
+## Atualização — compositor de resposta encaminhado diretamente ao SDC (2026-11-13)
+
+- O preprocess do tema envia os estados/identificadores ao SDC
+  `discussion-reply-composer` e mantém mensagens, contexto e Form API como
+  render arrays nos slots. Removido o override Twig; restam 34 templates.
+

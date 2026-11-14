@@ -903,7 +903,7 @@ Cada entrada tem: papel, props, slots, JavaScript (se houver), estado e a regra 
 - **Local:** `components/discussion-reply-composer/`
 - **Schema:** estrito, com props `target_id`, `status`, `mode` (`responder`, `citar`, `editar`), `parent_id`, `parent_author`, `parent_subject`, `host_title` e slots `messages`, `context`, `form`.
 - **Story:** `discussion-reply-composer.default.story.yml`.
-- **Consumer:** template de tema `discussion-reply-composer.html.twig` e módulo `aculta_forum`.
+- **Consumer:** preprocess do tema para o hook `discussion_reply_composer`; módulo `aculta_forum` fornece props e Form API em render arrays.
 
 ## Estatísticas do Fórum (FST-08)
 

@@ -31,6 +31,7 @@ class ForumThemeHooks {
           'host_title' => NULL,
           'messages' => NULL,
           'form' => NULL,
+          'component' => NULL,
         ],
         'path' => $path . '/templates',
         'template' => 'discussion-reply-composer',
