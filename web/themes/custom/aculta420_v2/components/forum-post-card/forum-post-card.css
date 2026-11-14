@@ -715,3 +715,15 @@
 .forum-post-card .forum-post-card__author-info {
   flex-shrink: 0;
 }
+
+/* Cartão compacto: a identidade (avatar e nome) ocupa o espaço que sobra; posts e data mantêm o tamanho natural. */
+.forum-post-card--density-compact .forum-post-card__author > .forum-author-line {
+  flex: 1 1 0;
+  min-inline-size: 0;
+}
+
+.forum-post-card--density-compact .forum-post-card__author-info {
+  flex: 0 1 auto;
+  inline-size: auto;
+  max-inline-size: 55%;
+}

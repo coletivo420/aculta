@@ -10,6 +10,9 @@ props:
   quote_url: /discussoes/citar/comment/1
   delete_url: /discussoes/apagar/comment/1
 slots:
+  avatar:
+    type: inline_template
+    template: '{{ render_var(aculta_avatar_sample("PiradoPirata")) }}'
   body:
     '#markup': <p>Quero montar meu primeiro cultivo, mas tenho pouco espaço. Quais substratos vocês recomendam?</p>
   reactions_slot:

@@ -7,6 +7,9 @@ props:
   timestamp: Há 3 horas
   density: compact
 slots:
+  avatar:
+    type: inline_template
+    template: '{{ render_var(aculta_avatar_sample("PiradoPirata")) }}'
   body:
     '#markup': <p>Excelente tutorial! Para solos orgânicos vivos (no-till), recomendo também monitorar a umidade com tensiômetro nas primeiras semanas para evitar compactação.</p>
   actions:
