@@ -155,7 +155,8 @@ class DiscussionReactionManager {
     $scope = $this->scopeResolver->resolve($entity);
     $host = $scope->host ?? $this->resolveHost($entity);
     $contextId = $scope->scope;
-    $isPublic = $scope->isPublicForum();
+    // Reações em publicações da Revista contam para o contador geral de recebidas do autor, como no fórum público.
+    $isPublic = $scope->isPublicForum() || $scope->scope === \Drupal\aculta_forum\Analytics\ForumAnalyticsScope::PUBLICATION;
 
     $existing = $this->database->select(self::TABLE_REACTIONS, 'r')
       ->fields('r', ['id', 'reaction', 'is_public_context'])

@@ -11,6 +11,7 @@ use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Hook\Order\Order;
+use Drupal\Core\Render\Element;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\node\NodeInterface;
 use Drupal\user\EntityOwnerInterface;
@@ -68,6 +69,18 @@ final class DiscussionReactionEntityViewHooks {
       $variables['reply_depth'] = min(3, substr_count((string) $threadComment->get('thread')->value, '.'));
       // Resposta em nível: lado oposto ao cartão ao qual responde (pai). A raiz segue a alternância da conversa.
       $variables['accent_side'] = $this->discussionSide($threadComment);
+      // Comentários de publicação da Revista: sem tópico; a publicação é o próprio tópico.
+      $host = $threadComment->getCommentedEntity();
+      $variables['publication_comment'] = $host instanceof NodeInterface && $host->bundle() === 'revista';
+      if ($variables['publication_comment']) {
+        $reactions = $this->reactionManager->loadReactions('comment', (int) $threadComment->id(), NULL);
+        $total = 0;
+        foreach (($reactions['reactions'] ?? []) as $reaction) {
+          $total += (int) ($reaction['count'] ?? 0);
+        }
+        $variables['sort_total'] = $total;
+        $variables['sort_created'] = (int) $threadComment->getCreatedTime();
+      }
       // Primeira resposta entre irmãos do mesmo pai (mostra a seta de resposta).
       if ($variables['reply_depth'] >= 1) {
         $parentId = (int) ($threadComment->get('pid')->target_id ?? 0);
@@ -199,6 +212,112 @@ final class DiscussionReactionEntityViewHooks {
       return 'start';
     }
     return $this->discussionSide($parent, $guard + 1) === 'end' ? 'start' : 'end';
+  }
+
+  /**
+   * Revista: comentários por total de reações (desc) e depois data (desc); respostas seguem o pai.
+   *
+   * A seção de comentários da publicação é renderizada pelo bloco do campo, e não pelo build da entidade.
+   */
+  #[Hook('block_view_alter')]
+  public function revistaCommentBlockOrder(array &$build, $block): void {
+    if (!is_object($block) || !method_exists($block, 'getPluginId')
+      || !str_starts_with((string) $block->getPluginId(), 'field_block:node:revista:field_aculta_discussion')) {
+      return;
+    }
+    $this->orderCommentsIn($build);
+  }
+
+  /**
+   * Revista (entidade): mesma ordenação quando a seção vem do build da entidade.
+   */
+  #[Hook('entity_view_alter')]
+  public function revistaCommentOrder(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display): void {
+    if (!$entity instanceof NodeInterface || $entity->bundle() !== 'revista' || ($build['#view_mode'] ?? NULL) !== 'full') {
+      return;
+    }
+    // O campo fica dentro das seções do Layout Builder: procura a lista em todo o build.
+    $this->orderCommentsIn($build);
+  }
+
+  /**
+   * Revista: a seção de comentários da publicação é ordenada no preprocess do nó.
+   */
+  #[Hook('preprocess_node')]
+  public function revistaCommentPreprocessOrder(array &$variables): void {
+    $node = $variables['node'] ?? NULL;
+    if (!$node instanceof NodeInterface || $node->bundle() !== 'revista') {
+      return;
+    }
+    if (isset($variables['content']['field_aculta_discussion']) && is_array($variables['content']['field_aculta_discussion'])) {
+      $this->orderCommentsIn($variables['content']['field_aculta_discussion']);
+    }
+  }
+
+  /**
+   * Encontra listas de comentários (chave comments com elementos #comment) e reordena cada uma.
+   */
+  private function orderCommentsIn(array &$element): void {
+    if (isset($element['comments']) && is_array($element['comments'])) {
+      $this->reorderCommentItems($element['comments']);
+    }
+    foreach (Element::children($element) as $key) {
+      if (is_array($element[$key])) {
+        $this->orderCommentsIn($element[$key]);
+      }
+    }
+  }
+
+  /**
+   * Reordena uma lista de comentários: raízes por total de reações e data; respostas logo após o pai.
+   */
+  private function reorderCommentItems(array &$items): void {
+    $comments = [];
+    foreach (Element::children($items) as $key) {
+      $comment = $items[$key]['#comment'] ?? NULL;
+      if ($comment instanceof CommentInterface) {
+        $comments[(int) $comment->id()] = $comment;
+      }
+    }
+    if (count($comments) < 2) {
+      return;
+    }
+    $totals = [];
+    foreach ($comments as $cid => $comment) {
+      $reactions = $this->reactionManager->loadReactions('comment', $cid, NULL);
+      $sum = 0;
+      foreach (($reactions['reactions'] ?? []) as $reaction) {
+        $sum += (int) ($reaction['count'] ?? 0);
+      }
+      $totals[$cid] = $sum;
+    }
+    $children = [];
+    $roots = [];
+    foreach ($comments as $cid => $comment) {
+      $pid = (int) ($comment->get('pid')->target_id ?? 0);
+      if ($pid > 0 && isset($comments[$pid])) {
+        $children[$pid][] = $cid;
+      }
+      else {
+        $roots[] = $cid;
+      }
+    }
+    usort($roots, static function (int $a, int $b) use ($totals, $comments): int {
+      return [$totals[$b], $comments[$b]->getCreatedTime(), $b] <=> [$totals[$a], $comments[$a]->getCreatedTime(), $a];
+    });
+    $order = [];
+    $walk = function (int $cid) use (&$walk, &$order, $children): void {
+      $order[] = $cid;
+      foreach ($children[$cid] ?? [] as $child) {
+        $walk($child);
+      }
+    };
+    foreach ($roots as $root) {
+      $walk($root);
+    }
+    foreach ($order as $index => $cid) {
+      $items[$cid]['#weight'] = $index;
+    }
   }
 
 }

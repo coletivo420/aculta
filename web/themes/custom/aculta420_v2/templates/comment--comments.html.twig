@@ -11,6 +11,27 @@
 {% set author_reactions_val = author_reactions_received is defined ? author_reactions_received : (author_card ? author_card['#reactions_received']|default(null) : null) %}
 {% set composer_target_id = 'discussion-composer-' ~ commented_entity_type ~ '-' ~ commented_entity_id ~ '-' ~ comment.id %}
 
+{% if publication_comment|default(false) %}
+  {% set author_avatar = author_card and author_card['#avatar'] is defined ? render_var(author_card['#avatar']) : null %}
+  {% set reply_card %}
+    <article class="comment comment--discussion js-comment">
+    {{ include('aculta420_v2:forum-reply-compact', {
+      author_name: author_name_val|default('Participante'|t),
+      author_url: null,
+      timestamp: created|default(null),
+      accent_side: accent_side|default('start'),
+      avatar: author_avatar,
+      content: comment_body,
+      reactions_slot: reaction_bar_val,
+      actions: actions_markup
+    }, with_context = false) }}
+    </article>
+  {% endset %}
+  {{ attach_library('aculta_forum/revista-comment-order') }}
+  <div class="revista-comment-sort" data-sort-total="{{ sort_total|default(0) }}" data-sort-created="{{ sort_created|default(0) }}">
+    {{ include('aculta420_v2:reply-indent', { depth: reply_depth|default(0), first: reply_first|default(false), content: reply_card }, with_context = false) }}
+  </div>
+{% else %}
 {% embed 'aculta420_v2:forum-comment' with {
   attributes: attributes,
   status: status|default(null),
@@ -33,3 +54,4 @@
   {% block reactions_slot %}{{ reaction_bar_val }}{% endblock %}
   {% block title_suffix %}{{ title_suffix }}{% endblock %}
 {% endembed %}
+{% endif %}

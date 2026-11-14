@@ -2,6 +2,7 @@
 .reply-indent {
   position: relative;
   min-inline-size: 0;
+  margin-block: var(--spacing-lg);
 }
 
 .reply-indent--depth-1 {

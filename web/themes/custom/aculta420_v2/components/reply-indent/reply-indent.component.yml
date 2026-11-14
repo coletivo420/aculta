@@ -1,6 +1,6 @@
 $schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
 name: Resposta recuada
-description: Recua uma resposta em nível e marca a faixa de resposta à esquerda, com a cor do tema. Usado nas respostas de uma conversa; nível 0 é a resposta raiz.
+description: Recua respostas conforme a profundidade da conversa e mostra a seta de resposta na primeira resposta de cada nível.
 status: stable
 group: Comunidade
 props:
@@ -18,7 +18,7 @@ props:
       minimum: 0
       maximum: 3
       default: 0
-      description: 0 = resposta raiz (sem recuo); 1 a 3 = respostas em nível, com recuo e faixa de resposta. Níveis acima de 3 ficam no nível 3.
+      description: 0 = resposta raiz sem recuo; 1 a 3 = níveis de resposta com recuo. Valores acima de 3 usam o recuo máximo do nível 3.
 slots:
   content:
     title: Conteúdo da resposta

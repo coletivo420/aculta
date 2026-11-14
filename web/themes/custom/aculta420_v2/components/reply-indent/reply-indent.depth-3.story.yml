@@ -1,5 +1,5 @@
 name: Resposta nível 3
-description: Resposta de conversa no nível 3, com recuo e faixa de resposta conforme o nível.
+description: Primeira resposta do nível 3, com recuo máximo e seta de resposta.
 component: aculta420_v2:reply-indent
 props:
   depth: 3
