@@ -365,6 +365,10 @@ final class PagePresentationHooks {
       && ($variables['view_mode'] ?? NULL) === 'teaser') {
       $this->composeWikiTeaser($variables);
     }
+    if (($variables['node']?->bundle() ?? NULL) === 'document'
+      && ($variables['view_mode'] ?? NULL) === 'teaser') {
+      $this->composeDocumentTeaser($variables);
+    }
   }
 
   /**
@@ -414,6 +418,36 @@ final class PagePresentationHooks {
       ->applyTo($component);
     $variables['content'] = $component;
     // The SDC owns the linked title, as the removed template did.
+    $variables['label'] = FALSE;
+  }
+
+  /**
+   * Composes a document teaser with its existing SDC and formatted fields.
+   */
+  private function composeDocumentTeaser(array &$variables): void {
+    $node = $variables['node'] ?? NULL;
+    $content = $variables['content'] ?? [];
+    if (!$node instanceof NodeInterface || !is_array($content)) {
+      return;
+    }
+
+    $variables['content'] = [
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:document-card',
+      '#props' => [
+        'title' => (string) ($variables['label'] ?? $node->label()),
+        'url' => $node->toUrl('canonical')->toString(),
+      ],
+      '#slots' => [
+        'category' => $content['field_category'] ?? [],
+        'summary' => $content['body'] ?? [],
+        'attachment' => $content['field_document'] ?? [],
+      ],
+    ];
+    CacheableMetadata::createFromRenderArray($variables['elements'] ?? [])
+      ->addCacheableDependency($node)
+      ->applyTo($variables['content']);
+    // The SDC renders the document title, so suppress Core's duplicate label.
     $variables['label'] = FALSE;
   }
 

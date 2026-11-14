@@ -34,14 +34,16 @@ final class DocumentCardComponentTest extends UnitTestCase {
   /**
    * Ensures Drupal field render arrays reach the SDC slots unchanged.
    */
-  public function testDocumentTeaserAdapterPreservesRenderedFields(): void {
+  public function testDocumentTeaserCompositionPreservesRenderedFields(): void {
     $themeDir = dirname(__DIR__, 3);
-    $template = (string) file_get_contents($themeDir . '/templates/content/node--document--teaser.html.twig');
-    self::assertStringContainsString("embed 'aculta420_v2:document-card'", $template);
-    self::assertStringContainsString('category_render: content.field_category', $template);
-    self::assertStringContainsString('summary_render: content.body', $template);
-    self::assertStringContainsString('attachment_render: content.field_document', $template);
-    self::assertStringNotContainsString('|raw', $template);
+    $hook = (string) file_get_contents($themeDir . '/src/Hook/PagePresentationHooks.php');
+    self::assertStringContainsString("'#component' => 'aculta420_v2:document-card'", $hook);
+    self::assertStringContainsString("'category' => \$content['field_category'] ?? []", $hook);
+    self::assertStringContainsString("'summary' => \$content['body'] ?? []", $hook);
+    self::assertStringContainsString("'attachment' => \$content['field_document'] ?? []", $hook);
+    self::assertStringContainsString("CacheableMetadata::createFromRenderArray(\$variables['elements'] ?? [])", $hook);
+    self::assertStringNotContainsString('node--document--teaser.html.twig', $hook);
+    self::assertFileDoesNotExist($themeDir . '/templates/content/node--document--teaser.html.twig');
   }
 
   /**

@@ -136,13 +136,14 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
       && (string) $displayId !== 'default'
       && is_file($forumTopicFieldsTemplate)
       && str_contains((string) file_get_contents($forumTopicFieldsTemplate), "aculta420_v2:forum-topic-row");
-    $documentTeaserTemplate = $theme . '/templates/content/node--document--teaser.html.twig';
+    $documentTeaserHook = $theme . '/src/Hook/PagePresentationHooks.php';
     $documentCardSdc = $theme . '/components/document-card/document-card.component.yml';
     $isDocumentCardSdc = $viewId === 'aculta_documents'
       && (string) $displayId === 'block_1'
-      && is_file($documentTeaserTemplate)
+      && is_file($documentTeaserHook)
       && is_file($documentCardSdc)
-      && str_contains((string) file_get_contents($documentTeaserTemplate), "aculta420_v2:document-card");
+      && str_contains((string) file_get_contents($documentTeaserHook), "aculta420_v2:document-card")
+      && str_contains((string) file_get_contents($documentTeaserHook), 'composeDocumentTeaser');
     $isDocumentsPilot = $isDocumentCardSdc
       && $stylePlugin === 'ui_patterns'
       && ($stylePatterns['component_id'] ?? NULL) === 'aculta420_v2:layout-grid';
@@ -155,14 +156,15 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
       && $rowPlugin === 'entity:commerce_product'
       && ($rowOptions['options']['view_mode'] ?? '') === 'catalog'
       && $isProductCardAdapter;
-    $wikiTeaserTemplate = $theme . '/templates/content/node--wiki-entry--teaser.html.twig';
+    $wikiTeaserHook = $theme . '/src/Hook/PagePresentationHooks.php';
     $isWikiEntriesPilot = $viewId === 'wiki_entries'
       && $stylePlugin === 'ui_patterns'
       && ($stylePatterns['component_id'] ?? NULL) === 'aculta420_v2:layout-grid'
       && $rowPlugin === 'entity:node'
       && ($rowOptions['options']['view_mode'] ?? '') === 'teaser'
-      && is_file($wikiTeaserTemplate)
-      && str_contains((string) file_get_contents($wikiTeaserTemplate), "aculta420_v2:wiki-entry");
+      && is_file($wikiTeaserHook)
+      && str_contains((string) file_get_contents($wikiTeaserHook), "aculta420_v2:wiki-entry")
+      && str_contains((string) file_get_contents($wikiTeaserHook), 'composeWikiTeaser');
     $isWikiCategoriesPilot = $viewId === 'wiki_categories'
       && $stylePlugin === 'ui_patterns'
       && ($stylePatterns['component_id'] ?? NULL) === 'aculta420_v2:layout-grid'
@@ -185,7 +187,14 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
     $isAdminViewNative = $stylePlugin === 'table'
       && (str_starts_with($displayPath, 'admin/') || str_starts_with($displayPath, 'painel-administrativo/'));
     $runtimeView = $runtimeViewDisplays[$viewId] ?? NULL;
-    $wikiRuntimeVerified = $isWikiEntriesPilot
+    // Code-level adapter changes invalidate older Runtime/browser snapshots.
+    $runtimeEvidenceDateFloor = [
+      'aculta_documents' => '2026-11-14',
+      'wiki_entries' => '2026-11-14',
+    ];
+    $runtimeEvidenceCurrent = ($runtimeEvidenceDateFloor[$viewId] ?? '0000-00-00') <= $runtimeObservedDate;
+    $wikiRuntimeVerified = $runtimeEvidenceCurrent
+      && $isWikiEntriesPilot
       && is_array($runtimeView)
       && ($runtimeView['status'] ?? '') === 'runtime_verified';
     $wikiCategoriesRuntimeVerified = $isWikiCategoriesPilot
@@ -228,7 +237,8 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
       && is_array($runtimeView)
       && is_array($runtimeView['displays'][$displayId] ?? NULL)
       && ($runtimeView['displays'][$displayId]['status'] ?? '') === 'runtime_configured_no_fixture';
-    $documentRuntimeVerified = $isDocumentsPilot
+    $documentRuntimeVerified = $runtimeEvidenceCurrent
+      && $isDocumentsPilot
       && is_array($runtimeView)
       && is_array($runtimeView['displays'][$displayId] ?? NULL)
       && ($runtimeView['displays'][$displayId]['status'] ?? '') === 'runtime_verified_sdc_grid';
@@ -285,7 +295,7 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
         ? 'BLOCKED_UPSTREAM'
         : (($isWikiEntriesPilot || $isWikiCategoriesPilot) && $displayId === 'default'
         ? 'FUNCTIONAL_NATIVE_EXCEPTION'
-        : ($isForumTopicsSdc || $isRevistaTeaserSdc || $isForumGalleryPilot || $isProductGalleryPilot || ($isForumCategoryPilot && (string) $displayId === 'block_landing') || $documentRuntimeVerified || $shopRuntimeVerified || $wikiRuntimeVerified || $wikiCategoriesRuntimeVerified
+        : ($isForumTopicsSdc || $isRevistaTeaserSdc || $isForumGalleryPilot || $isProductGalleryPilot || ($isForumCategoryPilot && (string) $displayId === 'block_landing') || $isDocumentsPilot || $isWikiEntriesPilot || $documentRuntimeVerified || $shopRuntimeVerified || $wikiRuntimeVerified || $wikiCategoriesRuntimeVerified
         ? 'UI_SUITE_NATIVE'
         : (($isViewsFunctionalBase || $isEventsBase || $isAdminViewNative || $isWebformSubmissions || $isNativeCoreView)
         ? 'FUNCTIONAL_NATIVE_EXCEPTION'
@@ -324,7 +334,8 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
         $isShopCatalogPilot && $shopRuntimeVerified => 'Anonymous Runtime returned product-card SDC with price, summary and add-to-cart; Firefox passed 10/10 viewports/modes with focus and contrast; zoom 200%, other roles, cache-hit and human visual acceptance remain pending',
         $isWikiEntriesPilot && $wikiRuntimeVerified => 'Anonymous Runtime returned six published wiki-entry teaser rows through the SDC adapter; Firefox browser comparison passed for the page and canonical article; zoom, cache-hit, other roles and assistive technology remain pending',
         $isWikiCategoriesPilot && $wikiCategoriesRuntimeVerified => 'Anonymous Runtime retained 15 taxonomy category rows; Firefox home comparison verified layout-grid, responsive columns and row count; zoom, cache-hit, other roles and assistive technology remain pending',
-        $isDocumentsPilot => 'Runtime returned three published document teasers inside the UI Patterns grid; the current fixture has empty body/file descriptions, so field links are not evidenced; browser visual, editor/admin profiles and cache-hit remain pending',
+        $isDocumentsPilot => 'UI Patterns layout-grid and document-card SDC are confirmed in current source; Runtime/browser snapshot predates the preprocess migration and must be repeated',
+        $isWikiEntriesPilot => 'UI Patterns layout-grid and wiki-entry SDC are confirmed in current source; Runtime/browser snapshot predates the preprocess migration and must be repeated',
         $isDocumentCardSdc => 'Document SDC adapter is present; Runtime row rendering and grid integration are pending',
         $isForumTopicsSdc && is_array($runtimeView) && is_array($runtimeView['displays'][$displayId] ?? NULL) => 'Runtime config matches Sync; executable View returns 10 rows; access-profile and browser visual evidence not re-run in this inventory pass',
         $isForumTopicsSdc => 'Existing SDC row adapter is confirmed in source; Runtime output, access profiles and browser evidence need verification',
@@ -367,8 +378,9 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
         $isShopCatalogPilot && $shopRuntimeVerified => sprintf('active; UI Patterns layout-grid; %d product rows; Commerce catalog view mode and native add-to-cart retained', $shopRuntimeDisplay['result_count']),
         $isWikiEntriesPilot && $wikiRuntimeVerified => sprintf('active; UI Patterns layout-grid; %d published node teaser rows; wiki-entry SDC adapter and native access retained', $runtimeView['anonymous_render']['result_count_before_after'] ?? 0),
         $isWikiCategoriesPilot && $wikiCategoriesRuntimeVerified => sprintf('active; UI Patterns layout-grid; %d native taxonomy term rows; anonymous category links and editorial order retained', $runtimeViewDisplays['wiki_categories']['displays']['block_1']['result_count_before_after'] ?? 0),
-        $isDocumentsPilot => 'configured; Runtime/browser evidence not recorded',
+        $isDocumentsPilot => 'configured in Sync/source; SDC hook adapter changed after the Runtime snapshot; Runtime access/render/cache validation pending',
         $isDocumentCardSdc => 'document teaser SDC adapter is confirmed in source; View style migration and Runtime output remain pending',
+        $isWikiEntriesPilot => 'configured in Sync/source; SDC hook adapter changed after the Runtime snapshot; Runtime access/render/cache validation pending',
         $isForumTopicsSdc && is_array($runtimeView) && is_array($runtimeView['displays'][$displayId] ?? NULL) => 'active; native Views fields row uses forum-topic-row SDC adapter; 10 results; browser/access acceptance not re-run',
         $isForumTopicsSdc => 'existing SDC row adapter confirmed in source; Runtime output not recorded',
         $isProductGalleryPilot && $productGalleryRuntimeConfigured => 'active; Commerce product 1 supplies seven media IDs; UI Patterns style returns seven rows; visual acceptance deferred',
