@@ -1,0 +1,36 @@
+{
+  "totals": {
+    "errors": 3,
+    "file_errors": 3
+  },
+  "files": {
+    "web/modules/custom/mod_a/src/A.php": {
+      "errors": 2,
+      "messages": [
+        {
+          "message": "A message.",
+          "line": 1,
+          "ignorable": true,
+          "identifier": "argument.type"
+        },
+        {
+          "message": "A message.",
+          "line": 1,
+          "ignorable": true,
+          "identifier": "argument.type"
+        }
+      ]
+    },
+    "web/modules/custom/mod_b/src/B.php": {
+      "errors": 1,
+      "messages": [
+        {
+          "message": "B message.",
+          "line": 1,
+          "ignorable": true,
+          "identifier": "return.type"
+        }
+      ]
+    }
+  }
+}

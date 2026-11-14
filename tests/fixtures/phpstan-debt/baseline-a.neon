@@ -1,0 +1,14 @@
+parameters:
+	ignoreErrors:
+		-
+			rawMessage: 'A message.'
+			identifier: argument.type
+			count: 2
+			path: web/modules/custom/mod_a/src/A.php
+
+		-
+			rawMessage: 'B message.'
+			identifier: return.type
+			count: 1
+			path: web/modules/custom/mod_b/src/B.php
+

@@ -1,0 +1,14 @@
+parameters:
+	ignoreErrors:
+		-
+			rawMessage: 'Bad message.'
+			identifier: argument.type
+			count: 1
+			path: /absolute/A.php
+
+		-
+			rawMessage: 'Zero message.'
+			identifier: argument.type
+			count: 0
+			path: web/modules/custom/mod_a/src/Z.php
+

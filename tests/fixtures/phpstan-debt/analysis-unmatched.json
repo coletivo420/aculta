@@ -1,0 +1,19 @@
+{
+  "totals": {
+    "errors": 1,
+    "file_errors": 1
+  },
+  "files": {
+    "web/modules/custom/mod_a/src/A.php": {
+      "errors": 1,
+      "messages": [
+        {
+          "message": "Ignored error 'X' in path A.php was not matched.",
+          "line": 1,
+          "ignorable": true,
+          "identifier": "ignore.unmatched"
+        }
+      ]
+    }
+  }
+}
