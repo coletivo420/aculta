@@ -313,11 +313,11 @@ final class PagePresentationHooks {
   #[Hook('preprocess_node')]
   public function preprocessNode(array &$variables): void {
     $variables['aculta_accordion_sdc_available'] = $this->componentAvailable('accordion');
-    if (($variables['node']?->bundle() ?? NULL) === 'revista'
+    if ($variables['node']?->bundle() === 'revista'
       && ($variables['view_mode'] ?? NULL) === 'full') {
       $this->composeRevistaFull($variables);
     }
-    if (($variables['node']?->bundle() ?? NULL) === 'revista'
+    if ($variables['node']?->bundle() === 'revista'
       && ($variables['view_mode'] ?? NULL) === 'teaser') {
       $config = $this->configFactory->get('aculta420_v2.settings');
       $selected = $config->get('aculta_revista_accent.selected.revista_accent');
@@ -343,11 +343,11 @@ final class PagePresentationHooks {
       }
       $this->composeRevistaTeaser($variables, $accent, $config);
     }
-    if (($variables['node']?->bundle() ?? NULL) === 'wiki_entry'
+    if ($variables['node']?->bundle() === 'wiki_entry'
       && ($variables['view_mode'] ?? NULL) === 'teaser') {
       $this->composeWikiTeaser($variables);
     }
-    if (($variables['node']?->bundle() ?? NULL) === 'document'
+    if ($variables['node']?->bundle() === 'document'
       && ($variables['view_mode'] ?? NULL) === 'teaser') {
       $this->composeDocumentTeaser($variables);
     }
