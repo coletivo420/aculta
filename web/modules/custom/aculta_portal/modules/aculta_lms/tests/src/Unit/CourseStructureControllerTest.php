@@ -13,6 +13,7 @@ use Drupal\Core\Entity\Query\QueryInterface;
 use Drupal\Core\Field\FieldItemList;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\GeneratedUrl;
+use Drupal\Core\Url;
 use Drupal\Core\Routing\UrlGeneratorInterface;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\Tests\UnitTestCase;
@@ -99,43 +100,46 @@ final class CourseStructureControllerTest extends UnitTestCase {
     $formBuilder->method('getForm')->willReturn(['#type' => 'form']);
     $build = (new CourseStructureController($manager, $this->getStringTranslationStub(), $formBuilder))->structure($course);
 
-    self::assertSame('component', $build['#type']);
-    self::assertSame('aculta420_v2:lms-course-curriculum', $build['#component']);
-    self::assertSame(['aculta_lms/course_structure'], $build['#attached']['library']);
-    self::assertSame('user', $build['#cache']['contexts'][0]);
-    self::assertSame('Curso de exemplo', $build['#slots']['header']['title']['#value']);
-    self::assertSame('Estrutura do curso', (string) $build['#slots']['lessons_heading']['#value']);
-    self::assertCount(2, $build['#slots']['lessons']['#items']);
-    self::assertSame('lessons', $build['#slots']['lessons']['#attributes']['data-aculta-sort-list']);
-    $firstLesson = $build['#slots']['lessons']['#items'][0];
-    $secondLesson = $build['#slots']['lessons']['#items'][1];
-    self::assertSame('11', $firstLesson['#attributes']['data-aculta-sort-item']);
-    self::assertTrue($firstLesson['heading']['sort_handle']['#attributes']['data-aculta-sort-handle']);
-    self::assertSame('true', $firstLesson['heading']['sort_handle']['#attributes']['aria-hidden']);
-    self::assertSame('Primeira aula', (string) $firstLesson['heading']['title']['#title']);
-    self::assertSame('aculta_lms.lesson_edit', $firstLesson['heading']['title']['#url']->getRouteName());
-    self::assertSame('aculta_lms.lesson_preview', $firstLesson['heading']['preview']['#url']->getRouteName());
-    self::assertSame('Publicada', (string) $firstLesson['heading']['state']['#value']);
-    self::assertCount(2, $firstLesson['activities']['#items']);
-    self::assertSame('activities', $firstLesson['activities']['#attributes']['data-aculta-sort-list']);
-    self::assertSame('21', $firstLesson['activities']['#items'][0]['#attributes']['data-aculta-sort-item']);
-    self::assertTrue($firstLesson['activities']['#items'][0]['sort_handle']['#attributes']['data-aculta-sort-handle']);
-    self::assertSame('Explique a ideia.', (string) $firstLesson['activities']['#items'][0]['question']['#plain_text']);
-    self::assertSame('aculta_lms.activity_edit', $firstLesson['activities']['#items'][0]['title']['#url']->getRouteName());
-    self::assertSame('aculta_lms.activity_delete', $firstLesson['activities']['#items'][0]['actions']['delete']['#url']->getRouteName());
-    self::assertSame('aculta_lms.lesson_delete', $firstLesson['actions']['delete']['#url']->getRouteName());
-    self::assertSame('aculta_lms.lesson_move', $firstLesson['actions']['move_down']['#url']->getRouteName());
-    self::assertSame('abaixo', $firstLesson['actions']['move_down']['#url']->getRouteParameters()['direcao']);
-    self::assertSame('aculta_lms.lesson_move', $secondLesson['actions']['move_up']['#url']->getRouteName());
-    self::assertSame('acima', $secondLesson['actions']['move_up']['#url']->getRouteParameters()['direcao']);
-    self::assertSame('aculta_lms.activity_move', $firstLesson['activities']['#items'][0]['actions']['move_down']['#url']->getRouteName());
-    self::assertSame('abaixo', $firstLesson['activities']['#items'][0]['actions']['move_down']['#url']->getRouteParameters()['direcao']);
-    self::assertSame('aculta_lms.activity_move', $firstLesson['activities']['#items'][1]['actions']['move_up']['#url']->getRouteName());
-    self::assertSame('2 aulas', (string) $build['#slots']['summary']['lessons']['#plain_text']);
+    self::assertSame('component', self::renderValue($build, '#type'));
+    self::assertSame('aculta420_v2:lms-course-curriculum', self::renderValue($build, '#component'));
+    self::assertSame(['aculta_lms/course_structure'], self::renderValue($build, '#attached', 'library'));
+    self::assertSame('user', self::renderValue($build, '#cache', 'contexts', 0));
+    self::assertSame('Curso de exemplo', self::renderValue($build, '#slots', 'header', 'title', '#value'));
+    self::assertSame('Estrutura do curso', self::renderText($build, '#slots', 'lessons_heading', '#value'));
+    self::assertCount(2, self::renderArray($build, '#slots', 'lessons', '#items'));
+    self::assertSame('lessons', self::renderValue($build, '#slots', 'lessons', '#attributes', 'data-aculta-sort-list'));
+    $firstLesson = self::renderArray($build, '#slots', 'lessons', '#items', 0);
+    $secondLesson = self::renderArray($build, '#slots', 'lessons', '#items', 1);
+    self::assertSame('11', self::renderValue($firstLesson, '#attributes', 'data-aculta-sort-item'));
+    self::assertTrue(self::renderValue($firstLesson, 'heading', 'sort_handle', '#attributes', 'data-aculta-sort-handle'));
+    self::assertSame('true', self::renderValue($firstLesson, 'heading', 'sort_handle', '#attributes', 'aria-hidden'));
+    self::assertSame('Primeira aula', self::renderText($firstLesson, 'heading', 'title', '#title'));
+    self::assertSame('aculta_lms.lesson_edit', self::renderUrl($firstLesson, 'heading', 'title', '#url')->getRouteName());
+    self::assertSame('aculta_lms.lesson_preview', self::renderUrl($firstLesson, 'heading', 'preview', '#url')->getRouteName());
+    self::assertSame('Publicada', self::renderText($firstLesson, 'heading', 'state', '#value'));
+    self::assertCount(2, self::renderArray($firstLesson, 'activities', '#items'));
+    self::assertSame('activities', self::renderValue($firstLesson, 'activities', '#attributes', 'data-aculta-sort-list'));
+    self::assertSame('21', self::renderValue($firstLesson, 'activities', '#items', 0, '#attributes', 'data-aculta-sort-item'));
+    self::assertTrue(self::renderValue($firstLesson, 'activities', '#items', 0, 'sort_handle', '#attributes', 'data-aculta-sort-handle'));
+    self::assertSame('Explique a ideia.', self::renderText($firstLesson, 'activities', '#items', 0, 'question', '#plain_text'));
+    self::assertSame('aculta_lms.activity_edit', self::renderUrl($firstLesson, 'activities', '#items', 0, 'title', '#url')->getRouteName());
+    self::assertSame('aculta_lms.activity_delete', self::renderUrl($firstLesson, 'activities', '#items', 0, 'actions', 'delete', '#url')->getRouteName());
+    self::assertSame('aculta_lms.lesson_delete', self::renderUrl($firstLesson, 'actions', 'delete', '#url')->getRouteName());
+    self::assertSame('aculta_lms.lesson_move', self::renderUrl($firstLesson, 'actions', 'move_down', '#url')->getRouteName());
+    self::assertSame('abaixo', self::renderUrl($firstLesson, 'actions', 'move_down', '#url')->getRouteParameters()['direcao']);
+    self::assertSame('aculta_lms.lesson_move', self::renderUrl($secondLesson, 'actions', 'move_up', '#url')->getRouteName());
+    self::assertSame('acima', self::renderUrl($secondLesson, 'actions', 'move_up', '#url')->getRouteParameters()['direcao']);
+    self::assertSame('aculta_lms.activity_move', self::renderUrl($firstLesson, 'activities', '#items', 0, 'actions', 'move_down', '#url')->getRouteName());
+    self::assertSame('abaixo', self::renderUrl($firstLesson, 'activities', '#items', 0, 'actions', 'move_down', '#url')->getRouteParameters()['direcao']);
+    self::assertSame('aculta_lms.activity_move', self::renderUrl($firstLesson, 'activities', '#items', 1, 'actions', 'move_up', '#url')->getRouteName());
+    self::assertSame('2 aulas', self::renderText($build, '#slots', 'summary', 'lessons', '#plain_text'));
   }
 
   /**
    * Creates an entity query fixture.
+   *
+   * @param list<int|string>|int $result
+   *   Query result IDs, or an integer count result.
    */
   private function query(array|int $result): QueryInterface {
     $query = $this->createMock(QueryInterface::class);
@@ -150,6 +154,9 @@ final class CourseStructureControllerTest extends UnitTestCase {
 
   /**
    * Creates entity storage around a query fixture.
+   *
+   * @param array<int|string, ContentEntityInterface> $entities
+   *   Entities keyed by their storage IDs.
    */
   private function storage(QueryInterface $query, array $entities): EntityStorageInterface {
     $storage = $this->createMock(EntityStorageInterface::class);
@@ -159,7 +166,10 @@ final class CourseStructureControllerTest extends UnitTestCase {
   }
 
   /**
-   * Creates a field item list fixture.
+   * Creates a generic field item list fixture.
+   *
+   * @return \Drupal\Core\Field\FieldItemListInterface<\Drupal\Core\Field\FieldItemInterface>
+   *   Field item list exposing the supplied test value.
    */
   private static function field(mixed $value): FieldItemListInterface {
     return new class($value) extends FieldItemList {
@@ -169,11 +179,81 @@ final class CourseStructureControllerTest extends UnitTestCase {
       /**
        * Returns the fixture field value.
        */
-      public function __get($property_name) {
+      public function __get(mixed $property_name): mixed {
         return $property_name === 'value' ? $this->fieldValue : NULL;
       }
 
     };
+  }
+
+  /**
+   * Reads a render-array value after validating every container in its path.
+   *
+   * @param array<array-key, mixed> $build
+   *   Render array at the root of the path.
+   * @param int|string ...$path
+   *   Sequence of render-array keys.
+   *
+   * @return mixed
+   *   Value at the requested path.
+   */
+  private static function renderValue(array $build, string|int ...$path): mixed {
+    $value = $build;
+    foreach ($path as $key) {
+      self::assertIsArray($value);
+      self::assertArrayHasKey($key, $value);
+      $value = $value[$key];
+    }
+    return $value;
+  }
+
+  /**
+   * Reads a nested render array after checking its runtime type.
+   *
+   * @param array<array-key, mixed> $build
+   *   Render array at the root of the path.
+   * @param int|string ...$path
+   *   Sequence of render-array keys.
+   *
+   * @return array<array-key, mixed>
+   *   Render array at the requested path.
+   */
+  private static function renderArray(array $build, string|int ...$path): array {
+    $value = self::renderValue($build, ...$path);
+    if (!is_array($value)) {
+      self::fail('Expected a nested render array.');
+    }
+    return $value;
+  }
+
+  /**
+   * Reads a Drupal URL from a nested render array.
+   *
+   * @param array<array-key, mixed> $build
+   *   Render array at the root of the path.
+   * @param int|string ...$path
+   *   Sequence of render-array keys.
+   */
+  private static function renderUrl(array $build, string|int ...$path): Url {
+    $value = self::renderValue($build, ...$path);
+    self::assertInstanceOf(Url::class, $value);
+    return $value;
+  }
+
+  /**
+   * Reads a stringable display value from a nested render array.
+   *
+   * @param array<array-key, mixed> $build
+   *   Render array at the root of the path.
+   * @param int|string ...$path
+   *   Sequence of render-array keys.
+   */
+  private static function renderText(array $build, string|int ...$path): string {
+    $value = self::renderValue($build, ...$path);
+    if (!is_string($value) && !$value instanceof \Stringable) {
+      self::fail('Expected a stringable render value.');
+    }
+    return (string) $value;
   }
 
 }

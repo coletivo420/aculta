@@ -61,14 +61,14 @@
   "generation_command": "vendor/bin/phpstan analyse --configuration=.phpstan-audit.neon --level=10 --generate-baseline=phpstan-baseline.neon --memory-limit=5G",
   "post_freeze_reductions": {
     "date": "2026-11-14",
-    "entries_removed": 43,
-    "occurrences_removed": 76,
-    "current_entries": 15556,
-    "current_occurrences": 26772,
+    "entries_removed": 82,
+    "occurrences_removed": 212,
+    "current_entries": 15517,
+    "current_occurrences": 26636,
     "current_production": 15753,
-    "current_tests": 11019,
-    "current_baseline_sha256": "9a626bd8bdafde375429983701d83dfbcb2152a82e549b1c0ad72bc7c9b46997",
-    "reason": "Correções reais de dívida em aculta_studio e no carregador do curso piloto; sem regeneração automática do baseline."
+    "current_tests": 10883,
+    "current_baseline_sha256": "894e40ac67dabb275292e970b7e7016528b58ce48f39b54d7233687e0efa1fac",
+    "reason": "Correções em aculta_studio, no carregador do curso piloto e na tipagem e validação do CourseStructureControllerTest; sem regeneração automática do baseline."
   },
   "gates": {
     "check": "php scripts/phpstan-debt-guard.php check --baseline=phpstan-baseline.neon --config=phpstan.neon --git-base=origin/dev --analysis=artifacts/phpstan.json",

@@ -1,10 +1,10 @@
 # Dívida PHPStan — ACULTA
 
-Gerado em 2026-11-14T19:22:41+00:00 por `scripts/phpstan-debt-report.php`.
+Gerado em 2026-11-14T19:36:55+00:00 por `scripts/phpstan-debt-report.php`.
 
 | Item | Valor |
 | --- | --- |
-| Commit | `302a9a9c8763fe335cec43e3b93bcad65e0e6ad0` |
+| Commit | `ee0ec41ca7f2960a8e0031c7c6174977c8be5946` |
 | PHP | 8.4.27 |
 | PHPStan | PHPStan - PHP Static Analysis Tool 2.3.5 |
 | Nível | 10 |
@@ -15,30 +15,30 @@ Gerado em 2026-11-14T19:22:41+00:00 por `scripts/phpstan-debt-report.php`.
 
 | Medida | Ocorrências |
 | --- | ---: |
-| Total bruto no nível 10 | 26772 |
-| Dívida congelada no baseline | 26772 |
+| Total bruto no nível 10 | 26636 |
+| Dívida congelada no baseline | 26636 |
 | Erros não suprimidos | 0 |
-| Entradas no baseline | 15556 |
+| Entradas no baseline | 15517 |
 | Produção | 15753 |
-| Testes | 11019 |
+| Testes | 10883 |
 
 ## Criticidade funcional
 
 | Criticidade | Ocorrências |
 | --- | ---: |
 | alta | 231 |
-| media | 23488 |
-| baixa | 3053 |
+| media | 23357 |
+| baixa | 3048 |
 
 ## Evolução desde o baseline de referência
 
 | Classificação | Entradas |
 | --- | ---: |
-| Dívida removida | 43 |
-| Dívida mantida | 15556 |
+| Dívida removida | 39 |
+| Dívida mantida | 15517 |
 | Nova dívida (bloqueante) | 0 |
 | Contagem aumentada (bloqueante) | 0 |
-| Contagem reduzida | 4 |
+| Contagem reduzida | 0 |
 | Identidade de erro alterada (revisão) | 0 |
 
 ## Dívida por módulo (prioridade de redução)
@@ -47,8 +47,8 @@ Gerado em 2026-11-14T19:22:41+00:00 por `scripts/phpstan-debt-report.php`.
 | --- | ---: |
 | aculta_forum | 3096 |
 | scripts | 2996 |
-| aculta_lms | 2184 |
 | aculta_messenger | 2073 |
+| aculta_lms | 2048 |
 | aculta_portal | 2020 |
 | aculta_events | 1792 |
 | aculta_wiki | 1461 |
@@ -80,11 +80,11 @@ Gerado em 2026-11-14T19:22:41+00:00 por `scripts/phpstan-debt-report.php`.
 
 | Identificador | Ocorrências |
 | --- | ---: |
-| `offsetAccess.nonOffsetAccessible` | 8197 |
-| `argument.type` | 4646 |
-| `method.nonObject` | 3046 |
-| `missingType.iterableValue` | 2820 |
-| `cast.string` | 2094 |
+| `offsetAccess.nonOffsetAccessible` | 8085 |
+| `argument.type` | 4644 |
+| `method.nonObject` | 3034 |
+| `missingType.iterableValue` | 2818 |
+| `cast.string` | 2089 |
 | `cast.int` | 1350 |
 | `method.notFound` | 998 |
 | `property.nonObject` | 673 |
@@ -92,14 +92,14 @@ Gerado em 2026-11-14T19:22:41+00:00 por `scripts/phpstan-debt-report.php`.
 | `foreach.nonIterable` | 354 |
 | `binaryOp.invalid` | 299 |
 | `offsetAccess.invalidOffset` | 197 |
-| `missingType.return` | 139 |
+| `missingType.return` | 138 |
 | `property.notFound` | 134 |
 | `encapsedStringPart.nonString` | 115 |
 | `staticMethod.internalClass` | 105 |
 | `staticMethod.alreadyNarrowedType` | 102 |
 | `offsetAccess.notFound` | 97 |
 | `method.alreadyNarrowedType` | 85 |
-| `missingType.generics` | 78 |
+| `nullCoalesce.offset` | 77 |
 
 ## Arquivos com mais dívida
 
@@ -119,12 +119,12 @@ Gerado em 2026-11-14T19:22:41+00:00 por `scripts/phpstan-debt-report.php`.
 | `web/themes/custom/aculta420_v2/src/Hook/PagePresentationHooks.php` | 169 |
 | `scripts/install-institution.php` | 163 |
 | `web/modules/custom/aculta_portal/modules/aculta_events/tests/src/Kernel/EventOrganizationLifecycleKernelTest.php` | 140 |
-| `web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Unit/CourseStructureControllerTest.php` | 136 |
 | `web/modules/custom/aculta_portal/modules/aculta_studio/tests/src/Unit/StudioProfileControllerTest.php` | 118 |
 | `web/modules/custom/aculta_portal/src/Hook/PortalHooks.php` | 118 |
 | `web/modules/custom/aculta_portal/modules/aculta_lms_h5p/tests/src/Kernel/aculta_H5PCourseAccessIntegrationTest.php` | 110 |
 | `web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Kernel/ForumNoticeIdempotencyKernelTest.php` | 110 |
 | `web/modules/custom/aculta_portal/modules/aculta_index/tests/src/Kernel/ContentIndexSchemaKernelTest.php` | 109 |
+| `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php` | 108 |
 
 ## Como usar
 
