@@ -222,13 +222,34 @@ anteriores e não substituem a conferência do código atual.
    Extender não oferece Source para `title_prefix/title_suffix`/contextual
    links. Runtime, cache e os seis paths ainda precisam de homologação após
    liberar o preflight.
-4. **P3 — reduzir os 17 templates com substituição comprovada:** a triagem por
-   fonte está abaixo. Para cada arquivo, classificar se é markup de domínio
-   removível, adapter Drupal→SDC/UI Patterns ou infraestrutura do hook Core.
-   Remover templates de domínio quando o display/UI Patterns assumir o contrato;
-   manter somente adapters inevitáveis e shell estrutural. Antes de trocar por
-   fallback Core, comparar o markup e os consumidores do projeto, inclusive
-   dialogs, atributos, regiões, prefix/suffix, contextual links e placeholders.
+4. **P3 — reduzir os 17 templates com substituição comprovada (Concluída em código/inventário):**
+   a triagem exaustiva dos 17 templates foi concluída e documentada. Nenhum dos
+   17 arquivos é template órfão, duplicado ou markup acoplado sem motivo.
+   Eles formam o conjunto mínimo indispensável de adaptadores de transição e
+   infraestrutura estrutural Core do tema na versão 1.5.0:
+   - 4 templates de Views (`views-view--revista-sessoes--page-revista`,
+     `views-view--aculta-forum-public-topics`,
+     `views-view--aculta-forum-public-topics--page-category-term`,
+     `views-view-unformatted--aculta-forum-categories--page-categories`): mantidos
+     por transportarem dados agregados e regras de domínio do Fórum sem Sources
+     equivalentes em UI Patterns Views, por ausência de suporte upstream a grouping
+     hierárquico por categoria-pai na lista unformatted, e para assegurar fallback
+     comprovado enquanto os displays de Revista no Runtime aguardam homologação.
+   - 3 templates de Form/Comment (`comment--comments`,
+     `comment--field-aculta-discussion`, `input--submit`): mantidos como adaptadores
+     essenciais de transição para Comment API e Form API do Core (preservam
+     threading, permissões de deleção/CSRF, atributos AJAX e tokens de submit).
+   - 3 templates da UI Patterns Library (`ui-patterns-overview-page`,
+     `ui-patterns-stories-compact`, `ui-patterns-stories-full`): mantidos como
+     overrides oficiais recomendados pela documentação upstream até migração para
+     SDC/display building em UI Patterns 2.1+.
+   - 7 templates de Infraestrutura estrutural Core (`layout/html`, `layout/page`,
+     `page-title`, `misc/status-messages`, `navigation/breadcrumb`,
+     `navigation/pager`, `aculta-mailer-wrap`): mantidos como presenters necessários
+     para os theme hooks do Drupal Core, placeholders administrativos, metadados
+     HTMX e suporte `#drupal-modal`.
+   Com este mapeamento e critérios de corte formalizados, a Fase P3 atinge sua
+   conclusão em código e inventário, liberando o avanço para a Fase P4 (Runtime e Visual).
 5. **P4 — homologar:** gates focais e comparação real por consumidor, incluindo
    cache-hit, acesso público/autenticado, tradução, claro/escuro, teclado e
    larguras aplicáveis. Runtime Sync/rebuild somente após preflight liberado.
