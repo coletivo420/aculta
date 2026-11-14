@@ -1,10 +1,10 @@
 # Dívida PHPStan — ACULTA
 
-Gerado em 2026-11-14T20:03:28+00:00 por `scripts/phpstan-debt-report.php`.
+Gerado em 2026-11-14T20:06:10+00:00 por `scripts/phpstan-debt-report.php`.
 
 | Item | Valor |
 | --- | --- |
-| Commit | `f43bedc493c625e48a5177ff66a2638637428b1a` |
+| Commit | `9ab470f9987fedd83c3eb17db81b09323def1dfb` |
 | PHP | 8.4.27 |
 | PHPStan | PHPStan - PHP Static Analysis Tool 2.3.5 |
 | Nível | 10 |
@@ -15,27 +15,27 @@ Gerado em 2026-11-14T20:03:28+00:00 por `scripts/phpstan-debt-report.php`.
 
 | Medida | Ocorrências |
 | --- | ---: |
-| Total bruto no nível 10 | 26450 |
-| Dívida congelada no baseline | 26450 |
+| Total bruto no nível 10 | 26413 |
+| Dívida congelada no baseline | 26413 |
 | Erros não suprimidos | 0 |
-| Entradas no baseline | 15443 |
+| Entradas no baseline | 15426 |
 | Produção | 15696 |
-| Testes | 10754 |
+| Testes | 10717 |
 
 ## Criticidade funcional
 
 | Criticidade | Ocorrências |
 | --- | ---: |
 | alta | 231 |
-| media | 23196 |
-| baixa | 3023 |
+| media | 23163 |
+| baixa | 3019 |
 
 ## Evolução desde o baseline de referência
 
 | Classificação | Entradas |
 | --- | ---: |
-| Dívida removida | 20 |
-| Dívida mantida | 15443 |
+| Dívida removida | 17 |
+| Dívida mantida | 15426 |
 | Nova dívida (bloqueante) | 0 |
 | Contagem aumentada (bloqueante) | 0 |
 | Contagem reduzida | 0 |
@@ -49,7 +49,7 @@ Gerado em 2026-11-14T20:03:28+00:00 por `scripts/phpstan-debt-report.php`.
 | scripts | 2996 |
 | aculta_messenger | 2073 |
 | aculta_portal | 2020 |
-| aculta_lms | 1862 |
+| aculta_lms | 1825 |
 | aculta_events | 1792 |
 | aculta_wiki | 1461 |
 | aculta_lms_h5p | 1299 |
@@ -81,9 +81,9 @@ Gerado em 2026-11-14T20:03:28+00:00 por `scripts/phpstan-debt-report.php`.
 | Identificador | Ocorrências |
 | --- | ---: |
 | `offsetAccess.nonOffsetAccessible` | 8044 |
-| `argument.type` | 4639 |
-| `method.nonObject` | 2962 |
-| `missingType.iterableValue` | 2796 |
+| `argument.type` | 4623 |
+| `method.nonObject` | 2945 |
+| `missingType.iterableValue` | 2793 |
 | `cast.string` | 2075 |
 | `cast.int` | 1344 |
 | `method.notFound` | 985 |

@@ -6,6 +6,7 @@ namespace Drupal\Tests\aculta_lms\Unit;
 
 use Drupal\aculta_lms\Access\AnswerAttachmentAccessCheck;
 use Drupal\aculta_lms\Notice\LearningEligibilityInterface;
+use Drupal\Core\Cache\CacheableDependencyInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -17,6 +18,7 @@ use Drupal\group\Entity\GroupInterface;
 use Drupal\Tests\UnitTestCase;
 use Drupal\user\UserInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Tests per-request authorization of ACULTA answer file references. */
@@ -52,11 +54,16 @@ final class AnswerAttachmentAccessCheckTest extends UnitTestCase {
 
     $result = $check->access($answer, $account);
     self::assertFalse($result->isAllowed());
+    self::assertInstanceOf(CacheableDependencyInterface::class, $result);
     self::assertContains('group_relationship_list:plugin:group_membership:group:89', $result->getCacheTags());
   }
 
   /**
-   * Builds all entity doubles for one answer access check. */
+   * Builds all entity doubles for one answer access check.
+   *
+   * @return array{0: \Drupal\Core\Entity\FieldableEntityInterface&MockObject, 1: \Drupal\Core\Session\AccountInterface&MockObject, 2: \Drupal\user\UserInterface&MockObject, 3: \Drupal\Core\Entity\FieldableEntityInterface&MockObject, 4: \Drupal\file\FileInterface&MockObject, 5: \Drupal\group\Entity\GroupInterface&MockObject}
+   *   Answer, account, owner, activity, file and course fixtures.
+   */
   private function entities(int $ownerId, int $accountId, bool $canGrade): array {
     $answer = $this->cacheableEntity('aculta_lms_answer', [
       'uid' => $ownerId,
@@ -90,7 +97,11 @@ final class AnswerAttachmentAccessCheckTest extends UnitTestCase {
   }
 
   /**
-   * Constructs the checker and its storage doubles. */
+   * Constructs the checker and its storage doubles.
+   *
+   * @return array{0: \Drupal\aculta_lms\Access\AnswerAttachmentAccessCheck, 1: \Drupal\aculta_lms\Notice\LearningEligibilityInterface&MockObject}
+   *   The access checker and the enrollment eligibility mock.
+   */
   private function checker(EntityInterface $answer, UserInterface $user, EntityInterface $activity, FileInterface $file, GroupInterface $course): array {
     $storage = $this->createMock(EntityStorageInterface::class);
     $storage->method('load')->willReturnMap([
@@ -110,7 +121,14 @@ final class AnswerAttachmentAccessCheckTest extends UnitTestCase {
   }
 
   /**
-   * Creates an entity mock with field values and cache metadata. */
+   * Creates an entity mock with field values and cache metadata.
+   *
+   * @param array<string, int|string> $values
+   *   Entity field values used by the access check.
+   *
+   * @return \Drupal\Core\Entity\FieldableEntityInterface&MockObject
+   *   The cacheable entity mock.
+   */
   private function cacheableEntity(string $type, array $values): FieldableEntityInterface {
     $entity = $this->createMock(FieldableEntityInterface::class);
     $entity->method('getEntityTypeId')->willReturn($type);
@@ -122,7 +140,11 @@ final class AnswerAttachmentAccessCheckTest extends UnitTestCase {
   }
 
   /**
-   * Creates a field list double with a value. */
+   * Creates a field list double with a value.
+   *
+   * @return \Drupal\Core\Field\FieldItemListInterface<\Drupal\Core\Field\FieldItemInterface>&MockObject
+   *   The field item list mock.
+   */
   private function field(mixed $value): FieldItemListInterface {
     $field = $this->createMock(FieldItemListInterface::class);
     $field->method('__get')->with('value')->willReturn($value);
