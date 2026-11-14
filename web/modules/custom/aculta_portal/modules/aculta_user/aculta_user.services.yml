@@ -139,3 +139,7 @@ services:
   aculta_user.portal_menu_presentation:
     class: Drupal\aculta_user\Identity\AccountMenuPresentationBuilder
     arguments: ['@entity_type.manager', '@aculta_user.public_profile_policy', '@aculta_user.avatar_resolver']
+
+  # API passiva de coautoria; o campo e os hooks serão ativados em corte único.
+  aculta_user.coauthor_manager:
+    class: Drupal\aculta_user\CoAuthor\CoAuthorManager
