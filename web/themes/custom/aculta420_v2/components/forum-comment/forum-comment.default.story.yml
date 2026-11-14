@@ -1,0 +1,19 @@
+name: Comentário com resposta e ações
+description: Cartão de comentário com vínculo ao pai e ações renderizadas.
+component: aculta420_v2:forum-comment
+props:
+  composer_target_id: discussion-composer-comment-1
+  author_name: Participante de exemplo
+  author_posts: 12
+  author_reactions: 8
+  timestamp: 14 de novembro de 2026
+slots:
+  context:
+    type: inline_template
+    template: '<p class="comment__in-reply-to">Em resposta a <strong class="comment__in-reply-to-author">Outra pessoa</strong></p>'
+  body:
+    type: inline_template
+    template: '<p>Esta é uma resposta demonstrativa em uma discussão.</p>'
+  actions:
+    type: inline_template
+    template: '<a href="#comentario">Link permanente</a>'

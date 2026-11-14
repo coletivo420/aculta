@@ -1,6 +1,6 @@
 # Catálogo de componentes do tema V2
 
-Componentes SDC com schemas estritos (`additionalProperties: false`). Os nomes de prop e slot abaixo são os do `*.component.yml`. "Estado" indica o que foi entregue e verificado. Inventário do checkout atualizado em 2026-11-14: 147 manifests SDC e 232 stories; schemas e renderização isolada são conferidos pelos gates de `docs/gates.md`. A existência do manifest/story não prova, por si só, que um consumidor de produção esteja configurado.
+Componentes SDC com schemas estritos (`additionalProperties: false`). Os nomes de prop e slot abaixo são os do `*.component.yml`. "Estado" indica o que foi entregue e verificado. Inventário do checkout atualizado em 2026-11-14: 148 manifests SDC e 233 stories; schemas e renderização isolada são conferidos pelos gates de `docs/gates.md`. A existência do manifest/story não prova, por si só, que um consumidor de produção esteja configurado.
 
 Prefixo de uso: `aculta420_v2:<nome>`. Em Twig, use `include` com `with_context = false`, ou `embed` quando o componente tem slots.
 
@@ -15,7 +15,7 @@ Prefixo de uso: `aculta420_v2:<nome>`. Em Twig, use `include` com `with_context 
 
 A UI Patterns Library descobre os componentes diretamente dos arquivos
 `*.component.yml` e suas stories; não há uma lista paralela para manter. Neste
-checkout há 147 manifests SDC e 232 stories. O Drupal precisa reconstruir seus
+checkout há 148 manifests SDC e 233 stories. O Drupal precisa reconstruir seus
 caches de descoberta para refletir alterações no Runtime. Todos os SDCs têm ao
 menos uma story. A configuração habilita
 `ui_patterns_library`; descoberta no Runtime não foi confirmada nesta revisão.
@@ -226,6 +226,13 @@ estado vazio, pager, attachments, more, footer e feed icons. O template Twig
 conecta metadados e conteúdo da View; Search API mantém query, filtros, acesso,
 cache e view modes. Stories: `forum-search-page.default.story.yml` e
 `forum-search-page.empty.story.yml`.
+
+### forum-comment — Comentário do Fórum
+
+Centraliza o wrapper de comentário Drupal, metadados de autoria, conteúdo,
+reações, ações e alvo do compositor como slots e props; os adaptadores preservam
+o contexto específico do comentário pai. Compõe `forum-post-card` internamente.
+Story: `forum-comment.default.story.yml`.
 
 ### mail-envelope — Envelope de e-mail
 

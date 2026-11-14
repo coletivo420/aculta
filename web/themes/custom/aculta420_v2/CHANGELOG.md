@@ -1771,6 +1771,9 @@ State: Dev. No RC, production deployment, or release tag is declared.
 - Criado `mail-envelope` para a tabela visual de mensagens, incluindo logo,
   corpo e rodapé opcional. O template owner conserva o documento HTML, metadados,
   CSS inline para claro/escuro e o caminho de texto simples.
+- Criado `forum-comment` para centralizar o wrapper SDC dos comentários em
+  Fórum, Revista, Wiki e LMS; os dois adaptadores Twig preservam a diferença de
+  contexto do comentário pai, os atributos Drupal e os destinos HTMX.
 - Removidos `src/styles/forum.css`, a biblioteca `forum` e seu attachment em
   `PagePresentationHooks`. Listagem, categoria e busca carregam CSS a partir
   dos SDCs que efetivamente compõem cada View.

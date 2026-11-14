@@ -1,4 +1,4 @@
-{# Preserve the Drupal comment render array, presenting it via forum-post-card with Core attributes and accessibility metadata. #}
+{# Adapter do Comment API para threads de Fórum, Revista, Wiki e LMS. #}
 {% set author_card = content.author_card|default(null) %}
 {% set reaction_bar_val = reaction_bar|default(content.reaction_bar|default(null)) %}
 {% set comment_body = content|without('author_card', 'reaction_bar', 'links') %}
@@ -10,29 +10,28 @@
 {% set author_posts_val = author_posts is defined ? author_posts : null %}
 {% set author_reactions_val = author_reactions_received is defined ? author_reactions_received : (author_card ? author_card['#reactions_received']|default(null) : null) %}
 {% set composer_target_id = 'discussion-composer-' ~ commented_entity_type ~ '-' ~ commented_entity_id ~ '-' ~ comment.id %}
-{{ title_prefix }}
-<article{{ attributes.addClass('comment', 'comment--discussion', 'js-comment', status ? 'comment--' ~ status) }}>
-  {% if parent_comment %}
-    <p class="comment__in-reply-to">
-      {{ 'Em resposta a'|t }}
-      <strong class="comment__in-reply-to-author">{{ parent_comment.getAuthorName() }}</strong>
-    </p>
-  {% endif %}
-  {{ include('aculta420_v2:forum-post-card', {
-    stripe: 'brand',
-    author_name: author_name_val|default('Participante'|t),
-    author_role: null,
-    author_posts: author_posts_val,
-    author_reactions: author_reactions_val,
-    timestamp: created|default(null),
-    reactions: null,
-    reply_url: null,
-    avatar: author_card,
-    body: comment_body,
-    actions: actions_markup,
-    reactions_slot: reaction_bar_val,
-    reply: null,
-  }, with_context = false) }}
-  <div id="{{ composer_target_id }}" class="discussion-reply-target"></div>
-</article>
-{{ title_suffix }}
+
+{% embed 'aculta420_v2:forum-comment' with {
+  attributes: attributes,
+  status: status|default(null),
+  composer_target_id: composer_target_id,
+  author_name: author_name_val|default('Participante'|t),
+  author_posts: author_posts_val,
+  author_reactions: author_reactions_val,
+  timestamp: created|default(null)
+} %}
+  {% block title_prefix %}{{ title_prefix }}{% endblock %}
+  {% block context %}
+    {% if parent_comment %}
+      <p class="comment__in-reply-to">
+        {{ 'Em resposta a'|t }}
+        <strong class="comment__in-reply-to-author">{{ parent_comment.getAuthorName() }}</strong>
+      </p>
+    {% endif %}
+  {% endblock %}
+  {% block avatar %}{{ author_card }}{% endblock %}
+  {% block body %}{{ comment_body }}{% endblock %}
+  {% block actions %}{{ actions_markup }}{% endblock %}
+  {% block reactions_slot %}{{ reaction_bar_val }}{% endblock %}
+  {% block title_suffix %}{{ title_suffix }}{% endblock %}
+{% endembed %}
