@@ -95,7 +95,7 @@ anteriores e não substituem a conferência do código atual.
    reutilizáveis com plano de compatibilidade das referências persistidas.
 3. **P2 — cruzar integrações:** matriz estática regenerada em 2026-11-14 com
    456 linhas: 146 SDCs, 159 displays Views, 52 instâncias de bloco, 22
-   displays com Layout Builder e 21 overrides Twig do tema. Foram achadas
+   displays com Layout Builder e 20 templates Twig Drupal do tema. Foram achadas
    referências literais a 112 SDCs; os 34 sem referência literal não são
    candidatos automáticos a exclusão, pois a Library os publica e usos
    editoriais/dinâmicos não aparecem nessa busca. Ainda falta reconciliar as
@@ -107,7 +107,7 @@ anteriores e não substituem a conferência do código atual.
    entrar no Runtime. A API do Component Display Extender não oferece Source
    para `title_prefix/title_suffix`/contextual links. Runtime, cache e os seis
    paths ainda precisam de homologação após liberar o preflight.
-4. **P3 — reduzir os 21 templates com substituição comprovada:** a triagem por
+4. **P3 — reduzir os 20 templates com substituição comprovada:** a triagem por
    fonte está abaixo. Para cada arquivo, classificar se é markup de domínio
    removível, adapter Drupal→SDC/UI Patterns ou infraestrutura do hook Core.
    Remover templates de domínio quando o display/UI Patterns assumir o contrato;
