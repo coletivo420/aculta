@@ -245,6 +245,8 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      with:
+        fetch-depth: 0
 
     - name: Setup PHP
       uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # v2.40.0
@@ -256,8 +258,104 @@ jobs:
       run: |
         composer install --prefer-dist
 
-    - name: Run PHPStan
+    - name: Resolve diff base
       run: |
-        # phpstan.neon inclui phpstan-baseline.neon. Novos erros e entradas de
-        # baseline resolvidas (reportUnmatchedIgnoredErrors) falham o job.
-        vendor/bin/phpstan analyse --no-progress --memory-limit=2G
+        if [ "$GITHUB_EVENT_NAME" = "pull_request" ]; then
+          base="${{ github.event.pull_request.base.sha }}"
+        elif [ "$GITHUB_EVENT_NAME" = "push" ]; then
+          base="${{ github.event.before }}"
+        else
+          base="$(git rev-parse origin/dev 2>/dev/null || git rev-list --max-parents=0 HEAD)"
+        fi
+        if [ -z "$base" ] || [ "$base" = "0000000000000000000000000000000000000000" ]; then
+          base="$(git rev-parse HEAD~1 2>/dev/null || git rev-list --max-parents=0 HEAD)"
+        fi
+        echo "PHPSTAN_DIFF_BASE=$base" >> "$GITHUB_ENV"
+        echo "Base do gate PHPStan: $base"
+
+    - name: Run PHPStan level 10 with frozen baseline
+      run: |
+        mkdir -p artifacts
+        set +e
+        vendor/bin/phpstan analyse --configuration=phpstan.neon --no-progress \
+          --error-format=json --memory-limit=2G > artifacts/phpstan.json
+        rc=$?
+        set -e
+        echo "phpstan_exit=$rc" | tee artifacts/phpstan-exit.txt
+        if [ "$rc" -gt 1 ]; then
+          echo "Falha de execução do PHPStan (não é erro estático)." >&2
+          exit "$rc"
+        fi
+        # O código 1 com JSON válido é diagnóstico; o guard classifica cada
+        # erro como não suprimido, ignore.unmatched ou ignore.count.
+
+    - name: Blocking debt gates (integrity, config, growth, new errors)
+      run: |
+        php scripts/phpstan-debt-guard.php check \
+          --baseline=phpstan-baseline.neon \
+          --config=phpstan.neon \
+          --git-base="$PHPSTAN_DIFF_BASE" \
+          --analysis=artifacts/phpstan.json
+
+    - name: Blocking debt in touched files and modules
+      run: |
+        php scripts/phpstan-debt-guard.php diff \
+          --baseline=phpstan-baseline.neon \
+          --git-base="$PHPSTAN_DIFF_BASE"
+
+    - name: Debt evolution report
+      if: always()
+      run: |
+        mkdir -p artifacts
+        args=(
+          "--baseline=phpstan-baseline.neon"
+          "--analysis=artifacts/phpstan.json"
+          "--sha=${{ github.sha }}"
+          "--out=artifacts/phpstan-debt.md"
+          "--json-out=artifacts/phpstan-debt.json"
+        )
+        if git show "$PHPSTAN_DIFF_BASE:phpstan.neon" 2>/dev/null \
+          | grep -Eq '^[[:space:]]*level:[[:space:]]*10[[:space:]]*$'; then
+          git show "$PHPSTAN_DIFF_BASE:phpstan-baseline.neon" \
+            > artifacts/phpstan-baseline-reference.neon
+          args+=("--reference-baseline=artifacts/phpstan-baseline-reference.neon")
+        else
+          echo "Referência não está no nível 10: evolução omissa neste commit de transição."
+        fi
+        php scripts/phpstan-debt-report.php "${args[@]}"
+
+    - name: Upload PHPStan diagnostics
+      if: always()
+      uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+      with:
+        name: phpstan-debt
+        path: |
+          artifacts/phpstan.json
+          artifacts/phpstan-exit.txt
+          artifacts/phpstan-debt.md
+          artifacts/phpstan-debt.json
+          artifacts/phpstan-baseline-reference.neon
+        retention-days: 14
+        if-no-files-found: warn
+
+  # Check estável para branch protection: um job PHPStan `skipped` não pode
+  # ser lido como aprovação. Este job sempre executa e exige sucesso real.
+  phpstan-gate:
+    name: PHPStan level 10 gate
+    needs: [ workflow-guard, phpstan ]
+    if: always()
+    runs-on: ubuntu-24.04
+    steps:
+    - name: Require an executed and successful PHPStan job
+      run: |
+        if [ "${{ needs.workflow-guard.outputs.should_run }}" != "true" ]; then
+          echo "Push deduplicado: a verificação canônica é o job do PR aberto."
+          echo "O check estável não aprova por si só um PHPStan não executado."
+          exit 0
+        fi
+        result="${{ needs.phpstan.result }}"
+        if [ "$result" != "success" ]; then
+          echo "PHPStan nível 10 não aprovado (result=$result)." >&2
+          exit 1
+        fi
+        echo "PHPStan nível 10 executado e aprovado."
