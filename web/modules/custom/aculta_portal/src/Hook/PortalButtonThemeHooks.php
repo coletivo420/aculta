@@ -21,6 +21,7 @@ final class PortalButtonThemeHooks {
         'variables' => [
           'props' => [],
           'attributes' => NULL,
+          'component' => NULL,
         ],
       ],
     ];

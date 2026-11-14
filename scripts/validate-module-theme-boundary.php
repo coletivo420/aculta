@@ -186,6 +186,7 @@ foreach ($files($module . '/templates', ['twig']) as $path) {
   // por um SDC no preprocess do tema, sem override Twig ACULTA420.
   $neutralFallbacks = [
     'portal-element.html.twig',
+    'aculta-portal-button.html.twig',
     'aculta-section.html.twig',
   ];
   $assert(is_file($themeTemplate) || in_array(basename($path), $neutralFallbacks, TRUE), 'Template do módulo sem correspondente no tema (ACULTA420 deve sobrescrever): ' . basename($path));

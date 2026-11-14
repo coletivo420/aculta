@@ -590,6 +590,40 @@ final class PagePresentationHooks {
   }
 
   /**
+   * Renders the Portal's reusable button contract through the theme SDC.
+   */
+  #[Hook('preprocess_aculta_portal_button')]
+  public function preprocessPortalButton(array &$variables): void {
+    if (!$this->componentAvailable('button')) {
+      return;
+    }
+
+    $props = is_array($variables['props'] ?? NULL) ? $variables['props'] : [];
+    $attributes = $variables['attributes'] ?? [];
+    if (!$attributes instanceof Attribute) {
+      $attributes = new Attribute(is_array($attributes) ? $attributes : []);
+    }
+    $variables['component'] = [
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:button',
+      '#props' => [
+        'text' => isset($props['text']) ? (string) $props['text'] : '',
+        'url' => isset($props['url']) ? (string) $props['url'] : NULL,
+        'variant' => $props['variant'] ?? 'primary',
+        'size' => $props['size'] ?? 'default',
+        'is_submit' => (bool) ($props['is_submit'] ?? FALSE),
+        'disabled' => (bool) ($props['disabled'] ?? FALSE),
+        'icon_before' => $props['icon_before'] ?? NULL,
+        'icon_after' => $props['icon_after'] ?? NULL,
+        'leading_icon' => $props['leading_icon'] ?? NULL,
+        'trailing_icon' => $props['trailing_icon'] ?? NULL,
+        'aria_label' => $props['aria_label'] ?? NULL,
+        'attributes' => $attributes,
+      ],
+    ];
+  }
+
+  /**
    * Builds a SDC render array for the neutral donation action hook.
    */
   private function preprocessDonationButton(array &$variables, string $variant): void {

@@ -3,14 +3,18 @@
  * @file
  * Fallback neutro do botão do Portal, sem classes de design.
  *
- * O tema ACULTA420 sobrescreve este template e apresenta o SDC `button`.
+ * O tema ACULTA420 fornece o SDC `button` por preprocess.
  * Sem o tema, o elemento continua clicável e acessível.
  */
 #}
-{% set variant = props.variant|default('primary') %}
-{% set token = 'button-' ~ variant %}
-{% if props.url %}
-  <a href="{{ props.url }}" data-portal-ui="{{ token }}"{% if props.aria_label %} aria-label="{{ props.aria_label }}"{% endif %}{{ attributes }}>{{ props.text }}</a>
+{% if component %}
+  {{ component }}
 {% else %}
-  <button type="button" data-portal-ui="{{ token }}"{% if props.aria_label %} aria-label="{{ props.aria_label }}"{% endif %}{{ attributes }}>{{ props.text }}</button>
+  {% set variant = props.variant|default('primary') %}
+  {% set token = 'button-' ~ variant %}
+  {% if props.url %}
+    <a href="{{ props.url }}" data-portal-ui="{{ token }}"{% if props.aria_label %} aria-label="{{ props.aria_label }}"{% endif %}{{ attributes }}>{{ props.text }}</a>
+  {% else %}
+    <button type="button" data-portal-ui="{{ token }}"{% if props.aria_label %} aria-label="{{ props.aria_label }}"{% endif %}{{ attributes }}>{{ props.text }}</button>
+  {% endif %}
 {% endif %}

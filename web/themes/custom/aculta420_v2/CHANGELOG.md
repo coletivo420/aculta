@@ -1885,6 +1885,12 @@ State: Dev. No RC, production deployment, or release tag is declared.
 - Removido o override `aculta-section.html.twig`. Restam 44 templates no tema;
   validação visual no Runtime continua pendente.
 
+## Atualização — botão do Portal encaminhado diretamente a SDC (2026-11-13)
+
+- O hook neutro `aculta_portal_button` agora emite o SDC `button` via preprocess
+  do tema. O fallback semântico permanece no módulo Portal; removido o override
+  Twig do tema. Restam 38 templates Twig.
+
 ## Atualização — páginas LinkWeed encaminhadas diretamente a SDCs (2026-11-14)
 
 - A landing Links usa `layout-section`; a micropágina usa `social-links-page`.
