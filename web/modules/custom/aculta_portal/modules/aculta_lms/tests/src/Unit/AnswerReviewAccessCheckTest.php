@@ -15,6 +15,7 @@ use Drupal\group\Entity\GroupRelationshipInterface;
 use Drupal\Tests\UnitTestCase;
 use Drupal\user\UserInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Tests contextual access for the educator's answer review workflow.
@@ -38,7 +39,7 @@ final class AnswerReviewAccessCheckTest extends UnitTestCase {
    * Denies review when the answer owner is outside the selected class.
    */
   public function testCannotReviewAnswerFromAnotherClass(): void {
-    [$check, $course, $class, $answer, $memberships, $student] = $this->scenario();
+    [$check, $course, $class, $answer, $memberships] = $this->scenario();
     $otherStudent = $this->createMock(UserInterface::class);
     $otherStudent->method('id')->willReturn('73');
     $otherStudent->method('isActive')->willReturn(TRUE);
@@ -64,7 +65,7 @@ final class AnswerReviewAccessCheckTest extends UnitTestCase {
    * Denies answers belonging to another course.
    */
   public function testCannotReviewAnswerFromAnotherCourse(): void {
-    [$check, $course, $class, $answer, $memberships] = $this->scenario();
+    [, , $class, $answer, $memberships] = $this->scenario();
     $otherCourse = $this->group('lms_course', '99');
     $otherCourse->method('getRelationships')->willReturn([]);
     $answerCourse = $this->group('lms_course', '100');
@@ -80,6 +81,9 @@ final class AnswerReviewAccessCheckTest extends UnitTestCase {
 
   /**
    * Creates the baseline answer review fixture.
+   *
+   * @return array{0: \Drupal\aculta_lms\Access\AnswerReviewAccessCheck, 1: \Drupal\group\Entity\GroupInterface&MockObject, 2: \Drupal\group\Entity\GroupInterface&MockObject, 3: \Drupal\Core\Entity\FieldableEntityInterface&MockObject, 4: \Drupal\aculta_lms\Group\GroupMembershipReaderInterface&MockObject, 5: \Drupal\user\UserInterface&MockObject}
+   *   The access checker and its course, class, answer, membership and student fixtures.
    */
   private function scenario(): array {
     $course = $this->group('lms_course', '12');
@@ -116,7 +120,7 @@ final class AnswerReviewAccessCheckTest extends UnitTestCase {
   /**
    * Creates a Group mock with the requested identity.
    */
-  private function group(string $bundle, string $id): GroupInterface {
+  private function group(string $bundle, string $id): GroupInterface&MockObject {
     $group = $this->createMock(GroupInterface::class);
     $group->method('bundle')->willReturn($bundle);
     $group->method('id')->willReturn($id);
@@ -142,6 +146,9 @@ final class AnswerReviewAccessCheckTest extends UnitTestCase {
 
   /**
    * Creates a field list mock with the requested value.
+   *
+   * @return \Drupal\Core\Field\FieldItemListInterface<\Drupal\Core\Field\FieldItemInterface>
+   *   The field list mock.
    */
   private function field(mixed $value): FieldItemListInterface {
     $field = $this->createMock(FieldItemListInterface::class);
