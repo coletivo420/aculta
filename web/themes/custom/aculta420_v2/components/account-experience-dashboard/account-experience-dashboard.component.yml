@@ -11,41 +11,51 @@ props:
     show_identity:
       type: boolean
       title: Exibe o bloco de identidade
+      description: Controla a apresentação do bloco com nome e, quando informados, e-mail, avatar e link de perfil.
       default: false
     identity_name:
       type: [string, 'null']
       title: Nome da pessoa
+      description: Nome apresentado no bloco de identidade quando show_identity está ativo.
       default: null
     identity_email:
       type: [string, 'null']
       title: E-mail da pessoa
+      description: E-mail opcional apresentado no bloco de identidade.
       default: null
     profile_url:
       type: [string, 'null']
       title: URL do perfil público
+      description: Destino do link de perfil exibido no bloco de identidade.
       default: null
     experiences_title:
       type: string
       title: Título da lista de experiências
+      description: Cabeçalho visível acima da lista de experiências.
       minLength: 1
     experiences_description:
       type: string
       title: Descrição das experiências
+      description: Texto de apoio exibido entre o cabeçalho e a lista de experiências.
     account_url:
       type: [string, 'null']
       title: URL da conta
+      description: Destino opcional do atalho para as configurações da conta.
       default: null
     account_link_label:
       type: string
       title: Rótulo acessível do atalho da conta
+      description: Nome acessível do link de conta, aplicado como aria-label.
       default: ''
     account_link_title:
       type: string
       title: Título do atalho da conta
+      description: Título visível do atalho para a conta.
       default: ''
     account_link_description:
       type: string
       title: Descrição do atalho da conta
+      description: Texto de apoio visível no atalho para a conta.
       default: ''
 slots:
   menu:

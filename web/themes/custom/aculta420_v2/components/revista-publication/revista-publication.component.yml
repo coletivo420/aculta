@@ -11,26 +11,33 @@ props:
     has_meta:
       type: boolean
       title: Metadados disponíveis
+      description: Mostra o slot meta com autoria, data, hora e compartilhamento quando ele foi produzido.
       default: false
     has_subtitle:
       type: boolean
       title: Chamada disponível
+      description: Mostra o slot subtitle quando o campo de chamada editorial está preenchido.
     has_summary:
       type: boolean
       title: Resumo disponível
+      description: Mostra o slot summary quando o campo de resumo está preenchido.
     has_cover:
       type: boolean
       title: Capa disponível
+      description: Mostra o slot cover quando há imagem de capa no conteúdo.
     has_footer:
       type: boolean
       title: Rodapé editorial disponível
+      description: Mostra o rodapé que agrupa categorias, tags, referências, créditos e outros metadados disponíveis.
     has_authors:
       type: boolean
       title: Autoria disponível
+      description: Mostra o slot authors quando o módulo aculta_user produz a caixa de autoria.
       default: false
     has_discussion:
       type: boolean
       title: Discussão disponível
+      description: Mostra o slot discussion quando há render array de discussão.
       default: false
 slots:
   meta:

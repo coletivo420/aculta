@@ -15,6 +15,7 @@ props:
     authenticated:
       type: boolean
       title: Usuário autenticado
+      description: Quando true, mostra o bloco de identidade autenticada com avatar e nome; não controla acesso nem substitui os itens de menu fornecidos pelo Drupal.
       default: false
     summary_label:
       type: string

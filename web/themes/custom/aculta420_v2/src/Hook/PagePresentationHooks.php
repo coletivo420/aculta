@@ -1107,7 +1107,7 @@ final class PagePresentationHooks {
   }
 
   /**
-   * Wraps the photo editor's original render arrays in its presentation SDC.
+   * Composes the account photo trigger and editor form with the shared popup SDC.
    */
   #[Hook('preprocess_aculta_portal_photo_editor')]
   public function preprocessPortalPhotoEditor(array &$variables): void {
@@ -1118,8 +1118,15 @@ final class PagePresentationHooks {
     $variables['component'] = [
       '#type' => 'component',
       '#component' => 'aculta420_v2:account-photo-editor',
-      '#props' => [],
-      '#slots' => ['content' => $variables['photo_form'] ?? []],
+      '#props' => [
+        'id' => 'account-photo-popup',
+        'title' => (string) new \Drupal\Core\StringTranslation\TranslatableMarkup('Alterar foto do perfil'),
+        'trigger_aria_label' => (string) new \Drupal\Core\StringTranslation\TranslatableMarkup('Alterar foto de perfil'),
+      ],
+      '#slots' => [
+        'trigger' => $variables['photo'] ?? [],
+        'content' => $variables['photo_form']['form'] ?? [],
+      ],
     ];
   }
 

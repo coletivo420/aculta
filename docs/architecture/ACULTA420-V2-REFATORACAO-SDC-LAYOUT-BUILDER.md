@@ -1,8 +1,26 @@
 # ACULTA420 V2 - Plano de refatoracao SDC First, Layout Builder e CSS multidominio
 
-**Estado:** arquitetura decidida; implementacao por pacotes e homologacao pendentes. Decisao: ADR-054. Branch dev. Referencia inicial: 2026-11-09.
+**Estado atual:** plano histórico de 2026-11-09, parcialmente implementado. O estado executável e as próximas ações estão em ADR-056 e `web/themes/custom/aculta420_v2/docs/roadmap.md`; não inferir que os pacotes ou homologações antigos ainda estejam pendentes sem conferir o checkout e o Config Sync.
 
 > **Substituído em 2026-11-13:** este plano registra a estratégia anterior de rollout paralelo, homologação visual antes do corte e fallback. A seção “Decisão vigente — corte radical da apresentação legada” da ADR-054 prevalece: conversão direta, sem exigir paridade visual nem piloto bloqueante. Reaproveite deste plano somente os contratos de segurança, acesso, cache, ownership e integridade que não conflitem com a decisão vigente.
+
+## Estado conferido no checkout (2026-11-14)
+
+Este quadro é a referência atual para interpretar as fases históricas abaixo;
+não as reabre como tarefas vigentes. `aculta420_v2.info.yml` declara cinco
+regiões (`institution`, `header`, `content`, `sidebar_first`, `footer`), e
+`templates/layout/page.html.twig` compõe o shell único com o SDC `layout-page`.
+Layout Builder e UI Patterns Layouts continuam habilitados, mas a configuração
+é adotada por display/consumer conforme Config Sync; não há habilitação
+indiscriminada em todos os displays. O roadmap do tema lista os templates
+Drupal ainda existentes, suas fontes e a substituição comprovada ou pendente.
+
+O estado corrente de integração, divergência do Runtime e próximos cortes está
+em [ADR-056](../decisions/ADR-056-ui-patterns-2-recomendacoes-e-corte-documentacao.md)
+e no [roadmap do tema](../../web/themes/custom/aculta420_v2/docs/roadmap.md).
+Em particular, P3 e P9 deste documento não autorizam rollout paralelo, piloto,
+paridade visual como bloqueio, importação de configuração ou limpeza no
+Runtime.
 
 ## 1. Objetivo e limites
 

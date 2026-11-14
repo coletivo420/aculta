@@ -11,18 +11,22 @@ props:
     title:
       title: Título do certificado
       type: string
+      description: Nome do curso ou certificado exibido como cabeçalho do cartão.
       minLength: 1
     status:
       title: Estado do certificado
       type: string
+      description: Estado estruturado usado como atributo data-status no cartão.
       enum: [active, revoked]
     status_text:
       title: Texto do estado do certificado
       type: string
+      description: Rótulo visível do estado, preparado pelo LMS.
       minLength: 1
     issued_text:
       title: Texto da data de emissão
       type: string
+      description: Data de emissão já formatada para exibição pelo LMS.
       minLength: 1
 slots:
   verification_action:

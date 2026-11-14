@@ -1,6 +1,6 @@
 # Catálogo de componentes do tema V2
 
-Componentes SDC com schemas estritos (`additionalProperties: false`). Os nomes de prop e slot abaixo são os do `*.component.yml`. "Estado" indica o que foi entregue e verificado. Inventário do checkout atualizado em 2026-11-14 após remover o seletor: 145 manifests SDC e 229 stories; schemas e renderização isolada são conferidos pelos gates de `docs/gates.md`. A existência do manifest/story não prova, por si só, que um consumidor de produção esteja configurado.
+Componentes SDC com schemas estritos (`additionalProperties: false`). Os nomes de prop e slot abaixo são os do `*.component.yml`. "Estado" indica o que foi entregue e verificado. Inventário do worktree em 2026-11-14: 148 manifests SDC e 240 stories, incluindo `delete-confirm` e `posting-overlay` ainda não rastreados e a nova story `reply-indent.depth-2-intermediate`; os gates SDC/Library passaram, mas o snapshot ainda aguarda preview visual. A existência do manifest/story não prova, por si só, que um consumidor de produção esteja configurado.
 
 Prefixo de uso: `aculta420_v2:<nome>`. Em Twig, use `include` com `with_context = false`, ou `embed` quando o componente tem slots.
 
@@ -15,10 +15,11 @@ Prefixo de uso: `aculta420_v2:<nome>`. Em Twig, use `include` com `with_context 
 
 A UI Patterns Library descobre os componentes diretamente dos arquivos
 `*.component.yml` e suas stories; não há uma lista paralela para manter. Neste
-checkout há 145 manifests SDC e 229 stories. O Drupal precisa reconstruir seus
-caches de descoberta para refletir alterações no Runtime. Todos os SDCs têm ao
+worktree há 148 manifests SDC e 240 stories, incluindo `delete-confirm` e
+`posting-overlay` ainda não rastreados. O Drupal precisa reconstruir seus caches de descoberta para
+refletir alterações no Runtime. Todos os SDCs têm ao
 menos uma story. A configuração habilita
-`ui_patterns_library`. A última descoberta Runtime anterior à remoção do seletor listou 148 SDCs; o cache precisa ser reconstruído para refletir os 145 manifests atuais.
+`ui_patterns_library`. A última descoberta Runtime registrada listou 145 SDCs, anterior à inclusão de `reply-indent`; cache e descoberta precisam ser atualizados após consolidar os 148 manifests do worktree.
 
 O grupo `Layouts` também alimenta os plugins de `ui_patterns_layouts`, usados
 pelo Layout Builder. Os sete layouts declarados são `event-page-layout`, `layout-page`, `layout-section`, `layout-two-columns`, `layout-grid`, `layout-narrow` e `layout-full`. O rodapé institucional (`site-footer`) também é um item desta biblioteca, com regiões `brand`, `nav`, `content` e `legal`; ele está posicionado no layout de blocos do display `footer` do bloco `aculta_institution`. O gate de Runtime cobre hoje seis layouts
@@ -118,7 +119,9 @@ acessível e dados do arquivo continuam no módulo. Story:
 
 Casca de apresentação para resumo do checkout, confirmação, valor e convite de
 conta. O módulo `aculta_donation` mantém cálculo, conteúdo, fluxo e cache; seus
-render arrays são fornecidos pelo slot `content`. CSS fica no componente. Story:
+render arrays são fornecidos pelo slot `content`. A prop `variant` (`summary`,
+`summaries`, `thanks`, `amount` ou `invite`) seleciona a classe de apresentação;
+`attributes` estende os atributos do contêiner. CSS fica no componente. Story:
 `donation-presentation.default.story.yml`.
 
 ### saved-content-page — Página de salvos e recomendações
@@ -195,8 +198,8 @@ resets de lista apenas quando esse cabeçalho é renderizado. Story:
 
 Recebe o Form API do nó de tópico pelo slot `form`; controller, validação, submit
 e permissões permanecem no Fórum. A story executável `DiscussionTopicComposerStory`
-monta um formulário de demonstração. Ela não prova composição deste SDC na rota
-de produção. O antigo Twig `node-add-form--aculta-forum-topic.html.twig` foi
+monta um formulário de demonstração dentro do SDC `popup`, aberto por um botão.
+A rota real também consome o SDC `popup` e carrega o Form API por HTMX. O antigo Twig `node-add-form--aculta-forum-topic.html.twig` foi
 removido porque o hook não existe; Core registra `node_edit_form`. O SDC continua
 na UI Patterns Library.
 
@@ -227,7 +230,39 @@ cache e view modes. Stories: `forum-search-page.default.story.yml` e
 Centraliza o wrapper de comentário Drupal, metadados de autoria, conteúdo,
 reações, ações e alvo do compositor como slots e props; os adaptadores preservam
 o contexto específico do comentário pai. Compõe `forum-post-card` internamente.
-Story: `forum-comment.default.story.yml`.
+Os dois templates Core de comentário usam `{% embed %}` para substituir os
+blocks. Drupal Core injeta `#slots` pelo mesmo mecanismo de blocks no render
+isolado e nas stories da UI Patterns Library. Story:
+`forum-comment.default.story.yml`.
+
+### reply-indent — Recuo de resposta
+
+Aplica o recuo hierárquico nos níveis 1 a 3; o nível 0 representa o comentário
+raiz. A prop `depth` aceita inteiros de 0 a 3 e limita visualmente níveis
+superiores a 3. A prop `first` mostra a seta de resposta quando verdadeira e o
+nível é maior que zero. O SDC `forum-comment` passa as duas props e compõe este
+wrapper ao redor do cartão de comentário. Stories: `reply-indent.depth-0.story.yml`
+até `reply-indent.depth-3.story.yml`; os níveis 1 a 3 mostram a primeira
+resposta com seta. `reply-indent.depth-2-intermediate.story.yml` demonstra o
+nível 2 com `first: false`, sem seta. A faixa lateral pertence ao cartão
+`forum-post-card`, não a este wrapper.
+
+### forum-quote — Citação do Fórum
+
+Apresenta autoria, avatar opcional, data e conteúdo citado. Os props de URL e o
+slot de reações foram removidos porque o Twig não os consumia e não foi
+encontrado consumidor persistido no Runtime consultado. O SDC permanece na UI
+Patterns Library como componente de catálogo; gates e preview da poda estão
+pendentes.
+
+### delete-confirm — Confirmação de exclusão
+
+Composição de popover nativo com título, explicação e botões cancelar/confirmar.
+Os templates de comentário do Fórum o incluem; o adapter fornece destino e
+token CSRF, validados pela rota proprietária. O popover é não modal: a story
+usa destino de exemplo, o diálogo associa título e mensagem por ARIA e não
+declara `aria-modal`. Interação de foco/teclado e preview da Library aguardam
+validação no Runtime.
 
 ### mail-envelope — Envelope de e-mail
 
@@ -236,9 +271,10 @@ owner de e-mail mantém o documento HTML, metadados, CSS inline para claro/escur
 e saída de texto simples. `MailEnvelopeHooks` continua resolvendo tokens e URL
 do logo. Story: `mail-envelope.default.story.yml`.
 
-Os estilos de apresentação da navegação JS de progresso, recuo hierárquico,
-foco e resposta agora acompanham `forum-post-card`, incluído nos templates de
-comentário compartilhados por Fórum, Revista, Wiki e LMS. A caixa editorial da
+Os estilos de apresentação da navegação JS de progresso, foco e resposta
+acompanham `forum-post-card`; o recuo hierárquico é responsabilidade de
+`reply-indent`. Os componentes estão nos templates de comentário compartilhados
+por Fórum, Revista, Wiki e LMS. A caixa editorial da
 discussão Wiki acompanha o SDC `wiki-entry`. Os render arrays Drupal continuam
 preservados.
 
@@ -303,17 +339,18 @@ global de autoria.
 - **Props:** `title`, `section_title`, `menu_items`, `accordion_items` e `logout`.
 - **Slots:** `content`.
 - **Story:** `account-shell.default.story.yml`.
-- **CSS:** navegação responsiva, conteúdo, foco, tabelas e ações da visão geral carregam pelo asset do SDC; o editor de foto tem SDC e asset próprios, enquanto gatilho e ações continuam na biblioteca contextual da Conta.
+- **CSS:** navegação responsiva, conteúdo, foco, tabelas e ações da visão geral carregam pelo asset do SDC. O editor de foto compõe `popup` e `avatar`; o gatilho usa `icon` e as ações do Form API usam `button`, com stories publicadas na UI Patterns Library.
 - **Regra:** o H1 "Minha conta" é entregue pelo SDC `heading` (nível 1, faixa tricolor); o tema não lê usuário nem decide acesso.
 - **Estado:** SM do H1 atualizado em 2026-11-12; validação autenticada continua pendente.
 
 ### account-photo-editor — Editor de foto da Conta
 
-- **Papel:** envolve a prévia e o Form API original do editor, mantendo o ponto de extensão `aculta_portal_photo_editor_alter`.
-- **Props/slots:** nenhum prop; slot `content` recebe o render array já preparado pelo módulo.
-- **Story:** `account-photo-editor.default.story.yml`, com avatar e botão demonstrativos.
-- **CSS:** asset local do SDC contém apenas o posicionamento do editor; o formulário real preserva cache, acesso e attachments.
-- **Estado:** migrado via preprocess; validação autenticada no Runtime pendente.
+- **Papel:** abre o Form API do editor dentro do SDC `popup`; compõe o gatilho com o SDC `avatar` e o lápis do SDC `icon`.
+- **Props:** `id`, `title`, `trigger_aria_label`.
+- **Slots:** `trigger` recebe a mídia preparada pelo Portal; `content` recebe o Form API; `footer` é opcional.
+- **Stories:** estado de avatar do acervo e estado de foto pessoal, com prévia circular e ações do formulário.
+- **CSS:** o asset garante o recorte circular da prévia e o lápis sobreposto ao avatar. Acessos, cache e attachments continuam no render array do módulo.
+- **Estado:** composição pelo popup implementada no checkout; upload e experiência autenticada ainda precisam de validação no Runtime.
 
 ### account-terms-modal — Modal de aceite dos termos
 
@@ -402,15 +439,16 @@ seis layouts compartilhados.
 
 ### layout-page
 
-Estrutura o landmark main nas variantes stack, aside e full; stories:
+Estrutura o landmark main nas variantes stack, aside e full; `has_aside` informa se o adapter encontrou conteúdo visível; stories:
 layout-page.default (aside), layout-page.aside-no-title, layout-page.stack,
 layout-page.stack-no-title, layout-page.full e layout-page.full-no-title.
 Slots: title, content
 e aside. O conteúdo principal precede o complementar no DOM; a partir de 60rem,
 aside com conteúdo forma duas colunas, com a área complementar à esquerda
 apenas no visual (CSS Grid). Sem aside, a página permanece em uma coluna.
-O fallback do shell espelha a geometria; validar foco, landmarks e zoom no
-Runtime. O preprocess escolhe a variante por rota/conteúdo, sem resolver
+O fallback do shell espelha a geometria. `page.html.twig` renderiza o slot
+sidebar uma vez e fornece `has_aside`; o SDC não inspeciona a saída. Validar
+foco, landmarks e zoom no Runtime. O preprocess escolhe a variante por rota/conteúdo, sem resolver
 identidade visual de domínio no SDC. Sem JavaScript.
 
 ### avatar
@@ -453,10 +491,10 @@ sem validação.
 
 ### auth-dialog
 
-Diálogo/Modal de autenticação e login completo da UI Library com as listras de acento tricolores (verde, amarelo e vermelho: `--accent-green-stripe`, `--accent-yellow-stripe`, `--accent-red-stripe`).
-Props: `id`, `title` (padrão: "Entrar na ACULTA"), `subtitle` ("Acesse sua conta e continue de onde parou."), `header_variant` (`neutral` ou `institutional`), `show_accent_stripes` (booleano), `close_label`, `google_auth_url`, `password_reset_url` e `register_url`. Slot: `content` (recebe os campos do formulário Form API e o botão de envio).
+Diálogo de autenticação da UI Library com as listras de acento tricolores (verde, amarelo e vermelho: `--accent-green-stripe`, `--accent-yellow-stripe`, `--accent-red-stripe`).
+Props: `id`, `title` (padrão: "Entrar na ACULTA"), `subtitle` ("Acesse sua conta e continue de onde parou."), `header_variant` (`neutral` ou `institutional`), `show_accent_stripes`, `close_label`, `google_auth_url`, `password_reset_url`, `register_url`, `trigger_label` e `trigger_url`. Slot: `content` (recebe os campos do formulário Form API e o botão de envio).
 Stories: `auth-dialog.default.story.yml` (Superfície Neutra) e `auth-dialog.institutional.story.yml` (Faixa Institucional Verde).
-Inclui botão Google com ícone de marca, divisor centralizado "ou entre com sua conta", rodapé com link para cadastro e selo de autenticação segura. Suporta nativamente modo claro e escuro por tokens semânticos e `prefers-reduced-motion`.
+Inclui botão Google com ícone de marca, divisor centralizado "ou entre com sua conta", rodapé com link para cadastro e selo de autenticação segura. `password_reset_url` é declarado mas não renderizado no Twig atual; não há link de recuperação funcional neste componente. O gatilho só aparece quando `trigger_label` está definido. Suporta modo claro e escuro por tokens semânticos e `prefers-reduced-motion`.
 
 ### accordion
 
@@ -548,18 +586,27 @@ certificados. LMS continua dono das matrículas, destinos, progresso, acesso e
 cache. Não usa mais os wrappers genéricos `context-header`, `card`,
 `content-grid` nem o mapa de tokens legado da home. O template inclui os SDCs
 `heading` e `empty-state`. Story: `lms-learning-dashboard.default.story.yml`.
+Props: `title`, `introduction`, `continue_title`, `courses_title`,
+`empty_courses_message`, `certificates_title`. Slots: `resume`, `courses`,
+`empty_action`, `certificates`.
 
 ### lms-learning-course-card
 
 Cartão LMS próprio com progresso (SDC `progress`), estado de avaliação e ações
 canônicas de jornada/retomada. Props são projeções autorizadas do curso; links
 chegam nos slots como SDC `button`. Story: `lms-learning-course-card.default.story.yml`.
+Props: `title`, `progress_id`, `progress_label`, `progress_text`,
+`progress_value`, `has_lessons`, `finished`, `pending_evaluation`,
+`pending_text`, `finished_text`, `current_lesson`. Slots: `journey_action`,
+`continue_action`.
 
 ### lms-certificate-card
 
 Certificado da conta com estado ativo/revogado, data localizada e ação de
 verificação pública. LMS prepara os dados e URL; o SDC controla a apresentação.
 Story: `lms-certificate-card.default.story.yml`.
+Props: `title`, `status`, `status_text`, `issued_text`. Slot:
+`verification_action`.
 
 ### lms-learning-journey
 
@@ -675,17 +722,20 @@ etapas; controle de fluxo e permissões permanecem no módulo proprietário
 ### alerts-trigger — Avisos
 - **Papel:** botão com contagem e diálogo de avisos carregado sob demanda.
 - **Props:** `href`, `all_href`, `count`, `count_kind` (`active` ou `attention`).
+- **Comportamento:** `href` alimenta o carregamento HTMX do drawer; `all_href` opcional aparece no rodapé. A contagem compõe o rótulo acessível e o badge, e `count_kind` distingue avisos ativos dos ativos/não lidos.
 - **Estado:** entregue.
 
 ### messenger-trigger — Mensagens
 - **Papel:** botão com contagem de mensagens não lidas e diálogo de conversas.
 - **Props:** `href`, `all_href`, `count`.
+- **Comportamento:** `href` alimenta o carregamento HTMX do drawer; `all_href` opcional aparece no rodapé. A contagem compõe o rótulo acessível e o badge.
 - **CSS:** `messenger-trigger.css` contém gaveta, conversas, avisos agrupados e estados HTMX; o asset é anexado junto do SDC, que só é incluído quando a barra tem URL de mensagens.
 - **Estado:** entregue; validar visualmente em conta autenticada continua pendente.
 
 ### cart-offcanvas — Carrinho
 - **Papel:** gatilho e painel lateral do carrinho, com itens agrupados por site e link para o checkout no purpose principal.
 - **Props:** `count`, `empty`, `url`, `total`, `sites` (com `items`), `checkout_url`, `banner`.
+- **Estrutura:** `sites` traz chave, rótulo, contagem, estado vazio, total, URL de checkout e linhas com título, quantidade e valor já preparados pelo Portal. O grupo `assinatura` usa uma seção de checkout própria. `cart-offcanvas-body` compartilha a apresentação e aceita `htmx_oob` para substituir seu elemento raiz na resposta HTMX.
 - **Estado:** entregue. O checkout e o pagamento pertencem ao purpose principal (PAYMENT-DOMAIN-POLICY).
 
 ### pagination — Paginação
@@ -728,12 +778,19 @@ autorizada.
 - **Slots:** `image`, `actions`.
 - **Estado:** a row de `eventos_publicos` compõe `card-cultural` como SDC; a View usa UI Patterns Views com `layout-grid`. O plugin `PublicCatalogueCard` prepara props mínimas; dados, ACL, filtro e metadados de cache continuam no módulo owner. HTTP 200 foi confirmado após correção do template ausente; aceite visual completo ainda pendente. Faixa de acento permanece separada e DRAFT até D1 (`domain_presentation.accent`). Browser visual aguarda validação autenticada/runtime.
 
+### events-upcoming-block — Próximos eventos
+- **Papel:** lista somente leitura de links canônicos de eventos, ou mensagem vazia quando não há resultados.
+- **Props:** `title`, `empty_text` e `items` (`links`). Um título vazio deixa a chamada visível do bloco como heading da instância.
+- **Slot:** `header_actions` para link ou botão opcional de acesso à agenda.
+- **Consumer:** `UpcomingEventsBlock::build()`; o módulo mantém seleção, URLs, contexto de usuário/site e metadados de cache.
+- **Story:** `events-upcoming-block.default.story.yml`.
+
 ### forum-topic — Tópico do Fórum
 - **Papel:** teaser e conteúdo completo do tópico, preservando autoria, categorias, favoritos e discussão nos render arrays Drupal.
 - **Props:** `variant` (`teaser` ou `full`), `has_title`, `has_meta`, `has_bookmark`.
 - **Slots:** `title`, `meta`, `bookmark`, `content`.
 - **Consumers:** view mode de node `aculta_forum_topic`, View pública de tópicos e discussão compartilhada.
-- **Estado:** todos os view modes continuam usando o SDC; `full` é composto pelo hook `PagePresentationHooks::composeForumTopic()` com o SDC `forum-topic-page`, e os demais usam a variante teaser. Render isolado passou no checkout; homologação Runtime e visual da retirada do template permanecem pendentes.
+- **Estado:** todos os view modes continuam usando o SDC; `full` é composto pelo hook `PagePresentationHooks::composeForumTopic()` com o SDC `forum-topic-page`, e os demais usam a variante teaser. O slot `content` é renderizado com escape normal do Twig; strings simples não viram HTML. Render isolado passou no checkout; homologação Runtime e visual da retirada do template permanecem pendentes.
 
 ### forum-topic-page — Página de tópico do Fórum
 - **Papel:** compõe o tópico completo, painel lateral de contexto, diálogo HTMX de resposta e botão Comentar.
@@ -778,8 +835,11 @@ regras globalmente. Story: `map-canvas.default.story.yml`.
 
 ### button — Botão
 - **Papel:** ação ou link com estados acessíveis.
-- **Props:** `text`, `url`, `variant` (`primary`, `secondary`, `outline` ou `ghost`), `is_submit`, `disabled`, `icon_before`, `icon_after`.
-- **Estado:** entregue.
+- **Props:** `text`, `aria_label`, `url`, `variant` (`primary`, `secondary`, `outline`, `ghost` ou `danger`), `size` (`default` ou `small`), `is_submit`, `disabled`, `icon_before`, `icon_after`, `leading_icon`, `trailing_icon` e `attributes`.
+- **Stories do Editor de Foto:** `button.photo-editor-sortear.story.yml` (`secondary`), `button.photo-editor-salvar.story.yml` (`primary`) e `button.photo-editor-remover.story.yml` (`danger`), com ícones Phosphor e cores do `button-scheme`.
+- **UI Patterns Library:** as stories aparecem na página do componente `/painel-administrativo/aparencia/ui/components/aculta420_v2/button`.
+- **Integração real:** os três submits Form API do editor usam o mesmo SDC via `input--submit.html.twig`; suas variantes e ícones são selecionados pelo marcador `data-aculta-photo-action`, preservando os atributos de submit e HTMX.
+- **Estado:** entregue; validação do fluxo real do Editor de Foto ainda pendente.
 
 ### donation-quick — Valores rápidos de doação
 - **Papel:** lista valores e destinos preparados pelo módulo de doação, compondo cada ação com o SDC `button`.
@@ -815,11 +875,11 @@ regras globalmente. Story: `map-canvas.default.story.yml`.
 
 ### author-card — Cartão de autoria
 - **Papel:** apresenta identidade pública e contextual preparada pelo `aculta_user`, inclusive autoria editorial.
-- **Props:** `variant`, `size`, `display_name`, `profile_url`, `source_label`, `has_avatar`, `has_actions`, `member_since`, `designation`, `bio`, `social_links`.
+- **Props:** `variant`, `size`, `display_name`, `profile_url`, `source_label`, `has_avatar`, `has_actions`, `member_since`, `designation`, `bio`, `reactions_received`, `reactions_given`, `social_links`.
 - **Slots:** `avatar`, `actions`.
 - **Story:** `author-card.default.story.yml`.
-- **Regra:** não carrega usuário/Profile, não decide visibilidade e não inventa iniciais; os slots conservam os render arrays cacheáveis do módulo proprietário.
-- **Estado:** implementação presente, com gate de render SDC. Cumpre a função de Author box no slot `authors` de `revista-publication`, usando identidade, avatar e biografia fornecidos pelo Portal; não existe necessidade documentada para um segundo SDC homônimo. O consumer `profile-identity` do Studio também usa a variante `profile_full`; comparação antes/depois em `/meu-perfil` passou no Firefox ESR (89/89, 22 ignoradas), claro/escuro, 320/1440 px, foco por teclado e zero overflow. Capturas em `$SUITE_OUT/layouts-purpose-studio-profile-identity-paired-20261106/{before,after}/`. A rota pública de perfil continua sem validação de Runtime.
+- **Regra:** não carrega usuário/Profile, não decide visibilidade e não inventa iniciais; o producer preserva os render arrays cacheáveis em `#slots`. O Core injeta esses slots nos blocks `avatar` e `actions` do SDC. O Twig exibe `reactions_received` nos contextos habilitados; `reactions_given` atualmente participa apenas da condição da área de estatísticas e não tem saída visual, portanto permanece como dívida de contrato a revisar.
+- **Estado:** o validator do tema passou para 91 SDCs e confere identidade, bio e mídia no slot `avatar`; Core e UI Patterns Library usam o mesmo mecanismo de slot por block. A evidência do gate não substitui homologação publicada/autenticada do author box no Runtime; a rota pública ainda não foi homologada. A comparação `/meu-perfil` (Firefox ESR, 89/89, 22 ignoradas, 2026-11-06) é histórica para layout/teclado. Revisar separadamente a saída visual de ações e a dívida `reactions_given`.
 
 ### profile-details — Detalhes de perfil
 - **Papel:** apresenta biografia ou redes sociais já preparadas pelo `aculta_user` no Studio.
@@ -827,7 +887,7 @@ regras globalmente. Story: `map-canvas.default.story.yml`.
 - **Slots:** `bio`, `social_links` e `actions`; todos preservam render arrays do módulo proprietário.
 - **Story:** `profile-details.default.story.yml`.
 - **Regra:** o tema não carrega usuário/Profile, não transforma render arrays em texto ou links e não decide autorização/visibilidade.
-- **Estado:** `profile-bio` e `profile-social` mapeados pelo preprocess de apresentação. Schema e render Drupal passaram; captura pareada autenticada em `/meu-perfil` passou 97/97 verificações (22 ignoradas, zero falhas), em claro/escuro a 320/1440 px, com títulos acessíveis, foco por teclado e zero overflow. Evidências em `$SUITE_OUT/layouts-purpose-studio-profile-details-paired-20261106/{before,after}/`.
+- **Estado:** `profile-bio` e `profile-social` são enviados em `#slots`; Drupal Core injeta os valores nos blocks `bio`, `social_links` e `actions`. Os guards `is defined` condicionam wrappers de slots opcionais. O validador atual renderiza o catálogo, mas não confere cada saída do componente; a captura autenticada de 2026-11-06 (97/97, 22 ignoradas) continua sendo evidência visual histórica. Confirmar conteúdo e cache em `/meu-perfil` no Runtime antes de homologar o consumer. Evidências em `$SUITE_OUT/layouts-purpose-studio-profile-details-paired-20261106/{before,after}/`.
 
 ### public-profile-page — Página de perfil público
 
@@ -843,7 +903,7 @@ Portal. Props: nenhuma. Slot: `content`. Story:
 - **Slots:** `image`, `category`, `subtitle`, `summary`.
 - **Story:** `revista-teaser.default.story.yml`.
 - **Regra:** recebe render arrays do node view, não resolve conteúdo nem cache; a capa ausente usa apenas uma superfície decorativa. Desde 2026-11-12 o título do cartão é um H5 do SDC `heading`, com link herdando a cor e o sublinhado do título; o teaser em destaque usa a escala H4 por token.
-- **Estado:** implementação pronta; título pelo SDC `heading` e browser Firefox (1280/1920/390 px, claro/escuro) em 2026-11-12.
+- **Estado:** `PagePresentationHooks::composeRevistaTeaser()` fornece `image`, `category`, `subtitle` e `summary` por `#slots`; Core injeta os valores nos blocks correspondentes. O validador renderiza 91 SDCs, mas não verifica todas as combinações do teaser. As capturas de 2026-11-12 são evidência visual histórica; conferir no Runtime teaser com/sem cada campo e preservar cache do node.
 
 ### revista-listing — Listagem editorial
 - **Papel:** apresenta o H1 editorial e a grade da View `revista_sessoes:page_revista`.
@@ -851,7 +911,7 @@ Portal. Props: nenhuma. Slot: `content`. Story:
 - **Slots:** `items` (saída renderizada da View).
 - **Story:** `revista-listing.default.story.yml`.
 - **Regra:** não reordena o DOM nem consulta conteúdo; substitui o título genérico só na presença da listagem e mantém uma, duas e três colunas conforme o espaço. O H1 da página pertence ao título da rota; a listagem usa `h2` por padrão para não duplicar o título principal. Desde 2026-11-12 o título é renderizado pelo SDC `heading` (nível conforme `title_level`, faixa tricolor).
-- **Estado:** implementação pronta; gates SDC e browser Firefox (1280/1920/390 px, claro/escuro) passaram em 2026-11-12.
+- **Estado:** a View atual chama `revista-listing` por `{% embed %}` e substitui o block `items`; a story da Library injeta o mesmo slot por `#type: component`, que Core converte em override de block. Não há incompatibilidade de contrato entre os dois caminhos. Gates/capturas de 2026-11-12 são históricos; confirmar estilo ativo, conteúdo e integração no Runtime antes de remover o override da View.
 
 ### revista-publication — Publicação completa
 - **Papel:** compõe metadados, capa, chamada, resumo, corpo, conteúdo editorial adicional, autoria e discussão.
@@ -859,12 +919,11 @@ Portal. Props: nenhuma. Slot: `content`. Story:
 - **Slots:** `meta`, `cover`, `subtitle`, `summary`, `body`, `footer`, `authors`, `discussion`.
 - **Story:** `revista-publication.default.story.yml`.
 - **Regra:** os dados e controles de acesso permanecem nos render arrays de `aculta_magazine` e `aculta_user`; o componente controla apenas a ordem e a apresentação.
-- **Estado:** implementação pronta; aguardando gates SDC e verificação de Runtime.
+- **Estado:** o presenter compõe o SDC `revista-publication` como render array no modo full; o Config Sync também prepara um ComponentLayout UI Patterns. A adoção do layout no Runtime, acesso e cache ainda exigem homologação conforme `roadmap.md`.
 
 ### wiki-entry — Verbete da Wiki
 - **Papel:** apresenta verbetes completos e cartões de listagem, portando a hierarquia editorial da V1 para Wiki420.
-- **Props:** `variant`, `title_level` (`h1` ou `h2`, padrão `h2`; o H1 pertence ao título da rota), `has_summary`, `has_image`, `has_categories`, demais flags de apresentação.
-- **Props:** `variant`, `url`, `has_summary`, `has_image`, `has_categories`, `has_related`, `has_references`, `has_discussion`.
+- **Props:** `variant` (`article` ou `teaser`), `title_level` (`h1` ou `h2`, padrão `h2`), `url`, `entity_title`, `has_summary`, `has_image` e `has_categories`. As três flags de conteúdo condicionam o teaser; no artigo, a presença dos slots renderizados determina a exibição.
 - **Slots:** `title`, `summary`, `image`, `categories`, `body`, `related`, `references`, `discussion`, `actions`.
 - **Stories:** `wiki-entry.default.story.yml` e `wiki-entry.teaser.story.yml`.
 - **Regra:** conserva os render arrays e controles de acesso do Drupal; não consulta conteúdo nem decide acesso. O título da página completa é dono do H1; o título genérico fica oculto apenas quando o adapter está presente. Desde 2026-11-12 o título do artigo e o título do cartão (teaser) são renderizados pelo SDC `heading` (artigo no nível de `title_level`, faixa tricolor; cartão em H5).
@@ -962,9 +1021,17 @@ Cada entrada tem: papel, props, slots, JavaScript (se houver), estado e a regra 
 ### discussion-reply-composer — Compositor de Resposta da Discussão
 
 - **Local:** `components/discussion-reply-composer/`
-- **Schema:** estrito, com props `target_id`, `status`, `mode` (`responder`, `citar`, `editar`), `parent_id`, `parent_author`, `parent_subject`, `host_title` e slots `messages`, `context`, `form`.
+- **Schema:** estrito, com props `target_id`, `standalone_popup`, `status`, `mode` (`responder`, `citar`, `editar`), `parent_id`, `parent_author`, `parent_subject`, `host_title` e slots `messages`, `context`, `form`.
 - **Story:** `discussion-reply-composer.default.story.yml`.
-- **Consumer:** preprocess do tema para o hook `discussion_reply_composer`; módulo `aculta_forum` fornece props e Form API em render arrays.
+- **Consumer:** preprocess do tema para o hook `discussion_reply_composer`; módulo `aculta_forum` fornece props e Form API em render arrays. A story compõe o `popup` com gatilho visível; na resposta dinâmica, `standalone_popup: false` evita modal duplicado dentro do popup de página.
+
+### discussion-content-composer — Compositor de Criação de Conteúdo
+
+Compõe o formulário real de revista dentro do SDC `popup`, incluindo o botão de
+abertura e todos os campos. A story executável usa `StudioContentPopupLayout`.
+No Runtime de Marley, `EditorialWorkspaceController::createPopup()` define
+`standalone_popup: false` porque `MarleyController` já fornece o popup de página
+e a resposta HTMX ocupa o slot `content` desse diálogo.
 
 ## Estatísticas do Fórum (FST-08)
 

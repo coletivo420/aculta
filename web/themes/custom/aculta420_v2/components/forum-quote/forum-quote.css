@@ -53,24 +53,6 @@
   font-style: normal;
 }
 
-.forum-quote__actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: var(--spacing-sm);
-  margin-block-start: var(--spacing-sm);
-}
-
-.forum-quote__action {
-  display: inline-flex;
-  text-decoration: none;
-  color: var(--color-brand-primary);
-}
-
-.forum-quote__action:focus-visible {
-  outline: 2px solid var(--color-brand-primary);
-  outline-offset: 2px;
-}
-
 .forum-quote__author-row {
   display: flex;
   align-items: center;

@@ -4,6 +4,26 @@
 **Referencias:** `docs/decisions/ADR-054-refatoracao-aculta420-v2-sdc-layout-builder.md`, `docs/decisions/ADR-055-integracao-ui-icons-ui-styles-page-e-sistema-unificado-de-emojis.md`, `docs/architecture/ACULTA420-V2-UI-SUITE-INTEGRACAO-VISUAL-PLANO.md`.
 
 > **Estrategia de corte substituida em 2026-11-13:** a ADR-054 vigente autoriza substituicao direta da apresentacao, sem migracao paralela, reversao visual obrigatoria ou paridade como bloqueio. Este documento permanece como inventario historico e fonte de contratos funcionais; em conflito, seguir a decisao vigente da ADR-054.
+>
+> Estados descritos como “Runtime atual” neste plano são snapshots de 2026-11-10. Não usar para afirmar estado Runtime presente nem para autorizar operação; a ADR-056 e o roadmap do tema registram a leitura de 2026-11-14 e as pendências operacionais.
+
+## Estado reconciliado no checkout (2026-11-14)
+
+Este documento continua como inventário histórico; os passos RN e os estados
+“Runtime atual” abaixo não são a fila executável. O contrato de identidade
+funcional já usa `DomainSiteManager`/`DomainSiteManagerInterface` e
+`SiteKeyRegistry`; não existe `DomainPurposeManager` no código atual. O Portal
+resolve `domain_id → skin_id` via `DomainSkinResolver` e
+`aculta_portal.visual_skins`, entrega `aculta_skin_id` e o tema aplica
+`data-skin`/`data-theme`. UI Skins declara as variáveis e os scopes do tema no
+Config Sync. Assim, a antiga migração RN-00–RN-05 da nomenclatura funcional
+`purpose` para `site_key` não deve ser tratada como trabalho pendente apenas
+porque os capítulos históricos abaixo ainda mencionam `purpose`.
+
+Essa evidência prova o contrato no checkout e Sync, não a igualdade atual do
+Runtime. Para divergências e homologação, usar a ADR-056 e o
+[roadmap vigente do tema](../../web/themes/custom/aculta420_v2/docs/roadmap.md).
+Nenhuma fase antiga deste plano autoriza importação ou limpeza operacional.
 
 ## 1. Decisoes do responsavel
 

@@ -12,40 +12,50 @@ props:
     title:
       type: string
       title: Título do evento
+      description: Texto principal do cartão, renderizado como link quando url está informada.
       minLength: 1
     url:
       type: [string, 'null']
       title: URL de destino
+      description: Destino opcional aplicado ao título do evento.
       format: uri-reference
     category:
       type: [string, 'null']
       title: Categoria cultural
+      description: Rótulo opcional exibido como badge acima do título.
     date:
       type: [string, 'null']
       title: Data do evento
+      description: Data e horário já formatados pelo módulo para exibição no cartão.
     location:
       type: [string, 'null']
       title: Local ou bairro
+      description: Localidade já preparada pelo módulo e exibida junto ao ícone de mapa.
     summary:
       type: [string, 'null']
       title: Resumo do evento
+      description: Texto resumido opcional exibido abaixo dos metadados.
     accent:
       type: [string, 'null']
       title: Faixa de acento resolvida pelo Portal
+      description: Escolhe a faixa visual do cartão; não altera o estado ou os dados do evento.
       enum: [green, yellow, red, null]
       default: null
     variant:
       type: string
       title: Apresentação
+      description: Seleciona a composição padrão ou compacta do cartão.
       enum: [default, compact]
       default: default
     cancelled:
       type: boolean
       title: Evento cancelado
+      description: Aplica o estado visual cancelado e mostra cancel_label como mensagem de status.
       default: false
     cancel_label:
       type: string
       title: Texto acessível do estado cancelado
+      description: Mensagem exibida com role status quando cancelled está ativo.
       default: Evento cancelado
 slots:
   image:

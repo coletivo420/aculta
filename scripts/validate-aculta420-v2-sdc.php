@@ -93,6 +93,7 @@ $component_ids = [
   'account-experience-dashboard',
   'account-experience-card',
   'consent-banner',
+  'delete-confirm',
   'dialog',
   'data-table',
   'document-download',
@@ -191,7 +192,7 @@ $definitions = $source_manager->getDefinitions();
   ->setValue($manager, $definitions);
 $samples = [
   'avatar' => [
-    '#props' => ['size' => 'md', 'label' => 'Avatar sem foto'],
+    '#props' => ['size' => 'md'],
     '#slots' => [
       'media' => Markup::create('<img src="/avatar-example.png" alt="Retrato de exemplo">'),
     ],
@@ -418,6 +419,17 @@ $samples = [
       'actions' => Markup::create('<a class="button button--outline" href="/destino-completo">Continuar</a>'),
     ],
   ],
+  'delete-confirm' => [
+    '#props' => [
+      'target_id' => 'v2-sdc-delete-confirm-validation',
+      'title' => 'Excluir resposta?',
+      'message' => 'Esta ação não pode ser desfeita.',
+      'confirm_label' => 'Excluir',
+      'cancel_label' => 'Cancelar',
+      'token' => 'fixture-csrf-token',
+      'confirm_url' => '/example/confirm-delete',
+    ],
+  ],
   'event-page-layout' => [
     '#props' => [],
     '#slots' => [
@@ -505,7 +517,7 @@ $samples = [
   ],
   'icon' => ['#props' => ['name' => 'map-pin', 'variant' => 'duotone', 'size' => 'md']],
   'layout-page' => [
-    '#props' => ['variant' => 'aside'],
+    '#props' => ['variant' => 'aside', 'has_aside' => TRUE],
     '#slots' => [
       'title' => '<h1>Página de teste</h1>',
       'content' => '<p>Conteúdo principal.</p>',
@@ -1001,13 +1013,15 @@ foreach ($component_ids as $component_id) {
     $fallback_build = [
       '#type' => 'component',
       '#component' => $plugin_id,
-      '#props' => ['size' => 'md', 'label' => 'Avatar sem foto'],
+      '#props' => ['size' => 'md'],
       '#slots' => [],
     ];
     $fallback_output = (string) $renderer->renderInIsolation($fallback_build);
-    if (!str_contains($fallback_output, 'role="img"')
-      || !str_contains($fallback_output, 'aria-label="Avatar sem foto"')) {
-      throw new RuntimeException('Avatar fallback must expose a neutral, named icon.');
+    if (!str_contains($fallback_output, 'aculta-avatar--md')
+      || str_contains($fallback_output, '<img')
+      || str_contains($fallback_output, 'aculta-icon')
+      || str_contains($fallback_output, 'role="img"')) {
+      throw new RuntimeException('Avatar without media must render its empty frame without inventing an icon or image.');
     }
   }
   if ($component_id === 'author-card'
@@ -1069,6 +1083,38 @@ foreach ($component_ids as $component_id) {
       || !str_contains($dialog_behavior, 'first.focus()')) {
       throw new RuntimeException('Utility dialog behavior must select the SDC contract attribute.');
     }
+  }
+  if ($component_id === 'forum-topic'
+    && (!str_contains($output, '&lt;div')
+      || str_contains($output, '<div class="aculta-author-card">'))) {
+    throw new RuntimeException('Forum topic must escape plain string slot content while render arrays and safe markup remain renderable.');
+  }
+  if ($component_id === 'layout-page') {
+    if (!str_contains($output, '<aside class="layout-page__aside"')
+      || !str_contains($output, 'Conteúdo complementar.')) {
+      throw new RuntimeException('Layout page must render the aside only when its explicit has_aside prop is true.');
+    }
+    $no_aside_build = [
+      '#type' => 'component',
+      '#component' => $plugin_id,
+      '#props' => ['variant' => 'aside', 'has_aside' => FALSE],
+      '#slots' => [
+        'content' => 'Conteúdo principal.',
+        'aside' => 'Conteúdo complementar.',
+      ],
+    ];
+    $no_aside_output = (string) $renderer->renderInIsolation($no_aside_build);
+    if (str_contains($no_aside_output, 'layout-page__aside')) {
+      throw new RuntimeException('Layout page must omit an empty aside without inspecting slot markup.');
+    }
+  }
+  if ($component_id === 'delete-confirm'
+    && (!str_contains($output, 'popover="auto"')
+      || !str_contains($output, 'role="dialog"')
+      || !str_contains($output, 'aria-describedby="v2-sdc-delete-confirm-validation-message"')
+      || str_contains($output, 'aria-modal="true"')
+      || !str_contains($output, 'action="/example/confirm-delete"'))) {
+    throw new RuntimeException('Delete confirmation must render a described non-modal popover with a non-destructive example action.');
   }
   if ($component_id === 'data-table') {
     $table_dependencies = $definition['library']['dependencies'] ?? [];

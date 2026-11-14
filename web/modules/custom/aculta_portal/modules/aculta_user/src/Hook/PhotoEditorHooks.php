@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_user\Hook;
 
-use Drupal\Component\Serialization\Json;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Drupal\Core\Entity\EntityFormInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\Core\Url;
 use Drupal\aculta_user\Form\PhotoEditorGuard;
+use Drupal\aculta_user\Form\UserPictureForm;
 use Drupal\user\UserInterface;
 
 /**
@@ -38,10 +38,12 @@ final class PhotoEditorHooks {
     private readonly AccountInterface $currentUser,
     #[Autowire(service: 'entity_type.manager')]
     private readonly EntityTypeManagerInterface $entityTypeManager,
+    #[Autowire(service: 'form_builder')]
+    private readonly FormBuilderInterface $formBuilder,
   ) {}
 
   /**
-   * Troca o gatilho do editor de foto pelo link que abre o modal.
+   * Entrega a prévia e o formulário próprio para a composição do tema.
    *
    * @param array $photoForm
    *   Estrutura do editor de foto da conta.
@@ -50,24 +52,11 @@ final class PhotoEditorHooks {
    */
   #[Hook('aculta_portal_photo_editor_alter')]
   public function photoEditorAlter(array &$photoForm, UserInterface $account): void {
-    // O gatilho é o avatar: abre o modal Drupal com o formulário da foto (rota própria, upload por AJAX). O conteúdo
-    // do avatar vem do preparo do Portal ($photoForm['avatar']); o formulário, o sorteio e o recorte ficam no modal.
+    // A rota segue disponível como fallback. Na conta, o formulário é renderizado dentro do popup SDC e
+    // mantém seu #action apontado para a rota própria para os envios e reconstruções do formulário.
     $photoForm = [
-      '#type' => 'link',
-      '#title' => $photoForm['preview']['avatar'] ?? ['#markup' => ''],
-      '#url' => Url::fromRoute('aculta_user.foto'),
-      '#attributes' => [
-        'class' => ['use-ajax'],
-        'data-portal-ui' => 'account-photo-trigger',
-        'data-dialog-type' => 'modal',
-        'data-dialog-options' => Json::encode(['title' => (string) $this->t('Alterar foto do perfil')]),
-        'data-aculta-photo-open' => '',
-        'aria-label' => (string) $this->t('Alterar foto de perfil de @name', ['@name' => $account->getDisplayName()]),
-      ],
-      '#attached' => [
-        'library' => ['core/drupal.dialog.ajax', 'aculta_user/photo-flow'],
-        'drupalSettings' => ['acultaUser' => ['savedFid' => (int) ($account->get('user_picture')->target_id ?? 0)]],
-      ],
+      'preview' => $photoForm['preview'] ?? [],
+      'form' => $this->formBuilder->getForm(UserPictureForm::class),
     ];
   }
 

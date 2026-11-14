@@ -7,10 +7,7 @@
     <div class="layout-page__title">{{ title }}</div>
   {% endif %}
   <div class="layout-page__content">{{ content }}</div>
-  {% if aside %}
-    {% set aside_rendered = aside|render %}
-    {% if aside_rendered|trim is not empty %}
-      <aside class="layout-page__aside" aria-label="{{ 'Related content'|t }}">{{ aside_rendered }}</aside>
-    {% endif %}
+  {% if has_aside %}
+    <aside class="layout-page__aside" aria-label="{{ 'Related content'|t }}">{{ aside }}</aside>
   {% endif %}
 </main>

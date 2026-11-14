@@ -15,15 +15,18 @@ props:
       type: string
       format: uri-reference
       title: Endereço da caixa de mensagens
+      description: URL carregada sob demanda no conteúdo do drawer de mensagens.
     all_href:
       type: string
       default: ''
       title: Endereço de todas as mensagens
+      description: Quando informado, aparece no rodapé como link para todas as mensagens.
     count:
       type: integer
       minimum: 0
       default: 0
       title: Quantidade de mensagens não lidas
+      description: Quantidade anunciada no nome acessível e mostrada no indicador visual, limitado a 99+.
 assets:
   css:
     component:

@@ -3,6 +3,7 @@ description: Duas colunas a partir de 60rem sem região de título; a barra fica
 component: aculta420_v2:layout-page
 props:
   variant: aside
+  has_aside: true
 slots:
   content:
     type: inline_template

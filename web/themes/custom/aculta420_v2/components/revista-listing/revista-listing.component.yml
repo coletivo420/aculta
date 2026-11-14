@@ -11,9 +11,11 @@ props:
     eyebrow:
       type: string
       title: Antetítulo
+      description: Texto editorial opcional exibido acima do título da listagem.
     title:
       type: string
       title: Título da listagem
+      description: Título principal do componente, renderizado pelo SDC heading.
     title_level:
       type: string
       enum: [h1, h2]
@@ -23,6 +25,7 @@ props:
     has_items:
       type: boolean
       title: Existem publicações
+      description: Quando false, omite o contêiner das publicações; quando true, renderiza o slot items.
       default: true
 slots:
   items:

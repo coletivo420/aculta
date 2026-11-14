@@ -6,10 +6,32 @@ group: Conta
 props:
   type: object
   additionalProperties: false
+  required: [id, title]
+  properties:
+    id:
+      type: string
+      title: ID único do popup
+      description: Identificador associado ao gatilho e ao diálogo de alteração de foto.
+      pattern: '^[A-Za-z][A-Za-z0-9_-]*$'
+    title:
+      type: string
+      title: Título do popup
+      description: Título visível e acessível do diálogo de alteração de foto.
+      minLength: 1
+    trigger_aria_label:
+      type: string
+      title: Nome acessível do gatilho
+      description: Nome do gatilho de avatar quando não há texto visível.
 slots:
+  trigger:
+    title: Avatar
+    description: Prévia que funciona como gatilho do popup.
   content:
-    title: Prévia e formulário
-    description: Render array original com acesso, cache, attachments e alterações dos módulos preservados.
+    title: Formulário
+    description: Formulário de alteração de foto com acesso, cache e attachments preservados.
+  footer:
+    title: Rodapé
+    description: Ações opcionais do popup.
 assets:
   css:
     component:

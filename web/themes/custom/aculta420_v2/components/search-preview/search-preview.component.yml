@@ -10,6 +10,7 @@ props:
     attributes:
       type: Drupal\Core\Template\Attribute
       title: Atributos HTML opcionais
+      description: Atributos adicionais aplicados ao contêiner da região de prévia.
       default: null
 slots:
   content:

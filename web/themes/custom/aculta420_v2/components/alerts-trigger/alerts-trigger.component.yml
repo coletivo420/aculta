@@ -15,17 +15,21 @@ props:
       type: string
       format: uri-reference
       title: Endereço da central de alertas
+      description: URL carregada sob demanda no conteúdo do drawer de avisos.
     all_href:
       type: string
       default: ''
       title: Endereço de todos os alertas
+      description: Quando informado, aparece no rodapé como link para a central completa.
     count:
       type: integer
       minimum: 0
       default: 0
       title: Quantidade de alertas
+      description: Quantidade anunciada no nome acessível e mostrada no indicador visual, limitado a 99+.
     count_kind:
       type: string
       title: Tipo de contagem dos alertas
+      description: Escolhe o texto acessível para contar avisos ativos ou ativos/não lidos.
       enum: [active, attention]
       default: active

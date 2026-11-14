@@ -27,7 +27,7 @@ Decisões que governam o tema estão em `docs/decisions/` na raiz do repositóri
 
 ## Estado em uma frase
 
-O checkout contém 145 SDCs e 229 stories, e todos os SDCs têm ao menos uma story. Restam 17 templates Twig Drupal no tema; o corte continua orientado pelos consumidores, preservando adaptadores necessários ao Drupal e à composição UI Suite. O shell declara cinco regiões e usa um template de página. `aculta_ui_library` foi removido do checkout e não está habilitado no Sync nem no Runtime; há uma entrada órfã em `system.schema` a limpar com backup/restauração comprovados. O cache Runtime ainda reflete as 148 definições anteriores à remoção do seletor e precisa ser reconstruído; uso editorial persistido, composição, cobertura visual/autenticada e igualdade entre Config Sync e Runtime seguem pendentes onde não há evidência atual.
+O worktree contém 148 manifests SDC e 240 stories, contando o SDC `delete-confirm` ainda não rastreado; todos têm story. Restam 17 templates Twig Drupal no tema; o corte continua orientado pelos consumidores, preservando adaptadores necessários ao Drupal e à composição UI Suite. O shell declara cinco regiões e usa um template de página. `aculta_ui_library` foi removido do checkout e não está habilitado no Sync nem no Runtime; há uma entrada órfã em `system.schema` a limpar com backup/restauração comprovados. A última descoberta Runtime registrada continua em 145 definições, anterior a `reply-indent`; cache, uso editorial persistido, composição, cobertura visual/autenticada e igualdade entre Config Sync e Runtime aguardam nova homologação. A poda do contrato morto de `forum-quote` e a story intermediária de `reply-indent` estão no worktree; gates SDC/Library passaram e preview visual permanece pendente.
 
 ## Estrutura
 

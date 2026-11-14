@@ -11,33 +11,41 @@ props:
     id:
       type: string
       title: Identificador da experiência
+      description: Identificador estável gravado no atributo data-experience do cartão ou da faixa.
       minLength: 1
     kind:
       type: string
       title: Variante visual
+      description: Seleciona o cartão de experiência ou a faixa integrada de largura total.
       enum: [card, strip]
     icon:
       type: [string, 'null']
       title: Ícone Phosphor
+      description: Nome do ícone exibido pelo SDC icon; quando ausente, o Twig usa o ícone user.
       default: null
     title:
       type: string
       title: Título da experiência
+      description: Título visível da experiência.
       minLength: 1
     description:
       type: string
       title: Descrição da experiência
+      description: Texto visível que explica a experiência.
     tag:
       type: [string, 'null']
       title: Identificador curto da variante em faixa
+      description: Etiqueta opcional exibida somente na variante strip.
       default: null
     url:
       type: [string, 'null']
       title: Destino autorizado da experiência
+      description: Destino preparado pelo módulo proprietário; na variante card, sua presença mostra o link de ação.
       default: null
     action_label:
       type: [string, 'null']
       title: Rótulo da ação
+      description: Texto visível do link de ação quando url está informado.
       default: null
 assets:
   css:

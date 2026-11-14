@@ -11,6 +11,7 @@ props:
     variant:
       type: string
       title: Variante de apresentação
+      description: article renderiza o verbete completo; teaser renderiza um cartão resumido.
       enum: [article, teaser]
     title_level:
       type: string
@@ -21,6 +22,7 @@ props:
     url:
       type: [string, 'null']
       title: URL canônica do verbete
+      description: No modo article, destino do link Ler que indica a página atual do verbete.
       format: uri-reference
       default: null
     entity_title:
@@ -31,12 +33,15 @@ props:
     has_summary:
       type: boolean
       title: Resumo visível
+      description: No modo teaser, controla a exibição do slot summary; no artigo, o slot é exibido quando contém conteúdo.
     has_image:
       type: boolean
       title: Imagem visível
+      description: No modo teaser, controla a exibição do slot image; no artigo, a coluna lateral depende do conteúdo renderizado.
     has_categories:
       type: boolean
       title: Categorias visíveis
+      description: No modo teaser, controla a exibição do slot categories; no artigo, as categorias aparecem quando o slot contém conteúdo.
 slots:
   body:
     title: Corpo do verbete

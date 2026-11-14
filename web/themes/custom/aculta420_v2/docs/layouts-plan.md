@@ -1,11 +1,18 @@
 # Plano histórico: sistema de layouts de página do tema V2
 
-- **Status:** decisões principais aprovadas em 2026-11-04 (opção A, variante escolhida pelo tema, mapeamento da seção 5.5). Breakpoint e área da conta em proposta. Nenhum código foi alterado por este plano.
+- **Status atual deste documento:** histórico de proposta de 2026-11-04. O SDC `layout-page`, o shell único e as cinco regiões já existem no checkout; qualquer requisito remanescente deve ser confirmado no código e na fila vigente de [roadmap.md](roadmap.md), sob ADR-056. A proposta de breakpoint/área não é status executável.
 - **Data:** 2026-11-04 (atualizado no mesmo dia).
 - **Relaciona-se com:** ADR-046 (shell, fundações e Fase 4), ADR-047 (menu de conta), [architecture.md](architecture.md), [components.md](components.md), [roadmap.md](roadmap.md).
 - **Fica para:** ADR-048, a ser redigido com as decisões aprovadas (seção 9).
 
 > Este plano antecede o corte radical e as recomendações da ADR-056. Use-o como contexto histórico; contratos e próximos passos devem ser conferidos contra o código e o roadmap atual.
+
+> **Leitura de status:** as seções 2 e 4–9 descrevem diagnóstico, propostas e
+> decisões de 2026-11-04, não o estado corrente. O shell e `layout-page` foram
+> implementados; o mapeamento atual de variantes e as pendências comprovadas
+> estão em [status-layouts-e-shell.md](status-layouts-e-shell.md) e
+> [roadmap.md](roadmap.md). Não execute as fases P1–P5 deste plano sem nova
+> conferência.
 
 ## 1. Objetivo
 
@@ -16,7 +23,7 @@ Definir como as páginas montam o layout (cabeçalho, destaque, ajuda, breadcrum
 - a escolha do layout seja feita pelo tema, a partir do tipo de conteúdo, sem regra de domínio;
 - o mobile-first, a acessibilidade e a cacheabilidade sejam garantidos pela estrutura, não por CSS específico de página.
 
-## 2. Diagnóstico do código atual (`1.2.0-dev.17`)
+## 2. Diagnóstico histórico do código (`1.2.0-dev.17`)
 
 - `templates/layout/page.html.twig` tem uma única estrutura: barra institucional (`multidomain-bar`), `page__header`, `page__highlighted`, `page__help`, `page__breadcrumb`, `main` com `page__content` e uma `aside` opcional (`sidebar_first`), e `page__footer`.
 - Não existe componente de layout. As classes `page__main--with-sidebar` e `page__sidebar` são CSS de página, não contrato de componente.

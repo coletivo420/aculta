@@ -13,45 +13,54 @@ props:
     empty:
       title: Carrinho sem itens
       type: boolean
+      description: Seleciona a mensagem de carrinho vazio ou o resumo dos itens.
       default: true
     url:
       title: Endereço do carrinho
       type: string
+      description: Destino opcional do link para ver o carrinho completo.
       default: ''
     total:
       title: Valor total do carrinho
       type: string
+      description: Total formatado pelo módulo e exibido no resumo preenchido.
       default: ''
     sites:
       title: Carrinhos separados por site
       type: array
+      description: Grupos de carrinho e respectivos itens preparados pelo CartUtility.
       default: []
       items:
         type: object
+        description: Grupo de itens de um site da loja.
         additionalProperties: false
         required: [key, label, total, items]
         properties:
-          key: { type: string }
-          label: { type: string }
-          count: { type: integer, minimum: 0, default: 0 }
-          empty: { type: boolean, default: true }
-          total: { type: string }
-          checkout_url: { type: string, default: '' }
+          key: { type: string, description: 'Chave do site; a chave assinatura usa a seção própria do template.' }
+          label: { type: string, description: Nome visível do grupo de carrinho. }
+          count: { type: integer, minimum: 0, default: 0, description: Quantidade de itens no grupo. }
+          empty: { type: boolean, default: true, description: Indica se o grupo não contém itens. }
+          total: { type: string, description: Total do grupo já formatado pelo módulo. }
+          checkout_url: { type: string, default: '', description: Destino de checkout fornecido para este grupo. }
           items:
             type: array
+            description: Itens do grupo, já preparados pelo módulo.
             items:
               type: object
+              description: Linha de item exibida no resumo do carrinho.
               additionalProperties: false
               required: [title, quantity, total]
               properties:
-                title: { type: string }
-                quantity: { type: string }
-                total: { type: string }
+                title: { type: string, description: Título do item. }
+                quantity: { type: string, description: Quantidade formatada para exibição. }
+                total: { type: string, description: Valor da linha já formatado pelo módulo. }
     checkout_url:
       title: Endereço para finalizar a compra
       type: string
+      description: Destino geral de checkout fornecido pelo módulo quando disponível.
       default: ''
     htmx_oob:
       title: Marcar como substituição externa HTMX
       type: boolean
+      description: Quando true, substitui o elemento raiz do corpo por meio de hx-swap-oob.
       default: false

@@ -20,6 +20,10 @@
       'data-aculta-dialog-trigger': '',
     }),
   }, with_context = false) }}
+{% elseif trigger %}
+  <button type="button" class="aculta-dialog__trigger aculta-dialog__trigger--custom" aria-controls="{{ id }}" aria-expanded="false" aria-haspopup="dialog" data-aculta-dialog-trigger{% if trigger_aria_label %} aria-label="{{ trigger_aria_label }}"{% endif %}>
+    {{ trigger }}
+  </button>
 {% endif %}
 
 <dialog{{ attributes.addClass(['aculta-popup', 'aculta-popup--' ~ (header_variant|default('neutral'))]) }} id="{{ id }}" aria-labelledby="{{ id }}-title" aria-modal="true" tabindex="-1" data-aculta-utility-drawer>

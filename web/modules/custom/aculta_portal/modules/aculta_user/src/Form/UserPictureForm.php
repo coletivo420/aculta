@@ -166,6 +166,7 @@ class UserPictureForm extends FormBase {
       $form['actions']['sortear'] = [
         '#type' => 'submit',
         '#value' => $this->t('Sortear novo avatar'),
+        '#attributes' => ['data-aculta-photo-action' => 'sortear'],
         // Nome próprio: o HTMX envia só o nome do disparador, e "op"
         // compartilhado faria o "Salvar" ser acionado no lugar do sorteio.
         '#name' => 'sortear',
@@ -188,12 +189,16 @@ class UserPictureForm extends FormBase {
         '#value' => $this->t('Remover foto'),
         '#limit_validation_errors' => [],
         '#submit' => ['::removePersonal'],
-        '#attributes' => ['data-portal-ui' => 'button-danger'],
+        '#attributes' => [
+          'data-portal-ui' => 'button-danger',
+          'data-aculta-photo-action' => 'remover',
+        ],
       ];
     }
     $form['actions']['salvar'] = [
       '#type' => 'submit',
       '#value' => $this->t('Salvar foto do perfil'),
+      '#attributes' => ['data-aculta-photo-action' => 'salvar'],
     ];
     $form['#action'] = Url::fromRoute('aculta_user.foto')->toString();
     return $form;

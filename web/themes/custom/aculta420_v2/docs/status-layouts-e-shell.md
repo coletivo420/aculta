@@ -1,6 +1,32 @@
 # Status de layouts, shell e Studio
 
-Snapshot de status extraído do roadmap em 2026-11-05; os registros abaixo não descrevem automaticamente o checkout atual. O shell paralelo e os presenters de Evento/FAQ já não existem no código. Refaça as afirmações por código/Config Sync conforme ADR-056; a fila vigente fica no início de `roadmap.md`.
+Snapshot de status extraído do roadmap em 2026-11-05; os registros abaixo não descrevem automaticamente o checkout atual. A seção C4 sobre oito regiões e os relatos de P2/P3 são históricos. O estado atual reconciliado em 2026-11-14 está abaixo; a fila vigente fica no início de `roadmap.md`.
+
+## Estado atual reconciliado — shell e layouts (2026-11-14)
+
+Fontes: `aculta420_v2.info.yml`, `templates/layout/page.html.twig`,
+`components/layout-page/layout-page.component.yml` e
+`src/Hook/PagePresentationHooks.php` (`preprocessPage()` e
+`getPageLayoutVariant()`). O tema tem um shell e cinco regiões declaradas:
+`institution`, `header`, `content`, `sidebar_first` e `footer`. O template
+passa título, conteúdo e barra lateral ao SDC `layout-page`; o rodapé permanece
+no shell. O componente oferece `stack`, `aside` e `full`, com slot de aside
+omitido quando vazio.
+
+O hook escolhe a variante pelo nome da rota, tipo de conteúdo e front page; não
+usa hostname nem `site_key`/purpose. No código atual: `wiki_entry` usa `aside`;
+`aculta_forum_topic`, suas listas públicas/categorias e formulário de criação
+usam `full`; `revista` usa `full`; a front page usa `full`; a rota do dashboard
+Studio usa `aside`. Rotas de Conta e outras rotas mapeadas explicitamente no
+`match` do hook usam `aside`; o restante cai em `stack`. Eventos, FAQ, LMS,
+Commerce e toda a configuração por domínio não devem ser inferidos apenas desse
+mapa: parte da composição acontece em presenters, render arrays e Config Sync.
+
+Este snapshot confirma implementação estrutural no checkout, não homologação
+visual nem o estado efetivamente ativo no Runtime. Capturas responsivas,
+teclado, zoom e comparação Runtime continuam pendentes conforme a fila P0/P4
+do roadmap. Os registros datados abaixo preservam resultados de suas rodadas e
+não substituem este estado atual.
 
 ## H2 — Meu Perfil privado em `/meu-perfil`
 
@@ -48,7 +74,7 @@ Schema, render SDC, shell e foundations passaram na rodada atual. A revisão
 visual autenticada, teclado e Escape estão pendentes porque `DISPLAY` não está
 disponível.
 
-## Revisão do shell e rodapé — C4 implementado; validação visual pendente
+## Registro histórico — Revisão do shell e rodapé (snapshot 2026-11-05)
 
 Revisadas as oito regiões declaradas: header, navigation, highlighted, help,
 breadcrumb, content, sidebar_first e footer; a composição preserva conteúdo
@@ -59,7 +85,7 @@ design foundations passaram após as alterações. Capturas em claro/escuro,
 larguras, zoom 200% e teclado permanecem DEFERRED por falta de `DISPLAY`. O
 adapter de conteúdo público Links segue no inventário de templates G3.
 
-## Layout de página — P1 implementado; validação visual pendente
+## Registro histórico — Layout de página P1 (snapshot 2026-11-05)
 
 Criado o SDC layout-page com variantes stack, aside e full, stories próprias e
 slots title, content e aside. page.html.twig agora compõe o landmark main pelo
@@ -68,15 +94,13 @@ vira coluna a partir de 60rem. Capturas de P1, landmarks, zoom e teclado
 aguardam Firefox visível (DISPLAY indisponível). P2 permanece para mapear
 tipo/área em preprocess_page.
 
-## Layout de página — P2 parcial
+## Registro histórico — Layout de página P2 (snapshot 2026-11-05; mapeamento superado)
 
-O preprocess seleciona `aside` para wiki e tópico do fórum; `full` para home,
-revista, catálogo de eventos e mapa; e `stack` por padrão. A variante é
-selecionada por bundle/route name, sem hostname ou purpose. Catálogo e produto
-da loja aguardam autorização explícita de tarefa. Validação visual do
-mapeamento permanece pendente por falta de `DISPLAY`.
+Naquele snapshot, o preprocess selecionava `aside` para wiki e tópico do fórum.
+Consulte o quadro atual acima e `PagePresentationHooks::getPageLayoutVariant()`
+para o mapeamento vigente no checkout.
 
-## Layout de Studio e conta — P3 implementado; validação visual pendente
+## Registro histórico — Layout de Studio e conta P3 (snapshot 2026-11-05; rotas podem ter mudado)
 
 ADR-048 coloca o dashboard privado em `/` no purpose `account` e Minha Conta
 em `/conta`. O Portal serve a raiz pela rota protegida

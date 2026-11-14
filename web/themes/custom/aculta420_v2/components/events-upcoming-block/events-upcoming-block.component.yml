@@ -10,10 +10,12 @@ props:
     title:
       title: Título da lista de eventos
       type: string
+      description: Cabeçalho opcional da lista; pode ficar vazio quando o próprio bloco fornece o título.
       default: Próximos eventos
     empty_text:
       title: Mensagem quando não há eventos
       type: string
+      description: Texto exibido quando a lista de links items está vazia.
       default: Nenhum evento publicado no momento.
     items:
       title: Eventos a exibir

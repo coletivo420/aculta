@@ -175,6 +175,18 @@ final class MarleyController {
     $build['layout'] = $layout;
     // Popup de criação de conteúdo (ação Nova publicação): diálogo e HTMX.
     $build['#attached']['library'][] = 'aculta_studio/studio-create-popup';
+    $build['studio_create_popup'] = [
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:popup',
+      '#props' => [
+        'id' => 'aculta-studio-create-dialog',
+        'title' => (string) t('Nova publicação'),
+        'close_label' => (string) t('Fechar'),
+      ],
+      '#slots' => [
+        'content' => ['#markup' => '<div id="aculta-studio-create-body" class="aculta-reply-dialog__body"></div>'],
+      ],
+    ];
 
     // Nível 3: the requested subtab, or the first subtab in its section.
     if ($sub === '') {

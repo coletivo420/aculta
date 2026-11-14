@@ -11,11 +11,13 @@ props:
     attributes:
       type: Drupal\Core\Template\Attribute
       title: Atributos HTML opcionais
+      description: Atributos aplicados ao contêiner da mensagem.
       default: null
     type:
       title: Tipo do aviso
       type: string
       enum: [status, info, warning, error]
+      description: Estado semântico que define o rótulo anunciado e o ícone.
     role:
       type: [string, 'null']
       enum: [status, alert, null]
@@ -31,14 +33,17 @@ props:
       type: string
       default: Fechar aviso
       title: Rótulo do controle de fechamento
+      description: Nome acessível do botão quando dismissible estiver ativo.
       minLength: 1
     messages:
       title: Mensagens exibidas
       type: array
       minItems: 0
       default: []
+      description: Lista de mensagens textuais, usada quando o slot content não é fornecido.
       items:
         type: [string, object]
+        description: Uma mensagem textual ou um valor renderizável pelo Drupal.
 slots:
   content:
     title: Conteúdo rico da mensagem

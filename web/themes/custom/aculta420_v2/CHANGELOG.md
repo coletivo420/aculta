@@ -935,6 +935,20 @@
 
 # Changelog — ACULTA420 V2
 
+## Não versionado — Editor de foto da Conta com popup e ações do SDC button (2026-11-14)
+
+- O avatar do dashboard abre o SDC `popup`, com o lápis sobreposto composto pelo SDC `icon` e a imagem exibida pelo SDC `avatar`.
+- As stories do Editor de Foto mostram os estados de avatar do acervo e foto pessoal, com preview circular e ações correspondentes ao Form API.
+- A UI Patterns Library publica stories específicas de Sortear (`secondary`), Salvar (`primary`) e Remover (`danger`) na página do componente `button`; o `input--submit` compõe as ações reais pelo mesmo SDC e preserva o submit/HTMX.
+- Checkout: 145 manifests SDC e 233 stories. Schemas e contrato da Library PASS; upload e navegação autenticada no Runtime ainda não homologados.
+
+## Não versionado — slots seguros para página e composição de conteúdo (2026-11-14)
+
+- `layout-page` ganhou a prop booleana `has_aside`. O template adaptador renderiza `page.sidebar_first` uma vez e decide a presença; o SDC não chama `render` nem inspeciona texto para montar a região. As stories com sidebar declaram a prop e o validator confere estados com e sem conteúdo.
+- `forum-topic.content`, `studio-form.content` e `studio-shell.content` passaram a imprimir slots diretamente, removendo `raw` e testes de tipo redundantes.
+- `delete-confirm` anuncia um diálogo não modal, associa a descrição por ARIA, documenta os quatro textos e usa destino de exemplo não destrutivo na story.
+- Renderer Drupal: 91 SDCs PASS, incluindo estado da barra lateral presente/ausente. Preview e homologação Runtime continuam pendentes.
+
 ## Não versionado — galeria da UI Patterns Library
 
 - As rotas da biblioteca saem dos containers por purpose e usam largura total. O overview apresenta cada componente em um bloco próprio, sem criar colunas para stories.

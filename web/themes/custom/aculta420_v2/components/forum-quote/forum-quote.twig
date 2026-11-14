@@ -1,7 +1,7 @@
 {#
 /**
  * @file
- * Citação / quote do fórum: aspas em destaque, faixa verde à esquerda, vermelha à direita, e ações.
+ * Citação do fórum com autoria, conteúdo e faixas de acento laterais.
  */
 #}
 <blockquote{% if theme == 'dark' %} data-theme="dark"{% endif %} class="forum-quote forum-quote--density-{{ density|default('default') }}{% if density == 'compact' %} aculta-mobile-frame{% endif %}{% if accent_side == 'end' %} forum-quote--side-end{% endif %}">

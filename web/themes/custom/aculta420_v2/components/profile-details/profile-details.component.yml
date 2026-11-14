@@ -11,14 +11,17 @@ props:
     title:
       type: string
       title: Título da seção
+      description: Texto do cabeçalho associado à região por title_id.
       minLength: 1
     title_id:
       type: string
       title: Identificador do título acessível
+      description: ID aplicado ao cabeçalho e referenciado por aria-labelledby na seção.
       pattern: '^[A-Za-z][A-Za-z0-9_-]*$'
     heading_level:
       type: integer
       title: Nível semântico do título
+      description: Escolhe entre h2 e h3 conforme a hierarquia da página.
       enum: [2, 3]
       default: 2
 slots:

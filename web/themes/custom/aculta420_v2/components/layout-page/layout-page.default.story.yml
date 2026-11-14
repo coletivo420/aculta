@@ -3,6 +3,7 @@ description: Conteúdo seguido da área complementar no DOM; duas colunas a part
 component: aculta420_v2:layout-page
 props:
   variant: aside
+  has_aside: true
 slots:
   title:
     type: inline_template

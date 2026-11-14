@@ -10,6 +10,7 @@ props:
     size:
       type: string
       title: Tamanho
+      description: Escala visual do contêiner da mídia do avatar.
       enum: [xs, sm, md, lg, xl]
       default: md
 slots:

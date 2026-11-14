@@ -1,6 +1,6 @@
 $schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
 name: Citação (quote)
-description: Citação de uma publicação do fórum, com aspas em destaque, faixa verde à esquerda e vermelha à direita, e ações (link, reação e responder).
+description: Citação de uma publicação do fórum, com aspas em destaque, identificação do autor e faixas de acento nas laterais.
 status: stable
 group: Comunidade
 props:
@@ -34,36 +34,10 @@ props:
       title: Data da postagem original
       description: Data já formatada da publicação citada, mostrada ao lado do autor.
       default: null
-      default: null
     avatar:
       type: [string, 'null']
       title: Mídia do avatar do autor citado (markup da imagem)
-      description: Somente markup de imagem confiável e já renderizado; o componente não sanitiza o valor. Vazio usa o avatar com iniciais.
-      default: null
-    permalink_url:
-      type: [string, 'null']
-      title: Link para a publicação citada
-      description: Destino público do permalink da mensagem original.
-      default: null
-    edit_url:
-      type: [string, 'null']
-      title: URL para editar
-      description: Destino de edição fornecido pelo chamador depois de decidir se deve oferecer a ação.
-      default: null
-    delete_url:
-      type: [string, 'null']
-      title: URL para excluir
-      description: Destino de exclusão ou solicitação fornecido pelo chamador depois de aplicar a política.
-      default: null
-    quote_url:
-      type: [string, 'null']
-      title: URL para citar
-      description: Destino da ação de citação fornecido pelo chamador quando aplicável.
-      default: null
-    reply_url:
-      type: [string, 'null']
-      title: URL para responder
-      description: Destino do fluxo de resposta fornecido pelo chamador quando aplicável.
+      description: Markup de imagem confiável já renderizado, sem sanitização pelo componente. Null/empty usa o slot avatar_media; sem mídia nos dois contratos, o SDC avatar deixa o quadro vazio e não gera iniciais.
       default: null
 slots:
   avatar_media:
@@ -72,6 +46,3 @@ slots:
   content:
     title: Conteúdo
     description: Texto citado.
-  reactions_slot:
-    title: Barra de reações
-    description: aculta420_v2:discussion-reaction-bar, fornecida pelo módulo proprietário.

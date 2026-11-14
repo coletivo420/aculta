@@ -11,6 +11,12 @@ props:
       type: boolean
       default: false
       title: Dashboard do Studio
+      description: Aplica a disposição especial da página de visão geral do Studio.
+    has_aside:
+      type: boolean
+      default: false
+      title: Barra lateral disponível
+      description: Indica se o adaptador Drupal renderizou conteúdo visível para a região complementar.
     variant:
       type: string
       enum: [stack, aside, full]

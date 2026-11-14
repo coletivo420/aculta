@@ -43,12 +43,14 @@
       content: page.content,
     }, with_context: false) %}
   {% endif %}
+  {% set aside_markup %}{{ aculta_lms_student_dashboard_route|default(false) ? '' : page.sidebar_first }}{% endset %}
   {{ include('aculta420_v2:layout-page', {
     variant: aculta_layout_variant|default('stack'),
     studio_dashboard: aculta_studio_account_dashboard|default(false),
+    has_aside: aside_markup|trim is not empty,
     title: title_slot,
     content: main_content,
-    aside: aculta_lms_student_dashboard_route|default(false) ? [] : page.sidebar_first,
+    aside: aside_markup,
   }, with_context: false) }}
 
   <div class="page__footer">

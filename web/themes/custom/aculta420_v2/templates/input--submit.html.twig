@@ -8,7 +8,16 @@
  * tokens emite. Sem type="button": o componente gera type="submit".
  */
 #}
-{% set variant = attributes.hasClass('button--danger') ? 'danger'
+{% set photo_action = attributes.toArray()['data-aculta-photo-action']|default('') %}
+{% set photo_variant = photo_action == 'sortear' ? 'secondary'
+  : photo_action == 'remover' ? 'danger'
+  : 'primary' %}
+{% set photo_icon = photo_action == 'sortear' ? 'arrows-clockwise'
+  : photo_action == 'remover' ? 'trash'
+  : photo_action == 'salvar' ? 'floppy-disk'
+  : null %}
+{% set variant = photo_action in ['sortear', 'salvar', 'remover'] ? photo_variant
+  : attributes.hasClass('button--danger') ? 'danger'
   : attributes.hasClass('button--secondary') ? 'secondary'
   : attributes.hasClass('button--outline') ? 'outline'
   : attributes.hasClass('button--ghost') ? 'ghost'
@@ -18,6 +27,7 @@
 {% set rest = attributes
   .removeAttribute('type')
   .removeAttribute('disabled')
+  .removeAttribute('data-aculta-photo-action')
   .removeClass(['button', 'button--primary', 'button--secondary', 'button--outline', 'button--ghost', 'button--danger', 'button--small', 'button--action', 'button--cta']) %}
 {# O rótulo do Drupal chega em attributes.value; value só existe quando o chamador o passa. #}
 {% set label %}{{ value|default(attributes.value) }}{% endset %}
@@ -25,6 +35,7 @@
   text: label|trim,
   is_submit: true,
   variant: variant,
+  icon_before: photo_icon,
   size: is_small ? 'small' : 'default',
   disabled: is_disabled,
   attributes: rest,

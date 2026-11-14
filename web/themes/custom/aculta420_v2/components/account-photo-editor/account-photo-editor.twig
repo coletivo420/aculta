@@ -1,3 +1,19 @@
+{% set photo_trigger %}
+  <span class="account-photo-editor__avatar-trigger">
+    {{ include('aculta420_v2:avatar', { size: 'lg', media: trigger }, with_context = false) }}
+    <span class="account-photo-editor__edit-icon">
+      {{ include('aculta420_v2:icon', { name: 'pencil-simple', variant: 'regular', size: 'sm' }, with_context = false) }}
+    </span>
+  </span>
+{% endset %}
+
 <div{{ attributes.addClass('account-photo-editor').setAttribute('data-aculta-photo-editor', '') }}>
-  {{ content }}
+  {{ include('aculta420_v2:popup', {
+    id: id,
+    title: title,
+    trigger_aria_label: trigger_aria_label,
+    trigger: photo_trigger,
+    content: content,
+    footer: footer,
+  }, with_context = false) }}
 </div>

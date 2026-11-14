@@ -11,6 +11,7 @@ props:
     label:
       type: string
       title: Nome acessível da navegação
+      description: Rótulo acessível aplicado ao elemento nav que agrupa os links fornecidos no slot items.
       minLength: 1
 slots:
   items:

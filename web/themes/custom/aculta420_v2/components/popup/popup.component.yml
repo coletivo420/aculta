@@ -14,43 +14,58 @@ props:
     id:
       type: string
       title: ID único do popup
+      description: ID usado pelo diálogo e pelo gatilho para associar aria-controls e aria-labelledby.
       pattern: '^[A-Za-z][A-Za-z0-9_-]*$'
     title:
       type: string
       title: Título
+      description: Título visível do diálogo e destino de aria-labelledby.
       minLength: 1
     subtitle:
       type: [string, 'null']
       title: Subtítulo (opcional)
+      description: Texto complementar exibido abaixo do título quando fornecido.
       default: null
     trigger_label:
       type: [string, 'null']
       title: Rótulo do botão que abre o popup (vazio = sem gatilho)
+      description: Texto do gatilho padrão; se vazio, o componente não cria esse gatilho.
       default: null
     trigger_url:
       type: [string, 'null']
       title: Destino do gatilho sem JavaScript
+      description: URL de fallback do gatilho padrão; por padrão aponta para o diálogo.
       default: null
       format: uri-reference
+    trigger_aria_label:
+      type: [string, 'null']
+      title: Nome acessível do gatilho customizado
+      description: Nome anunciado pelo leitor de tela quando o gatilho customizado não tem texto visível.
+      default: null
     header_variant:
       type: string
       title: Apresentação do cabeçalho
+      description: Variante visual do cabeçalho do diálogo.
       enum: [neutral, institutional]
       default: neutral
     show_accent_stripes:
       type: boolean
       title: Mostrar as faixas tricolores
+      description: Exibe as faixas de identidade no topo do diálogo.
       default: true
     close_label:
       type: string
       title: Rótulo acessível do botão de fechar
+      description: Nome anunciado pelo leitor de tela no controle de fechamento.
       default: Fechar
     attributes:
       type: 'Drupal\Core\Template\Attribute'
       title: Atributos HTML do diálogo
+      description: Atributos aplicados ao elemento dialog, por exemplo data-* de integração.
     close_attributes:
       type: 'Drupal\Core\Template\Attribute'
       title: Atributos HTML do botão de fechar
+      description: Atributos adicionais aplicados ao botão de fechamento.
 slots:
   content:
     title: Conteúdo
@@ -58,3 +73,6 @@ slots:
   footer:
     title: Rodapé
     description: Ações ou links do rodapé, opcionais.
+  trigger:
+    title: Gatilho customizado
+    description: Conteúdo visual do botão que abre o diálogo, por exemplo um avatar.

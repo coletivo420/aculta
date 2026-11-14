@@ -10,6 +10,7 @@ props:
     attributes:
       type: Drupal\Core\Template\Attribute
       title: Atributos HTML opcionais
+      description: Atributos aplicados ao elemento h1–h6 renderizado.
       default: null
     text:
       type: string

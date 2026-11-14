@@ -14,28 +14,34 @@ props:
     id:
       type: string
       title: ID único do diálogo
+      description: ID associado ao gatilho e usado para identificar o elemento dialog na página.
       pattern: '^[A-Za-z][A-Za-z0-9_-]*$'
     title:
       type: string
       title: Título
+      description: Texto visível no cabeçalho e referenciado pelo nome acessível do diálogo.
       minLength: 1
     trigger_label:
       type: string
       title: Rótulo do link de abertura
+      description: Texto do link que abre o diálogo quando o comportamento JavaScript está ativo.
       minLength: 1
     trigger_url:
       type: string
       title: Destino completo sem JavaScript
+      description: URL de fallback do gatilho, usada para manter acesso ao conteúdo sem JavaScript.
       minLength: 1
       format: uri-reference
     close_label:
       type: string
       title: Rótulo acessível do botão de fechar
+      description: Nome acessível do botão que fecha o diálogo.
       minLength: 1
       default: Fechar
     variant:
       type: string
       title: Apresentação
+      description: Variante visual do diálogo; fullscreen amplia o painel para ocupar a tela.
       enum: [default, fullscreen]
       default: default
 slots:

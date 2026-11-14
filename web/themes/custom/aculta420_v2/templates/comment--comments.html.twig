@@ -13,13 +13,27 @@
 
 {% if publication_comment|default(false) %}
   {% set author_avatar = author_card and author_card['#avatar'] is defined ? render_var(author_card['#avatar']) : null %}
+  {% set revista_content = comment_deleted|default(false) ? '<p class="forum-reply-compact__deleted">Comentário excluído</p>' : comment_body %}
   {% set revista_actions_markup %}
     {{ include('aculta420_v2:content-reply-bar', {
       permalink_url: revista_actions.permalink_url|default(null),
       edit_url: revista_actions.edit_url|default(null),
-      delete_url: revista_actions.delete_url|default(null),
+      reply_url: revista_actions.reply_url|default(null),
+      quote_url: revista_actions.quote_url|default(null),
+      delete_target: delete_allowed|default(false) ? 'delete-confirm-' ~ comment.id : null,
       target_id: 'aculta-reply-dialog-body'
     }, with_context = false) }}
+    {% if delete_allowed|default(false) %}
+      {{ include('aculta420_v2:delete-confirm', {
+        target_id: 'delete-confirm-' ~ comment.id,
+        title: 'Excluir resposta?'|t,
+        message: delete_message|default('Confirma a exclusão?'|t),
+        confirm_label: 'Excluir'|t,
+        cancel_label: 'Cancelar'|t,
+        token: delete_token|default(''),
+        confirm_url: delete_url|default('')
+      }, with_context = false) }}
+    {% endif %}
   {% endset %}
   {% set reply_card %}
     <article class="comment comment--discussion js-comment">
@@ -29,7 +43,7 @@
       timestamp: created|default(null),
       accent_side: accent_side|default('start'),
       avatar: author_avatar,
-      content: comment_body,
+      content: revista_content,
       reactions_slot: reaction_bar_val,
       received_slot: reactions_received|default(null),
       actions: revista_actions_markup

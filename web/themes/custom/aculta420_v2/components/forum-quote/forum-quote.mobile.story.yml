@@ -1,36 +1,12 @@
-name: Citação (mobile)
+name: Citação compacta
+description: Citação com espaçamento compacto para composições estreitas.
 props:
   density: compact
   author_name: PiradoPirata
   timestamp: 07/11/2026 14:36
-  permalink_url: /forum/topico/123#post-456
-  reply_url: /discussoes/responder/comment/456
-  edit_url: /discussoes/editar/comment/456
-  delete_url: /discussoes/apagar/comment/456
-  quote_url: /discussoes/citar/comment/456
 slots:
   avatar_media:
     type: inline_template
     template: '{{ render_var(aculta_avatar_sample("PiradoPirata")) }}'
   content:
     '#markup': '<p>Para solos orgânicos vivos, recomendo também monitorar a umidade com tensiômetro nas primeiras semanas.</p>'
-  reactions_slot:
-    '#type': component
-    '#component': aculta420_v2:discussion-reaction-bar
-    '#props':
-      target_id: discussion-reactions-quote-story
-      entity_type: comment
-      entity_id: '1'
-      user_reaction: thumbs_up
-      default_reaction: broccoli
-      can_react: true
-      react_url: '#'
-      csrf_token: story-token
-      reactions:
-        thumbs_up:
-          id: thumbs_up
-          count: 12
-          user_reacted: true
-        seedling:
-          id: seedling
-          count: 7

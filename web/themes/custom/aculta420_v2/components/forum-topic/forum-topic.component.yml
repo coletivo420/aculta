@@ -37,4 +37,4 @@ slots:
     description: Render array da ação; o chamador deve validar acesso e fornecer apenas controles permitidos.
   content:
     title: Conteúdo
-    description: Render arrays Drupal ou markup confiável de campos, autoria e discussão; strings saem sem escape, então o chamador deve fornecer conteúdo seguro e autorizado.
+    description: Render arrays Drupal ou markup confiável de campos, autoria e discussão; strings simples são escapadas automaticamente pelo Twig.

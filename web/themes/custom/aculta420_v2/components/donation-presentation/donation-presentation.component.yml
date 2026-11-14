@@ -12,9 +12,11 @@ props:
       type: string
       enum: [summary, summaries, thanks, amount, invite]
       title: Composição apresentada
+      description: Define a classe visual correspondente ao tipo de conteúdo fornecido pelo módulo.
     attributes:
       type: Drupal\Core\Template\Attribute
       title: Atributos HTML opcionais
+      description: Atributos adicionais aplicados ao contêiner de apresentação.
       default: null
 slots:
   content:
