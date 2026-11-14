@@ -12,24 +12,32 @@ props:
       title: Título do ranking por categoria
       type: string
       minLength: 1
+      description: Legenda da tabela, que identifica a dimensão e o recorte do ranking.
     empty:
       title: Mensagem sem categorias
       type: string
       default: Sem dados no período.
+      description: Mensagem apresentada no lugar da tabela quando rows está vazio.
     rows:
       title: Categorias do ranking
       type: array
+      description: Categorias ordenadas para as linhas da tabela de ranking.
       items:
         type: object
         additionalProperties: false
+        description: Uma categoria e seu valor na posição correspondente do ranking.
         required: [position, label, value]
         properties:
           position:
             type: integer
+            description: Posição ordinal da categoria na tabela.
           label:
             type: string
+            description: Nome da categoria, apresentado como texto ou link.
           url:
             type: string
             default: ''
+            description: Destino opcional aplicado ao nome da categoria quando preenchido.
           value:
             type: string
+            description: Valor textual exibido na coluna Total.

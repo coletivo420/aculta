@@ -12,22 +12,29 @@ props:
       title: Título do resumo de atividade
       type: string
       minLength: 1
+      description: Cabeçalho do resumo, renderizado antes da lista de definições.
     note:
       title: Observação do resumo
       type: string
       default: ''
+      description: Observação opcional apresentada após as linhas de atividade.
     rows:
       title: Linhas de atividade
       type: array
+      description: Pares de rótulo e valor apresentados como linhas de uma lista de definição.
       items:
         type: object
         additionalProperties: false
+        description: Uma linha da lista de atividade.
         required: [label, value]
         properties:
           label:
             type: string
+            description: Nome do indicador apresentado como termo da definição.
           value:
             type: string
+            description: Valor textual apresentado para o indicador.
           description:
             type: string
             default: ''
+            description: Contexto opcional mostrado junto ao valor do indicador.

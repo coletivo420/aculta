@@ -12,7 +12,9 @@ props:
       title: Mensagem do estado vazio
       type: string
       minLength: 1
+      description: Explicação principal exibida quando a coleta ou o recorte não tem dados.
     hint:
       title: Orientação complementar
       type: string
       default: ''
+      description: Orientação opcional apresentada abaixo da mensagem principal.

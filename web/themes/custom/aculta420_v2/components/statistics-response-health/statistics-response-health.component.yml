@@ -14,22 +14,29 @@ props:
       title: Título do resumo de respostas
       type: string
       minLength: 1
+      description: Cabeçalho do resumo de saúde das respostas.
     note:
       title: Observação do resumo
       type: string
       default: ''
+      description: Contexto opcional sobre a população ou o método usado nos indicadores.
     rows:
       title: Linhas de saúde das respostas
       type: array
+      description: Indicadores agregados de respostas apresentados como lista de definição.
       items:
         type: object
         additionalProperties: false
+        description: Uma linha de indicador de saúde das respostas.
         required: [label, value]
         properties:
           label:
             type: string
+            description: Nome do indicador apresentado como termo da definição.
           value:
             type: string
+            description: Valor textual do indicador.
           description:
             type: string
             default: ''
+            description: Contexto opcional apresentado junto ao valor do indicador.
