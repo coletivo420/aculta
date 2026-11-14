@@ -1,0 +1,7 @@
+name: Editor de foto — Sortear
+description: Botão secundário claro do Esquema de botões para sortear outro avatar.
+props:
+  text: Sortear novo avatar
+  variant: secondary
+  icon_before: arrows-clockwise
+  is_submit: false

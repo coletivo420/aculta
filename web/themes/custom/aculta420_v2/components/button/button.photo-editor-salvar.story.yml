@@ -1,0 +1,7 @@
+name: Editor de foto — Salvar
+description: Botão verde primário do Esquema de botões para salvar a foto do perfil.
+props:
+  text: Salvar foto do perfil
+  variant: primary
+  icon_before: floppy-disk
+  is_submit: false
