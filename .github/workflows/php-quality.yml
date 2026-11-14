@@ -39,11 +39,14 @@ jobs:
           -H "Authorization: Bearer $GH_TOKEN" \
           -H "Accept: application/vnd.github+json" \
           "$API_URL/repos/$REPOSITORY/commits/$COMMIT_SHA/pulls?per_page=100")"
+        # PR de integração dev->main acumula a semana inteira: o diff dele
+        # não é a unidade de alteração. Nesse caso o push a dev roda a suíte
+        # para validar o incremento; PRs de feature continuam deduplicando.
         open_prs="$(jq --arg sha "$COMMIT_SHA" \
-          '[.[] | select(.state == "open" and .head.sha == $sha and (.base.ref == "main" or .base.ref == "dev"))] | length' \
+          '[.[] | select(.state == "open" and .head.sha == $sha and (.base.ref == "main" or .base.ref == "dev") and ((.head.ref == "dev" and .base.ref == "main") | not))] | length' \
           <<< "$prs")"
         if [ "$open_prs" -gt 0 ]; then
-          echo "Este SHA já é validado pelo workflow do PR; pulando a suíte PHP duplicada."
+          echo "Este SHA já é validado pelo workflow do PR de feature; pulando a suíte PHP duplicada."
           echo "should_run=false" >> "$GITHUB_OUTPUT"
         else
           echo "should_run=true" >> "$GITHUB_OUTPUT"
@@ -301,10 +304,26 @@ jobs:
           --analysis=artifacts/phpstan.json
 
     - name: Blocking debt in touched files and modules
+      if: >-
+        github.event_name != 'pull_request' ||
+        !(github.event.pull_request.base.ref == 'main' && github.event.pull_request.head.ref == 'dev')
       run: |
         php scripts/phpstan-debt-guard.php diff \
           --baseline=phpstan-baseline.neon \
           --git-base="$PHPSTAN_DIFF_BASE"
+
+    - name: Debt diff gate for the weekly integration PR
+      if: >-
+        github.event_name == 'pull_request' &&
+        github.event.pull_request.base.ref == 'main' &&
+        github.event.pull_request.head.ref == 'dev'
+      run: |
+        # O PR dev->main carrega a semana inteira. Cada push a dev executa o
+        # gate por arquivo/módulo sobre o incremento real; aplicar o diff
+        # semanal exigiria limpar dívida de centenas de arquivos alheios à
+        # alteração corrente.
+        echo "PR de integração dev->main: gate por arquivo/módulo N/A;"
+        echo "os pushes a dev são a unidade de validação da dívida tocada."
 
     - name: Debt evolution report
       if: always()

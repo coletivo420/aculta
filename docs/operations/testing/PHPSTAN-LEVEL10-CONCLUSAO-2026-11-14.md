@@ -99,6 +99,8 @@ Criticidade funcional revisada (não automática por identificador): 231 ocorrê
 
 Sem `continue-on-error`, `|| true`, ignores globais ou exclusões para neutralizar os gates. O baseline nunca é regenerado no CI.
 
+Escopo do diff: pushes a `dev` validam o incremento real (`event.before`) e PRs de feature usam o merge-base. O PR semanal de integração `dev→main` acumula a semana inteira; nele o gate por arquivo/módulo é explicitamente N/A, enquanto o PHPStan global, a integridade/crescimento do baseline e o job estável continuam bloqueantes. A deduplicação não pula mais a suíte em pushes cobertos por esse PR de integração, para que cada incremento seja validado.
+
 ## 9. Guardrails implementados
 
 - `scripts/phpstan-debt-guard.php check`: integridade, configuração, crescimento, identidade de erro, erros não suprimidos e supressões obsoletas.

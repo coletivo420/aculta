@@ -40,7 +40,7 @@ printf 'phpstan_exit=%s\n' "$rc"
 
 Código 1 com JSON válido é diagnóstico; o guard classifica cada mensagem. Código acima de 1, JSON inválido ou execução interrompida é falha de infraestrutura, nunca PASS.
 
-O comando `diff` considera os arquivos PHP de `git diff --diff-filter=ACMR <base> HEAD`. O CI usa o SHA base do PR ou o `before` do push. Em commit de transição (baseline de referência ainda no nível 5) a comparação de crescimento é suspensa e o gate informa isso; a partir do commit seguinte ela é obrigatória.
+O comando `diff` considera os arquivos PHP de `git diff --diff-filter=ACMR <base> HEAD`. O CI usa o `before` do push (incremento real) e o merge-base em PRs de feature. No PR semanal de integração dev→main, o diff acumula a semana inteira e o gate por arquivo/módulo é N/A: cada push a dev é a unidade de validação, e por isso o guard de deduplicação não pula a suíte em pushes cobertos por esse PR de integração. Em commit de transição (baseline de referência ainda no nível 5) a comparação de crescimento é suspensa e o gate informa isso; a partir do commit seguinte ela é obrigatória.
 
 O job estável para branch protection é **PHPStan level 10 gate**. Ele falha se o job `phpstan` não tiver executado com sucesso; um `skipped` por deduplicação de push só é aceitável porque o job do PR aberto executa a mesma verificação.
 
