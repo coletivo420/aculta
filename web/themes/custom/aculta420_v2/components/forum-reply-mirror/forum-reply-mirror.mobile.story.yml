@@ -6,6 +6,9 @@ props:
   timestamp: Há 3 horas
   density: compact
 slots:
+  reactions_received:
+    type: inline_template
+    template: '{{ include("aculta420_v2:discussion-reactions-received", { target_id: "reactions-mirror-story", reactions: { thumbs_up: { id: "thumbs_up", count: 12 }, seedling: { id: "seedling", count: 7 } } }, with_context = false) }}'
   body:
     '#markup': <p>Substrato leve com húmus de minhoca e fibra de coco funciona bem em espaço pequeno.</p>
   actions:

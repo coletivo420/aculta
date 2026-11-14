@@ -108,6 +108,9 @@ slots:
   actions:
     title: Ações do post
     description: Botões de curtir, sinalizar ou moderar.
+  reactions_received:
+    title: Reações recebidas
+    description: Barra somente leitura (discussion-reactions-received) entre o texto e as ações.
   reactions_slot:
     title: Barra de reações interativas
     description: Barra de reações por emojis renderizada pelo aculta_forum.

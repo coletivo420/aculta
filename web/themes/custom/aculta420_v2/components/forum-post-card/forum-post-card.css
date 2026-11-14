@@ -651,15 +651,17 @@
   white-space: nowrap;
 }
 
-/* Desktop: linha de posts e data à direita; avatar e nome à esquerda, com espaçamento menor entre eles. */
+/* Desktop: avatar, nome e linha de posts e data alinhados à esquerda; espaçamento menor entre avatar e nome. */
 @media (min-width: 48rem) {
   .forum-post-card .forum-post-card__author-info {
     flex: 1 1 auto;
     inline-size: 100%;
+    text-align: start;
   }
 
   .forum-post-card .forum-post-card__author-meta {
-    margin-inline-start: auto;
+    justify-content: flex-start;
+    margin-inline-start: 0;
   }
 
   .forum-post-card .forum-post-card__author .forum-author-line__identity {
@@ -726,4 +728,21 @@
   flex: 0 1 auto;
   inline-size: auto;
   max-inline-size: 55%;
+}
+
+/* Nome do autor alinhado ao topo do avatar, em qualquer modo. */
+.forum-post-card .forum-author-line,
+.forum-post-card .forum-author-line__identity {
+  align-items: flex-start;
+}
+
+.forum-post-card .forum-author-line__name {
+  line-height: 1.2;
+}
+
+/* Reações recebidas: dentro do corpo, acima da linha divisória do rodapé, alinhadas à esquerda. */
+.forum-post-card__reactions-received {
+  display: flex;
+  justify-content: flex-start;
+  margin-block-start: var(--spacing-sm);
 }

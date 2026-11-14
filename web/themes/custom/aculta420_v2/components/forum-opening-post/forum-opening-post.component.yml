@@ -66,6 +66,9 @@ slots:
   body:
     title: Corpo da postagem
     description: Corpo do tópico renderizado pelo Drupal.
+  reactions_received:
+    title: Reações recebidas
+    description: Barra somente leitura (discussion-reactions-received), acima da linha do rodapé.
   reactions_slot:
     title: Barra de reações interativas
     description: Barra de reações por emojis renderizada pelo aculta_forum.

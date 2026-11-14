@@ -7,6 +7,9 @@ props:
   timestamp: Há 3 horas
   density: compact
 slots:
+  reactions_received:
+    type: inline_template
+    template: '{{ include("aculta420_v2:discussion-reactions-received", { target_id: "reactions-story", reactions: { thumbs_up: { id: "thumbs_up", count: 12 }, seedling: { id: "seedling", count: 7 } } }, with_context = false) }}'
   avatar:
     type: inline_template
     template: '{{ render_var(aculta_avatar_sample("PiradoPirata")) }}'

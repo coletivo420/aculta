@@ -52,6 +52,11 @@
 
     <div class="forum-post-card__body">
       {{ body }}
+      {% if reactions_received %}
+        <div class="forum-post-card__reactions-received">
+          {{ reactions_received }}
+        </div>
+      {% endif %}
     </div>
 
     <footer class="forum-post-card__footer">
