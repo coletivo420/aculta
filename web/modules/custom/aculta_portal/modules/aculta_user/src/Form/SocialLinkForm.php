@@ -52,6 +52,12 @@ final class SocialLinkForm extends FormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<array-key, mixed> $form
+   *   Estrutura do formulário.
+   *
+   * @return array<array-key, mixed>
+   *   Estrutura do formulário.
    */
   public function buildForm(array $form, FormStateInterface $form_state, string $rede = ''): array {
     if (!isset(SocialNetworks::NETWORKS[$rede])) {
@@ -66,17 +72,30 @@ final class SocialLinkForm extends FormBase {
       $studio ? 'aculta_studio.profile_social' : 'aculta_user.redes_form',
       ['rede' => $rede],
     )->toString();
-    $form['#attributes']['data-portal-ui'] = $studio ? 'studio-social-form' : 'social-link-dialog';
+    // Atributos e anexos são lidos e gravados de volta como arrays, sem escrita aninhada em valores não tipados.
+    $attributes = is_array($form['#attributes'] ?? NULL) ? $form['#attributes'] : [];
+    $attributes['data-portal-ui'] = $studio ? 'studio-social-form' : 'social-link-dialog';
     // Minha Conta keeps its modal/JSON workflow. The Studio full-page form
     // uses native Form API for validation, CSRF, and a no-JavaScript fallback.
     if (!$studio) {
       $form['#aculta_json_save'] = TRUE;
-      $form['#attributes']['data-aculta-json-form'] = 'social';
-      $form['#attached']['library'][] = 'aculta_user/account-bio-form';
-      $form['#attached']['drupalSettings']['acultaUser']['jsonForms']['social'] = [
+      $attributes['data-aculta-json-form'] = 'social';
+      $attached = is_array($form['#attached'] ?? NULL) ? $form['#attached'] : [];
+      $libraries = is_array($attached['library'] ?? NULL) ? $attached['library'] : [];
+      $libraries[] = 'aculta_user/account-bio-form';
+      $attached['library'] = $libraries;
+      $settings = is_array($attached['drupalSettings'] ?? NULL) ? $attached['drupalSettings'] : [];
+      $acultaUser = is_array($settings['acultaUser'] ?? NULL) ? $settings['acultaUser'] : [];
+      $jsonForms = is_array($acultaUser['jsonForms'] ?? NULL) ? $acultaUser['jsonForms'] : [];
+      $jsonForms['social'] = [
         'url' => Url::fromRoute('aculta_user.redes_save', [], ['query' => ['token' => $this->csrfToken->get('redes/salvar')]])->toString(),
       ];
+      $acultaUser['jsonForms'] = $jsonForms;
+      $settings['acultaUser'] = $acultaUser;
+      $attached['drupalSettings'] = $settings;
+      $form['#attached'] = $attached;
     }
+    $form['#attributes'] = $attributes;
     $form['rede'] = ['#type' => 'hidden', '#value' => $rede];
     $form['link'] = [
       '#type' => 'url',
@@ -105,11 +124,14 @@ final class SocialLinkForm extends FormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<array-key, mixed> $form
+   *   Estrutura do formulário.
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
-    $rede = (string) $form_state->getValue('rede');
+    $rede = $this->textValue($form_state->getValue('rede'));
     try {
-      $uri = $this->networks->normalize($rede, (string) $form_state->getValue('link'));
+      $uri = $this->networks->normalize($rede, $this->textValue($form_state->getValue('link')));
     }
     catch (\InvalidArgumentException $e) {
       $form_state->setErrorByName('link', $e->getMessage());
@@ -137,6 +159,13 @@ final class SocialLinkForm extends FormBase {
     $storage = $this->entityTypeManagerService->getStorage('profile');
     $account = $this->currentUserService->getAccount();
     return PerfilDoPapel::obter($storage, $account);
+  }
+
+  /**
+   * Texto de um valor de formulário ou de campo; vazio quando o valor não é escalar.
+   */
+  private function textValue(mixed $value): string {
+    return is_scalar($value) ? (string) $value : '';
   }
 
 }
