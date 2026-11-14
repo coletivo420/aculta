@@ -125,7 +125,14 @@ final class CourseContentDeleteFormTest extends UnitTestCase {
   }
 
   /**
-   * Builds a lesson deletion form and its storage fixtures. */
+   * Builds a lesson deletion form and its storage fixtures.
+   *
+   * @param list<int|string> $archive_ids
+   *   Attempt archive identifiers.
+   *
+   * @return array{0: \Drupal\aculta_lms\Form\LessonDeleteForm, 1: \Drupal\Core\Entity\ContentEntityInterface&\PHPUnit\Framework\MockObject\MockObject, 2: \Drupal\Core\Entity\EntityStorageInterface&\PHPUnit\Framework\MockObject\MockObject, 3: \Drupal\Core\Entity\EntityStorageInterface&\PHPUnit\Framework\MockObject\MockObject}
+   *   The form, lesson and both entity storages.
+   */
   private function lessonForm(array $archive_ids = []): array {
     $course = $this->createMock(GroupInterface::class);
     $course->method('id')->willReturn('3');
@@ -154,7 +161,16 @@ final class CourseContentDeleteFormTest extends UnitTestCase {
   }
 
   /**
-   * Builds an activity deletion form and its storage fixtures. */
+   * Builds an activity deletion form and its storage fixtures.
+   *
+   * @param list<int|string> $answer_ids
+   *   Answer identifiers for the activity.
+   * @param list<int|string> $archive_ids
+   *   Attempt archive identifiers.
+   *
+   * @return array{0: \Drupal\aculta_lms\Form\ActivityDeleteForm, 1: \Drupal\Core\Entity\ContentEntityInterface&\PHPUnit\Framework\MockObject\MockObject, 2: \Drupal\Core\Entity\EntityStorageInterface&\PHPUnit\Framework\MockObject\MockObject, 3: \Drupal\Core\Entity\EntityStorageInterface&\PHPUnit\Framework\MockObject\MockObject}
+   *   The form, activity and both entity storages.
+   */
   private function activityForm(array $answer_ids, array $archive_ids = []): array {
     $course = $this->createMock(GroupInterface::class);
     $course->method('id')->willReturn('3');
@@ -199,7 +215,11 @@ final class CourseContentDeleteFormTest extends UnitTestCase {
   }
 
   /**
-   * Creates a simple field item fixture. */
+   * Creates a simple field item fixture.
+   *
+   * @return \Drupal\Core\Field\FieldItemListInterface<\Drupal\Core\Field\FieldItemInterface>
+   *   The field item list.
+   */
   private function field(string $value): FieldItemListInterface {
     return new class($value) extends FieldItemList {
 
@@ -208,7 +228,7 @@ final class CourseContentDeleteFormTest extends UnitTestCase {
       /**
        * Returns the fixture field value.
        */
-      public function __get($property_name) {
+      public function __get(mixed $property_name): mixed {
         return $property_name === 'value' ? $this->fieldValue : NULL;
       }
 
@@ -216,7 +236,11 @@ final class CourseContentDeleteFormTest extends UnitTestCase {
   }
 
   /**
-   * Creates a route match fixture. */
+   * Creates a route match fixture.
+   *
+   * @param array<string, \Drupal\group\Entity\GroupInterface|\Drupal\Core\Entity\ContentEntityInterface> $parameters
+   *   Route parameters used by the deletion forms.
+   */
   private function routeMatch(array $parameters): CurrentRouteMatch {
     $route = $this->createMock(CurrentRouteMatch::class);
     $route->method('getParameter')->willReturnCallback(static fn(string $name): mixed => $parameters[$name] ?? NULL);
@@ -224,7 +248,11 @@ final class CourseContentDeleteFormTest extends UnitTestCase {
   }
 
   /**
-   * Creates a query returning IDs. */
+   * Creates a query returning IDs.
+   *
+   * @param list<int|string>|int $ids
+   *   Result identifiers, or the count result used by answer checks.
+   */
   private function query(array|int $ids): QueryInterface {
     $query = $this->createMock(QueryInterface::class);
     $query->method('accessCheck')->willReturnSelf();
