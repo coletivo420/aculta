@@ -35,6 +35,9 @@ final class OwnershipClaimAdminController extends ControllerBase {
 
   /**
    * Renderiza a listagem de pedidos de reivindicação de posse.
+   *
+   * @return array<array-key, mixed>
+   *   Render array da listagem.
    */
   public function overview(Request $request): array {
     $statusFilter = $request->query->get('status');
@@ -66,8 +69,8 @@ final class OwnershipClaimAdminController extends ControllerBase {
     $userStorage = $this->entityTypeMgr->getStorage('user');
 
     foreach ($claims as $claim) {
-      $targetType = (string) $claim->get('target_type')->value;
-      $targetId = (int) $claim->get('target_id')->value;
+      $targetType = $this->textValue($claim->get('target_type')->value);
+      $targetId = $this->intValue($claim->get('target_id')->value);
 
       $targetText = sprintf('%s #%d', $targetType, $targetId);
       if ($this->entityTypeMgr->hasDefinition($targetType)) {
@@ -99,21 +102,21 @@ final class OwnershipClaimAdminController extends ControllerBase {
         $targetCell = ['#plain_text' => $targetText];
       }
 
-      $claimantUid = (int) $claim->get('uid')->target_id;
+      $claimantUid = $this->intValue($claim->get('uid')->target_id);
       $claimant = $userStorage->load($claimantUid);
       $claimantName = $claimant !== NULL ? $claimant->getDisplayName() : sprintf('UID #%d', $claimantUid);
 
-      $statusValue = (string) $claim->get('status')->value;
+      $statusValue = $this->textValue($claim->get('status')->value);
       $statusLabel = match ($statusValue) {
         'approved' => $this->t('Aprovado'),
         'rejected' => $this->t('Rejeitado'),
         default => $this->t('Pendente'),
       };
 
-      $created = (int) $claim->get('created')->value;
+      $created = $this->intValue($claim->get('created')->value);
       $createdFormatted = $created > 0 ? $this->dateFormatter->format($created, 'short') : '-';
 
-      $justificativa = (string) $claim->get('justificativa')->value;
+      $justificativa = $this->textValue($claim->get('justificativa')->value);
       $justificativaTruncada = Unicode::truncate($justificativa, 100, TRUE, TRUE);
 
       $actions = [];
@@ -124,7 +127,7 @@ final class OwnershipClaimAdminController extends ControllerBase {
         ];
       }
       else {
-        $decidedByUid = (int) $claim->get('decided_by')->value;
+        $decidedByUid = $this->intValue($claim->get('decided_by')->value);
         $decidedBy = $decidedByUid > 0 ? $userStorage->load($decidedByUid) : NULL;
         $decidedByName = $decidedBy !== NULL ? $decidedBy->getDisplayName() : ($decidedByUid > 0 ? sprintf('UID #%d', $decidedByUid) : '-');
         $actions[] = [
@@ -138,7 +141,7 @@ final class OwnershipClaimAdminController extends ControllerBase {
         'target' => ['data' => $targetCell],
         'claimant' => $claimantName,
         'justificativa' => $justificativaTruncada,
-        'contato' => (string) ($claim->get('contato')->value ?? '-'),
+        'contato' => $this->textValue($claim->get('contato')->value ?? '-'),
         'created' => $createdFormatted,
         'status' => $statusLabel,
         'operations' => [
@@ -165,7 +168,7 @@ final class OwnershipClaimAdminController extends ControllerBase {
       ];
     }
 
-    $build = [
+    return [
       'filters' => [
         '#theme' => 'links',
         '#links' => $filterLinks,
@@ -198,9 +201,22 @@ final class OwnershipClaimAdminController extends ControllerBase {
           'url.query_args:target_id',
         ],
       ],
+      '#attached' => ['library' => ['aculta_user/ownership-claims-admin']],
     ];
-    $build['#attached']['library'][] = 'aculta_user/ownership-claims-admin';
-    return $build;
+  }
+
+  /**
+   * Texto de um valor de campo; vazio quando o valor não é escalar.
+   */
+  private function textValue(mixed $value): string {
+    return is_scalar($value) || $value instanceof \Stringable ? (string) $value : '';
+  }
+
+  /**
+   * Inteiro de um valor de campo; zero quando não é numérico.
+   */
+  private function intValue(mixed $value): int {
+    return is_numeric($value) ? (int) $value : 0;
   }
 
 }

@@ -73745,24 +73745,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_user/aculta_user.install
 
 		-
-			rawMessage: 'Cannot call method fetchField() on Drupal\Core\Database\StatementInterface|null.'
-			identifier: method.nonObject
-			count: 4
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Account/NicknameRegistry.php
-
-		-
-			rawMessage: Cannot cast mixed to int.
-			identifier: cast.int
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Account/NicknameRegistry.php
-
-		-
-			rawMessage: Cannot cast mixed to string.
-			identifier: cast.string
-			count: 5
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Account/NicknameRegistry.php
-
-		-
 			rawMessage: Cannot cast mixed to int.
 			identifier: cast.int
 			count: 2
@@ -73907,36 +73889,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Controller/LegacyMemorialController.php
 
 		-
-			rawMessage: Cannot access an offset on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Controller/OwnershipClaimAdminController.php
-
-		-
-			rawMessage: Cannot access offset 'library' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Controller/OwnershipClaimAdminController.php
-
-		-
-			rawMessage: Cannot cast mixed to int.
-			identifier: cast.int
-			count: 3
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Controller/OwnershipClaimAdminController.php
-
-		-
-			rawMessage: Cannot cast mixed to string.
-			identifier: cast.string
-			count: 4
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Controller/OwnershipClaimAdminController.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_user\Controller\OwnershipClaimAdminController::overview() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Controller/OwnershipClaimAdminController.php
-
-		-
 			rawMessage: Cannot cast mixed to string.
 			identifier: cast.string
 			count: 2
@@ -74061,42 +74013,6 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Form/AssociadoSituacaoForm.php
-
-		-
-			rawMessage: Cannot cast mixed to string.
-			identifier: cast.string
-			count: 4
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Form/ChangemailForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_user\Form\ChangemailForm::buildForm() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Form/ChangemailForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_user\Form\ChangemailForm::buildForm() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Form/ChangemailForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_user\Form\ChangemailForm::submitForm() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Form/ChangemailForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_user\Form\ChangemailForm::validateForm() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Form/ChangemailForm.php
-
-		-
-			rawMessage: 'Parameter #2 $string2 of function strcasecmp expects string, string|null given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Form/ChangemailForm.php
 
 		-
 			rawMessage: Cannot access an offset on mixed.

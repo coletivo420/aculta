@@ -7,6 +7,7 @@ namespace Drupal\aculta_user\Account;
 use Drupal\aculta_portal\Profile\PerfilDoPapel;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Database\IntegrityConstraintViolationException;
+use Drupal\Core\Database\StatementInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\profile\Entity\ProfileInterface;
 
@@ -38,22 +39,20 @@ final class NicknameRegistry {
       throw new \InvalidArgumentException('A valid canonical nickname slug and UID are required.');
     }
 
-    $owner = $this->database->select('aculta_user_nickname', 'n')
+    $owner = $this->firstField($this->database->select('aculta_user_nickname', 'n')
       ->fields('n', ['uid'])
       ->condition('slug', $slug)
       ->range(0, 1)
-      ->execute()
-      ->fetchField();
-    if ($owner !== FALSE && (int) $owner !== $uid) {
+      ->execute());
+    if ($owner !== FALSE && $this->intValue($owner) !== $uid) {
       throw new NicknameClaimConflictException('This public nickname is already in use.');
     }
 
-    $existing = $this->database->select('aculta_user_nickname', 'n')
+    $existing = $this->firstField($this->database->select('aculta_user_nickname', 'n')
       ->fields('n', ['uid'])
       ->condition('uid', $uid)
       ->range(0, 1)
-      ->execute()
-      ->fetchField();
+      ->execute());
     try {
       if ($existing !== FALSE) {
         $this->database->update('aculta_user_nickname')
@@ -84,20 +83,19 @@ final class NicknameRegistry {
     if ($excludeUid !== NULL) {
       $query->condition('uid', $excludeUid, '<>');
     }
-    return $query->execute()->fetchField() !== FALSE;
+    return $this->firstField($query->execute()) !== FALSE;
   }
 
   /**
    * Resolves the owner of a current slug, or NULL when no claim exists.
    */
   public function uidForSlug(string $slug): ?int {
-    $uid = $this->database->select('aculta_user_nickname', 'n')
+    $uid = $this->firstField($this->database->select('aculta_user_nickname', 'n')
       ->fields('n', ['uid'])
       ->condition('slug', $slug)
       ->range(0, 1)
-      ->execute()
-      ->fetchField();
-    return $uid === FALSE ? NULL : (int) $uid;
+      ->execute());
+    return $uid === FALSE ? NULL : $this->intValue($uid);
   }
 
   /**
@@ -108,7 +106,7 @@ final class NicknameRegistry {
       return;
     }
     $uid = (int) $profile->getOwnerId();
-    $nickname = trim((string) $profile->get('field_nickname')->value);
+    $nickname = trim($this->textValue($profile->get('field_nickname')->value));
     if ($uid <= 0 || isset($this->synchronizing[$uid])) {
       return;
     }
@@ -119,7 +117,7 @@ final class NicknameRegistry {
       }
       $original = $this->entityTypeManager->getStorage('profile')->loadUnchanged($profile->id());
       $originalNickname = $original instanceof ProfileInterface && $original->hasField('field_nickname')
-        ? trim((string) $original->get('field_nickname')->value)
+        ? trim($this->textValue($original->get('field_nickname')->value))
         : '';
       if ($originalNickname === '') {
         return;
@@ -161,7 +159,7 @@ final class NicknameRegistry {
       if (!$sibling instanceof ProfileInterface
         || (string) $sibling->id() === (string) $profile->id()
         || !$sibling->hasField('field_nickname')
-        || trim((string) $sibling->get('field_nickname')->value) === $nickname) {
+        || trim($this->textValue($sibling->get('field_nickname')->value)) === $nickname) {
         continue;
       }
       $sibling->set('field_nickname', $nickname);
@@ -223,7 +221,7 @@ final class NicknameRegistry {
       $profileCount++;
       $uid = (int) $profile->getOwnerId();
       $nickname = $profile->hasField('field_nickname')
-        ? trim((string) $profile->get('field_nickname')->value)
+        ? trim($this->textValue($profile->get('field_nickname')->value))
         : '';
       // Perfil sem dono não reivindica índice e não bloqueia o rebuild.
       // Com apelido preenchido, é contado à parte para investigação
@@ -303,7 +301,7 @@ final class NicknameRegistry {
         $this->synchronizing[(int) $uid] = TRUE;
         try {
           foreach ($profilesByUid[$uid] as $profile) {
-            if (trim((string) $profile->get('field_nickname')->value) === $nickname) {
+            if (trim($this->textValue($profile->get('field_nickname')->value)) === $nickname) {
               continue;
             }
             $profile->set('field_nickname', $nickname);
@@ -333,6 +331,30 @@ final class NicknameRegistry {
       'ignored_invalid_format' => $ignoredInvalidFormat,
       'slug_conflicts' => $slugConflicts,
     ];
+  }
+
+  /**
+   * Primeiro campo do resultado, ou FALSE quando não há linha (ou a consulta não devolveu resultado).
+   *
+   * @param \Drupal\Core\Database\StatementInterface<int, mixed>|null $statement
+   *   Resultado da consulta, ou NULL quando o banco não devolveu um.
+   */
+  private function firstField(?StatementInterface $statement): mixed {
+    return $statement === NULL ? FALSE : $statement->fetchField();
+  }
+
+  /**
+   * Texto de um valor de campo; vazio quando o valor não é escalar.
+   */
+  private function textValue(mixed $value): string {
+    return is_scalar($value) || $value instanceof \Stringable ? (string) $value : '';
+  }
+
+  /**
+   * Inteiro de um valor de consulta ou de campo; zero quando não é numérico.
+   */
+  private function intValue(mixed $value): int {
+    return is_numeric($value) ? (int) $value : 0;
   }
 
 }
