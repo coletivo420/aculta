@@ -1,7 +1,8 @@
 {#
   Lista pública de tópicos do fórum (ACULTA420 V2), três colunas como na referência:
   categorias à esquerda, lista ao centro e números e regras à direita.
-  Categorias e totais vêm de ForumListHooks; abas usam as rotas dos displays existentes.
+  Categorias e totais públicos vêm do módulo owner com EntityQuery e cacheabilidade;
+  abas usam as rotas dos displays existentes.
 #}
 {% set current_display = view.current_display %}
 
@@ -98,3 +99,4 @@
   }, with_context = false) }}
 {% endblock %}
 {% endembed %}
+{{ forum_list_cache_metadata }}
