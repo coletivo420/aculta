@@ -1,6 +1,6 @@
 # Catálogo de componentes do tema V2
 
-Componentes SDC com schemas estritos (`additionalProperties: false`). Os nomes de prop e slot abaixo são os do `*.component.yml`. "Estado" indica o que foi entregue e verificado. Inventário do checkout atualizado em 2026-11-14: 146 manifests SDC e 228 stories; schemas e renderização isolada são conferidos pelos gates de `docs/gates.md`. A existência do manifest/story não prova, por si só, que um consumidor de produção esteja configurado.
+Componentes SDC com schemas estritos (`additionalProperties: false`). Os nomes de prop e slot abaixo são os do `*.component.yml`. "Estado" indica o que foi entregue e verificado. Inventário do checkout atualizado em 2026-11-14: 146 manifests SDC e 229 stories; schemas e renderização isolada são conferidos pelos gates de `docs/gates.md`. A existência do manifest/story não prova, por si só, que um consumidor de produção esteja configurado.
 
 Prefixo de uso: `aculta420_v2:<nome>`. Em Twig, use `include` com `with_context = false`, ou `embed` quando o componente tem slots.
 
@@ -15,7 +15,7 @@ Prefixo de uso: `aculta420_v2:<nome>`. Em Twig, use `include` com `with_context 
 
 A UI Patterns Library descobre os componentes diretamente dos arquivos
 `*.component.yml` e suas stories; não há uma lista paralela para manter. Neste
-checkout há 146 manifests SDC e 228 stories. O Drupal precisa reconstruir seus
+checkout há 146 manifests SDC e 229 stories. O Drupal precisa reconstruir seus
 caches de descoberta para refletir alterações no Runtime. Todos os SDCs têm ao
 menos uma story. A configuração habilita
 `ui_patterns_library`; descoberta no Runtime não foi confirmada nesta revisão.
@@ -213,9 +213,10 @@ CSS da lista, categorias e painel lateral acompanha o SDC. Story:
 
 ### forum-category-page — Página de categoria do Fórum
 
-Envolve a View de categoria e carrega o layout responsivo da coluna de tópicos
-e do painel lateral. Header, tabs, rows, pager e regras seguem como render arrays
-e SDCs existentes. Story: `forum-category-page.default.story.yml`.
+É dona do layout responsivo e expõe slots separados para cabeçalho, navegação,
+tópicos, estado vazio, paginação e painel lateral. O template da View do Fórum
+fica como adapter dos dados e compõe os SDCs existentes nesses slots. Story:
+`forum-category-page.default.story.yml`.
 
 ### forum-search-page — Busca do Fórum
 

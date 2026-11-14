@@ -1757,6 +1757,10 @@ State: Dev. No RC, production deployment, or release tag is declared.
   da busca passaram ao `forum-search-page`, por sugestão Twig que mantém todas
   as áreas padrão da View. Os avatares de tópico agora pertencem a
   `forum-topic-row`.
+- `forum-category-page` agora define a estrutura responsiva da página e slots
+  explícitos para cabeçalho, navegação, tópicos, vazio, pager e painel lateral.
+  O Twig da View só conecta dados Drupal e SDCs filhos ao contrato do componente;
+  a story demonstra a composição pela UI Patterns Library.
 - Removidos `src/styles/forum.css`, a biblioteca `forum` e seu attachment em
   `PagePresentationHooks`. Listagem, categoria e busca carregam CSS a partir
   dos SDCs que efetivamente compõem cada View.

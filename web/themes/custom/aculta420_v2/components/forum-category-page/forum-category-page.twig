@@ -1,3 +1,17 @@
 <div class="aculta-forum-category-page">
-  {{ content }}
+  {{ header }}
+  <div class="aculta-forum-category-page__layout">
+    <div class="aculta-forum-category-page__main">
+      {{ navigation }}
+      {% if topics %}
+        <div class="aculta-forum-category-page__topics">{{ topics }}</div>
+      {% elseif empty %}
+        <div class="view-empty">{{ empty }}</div>
+      {% endif %}
+      {{ pager }}
+    </div>
+    <aside class="aculta-forum-category-page__aside" aria-label="{{ 'Informações da categoria'|t }}">
+      {{ sidebar }}
+    </aside>
+  </div>
 </div>

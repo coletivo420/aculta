@@ -7,9 +7,24 @@ props:
   type: object
   additionalProperties: false
 slots:
-  content:
-    title: Conteúdo da categoria
-    description: Cabeçalho, navegação, rows, pager e painel lateral da View.
+  header:
+    title: Cabeçalho
+    description: Cabeçalho SDC com título e indicadores da categoria.
+  navigation:
+    title: Navegação
+    description: Abas e filtros de navegação da lista.
+  topics:
+    title: Tópicos
+    description: Linhas renderizadas pela View.
+  empty:
+    title: Estado vazio
+    description: Mensagem exibida quando a View não retorna tópicos.
+  pager:
+    title: Paginação
+    description: Paginação renderizada pela View.
+  sidebar:
+    title: Painel lateral
+    description: Estatísticas, regras e conteúdo complementar da categoria.
 assets:
   css:
     component:

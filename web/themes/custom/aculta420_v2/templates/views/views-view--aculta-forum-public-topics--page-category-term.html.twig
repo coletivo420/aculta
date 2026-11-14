@@ -20,43 +20,41 @@
 ] %}
 
 {% embed 'aculta420_v2:forum-category-page' %}
-{% block content %}
+{% block header %}
   {{ include('aculta420_v2:forum-category-header', {
     title: view.getTitle()|default('Categoria'|t),
     description: null,
     icon: 'plant',
     stats: category_stats
   }, with_context = false) }}
+{% endblock %}
 
-  <div class="aculta-forum-category-page__layout">
-    <div class="aculta-forum-category-page__main">
-      {{ include('aculta420_v2:forum-tabs', {
-        label: 'Seções da categoria'|t,
-        items: section_items
-      }, with_context = false) }}
+{% block navigation %}
+  {{ include('aculta420_v2:forum-tabs', {
+    label: 'Seções da categoria'|t,
+    items: section_items
+  }, with_context = false) }}
+{% endblock %}
 
-      {% if rows %}
-        <div class="aculta-forum-category-page__topics">
-          {{ rows }}
-        </div>
-      {% elseif empty %}
-        <div class="view-empty">{{ empty }}</div>
-      {% endif %}
+{% block topics %}
+  {{ rows }}
+{% endblock %}
 
-      {% if pager %}
-        {{ pager }}
-      {% endif %}
-    </div>
+{% block empty %}
+  {{ empty }}
+{% endblock %}
 
-    <div class="aculta-forum-category-page__aside">
-      {{ include('aculta420_v2:forum-sidebar-panels', {
-        stats: aside_stats,
-        featured: null,
-        moderators: null,
-        rules: community_rules,
-        related: null
-      }, with_context = false) }}
-    </div>
-  </div>
+{% block pager %}
+  {{ pager }}
+{% endblock %}
+
+{% block sidebar %}
+  {{ include('aculta420_v2:forum-sidebar-panels', {
+    stats: aside_stats,
+    featured: null,
+    moderators: null,
+    rules: community_rules,
+    related: null
+  }, with_context = false) }}
 {% endblock %}
 {% endembed %}
