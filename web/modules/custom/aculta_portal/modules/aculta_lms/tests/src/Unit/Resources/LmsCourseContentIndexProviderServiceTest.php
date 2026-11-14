@@ -32,9 +32,16 @@ final class LmsCourseContentIndexProviderServiceTest extends UnitTestCase {
   public function testProviderServiceIsCollectedByTaggedRegistry(): void {
     $moduleDirectory = dirname(__DIR__, 4);
     $services = Yaml::parseFile($moduleDirectory . '/aculta_lms.services.yml');
+    self::assertIsArray($services);
+    self::assertIsArray($services['services'] ?? NULL);
+    $serviceDefinitions = $services['services'];
     $providerId = 'aculta_lms.course_content_index_provider';
-    self::assertArrayHasKey($providerId, $services['services']);
-    $providerDefinition = $services['services'][$providerId];
+    self::assertArrayHasKey($providerId, $serviceDefinitions);
+    self::assertIsArray($serviceDefinitions[$providerId]);
+    $providerDefinition = $serviceDefinitions[$providerId];
+    self::assertIsString($providerDefinition['class'] ?? NULL);
+    self::assertIsArray($providerDefinition['arguments'] ?? NULL);
+    self::assertIsArray($providerDefinition['tags'] ?? NULL);
 
     $container = new ContainerBuilder();
     $purposeServiceId = 'aculta_portal.domain_site';
@@ -44,13 +51,17 @@ final class LmsCourseContentIndexProviderServiceTest extends UnitTestCase {
     $container->setDefinition($purposeServiceId, $purposeDefinition);
     $relationManagerId = 'group_relation_type.manager';
     $container->setDefinition($relationManagerId, (new Definition())->setSynthetic(TRUE)->setPublic(TRUE));
+    $arguments = [];
+    foreach ($providerDefinition['arguments'] as $argument) {
+      self::assertIsString($argument);
+      $arguments[] = new Reference(substr($argument, 1));
+    }
     $providerService = (new Definition($providerDefinition['class']))
-      ->setArguments(array_map(
-        static fn (string $argument): Reference => new Reference(substr($argument, 1)),
-        $providerDefinition['arguments'],
-      ))
+      ->setArguments($arguments)
       ->setPublic(TRUE);
     foreach ($providerDefinition['tags'] as $tag) {
+      self::assertIsArray($tag);
+      self::assertIsString($tag['name'] ?? NULL);
       $providerService->addTag($tag['name']);
     }
     $container->setDefinition($providerId, $providerService);
@@ -67,7 +78,6 @@ final class LmsCourseContentIndexProviderServiceTest extends UnitTestCase {
     $container->set($relationManagerId, $this->createMock(GroupRelationTypeManagerInterface::class));
 
     $registry = $container->get('aculta_index.provider_registry');
-    self::assertInstanceOf(ContentIndexProviderRegistry::class, $registry);
     self::assertInstanceOf(LmsCourseContentIndexProvider::class, $registry->get('lms_course'));
     self::assertSame('lms_course', $registry->findProviderIdForBundle('group', 'lms_course'));
   }

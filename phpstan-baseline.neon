@@ -49465,36 +49465,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Unit/LmsCheckoutProviderTest.php
 
 		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityTypeManagerInterface::method().'
-			identifier: method.notFound
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Unit/LmsFriendlySlugsTest.php
-
-		-
-			rawMessage: 'Cannot call method willReturn() on mixed.'
-			identifier: method.nonObject
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Unit/LmsFriendlySlugsTest.php
-
-		-
-			rawMessage: 'Cannot call method with() on mixed.'
-			identifier: method.nonObject
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Unit/LmsFriendlySlugsTest.php
-
-		-
-			rawMessage: 'Method Drupal\Tests\aculta_lms\Unit\LmsFriendlySlugsTest::storage() has parameter $entities with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Unit/LmsFriendlySlugsTest.php
-
-		-
-			rawMessage: 'Method Drupal\Tests\aculta_lms\Unit\LmsFriendlySlugsTest::storage() has parameter $ids with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Unit/LmsFriendlySlugsTest.php
-
-		-
 			rawMessage: 'Offset string on array{} on left side of ?? does not exist.'
 			identifier: nullCoalesce.offset
 			count: 1
@@ -49519,90 +49489,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Unit/Resources/CourseResourceBuilderTest.php
 
 		-
-			rawMessage: 'Argument of an invalid type mixed supplied for foreach, only iterables are supported.'
-			identifier: foreach.nonIterable
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Unit/Resources/LmsCourseContentIndexProviderServiceTest.php
-
-		-
-			rawMessage: 'Call to static method PHPUnit\Framework\Assert::assertInstanceOf() with ''Drupal\\aculta_index\\Provider\\ContentIndexProviderRegistry'' and Drupal\aculta_index\Provider\ContentIndexProviderRegistry will always evaluate to true.'
-			identifier: staticMethod.alreadyNarrowedType
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Unit/Resources/LmsCourseContentIndexProviderServiceTest.php
-
-		-
-			rawMessage: Cannot access offset 'arguments' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Unit/Resources/LmsCourseContentIndexProviderServiceTest.php
-
-		-
-			rawMessage: Cannot access offset 'class' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Unit/Resources/LmsCourseContentIndexProviderServiceTest.php
-
-		-
-			rawMessage: Cannot access offset 'name' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Unit/Resources/LmsCourseContentIndexProviderServiceTest.php
-
-		-
-			rawMessage: Cannot access offset 'services' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Unit/Resources/LmsCourseContentIndexProviderServiceTest.php
-
-		-
-			rawMessage: Cannot access offset 'tags' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Unit/Resources/LmsCourseContentIndexProviderServiceTest.php
-
-		-
-			rawMessage: 'Parameter #1 $callback of function array_map expects (callable(mixed): mixed)|null, Closure(string): Symfony\Component\DependencyInjection\Reference given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Unit/Resources/LmsCourseContentIndexProviderServiceTest.php
-
-		-
-			rawMessage: 'Parameter #1 $class of class Symfony\Component\DependencyInjection\Definition constructor expects string|null, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Unit/Resources/LmsCourseContentIndexProviderServiceTest.php
-
-		-
-			rawMessage: 'Parameter #1 $name of method Symfony\Component\DependencyInjection\Definition::addTag() expects string, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Unit/Resources/LmsCourseContentIndexProviderServiceTest.php
-
-		-
-			rawMessage: 'Parameter #2 $array of function array_map expects array, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Unit/Resources/LmsCourseContentIndexProviderServiceTest.php
-
-		-
-			rawMessage: 'Parameter #2 $array of static method PHPUnit\Framework\Assert::assertArrayHasKey() expects array<mixed>|ArrayAccess<(int|string), mixed>, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Unit/Resources/LmsCourseContentIndexProviderServiceTest.php
-
-		-
-			rawMessage: Cannot access offset 'title' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 4
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Unit/StudentTourWizardTest.php
-
-		-
-			rawMessage: Cannot cast mixed to string.
-			identifier: cast.string
-			count: 4
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Unit/StudentTourWizardTest.php
-
-		-
 			rawMessage: 'Cannot call method getPath() on Symfony\Component\Routing\Route|null.'
 			identifier: method.nonObject
 			count: 1
@@ -49613,36 +49499,6 @@ parameters:
 			identifier: method.nonObject
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Unit/UploadedAnswerRouteSubscriberTest.php
-
-		-
-			rawMessage: 'Cannot call method getCacheContexts() on mixed.'
-			identifier: method.nonObject
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Unit/WebformScoreAccessTest.php
-
-		-
-			rawMessage: 'Cannot call method isForbidden() on mixed.'
-			identifier: method.nonObject
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Unit/WebformScoreAccessTest.php
-
-		-
-			rawMessage: 'Cannot call method isNeutral() on mixed.'
-			identifier: method.nonObject
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Unit/WebformScoreAccessTest.php
-
-		-
-			rawMessage: 'Method Drupal\Tests\aculta_lms\Unit\WebformScoreAccessTest::scoreField() return type with generic interface Drupal\Core\Field\FieldItemListInterface does not specify its types: T'
-			identifier: missingType.generics
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Unit/WebformScoreAccessTest.php
-
-		-
-			rawMessage: 'Parameter #2 $haystack of static method PHPUnit\Framework\Assert::assertContains() expects iterable, mixed given.'
-			identifier: argument.type
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Unit/WebformScoreAccessTest.php
 
 		-
 			rawMessage: Cannot access offset 'id' on mixed.

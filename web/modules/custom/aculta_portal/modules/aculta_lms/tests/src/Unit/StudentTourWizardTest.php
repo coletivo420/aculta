@@ -55,10 +55,30 @@ final class StudentTourWizardTest extends UnitTestCase {
     $this->assertArrayHasKey('activities', $operations);
     $this->assertArrayHasKey('complete', $operations);
 
-    $this->assertSame('Boas-vindas', (string) $operations['welcome']['title']);
-    $this->assertSame('Navegacao e Sala de Aula', (string) $operations['navigation']['title']);
-    $this->assertSame('Atividades e Avaliacoes', (string) $operations['activities']['title']);
-    $this->assertSame('Conclusao e Certificados', (string) $operations['complete']['title']);
+    $welcome = $operations['welcome'];
+    $navigation = $operations['navigation'];
+    $activities = $operations['activities'];
+    $complete = $operations['complete'];
+    $this->assertIsArray($welcome);
+    $this->assertIsArray($navigation);
+    $this->assertIsArray($activities);
+    $this->assertIsArray($complete);
+    $this->assertSame('Boas-vindas', $this->operationTitle($welcome));
+    $this->assertSame('Navegacao e Sala de Aula', $this->operationTitle($navigation));
+    $this->assertSame('Atividades e Avaliacoes', $this->operationTitle($activities));
+    $this->assertSame('Conclusao e Certificados', $this->operationTitle($complete));
+  }
+
+  /**
+   * Reads the title from an operation definition.
+   *
+   * @param array<array-key, mixed> $operation
+   *   Wizard operation definition.
+   */
+  private function operationTitle(array $operation): string {
+    $title = $operation['title'] ?? NULL;
+    $this->assertIsString($title);
+    return $title;
   }
 
 }

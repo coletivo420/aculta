@@ -61,14 +61,14 @@
   "generation_command": "vendor/bin/phpstan analyse --configuration=.phpstan-audit.neon --level=10 --generate-baseline=phpstan-baseline.neon --memory-limit=5G",
   "post_freeze_reductions": {
     "date": "2026-11-14",
-    "entries_removed": 295,
-    "occurrences_removed": 722,
-    "current_entries": 15304,
-    "current_occurrences": 26126,
+    "entries_removed": 319,
+    "occurrences_removed": 759,
+    "current_entries": 15280,
+    "current_occurrences": 26089,
     "current_production": 15696,
-    "current_tests": 10430,
-    "current_baseline_sha256": "cbd8d60d47739992ff279bcd299e24dd2b00e7c08fbd94dd4a727cb8479dac44",
-    "reason": "Correções em aculta_studio, no carregador do curso piloto, na tipagem e validação de testes do LMS, na validação do envio de respostas, no teste de materiais do curso, na tipagem das fixtures de exclusão de conteúdo, nos render arrays de materiais do curso, nas fixtures dos testes de acesso a anexos e revisão de respostas, na fixture de pedido de matrícula, na validação da configuração de Views, nas estruturas do render array de discussões, nas fixtures de limpeza e acesso a documentos e nos contratos de declarações xAPI e uploads de respostas; sem regeneração automática do baseline, além da tipagem dos testes de ordenação do editor, autoria de cursos e índice de conteúdo do LMS e nos testes unitários de seleção de turma, painel de aprendizagem e disponibilidade de matrícula no LMS."
+    "current_tests": 10393,
+    "current_baseline_sha256": "c4c1e969efcecab96070a1ec14a237936d38a3cccb7dd5d579b457d3a6bad38f",
+    "reason": "Correções em aculta_studio, no carregador do curso piloto, na tipagem e validação de testes do LMS, na validação do envio de respostas, no teste de materiais do curso, na tipagem das fixtures de exclusão de conteúdo, nos render arrays de materiais do curso, nas fixtures dos testes de acesso a anexos e revisão de respostas, na fixture de pedido de matrícula, na validação da configuração de Views, nas estruturas do render array de discussões, nas fixtures de limpeza e acesso a documentos e nos contratos de declarações xAPI e uploads de respostas; sem regeneração automática do baseline, além da tipagem dos testes de ordenação do editor, autoria de cursos e índice de conteúdo do LMS e nos testes unitários de seleção de turma, painel de aprendizagem e disponibilidade de matrícula no LMS e nas fixtures do índice de conteúdo, acesso a notas Webform, slugs de curso e tour de estudantes do LMS."
   },
   "gates": {
     "check": "php scripts/phpstan-debt-guard.php check --baseline=phpstan-baseline.neon --config=phpstan.neon --git-base=origin/dev --analysis=artifacts/phpstan.json",
