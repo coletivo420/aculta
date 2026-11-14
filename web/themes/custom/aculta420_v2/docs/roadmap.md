@@ -108,14 +108,18 @@ anteriores e não substituem a conferência do código atual.
    de schemas aninhados em `statistics-trend-chart`, `statistics-period-filter`,
    `pagination`, `account-shell`, `breadcrumb`, `account-menu` e `filter-chips`. Há 80 SDCs com 159 props
    obrigatórias e 13 SDCs
-   com prop `variant` enum; nenhum manifest declara `tags`, `links`, metadados
-   de `variants` ou `slots.expected`. A leitura inicial classifica sete
-   candidatos a metadado oficial de variante visual (`badge`, `breadcrumb`,
-   `button`, `card-cultural`, `dialog`, `icon`, `reaction-emoji`) e mantém seis
-   props comuns por representarem contexto/conteúdo/estrutura; conferir consumidores
-   e compatibilidade do render SDC direto antes de migrar. Avaliar também as
-   159 props obrigatórias, defaults e estados vazios; ausência de metadados não
-   é falha automática. O worktree tem 275 slots; a varredura lexical apontou 16
+   com prop `variant` enum; sete têm metadado oficial `variants` alinhado ao schema SDC.
+   Nenhum manifest declara `tags`/`links` e nenhum slot declara `expected`;
+   os metadados oficiais `variants` foram adicionados a `badge`, `breadcrumb`,
+   `button`, `card-cultural`, `dialog`, `icon` e `reaction-emoji`, preservando
+   os props enum SDC equivalentes para render direto. Os seis outros enums
+   (`author-card`, `donation-presentation`, `forum-topic`, `layout-page`,
+   `site-footer`, `wiki-entry`) permanecem props comuns por representarem
+   contexto/conteúdo/estrutura. Os enums metadata e SDC estão alinhados nos sete
+   manifests. O gate SDC agora garante alinhamento e labels nos manifests; schema e contrato da
+   Library passaram. Preview e render direto no Runtime continuam pendentes. Avaliar
+   também as 159 props obrigatórias, defaults e estados vazios; ausência de
+   metadados não é falha automática. O worktree tem 275 slots; a varredura lexical apontou 16
    candidatos;
    triagem manual classificou 11 usos com conversão/inspeção de conteúdo, quatro
    verificações de presença e um falso positivo. As 11 ações foram concluídas:

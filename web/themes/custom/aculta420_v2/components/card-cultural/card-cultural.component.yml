@@ -1,5 +1,10 @@
 $schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
 name: Card cultural
+variants:
+  default:
+    title: Padrão
+  compact:
+    title: Compacto
 description: Cartão informativo para eventos e pontos culturais.
 status: experimental
 group: Conteúdo

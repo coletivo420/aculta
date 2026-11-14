@@ -93,6 +93,19 @@ foreach ($iterator as $file) {
     }
   }
 
+  if (isset($meta['variants'])) {
+    $variants = $meta['variants'];
+    $variantProp = $props['variant'] ?? NULL;
+    $assert(is_array($variants) && $variants !== [], "$relative: variants metadata must be a non-empty map.");
+    $assert(is_array($variantProp) && is_array($variantProp['enum'] ?? NULL), "$relative: variants metadata requires a declared SDC variant enum for direct Core rendering.");
+    if (is_array($variants) && is_array($variantProp['enum'] ?? NULL)) {
+      $assert(array_keys($variants) === $variantProp['enum'], "$relative: variants metadata keys must match the SDC variant enum in the same order.");
+      foreach ($variants as $variantId => $variant) {
+        $assert(is_array($variant) && is_string($variant['title'] ?? NULL) && trim($variant['title']) !== '', "$relative: variant '$variantId' needs a non-empty title.");
+      }
+    }
+  }
+
   $slots = $meta['slots'] ?? [];
   $assert(is_array($slots), "$relative: slots must be a map.");
   foreach (is_array($slots) ? $slots : [] as $slotName => $slot) {

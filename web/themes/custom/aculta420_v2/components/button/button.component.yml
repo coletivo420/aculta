@@ -1,5 +1,16 @@
 $schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
 name: Button
+variants:
+  primary:
+    title: Principal
+  secondary:
+    title: Secundário
+  outline:
+    title: Contorno
+  ghost:
+    title: Discreto
+  danger:
+    title: Destrutivo
 status: stable
 description: Controle de ação ou link com estados acessíveis.
 group: Botões

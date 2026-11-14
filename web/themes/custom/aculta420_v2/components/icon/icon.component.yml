@@ -1,5 +1,18 @@
 $schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
 name: Ícone Phosphor / ACULTA
+variants:
+  thin:
+    title: Fino
+  light:
+    title: Leve
+  regular:
+    title: Regular
+  bold:
+    title: Negrito
+  fill:
+    title: Preenchido
+  duotone:
+    title: Duotone
 description: Ícone vetorial Phosphor (regular e duotone) ou ACULTA Brócolis (seis pesos).
 status: stable
 group: Elementos básicos

@@ -1,5 +1,10 @@
 $schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
 name: Diálogo
+variants:
+  default:
+    title: Padrão
+  fullscreen:
+    title: Tela cheia
 status: stable
 description: Janela modal HTML nativa, aberta pelo comportamento compartilhado do tema.
 group: Elementos básicos

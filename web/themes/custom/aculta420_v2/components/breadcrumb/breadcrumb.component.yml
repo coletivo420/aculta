@@ -1,5 +1,10 @@
 $schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
 name: Breadcrumb
+variants:
+  padrao:
+    title: Padrão
+  contextual:
+    title: Contextual
 description: Trilha de navegação por sessão, com ícone da seção e página atual sem link.
 status: stable
 group: Navegação

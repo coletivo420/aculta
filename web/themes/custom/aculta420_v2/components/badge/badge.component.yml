@@ -1,5 +1,12 @@
 $schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
 name: Badge
+variants:
+  primary:
+    title: Principal
+  highlight:
+    title: Destaque
+  neutral:
+    title: Neutro
 status: stable
 description: Etiqueta compacta para categoria ou estado.
 group: Elementos básicos
