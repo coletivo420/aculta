@@ -12,6 +12,7 @@ props:
       type: string
       minLength: 1
       title: Título anunciado ao diálogo
+      description: Texto anunciado quando o formulário de aceite é aberto pelo diálogo da Conta.
 slots:
   content:
     title: Formulário

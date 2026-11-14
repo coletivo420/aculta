@@ -16,11 +16,14 @@ props:
       type: string
       format: uri-reference
       minLength: 1
+      description: Destino do link que abre a busca contextual.
     label:
       title: Nome acessível do gatilho
       type: string
       minLength: 1
+      description: Nome acessível do link, repetido no texto oculto para leitores de tela.
     attributes:
       title: Atributos e dados de interação
       type: Drupal\Core\Template\Attribute
       default: null
+      description: Atributos e dados de interação mesclados ao elemento link do gatilho.

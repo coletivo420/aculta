@@ -12,19 +12,23 @@ props:
       type: string
       minLength: 1
       title: Título da página
+      description: Título principal da micropágina, renderizado como heading de nível um.
     description:
       type: [string, 'null']
       title: Descrição editorial
       default: null
+      description: Texto editorial opcional apresentado abaixo do título.
     has_links:
       type: boolean
       title: Há links publicados
       default: false
+      description: Quando true, exibe o slot links; quando false, mostra a mensagem de página sem links.
     theme_preset:
       type: string
       enum: [classic, soft, outline]
       title: Apresentação
       default: classic
+      description: Preset visual aplicado como modificador de classe na página.
 slots:
   owner_identity:
     title: Identidade pública do proprietário

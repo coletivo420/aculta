@@ -12,6 +12,7 @@ props:
       type: string
       title: Cor da categoria
       enum: [red, green, yellow, green-dark]
+      description: Token da paleta editorial aplicado à classe visual do rótulo.
 slots:
   label:
     title: Link da categoria

@@ -13,6 +13,7 @@ props:
       type: string
       minLength: 1
       format: uri-reference
+      description: Destino do link que permite consultar a política de privacidade antes de escolher sobre métricas.
 assets:
   css:
     component:

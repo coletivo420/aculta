@@ -11,6 +11,7 @@ props:
       type: Drupal\Core\Template\Attribute
       title: Atributos HTML opcionais
       default: null
+      description: Atributos mesclados ao elemento section que envolve calendário, controles e fallback acessível.
 slots:
   content:
     title: Calendário e conteúdo alternativo
