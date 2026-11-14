@@ -11,18 +11,22 @@ props:
     name:
       type: string
       title: Nome do ícone
+      description: Nome do arquivo de ícone Phosphor ou aculta-brocolis para a marca do tema.
       pattern: '^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$'
     variant:
       type: string
       title: Peso visual
+      description: Peso do ícone; para Phosphor o template reduz as opções a regular ou duotone, enquanto o ícone ACULTA oferece os seis pesos.
       enum: [thin, light, regular, bold, fill, duotone]
       default: duotone
     size:
       type: string
       title: Tamanho
+      description: Classe de tamanho aplicada ao ícone.
       enum: [sm, md, lg, xl, bar]
       default: md
     color:
       type: string
       title: Token CSS ou cor hexadecimal
+      description: Valor CSS permitido para a cor primária, como var(--token), hexadecimal ou currentColor.
       pattern: '^(var\(--[a-z][a-z0-9-]*\)|#[0-9A-Fa-f]{3,8}|currentColor)$'
