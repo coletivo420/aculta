@@ -551,9 +551,9 @@ display:
             variant_id: null
             props:
               pinned:
-                source_id: select
+                source_id: view_field_value
                 source:
-                  value: false
+                  ui_patterns_views_field: sticky
             slots:
               title:
                 sources:
@@ -570,12 +570,6 @@ display:
                   -
                     source:
                       ui_patterns_views_field: field_aculta_categories
-                    source_id: view_field
-              pinned_content:
-                sources:
-                  -
-                    source:
-                      ui_patterns_views_field: sticky
                     source_id: view_field
               replies_content:
                 sources:

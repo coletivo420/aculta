@@ -23,6 +23,7 @@ dependencies:
   - domain_source:domain_source
   - diff:diff
   - drupal:comment
+  - drupal:contextual
   - drupal:migrate
   - drupal:content_moderation
   - drupal:history

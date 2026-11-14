@@ -130,10 +130,12 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
       'aculta_forum_lms_admin_comments',
       'aculta_magazine_admin_comments',
       'aculta_activities',
-      'aculta_forum_search',
       'aculta_forum_unread_topics',
       'perfis_publicos',
     ], TRUE);
+    $isForumSearchPilot = $viewId === 'aculta_forum_search'
+      && (string) $displayId === 'page_search'
+      && ($displayPatterns['component_id'] ?? NULL) === 'aculta420_v2:forum-search-page';
     $forumTopicFieldsTemplate = $theme . '/templates/views/views-view-fields--aculta-forum-public-topics.html.twig';
     $isForumTopicsSdc = $viewId === 'aculta_forum_public_topics'
       && (string) $displayId !== 'default'
@@ -306,7 +308,7 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
         ? 'BLOCKED_UPSTREAM'
         : (($isWikiEntriesPilot || $isWikiCategoriesPilot) && $displayId === 'default'
         ? 'FUNCTIONAL_NATIVE_EXCEPTION'
-        : ($isForumTopicsRowPilot || $isForumTopicsSdc || $isRevistaTeaserSdc || $isForumGalleryPilot || $isProductGalleryPilot || ($isForumCategoryPilot && (string) $displayId === 'block_landing') || $isDocumentsPilot || $isShopCatalogPilot || $isWikiEntriesPilot || $documentRuntimeVerified || $shopRuntimeVerified || $wikiRuntimeVerified || $wikiCategoriesRuntimeVerified
+        : ($isForumTopicsRowPilot || $isForumTopicsSdc || $isForumSearchPilot || $isRevistaTeaserSdc || $isForumGalleryPilot || $isProductGalleryPilot || ($isForumCategoryPilot && (string) $displayId === 'block_landing') || $isDocumentsPilot || $isShopCatalogPilot || $isWikiEntriesPilot || $documentRuntimeVerified || $shopRuntimeVerified || $wikiRuntimeVerified || $wikiCategoriesRuntimeVerified
         ? 'UI_SUITE_NATIVE'
         : (($isViewsFunctionalBase || $isEventsBase || $isAdminViewNative || $isWebformSubmissions || $isNativeCoreView)
         ? 'FUNCTIONAL_NATIVE_EXCEPTION'
@@ -323,6 +325,7 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
         $isWikiCategoriesPilot => 'UI Patterns layout-grid composes native taxonomy-term rows; preserve vocabulary filter, term links, access, editorial order and pager in Views',
         $isDocumentCardSdc => 'The document teaser row uses the existing document-card SDC; finish its UI Patterns layout composition and Runtime validation',
         $isForumTopicsRowPilot => 'UI Patterns ComponentRow composes forum-topic-row from View-rendered fields, including policy-resolved author identity; preserve View query, domain/access filters, sorting, pager and cache',
+        $isForumSearchPilot => 'Search display uses the forum-search-page SDC through UI Patterns Views; native Search API query, filters, access, contextual links and cache remain Views-owned',
         $isForumTopicsSdc => 'The Fields row adapter composes forum-topic-row as a fallback until the configured UI Patterns row is imported and verified',
         $isProductGalleryPilot => 'UI Patterns layout-grid composes the native Commerce product media View; preserve product Media IDs, ordering, published/image filters and produto_galeria view mode',
         $isNativeCoreView => 'Native Core/contrib View for administration, account, groups or media; keep query, access, filters, pager and Drupal render arrays',
@@ -354,6 +357,7 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
         $isWikiEntriesPilot => 'UI Patterns layout-grid and wiki-entry SDC are confirmed in current source; Runtime/browser snapshot predates the preprocess migration and must be repeated',
         $isDocumentCardSdc => 'Document SDC adapter is present; Runtime row rendering and grid integration are pending',
         $isForumTopicsRowPilot => 'UI Patterns ComponentRow configured in Sync/install; Runtime snapshot predates this change and cannot verify row output, public-author policy, access or cache; browser comparison remains pending',
+        $isForumSearchPilot => 'UI Patterns Views configured in Sync/install; Runtime still has divergent display config, so source output, Search API results, contextual links, access/cache and browser comparison remain pending',
         $isForumTopicsSdc && is_array($runtimeView) && is_array($runtimeView['displays'][$displayId] ?? NULL) => 'Runtime config matches Sync; executable View returns 10 rows; access-profile and browser visual evidence not re-run in this inventory pass',
         $isForumTopicsSdc => 'Existing SDC row adapter is confirmed in source; Runtime output, access profiles and browser evidence need verification',
         $isProductGalleryPilot => $productGalleryRuntimeConfigured
@@ -401,6 +405,7 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
         $isDocumentCardSdc => 'document teaser SDC adapter is confirmed in source; View style migration and Runtime output remain pending',
         $isWikiEntriesPilot => 'configured in Sync/source; SDC hook adapter changed after the Runtime snapshot; Runtime access/render/cache validation pending',
         $isForumTopicsRowPilot => 'configured in Sync/install; Runtime snapshot predates UI Patterns row; import, row output, author policy, access/cache and visual acceptance pending',
+        $isForumSearchPilot => 'configured in Sync/install; Runtime display config is divergent; import and Search API output/access/cache/visual validation pending',
         $isForumTopicsSdc && is_array($runtimeView) && is_array($runtimeView['displays'][$displayId] ?? NULL) => 'active; native Views fields row uses forum-topic-row SDC adapter; 10 results; browser/access acceptance not re-run',
         $isForumTopicsSdc => 'existing SDC row adapter confirmed in source; Runtime output not recorded',
         $isProductGalleryPilot && $productGalleryRuntimeConfigured => 'active; Commerce product 1 supplies seven media IDs; UI Patterns style returns seven rows; visual acceptance deferred',
