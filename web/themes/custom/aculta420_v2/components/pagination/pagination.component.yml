@@ -24,6 +24,7 @@ props:
       description: Itens de navegação na ordem em que serão apresentados, incluindo páginas e controles anterior/próxima.
       items:
         type: object
+        description: Link ou controle de navegação para uma página da coleção paginada.
         additionalProperties: false
         required: [url, label]
         properties:

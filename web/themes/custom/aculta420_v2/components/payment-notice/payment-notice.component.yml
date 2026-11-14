@@ -10,13 +10,16 @@ props:
     intro:
       type: string
       title: Texto introdutório
+      description: Texto contextual sobre o processamento dos pagamentos, preparado pelo Portal.
     link_label:
       type: [string, 'null']
       title: Rótulo do link externo
+      description: Texto do link para a conta Mercado Pago; só aparece junto com url quando ambos estão preenchidos.
     url:
       type: [string, 'null']
       format: uri-reference
       title: Destino externo validado pelo Portal
+      description: URL de conta validada pelo Portal para usar HTTPS e o host oficial mercadopago.com.br; o link abre em nova aba.
 assets:
   css:
     component:

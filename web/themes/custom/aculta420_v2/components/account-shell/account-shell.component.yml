@@ -25,6 +25,7 @@ props:
       default: []
       items:
         type: object
+        description: Link de navegação principal para uma seção da Conta.
         additionalProperties: false
         required: [label, href]
         properties:
@@ -45,6 +46,7 @@ props:
       default: []
       items:
         type: object
+        description: Painel expansível de uma seção carregada sob demanda na Conta.
         additionalProperties: false
         required: [label, href]
         properties:

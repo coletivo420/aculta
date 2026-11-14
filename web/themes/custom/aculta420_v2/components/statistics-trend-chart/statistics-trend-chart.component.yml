@@ -29,6 +29,7 @@ props:
       type: array
       items:
         type: object
+        description: Ponto da série temporal com rótulo, valor textual e largura percentual.
         additionalProperties: false
         required: [label, value, percent]
         properties:

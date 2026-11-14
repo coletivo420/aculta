@@ -34,20 +34,25 @@ props:
       default: []
       items:
         type: object
+        description: Destino publicado da rede ACULTA mostrado no menu da conta.
         additionalProperties: false
         required: [purpose, title, url, current]
         properties:
           purpose:
             type: string
             minLength: 1
+            description: Identificador do purpose do site publicado.
           title:
             type: string
             minLength: 1
+            description: Nome localizado do site mostrado como link.
           url:
             type: string
             format: uri
+            description: URL completa do site publicado.
           current:
             type: boolean
+            description: Indica se o site corresponde ao domínio atual.
     legal_links:
       type: array
       title: Links legais

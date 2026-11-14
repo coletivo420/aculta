@@ -21,102 +21,138 @@ props:
       type: string
       minLength: 1
       format: uri-reference
+      description: Destino do logotipo da barra, preparado pelo Portal como URL inicial do domínio principal.
     logo_base_url:
       title: Endereço base dos logotipos
       type: string
       minLength: 1
       format: uri-reference
+      description: Caminho base usado para montar os arquivos de logotipo institucional responsivo.
     logo_alt:
       title: Texto alternativo do logotipo
       type: string
       minLength: 1
       default: ACULTA
+      description: Texto alternativo da imagem institucional da ACULTA.
     is_account_domain:
       title: Exibir no domínio da conta
       type: boolean
       default: false
+      description: Quando true, aplica o modificador de layout usado na barra institucional do domínio da Conta.
     show_utility_bar:
       title: Exibir barra de utilidades
       type: boolean
       default: true
+      description: Controla a exibição conjunta dos gatilhos de busca, carrinho, mensagens, alertas e conta.
     cart_url:
       title: Endereço do carrinho
       type: [string, 'null']
       format: uri-reference
       default: null
+      description: Destino do carrinho completo; quando preenchido, habilita a inclusão do painel de carrinho.
     cart_count:
       title: Quantidade de itens no carrinho
       type: integer
       minimum: 0
       default: 0
+      description: Quantidade total de unidades nos carrinhos, encaminhada ao gatilho e ao painel do carrinho.
     cart_empty:
       title: Carrinho sem itens
       type: boolean
       default: true
+      description: Estado vazio calculado pelo CartUtility e encaminhado ao painel para selecionar vazio ou itens.
     cart_total:
       title: Valor total do carrinho
       type: string
       default: ''
+      description: Total formatado pelo Portal para o conjunto de carrinhos.
     cart_sites:
       title: Carrinhos por site
       type: array
       default: []
+      description: Grupos de carrinho e linhas formatadas por purpose/site, produzidos pelo CartUtility.
       items:
         type: object
+        description: Grupo de linhas do carrinho para um purpose/site.
         additionalProperties: false
         required: [key, label, total, items]
         properties:
-          key: { type: string }
-          label: { type: string }
-          total: { type: string }
-          checkout_url: { type: string, default: '' }
+          key:
+            type: string
+            description: Chave do purpose/site usada para selecionar a apresentação e a rota de checkout do grupo.
+          label:
+            type: string
+            description: Nome localizado do purpose/site mostrado como cabeçalho do grupo.
+          total:
+            type: string
+            description: Soma das linhas do grupo, já formatada para exibição.
+          checkout_url:
+            type: string
+            default: ''
+            description: Destino de checkout associado ao grupo quando o Portal fornece um fluxo próprio.
           items:
             type: array
+            description: Linhas de produto do grupo, ordenadas pelo Portal para exibição no painel.
             items:
               type: object
+              description: Linha resumida de um item no carrinho.
               additionalProperties: false
               required: [title, quantity, total]
               properties:
-                title: { type: string }
-                quantity: { type: string }
-                total: { type: string }
+                title:
+                  type: string
+                  description: Título formatado do item do Commerce.
+                quantity:
+                  type: string
+                  description: Quantidade do item como texto pronto para exibição.
+                total:
+                  type: string
+                  description: Total da linha como valor formatado pelo Portal.
     cart_checkout_url:
       title: Endereço para finalizar compra
       type: string
       default: ''
+      description: Destino geral para finalizar os itens reunidos em um pedido, quando disponível.
     messages_url:
       title: Endereço da caixa de mensagens
       type: [string, 'null']
       format: uri-reference
       default: null
+      description: Destino do preview de mensagens; quando disponível, mostra o gatilho de mensagens.
     messages_count:
       title: Quantidade de mensagens não lidas
       type: integer
       minimum: 0
       default: 0
+      description: Contagem não lida preparada pelo Messenger e exibida no gatilho de mensagens.
     messages_all_url:
       title: Endereço de todas as mensagens
       type: string
       default: ''
+      description: Destino da aba de mensagens da conta, encaminhado ao gatilho.
     alerts_url:
       title: Endereço da central de alertas
       type: [string, 'null']
       format: uri-reference
       default: null
+      description: Destino do preview de alertas; quando disponível, mostra o gatilho de alertas.
     alerts_count:
       title: Quantidade de alertas
       type: integer
       minimum: 0
       default: 0
+      description: Contagem preparada pelo Messenger com alertas ativos e, para pessoas autenticadas, avisos não lidos.
     alerts_count_kind:
       title: Tipo de contagem dos alertas
       type: string
       enum: [active, attention]
       default: active
+      description: Define o texto acessível do gatilho como alertas ativos ou como alertas ativos e avisos não lidos.
     alerts_all_url:
       title: Endereço de todos os alertas
       type: string
       default: ''
+      description: Destino da aba de avisos da conta, encaminhado ao gatilho de alertas.
 slots:
   search:
     title: Pesquisa

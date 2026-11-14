@@ -36,6 +36,7 @@ props:
       description: Níveis acima da página atual, sem o início, que o componente já mostra.
       items:
         type: object
+        description: Link de uma seção anterior à página atual na trilha de navegação.
         additionalProperties: false
         required: [label, url]
         properties:

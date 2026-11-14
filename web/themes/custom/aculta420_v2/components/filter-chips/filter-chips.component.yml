@@ -14,6 +14,7 @@ props:
       type: array
       items:
         type: object
+        description: Filtro apresentado como link, opcionalmente com contagem e estado ativo.
         additionalProperties: false
         required: [label, url]
         properties:

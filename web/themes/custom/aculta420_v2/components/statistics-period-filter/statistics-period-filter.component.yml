@@ -24,6 +24,7 @@ props:
       type: array
       items:
         type: object
+        description: Opção de período disponível no seletor enviado pelo formulário.
         additionalProperties: false
         required: [value, label]
         properties:
@@ -48,6 +49,7 @@ props:
       type: array
       items:
         type: object
+        description: Par nome/valor enviado em um campo oculto do formulário.
         additionalProperties: false
         required: [name, value]
         properties:

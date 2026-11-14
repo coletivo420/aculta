@@ -12,18 +12,23 @@ props:
       type: string
       minLength: 1
       default: Ecossistema ACULTA
+      description: Cabeçalho acessível da navegação entre portais, referenciado por aria-labelledby.
     links:
       title: Links disponíveis
       type: array
       default: []
+      description: Portais habilitados fornecidos pelo DomainPresentationBuilder; lista vazia omite a vitrine.
       items:
         type: object
         additionalProperties: false
+        description: Destino de um portal ativo da rede ACULTA.
         required: [title, url]
         properties:
           title:
             type: string
             minLength: 1
+            description: Nome localizado do portal apresentado no link.
           url:
             type: string
             format: uri-reference
+            description: URL inicial do domínio ativo resolvida para o ambiente atual.
