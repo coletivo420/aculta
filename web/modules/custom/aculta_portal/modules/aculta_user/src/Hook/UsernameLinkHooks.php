@@ -31,7 +31,7 @@ final class UsernameLinkHooks {
   /**
    * Aplica o link do perfil público nas variáveis do nome de usuário.
    *
-   * @param array $variables
+   * @param array<array-key, mixed> $variables
    *   Variáveis de preprocessamento, alteradas por referência.
    */
   #[Hook('preprocess_username')]
@@ -51,7 +51,12 @@ final class UsernameLinkHooks {
     else {
       $variables['link_path'] = $url->toString();
       $variables['profile_access'] = TRUE;
-      $variables['attributes']['href'] = $url->toString();
+      // Atributos do tema podem ser um objeto Attribute (ArrayAccess) ou um array: ambos recebem o href.
+      $attributes = $variables['attributes'] ?? [];
+      if (is_array($attributes) || $attributes instanceof \ArrayAccess) {
+        $attributes['href'] = $url->toString();
+        $variables['attributes'] = $attributes;
+      }
     }
     $cache->applyTo($variables);
   }
@@ -59,20 +64,23 @@ final class UsernameLinkHooks {
   /**
    * Aplica o link do perfil público em campos de referência a usuário.
    *
-   * @param array $variables
+   * @param array<array-key, mixed> $variables
    *   Variáveis de preprocessamento, alteradas por referência.
    */
   #[Hook('preprocess_field')]
   public function preprocessField(array &$variables): void {
-    $items = $variables['element']['#items'] ?? NULL;
+    $element = $variables['element'] ?? NULL;
+    $items = is_array($element) ? ($element['#items'] ?? NULL) : NULL;
     if (!$items instanceof FieldItemListInterface || $items->getFieldDefinition()->getSetting('target_type') !== 'user') {
       return;
     }
 
     $referencedUsers = $items->referencedEntities();
-    foreach ($variables['items'] ?? [] as $delta => $item) {
-      $content = $item['content'] ?? NULL;
-      $user = $referencedUsers[$delta] ?? NULL;
+    $rows = is_array($variables['items'] ?? NULL) ? $variables['items'] : [];
+    foreach ($rows as $delta => $item) {
+      $row = is_array($item) ? $item : [];
+      $content = $row['content'] ?? NULL;
+      $user = is_array($referencedUsers) ? ($referencedUsers[$delta] ?? NULL) : NULL;
       // Só o link do rótulo é trocado; itens sem link ou sem usuário carregado ficam como estão.
       if (!is_array($content) || !isset($content['#url']) || !$user instanceof UserInterface) {
         continue;
@@ -81,13 +89,18 @@ final class UsernameLinkHooks {
       $cache = BubbleableMetadata::createFromRenderArray($content);
       $url = $this->publicProfileLink->build($user, $cache);
       if ($url === NULL) {
-        $variables['items'][$delta]['content'] = ['#plain_text' => (string) ($content['#title'] ?? $user->getDisplayName())];
-        $cache->applyTo($variables['items'][$delta]['content']);
-        continue;
+        $title = $content['#title'] ?? $user->getDisplayName();
+        $plain = ['#plain_text' => is_scalar($title) || $title instanceof \Stringable ? (string) $title : ''];
+        $cache->applyTo($plain);
+        $row['content'] = $plain;
       }
-      $content['#url'] = $url;
-      $cache->applyTo($content);
-      $variables['items'][$delta]['content'] = $content;
+      else {
+        $content['#url'] = $url;
+        $cache->applyTo($content);
+        $row['content'] = $content;
+      }
+      $rows[$delta] = $row;
+      $variables['items'] = $rows;
     }
   }
 

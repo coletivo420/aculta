@@ -60,6 +60,12 @@ final class AccountBioForm extends FormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<array-key, mixed> $form
+   *   Estrutura do formulário.
+   *
+   * @return array<array-key, mixed>
+   *   Estrutura do formulário.
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $profile = $this->profile();
@@ -68,8 +74,9 @@ final class AccountBioForm extends FormBase {
     // Studio has a full-page Form API fallback. Existing Minha Conta modals
     // retain their owner AJAX/JSON behavior and unchanged submission route.
     $form['#action'] = $actionUrl->toString();
+    // Atributos e anexos são lidos e gravados de volta como arrays, sem escrita aninhada em valores não tipados.
     if ($studio) {
-      $form['#attributes']['data-portal-ui'] = 'studio-bio-form';
+      $form['#attributes'] = array_merge(is_array($form['#attributes'] ?? NULL) ? $form['#attributes'] : [], ['data-portal-ui' => 'studio-bio-form']);
     }
     if ($this->isHtmxRequest()) {
       (new Htmx())
@@ -80,17 +87,27 @@ final class AccountBioForm extends FormBase {
         ->applyTo($form);
     }
     elseif (!$studio) {
-      $form['#attributes']['data-aculta-bio-form'] = '';
-      $form['#attached']['library'][] = 'aculta_user/account-bio-form';
-      $form['#attached']['drupalSettings']['acultaUser']['bioSave'] = [
+      $attributes = is_array($form['#attributes'] ?? NULL) ? $form['#attributes'] : [];
+      $attributes['data-aculta-bio-form'] = '';
+      $form['#attributes'] = $attributes;
+      $attached = is_array($form['#attached'] ?? NULL) ? $form['#attached'] : [];
+      $libraries = is_array($attached['library'] ?? NULL) ? $attached['library'] : [];
+      $libraries[] = 'aculta_user/account-bio-form';
+      $attached['library'] = $libraries;
+      $settings = is_array($attached['drupalSettings'] ?? NULL) ? $attached['drupalSettings'] : [];
+      $acultaUser = is_array($settings['acultaUser'] ?? NULL) ? $settings['acultaUser'] : [];
+      $acultaUser['bioSave'] = [
         'url' => Url::fromRoute('aculta_user.bio_save', [], ['query' => ['token' => $this->csrfToken->get('bio/salvar')]])->toString(),
       ];
+      $settings['acultaUser'] = $acultaUser;
+      $attached['drupalSettings'] = $settings;
+      $form['#attached'] = $attached;
     }
     $form['bio'] = [
       '#type' => 'textarea',
       '#title' => $this->t('Bio'),
       '#description' => $this->t('Até @max caracteres. Aparece no seu perfil público quando você escolher exibi-la.', ['@max' => self::MAX_LENGTH]),
-      '#default_value' => $profile->hasField('field_bio') ? (string) $profile->get('field_bio')->value : '',
+      '#default_value' => $profile->hasField('field_bio') ? $this->textValue($profile->get('field_bio')->value) : '',
       '#rows' => 4,
     ];
     // Container comum, não "actions": o Drupal move os botões de form-actions para a barra do diálogo (proxies)
@@ -118,20 +135,26 @@ final class AccountBioForm extends FormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<array-key, mixed> $form
+   *   Estrutura do formulário.
    */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
-    if (mb_strlen(trim((string) $form_state->getValue('bio'))) > self::MAX_LENGTH) {
+    if (mb_strlen(trim($this->textValue($form_state->getValue('bio')))) > self::MAX_LENGTH) {
       $form_state->setErrorByName('bio', $this->t('A bio aceita até @max caracteres.', ['@max' => self::MAX_LENGTH]));
     }
   }
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<array-key, mixed> $form
+   *   Estrutura do formulário.
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $profile = $this->profile();
     // Texto vazio grava vazio: a visão geral volta a mostrar o aviso padrão.
-    $profile->set('field_bio', trim((string) $form_state->getValue('bio')));
+    $profile->set('field_bio', trim($this->textValue($form_state->getValue('bio'))));
     $profile->save();
     $this->messenger()->addStatus($this->t('Bio salva.'));
 
@@ -162,6 +185,13 @@ final class AccountBioForm extends FormBase {
     $storage = $this->entityTypeManagerService->getStorage('profile');
     $account = $this->currentUserService->getAccount();
     return PerfilDoPapel::obter($storage, $account);
+  }
+
+  /**
+   * Texto de um valor de formulário ou de campo; vazio quando o valor não é escalar.
+   */
+  private function textValue(mixed $value): string {
+    return is_scalar($value) || $value instanceof \Stringable ? (string) $value : '';
   }
 
 }

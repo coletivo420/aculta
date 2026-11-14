@@ -7,6 +7,7 @@ namespace Drupal\aculta_user;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\Query\QueryInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\comment\CommentInterface;
 use Drupal\node\NodeInterface;
@@ -30,6 +31,9 @@ final class ParticipationRules {
 
   /**
    * Returns the active settings with safe defaults for missing keys.
+   *
+   * @return array<array-key, mixed>
+   *   Configurações ativas, com os padrões para chaves ausentes.
    */
   public function settings(): array {
     return $this->configFactory->get('aculta_user.settings')->getRawData() + [
@@ -55,8 +59,8 @@ final class ParticipationRules {
    * Whether the account is exempt by role.
    */
   public function isExempt(AccountInterface $account): bool {
-    $exempt = $this->settings()['papeis_isentos'];
-    return array_intersect($exempt, $account->getRoles()) !== [];
+    $exempt = $this->stringsOf($this->settings()['papeis_isentos'] ?? []);
+    return array_intersect($exempt, $this->stringsOf($account->getRoles())) !== [];
   }
 
   /**
@@ -101,7 +105,7 @@ final class ParticipationRules {
    * contexts, even though LMS comments never enter public moderation.
    */
   public function hasPublishedDiscussionComment(int $uid): bool {
-    if ($this->discussionCommentQuery($uid, TRUE, TRUE)->range(0, 1)->count()->execute() > 0) {
+    if ($this->intValue($this->discussionCommentQuery($uid, TRUE, TRUE)->range(0, 1)->count()->execute()) > 0) {
       return TRUE;
     }
 
@@ -109,13 +113,13 @@ final class ParticipationRules {
     // Once Forum Comments are removed, this query remains the participation
     // source for revisionable public posts.
     if ($this->entityTypeManager->hasDefinition('aculta_forum_post')) {
-      return $this->entityTypeManager->getStorage('aculta_forum_post')->getQuery()
+      return $this->intValue($this->entityTypeManager->getStorage('aculta_forum_post')->getQuery()
         ->accessCheck(FALSE)
         ->condition('uid', $uid)
         ->condition('status', 1)
         ->range(0, 1)
         ->count()
-        ->execute() > 0;
+        ->execute()) > 0;
     }
 
     return FALSE;
@@ -125,7 +129,7 @@ final class ParticipationRules {
    * Whether an account has a pending comment in a non-LMS context.
    */
   public function hasPendingDiscussionComment(int $uid): bool {
-    return $this->discussionCommentQuery($uid, FALSE)->range(0, 1)->count()->execute() > 0;
+    return $this->intValue($this->discussionCommentQuery($uid, FALSE)->range(0, 1)->count()->execute()) > 0;
   }
 
   /**
@@ -139,16 +143,16 @@ final class ParticipationRules {
    * Number of published replies made in public Forum topics.
    */
   public function publishedPublicForumCommentCount(int $uid): int {
-    return (int) $this->discussionCommentQuery($uid, TRUE)
+    return $this->intValue($this->discussionCommentQuery($uid, TRUE)
       ->condition('entity_id.entity:node.type', 'aculta_forum_topic')
       ->count()
-      ->execute();
+      ->execute());
   }
 
   /**
    * Builds a query over the shared discussion field.
    */
-  private function discussionCommentQuery(int $uid, bool $published, bool $includeLms = FALSE) {
+  private function discussionCommentQuery(int $uid, bool $published, bool $includeLms = FALSE): QueryInterface {
     $query = $this->entityTypeManager->getStorage('comment')->getQuery()
       ->accessCheck(FALSE)
       ->condition('comment_type', self::DISCUSSION_COMMENT_TYPE)
@@ -170,6 +174,29 @@ final class ParticipationRules {
   private function hasHistoricAuthor(FieldableEntityInterface $entity): bool {
     return $entity->hasField('field_autor_legado')
       && !$entity->get('field_autor_legado')->isEmpty();
+  }
+
+  /**
+   * Só os itens textuais de uma lista (papéis e configurações de papéis são strings).
+   *
+   * @return list<string>
+   *   Itens que são strings, na mesma ordem.
+   */
+  private function stringsOf(mixed $values): array {
+    $strings = [];
+    foreach (is_array($values) ? $values : [] as $value) {
+      if (is_string($value)) {
+        $strings[] = $value;
+      }
+    }
+    return $strings;
+  }
+
+  /**
+   * Inteiro de um resultado de consulta; zero quando não é numérico.
+   */
+  private function intValue(mixed $value): int {
+    return is_numeric($value) ? (int) $value : 0;
   }
 
 }
