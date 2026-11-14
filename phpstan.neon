@@ -6,7 +6,7 @@ includes:
 
 # A extensão mglaman/phpstan-drupal é carregada automaticamente pelo phpstan/extension-installer.
 parameters:
-    level: 5
+    level: 10
     # Dívida resolvida em ignores revisados precisa aparecer, não ficar oculta.
     reportUnmatchedIgnoredErrors: true
     paths:

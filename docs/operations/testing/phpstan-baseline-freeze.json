@@ -1,0 +1,57 @@
+{
+  "frozen_at": "2026-11-14T17:38:32+00:00",
+  "source_sha": "4740f6103",
+  "level": 10,
+  "canonical_baseline": "phpstan-baseline.neon",
+  "baseline_sha256": "8b24e3841fedc16350ac30c2741a5d11d4f65792487c3057addf24f48c10be09",
+  "entries": 15611,
+  "occurrences": 26863,
+  "production": 15831,
+  "tests": 11032,
+  "top_modules": {
+    "aculta_forum": 3096,
+    "scripts": 3071,
+    "aculta_lms": 2184,
+    "aculta_messenger": 2073,
+    "aculta_portal": 2020,
+    "aculta_events": 1792,
+    "aculta_wiki": 1461,
+    "aculta_lms_h5p": 1299,
+    "aculta_index": 1112,
+    "aculta_user": 899
+  },
+  "top_identifiers": {
+    "offsetAccess.nonOffsetAccessible": 8234,
+    "argument.type": 4659,
+    "method.nonObject": 3059,
+    "missingType.iterableValue": 2821,
+    "cast.string": 2094,
+    "cast.int": 1350,
+    "method.notFound": 1004,
+    "property.nonObject": 673,
+    "return.type": 371,
+    "foreach.nonIterable": 356
+  },
+  "previous_baseline": {
+    "level": 5,
+    "commit": "2e631809619d0fecd56ca73c5193c0106b7f0c38",
+    "sha256": "3fa97bbe8ec817f06e189344e529076d9c6f408bb5b99da331c23bbaae52f8b1"
+  },
+  "environment": {
+    "php": "8.4.27",
+    "phpstan": "2.3.5",
+    "drupal_extension": "mglaman/phpstan-drupal 2.2.2",
+    "scope": [
+      "web/modules/custom",
+      "web/themes/custom",
+      "scripts"
+    ],
+    "bleeding_edge": true,
+    "report_unmatched_ignored_errors": true
+  },
+  "generation_command": "vendor/bin/phpstan analyse --configuration=.phpstan-audit.neon --level=10 --generate-baseline=phpstan-baseline.neon --memory-limit=5G",
+  "gates": {
+    "check": "php scripts/phpstan-debt-guard.php check --baseline=phpstan-baseline.neon --config=phpstan.neon --git-base=origin/dev --analysis=artifacts/phpstan.json",
+    "diff": "php scripts/phpstan-debt-guard.php diff --baseline=phpstan-baseline.neon --git-base=origin/dev"
+  }
+}
