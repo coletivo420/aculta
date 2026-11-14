@@ -85,7 +85,7 @@ class DiscussionReactionBuilder {
         ],
       ],
       '#cache' => [
-        'contexts' => ['user', 'user.permissions'],
+        'contexts' => ['user', 'user.permissions', 'languages:language_interface'],
         'tags' => array_merge($entity->getCacheTags(), [
           "aculta_discussion_reactions:{$entityType}:{$entityId}",
           'config:aculta_forum.settings',
@@ -199,7 +199,7 @@ class DiscussionReactionBuilder {
       '#props' => [],
       '#slots' => ['categories' => $categorySlots],
       '#cache' => [
-        'contexts' => ['user', 'user.permissions'],
+        'contexts' => ['user', 'user.permissions', 'languages:language_interface'],
         'tags' => array_merge($entity->getCacheTags(), [
           "aculta_discussion_reactions:{$entityType}:{$entityId}",
           'config:aculta_forum.settings',
