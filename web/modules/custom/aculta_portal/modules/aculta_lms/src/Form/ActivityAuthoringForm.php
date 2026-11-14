@@ -52,13 +52,20 @@ final class ActivityAuthoringForm extends FormBase {
 
   /**
    * Builds the activity authoring form.
+   *
+   * @param array<array-key, mixed> $form
+   *   The form render array being built.
+   *
+   * @return array<array-key, mixed>
+   *   The completed form render array.
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     [$course, $lesson, $activity] = $this->routeEntities();
-    $form['#attributes']['data-aculta-unsaved-changes'] = TRUE;
-    $form['#attached']['library'][] = 'aculta_lms/unsaved_changes';
-    $configuration = $activity ? $this->decodeConfiguration((string) $activity->get('answer_config')->value) : [];
-    $type = (string) ($activity?->get('type')->value ?? 'free_text');
+    $form['#attributes'] = ['data-aculta-unsaved-changes' => TRUE];
+    $form['#attached'] = ['library' => ['aculta_lms/unsaved_changes']];
+    $storedConfiguration = $activity?->get('answer_config')->value;
+    $configuration = is_string($storedConfiguration) ? $this->decodeConfiguration($storedConfiguration) : [];
+    $type = self::stringValue($activity?->get('type')->value ?? NULL, 'free_text');
     $typeOptions = [
       'true_false' => $this->t('Verdadeiro ou falso'),
       'select' => $this->t('Seleção'),
@@ -89,7 +96,7 @@ final class ActivityAuthoringForm extends FormBase {
       '#title' => $this->t('Enunciado'),
       '#required' => TRUE,
       '#rows' => 4,
-      '#default_value' => (string) ($configuration['question'] ?? ''),
+      '#default_value' => self::stringValue($configuration['question'] ?? NULL),
     ];
     $form['correct_boolean'] = [
       '#type' => 'radios',
@@ -102,21 +109,24 @@ final class ActivityAuthoringForm extends FormBase {
       '#type' => 'textarea',
       '#title' => $this->t('Opções de resposta'),
       '#description' => $this->t('Uma opção por linha. A ordem exibida ao estudante acompanha esta lista.'),
-      '#default_value' => implode("\n", array_map('strval', array_values((array) ($configuration['options'] ?? [])))),
+      '#default_value' => implode("\n", self::stringValues($configuration['options'] ?? NULL)),
       '#states' => ['visible' => [':input[name="type"]' => ['value' => 'select']]],
     ];
     $form['correct_values'] = [
       '#type' => 'textarea',
       '#title' => $this->t('Opções corretas'),
       '#description' => $this->t('Informe cada opção correta em uma linha, exatamente como aparece acima. Seleção permite mais de uma resposta correta.'),
-      '#default_value' => implode("\n", array_map('strval', (array) ($configuration['correct'] ?? []))),
+      '#default_value' => implode("\n", self::stringValues($configuration['correct'] ?? NULL)),
       '#states' => ['visible' => [':input[name="type"]' => ['value' => 'select']]],
     ];
     $form['blank_answers'] = [
       '#type' => 'textarea',
       '#title' => $this->t('Respostas aceitas por lacuna'),
       '#description' => $this->t('Uma lacuna por linha; use | para separar sinônimos aceitos, por exemplo: cannabis|maconha.'),
-      '#default_value' => implode("\n", array_map(static fn(array $answers): string => implode('|', $answers), (array) ($configuration['correct'] ?? []))),
+      '#default_value' => implode("\n", array_map(
+        static fn(array $answers): string => implode('|', $answers),
+        self::stringGroups($configuration['correct'] ?? NULL),
+      )),
       '#states' => ['visible' => [':input[name="type"]' => ['value' => 'fill_blanks']]],
     ];
     $form['minimum_characters'] = [
@@ -125,7 +135,7 @@ final class ActivityAuthoringForm extends FormBase {
       '#min' => 0,
       '#max' => 10000,
       '#step' => 1,
-      '#default_value' => (int) ($configuration['minimum_characters'] ?? 0),
+      '#default_value' => self::nonNegativeInteger($configuration['minimum_characters'] ?? NULL),
       '#states' => ['visible' => [':input[name="type"]' => ['value' => 'free_text']]],
     ];
     $form['weight'] = [
@@ -134,7 +144,9 @@ final class ActivityAuthoringForm extends FormBase {
       '#min' => 0,
       '#step' => 1,
       '#required' => TRUE,
-      '#default_value' => $activity?->get('weight')->value ?? $this->nextWeight((int) $lesson->id()),
+      '#default_value' => $activity !== NULL
+        ? self::signedInteger($activity->get('weight')->value)
+        : $this->nextWeight((int) $lesson->id()),
     ];
     $form['graded'] = [
       '#type' => 'checkbox',
@@ -142,17 +154,19 @@ final class ActivityAuthoringForm extends FormBase {
       '#default_value' => (bool) ($activity?->get('graded')->value ?? ($type !== 'free_text' && $type !== 'file_upload')),
       '#description' => $this->t('Respostas discursivas e arquivos aguardam avaliação do educador; o indicador formativo não altera a nota final.'),
     ];
-    $form['actions']['submit'] = [
-      '#type' => 'submit',
-      '#value' => $activity ? $this->t('Salvar atividade') : $this->t('Criar atividade'),
-      '#button_type' => 'primary',
-    ];
-    $form['actions']['cancel'] = [
-      '#type' => 'aculta_portal_button',
-      '#props' => [
-        'text' => (string) $this->t('Voltar à estrutura do curso'),
-        'url' => Url::fromRoute('aculta_lms.course_structure', ['course' => $course->id()])->toString(),
-        'variant' => 'secondary',
+    $form['actions'] = [
+      'submit' => [
+        '#type' => 'submit',
+        '#value' => $activity ? $this->t('Salvar atividade') : $this->t('Criar atividade'),
+        '#button_type' => 'primary',
+      ],
+      'cancel' => [
+        '#type' => 'aculta_portal_button',
+        '#props' => [
+          'text' => (string) $this->t('Voltar à estrutura do curso'),
+          'url' => Url::fromRoute('aculta_lms.course_structure', ['course' => $course->id()])->toString(),
+          'variant' => 'secondary',
+        ],
       ],
     ];
     return $form;
@@ -160,11 +174,14 @@ final class ActivityAuthoringForm extends FormBase {
 
   /**
    * Validates activity configuration before save.
+   *
+   * @param array<array-key, mixed> $form
+   *   The form render array being validated.
    */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
-    $type = (string) $form_state->getValue('type');
+    $type = self::stringValue($form_state->getValue('type'));
     try {
-      ActivityConfiguration::fromFormValues($type, $form_state->getValues());
+      ActivityConfiguration::fromFormValues($type, self::stringKeyedValues($form_state->getValues()));
     }
     catch (\InvalidArgumentException $exception) {
       $field = match ($type) {
@@ -184,12 +201,15 @@ final class ActivityAuthoringForm extends FormBase {
 
   /**
    * Saves the activity and returns to course structure.
+   *
+   * @param array<array-key, mixed> $form
+   *   The submitted form render array.
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     [$course, $lesson, $activity] = $this->routeEntities();
-    $type = (string) $form_state->getValue('type');
+    $type = self::stringValue($form_state->getValue('type'));
     try {
-      $configuration = ActivityConfiguration::fromFormValues($type, $form_state->getValues());
+      $configuration = ActivityConfiguration::fromFormValues($type, self::stringKeyedValues($form_state->getValues()));
       $answerConfig = json_encode($configuration, JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     }
     catch (\JsonException | \InvalidArgumentException) {
@@ -197,10 +217,10 @@ final class ActivityAuthoringForm extends FormBase {
       return;
     }
     $values = [
-      'lesson_id' => (int) $lesson->id(),
+      'lesson_id' => self::nonNegativeInteger($lesson->id()),
       'type' => $type,
       'graded' => (bool) $form_state->getValue('graded'),
-      'weight' => (int) $form_state->getValue('weight'),
+      'weight' => self::nonNegativeInteger($form_state->getValue('weight')),
       'answer_config' => $answerConfig,
     ];
     if ($activity === NULL) {
@@ -242,21 +262,123 @@ final class ActivityAuthoringForm extends FormBase {
       $this->entityTypeManager->getStorage('aculta_lms_activity')->loadByProperties(['lesson_id' => $lessonId]),
       static fn($activity): bool => $activity instanceof ContentEntityInterface,
     ));
-    $weights = array_map(static fn(ContentEntityInterface $activity): int => (int) $activity->get('weight')->value, $activities);
+    $weights = array_map(static fn(ContentEntityInterface $activity): int => self::signedInteger($activity->get('weight')->value), $activities);
     return $weights === [] ? 0 : max($weights) + 1;
   }
 
   /**
    * Decodes stored learner-facing activity settings.
+   *
+   * @return array<string, mixed>
+   *   String-keyed activity configuration.
    */
   private function decodeConfiguration(string $json): array {
     try {
       $configuration = json_decode($json === '' ? '{}' : $json, TRUE, 512, JSON_THROW_ON_ERROR);
-      return is_array($configuration) ? $configuration : [];
+      if (!is_array($configuration)) {
+        return [];
+      }
+      $stringKeyed = [];
+      foreach ($configuration as $key => $value) {
+        if (is_string($key)) {
+          $stringKeyed[$key] = $value;
+        }
+      }
+      return $stringKeyed;
     }
     catch (\JsonException) {
       throw new \UnexpectedValueException('A configuração armazenada da atividade não é JSON válido.');
     }
+  }
+
+  /**
+   * Reads only string values from an untrusted configuration field.
+   *
+   * @return list<string>
+   *   String entries, preserving their original order.
+   */
+  private static function stringValues(mixed $value): array {
+    if (!is_array($value)) {
+      return [];
+    }
+    $strings = [];
+    foreach ($value as $item) {
+      if (is_string($item)) {
+        $strings[] = $item;
+      }
+    }
+    return $strings;
+  }
+
+  /**
+   * Reads a list of answer groups from a stored fill-blanks configuration.
+   *
+   * @return list<list<string>>
+   *   Valid string groups in source order.
+   */
+  private static function stringGroups(mixed $value): array {
+    if (!is_array($value)) {
+      return [];
+    }
+    $groups = [];
+    foreach ($value as $group) {
+      if (is_array($group)) {
+        $groups[] = self::stringValues($group);
+      }
+    }
+    return $groups;
+  }
+
+  /**
+   * Converts known scalar text values while rejecting unexpected structures.
+   */
+  private static function stringValue(mixed $value, string $default = ''): string {
+    return is_string($value) ? $value : $default;
+  }
+
+  /**
+   * Converts a valid non-negative integer representation, defaulting safely.
+   */
+  private static function nonNegativeInteger(mixed $value): int {
+    if (is_int($value) && $value >= 0) {
+      return $value;
+    }
+    if (is_string($value) && preg_match('/^\d+$/D', $value) === 1) {
+      return (int) $value;
+    }
+    return 0;
+  }
+
+  /**
+   * Converts a stored signed integer representation, defaulting safely.
+   */
+  private static function signedInteger(mixed $value): int {
+    if (is_int($value)) {
+      return $value;
+    }
+    if (is_string($value) && preg_match('/^-?\d+$/D', $value) === 1) {
+      return (int) $value;
+    }
+    return 0;
+  }
+
+  /**
+   * Narrows Form API values to the string-keyed shape required by the config.
+   *
+   * @param array<array-key, mixed> $values
+   *   Raw Form API values.
+   *
+   * @return array<string, mixed>
+   *   Values with string field names.
+   */
+  private static function stringKeyedValues(array $values): array {
+    $stringKeyed = [];
+    foreach ($values as $key => $value) {
+      if (is_string($key)) {
+        $stringKeyed[$key] = $value;
+      }
+    }
+    return $stringKeyed;
   }
 
 }

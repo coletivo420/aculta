@@ -1,10 +1,10 @@
 # Dívida PHPStan — ACULTA
 
-Gerado em 2026-11-14T21:51:18+00:00 por `scripts/phpstan-debt-report.php`.
+Gerado em 2026-11-14T22:03:31+00:00 por `scripts/phpstan-debt-report.php`.
 
 | Item | Valor |
 | --- | --- |
-| Commit | `aec270c3fe189ad74be1748a7cf1b27d21c24d17` |
+| Commit | `PENDENTE` |
 | PHP | 8.4.27 |
 | PHPStan | PHPStan - PHP Static Analysis Tool 2.3.5 |
 | Nível | 10 |
@@ -15,11 +15,11 @@ Gerado em 2026-11-14T21:51:18+00:00 por `scripts/phpstan-debt-report.php`.
 
 | Medida | Ocorrências |
 | --- | ---: |
-| Total bruto no nível 10 | 25856 |
-| Dívida congelada no baseline | 25856 |
+| Total bruto no nível 10 | 25824 |
+| Dívida congelada no baseline | 25824 |
 | Erros não suprimidos | 0 |
-| Entradas no baseline | 15127 |
-| Produção | 15601 |
+| Entradas no baseline | 15104 |
+| Produção | 15569 |
 | Testes | 10255 |
 
 ## Criticidade funcional
@@ -27,15 +27,15 @@ Gerado em 2026-11-14T21:51:18+00:00 por `scripts/phpstan-debt-report.php`.
 | Criticidade | Ocorrências |
 | --- | ---: |
 | alta | 231 |
-| media | 22678 |
-| baixa | 2947 |
+| media | 22654 |
+| baixa | 2939 |
 
 ## Evolução desde o baseline de referência
 
 | Classificação | Entradas |
 | --- | ---: |
-| Dívida removida | 35 |
-| Dívida mantida | 15127 |
+| Dívida removida | 23 |
+| Dívida mantida | 15104 |
 | Nova dívida (bloqueante) | 0 |
 | Contagem aumentada (bloqueante) | 0 |
 | Contagem reduzida | 0 |
@@ -51,8 +51,8 @@ Gerado em 2026-11-14T21:51:18+00:00 por `scripts/phpstan-debt-report.php`.
 | aculta_portal | 2020 |
 | aculta_events | 1792 |
 | aculta_wiki | 1461 |
-| aculta_lms | 1299 |
 | aculta_lms_h5p | 1299 |
+| aculta_lms | 1267 |
 | aculta_index | 1112 |
 | aculta_user | 899 |
 | aculta_commerce | 839 |
@@ -80,12 +80,12 @@ Gerado em 2026-11-14T21:51:18+00:00 por `scripts/phpstan-debt-report.php`.
 
 | Identificador | Ocorrências |
 | --- | ---: |
-| `offsetAccess.nonOffsetAccessible` | 7911 |
-| `argument.type` | 4547 |
+| `offsetAccess.nonOffsetAccessible` | 7906 |
+| `argument.type` | 4539 |
 | `method.nonObject` | 2804 |
-| `missingType.iterableValue` | 2737 |
-| `cast.string` | 2050 |
-| `cast.int` | 1332 |
+| `missingType.iterableValue` | 2729 |
+| `cast.string` | 2043 |
+| `cast.int` | 1328 |
 | `method.notFound` | 914 |
 | `property.nonObject` | 664 |
 | `return.type` | 367 |
