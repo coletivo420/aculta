@@ -243,8 +243,9 @@ final class EventPageController extends ControllerBase {
             }
           }
 
-          // Neste caminho a ocorrência já traz um VirtualLocation.
-          $entrada['location'] = [$entrada['location'], $placeData];
+          $entrada['location'] = isset($entrada['location'])
+            ? [$entrada['location'], $placeData]
+            : $placeData;
         }
       }
 

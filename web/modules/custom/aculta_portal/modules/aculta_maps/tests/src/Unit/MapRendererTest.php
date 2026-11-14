@@ -68,7 +68,11 @@ final class MapRendererTest extends UnitTestCase {
     $this->assertSame('primary', $marker['categoryColorClass']);
     $this->assertSame('aculta_maps_popup_template', $build['popup_templates'][$marker['popupId']]['#theme']);
     $this->assertSame('Local aproximado', $build['popup_templates'][$marker['popupId']]['#popup']['#title']);
-    $this->assertSame('aculta_maps_marker_icon_template', $build['icon_templates'][$marker['iconTemplateId']]['#theme']);
+    $iconTemplate = $build['icon_templates'][$marker['iconTemplateId']];
+    $this->assertSame('inline_template', $iconTemplate['#type']);
+    $this->assertStringContainsString('data-aculta-map-marker-icon-template', $iconTemplate['#template']);
+    $this->assertSame('aculta420_v2:icon', $iconTemplate['#context']['icon']['#component']);
+    $this->assertSame('map-pin', $iconTemplate['#context']['icon']['#props']['name']);
   }
 
   /**

@@ -86,9 +86,20 @@ final class MapRenderer {
         ],
       ];
       $iconTemplates[$iconTemplateId] = [
-        '#theme' => 'aculta_maps_marker_icon_template',
-        '#template_id' => $iconTemplateId,
-        '#icon_name' => $iconName,
+        '#type' => 'inline_template',
+        '#template' => '<template data-aculta-map-marker-icon-template data-icon-template-id="{{ template_id }}">{{ icon }}</template>',
+        '#context' => [
+          'template_id' => $iconTemplateId,
+          'icon' => [
+            '#type' => 'component',
+            '#component' => 'aculta420_v2:icon',
+            '#props' => [
+              'name' => $iconName,
+              'variant' => 'duotone',
+              'size' => 'md',
+            ],
+          ],
+        ],
       ];
     }
 

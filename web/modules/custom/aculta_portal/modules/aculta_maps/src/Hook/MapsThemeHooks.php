@@ -36,13 +36,6 @@ final class MapsThemeHooks {
           'component' => NULL,
         ],
       ],
-      'aculta_maps_marker_icon_template' => [
-        'variables' => [
-          'template_id' => NULL,
-          'icon_name' => 'map-pin',
-          'icon' => NULL,
-        ],
-      ],
     ];
   }
 
