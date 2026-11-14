@@ -10,14 +10,17 @@ props:
   properties:
     format:
       title: Formato do documento
+      description: Rótulo visível do formato, como PDF.
       type: string
       minLength: 1
     size:
       title: Tamanho do arquivo
+      description: Tamanho legível do arquivo exibido junto ao formato.
       type: string
       minLength: 1
     format_token:
       title: Identificador de formato para exibição
+      description: Valor do atributo data-download-format usado para identificar o formato no markup.
       type: string
       minLength: 1
 slots:

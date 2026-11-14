@@ -10,8 +10,10 @@ props:
     label:
       type: string
       title: Texto do botão
+      description: Rótulo visível do controle de entrada.
       default: Continuar com Google
     url:
       type: [string, 'null']
       title: Endereço de início do login com Google (sem endereço, vira botão)
+      description: Quando informado, renderiza um link para o endereço; sem URL, renderiza um botão tipo button para o consumidor conectar a ação.
       default: null

@@ -11,6 +11,7 @@ props:
       type: boolean
       default: false
       title: Espaçamento compacto
+      description: Reduz o espaçamento vertical do estado vazio para uso em áreas secundárias.
 slots:
   message:
     title: Mensagem

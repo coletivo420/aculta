@@ -84,14 +84,15 @@ anteriores e não substituem a conferência do código atual.
    definições do provider. Stories para `hint`, `sales-panel` e `secret-reveal`
    foram adicionadas. Todos os slots agora têm título e descrição, e as props
    de topo têm título; o gate exige esses metadados. Auditoria atual dos 145
-   manifests: 525 props de topo, das quais 305 ainda não têm descrição em 67
+   manifests: 525 props de topo, das quais 289 ainda não têm descrição em 59
    SDCs. Considerando todos os nós de schema tipados sob essas props, incluindo
-   itens de arrays e schemas aninhados, são 689 nós, com 415 sem descrição em
-   70 SDCs. Totais históricos de 526/333 e 654/429 não se reproduzem neste
-   checkout e foram substituídos. Nesta rodada, oito manifests básicos
-   (`audio-player`, `data-table`, `filter-chips`, `form-field`, `hero-banner` e
-   três componentes de estatísticas) foram conferidos contra seus Twig e tiveram
-   descrições adicionadas às props e estruturas aninhadas. Os 18 manifests
+   itens de arrays e schemas aninhados, são 689 nós, com 396 sem descrição em
+   63 SDCs. Totais históricos de 526/333 e 654/429 não se reproduzem neste
+   checkout e foram substituídos. Dois lotes recentes documentaram 16 manifests
+   de elementos básicos e estatísticas a partir de seus Twig: `audio-player`,
+   `data-table`, `filter-chips`, `form-field`, `hero-banner`, três componentes
+   de estatísticas, `accordion`, `badge`, `breadcrumb`, `empty-state`,
+   `document-card`, `document-download`, `google-signin-button` e `hint`. Os 18 manifests
    anteriores do domínio Fórum também foram conferidos contra Twig e tiveram
    esses campos documentados. A checagem do provider instalado encontrou
    A validação atual do provider encontrou 22 props `unknown` em 13 SDCs,

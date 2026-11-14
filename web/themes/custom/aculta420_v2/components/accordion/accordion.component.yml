@@ -11,10 +11,12 @@ props:
       type: string
       minLength: 1
       title: Pergunta
+      description: Texto do controle nativo que abre ou recolhe a resposta.
     expanded:
       type: boolean
       default: false
       title: Aberto inicialmente
+      description: Quando verdadeiro, renderiza o elemento details inicialmente aberto.
 slots:
   content:
     title: Resposta

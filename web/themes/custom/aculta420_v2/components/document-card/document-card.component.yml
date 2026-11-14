@@ -11,9 +11,11 @@ props:
     title:
       type: string
       title: Título do documento
+      description: Texto do título clicável do documento.
     url:
       type: string
       title: URL do documento
+      description: Destino do link no título do documento.
 slots:
   category:
     title: Categoria

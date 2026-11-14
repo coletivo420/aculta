@@ -12,6 +12,7 @@ props:
       enum: [normal, muted]
       default: normal
       title: Ênfase
+      description: Ênfase visual normal ou secundária do texto auxiliar.
 slots:
   content:
     title: Texto

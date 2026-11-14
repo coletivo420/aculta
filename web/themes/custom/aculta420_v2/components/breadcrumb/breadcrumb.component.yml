@@ -10,6 +10,7 @@ props:
     label:
       type: string
       title: Nome acessível da navegação
+      description: Nome acessível aplicado ao elemento nav.
       minLength: 1
       default: Navegação estrutural
     inicio_url:
@@ -26,6 +27,7 @@ props:
     variant:
       type: string
       title: Superfície
+      description: Apresentação visual padrão ou contextual da trilha.
       enum: [padrao, contextual]
       default: padrao
     trail:
@@ -40,14 +42,17 @@ props:
           label:
             type: string
             title: Texto do link
+            description: Nome visível do nível da trilha.
             minLength: 1
           url:
             type: string
             title: Endereço
+            description: Destino do link para este nível da trilha.
             minLength: 1
           icon:
             type: string
             title: Ícone Phosphor opcional
+            description: Nome opcional do ícone exibido ao lado do nível; no primeiro nível, substitui o ícone definido pela sessão.
             pattern: '^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$'
     current:
       type: string
