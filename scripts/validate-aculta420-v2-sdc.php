@@ -9,6 +9,7 @@
 
 declare(strict_types=1);
 
+use Drupal\Component\Render\FormattableMarkup;
 use Drupal\Core\Cache\NullBackend;
 use Drupal\Core\Plugin\DefaultPluginManager;
 use Drupal\Core\Render\Markup;
@@ -196,7 +197,7 @@ $samples = [
   'avatar' => [
     '#props' => ['size' => 'md'],
     '#slots' => [
-      'media' => Markup::create('<img src="/avatar-example.png" alt="Retrato de exemplo">'),
+      'media' => new FormattableMarkup('<img src="/avatar-example.png" alt="Retrato de exemplo">', []),
     ],
   ],
   'author-card' => [
@@ -208,7 +209,7 @@ $samples = [
       'bio' => 'Biografia pública autorizada.',
     ],
     '#slots' => [
-      'avatar' => Markup::create('<img src="/author-example.png" alt="Retrato de exemplo">'),
+      'avatar' => new FormattableMarkup('<img src="/author-example.png" alt="Retrato de exemplo">', []),
       'actions' => '',
     ],
   ],
@@ -1226,7 +1227,7 @@ foreach ($component_ids as $component_id) {
       '#type' => 'component',
       '#component' => $plugin_id,
       '#props' => ['label' => 'Tabela larga', 'mobile_variant' => 'scroll'],
-      '#slots' => ['table' => Markup::create('<table role="table"><tbody role="rowgroup"><tr role="row"><td role="cell">Item</td></tr></tbody></table>')],
+      '#slots' => ['table' => new FormattableMarkup('<table role="table"><tbody role="rowgroup"><tr role="row"><td role="cell">Item</td></tr></tbody></table>', [])],
     ];
     $scroll_output = (string) $renderer->renderInIsolation($scroll_build);
     if (!str_contains($scroll_output, 'data-mobile-variant="scroll"')) {
@@ -1268,7 +1269,7 @@ foreach ($component_ids as $component_id) {
       '#type' => 'component',
       '#component' => $plugin_id,
       '#props' => ['compact' => TRUE],
-      '#slots' => ['message' => Markup::create('<p>Este curso ainda não tem aulas publicadas.</p>')],
+      '#slots' => ['message' => new FormattableMarkup('<p>Este curso ainda não tem aulas publicadas.</p>', [])],
     ];
     $compact_output = (string) $renderer->renderInIsolation($compact_build);
     if (!str_contains($compact_output, 'empty-state--compact')

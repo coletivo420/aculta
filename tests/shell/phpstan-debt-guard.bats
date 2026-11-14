@@ -109,7 +109,7 @@ check() {
     --reference-baseline="$FIX/baseline-a.neon" \
     --changed-files="$FIX/changed-a.txt"
   [ "$status" -eq 1 ]
-  [[ "$output" == *"dívida congelada"* ]]
+  [[ "$output" == *"precisa reduzir"* ]]
 }
 
 @test "módulo tocado sem redução de dívida: FAIL" {
@@ -163,4 +163,14 @@ check() {
     --changed-files="$FIX/changed-mod-a.txt" \
     --diff-text="$FIX/diff-clean.txt"
   [ "$status" -eq 0 ]
+}
+
+@test "arquivo tocado com redução de dívida: PASS" {
+  run php "$GUARD" diff \
+    --baseline="$FIX/baseline-file-reduced.neon" \
+    --reference-baseline="$FIX/baseline-a.neon" \
+    --changed-files="$FIX/changed-a.txt" \
+    --diff-text="$FIX/diff-clean.txt"
+  [ "$status" -eq 0 ]
+  [[ "$output" == *"reduziu a dívida"* ]]
 }

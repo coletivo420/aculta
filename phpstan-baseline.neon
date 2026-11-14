@@ -5886,7 +5886,7 @@ parameters:
 		-
 			rawMessage: 'Call to static method create() of internal class Drupal\Core\Render\Markup from outside its root namespace Drupal.'
 			identifier: staticMethod.internalClass
-			count: 108
+			count: 106
 			path: scripts/validate-aculta420-v2-sdc.php
 
 		-

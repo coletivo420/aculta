@@ -200,6 +200,21 @@ final class PhpstanDebt {
    *   Parsed entries.
    *
    * @return array<string, int>
+   *   Occurrences by file path.
+   */
+  public static function countsByPath(array $entries): array {
+    $counts = [];
+    foreach ($entries as $entry) {
+      $counts[$entry['path']] = ($counts[$entry['path']] ?? 0) + $entry['count'];
+    }
+    return $counts;
+  }
+
+  /**
+   * @param list<array{path: string, identifier: string, message: string, count: int, valid?: bool, error?: string}> $entries
+   *   Parsed entries.
+   *
+   * @return array<string, int>
    *   Occurrences by identifier.
    */
   public static function countsByIdentifier(array $entries): array {

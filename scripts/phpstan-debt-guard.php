@@ -169,19 +169,6 @@ function phpstan_guard_diff(array $options, array &$violations, array &$notes): 
   $touchedModules = [];
   foreach ($changed as $path) {
     $touchedModules[PhpstanDebt::module($path)] = TRUE;
-    $fileDebt = 0;
-    foreach ($entries as $entry) {
-      if ($entry['path'] === $path) {
-        $fileDebt += $entry['count'];
-      }
-    }
-    if ($fileDebt > 0) {
-      $violations[] = sprintf(
-        '%s tem %d ocorrência(s) de dívida congelada e precisa ser corrigido nesta alteração.',
-        $path,
-        $fileDebt,
-      );
-    }
   }
 
   // New inline suppressions are forbidden: only debt frozen in the baseline
@@ -195,11 +182,30 @@ function phpstan_guard_diff(array $options, array &$violations, array &$notes): 
   }
 
   $reference = phpstan_guard_reference($options, $notes);
+  $sameLevel = $reference !== NULL
+    && phpstan_guard_reference_level($reference) >= PHPSTAN_GUARD_REQUIRED_LEVEL;
+  $referenceByFile = $sameLevel ? PhpstanDebt::countsByPath($reference['entries']) : [];
+  $currentByFile = PhpstanDebt::countsByPath($entries);
+  foreach ($changed as $path) {
+    $after = $currentByFile[$path] ?? 0;
+    if ($after === 0) {
+      continue;
+    }
+    $before = $referenceByFile[$path] ?? 0;
+    if ($sameLevel && $after < $before) {
+      $notes[] = sprintf('%s reduziu a dívida de %d para %d ocorrência(s).', $path, $before, $after);
+      continue;
+    }
+    $violations[] = $sameLevel
+      ? sprintf('%s tem %d ocorrência(s) de dívida e precisa reduzir ao menos 1 nesta alteração (antes: %d).', $path, $after, $before)
+      : sprintf('%s tem %d ocorrência(s) de dívida congelada; em transição, corrija-as antes de alterar o arquivo.', $path, $after);
+  }
+
   if ($reference === NULL) {
     $notes[] = 'sem baseline de referência: meta de redução por módulo não aplicada.';
     return;
   }
-  if (phpstan_guard_reference_level($reference) < PHPSTAN_GUARD_REQUIRED_LEVEL) {
+  if (!$sameLevel) {
     $notes[] = 'referência em nível inferior: meta de redução por módulo suspensa na transição.';
     return;
   }
