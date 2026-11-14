@@ -1,6 +1,6 @@
 # Catálogo de componentes do tema V2
 
-Componentes SDC com schemas estritos (`additionalProperties: false`). Os nomes de prop e slot abaixo são os do `*.component.yml`. "Estado" indica o que foi entregue e verificado. Auditoria do checkout em 2026-11-13: 136 manifests SDC e 216 stories; schemas e renderização isolada são conferidos pelos gates de `docs/gates.md`. A existência do manifest/story não prova, por si só, que um consumidor de produção esteja configurado.
+Componentes SDC com schemas estritos (`additionalProperties: false`). Os nomes de prop e slot abaixo são os do `*.component.yml`. "Estado" indica o que foi entregue e verificado. Inventário do checkout atualizado em 2026-11-14: 141 manifests SDC e 223 stories; schemas e renderização isolada são conferidos pelos gates de `docs/gates.md`. A existência do manifest/story não prova, por si só, que um consumidor de produção esteja configurado.
 
 Prefixo de uso: `aculta420_v2:<nome>`. Em Twig, use `include` com `with_context = false`, ou `embed` quando o componente tem slots.
 
@@ -15,7 +15,7 @@ Prefixo de uso: `aculta420_v2:<nome>`. Em Twig, use `include` com `with_context 
 
 A UI Patterns Library descobre os componentes diretamente dos arquivos
 `*.component.yml` e suas stories; não há uma lista paralela para manter. Neste
-checkout há 136 manifests SDC e 216 stories. O Drupal precisa reconstruir seus
+checkout há 141 manifests SDC e 223 stories. O Drupal precisa reconstruir seus
 caches de descoberta para refletir alterações no Runtime. Todos os SDCs têm ao
 menos uma story. A configuração habilita
 `ui_patterns_library`; descoberta no Runtime não foi confirmada nesta revisão.

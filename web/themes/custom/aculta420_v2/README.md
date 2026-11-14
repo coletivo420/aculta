@@ -27,7 +27,7 @@ Decisões que governam o tema estão em `docs/decisions/` na raiz do repositóri
 
 ## Estado em uma frase
 
-O código e o Config Sync contêm SDCs, UI Patterns e UI Styles; o uso efetivo por consumidor ainda precisa ser cruzado com displays e Runtime. O shell tem cinco regiões e um template. ADR-056 registra 136 SDCs/216 stories; todos os SDCs têm story. Restam 19 templates Twig para classificação por consumidor e tentativa de remoção. `aculta_ui_library` foi retirado do Config Sync e será removido do código após desinstalação estrutural; a descoberta no Runtime, cobertura visual/autenticada, igualdade de Config Sync e lacunas de migração continuam pendentes quando não há evidência atual.
+O checkout contém 141 SDCs e 223 stories, e todos os SDCs têm ao menos uma story. Restam 24 templates Twig Drupal no tema; cada presenter está classificado no roadmap e o corte continua orientado pelos consumidores. O shell declara cinco regiões e usa um template de página. `aculta_ui_library` foi retirado do Config Sync e aguarda a desinstalação estrutural antes da remoção de seu código. Uso editorial persistido, composição no Runtime, cobertura visual/autenticada e igualdade entre Config Sync e Runtime seguem pendentes onde não há evidência atual.
 
 ## Estrutura
 
