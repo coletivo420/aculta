@@ -21,12 +21,3 @@ function aculta420_v2_preprocess(array &$variables): void {
   PortalUiHooks::preprocessVariables($variables);
 }
 
-/**
- * Keeps the cached hook callback valid until the shared Runtime is rebuilt.
- *
- * The legacy shell variant setting and template have been removed. This
- * temporary no-op can be deleted after a safe Runtime cache rebuild.
- */
-function aculta420_v2_theme_suggestions_page_alter(array &$suggestions, array $variables): void {
-  // Intentionally empty while the shared Runtime may still cache this hook.
-}

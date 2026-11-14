@@ -11,9 +11,8 @@ anteriores e não substituem a conferência do código atual.
   declara cinco regiões (`institution`, `header`, `content`, `sidebar_first`,
   `footer`). O seletor classic/v2 foi removido do formulário/configuração e a
   chave `aculta_shell_variant` não existe no Config Sync nem no Runtime ativo.
-  A função antiga de sugestão `page__shell_v2` agora é no-op, mantida somente
-  para que um registro de hook em cache não aponte para função ausente; removê-la
-  depende de rebuild seguro do Runtime compartilhado.
+  O hook no-op temporário de compatibilidade foi removido depois do rebuild do
+  cache Drupal em 2026-11-14.
 - 148 manifests SDC e 233 stories. Todos têm story: `hint` exemplifica os tons
   normal/muted; `sales-panel` e `secret-reveal` usam dados demonstrativos
   fictícios.
@@ -39,18 +38,21 @@ anteriores e não substituem a conferência do código atual.
   Runtime após liberar preflight. Matriz:
   `docs/architecture/inventarios/ui-suite-consumidores-iniciais.csv`.
 - Decisão do responsável (2026-11-13): remover por completo o módulo customizado
-  `aculta_ui_library`, inclusive o redirect legado, e manter a UI Patterns
-  Library oficial. `config/sync/core.extension.yml` já foi atualizado para não
-  habilitar o módulo; a exportação ainda não foi importada no Runtime. A
-  desinstalação precisa ocorrer antes de apagar o código. `runtime-sync doctor`
-  em 2026-11-14 bloqueou a janela estrutural com RX: checkout compartilhado
-  com Apache, drift em `aculta420_v2.settings` e
-  `core.entity_view_display.block_content.aculta_institution.footer`,
-  `core.entity_view_display.node.revista.full` e `views.view.revista_sessoes`,
-  11 módulos sem schema e baseline de cache/validação em
-  `e37f3d8d45ecba9719d4b97dde67effc2236b13f`. Não há updates ou deploy hooks
-  pendentes. Nenhuma importação/migração estrutural foi executada.
-- Restam 19 templates Twig Drupal no tema. O fallback de fields para
+  `aculta_ui_library`, inclusive o redirect legado, e manter somente a UI Patterns
+  Library oficial. `config/sync/core.extension.yml` já não habilita o módulo; a
+  configuração ainda não foi importada no Runtime. A desinstalação precisa
+  ocorrer antes de apagar o código. Na leitura Runtime de 2026-11-14, antes deste lote local, o `doctor` confirmou
+  branch/worktree limpos, lock e bootstrap, sem updates ou deploy hooks. Permanecem nove configs
+  divergentes: `aculta420_v2.settings`, o display footer da instituição,
+  `node.revista.full`, cinco Views (`aculta_forum_categories`,
+  `aculta_forum_public_topics`, `aculta_forum_search`, `courses`,
+  `courses_catalog`) e `revista_sessoes`. O risco cumulativo continua RX e há
+  avisos de schema para 11 módulos removidos. O checkout compartilhado com
+  Apache é o modo esperado e não bloqueia a janela. Cache Drupal foi
+  reconstruído em 2026-11-14, mas o baseline registrado pelo Runtime Sync
+  continua em `e37f3d8d45ecba9719d4b97dde67effc2236b13f`. Nenhuma
+  importação/migração estrutural foi executada.
+- Restam 17 templates Twig Drupal no tema. O fallback de fields para
   `aculta_forum_categories:page_categories` foi removido após leitura somente
   no Runtime confirmar que sua row ativa usa UI Patterns + `forum-category`;
   o template de agrupamento continua necessário porque o estilo ativo ainda
@@ -101,7 +103,7 @@ anteriores e não substituem a conferência do código atual.
    reutilizáveis com plano de compatibilidade das referências persistidas.
 3. **P2 — cruzar integrações:** matriz estática regenerada em 2026-11-14 com
    454 linhas (cabeçalho e 453 consumers): 148 SDCs, 159 displays Views, 52
-   instâncias de bloco, 22 displays com Layout Builder e 19 templates Twig Drupal
+   instâncias de bloco, 22 displays com Layout Builder e 17 templates Twig Drupal
    do tema. Foram achadas
    referências literais a 113 SDCs; os 35 sem referência literal não são
    candidatos automáticos a exclusão, pois a Library os publica e usos
@@ -124,7 +126,7 @@ anteriores e não substituem a conferência do código atual.
    Extender não oferece Source para `title_prefix/title_suffix`/contextual
    links. Runtime, cache e os seis paths ainda precisam de homologação após
    liberar o preflight.
-4. **P3 — reduzir os 19 templates com substituição comprovada:** a triagem por
+4. **P3 — reduzir os 17 templates com substituição comprovada:** a triagem por
    fonte está abaixo. Para cada arquivo, classificar se é markup de domínio
    removível, adapter Drupal→SDC/UI Patterns ou infraestrutura do hook Core.
    Remover templates de domínio quando o display/UI Patterns assumir o contrato;
