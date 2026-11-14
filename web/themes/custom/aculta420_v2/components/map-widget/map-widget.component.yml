@@ -15,18 +15,22 @@ props:
       title: Identificador HTML do mapa
       type: string
       minLength: 1
+      description: Identificador do elemento do mapa usado pelo JavaScript para associar configurações e marcadores.
     label:
       title: Nome acessível do mapa
       type: string
       default: Mapa interativo
+      description: Nome acessível aplicado à região interativa do mapa.
     privacy_notice_url:
       title: Endereço da política de privacidade
       type: [string, 'null']
       format: uri-reference
+      description: Destino opcional do link de privacidade exibido quando o aviso está habilitado.
     privacy_notice_text:
       title: Texto do aviso de privacidade
       type: string
       default: Política de privacidade
+      description: Texto do link de privacidade quando privacy_notice_url está preenchido.
 slots:
   templates:
     title: Templates de marcadores e popups

@@ -12,19 +12,34 @@ props:
       title: Página atual
       type: integer
       minimum: 1
+      description: Número da página atual, exibido no resumo oculto para leitores de tela.
     total_pages:
       title: Total de páginas
       type: [integer, 'null']
       minimum: 1
+      description: Total conhecido de páginas para o resumo acessível; null omite essa parte do texto.
     links:
       title: Links de navegação entre páginas
       type: array
+      description: Itens de navegação na ordem em que serão apresentados, incluindo páginas e controles anterior/próxima.
       items:
         type: object
         additionalProperties: false
         required: [url, label]
         properties:
-          url: { type: string, format: uri-reference }
-          label: { type: string, minLength: 1 }
-          is_active: { type: boolean, default: true }
-          is_current: { type: boolean, default: false }
+          url:
+            type: string
+            format: uri-reference
+            description: Destino do link de paginação quando o item está ativo.
+          label:
+            type: string
+            minLength: 1
+            description: Texto visível do controle ou número de página.
+          is_active:
+            type: boolean
+            default: true
+            description: Quando false, renderiza o item como texto desabilitado sem link.
+          is_current:
+            type: boolean
+            default: false
+            description: Quando true, marca o link da página atual com aria-current="page".
