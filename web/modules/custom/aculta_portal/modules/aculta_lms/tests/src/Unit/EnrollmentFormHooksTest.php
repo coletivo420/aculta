@@ -24,6 +24,7 @@ use Drupal\Tests\UnitTestCase;
 use Drupal\user\UserInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Tests the manual deletion policy for class enrollments.
@@ -76,6 +77,7 @@ final class EnrollmentFormHooksTest extends UnitTestCase {
     $result = $this->hooks($enrollments)->protectPaidEnrollment($relationship, 'delete', $this->createMock(UserInterface::class));
 
     self::assertTrue($result->isNeutral());
+    self::assertInstanceOf(CacheableDependencyInterface::class, $result);
     self::assertSame(0, $result->getCacheMaxAge());
   }
 
@@ -101,6 +103,7 @@ final class EnrollmentFormHooksTest extends UnitTestCase {
     $result = $this->hooks($enrollments)->protectPaidEnrollment($relationship, 'delete', $this->createMock(UserInterface::class));
 
     self::assertTrue($result->isForbidden());
+    self::assertInstanceOf(CacheableDependencyInterface::class, $result);
     self::assertSame(0, $result->getCacheMaxAge());
   }
 
@@ -154,8 +157,8 @@ final class EnrollmentFormHooksTest extends UnitTestCase {
    *
    * @param \Drupal\commerce_order\Entity\OrderInterface|null $order
    *   The provenance order, or NULL to simulate a broken reference.
-   * @param array<array-key, mixed> $payments
-   *   Payment storage results, including malformed values for fail-closed
+   * @param list<mixed> $payments
+   *   Payment storage results, including malformed records in fail-closed
    *   tests.
    *
    * @return \Drupal\Core\Access\AccessResultInterface
@@ -183,13 +186,15 @@ final class EnrollmentFormHooksTest extends UnitTestCase {
       $this->createMock(CourseOrderEnrollmentManagerInterface::class),
     );
 
-    return $hooks->protectPaidEnrollment($relationship, 'delete', $this->createMock(UserInterface::class));
+    $result = $hooks->protectPaidEnrollment($relationship, 'delete', $this->createMock(UserInterface::class));
+    self::assertInstanceOf(CacheableDependencyInterface::class, $result);
+    return $result;
   }
 
   /**
    * Creates a course order with a controllable workflow state.
    */
-  private function order(string $state): OrderInterface {
+  private function order(string $state): OrderInterface&MockObject {
     $order = $this->createMock(OrderInterface::class);
     $this->makeCacheable($order);
     $order->method('bundle')->willReturn('curso');
@@ -218,7 +223,7 @@ final class EnrollmentFormHooksTest extends UnitTestCase {
   /**
    * Creates a Group class used by the enrollment deletion policy.
    */
-  private function classGroup(): GroupInterface {
+  private function classGroup(): GroupInterface&MockObject {
     $group = $this->createMock(GroupInterface::class);
     $this->makeCacheable($group);
     $group->method('bundle')->willReturn('lms_class');
@@ -240,8 +245,8 @@ final class EnrollmentFormHooksTest extends UnitTestCase {
   /**
    * Creates a course selection form with one related class Group.
    *
-   * @return array{\Drupal\aculta_lms\Hook\EnrollmentFormHooks,\Drupal\Core\Form\FormStateInterface}
-   *   Hooks de inscrição e estado do formulário montados.
+   * @return array{EnrollmentFormHooks, FormStateInterface&MockObject}
+   *   Hook and form state fixture.
    */
   private function classSelectionContext(string $selected_class): array {
     $class = $this->createMock(GroupInterface::class);
@@ -284,7 +289,7 @@ final class EnrollmentFormHooksTest extends UnitTestCase {
   /**
    * Makes an entity mock safe to add to cacheable access results.
    */
-  private function makeCacheable(CacheableDependencyInterface $dependency): void {
+  private function makeCacheable(CacheableDependencyInterface&MockObject $dependency): void {
     $dependency->method('getCacheContexts')->willReturn([]);
     $dependency->method('getCacheTags')->willReturn([]);
     $dependency->method('getCacheMaxAge')->willReturn(Cache::PERMANENT);

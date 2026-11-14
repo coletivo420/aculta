@@ -21,6 +21,7 @@ use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 
 /**
@@ -39,6 +40,7 @@ final class LearningDashboardManagerTest extends UnitTestCase {
     $manager = $this->manager(NULL, $certificates, $entityTypeManager);
 
     $dashboard = $manager->studentDashboard(new UserSession(['uid' => 42]));
+    self::assertInstanceOf(\Drupal\Core\Cache\CacheableMetadata::class, $dashboard['cache']);
 
     self::assertSame([], $dashboard['courses']);
     self::assertSame([], $dashboard['certificates']);
@@ -84,12 +86,18 @@ final class LearningDashboardManagerTest extends UnitTestCase {
     $manager = new LearningDashboardManager($coursesReader, $certificates, $entityTypeManager, $progressReader, $lessonReader);
 
     $dashboard = $manager->studentDashboard($account);
+    self::assertIsArray($dashboard['courses']);
+    $courseRows = $dashboard['courses'];
+    self::assertArrayHasKey(0, $courseRows);
+    self::assertIsArray($courseRows[0]);
+    $courseRow = $courseRows[0];
+    self::assertInstanceOf(\Drupal\Core\Cache\CacheableMetadata::class, $dashboard['cache']);
 
-    self::assertCount(1, $dashboard['courses']);
-    self::assertSame(1, $dashboard['courses'][0]['total_lessons']);
-    self::assertSame(0, $dashboard['courses'][0]['completed_lessons']);
-    self::assertSame(0, $dashboard['courses'][0]['progress_percent']);
-    self::assertTrue($dashboard['courses'][0]['started']);
+    self::assertCount(1, $courseRows);
+    self::assertSame(1, $courseRow['total_lessons']);
+    self::assertSame(0, $courseRow['completed_lessons']);
+    self::assertSame(0, $courseRow['progress_percent']);
+    self::assertTrue($courseRow['started']);
     self::assertContains('user.group_permissions', $dashboard['cache']->getCacheContexts());
   }
 

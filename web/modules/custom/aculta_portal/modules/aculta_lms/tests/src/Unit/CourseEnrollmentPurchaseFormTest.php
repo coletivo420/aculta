@@ -22,6 +22,7 @@ use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupRelationshipInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
@@ -45,9 +46,12 @@ final class CourseEnrollmentPurchaseFormTest extends UnitTestCase {
     $form = $this->form()->buildForm([], $formState, $course);
 
     self::assertArrayNotHasKey('course_class', $form);
+    self::assertArrayHasKey('message', $form);
+    self::assertIsArray($form['message']);
+    self::assertArrayHasKey('#plain_text', $form['message']);
     self::assertSame(
       'Este curso ainda não possui turmas disponíveis para matrícula.',
-      (string) $form['message']['#plain_text'],
+      $this->plainText($form['message']),
     );
     self::assertArrayNotHasKey('actions', $form);
   }
@@ -56,11 +60,12 @@ final class CourseEnrollmentPurchaseFormTest extends UnitTestCase {
    * A published class remains visible when online purchase is not configured.
    */
   public function testPublishedClassWithoutCourseProductHasNoCheckoutAction(): void {
-    $course = $this->course([
-      $this->classRelationship($this->class('lms_class', '89', TRUE)),
-    ]);
-    self::assertSame('lms_class', $course->getRelationships('lms_classes')[0]->getEntity()->bundle());
-    self::assertTrue($course->getRelationships('lms_classes')[0]->getEntity()->isPublished());
+    $relationship = $this->classRelationship($this->class('lms_class', '89', TRUE));
+    $course = $this->course([$relationship]);
+    $class = $relationship->getEntity();
+    self::assertInstanceOf(GroupInterface::class, $class);
+    self::assertSame('lms_class', $class->bundle());
+    self::assertTrue($class->isPublished());
     $course->expects(self::once())
       ->method('hasField')
       ->with('field_course_product')
@@ -73,9 +78,12 @@ final class CourseEnrollmentPurchaseFormTest extends UnitTestCase {
     $form = $this->form()->buildForm([], $formState, $course);
 
     self::assertArrayNotHasKey('course_class', $form);
+    self::assertArrayHasKey('message', $form);
+    self::assertIsArray($form['message']);
+    self::assertArrayHasKey('#plain_text', $form['message']);
     self::assertSame(
       'A inscrição online ainda não está disponível para este curso.',
-      (string) $form['message']['#plain_text'],
+      $this->plainText($form['message']),
     );
     self::assertArrayNotHasKey('actions', $form);
   }
@@ -93,11 +101,26 @@ final class CourseEnrollmentPurchaseFormTest extends UnitTestCase {
     $form = $this->form()->buildForm([], $formState, $course);
 
     self::assertArrayNotHasKey('course_class', $form);
+    self::assertArrayHasKey('message', $form);
+    self::assertIsArray($form['message']);
+    self::assertArrayHasKey('#plain_text', $form['message']);
     self::assertSame(
       'A inscrição online não está disponível para este curso.',
-      (string) $form['message']['#plain_text'],
+      $this->plainText($form['message']),
     );
     self::assertArrayNotHasKey('actions', $form);
+  }
+
+  /**
+   * Reads plain text from a validated form message element.
+   *
+   * @param array<array-key, mixed> $element
+   *   Render array element containing #plain_text.
+   */
+  private function plainText(array $element): string {
+    $text = $element['#plain_text'] ?? NULL;
+    self::assertInstanceOf(TranslatableMarkup::class, $text);
+    return $text->getUntranslatedString();
   }
 
   /**
@@ -128,8 +151,14 @@ final class CourseEnrollmentPurchaseFormTest extends UnitTestCase {
 
   /**
    * Builds a cacheable course double with the supplied class relationships.
+   *
+   * @param list<GroupRelationshipInterface> $relationships
+   *   LMS class relations exposed by the course.
+   *
+   * @return GroupInterface&MockObject
+   *   The course fixture.
    */
-  private function course(array $relationships, bool $published = TRUE): GroupInterface {
+  private function course(array $relationships, bool $published = TRUE): GroupInterface&MockObject {
     $course = $this->createMock(GroupInterface::class);
     $course->method('id')->willReturn('88');
     $course->method('bundle')->willReturn('lms_course');
@@ -145,7 +174,7 @@ final class CourseEnrollmentPurchaseFormTest extends UnitTestCase {
   /**
    * Builds a cacheable class group double.
    */
-  private function class(string $bundle, string $id, bool $published): GroupInterface {
+  private function class(string $bundle, string $id, bool $published): GroupInterface&MockObject {
     $class = $this->createMock(GroupInterface::class);
     $class->method('bundle')->willReturn($bundle);
     $class->method('id')->willReturn($id);
@@ -160,7 +189,7 @@ final class CourseEnrollmentPurchaseFormTest extends UnitTestCase {
   /**
    * Wraps a class group in its LMS course relationship.
    */
-  private function classRelationship(GroupInterface $class): GroupRelationshipInterface {
+  private function classRelationship(GroupInterface $class): GroupRelationshipInterface&MockObject {
     $relationship = $this->createMock(GroupRelationshipInterface::class);
     $relationship->method('getEntity')->willReturn($class);
     return $relationship;
