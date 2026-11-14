@@ -22,12 +22,11 @@ function aculta420_v2_preprocess(array &$variables): void {
 }
 
 /**
- * Implements hook_theme_suggestions_page_alter().
+ * Keeps the cached hook callback valid until the shared Runtime is rebuilt.
  *
- * Retained until the shared Runtime hook cache is rebuilt safely.
+ * The legacy shell variant setting and template have been removed. This
+ * temporary no-op can be deleted after a safe Runtime cache rebuild.
  */
 function aculta420_v2_theme_suggestions_page_alter(array &$suggestions, array $variables): void {
-  if (theme_get_setting('aculta_shell_variant') === 'v2') {
-    $suggestions[] = 'page__shell_v2';
-  }
+  // Intentionally empty while the shared Runtime may still cache this hook.
 }

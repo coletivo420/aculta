@@ -9,10 +9,11 @@ anteriores e não substituem a conferência do código atual.
 
 - Um shell em `templates/layout/page.html.twig`; `aculta420_v2.info.yml`
   declara cinco regiões (`institution`, `header`, `content`, `sidebar_first`,
-  `footer`). O seletor classic/v2 foi removido do formulário/configuração do
-  tema. Callback antigo de sugestão pode permanecer temporariamente por causa
-  do cache do Runtime compartilhado; removê-lo depende de janela segura para
-  rebuild.
+  `footer`). O seletor classic/v2 foi removido do formulário/configuração e a
+  chave `aculta_shell_variant` não existe no Config Sync nem no Runtime ativo.
+  A função antiga de sugestão `page__shell_v2` agora é no-op, mantida somente
+  para que um registro de hook em cache não aponte para função ausente; removê-la
+  depende de rebuild seguro do Runtime compartilhado.
 - 146 manifests SDC e 228 stories. Todos têm story: `hint` exemplifica os tons
   normal/muted; `sales-panel` e `secret-reveal` usam dados demonstrativos
   fictícios.
