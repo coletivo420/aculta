@@ -594,6 +594,13 @@ foreach ($themeTemplateIterator as $themeTemplate) {
     ];
   }
 }
+// The Maps module owns a neutral <template> wrapper used by its JavaScript.
+// The theme supplies its visual icon through preprocess instead of replacing
+// that module template with a theme copy.
+$themeSdcAdapters['aculta-maps-marker-icon-template.html.twig'][] = [
+  'path' => 'PagePresentationHooks::preprocessMapMarkerIconTemplate()',
+  'components' => ['icon'],
+];
 $moduleIterator = new RecursiveIteratorIterator(
   new RecursiveDirectoryIterator($customModules, FilesystemIterator::SKIP_DOTS),
   RecursiveIteratorIterator::SELF_FIRST,

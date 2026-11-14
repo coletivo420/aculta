@@ -1026,6 +1026,27 @@ final class PagePresentationHooks {
   }
 
   /**
+   * Supplies the map module's icon template with the existing icon SDC.
+   */
+  #[Hook('preprocess_aculta_maps_marker_icon_template')]
+  public function preprocessMapMarkerIconTemplate(array &$variables): void {
+    if (!$this->componentAvailable('icon')) {
+      return;
+    }
+
+    $iconName = is_string($variables['icon_name'] ?? NULL) ? $variables['icon_name'] : 'map-pin';
+    $variables['icon'] = [
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:icon',
+      '#props' => [
+        'name' => $iconName,
+        'variant' => 'duotone',
+        'size' => 'md',
+      ],
+    ];
+  }
+
+  /**
    * Sends reply composer data and original form render arrays to its SDC.
    */
   #[Hook('preprocess_discussion_reply_composer')]

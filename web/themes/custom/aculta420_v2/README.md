@@ -27,7 +27,7 @@ Decisões que governam o tema estão em `docs/decisions/` na raiz do repositóri
 
 ## Estado em uma frase
 
-O checkout contém 141 SDCs e 223 stories, e todos os SDCs têm ao menos uma story. Restam 24 templates Twig Drupal no tema; cada presenter está classificado no roadmap e o corte continua orientado pelos consumidores. O shell declara cinco regiões e usa um template de página. `aculta_ui_library` foi retirado do Config Sync e aguarda a desinstalação estrutural antes da remoção de seu código. Uso editorial persistido, composição no Runtime, cobertura visual/autenticada e igualdade entre Config Sync e Runtime seguem pendentes onde não há evidência atual.
+O checkout contém 141 SDCs e 223 stories, e todos os SDCs têm ao menos uma story. Restam 23 templates Twig Drupal no tema; cada presenter está classificado no roadmap e o corte continua orientado pelos consumidores. O shell declara cinco regiões e usa um template de página. `aculta_ui_library` foi retirado do Config Sync e aguarda a desinstalação estrutural antes da remoção de seu código. Uso editorial persistido, composição no Runtime, cobertura visual/autenticada e igualdade entre Config Sync e Runtime seguem pendentes onde não há evidência atual.
 
 ## Estrutura
 
