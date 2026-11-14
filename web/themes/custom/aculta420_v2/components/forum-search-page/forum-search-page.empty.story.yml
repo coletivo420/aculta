@@ -1,0 +1,13 @@
+name: Busca sem resultados
+description: Formulário de busca com a mensagem de estado vazio da View.
+component: aculta420_v2:forum-search-page
+slots:
+  title:
+    type: inline_template
+    template: '<h1>Buscar no Fórum</h1>'
+  exposed:
+    type: inline_template
+    template: '<form id="views-exposed-form-aculta-forum-search-page-search"><div class="form-item-keys"><label for="empty-search-term">Termo</label><input id="empty-search-term" value="termo inexistente"></div><div class="form-item-categoria"><label for="empty-search-category">Categoria</label><select id="empty-search-category"></select></div><div id="edit-actions"><button type="submit">Buscar</button></div></form>'
+  empty:
+    type: inline_template
+    template: '<div class="view-aculta-forum-search"><p>Nenhum resultado para esta busca.</p></div>'

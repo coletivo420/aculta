@@ -2,6 +2,9 @@ name: Busca do Fórum com filtros e resultados
 description: Formulário exposto e resultados renderizados pela View.
 component: aculta420_v2:forum-search-page
 slots:
-  content:
+  exposed:
     type: inline_template
-    template: '<form id="views-exposed-form-aculta-forum-search-page-search"><div class="form-item-keys"><label>Termo</label><input></div><div class="form-item-categoria"><label>Categoria</label><select></select></div><div id="edit-actions"><button type="submit">Buscar</button></div></form><div class="view-aculta-forum-search"><div class="view-empty">Nenhum resultado.</div></div>'
+    template: '<form id="views-exposed-form-aculta-forum-search-page-search"><div class="form-item-keys"><label for="search-term">Termo</label><input id="search-term"></div><div class="form-item-categoria"><label for="search-category">Categoria</label><select id="search-category"></select></div><div id="edit-actions"><button type="submit">Buscar</button></div></form>'
+  rows:
+    type: inline_template
+    template: '<div class="view-aculta-forum-search"><article>Resultado de exemplo</article></div>'

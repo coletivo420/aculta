@@ -1,6 +1,6 @@
 # Catálogo de componentes do tema V2
 
-Componentes SDC com schemas estritos (`additionalProperties: false`). Os nomes de prop e slot abaixo são os do `*.component.yml`. "Estado" indica o que foi entregue e verificado. Inventário do checkout atualizado em 2026-11-14: 146 manifests SDC e 230 stories; schemas e renderização isolada são conferidos pelos gates de `docs/gates.md`. A existência do manifest/story não prova, por si só, que um consumidor de produção esteja configurado.
+Componentes SDC com schemas estritos (`additionalProperties: false`). Os nomes de prop e slot abaixo são os do `*.component.yml`. "Estado" indica o que foi entregue e verificado. Inventário do checkout atualizado em 2026-11-14: 146 manifests SDC e 231 stories; schemas e renderização isolada são conferidos pelos gates de `docs/gates.md`. A existência do manifest/story não prova, por si só, que um consumidor de produção esteja configurado.
 
 Prefixo de uso: `aculta420_v2:<nome>`. Em Twig, use `include` com `with_context = false`, ou `embed` quando o componente tem slots.
 
@@ -15,7 +15,7 @@ Prefixo de uso: `aculta420_v2:<nome>`. Em Twig, use `include` com `with_context 
 
 A UI Patterns Library descobre os componentes diretamente dos arquivos
 `*.component.yml` e suas stories; não há uma lista paralela para manter. Neste
-checkout há 146 manifests SDC e 230 stories. O Drupal precisa reconstruir seus
+checkout há 146 manifests SDC e 231 stories. O Drupal precisa reconstruir seus
 caches de descoberta para refletir alterações no Runtime. Todos os SDCs têm ao
 menos uma story. A configuração habilita
 `ui_patterns_library`; descoberta no Runtime não foi confirmada nesta revisão.
@@ -221,10 +221,11 @@ fica como adapter dos dados e compõe os SDCs existentes nesses slots. Story:
 
 ### forum-search-page — Busca do Fórum
 
-Envolve a saída padrão da View de busca e carrega o CSS de filtros e estado
-vazio. A sugestão Twig preserva exposed form, resultados, attachments, pager,
-footer e feed icons; query, filtros, acesso e cache continuam com Views/Search
-API. Story: `forum-search-page.default.story.yml`.
+É dona da estrutura da View e oferece slots para título, filtros, resultados,
+estado vazio, pager, attachments, more, footer e feed icons. O template Twig
+conecta metadados e conteúdo da View; Search API mantém query, filtros, acesso,
+cache e view modes. Stories: `forum-search-page.default.story.yml` e
+`forum-search-page.empty.story.yml`.
 
 Os estilos de apresentação da navegação JS de progresso, recuo hierárquico,
 foco e resposta agora acompanham `forum-post-card`, incluído nos templates de

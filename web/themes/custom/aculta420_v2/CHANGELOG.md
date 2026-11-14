@@ -1765,6 +1765,9 @@ State: Dev. No RC, production deployment, or release tag is declared.
   busca, navegação, rows, estado vazio, pager e painel lateral. O cabeçalho das
   rows agora usa estilos próprios do SDC da página, sem depender do CSS de
   `forum-topic-row`.
+- `forum-search-page` agora controla o wrapper completo da View e declara slots
+  para título, filtros, resultados, estado vazio e demais regiões do Search API.
+  O template fica responsável por conectar atributos e conteúdo Drupal ao SDC.
 - Removidos `src/styles/forum.css`, a biblioteca `forum` e seu attachment em
   `PagePresentationHooks`. Listagem, categoria e busca carregam CSS a partir
   dos SDCs que efetivamente compõem cada View.

@@ -5,21 +5,18 @@
   'view-display-id-' ~ display_id,
   dom_id ? 'js-view-dom-id-' ~ dom_id,
 ] %}
-{% embed 'aculta420_v2:forum-search-page' %}
-{% block content %}
-  <div{{ attributes.addClass(classes) }}>
-    {{ title_prefix }}
-    {{ title }}
-    {{ title_suffix }}
-    {% if header %}<div class="view-header">{{ header }}</div>{% endif %}
-    {% if exposed %}<div class="view-filters">{{ exposed }}</div>{% endif %}
-    {% if attachment_before %}<div class="attachment attachment-before">{{ attachment_before }}</div>{% endif %}
-    {% if rows %}{{ rows }}{% elseif empty %}<div class="view-empty">{{ empty }}</div>{% endif %}
-    {% if pager %}<div class="pager">{{ pager }}</div>{% endif %}
-    {% if attachment_after %}<div class="attachment attachment-after">{{ attachment_after }}</div>{% endif %}
-    {% if more %}<div class="more-link">{{ more }}</div>{% endif %}
-    {% if footer %}<div class="view-footer">{{ footer }}</div>{% endif %}
-    {% if feed_icons %}<div class="feed-icons">{{ feed_icons }}</div>{% endif %}
-  </div>
-{% endblock %}
+{% embed 'aculta420_v2:forum-search-page' with { attributes: attributes.addClass(classes) } %}
+{% block title_prefix %}{{ title_prefix }}{% endblock %}
+{% block title %}{{ title }}{% endblock %}
+{% block title_suffix %}{{ title_suffix }}{% endblock %}
+{% block header %}{{ header }}{% endblock %}
+{% block exposed %}{{ exposed }}{% endblock %}
+{% block attachment_before %}{{ attachment_before }}{% endblock %}
+{% block rows %}{{ rows }}{% endblock %}
+{% block empty %}{{ empty }}{% endblock %}
+{% block pager %}{{ pager }}{% endblock %}
+{% block attachment_after %}{{ attachment_after }}{% endblock %}
+{% block more %}{{ more }}{% endblock %}
+{% block footer %}{{ footer }}{% endblock %}
+{% block feed_icons %}{{ feed_icons }}{% endblock %}
 {% endembed %}
