@@ -68,11 +68,13 @@ jobs:
       run: |
         php scripts/validate-agent-token-budget.php
         python3 scripts/validate-agent-skills.py
-        php scripts/validate-aculta420-sdc-library-contract.php
 
     - name: Install dependencies
       run: |
         composer install --no-dev --prefer-dist --no-interaction
+
+    - name: Validate SDC library contract
+      run: php scripts/validate-aculta420-sdc-library-contract.php
 
     - name: Find all PHP files for linting
       id: find_php

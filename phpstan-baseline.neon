@@ -8465,12 +8465,6 @@ parameters:
 			path: web/themes/custom/aculta420_v2/aculta420_v2.theme
 
 		-
-			rawMessage: Coalesce operator ?? is unnecessary because the left side is always set and the right side is null.
-			identifier: nullCoalesce.unnecessary
-			count: 1
-			path: web/themes/custom/aculta420_v2/src/Hook/PagePresentationHooks.php
-
-		-
 			rawMessage: 'Property Drupal\aculta420_v2\Hook\UiPatternsStoryHooks::$componentPluginManager is never read, only written.'
 			identifier: property.onlyWritten
 			count: 1
