@@ -96,7 +96,7 @@ Enquanto esses dados não existirem nos contratos de variáveis ou views forneci
 Na entrega 2 foram incorporados:
 - `forum-sidebar-panels`: painéis laterais em coluna com faixas alternadas vermelha/amarela (`stats`, `featured`, `moderators`, `rules`, `related`). Moderadores e campos não entregues pelo backend operam com placeholder neutro e desabilitados com "Em breve".
 - `forum-composer-guidelines`: diretrizes de publicação em duas colunas no desktop e uma coluna no mobile, faixa amarela no topo e detalhes nativos recolhíveis.
-- Formulário `/criar-topico` adaptado com faixa vermelha no topo, botões de ação e diretrizes integradas via template `node-add-form--aculta-forum-topic.html.twig`.
+- A story `DiscussionTopicComposerStory` demonstra o formulário de criação dentro do SDC `discussion-topic-composer`. O template `node-add-form--aculta-forum-topic.html.twig` foi removido após confirmar que não existe hook `node_add_form`: o Core registra `node_edit_form`; o módulo mantém Form API, handlers, validação e acesso. Não considerar a story evidência de composição na rota de produção.
 - Nova rota e template da View `/categorias/{termo}` (`page_category_term` em `views.view.aculta_forum_public_topics.yml`), integrando `forum-category-header`, `forum-tabs`, lista de tópicos e `forum-sidebar-panels`.
 
 - O CSS do widget CAPTCHA/Turnstile pertence ao `aculta_portal` (biblioteca `captcha-presentation`, anexada por `CaptchaPresentationHooks`). O tema não cita CAPTCHA; a regra de fronteira é verificada pelo gate de fundação.

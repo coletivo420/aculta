@@ -1,10 +1,12 @@
 # discussion-topic-composer — Compositor de Criação de Tópico
 
-Componente do design system ACULTA para criar um tópico de discussão (Growroom420, Revista, Wiki e LMS). É o único compositor com **Assunto**, que fica antes do **Comentário**.
+Componente do design system ACULTA para demonstrar a criação de tópico com **Assunto** antes do **Comentário**. Seu contrato visual é reutilizável; consumidor de produção fora da story não está confirmado.
 
-## Onde é usado
-- `/criar-topico` e `node.add` do tipo `aculta_forum_topic`: o template `templates/content/node-add-form--aculta-forum-topic.html.twig` envolve o formulário neste componente.
-- Rótulos e ordem do formulário: módulo `aculta_forum`, `TopicComposerFormHooks` (Assunto = `title`, Comentário = `body`).
+## Exposição e composição
+- O componente permanece disponível na UI Patterns Library e tem uma story executável que cria um formulário de demonstração.
+- A story usa `TopicPopupLayout` e Form API; ela não comprova que a saída da rota de produção esteja envolvida por este SDC.
+- O módulo `aculta_forum`, `TopicComposerFormHooks`, define os rótulos e a ordem do formulário (Assunto = `title`, Comentário = `body`).
+- O antigo arquivo `node-add-form--aculta-forum-topic.html.twig` foi removido: o Core registra `node_edit_form`, não `node_add_form`, e o projeto não declarava esse hook.
 
 ## Propriedades
 - `target_id` (obrigatório): ID do container.

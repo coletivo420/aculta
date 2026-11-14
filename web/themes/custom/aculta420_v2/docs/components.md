@@ -198,10 +198,12 @@ resets de lista apenas quando esse cabeçalho é renderizado. Story:
 
 ### discussion-topic-composer — Compositor de tópico do Fórum
 
-Recebe o Form API do nó de tópico pelo slot `form`; a folha do SDC agora apresenta
-o formulário diretamente, sem a antiga casca de cartão duplicada. Controller,
-validação, submit e permissões permanecem no Fórum. Story: a implementação
-executável `DiscussionTopicComposerStory`.
+Recebe o Form API do nó de tópico pelo slot `form`; controller, validação, submit
+e permissões permanecem no Fórum. A story executável `DiscussionTopicComposerStory`
+monta um formulário de demonstração. Ela não prova composição deste SDC na rota
+de produção. O antigo Twig `node-add-form--aculta-forum-topic.html.twig` foi
+removido porque o hook não existe; Core registra `node_edit_form`. O SDC continua
+na UI Patterns Library.
 
 ### forum-list-page — Lista pública do Fórum
 
@@ -929,7 +931,7 @@ Cada entrada tem: papel, props, slots, JavaScript (se houver), estado e a regra 
 - **Estado:** entregue na Entrega 2 do redesenho visual Growroom420; schema estrito validado.
 
 ### forum-composer-guidelines — Diretrizes do Compositor do Fórum
-- **Papel:** painel de boas práticas e normas de publicação para o formulário `/criar-topico`, com duas colunas no desktop e uma coluna no mobile, faixa amarela de destaque e opção de recolhimento via `<details>` nativo.
+- **Papel:** painel de boas práticas e normas de publicação, com duas colunas no desktop e uma coluna no mobile, faixa amarela de destaque e opção de recolhimento via `<details>` nativo. Story disponível; consumidor de produção não confirmado.
 - **Props:** `collapsed` (bool), `tips` (array de strings), `community_rules` (array de `{title, text}`).
 - **Slots:** nenhum.
 - **Story:** `forum-composer-guidelines.default.story.yml`.
@@ -940,7 +942,7 @@ Cada entrada tem: papel, props, slots, JavaScript (se houver), estado e a regra 
 ## Fórum Growroom420 (entregas 1 e 2)
 
 - `forum-category-header`: prop `actions` (markup de link de ação principal). Story: `forum-category`.
-- `forum-tabs`, `forum-topic-row`, `forum-post-card`, `forum-sidebar-panels`, `forum-composer-guidelines`: usados na lista, na página de tópico e em `/criar-topico`.
+- `forum-tabs`, `forum-topic-row`, `forum-post-card` e `forum-sidebar-panels`: usados nas listagens e páginas atuais do Fórum. `forum-composer-guidelines` permanece catalogado com story, sem consumidor de produção confirmado.
 - `forum-topic-card`: schema e story existentes; sem uso na lista nesta entrega (modo cards pendente, seção 3.4).
 
 ### discussion-reply-composer — Compositor de Resposta da Discussão

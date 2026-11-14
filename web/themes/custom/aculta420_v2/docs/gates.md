@@ -95,12 +95,18 @@ Não é um script de gate, mas faz parte da entrega de mudança visual (ver [AGE
 
 ## Execução Recente — Redesenho Visual Growroom420 (Entrega 2)
 
-Validação dos componentes SDC complementares (`forum-sidebar-panels`, `forum-composer-guidelines`), do template `/criar-topico`, da nova rota `/categorias/{termo}` e da View em `config/sync`:
+Validação dos componentes SDC complementares (`forum-sidebar-panels`, `forum-composer-guidelines`), da rota de criação do tópico, da nova rota `/categorias/{termo}` e da View em `config/sync`:
 - `npm run lint:css` no tema: PASS sem erros.
 - `php scripts/validate-aculta420-sdc-schemas.php`: PASS (55 componentes, 27 includes, 764 checks).
 - `php scripts/validate-aculta420-design-foundations.php`: PASS (2468 checks; Dark token-only e contrastes em conformidade).
 - `php scripts/validate-aculta420-mapped-classes.php`: PASS (462 classes mapeadas).
 - `git diff --check`: PASS.
+
+Reauditoria em 2026-11-14: o arquivo `node-add-form--aculta-forum-topic.html.twig`
+não correspondia a hook registrado. Core declara `node_edit_form`; a validação
+histórica acima não demonstrou que o Twig era selecionado. O arquivo foi removido;
+os SDCs continuam disponíveis na UI Patterns Library e suas stories são previews,
+não prova de integração da rota de produção.
 
 ## Execução Recente — Redesenho Visual Growroom420 (Entrega 1)
 

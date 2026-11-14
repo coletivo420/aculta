@@ -53,7 +53,7 @@ Converter para entity displays/view modes e UI Patterns Field/Field Formatters, 
 
 - `templates/content/node--aculta-faq--full.html.twig` — compor campos e `accordion`/HTML details no display.
 - `templates/content/node--aculta-forum-topic.html.twig` — montar o display com os SDCs de tópico e comentário existentes; preservar render arrays dos comentários e ações.
-- `templates/content/node-add-form--aculta-forum-topic.html.twig` — remover somente o adapter visual; manter Form API, validação, handlers e acesso do módulo.
+- `templates/content/node-add-form--aculta-forum-topic.html.twig` — removido em 2026-11-14 após releitura do código do Core: não há hook `node_add_form` registrado pelo Core ou projeto; `NodeThemeHooks` registra `node_edit_form`. Form API, validação, handlers e acesso continuam no módulo. A story do SDC demonstra composição isolada e não comprova integração na rota.
 - `document-card` já é integrado diretamente pelo preprocess com todos os fields renderizados; seu antigo presenter Twig foi removido.
 - `node.revista.full` agora compõe o SDC `revista-publication` pelo Layout Builder UI Patterns ou pelo preprocess de compatibilidade; o template Drupal foi removido. O teaser também usa o SDC `revista-teaser` em render array.
 - `templates/content/node--wiki-entry--full.html.twig` — usar display/formatter do `wiki-entry` e Layout Builder/UI Patterns. O teaser foi removido e é composto por render array SDC pelo preprocess do tema.
