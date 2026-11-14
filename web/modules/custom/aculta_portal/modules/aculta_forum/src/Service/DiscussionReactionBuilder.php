@@ -109,7 +109,6 @@ class DiscussionReactionBuilder {
 
     $reactionsData = $this->reactionManager->loadReactions($entityType, $entityId, $uid);
     $access = $this->reactionEndpointAccess->access($entityType, (string) $entityId, $account);
-    $canReact = $access->isAllowed();
 
     $reactUrl = Url::fromRoute('aculta_forum.reaction_react', [
       'entity_type' => $entityType,
@@ -130,7 +129,7 @@ class DiscussionReactionBuilder {
       'direitos' => (string) $this->t('Direitos e Sociedade'),
     ];
 
-    $emojiCategories = [];
+    $categorySlots = [];
     if ($this->emojiAdapter !== NULL) {
       $rawCategories = $this->emojiAdapter->getCategories();
       foreach ($rawCategories as $catKey => $items) {
@@ -140,45 +139,112 @@ class DiscussionReactionBuilder {
           // Se o ícone do emoji existir nesta categoria do catálogo.
           if (isset($items[$emojiIcon])) {
             $catItem = $items[$emojiIcon];
-            $filteredItems[$reactionKey] = [
-              'id' => $reactionKey,
-              'name' => $reactionInfo['label'],
-              'icon' => $emojiIcon,
-              'keywords' => array_merge([$reactionInfo['label']], $catItem['keywords'] ?? []),
-            ];
+            $filteredItems[$reactionKey] = $this->buildPickerOption(
+              $reactionKey,
+              $reactionInfo['label'],
+              $emojiIcon,
+              array_merge([$reactionInfo['label']], $catItem['keywords'] ?? []),
+              $targetId,
+              $reactUrl,
+              $csrfToken,
+              $reactionsData['user_reaction'] === $reactionKey,
+            );
           }
         }
         if (!empty($filteredItems)) {
-          $emojiCategories[$catKey] = [
-            'label' => $categoryLabels[$catKey] ?? ucfirst($catKey),
-            'items' => $filteredItems,
+          $categorySlots[] = [
+            '#type' => 'component',
+            '#component' => 'aculta420_v2:discussion-reaction-category',
+            '#props' => [
+              'category_key' => (string) $catKey,
+              'label' => $categoryLabels[$catKey] ?? ucfirst((string) $catKey),
+            ],
+            '#slots' => [
+              'items' => array_values($filteredItems),
+            ],
           ];
         }
       }
     }
 
-    if (empty($emojiCategories)) {
-      $emojiCategories['geral'] = [
-        'label' => (string) $this->t('Reações'),
-        'items' => array_map(static fn(array $item): array => [
-          'id' => $item['id'],
-          'name' => $item['label'],
-          'keywords' => [$item['label']],
-        ], $allowedReactions),
+    if ($categorySlots === []) {
+      $categorySlots[] = [
+        '#type' => 'component',
+        '#component' => 'aculta420_v2:discussion-reaction-category',
+        '#props' => [
+          'category_key' => 'geral',
+          'label' => (string) $this->t('Reações'),
+        ],
+        '#slots' => [
+          'items' => array_map(
+            fn(array $item): array => $this->buildPickerOption(
+              $item['id'],
+              $item['label'],
+              $item['icon'],
+              [$item['label']],
+              $targetId,
+              $reactUrl,
+              $csrfToken,
+              $reactionsData['user_reaction'] === $item['id'],
+            ),
+            $allowedReactions,
+          ),
+        ],
       ];
     }
 
+    $build = [
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:discussion-reaction-picker',
+      '#props' => [],
+      '#slots' => ['categories' => $categorySlots],
+      '#cache' => [
+        'contexts' => ['user', 'user.permissions'],
+        'tags' => array_merge($entity->getCacheTags(), [
+          "aculta_discussion_reactions:{$entityType}:{$entityId}",
+          'config:aculta_forum.settings',
+        ]),
+      ],
+    ];
+    CacheableMetadata::createFromRenderArray($build)
+      ->addCacheableDependency($access)
+      ->applyTo($build);
+
+    return $build;
+  }
+
+  /**
+   * Builds the render array for one selectable reaction.
+   *
+   * @param list<string> $keywords
+   *   Search keywords for the picker.
+   *
+   * @return array<string, mixed>
+   *   The reaction option SDC render array.
+   */
+  private function buildPickerOption(
+    string $reactionId,
+    string $name,
+    string $icon,
+    array $keywords,
+    string $targetId,
+    string $reactUrl,
+    string $csrfToken,
+    bool $selected,
+  ): array {
     return [
-      '#theme' => 'discussion_reaction_picker',
-      '#target_id' => $targetId,
-      '#entity_type' => $entityType,
-      '#entity_id' => (string) $entityId,
-      '#allowed_reactions' => $allowedReactions,
-      '#emoji_categories' => $emojiCategories,
-      '#user_reaction' => $reactionsData['user_reaction'],
-      '#can_react' => $canReact,
-      '#react_url' => $reactUrl,
-      '#csrf_token' => $csrfToken,
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:discussion-reaction-option',
+      '#props' => [
+        'reaction_id' => $reactionId,
+        'name' => $name,
+        'icon' => $icon,
+        'keywords' => implode(' ', $keywords),
+        'target_id' => $targetId,
+        'react_url' => $reactUrl,
+        'csrf_token' => $csrfToken,
+        'selected' => $selected,
+      ],
     ];
   }
 

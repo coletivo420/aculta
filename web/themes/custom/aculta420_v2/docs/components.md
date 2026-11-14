@@ -1,6 +1,6 @@
 # Catálogo de componentes do tema V2
 
-Componentes SDC com schemas estritos (`additionalProperties: false`). Os nomes de prop e slot abaixo são os do `*.component.yml`. "Estado" indica o que foi entregue e verificado. Inventário do checkout atualizado em 2026-11-14: 142 manifests SDC e 224 stories; schemas e renderização isolada são conferidos pelos gates de `docs/gates.md`. A existência do manifest/story não prova, por si só, que um consumidor de produção esteja configurado.
+Componentes SDC com schemas estritos (`additionalProperties: false`). Os nomes de prop e slot abaixo são os do `*.component.yml`. "Estado" indica o que foi entregue e verificado. Inventário do checkout atualizado em 2026-11-14: 145 manifests SDC e 227 stories; schemas e renderização isolada são conferidos pelos gates de `docs/gates.md`. A existência do manifest/story não prova, por si só, que um consumidor de produção esteja configurado.
 
 Prefixo de uso: `aculta420_v2:<nome>`. Em Twig, use `include` com `with_context = false`, ou `embed` quando o componente tem slots.
 
@@ -15,7 +15,7 @@ Prefixo de uso: `aculta420_v2:<nome>`. Em Twig, use `include` com `with_context 
 
 A UI Patterns Library descobre os componentes diretamente dos arquivos
 `*.component.yml` e suas stories; não há uma lista paralela para manter. Neste
-checkout há 142 manifests SDC e 224 stories. O Drupal precisa reconstruir seus
+checkout há 145 manifests SDC e 227 stories. O Drupal precisa reconstruir seus
 caches de descoberta para refletir alterações no Runtime. Todos os SDCs têm ao
 menos uma story. A configuração habilita
 `ui_patterns_library`; descoberta no Runtime não foi confirmada nesta revisão.
@@ -45,6 +45,20 @@ cria os links autorizados; a story reutiliza essa mesma composição.
 Link com rótulo, destino, estado atual e ícone opcional. O provider do Studio
 permanece responsável por filtrar destinos antes de criar o render array.
 Story: `studio-menu-item.default.story.yml`.
+
+### discussion-reaction-picker — Seletor de reações
+
+Fragmento HTMX com busca local e categorias recebidas pelo slot `categories`.
+O módulo Fórum prepara a árvore de SDCs depois que a rota valida o acesso.
+
+### discussion-reaction-category — Categoria de reações
+
+Agrupa opções SDC no slot `items`; mantém a chave usada pelo filtro local.
+
+### discussion-reaction-option — Opção de reação
+
+Formulário com fallback POST e atualização HTMX. O módulo owner fornece
+endpoint, token CSRF, reação permitida e estado selecionado.
 
 ### article-authors — Autoria editorial
 

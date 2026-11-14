@@ -1,0 +1,11 @@
+<div class="discussion-reaction-bar__popup" role="dialog" aria-label="{{ 'Escolha uma reação'|t }}" data-reaction-picker-popup>
+  <div class="discussion-reaction-bar__picker-header">
+    <input type="search" class="discussion-reaction-bar__search" placeholder="{{ 'Buscar emoji...'|t }}" aria-label="{{ 'Buscar emoji'|t }}" data-reaction-picker-search autocomplete="off">
+    <button type="button" class="discussion-reaction-bar__picker-close" aria-label="{{ 'Fechar'|t }}" data-reaction-picker-close>&times;</button>
+  </div>
+
+  <div class="discussion-reaction-bar__categories" data-reaction-picker-body>
+    {{ categories }}
+    <div class="discussion-reaction-bar__empty" hidden>{{ 'Nenhum emoji encontrado.'|t }}</div>
+  </div>
+</div>

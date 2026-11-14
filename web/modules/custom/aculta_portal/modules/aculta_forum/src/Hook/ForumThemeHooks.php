@@ -36,21 +36,6 @@ class ForumThemeHooks {
         'path' => $path . '/templates',
         'template' => 'discussion-reply-composer',
       ],
-      'discussion_reaction_picker' => [
-        'variables' => [
-          'target_id' => '',
-          'entity_type' => '',
-          'entity_id' => '',
-          'allowed_reactions' => [],
-          'emoji_categories' => [],
-          'user_reaction' => NULL,
-          'can_react' => FALSE,
-          'react_url' => '',
-          'csrf_token' => '',
-        ],
-        'path' => $path . '/templates',
-        'template' => 'discussion-reaction-picker',
-      ],
     ];
   }
 

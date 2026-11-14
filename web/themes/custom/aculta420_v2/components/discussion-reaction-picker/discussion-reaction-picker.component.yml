@@ -1,0 +1,15 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Seletor de reações
+description: Fragmento pesquisável de reações carregado sob demanda para uma discussão.
+status: stable
+group: Comunidade
+libraryOverrides:
+  dependencies:
+    - aculta420_v2/discussion-reaction-bar
+props:
+  type: object
+  additionalProperties: false
+slots:
+  categories:
+    title: Categorias de reações
+    description: Categorias e opções autorizadas preparadas pelo módulo proprietário da discussão.

@@ -1,0 +1,9 @@
+props:
+  reaction_id: apoio
+  name: Apoio
+  icon: heart
+  keywords: apoio coração comunidade
+  target_id: discussion-reactions-comment-story
+  react_url: '#'
+  csrf_token: story-token
+  selected: false

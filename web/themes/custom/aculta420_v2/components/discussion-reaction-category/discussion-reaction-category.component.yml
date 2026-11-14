@@ -1,0 +1,24 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Categoria de reações
+description: Grupo nomeado de opções de reação dentro do seletor do Fórum.
+status: stable
+group: Comunidade
+props:
+  type: object
+  additionalProperties: false
+  required: [category_key, label]
+  properties:
+    category_key:
+      type: string
+      title: Chave da categoria
+      description: Identificador usado pelo filtro local do seletor.
+      pattern: '^[a-z][a-z0-9_-]*$'
+    label:
+      type: string
+      title: Nome da categoria
+      description: Texto traduzido apresentado acima das reações.
+      minLength: 1
+slots:
+  items:
+    title: Reações da categoria
+    description: Opções SDC preparadas pelo módulo Fórum conforme a configuração de reações permitidas.

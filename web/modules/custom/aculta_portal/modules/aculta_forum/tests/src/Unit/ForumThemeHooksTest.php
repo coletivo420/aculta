@@ -23,6 +23,7 @@ final class ForumThemeHooksTest extends UnitTestCase {
     $key = 'views_view_unformatted__aculta_forum_categories__page_categories';
     $this->assertArrayNotHasKey($key, $theme);
     $this->assertArrayHasKey('discussion_reply_composer', $theme);
+    $this->assertArrayNotHasKey('discussion_reaction_picker', $theme);
   }
 
 }
