@@ -77,13 +77,12 @@ anteriores e não substituem a conferência do código atual.
    Sources UI Patterns para esse tipo. A auditoria classificou os produtores
    encontrados e registrou as fontes na ADR-056; restam as migrações de presenter
    de Eventos/Reações, descrições específicas das props e confirmação de uso
-   editorial persistido no Runtime. Os presenters de Eventos/Reações foram
-   migrados para SDC direto neste lote; os contratos preservam cálculo, acesso e
-   cache nos módulos. O resultado no Runtime ainda precisa de homologação. Os
-   presenters de Eventos e Reações estão migrados neste lote; seguem pendentes
-   as descrições específicas das props e a confirmação de uso editorial
-   persistido no Runtime. Avançar na auditoria semântica restante: nomes,
-   tipagem, slots/props,
+   editorial persistido no Runtime. Os presenters de Eventos e Reações foram
+   migrados para SDC direto; os contratos preservam cálculo, acesso e cache nos
+   módulos. O resultado no Runtime ainda precisa de homologação. Seguem
+   pendentes as descrições específicas das props e a confirmação de uso
+   editorial persistido no Runtime. Avançar na auditoria semântica restante:
+   nomes, tipagem, slots/props,
    variants/defaults, includes e escaping. Renomear apenas conceitos realmente
    reutilizáveis com plano de compatibilidade das referências persistidas.
 3. **P2 — cruzar integrações:** matriz estática regenerada em 2026-11-14 com
@@ -93,13 +92,13 @@ anteriores e não substituem a conferência do código atual.
    candidatos automáticos a exclusão, pois a Library os publica e usos
    editoriais/dinâmicos não aparecem nessa busca. Ainda falta reconciliar as
    escolhas editoriais persistidas no Runtime e revisar a lista por consumidor.
-   A primeira candidata de migração é `revista_sessoes`: seis displays de
-   página compartilham um template de View. O código instalado de UI Patterns
-   Views oferece Component Display Extender e Sources para rows, empty,
-   exposed form, pager, header/footer e attachments. A API observada não tem
-   Source de `title_prefix/title_suffix`/contextual links; preservar esse
-   contrato administrativo por presenter fino ou solução suportada antes de
-   retirar o template.
+   `revista_sessoes` foi configurada no Sync para UI Patterns Views style com
+   `revista-listing`; os seis displays herdam a seleção e mantêm rows nativos
+   de node teaser. O template da Página Revista permanece como adapter fino
+   para os slots externos, mantém contextual links e usa fallback até o Sync
+   entrar no Runtime. A API do Component Display Extender não oferece Source
+   para `title_prefix/title_suffix`/contextual links. Runtime, cache e os seis
+   paths ainda precisam de homologação após liberar o preflight.
 4. **P3 — tentar eliminar os 31 templates:** a triagem por fonte está abaixo.
    Buscar substituição por displays/UI Patterns ou render arrays SDC em cada
    arquivo. Testar fallback Core e preservar apenas presenters mínimos quando
@@ -167,7 +166,7 @@ do módulo antes da desinstalação, pois o checkout é compartilhado com Apache
 | `commerce/commerce-product--produto-loja--catalog.html.twig`, `content/node--document--teaser.html.twig`, `content/node--revista--teaser.html.twig`, `content/node--wiki-entry--teaser.html.twig` | Os displays catalog/teaser seguem expondo fields sem UI Patterns/SDC; os presenters compõem `product-card`, `document-card`, `revista-teaser` e `wiki-entry`. | Mantidos na revisão R3: migrar cada view mode/row para UI Patterns ou render array SDC antes de remover o consumidor visual. |
 | `content/node--aculta-faq--full.html.twig` | Compõe FAQ com SDC `accordion` e mantém fallback nativo `<details>`. | Mantido: o Layout Builder atual só dispõe o body dentro de `layout-section`; migrar a coleção de perguntas para accordion por UI Patterns sem remover o fallback acessível. |
 | `discussion-reaction-picker.html.twig`, `input--submit.html.twig` | O picker mantém o form/CSRF/HTMX; o submit genérico converte controles Drupal para o SDC `button`, preservando atributos. | Mantidos: o fallback do módulo ainda imprime IDs de emoji como texto e o fallback Core do submit perde o visual SDC. Migrar os produtores mantendo contratos Form API, ícones e atributos. |
-| `views/views-view--revista-sessoes--page-revista.html.twig` | Os seis displays de página usam row `entity:node` em teaser e compartilham uma View; o template atual compõe `revista-listing`, filtros/exposed, vazio, pager, attachments, mais, footer e feed. | UI Patterns Views está instalado e o Component Display Extender tem Sources oficiais para as partes de View. Preparar um SDC de composição da listagem e mapear esses slots. A API observada não oferece Source para `title_prefix/title_suffix`/contextual links; preservar esse contrato administrativo por presenter fino ou solução suportada. Só retirar o template após configurar o Sync e aceitar saída no Runtime, cache e paginação. |
+| `views/views-view--revista-sessoes--page-revista.html.twig` | Os seis displays herdam UI Patterns Views style `revista-listing` pelo Config Sync; rows continuam node teaser. O template específico da Página Revista preserva title/contextual links, filtros, empty, pager, attachments, more, footer e feed, além de fallback anterior ao import. | Configuração preparada; o template imprime a saída SDC do style plugin quando ativo, sem duplo wrapper. Após liberar sync, verificar os seis paths, acesso/cache, empty, pager, anexos e contextual links. Só depois avaliar retirada; o Component Display Extender não fornece Source para o contexto administrativo do Views que o Twig atual preserva. |
 
 Esta classificação é somente uma triagem por fonte encontrada. Ela não prova que
 um template tenha consumidor ativo em cada domínio/Runtime. O objetivo é testar a

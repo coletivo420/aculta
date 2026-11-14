@@ -15,14 +15,18 @@
   {% if attachment_before %}<div class="revista-view__attachment revista-view__attachment--before">{{ attachment_before }}</div>{% endif %}
 
   {% if rows %}
-    {% embed 'aculta420_v2:revista-listing' with {
-      eyebrow: 'Publicações'|t,
-      title: 'Revista 420'|t,
-      has_items: true,
-      rows_render: rows
-    } only %}
-      {% block items %}{{ rows_render }}{% endblock %}
-    {% endembed %}
+    {% if view.getStyle().getPluginId() == 'ui_patterns' %}
+      {{ rows }}
+    {% else %}
+      {% embed 'aculta420_v2:revista-listing' with {
+        eyebrow: 'Publicações'|t,
+        title: 'Revista 420'|t,
+        has_items: true,
+        rows_render: rows
+      } only %}
+        {% block items %}{{ rows_render }}{% endblock %}
+      {% endembed %}
+    {% endif %}
   {% elseif empty %}
     <div class="revista-view__empty">{{ empty }}</div>
   {% endif %}
