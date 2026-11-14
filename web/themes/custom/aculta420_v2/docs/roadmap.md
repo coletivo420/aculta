@@ -120,8 +120,10 @@ anteriores e não substituem a conferência do código atual.
    Library passaram. Preview e render direto no Runtime continuam pendentes. Os 159 nomes de props obrigatórias aparecem nos Twig dos próprios SDCs; isso
    confirma uso nominal, mas não os valores do producer. Oito props são fornecidas
    por stories executáveis PHP/provider em vez de aparecer inline no YAML. Avaliar
-   defaults e estados vazios caso a caso; ausência de metadados não é falha
-   automática. O worktree tem 275 slots; a varredura lexical apontou 16
+   Dos 159 props required, 16 também têm default: 13 repetem fallback no Twig;
+   três são garantidos por producers PHP, com reações recebidas compostas só
+   quando há dados. Não remover required por lote. Revisar os demais defaults e
+   estados vazios caso a caso; ausência de metadados não é falha automática. O worktree tem 275 slots; a varredura lexical apontou 16
    candidatos;
    triagem manual classificou 11 usos com conversão/inspeção de conteúdo, quatro
    verificações de presença e um falso positivo. As 11 ações foram concluídas:
