@@ -80,7 +80,9 @@ final class PagePresentationHooksTest extends UnitTestCase {
       return $field;
     });
     $node->method('label')->willReturn('Publicação de teste');
-    $node->method('toUrl')->willReturn(Url::fromUri('internal:/revista/teste'));
+    $url = $this->createMock(Url::class);
+    $url->method('toString')->willReturn('/revista/teste');
+    $node->method('toUrl')->willReturn($url);
     $node->method('getCacheTags')->willReturn([]);
     $node->method('getCacheContexts')->willReturn([]);
     $node->method('getCacheMaxAge')->willReturn(Cache::PERMANENT);
