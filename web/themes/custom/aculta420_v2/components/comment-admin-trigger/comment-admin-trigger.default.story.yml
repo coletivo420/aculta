@@ -1,5 +1,16 @@
-name: Controles do comentário
-description: Botão de moderação do comentário, lado direito.
+name: Ícone com popup (clique abre os controles)
+description: Ícone de controles administrativos. Clicar abre o popup com o conteúdo de moderação do comentário.
 props:
-  url: /discussoes/1/controles
   author_name: Participante
+  with_dialog: true
+  dialog_id: aculta-admin-dialog-demo
+slots:
+  dialog_content:
+    '#type': component
+    '#component': aculta420_v2:comment-admin-controls
+    '#props':
+      author_name: Participante
+      state_label: Publicado
+      created_label: 14/11/2026
+      reactions_total: 1
+      reply_count: 0

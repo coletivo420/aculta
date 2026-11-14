@@ -16,6 +16,7 @@
     <button type="button" class="content-reply-bar__action content-reply-bar__action--delete" popovertarget="{{ delete_target }}" data-action="resposta-apagar" aria-label="{{ 'Excluir'|t }}" title="{{ 'Excluir'|t }}">
       {{ include('aculta420_v2:icon', { name: 'trash', variant: 'regular', size: 'md' }, with_context = false) }}
     </button>
+    {% if delete_dialog %}{{ delete_dialog }}{% endif %}
   {% elseif delete_url %}
     <a href="{{ delete_url }}" class="use-htmx content-reply-bar__action content-reply-bar__action--delete" data-action="resposta-apagar" data-hx-get="{{ delete_url }}" data-hx-target="#{{ target }}" data-hx-swap="innerHTML" aria-label="{{ 'Excluir tópico'|t }}" title="{{ 'Excluir tópico'|t }}">
       {{ include('aculta420_v2:icon', { name: 'trash', variant: 'regular', size: 'md' }, with_context = false) }}
@@ -37,6 +38,6 @@
     </a>
   {% endif %}
   {% if admin_url %}
-    {{ include('aculta420_v2:comment-admin-trigger', { url: admin_url, author_name: admin_author_name|default('Participante'|t) }, with_context = false) }}
+    {{ include('aculta420_v2:comment-admin-trigger', { url: admin_url, author_name: admin_author_name|default('Participante'|t), with_dialog: admin_with_dialog|default(false), dialog_id: 'aculta-admin-dialog-bar', dialog_content: admin_dialog }, with_context = false) }}
   {% endif %}
 </div>

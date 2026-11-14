@@ -1,7 +1,7 @@
 $schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
-name: Controles administrativos do comentário
+name: Controles administrativos do comentário (ícone)
 status: stable
-description: Botão com ícone Phosphor (shield-check), ao lado direito do bloco do comentário, que abre os controles de moderação daquele comentário no popup da página. Só aparece para quem pode moderar.
+description: Ícone de moderação (shield-check). Clique abre o popup de controles do comentário. Na página o conteúdo vem por HTMX; na UI Library o próprio componente traz o popup e abre por aria-controls.
 group: Comunidade
 libraryOverrides:
   dependencies:
@@ -9,14 +9,28 @@ libraryOverrides:
 props:
   type: object
   additionalProperties: false
-  required: [url, author_name]
+  required: [author_name]
   properties:
     url:
-      type: string
-      title: URL dos controles
-      description: Rota HTMX que devolve o conteúdo do modal de controles do comentário.
-      format: uri-reference
+      type: [string, 'null']
+      title: URL dos controles (página real)
+      description: Rota HTMX que devolve o conteúdo do modal. Usada quando with_dialog é falso.
+      default: null
     author_name:
       type: string
       title: Autor do comentário
       description: Nome usado no rótulo acessível do botão.
+    with_dialog:
+      type: boolean
+      title: Traz o próprio popup
+      description: Verdadeiro na UI Library — o componente renderiza o popup (popup SDC) com dialog_content e abre por aria-controls.
+      default: false
+    dialog_id:
+      type: string
+      title: ID do popup
+      description: ID do popup aberto pelo ícone quando with_dialog é verdadeiro.
+      default: aculta-admin-dialog
+slots:
+  dialog_content:
+    title: Conteúdo do popup
+    description: Conteúdo do modal (comment-admin-controls) quando with_dialog é verdadeiro.

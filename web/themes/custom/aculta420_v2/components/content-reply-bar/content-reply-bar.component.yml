@@ -15,6 +15,11 @@ props:
       title: URL dos controles administrativos
       description: Quando informada (só para quem pode moderar), mostra o botão de controles do comentário no fim da barra.
       default: null
+    admin_with_dialog:
+      type: boolean
+      title: Ícone com popup próprio
+      description: Verdadeiro na UI Library — o ícone de controles traz o popup (admin_dialog) e abre por aria-controls.
+      default: false
     admin_author_name:
       type: [string, 'null']
       title: Autor para o rótulo do controle
@@ -55,3 +60,10 @@ props:
       title: ID do elemento alvo para HTMX (ações que abrem o diálogo de resposta)
       description: ID do contêiner que recebe o fragmento HTMX das ações de excluir, editar, citar e responder.
       default: 'aculta-reply-dialog-body'
+slots:
+  admin_dialog:
+    title: Popup de controles administrativos
+    description: Conteúdo do popup de controles (comment-admin-controls), usado quando admin_with_dialog é verdadeiro.
+  delete_dialog:
+    title: Confirmação de exclusão
+    description: Janela delete-confirm cujo id é delete_target; abre pelo ícone de excluir.
