@@ -11,6 +11,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Routing\CurrentRouteMatch;
 use Drupal\Core\Routing\UrlGeneratorInterface;
 use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\aculta_lms\Form\ClassActivityDeadlineForm;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\Tests\UnitTestCase;
@@ -45,8 +46,10 @@ final class ClassActivityDeadlineFormTest extends UnitTestCase {
     $form = $this->createForm('America/Sao_Paulo');
     $build = $form->buildForm([], $this->createMock(FormStateInterface::class));
 
-    self::assertSame('America/Sao_Paulo', $build['due_at']['#date_timezone']);
-    self::assertStringContainsString('America/Sao_Paulo', (string) $build['intro']['#description']);
+    self::assertIsArray($build['due_at'] ?? NULL);
+    self::assertSame('America/Sao_Paulo', $build['due_at']['#date_timezone'] ?? NULL);
+    self::assertIsArray($build['intro'] ?? NULL);
+    self::assertStringContainsString('America/Sao_Paulo', $this->renderedText($build['intro']['#description'] ?? NULL));
   }
 
   /**
@@ -56,8 +59,24 @@ final class ClassActivityDeadlineFormTest extends UnitTestCase {
     $form = $this->createForm(NULL);
     $build = $form->buildForm([], $this->createMock(FormStateInterface::class));
 
-    self::assertSame('UTC', $build['due_at']['#date_timezone']);
-    self::assertStringContainsString('UTC', (string) $build['intro']['#description']);
+    self::assertIsArray($build['due_at'] ?? NULL);
+    self::assertSame('UTC', $build['due_at']['#date_timezone'] ?? NULL);
+    self::assertIsArray($build['intro'] ?? NULL);
+    self::assertStringContainsString('UTC', $this->renderedText($build['intro']['#description'] ?? NULL));
+  }
+
+  /**
+   * Reads a description value returned by Form API.
+   */
+  private function renderedText(mixed $description): string {
+    if (is_string($description)) {
+      return $description;
+    }
+    self::assertInstanceOf(TranslatableMarkup::class, $description);
+    $arguments = $description->getArguments();
+    $timezone = $arguments['@timezone'] ?? NULL;
+    self::assertIsString($timezone);
+    return str_replace('@timezone', $timezone, $description->getUntranslatedString());
   }
 
   /**

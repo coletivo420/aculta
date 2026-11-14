@@ -53,9 +53,27 @@ final class CourseBuilderWizardTest extends UnitTestCase {
     $this->assertArrayHasKey('details', $operations);
     $this->assertArrayHasKey('structure', $operations);
     $this->assertArrayHasKey('review', $operations);
-    $this->assertSame('Dados do Curso', (string) $operations['details']['title']);
-    $this->assertSame('Estrutura e Aulas', (string) $operations['structure']['title']);
-    $this->assertSame('Revisao e Publicacao', (string) $operations['review']['title']);
+    $details = $operations['details'];
+    $structure = $operations['structure'];
+    $review = $operations['review'];
+    $this->assertIsArray($details);
+    $this->assertIsArray($structure);
+    $this->assertIsArray($review);
+    $this->assertSame('Dados do Curso', $this->operationTitle($details));
+    $this->assertSame('Estrutura e Aulas', $this->operationTitle($structure));
+    $this->assertSame('Revisao e Publicacao', $this->operationTitle($review));
+  }
+
+  /**
+   * Reads a title from a CTools operation definition.
+   *
+   * @param array<array-key, mixed> $operation
+   *   Operation definition.
+   */
+  private function operationTitle(array $operation): string {
+    $title = $operation['title'] ?? NULL;
+    $this->assertIsString($title);
+    return $title;
   }
 
 }

@@ -16,7 +16,9 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\aculta_lms\AttemptArchiveManager;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\Tests\UnitTestCase;
+use Drupal\Core\Field\FieldItemInterface;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Tests that ACULTA grading changes preserve prior attempts. */
@@ -26,7 +28,7 @@ final class AttemptArchiveManagerTest extends UnitTestCase {
   /**
    * Valores capturados na criação da entidade de arquivo.
    *
-   * @var array<string, mixed>
+   * @var array<array-key, mixed>
    */
   private array $createdValues = [];
 
@@ -44,6 +46,7 @@ final class AttemptArchiveManagerTest extends UnitTestCase {
     self::assertSame(80, $this->createdValues['score']);
     self::assertSame(80.25, $this->createdValues['score_precise']);
     self::assertSame(100, $this->createdValues['max_score']);
+    self::assertIsString($this->createdValues['answer_data']);
     self::assertSame(['answer' => 'Resposta original'], json_decode($this->createdValues['answer_data'], TRUE));
     self::assertSame('', $this->createdValues['course_status_id']);
     self::assertSame('', $this->createdValues['lesson_status_id']);
@@ -107,7 +110,7 @@ final class AttemptArchiveManagerTest extends UnitTestCase {
   /**
    * Creates the manager and captures the archive entity values.
    *
-   * @return array{0: AttemptArchiveManager, 1: EntityInterface}
+   * @return array{AttemptArchiveManager, EntityInterface&MockObject}
    *   Gerenciador criado e entidade de arquivo simulada.
    */
   private function managerForArchive(?ContentEntityInterface $original = NULL): array {
@@ -181,7 +184,7 @@ final class AttemptArchiveManagerTest extends UnitTestCase {
   /**
    * Monta uma entidade de resposta simulada.
    *
-   * @param array $data
+   * @param array<string, mixed> $data
    *   Dados da resposta.
    * @param string|null $score
    *   Nota da resposta, ou NULL se não avaliada.
@@ -242,7 +245,11 @@ final class AttemptArchiveManagerTest extends UnitTestCase {
   }
 
   /**
-   * Creates a content entity double backed by simple scalar field lists. */
+   * Creates a content entity double backed by simple scalar field lists.
+   *
+   * @param array<string, mixed> $values
+   *   Scalar entity field values.
+   */
   private function contentEntity(string $type, string $id, array $values, string $uuid = 'entity-uuid', bool $new = FALSE): ContentEntityInterface {
     $fields = [];
     foreach ($values as $name => $value) {
@@ -264,7 +271,7 @@ final class AttemptArchiveManagerTest extends UnitTestCase {
    * @param mixed $value
    *   Valor armazenado no campo.
    *
-   * @return \Drupal\Core\Field\FieldItemListInterface
+   * @return \Drupal\Core\Field\FieldItemListInterface<FieldItemInterface>
    *   Item de campo simulado.
    */
   private function valueField(mixed $value): FieldItemListInterface {
@@ -291,7 +298,7 @@ final class AttemptArchiveManagerTest extends UnitTestCase {
        * @return mixed
        *   Valor da propriedade.
        */
-      public function __get($property_name) {
+      public function __get(mixed $property_name): mixed {
         if ($property_name === 'value') {
           return $this->fieldValue;
         }

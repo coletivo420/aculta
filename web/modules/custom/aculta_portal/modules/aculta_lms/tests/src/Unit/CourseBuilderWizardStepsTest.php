@@ -32,16 +32,19 @@ final class CourseBuilderWizardStepsTest extends UnitTestCase {
     $formState->setTemporaryValue('wizard', ['title' => 'Curso Teste', 'description' => 'Descricao']);
 
     $form = $step->buildForm([], $formState);
-    $this->assertSame('Curso Teste', $form['title']['#default_value']);
-    $this->assertSame('Descricao', $form['description']['#default_value']);
+    $this->assertIsArray($form['title'] ?? NULL);
+    $this->assertSame('Curso Teste', $form['title']['#default_value'] ?? NULL);
+    $this->assertIsArray($form['description'] ?? NULL);
+    $this->assertSame('Descricao', $form['description']['#default_value'] ?? NULL);
 
     $formState->setValue('title', 'Novo Titulo');
     $formState->setValue('description', 'Nova Descricao');
     $step->submitForm($form, $formState);
 
     $cached = $formState->getTemporaryValue('wizard');
-    $this->assertSame('Novo Titulo', $cached['title']);
-    $this->assertSame('Nova Descricao', $cached['description']);
+    $this->assertIsArray($cached);
+    $this->assertSame('Novo Titulo', $cached['title'] ?? NULL);
+    $this->assertSame('Nova Descricao', $cached['description'] ?? NULL);
   }
 
   /**
@@ -59,7 +62,8 @@ final class CourseBuilderWizardStepsTest extends UnitTestCase {
     $step->submitForm($form, $formState);
 
     $cached = $formState->getTemporaryValue('wizard');
-    $this->assertSame("Aula 1\nAula 2", $cached['initial_lessons']);
+    $this->assertIsArray($cached);
+    $this->assertSame("Aula 1\nAula 2", $cached['initial_lessons'] ?? NULL);
   }
 
   /**
@@ -86,6 +90,8 @@ final class CourseBuilderWizardStepsTest extends UnitTestCase {
     $step->submitForm($form, $formState);
 
     $cached = $formState->getTemporaryValue('wizard');
+    $this->assertIsArray($cached);
+    $this->assertIsBool($cached['publish'] ?? NULL);
     $this->assertTrue($cached['publish']);
   }
 

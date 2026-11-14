@@ -13,6 +13,7 @@ use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Tests educator authorization for course authoring.
@@ -46,7 +47,7 @@ final class CourseAuthoringAccessCheckTest extends UnitTestCase {
     $course->method('id')->willReturn('15');
     $this->makeCacheable($course);
     $course->method('hasPermission')->willReturn(TRUE);
-    $lesson = $this->createMock(ContentEntityInterface::class);
+    $lesson = $this->contentEntity();
     $lesson->method('getEntityTypeId')->willReturn('aculta_lms_lesson');
     $this->makeCacheable($lesson);
     $lesson->method('get')->with('course_id')->willReturn((object) ['value' => 16]);
@@ -75,12 +76,12 @@ final class CourseAuthoringAccessCheckTest extends UnitTestCase {
     $course->method('id')->willReturn('15');
     $this->makeCacheable($course);
     $course->method('hasPermission')->willReturn(TRUE);
-    $lesson = $this->createMock(ContentEntityInterface::class);
+    $lesson = $this->contentEntity();
     $lesson->method('getEntityTypeId')->willReturn('aculta_lms_lesson');
     $lesson->method('id')->willReturn('25');
     $this->makeCacheable($lesson);
     $lesson->method('get')->with('course_id')->willReturn((object) ['value' => 15]);
-    $activity = $this->createMock(ContentEntityInterface::class);
+    $activity = $this->contentEntity();
     $activity->method('getEntityTypeId')->willReturn('aculta_lms_activity');
     $activity->method('id')->willReturn('35');
     $this->makeCacheable($activity);
@@ -112,12 +113,12 @@ final class CourseAuthoringAccessCheckTest extends UnitTestCase {
     $course->method('id')->willReturn('15');
     $course->method('hasPermission')->with('grade students', $account)->willReturn(TRUE);
     $this->makeCacheable($course);
-    $lesson = $this->createMock(ContentEntityInterface::class);
+    $lesson = $this->contentEntity();
     $lesson->method('getEntityTypeId')->willReturn('aculta_lms_lesson');
     $lesson->method('id')->willReturn('25');
     $lesson->method('get')->with('course_id')->willReturn((object) ['value' => 15]);
     $this->makeCacheable($lesson);
-    $activity = $this->createMock(ContentEntityInterface::class);
+    $activity = $this->contentEntity();
     $activity->method('getEntityTypeId')->willReturn('aculta_lms_activity');
     $activity->method('id')->willReturn('35');
     $activity->method('get')->with('lesson_id')->willReturn((object) ['value' => 25]);
@@ -140,9 +141,19 @@ final class CourseAuthoringAccessCheckTest extends UnitTestCase {
   }
 
   /**
+   * Creates an entity mock with dynamic field access.
+   *
+   * @return ContentEntityInterface&MockObject
+   *   Entity mock.
+   */
+  private function contentEntity(): ContentEntityInterface&MockObject {
+    return $this->createMock(ContentEntityInterface::class);
+  }
+
+  /**
    * Adds cacheability methods to an entity mock.
    */
-  private function makeCacheable(ContentEntityInterface $entity): void {
+  private function makeCacheable(ContentEntityInterface&MockObject $entity): void {
     $entity->method('getCacheContexts')->willReturn([]);
     $entity->method('getCacheTags')->willReturn([]);
     $entity->method('getCacheMaxAge')->willReturn(-1);
