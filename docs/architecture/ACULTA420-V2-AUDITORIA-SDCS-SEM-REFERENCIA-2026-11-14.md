@@ -2,17 +2,25 @@
 
 ## Escopo e método
 
-A matriz `ui-suite-consumidores-iniciais.csv` contém 145 linhas de SDC. O gerador
+A matriz `ui-suite-consumidores-iniciais.csv` contém 150 registros SDC no
+worktree, incluindo componentes ainda não rastreados. O gerador
 `scripts/inventory-ui-suite-consumers.php` procura IDs explícitos fora do diretório
 do próprio componente e exclui stories/testes, varrendo módulos customizados,
-templates/componentes/src do tema e Config Sync. Nesta fotografia, 110 SDCs têm
-referências literais e 35 não têm. Ausência literal não prova ausência de uso
-editorial/dinâmico e não autoriza exclusão.
+templates/componentes/src do tema e Config Sync. Na fotografia inicial, 110 SDCs
+tinham referências literais e 35 não tinham. Ausência literal não prova ausência
+de uso editorial/dinâmico e não autoriza exclusão. A revisão do worktree em
+2026-11-14 encontrou 115 SDCs com referência literal e 35 sem referência
+literal. `reply-indent` tem consumer explícito em `forum-comment`; `delete-confirm`
+tem consumer explícito nos dois templates de comentário; `posting-overlay` é
+referenciado pelo hook de progresso do Fórum. A comparação programática da
+coluna `detected_consumers` confirma que as 35 linhas da tabela abaixo
+correspondem exatamente aos SDCs sem referência literal nesta fotografia.
 
-A validação corrente do provider UI Patterns, com cache de definições desativado,
-descobriu 145 SDCs `aculta420_v2`. Isso confirma a descoberta das definições no
-checkout/runtime consultado; não comprova configurações editoriais persistidas nem
-substitui a inspeção da página da Library, que aguarda o preflight/cache do Runtime.
+A última validação registrada do provider UI Patterns, com cache de definições
+desativado, descobriu 145 SDCs `aculta420_v2`, antes da inclusão de
+`reply-indent`. Esse snapshot não confirma a descoberta atual no Runtime nem
+configurações editoriais persistidas e não substitui a inspeção da página da
+Library, que aguarda atualização do cache e homologação.
 Por decisão do responsável, todos os SDCs publicados na UI Patterns Library são
 preservados. A coluna “Intenção declarada” transcreve o propósito do manifest e
 serve para localizar o contrato a revisar, não para atribuir um consumidor.
