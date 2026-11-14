@@ -11,14 +11,17 @@ props:
       type: string
       title: Título do diálogo
       default: "Editar perfil"
+      description: Texto do cabeçalho e nome acessível referenciado por aria-labelledby.
     subtitle:
       type: [string, 'null']
       title: Subtítulo
       default: "Atualize como seu perfil aparece na ACULTA."
+      description: Orientação opcional apresentada abaixo do título do diálogo.
     show_accent_stripes:
       type: boolean
       title: Mostrar faixas tricolores
       default: true
+      description: Quando true, exibe faixas decorativas tricolores no cabeçalho; elas são ocultadas de tecnologia assistiva.
 slots:
   intro:
     title: Introdução

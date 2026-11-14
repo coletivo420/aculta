@@ -12,35 +12,43 @@ props:
       type: string
       title: Título da publicação
       minLength: 1
+      description: Título editorial exibido como link para a publicação e repetido no nome acessível da ação de leitura.
     url:
       type: string
       title: URL canônica
       format: uri-reference
+      description: Destino canônico usado no título e na ação para abrir a publicação.
     has_category:
       type: boolean
       title: Categoria disponível
       default: false
+      description: Quando true, renderiza o slot category acima do título.
     has_subtitle:
       type: boolean
       title: Chamada disponível
       default: false
+      description: Quando true, renderiza o slot subtitle no corpo do cartão.
     has_summary:
       type: boolean
       title: Resumo disponível
       default: false
+      description: Quando true, renderiza o slot summary no corpo do cartão.
     has_cover:
       type: boolean
       title: Capa disponível
       default: false
+      description: Quando true, renderiza o slot image; caso contrário, mostra o quadro vazio da capa.
     read_label:
       type: string
       title: Texto do link
       default: Leia a publicação
+      description: Texto visível da ação que abre a publicação; o título é acrescentado em texto oculto para distingui-la.
     accent:
       type: [string, 'null']
       title: Faixa de acento resolvida pelo Portal ou pelo administrador
       enum: [green, yellow, red, null]
       default: null
+      description: Cor editorial opcional usada como modificador visual do cartão, resolvida antes pelo Portal ou pela configuração administrativa.
 slots:
   image:
     title: Capa

@@ -11,6 +11,7 @@ props:
       type: Drupal\Core\Template\Attribute
       title: Atributos HTML opcionais
       default: null
+      description: Atributos mesclados ao elemento raiz da lista de cursos preparada pelo presenter.
 slots:
   content:
     title: Cursos ou estado vazio
