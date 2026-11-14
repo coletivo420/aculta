@@ -56,3 +56,4 @@
 .content-reply-bar__action--edit { --content-reply-color: color-mix(in srgb, var(--accent-yellow-stripe) 60%, #000); }
 [data-theme="dark"] .content-reply-bar__action--edit { --content-reply-color: var(--accent-yellow-stripe); }
 .content-reply-bar__action--delete { --content-reply-color: var(--accent-red-stripe); }
+.content-reply-bar__action--admin { --content-reply-color: var(--color-brand-primary); }

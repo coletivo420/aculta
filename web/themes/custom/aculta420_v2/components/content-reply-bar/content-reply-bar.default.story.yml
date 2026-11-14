@@ -1,7 +1,40 @@
 name: Barra de Respostas de Conteúdo
+description: Barra de ações do comentário. Cada ícone abre o componente correspondente ao clique — controles administrativos (popup de moderação), excluir (confirmação), responder, editar e citar (popup de resposta).
 props:
   permalink_url: /forum/topico/123#post-456
-  edit_url: /discussoes/editar/comment/456
-  quote_url: /discussoes/citar/comment/456
-  reply_url: /discussoes/responder/comment/456
-  delete_url: /discussoes/apagar/comment/456
+  edit_url: '#'
+  quote_url: '#'
+  reply_url: '#'
+  reply_with_dialog: true
+  delete_target: delete-demo
+  admin_url: '#'
+  admin_with_dialog: true
+  admin_author_name: Participante
+slots:
+  reply_dialog:
+    '#type': component
+    '#component': aculta420_v2:discussion-reply-composer
+    '#props':
+      target_id: discussion-reply-composer-bar-demo
+      status: editando
+      mode: responder
+  admin_dialog:
+    '#type': component
+    '#component': aculta420_v2:comment-admin-controls
+    '#props':
+      author_name: Participante
+      state_label: Publicado
+      created_label: 14/11/2026
+      reactions_total: 1
+      reply_count: 0
+  delete_dialog:
+    '#type': component
+    '#component': aculta420_v2:delete-confirm
+    '#props':
+      target_id: delete-demo
+      title: Excluir resposta?
+      message: Confirma a exclusão?
+      confirm_label: Excluir
+      cancel_label: Cancelar
+      token: ''
+      confirm_url: '#'

@@ -61,11 +61,14 @@ final class DiscussionReplyComposerStory extends StoryDefault implements Contain
     return [
       'target_id' => 'discussion-composer-demo-1',
       'status' => 'editando',
+      'standalone_popup' => TRUE,
       'mode' => 'responder',
       'parent_id' => '42',
       'parent_author' => 'Maria Silva',
       'parent_subject' => 'Dúvida sobre o cultivo orgânico',
       'host_title' => 'Guia de Cultivo Sustentável',
+      'trigger_label' => 'Responder',
+      'dialog_title' => 'Responder à discussão',
     ];
   }
 

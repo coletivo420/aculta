@@ -161,7 +161,11 @@ final class EditorialWorkspaceController {
     return [
       '#type' => 'component',
       '#component' => 'aculta420_v2:discussion-content-composer',
-      '#props' => ['target_id' => 'aculta-studio-create-body', 'status' => 'editando'],
+      '#props' => [
+        'target_id' => 'aculta-studio-create-body',
+        'status' => 'editando',
+        'standalone_popup' => FALSE,
+      ],
       '#slots' => ['form' => $form],
     ];
   }

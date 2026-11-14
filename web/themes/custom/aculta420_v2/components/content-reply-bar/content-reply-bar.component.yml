@@ -20,6 +20,11 @@ props:
       title: Ícone com popup próprio
       description: Verdadeiro na UI Library — o ícone de controles traz o popup (admin_dialog) e abre por aria-controls.
       default: false
+    reply_with_dialog:
+      type: boolean
+      title: Responder, editar e citar abrem o popup da barra
+      description: Verdadeiro na UI Library — os três ícones abrem o popup de resposta (reply_dialog) por aria-controls, sem HTMX.
+      default: false
     admin_author_name:
       type: [string, 'null']
       title: Autor para o rótulo do controle
@@ -61,6 +66,9 @@ props:
       description: ID do contêiner que recebe o fragmento HTMX das ações de excluir, editar, citar e responder.
       default: 'aculta-reply-dialog-body'
 slots:
+  reply_dialog:
+    title: Popup de resposta
+    description: Conteúdo do popup de resposta (discussion-reply-composer), usado quando reply_with_dialog é verdadeiro.
   admin_dialog:
     title: Popup de controles administrativos
     description: Conteúdo do popup de controles (comment-admin-controls), usado quando admin_with_dialog é verdadeiro.

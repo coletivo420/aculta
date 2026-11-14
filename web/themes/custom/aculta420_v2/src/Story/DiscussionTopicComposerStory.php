@@ -58,6 +58,9 @@ final class DiscussionTopicComposerStory extends StoryDefault implements Contain
       'target_id' => 'discussion-topic-composer-demo-1',
       'status' => 'editando',
       'host_title' => 'Growroom420',
+      'standalone_popup' => TRUE,
+      'trigger_label' => 'Novo tópico',
+      'dialog_title' => 'Criar tópico',
     ];
   }
 

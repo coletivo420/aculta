@@ -1167,6 +1167,7 @@ final class PagePresentationHooks {
       '#component' => 'aculta420_v2:discussion-reply-composer',
       '#props' => [
         'target_id' => $targetId,
+        'standalone_popup' => FALSE,
         'status' => (string) ($variables['status'] ?? 'editando'),
         'mode' => (string) ($variables['mode'] ?? 'responder'),
         'parent_id' => isset($variables['parent_id']) ? $variables['parent_id'] : NULL,

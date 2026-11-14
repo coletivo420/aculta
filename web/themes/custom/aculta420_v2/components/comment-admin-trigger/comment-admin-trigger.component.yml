@@ -6,6 +6,7 @@ group: Comunidade
 libraryOverrides:
   dependencies:
     - aculta_forum/comment-admin-popup
+    - aculta420_v2/content-reply-bar
 props:
   type: object
   additionalProperties: false

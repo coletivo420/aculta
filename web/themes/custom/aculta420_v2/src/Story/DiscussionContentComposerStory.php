@@ -50,6 +50,9 @@ final class DiscussionContentComposerStory extends StoryDefault implements Conta
     return [
       'target_id' => 'discussion-content-composer-demo-1',
       'status' => 'editando',
+      'standalone_popup' => TRUE,
+      'trigger_label' => 'Nova publicação',
+      'dialog_title' => 'Nova publicação',
     ];
   }
 

@@ -1,6 +1,6 @@
 {#
  * @file
- * Compositor: o corpo é entregue ao popup da página (aculta-reply-dialog, topic ou studio).
+ * Compositor de resposta; a Library o mostra no popup e a página pode fornecer um popup compartilhado.
 #}
 {% set body %}
 <div id="{{ target_id }}" class="discussion-reply-composer discussion-reply-composer--{{ status }} discussion-reply-composer--{{ mode|default('responder') }} forum-post-card forum-post-card--stripe-brand" data-discussion-reply-composer data-status="{{ status }}" data-mode="{{ mode|default('responder') }}" data-parent-id="{{ parent_id|default('') }}">
@@ -8,7 +8,7 @@
   <div class="forum-post-card__inner">
     <header class="forum-post-card__header discussion-reply-composer__header">
       <div class="forum-post-card__author">
-        {{ include('aculta420_v2:avatar', { size: 'md', media: avatar }, with_context = false) }}
+        {{ include('aculta420_v2:avatar', {size: 'md', media: avatar}, with_context: false) }}
         <div class="forum-post-card__author-info">
           <div class="forum-post-card__author-name-row">
             <span class="forum-post-card__author-name">{{ mode == 'editar' ? 'Editar'|t : (mode == 'excluir' ? 'Excluir'|t : 'Sua Resposta'|t) }}</span>
@@ -55,5 +55,13 @@
   </div>
 </div>
 {% endset %}
-{# O formulário é carregado no corpo do popup da página; não cria popup próprio. #}
-{{ body|raw }}
+{% if standalone_popup is not defined or standalone_popup %}
+  {{ include('aculta420_v2:popup', {
+    id: target_id ~ '-popup',
+    title: dialog_title|default(trigger_label|default('Responder'|t)),
+    trigger_label: trigger_label|default('Responder'|t),
+    content: body,
+  }, with_context: false) }}
+{% else %}
+  {{ body }}
+{% endif %}

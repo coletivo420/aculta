@@ -351,6 +351,31 @@ final class PagePresentationHooksTest extends UnitTestCase {
   }
 
   /**
+   * Keeps the reply composer inline inside its page-level Popup SDC.
+   */
+  public function testDiscussionReplyComposerUsesSharedPopup(): void {
+    $componentManager = $this->createMock(ComponentPluginManager::class);
+    $componentManager->expects(self::once())
+      ->method('hasDefinition')
+      ->with('aculta420_v2:discussion-reply-composer')
+      ->willReturn(TRUE);
+    $hooks = $this->newHooks($componentManager);
+    $variables = [
+      'target_id' => 'discussion-composer-node-1',
+      'status' => 'editando',
+      'mode' => 'responder',
+      'form' => ['#type' => 'container'],
+      'component' => [],
+    ];
+
+    $hooks->preprocessDiscussionReplyComposer($variables);
+
+    self::assertSame('aculta420_v2:discussion-reply-composer', $variables['component']['#component']);
+    self::assertFalse($variables['component']['#props']['standalone_popup']);
+    self::assertSame($variables['form'], $variables['component']['#slots']['form']);
+  }
+
+  /**
    * Dashboard on the purpose root keeps its aside layout before front-page logic.
    */
   public function testDashboardAndAccountUseAsideLayout(): void {

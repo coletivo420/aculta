@@ -13,6 +13,11 @@ props:
       title: Identificador do container alvo
       minLength: 1
       description: ID DOM estável do compositor usado como alvo para atualizações HTMX.
+    standalone_popup:
+      type: boolean
+      title: Abrir em popup próprio
+      default: true
+      description: Compõe o compositor dentro do SDC popup; desative quando o consumidor já fornece a janela modal.
     status:
       type: string
       title: Estado do compositor
