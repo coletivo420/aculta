@@ -15,6 +15,7 @@ use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormState;
 use Drupal\Core\Routing\CurrentRouteMatch;
+use Drupal\Core\Url;
 use Drupal\Core\Routing\UrlGeneratorInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\group\Entity\GroupInterface;
@@ -25,6 +26,7 @@ use Drupal\media\MediaInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Tests that contextual document routes reuse Group and Media entity forms.
@@ -65,13 +67,18 @@ final class CourseDocumentControllerTest extends UnitTestCase {
 
     $build = $controller->add($course);
 
-    self::assertSame(['#type' => 'container'], $build['media_form']);
-    self::assertSame(
-      ['::submitForm', '::save'],
-      $build['actions']['submit']['#submit'],
-    );
-    self::assertSame('aculta_portal_button', $build['contextual_return']['#type']);
-    self::assertSame('aculta_lms.course_materials_edit', $build['contextual_return']['#props']['url']);
+    self::assertSame(['#type' => 'container'], $build['media_form'] ?? NULL);
+    $actions = $build['actions'] ?? NULL;
+    self::assertIsArray($actions);
+    $submit = $actions['submit'] ?? NULL;
+    self::assertIsArray($submit);
+    self::assertSame(['::submitForm', '::save'], $submit['#submit'] ?? NULL);
+    $contextualReturn = $build['contextual_return'] ?? NULL;
+    self::assertIsArray($contextualReturn);
+    self::assertSame('aculta_portal_button', $contextualReturn['#type'] ?? NULL);
+    $props = $contextualReturn['#props'] ?? NULL;
+    self::assertIsArray($props);
+    self::assertSame('aculta_lms.course_materials_edit', $props['url'] ?? NULL);
   }
 
   /**
@@ -89,9 +96,13 @@ final class CourseDocumentControllerTest extends UnitTestCase {
 
     $hooks->addCourseRelation($form, new FormState());
 
+    $actions = $form['actions'] ?? NULL;
+    self::assertIsArray($actions);
+    $submit = $actions['submit'] ?? NULL;
+    self::assertIsArray($submit);
     self::assertSame(
       ['::submitForm', '::save', 'aculta_lms.course_document_controller:submitDocumentToCourse'],
-      $form['actions']['submit']['#submit'],
+      $submit['#submit'] ?? NULL,
     );
   }
 
@@ -99,7 +110,7 @@ final class CourseDocumentControllerTest extends UnitTestCase {
    * Saved private documents are related after access is checked again.
    */
   public function testAttachDocumentToCourseRevalidatesAndRedirects(): void {
-    [$controller, $course, $document] = $this->fixtures();
+    [, $course, $document] = $this->fixtures();
     $course->method('getRelatedEntities')
       ->with('aculta_document_viewer:course_document')
       ->willReturn([]);
@@ -118,8 +129,10 @@ final class CourseDocumentControllerTest extends UnitTestCase {
     $form = [];
     $controller->attachDocumentToCourse($form, $form_state);
 
-    self::assertSame('aculta_lms.course_materials_edit', $form_state->getRedirect()->getRouteName());
-    self::assertSame(['course' => '12'], $form_state->getRedirect()->getRouteParameters());
+    $redirect = $form_state->getRedirect();
+    self::assertInstanceOf(Url::class, $redirect);
+    self::assertSame('aculta_lms.course_materials_edit', $redirect->getRouteName());
+    self::assertSame(['course' => '12'], $redirect->getRouteParameters());
   }
 
   /**
@@ -137,15 +150,19 @@ final class CourseDocumentControllerTest extends UnitTestCase {
 
     $build = $controller->edit($course, $document);
 
-    self::assertSame(['#type' => 'container'], $build['media_form']);
-    self::assertSame('aculta_portal_button', $build['contextual_return']['#type']);
-    self::assertSame('aculta_lms.course_materials_edit', $build['contextual_return']['#props']['url']);
+    self::assertSame(['#type' => 'container'], $build['media_form'] ?? NULL);
+    $contextualReturn = $build['contextual_return'] ?? NULL;
+    self::assertIsArray($contextualReturn);
+    self::assertSame('aculta_portal_button', $contextualReturn['#type'] ?? NULL);
+    $props = $contextualReturn['#props'] ?? NULL;
+    self::assertIsArray($props);
+    self::assertSame('aculta_lms.course_materials_edit', $props['url'] ?? NULL);
   }
 
   /**
    * Creates a controller with real access policies and isolated services.
    *
-   * @return array{\Drupal\aculta_lms\Resources\Controller\CourseDocumentController, \Drupal\group\Entity\GroupInterface, \Drupal\media\MediaInterface, \Drupal\Core\Entity\EntityFormBuilderInterface}
+   * @return array{0: \Drupal\aculta_lms\Resources\Controller\CourseDocumentController, 1: \Drupal\group\Entity\GroupInterface&\PHPUnit\Framework\MockObject\MockObject, 2: \Drupal\media\MediaInterface&\PHPUnit\Framework\MockObject\MockObject, 3: \Drupal\Core\Entity\EntityFormBuilderInterface&\PHPUnit\Framework\MockObject\MockObject}
    *   The controller, course and document.
    */
   private function fixtures(): array {
@@ -153,7 +170,7 @@ final class CourseDocumentControllerTest extends UnitTestCase {
     $account->method('hasPermission')->with('administer lms')->willReturn(TRUE);
     $groupType = $this->createMock(GroupTypeInterface::class);
     $groupType->method('hasPlugin')->with('aculta_document_viewer:course_document')->willReturn(TRUE);
-    $course = $this->createMock(GroupInterface::class);
+    $course = $this->createGroupMock();
     $course->method('bundle')->willReturn('lms_course');
     $course->method('id')->willReturn('12');
     $course->method('getGroupType')->willReturn($groupType);
@@ -161,7 +178,7 @@ final class CourseDocumentControllerTest extends UnitTestCase {
     $course->method('getCacheTags')->willReturn(['group:12']);
     $course->method('getCacheContexts')->willReturn([]);
     $course->method('getCacheMaxAge')->willReturn(-1);
-    $document = $this->createMock(MediaInterface::class);
+    $document = $this->createMediaMock();
     $document->method('bundle')->willReturn('course_document');
     $document->method('getCacheTags')->willReturn(['media:55']);
     $document->method('getCacheContexts')->willReturn([]);
@@ -182,7 +199,7 @@ final class CourseDocumentControllerTest extends UnitTestCase {
     $storage->method('create')->with(['bundle' => 'course_document'])->willReturn($document);
     $entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
     $entityTypeManager->method('getStorage')->with('media')->willReturn($storage);
-    $entityFormBuilder = $this->createMock(EntityFormBuilderInterface::class);
+    $entityFormBuilder = $this->createEntityFormBuilderMock();
     $controller = new CourseDocumentController(
       $entityTypeManager,
       $entityFormBuilder,
@@ -196,7 +213,7 @@ final class CourseDocumentControllerTest extends UnitTestCase {
   /**
    * Creates a controller bound to the current Group route parameter.
    */
-  private function controllerWithRouteMatch(GroupInterface $course, MediaInterface $document, CurrentRouteMatch $route_match): CourseDocumentController {
+  private function controllerWithRouteMatch(GroupInterface&MockObject $course, MediaInterface $document, CurrentRouteMatch $route_match): CourseDocumentController {
     $account = $this->createMock(AccountProxyInterface::class);
     $account->method('hasPermission')->with('administer lms')->willReturn(TRUE);
     $groupType = $this->createMock(GroupTypeInterface::class);
@@ -227,6 +244,36 @@ final class CourseDocumentControllerTest extends UnitTestCase {
       $route_match,
       $this->getStringTranslationStub(),
     );
+  }
+
+  /**
+   * Creates a Group entity mock with PHPUnit's mock API visible to PHPStan.
+   *
+   * @return \Drupal\group\Entity\GroupInterface&\PHPUnit\Framework\MockObject\MockObject
+   *   The Group entity mock.
+   */
+  private function createGroupMock(): GroupInterface&MockObject {
+    return $this->createMock(GroupInterface::class);
+  }
+
+  /**
+   * Creates a Media entity mock with PHPUnit's mock API visible to PHPStan.
+   *
+   * @return \Drupal\media\MediaInterface&\PHPUnit\Framework\MockObject\MockObject
+   *   The Media entity mock.
+   */
+  private function createMediaMock(): MediaInterface&MockObject {
+    return $this->createMock(MediaInterface::class);
+  }
+
+  /**
+   * Creates an entity form builder mock with PHPUnit's mock API visible.
+   *
+   * @return \Drupal\Core\Entity\EntityFormBuilderInterface&\PHPUnit\Framework\MockObject\MockObject
+   *   The form builder mock.
+   */
+  private function createEntityFormBuilderMock(): EntityFormBuilderInterface&MockObject {
+    return $this->createMock(EntityFormBuilderInterface::class);
   }
 
 }

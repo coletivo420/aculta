@@ -1,10 +1,10 @@
 # Dívida PHPStan — ACULTA
 
-Gerado em 2026-11-14T19:49:39+00:00 por `scripts/phpstan-debt-report.php`.
+Gerado em 2026-11-14T19:56:58+00:00 por `scripts/phpstan-debt-report.php`.
 
 | Item | Valor |
 | --- | --- |
-| Commit | `d4ec7b14a9cafbc68292aa99c422d7c1f315012d` |
+| Commit | `e1914d1c6b929ad9898391c82985ad16775856a6` |
 | PHP | 8.4.27 |
 | PHPStan | PHPStan - PHP Static Analysis Tool 2.3.5 |
 | Nível | 10 |
@@ -15,27 +15,27 @@ Gerado em 2026-11-14T19:49:39+00:00 por `scripts/phpstan-debt-report.php`.
 
 | Medida | Ocorrências |
 | --- | ---: |
-| Total bruto no nível 10 | 26579 |
-| Dívida congelada no baseline | 26579 |
+| Total bruto no nível 10 | 26534 |
+| Dívida congelada no baseline | 26534 |
 | Erros não suprimidos | 0 |
-| Entradas no baseline | 15493 |
+| Entradas no baseline | 15478 |
 | Produção | 15696 |
-| Testes | 10883 |
+| Testes | 10838 |
 
 ## Criticidade funcional
 
 | Criticidade | Ocorrências |
 | --- | ---: |
 | alta | 231 |
-| media | 23315 |
+| media | 23270 |
 | baixa | 3033 |
 
 ## Evolução desde o baseline de referência
 
 | Classificação | Entradas |
 | --- | ---: |
-| Dívida removida | 24 |
-| Dívida mantida | 15493 |
+| Dívida removida | 15 |
+| Dívida mantida | 15478 |
 | Nova dívida (bloqueante) | 0 |
 | Contagem aumentada (bloqueante) | 0 |
 | Contagem reduzida | 0 |
@@ -49,7 +49,7 @@ Gerado em 2026-11-14T19:49:39+00:00 por `scripts/phpstan-debt-report.php`.
 | scripts | 2996 |
 | aculta_messenger | 2073 |
 | aculta_portal | 2020 |
-| aculta_lms | 1991 |
+| aculta_lms | 1946 |
 | aculta_events | 1792 |
 | aculta_wiki | 1461 |
 | aculta_lms_h5p | 1299 |
@@ -80,13 +80,13 @@ Gerado em 2026-11-14T19:49:39+00:00 por `scripts/phpstan-debt-report.php`.
 
 | Identificador | Ocorrências |
 | --- | ---: |
-| `offsetAccess.nonOffsetAccessible` | 8084 |
+| `offsetAccess.nonOffsetAccessible` | 8074 |
 | `argument.type` | 4640 |
-| `method.nonObject` | 3024 |
+| `method.nonObject` | 3002 |
 | `missingType.iterableValue` | 2803 |
 | `cast.string` | 2075 |
 | `cast.int` | 1344 |
-| `method.notFound` | 998 |
+| `method.notFound` | 986 |
 | `property.nonObject` | 666 |
 | `return.type` | 369 |
 | `foreach.nonIterable` | 354 |
