@@ -1,0 +1,40 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Controles administrativos do comentário (conteúdo)
+status: stable
+description: Conteúdo do modal de moderação de um comentário. Mostra a situação somente leitura e recebe as ações do formulário e o registro de moderação pelos slots.
+group: Comunidade
+props:
+  type: object
+  additionalProperties: false
+  required: [author_name, state_label]
+  properties:
+    author_name:
+      type: string
+      title: Autor
+      description: Nome do autor do comentário.
+    state_label:
+      type: string
+      title: Situação
+      description: Estado atual do comentário, por exemplo publicado, despublicado ou removido pela moderação.
+    created_label:
+      type: [string, 'null']
+      title: Data
+      description: Data de publicação formatada.
+      default: null
+    reactions_total:
+      type: integer
+      title: Reações
+      description: Total de reações recebidas.
+      default: 0
+    reply_count:
+      type: integer
+      title: Respostas
+      description: Número de respostas filhas.
+      default: 0
+slots:
+  actions:
+    title: Ações de moderação
+    description: Formulário com as ações do comentário.
+  log:
+    title: Registro
+    description: Últimas ações de moderação sobre o comentário.

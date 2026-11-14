@@ -1,8 +1,7 @@
 {#
  * @file
- * Compositor em popup: usa o componente padrão Diálogo (dialog), que abre pelo gatilho.
+ * Compositor: o corpo é entregue ao popup da página (aculta-reply-dialog, topic ou studio).
 #}
-{% set dialog_id = target_id ~ '-dialog' %}
 {% set body %}
 <div id="{{ target_id }}" class="discussion-reply-composer discussion-reply-composer--{{ status }} discussion-reply-composer--{{ mode|default('responder') }} forum-post-card forum-post-card--stripe-brand" data-discussion-reply-composer data-status="{{ status }}" data-mode="{{ mode|default('responder') }}" data-parent-id="{{ parent_id|default('') }}">
   <div class="forum-post-card__stripe"></div>
@@ -56,10 +55,5 @@
   </div>
 </div>
 {% endset %}
-{{ include('aculta420_v2:popup', {
-  id: dialog_id,
-  title: dialog_title|default('Responder'),
-  trigger_label: trigger_label|default('Responder'),
-  trigger_url: '#' ~ dialog_id,
-  content: body|raw,
-}, with_context = false) }}
+{# O formulário é carregado no corpo do popup da página; não cria popup próprio. #}
+{{ body|raw }}

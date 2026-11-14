@@ -64,6 +64,9 @@ slots:
   actions:
     title: Barra de respostas
     description: aculta420_v2:content-reply-bar, fornecida pelo módulo proprietário.
+  admin:
+    title: Controles administrativos
+    description: Botão de moderação ao lado direito do comentário, visível só para quem pode moderar.
   received_slot:
     title: Barra de reações recebidas
     description: aculta420_v2:discussion-reactions-received, no topo à direita.

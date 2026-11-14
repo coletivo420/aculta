@@ -8,6 +8,12 @@ props:
   author_reactions: 8
   timestamp: 14 de novembro de 2026
 slots:
+  admin:
+    '#type': component
+    '#component': aculta420_v2:comment-admin-trigger
+    '#props':
+      url: /discussoes/1/controles
+      author_name: PiradoPirata
   context:
     type: inline_template
     template: '<p class="comment__in-reply-to">Em resposta a <strong class="comment__in-reply-to-author">Outra pessoa</strong></p>'

@@ -1,0 +1,9 @@
+{#
+/**
+ * @file
+ * Gatilho dos controles administrativos: carrega o modal do comentário por HTMX.
+ */
+#}
+<button type="button" class="comment-admin-trigger use-htmx" data-action="comentario-controles" data-hx-get="{{ url }}" data-hx-target="#aculta-admin-dialog-body" data-hx-swap="innerHTML" aria-label="{{ 'Controles administrativos de @name'|t({'@name': author_name}) }}" title="{{ 'Controles administrativos'|t }}">
+  {{ include('aculta420_v2:icon', { name: 'shield-check', variant: 'duotone', size: 'md' }, with_context = false) }}
+</button>

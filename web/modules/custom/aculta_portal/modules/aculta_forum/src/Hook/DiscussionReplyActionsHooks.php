@@ -28,6 +28,7 @@ final class DiscussionReplyActionsHooks {
     #[Autowire(service: 'aculta_forum.discussion_reply_url_builder')]
     private readonly DiscussionReplyUrlBuilder $urlBuilder,
     private readonly TranslationInterface $translation,
+    private readonly \Drupal\Core\KeyValueStore\KeyValueFactoryInterface $keyValue,
   ) {}
 
   /**
@@ -49,6 +50,7 @@ final class DiscussionReplyActionsHooks {
       return;
     }
 
+    $this->hideTombstonedActions($links, $comment);
     $this->markEditLink($links, $comment, $host);
 
     $access = $this->replyAccess->checkAccess($host, $this->currentUser, (int) $comment->id());
@@ -95,6 +97,20 @@ final class DiscussionReplyActionsHooks {
     else {
       $links['#links']['resposta-responder'] = $replyLink;
       $cacheability->applyTo($links);
+    }
+  }
+
+  /**
+   * Comentário excluído pelo autor ou removido pela moderação: o autor não edita nem exclui mais.
+   * Moderador (administer comments) mantém os controles para poder restaurar.
+   */
+  private function hideTombstonedActions(array &$links, CommentInterface $comment): void {
+    $tombstone = $this->keyValue->get('aculta_forum_comment_tombstones')->get((string) $comment->id());
+    if (!$tombstone || $this->currentUser->hasPermission('administer comments')) {
+      return;
+    }
+    foreach (['comment-edit', 'comment-delete'] as $key) {
+      unset($links['comment']['#links'][$key], $links['#links'][$key]);
     }
   }
 

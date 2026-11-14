@@ -163,3 +163,12 @@
   margin-inline-start: 0;
   margin-inline-end: auto;
 }
+
+/* Controles administrativos: botão no lado direito do bloco, fora do fluxo do texto. */
+.forum-reply-compact { position: relative; }
+.forum-reply-compact__admin {
+  position: absolute;
+  inset-block-start: var(--spacing-xs);
+  inset-inline-end: var(--spacing-xs);
+  z-index: 1;
+}

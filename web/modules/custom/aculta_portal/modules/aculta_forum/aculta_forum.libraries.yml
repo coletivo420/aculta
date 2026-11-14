@@ -39,3 +39,11 @@ ckeditor5.attachment:
     - core/drupal.ajax
     - core/drupal.dialog.ajax
     - entity_embed/entity_embed
+
+comment-admin-popup:
+  version: 1.0.0
+  js:
+    js/comment-admin-popup.js: {}
+  dependencies:
+    - core/drupal
+    - core/once

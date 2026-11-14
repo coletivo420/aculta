@@ -1,4 +1,5 @@
 {# Adapter do Comment API para threads de Fórum, Revista, Wiki e LMS. #}
+<div id="aculta-comment-{{ comment.id }}" class="aculta-comment-item">
 {% set author_card = content.author_card|default(null) %}
 {% set reaction_bar_val = reaction_bar|default(content.reaction_bar|default(null)) %}
 {% set comment_body = content|without('author_card', 'reaction_bar', 'links') %}
@@ -13,13 +14,31 @@
 
 {% if publication_comment|default(false) %}
   {% set author_avatar = author_card and author_card['#avatar'] is defined ? render_var(author_card['#avatar']) : null %}
+  {% set removed_label = comment_removed_by_moderation|default(false) ? 'Conteúdo removido pela moderação'|t : 'Comentário excluído'|t %}
+  {% set revista_content = comment_deleted|default(false) ? '<p class="forum-reply-compact__deleted">' ~ removed_label ~ '</p>' : comment_body %}
+  {% set admin_markup = null %}
   {% set revista_actions_markup %}
     {{ include('aculta420_v2:content-reply-bar', {
       permalink_url: revista_actions.permalink_url|default(null),
       edit_url: revista_actions.edit_url|default(null),
-      delete_url: revista_actions.delete_url|default(null),
-      target_id: 'aculta-reply-dialog-body'
+      reply_url: revista_actions.reply_url|default(null),
+      quote_url: revista_actions.quote_url|default(null),
+      delete_target: delete_allowed|default(false) ? 'delete-confirm-' ~ comment.id : null,
+      target_id: 'aculta-reply-dialog-body',
+      admin_url: admin_url|default(null),
+      admin_author_name: author_name_val|default('Participante'|t)
     }, with_context = false) }}
+    {% if delete_allowed|default(false) %}
+      {{ include('aculta420_v2:delete-confirm', {
+        target_id: 'delete-confirm-' ~ comment.id,
+        title: 'Excluir resposta?'|t,
+        message: delete_message|default('Confirma a exclusão?'|t),
+        confirm_label: 'Excluir'|t,
+        cancel_label: 'Cancelar'|t,
+        token: delete_token|default(''),
+        confirm_url: delete_url|default('')
+      }, with_context = false) }}
+    {% endif %}
   {% endset %}
   {% set reply_card %}
     <article class="comment comment--discussion js-comment">
@@ -29,10 +48,10 @@
       timestamp: created|default(null),
       accent_side: accent_side|default('start'),
       avatar: author_avatar,
-      content: comment_body,
+      content: revista_content,
       reactions_slot: reaction_bar_val,
       received_slot: reactions_received|default(null),
-      actions: revista_actions_markup
+      actions: revista_actions_markup,
     }, with_context = false) }}
     </article>
   {% endset %}
@@ -41,6 +60,21 @@
     {{ include('aculta420_v2:reply-indent', { depth: reply_depth|default(0), first: reply_first|default(false), content: reply_card }, with_context = false) }}
   </div>
 {% else %}
+{% set admin_markup = null %}
+{% set forum_delete_markup %}
+  {% if delete_allowed|default(false) %}
+    {{ include('aculta420_v2:content-reply-bar', { delete_target: 'delete-confirm-' ~ comment.id, target_id: 'aculta-reply-dialog-body', admin_url: admin_url|default(null), admin_author_name: author_name_val|default('Participante'|t) }, with_context = false) }}
+    {{ include('aculta420_v2:delete-confirm', {
+      target_id: 'delete-confirm-' ~ comment.id,
+      title: 'Excluir resposta?'|t,
+      message: delete_message|default('Confirma a exclusão?'|t),
+      confirm_label: 'Excluir'|t,
+      cancel_label: 'Cancelar'|t,
+      token: delete_token|default(''),
+      confirm_url: delete_url|default('')
+    }, with_context = false) }}
+  {% endif %}
+{% endset %}
 {% embed 'aculta420_v2:forum-comment' with {
   attributes: attributes,
   status: status|default(null),
@@ -63,9 +97,11 @@
     {% endif %}
   {% endblock %}
   {% block avatar %}{% if author_card and author_card['#avatar'] is defined %}{{ render_var(author_card['#avatar']) }}{% endif %}{% endblock %}
-  {% block body %}{{ comment_body }}{{ reactions_received }}{% endblock %}
-  {% block actions %}{{ actions_markup }}{% endblock %}
+  {% block body %}{% if comment_deleted|default(false) %}<p class="forum-reply-compact__deleted">{{ comment_removed_by_moderation|default(false) ? 'Conteúdo removido pela moderação'|t : 'Comentário excluído'|t }}</p>{% else %}{{ comment_body }}{% endif %}{{ reactions_received }}{% endblock %}
+  {% block actions %}{{ actions_markup }}{{ forum_delete_markup }}{% endblock %}
+  {% block admin %}{{ admin_markup }}{% endblock %}
   {% block reactions_slot %}{{ reaction_bar_val }}{% endblock %}
   {% block title_suffix %}{{ title_suffix }}{% endblock %}
 {% endembed %}
 {% endif %}
+</div>

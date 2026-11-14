@@ -32,24 +32,9 @@
     window.location.href = '/entrar/janela?destination=' + encodeURIComponent(destination);
   }
 
-  function ensureDialog() {
-    let dialog = document.getElementById(dialogId);
-    if (!dialog) {
-      dialog = document.createElement('dialog');
-      dialog.id = dialogId;
-      dialog.className = 'aculta-dialog';
-      dialog.setAttribute('aria-modal', 'true');
-      dialog.setAttribute('aria-labelledby', dialogId + '-title');
-      dialog.innerHTML = '<div class="aculta-dialog__inner">'
-        + '<div class="aculta-dialog__header">'
-        + '<h2 class="aculta-dialog__title" id="' + dialogId + '-title">Criar tópico</h2>'
-        + '<button type="button" class="aculta-dialog__close" data-aculta-dialog-close aria-label="Fechar">✕</button>'
-        + '</div>'
-        + '<div class="aculta-dialog__content"><div id="' + dialogBodyId + '" class="aculta-reply-dialog__body"></div></div>'
-        + '</div>';
-      document.body.appendChild(dialog);
-    }
-    return dialog;
+  // O diálogo é o SDC popup, renderizado na página pelo servidor. O JS só o localiza.
+  function getDialog() {
+    return document.getElementById(dialogId);
   }
 
   /**
@@ -75,7 +60,6 @@
   }
 
   function getBody() {
-    ensureDialog();
     return document.getElementById(dialogBodyId);
   }
 
@@ -93,8 +77,6 @@
           openLoginPopup();
         }, true);
 
-        // Garante o corpo do diálogo antes de o HTMX processar o link.
-        ensureDialog();
         // Mensagens de erro do envio: o recorte HTMX traz só o formulário, então guarda as
         // mensagens da resposta e as recoloca no topo do popup depois da troca.
         let pendingMessages = null;
@@ -153,7 +135,7 @@
               Drupal.attachBehaviors(target, drupalSettings);
             }
           }, delay));
-          const dialog = ensureDialog();
+          const dialog = getDialog();
           if (!dialog.open) {
             dialog.showModal();
           }
@@ -164,7 +146,7 @@
         });
 
         // Ao fechar, esvazia o corpo para a próxima abertura começar limpa.
-        const dialog = ensureDialog();
+        const dialog = getDialog();
         if (!dialog.dataset.acultaCloseBound) {
           dialog.dataset.acultaCloseBound = '1';
           dialog.addEventListener('close', () => {

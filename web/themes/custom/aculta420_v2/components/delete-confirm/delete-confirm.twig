@@ -1,0 +1,19 @@
+{#
+/**
+ * @file
+ * Confirmação de exclusão: janela nativa (popover). Confirmar envia POST com token; cancelar fecha a janela.
+ */
+#}
+<div id="{{ target_id }}" class="delete-confirm" popover="auto" role="dialog" aria-labelledby="{{ target_id }}-title" aria-describedby="{{ target_id }}-message">
+  <div class="delete-confirm__inner">
+    <h2 id="{{ target_id }}-title" class="delete-confirm__title">{{ title }}</h2>
+    <p id="{{ target_id }}-message" class="delete-confirm__message">{{ message }}</p>
+    <form method="post" action="{{ confirm_url }}" class="delete-confirm__form">
+      <input type="hidden" name="token" value="{{ token }}">
+      <div class="delete-confirm__actions">
+        {{ include('aculta420_v2:button', { text: cancel_label, variant: 'secondary', attributes: { type: 'button', popovertarget: target_id, popovertargetaction: 'hide' } }, with_context = false) }}
+        {{ include('aculta420_v2:button', { text: confirm_label, variant: 'danger', is_submit: true }, with_context = false) }}
+      </div>
+    </form>
+  </div>
+</div>

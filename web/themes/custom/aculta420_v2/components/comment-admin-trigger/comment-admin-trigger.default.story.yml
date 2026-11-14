@@ -1,0 +1,5 @@
+name: Controles do comentário
+description: Botão de moderação do comentário, lado direito.
+props:
+  url: /discussoes/1/controles
+  author_name: Participante

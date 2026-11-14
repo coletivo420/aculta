@@ -1,0 +1,6 @@
+name: Barra com controles administrativos
+description: Barra de ações do comentário com o botão de controles do administrador no fim da barra.
+props:
+  permalink_url: /comment/1
+  admin_url: /discussoes/1/controles
+  admin_author_name: Participante

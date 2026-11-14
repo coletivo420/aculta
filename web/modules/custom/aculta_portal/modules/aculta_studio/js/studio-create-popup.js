@@ -12,28 +12,12 @@
   const dialogBodyId = 'aculta-studio-create-body';
   const triggerSelector = '[data-action="conteudo-criar"]';
 
-  function ensureDialog() {
-    let dialog = document.getElementById(dialogId);
-    if (!dialog) {
-      dialog = document.createElement('dialog');
-      dialog.id = dialogId;
-      dialog.className = 'aculta-dialog';
-      dialog.setAttribute('aria-modal', 'true');
-      dialog.setAttribute('aria-labelledby', dialogId + '-title');
-      dialog.innerHTML = '<div class="aculta-dialog__inner">'
-        + '<div class="aculta-dialog__header">'
-        + '<h2 class="aculta-dialog__title" id="' + dialogId + '-title">Nova publicação</h2>'
-        + '<button type="button" class="aculta-dialog__close" data-aculta-dialog-close aria-label="Fechar">✕</button>'
-        + '</div>'
-        + '<div class="aculta-dialog__content"><div id="' + dialogBodyId + '" class="aculta-reply-dialog__body"></div></div>'
-        + '</div>';
-      document.body.appendChild(dialog);
-    }
-    return dialog;
+  // O diálogo é o SDC popup, renderizado na página pelo servidor. O JS só o localiza.
+  function getDialog() {
+    return document.getElementById(dialogId);
   }
 
   function getBody() {
-    ensureDialog();
     return document.getElementById(dialogBodyId);
   }
 
@@ -62,7 +46,6 @@
   Drupal.behaviors.acultaStudioCreatePopup = {
     attach(context) {
       once('aculta-studio-create-popup', document.body, context).forEach(() => {
-        ensureDialog();
 
         // O clique nunca segue o href (que aponta para o fragmento do popup). Se o HTMX não
         // processou o link, o popup é carregado aqui mesmo.
@@ -74,7 +57,6 @@
           event.preventDefault();
           event.stopPropagation();
           const url = trigger.getAttribute('data-hx-get') || trigger.getAttribute('href');
-          ensureDialog();
           if (window.htmx) {
             window.htmx.ajax('GET', url, { target: '#' + dialogBodyId, swap: 'innerHTML', select: '[data-aculta-content-composer]' });
           }
@@ -134,14 +116,14 @@
               Drupal.attachBehaviors(target, drupalSettings);
             }
           }, delay));
-          const dialog = ensureDialog();
+          const dialog = getDialog();
           if (!dialog.open) {
             dialog.showModal();
           }
         });
 
         // Ao fechar, destrói os editores e esvazia o corpo para a próxima abertura.
-        const dialog = ensureDialog();
+        const dialog = getDialog();
         if (!dialog.dataset.acultaCloseBound) {
           dialog.dataset.acultaCloseBound = '1';
           dialog.addEventListener('close', () => {

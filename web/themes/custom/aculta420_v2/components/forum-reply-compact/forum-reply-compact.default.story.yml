@@ -5,6 +5,12 @@ props:
   reacted: true
   reaction_count: 3
 slots:
+  admin:
+    '#type': component
+    '#component': aculta420_v2:comment-admin-trigger
+    '#props':
+      url: /discussoes/1/controles
+      author_name: PiradoPirata
   received_slot:
     '#type': component
     '#component': aculta420_v2:discussion-reactions-received

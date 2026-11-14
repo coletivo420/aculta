@@ -48,6 +48,11 @@ final class DiscussionProgressHooksTest extends UnitTestCase {
     $entityTypeManager->method('getStorage')->with('comment')->willReturn($storage);
     $container = new ContainerBuilder();
     $container->set('entity_type.manager', $entityTypeManager);
+    $container->set('string_translation', $this->getStringTranslationStub());
+    // O popup de resposta gera a URL do compositor com Url::fromRoute(); o teste só precisa de um endereço.
+    $urlGenerator = $this->createMock(\Drupal\Core\Routing\UrlGeneratorInterface::class);
+    $urlGenerator->method('generateFromRoute')->willReturn('/discussoes/compositor/node/1');
+    $container->set('url_generator', $urlGenerator);
     \Drupal::setContainer($container);
 
     $hooks = new DiscussionProgressHooks(

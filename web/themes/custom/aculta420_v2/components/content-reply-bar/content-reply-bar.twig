@@ -12,7 +12,11 @@
       {{ include('aculta420_v2:icon', { name: 'link', variant: 'regular', size: 'md' }, with_context = false) }}
     </a>
   {% endif %}
-  {% if delete_url %}
+  {% if delete_target %}
+    <button type="button" class="content-reply-bar__action content-reply-bar__action--delete" popovertarget="{{ delete_target }}" data-action="resposta-apagar" aria-label="{{ 'Excluir'|t }}" title="{{ 'Excluir'|t }}">
+      {{ include('aculta420_v2:icon', { name: 'trash', variant: 'regular', size: 'md' }, with_context = false) }}
+    </button>
+  {% elseif delete_url %}
     <a href="{{ delete_url }}" class="use-htmx content-reply-bar__action content-reply-bar__action--delete" data-action="resposta-apagar" data-hx-get="{{ delete_url }}" data-hx-target="#{{ target }}" data-hx-swap="innerHTML" aria-label="{{ 'Excluir tópico'|t }}" title="{{ 'Excluir tópico'|t }}">
       {{ include('aculta420_v2:icon', { name: 'trash', variant: 'regular', size: 'md' }, with_context = false) }}
     </a>
@@ -31,5 +35,8 @@
     <a href="{{ reply_url }}" class="use-htmx content-reply-bar__action content-reply-bar__action--reply" data-action="resposta-responder" data-hx-get="{{ reply_url }}" data-hx-target="#{{ target }}" data-hx-swap="innerHTML" aria-label="{{ 'Responder à discussão'|t }}" title="{{ 'Responder à discussão'|t }}">
       {{ include('aculta420_v2:icon', { name: 'arrow-bend-up-left', variant: 'regular', size: 'md' }, with_context = false) }}
     </a>
+  {% endif %}
+  {% if admin_url %}
+    {{ include('aculta420_v2:comment-admin-trigger', { url: admin_url, author_name: admin_author_name|default('Participante'|t) }, with_context = false) }}
   {% endif %}
 </div>

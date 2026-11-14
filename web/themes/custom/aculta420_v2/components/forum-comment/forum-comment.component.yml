@@ -79,6 +79,9 @@ slots:
   actions:
     title: Ações
     description: Permalink e links de ação renderizados e autorizados pelo Drupal.
+  admin:
+    title: Controles administrativos
+    description: Botão de moderação ao lado direito do comentário, visível só para quem pode moderar.
   reactions_slot:
     title: Barra de reações
     description: Barra interativa construída pelo módulo proprietário após checagem de acesso.

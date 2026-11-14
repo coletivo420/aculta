@@ -31,6 +31,10 @@ final class DiscussionReactionEntityViewHooks {
     private readonly AccountProxyInterface $currentUser,
     #[Autowire(service: 'entity_type.manager')]
     private readonly \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager,
+    #[Autowire(service: 'keyvalue')]
+    private readonly \Drupal\Core\KeyValueStore\KeyValueFactoryInterface $keyValueFactory,
+    #[Autowire(service: 'csrf_token')]
+    private readonly \Drupal\Core\Access\CsrfTokenGenerator $csrfGenerator,
   ) {}
 
   /**
@@ -72,6 +76,27 @@ final class DiscussionReactionEntityViewHooks {
       // Comentários de publicação da Revista: sem tópico; a publicação é o próprio tópico.
       $host = $threadComment->getCommentedEntity();
       $variables['publication_comment'] = $host instanceof NodeInterface && $host->bundle() === 'revista';
+      // Controles administrativos valem para todo comentário da discussão (fórum, LMS, Revista e Wiki).
+      $variables['admin_url'] = $this->currentUser->hasPermission('administer comments')
+        ? \Drupal\Core\Url::fromRoute('aculta_forum.comment_moderation', ['comment' => (int) $threadComment->id()])->toString()
+        : NULL;
+      // Estado de exclusão vale para todo comentário da discussão, não só para a Revista.
+      $cid = (int) $threadComment->id();
+      $isOwner = (int) $threadComment->getOwnerId() === (int) $this->currentUser->id();
+      $isAdmin = $this->currentUser->hasPermission('administer comments');
+      // Estado: resposta excluída pelo autor fica como "Comentário excluído", sem edição, resposta nem citação.
+      // Valor do tombstone: TRUE = excluído pelo autor; 'moderacao' = removido pela moderação.
+      $tombstone = $this->keyValueFactory->get('aculta_forum_comment_tombstones')->get((string) $cid);
+      $deleted = (bool) $tombstone;
+      $variables['comment_deleted'] = $deleted;
+      $variables['delete_allowed'] = $isAdmin || ($isOwner && !$deleted);
+      $variables['comment_removed_by_moderation'] = $tombstone === 'moderacao';
+      // Controles administrativos: só para quem pode moderar (ver DiscussionCommentModerationForm).
+      $variables['delete_token'] = $this->csrfGenerator->get('aculta_forum.comment.delete.' . $cid);
+      $variables['delete_url'] = '/discussoes/' . $cid . '/excluir';
+      $variables['delete_message'] = $isAdmin
+        ? (string) new \Drupal\Core\StringTranslation\TranslatableMarkup('O conteúdo será substituído por "Conteúdo removido pela moderação". Para excluir o bloco de vez, use os controles do comentário.')
+        : (string) new \Drupal\Core\StringTranslation\TranslatableMarkup('A resposta ficará como "Comentário excluído" e não poderá mais ser editada.');
       if ($variables['publication_comment']) {
         $reactions = $this->reactionManager->loadReactions('comment', (int) $threadComment->id(), NULL);
         $total = 0;
@@ -80,14 +105,18 @@ final class DiscussionReactionEntityViewHooks {
         }
         $variables['sort_total'] = $total;
         $variables['sort_created'] = (int) $threadComment->getCreatedTime();
-        // Ações da resposta: permalink sempre; editar e excluir só quando a conta pode.
         $cid = (int) $threadComment->id();
+        // Ações da resposta: responder, citar e editar abrem o Compositor de Resposta da Discussão;
+        // a rota valida o acesso. Excluir só aparece quando a conta pode.
+        $cid = (int) $threadComment->id();
+        $composer = '/discussoes/compositor/node/' . (int) $threadComment->getCommentedEntityId();
         $actions = ['permalink_url' => '/comment/' . $cid];
-        if ($threadComment->access('update', $this->currentUser)) {
-          $actions['edit_url'] = '/comment/' . $cid . '/edit';
-        }
-        if ($threadComment->access('delete', $this->currentUser)) {
-          $actions['delete_url'] = '/comment/' . $cid . '/delete';
+        if (!$deleted) {
+          $actions['reply_url'] = $composer . '?resposta=' . $cid;
+          $actions['quote_url'] = $composer . '?citar=' . $cid;
+          if ($threadComment->access('update', $this->currentUser)) {
+            $actions['edit_url'] = $composer . '?editar=' . $cid;
+          }
         }
         $variables['revista_actions'] = $actions;
       }

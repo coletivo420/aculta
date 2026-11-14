@@ -195,6 +195,7 @@ aculta_forum.discussion_composer:
     _custom_access: 'aculta_forum.discussion_reply_endpoint_access:access'
   options:
     _htmx_route: TRUE
+    _aculta_site_keys: [forum, magazine, courses, wiki]
   methods: [GET, HEAD, POST]
 
 aculta_forum.reaction_react:
@@ -208,4 +209,34 @@ aculta_forum.reaction_react:
     entity_id: '\d+'
   options:
     _htmx_route: TRUE
+    _aculta_site_keys: [forum, magazine, courses, wiki]
   methods: [POST]
+
+aculta_forum.comment_delete:
+  path: '/discussoes/{comment}/excluir'
+  defaults:
+    _controller: 'Drupal\aculta_forum\Controller\DiscussionCommentDeleteController::delete'
+    _title: 'Excluir resposta'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+  options:
+    parameters:
+      comment:
+        type: 'entity:comment'
+    _aculta_site_keys: [forum, magazine, courses, wiki]
+  methods: [POST]
+
+aculta_forum.comment_moderation:
+  path: '/discussoes/{comment}/controles'
+  defaults:
+    _form: 'Drupal\aculta_forum\Form\DiscussionCommentModerationForm'
+    _title: 'Controles do comentário'
+  requirements:
+    _custom_access: 'aculta_forum.comment_moderation_access:access'
+  options:
+    parameters:
+      comment:
+        type: 'entity:comment'
+    _htmx_route: TRUE
+    _aculta_site_keys: [forum, magazine, courses, wiki]
+  methods: [GET, POST]

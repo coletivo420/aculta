@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_forum\Hook;
 
+use Drupal\Core\Url;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -58,6 +59,28 @@ final class DiscussionProgressHooks {
     $build['field_aculta_discussion']['#attached']['library'][] = 'aculta_forum/discussion-reply-popup';
     // Alternância normal/espelhado pela ordem exibida das respostas.
     $build['field_aculta_discussion']['#attached']['library'][] = 'aculta_forum/discussion-side';
+    // Janela única da página (SDC popup) para Responder, Citar, Editar e login do visitante.
+    // O conteúdo chega por HTMX ao corpo #aculta-reply-dialog-body; o JS só a abre.
+    $build['aculta_reply_popup'] = [
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:popup',
+      '#props' => [
+        'id' => 'aculta-reply-dialog',
+        'title' => (string) t('Responder à discussão'),
+        'trigger_label' => (string) t('Responder'),
+        'trigger_url' => Url::fromRoute('aculta_forum.discussion_composer', [
+          'entity_type' => 'node',
+          'entity_id' => $entity->id(),
+        ])->toString(),
+        'close_label' => (string) t('Fechar'),
+      ],
+      '#slots' => [
+        'content' => [
+          ['#type' => 'component', '#component' => 'aculta420_v2:posting-overlay', '#props' => ['title' => (string) t('Aguarde'), 'text' => (string) t('Postando seu comentário…')]],
+          ['#markup' => '<div id="aculta-reply-dialog-body" class="aculta-reply-dialog__body"></div>'],
+        ],
+      ],
+    ];
     // O compositor do popup é carregado por HTMX, que não leva as configurações do editor.
     // Os anexos (biblioteca e drupalSettings do CKEditor) vêm do formulário de comentário do nó,
     // renderizado em isolamento: o HTML do formulário não entra na página.

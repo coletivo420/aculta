@@ -1,0 +1,22 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Controles administrativos do comentário
+status: stable
+description: Botão com ícone Phosphor (shield-check), ao lado direito do bloco do comentário, que abre os controles de moderação daquele comentário no popup da página. Só aparece para quem pode moderar.
+group: Comunidade
+libraryOverrides:
+  dependencies:
+    - aculta_forum/comment-admin-popup
+props:
+  type: object
+  additionalProperties: false
+  required: [url, author_name]
+  properties:
+    url:
+      type: string
+      title: URL dos controles
+      description: Rota HTMX que devolve o conteúdo do modal de controles do comentário.
+      format: uri-reference
+    author_name:
+      type: string
+      title: Autor do comentário
+      description: Nome usado no rótulo acessível do botão.

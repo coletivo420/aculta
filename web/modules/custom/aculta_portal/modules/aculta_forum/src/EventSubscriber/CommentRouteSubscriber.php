@@ -41,7 +41,7 @@ final class CommentRouteSubscriber extends RouteSubscriberBase {
 
     // Páginas antigas do fórum só existem no popup: criação de tópico em /node/add, edição e
     // resposta de comentário em página própria ficam bloqueadas (ver ForumPopupOnlyAccess).
-    foreach (['node.add', 'entity.comment.edit_form', 'comment.reply'] as $popupOnlyRoute) {
+    foreach (['node.add', 'entity.comment.edit_form', 'entity.comment.delete_form', 'comment.reply'] as $popupOnlyRoute) {
       $route = $collection->get($popupOnlyRoute);
       if ($route !== NULL && $route->getRequirement('_custom_access') === NULL) {
         $route->setRequirement('_custom_access', 'aculta_forum.popup_only_access:access');

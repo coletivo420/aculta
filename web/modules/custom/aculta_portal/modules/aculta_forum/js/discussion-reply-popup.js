@@ -19,32 +19,16 @@
   const dialogBodyId = 'aculta-reply-dialog-body';
 
   /**
-   * Overlay "Aguarde / Postando seu comentário" dentro do diálogo. A estrutura é criada aqui;
-   * a aparência (cartão, spinner, animação) é do tema, em forum.css.
+   * Aviso "Aguarde" dentro do popup: o SDC posting-overlay vem na página, oculto. O JS só o mostra.
    */
   function showPostingOverlay(visible) {
-    const dialog = document.getElementById(dialogId);
-    if (!dialog) {
-      return;
+    const overlay = document.querySelector('#aculta-reply-dialog .aculta-posting-overlay');
+    if (overlay) {
+      overlay.hidden = !visible;
     }
-    let overlay = dialog.querySelector('.aculta-posting-overlay');
-    if (!overlay) {
-      overlay = document.createElement('div');
-      overlay.className = 'aculta-posting-overlay';
-      overlay.setAttribute('role', 'status');
-      overlay.setAttribute('aria-live', 'polite');
-      overlay.hidden = true;
-      overlay.innerHTML = '<div class="aculta-posting-overlay__card">'
-        + '<span class="aculta-posting-overlay__spinner" aria-hidden="true"></span>'
-        + '<p class="aculta-posting-overlay__title">Aguarde</p>'
-        + '<p class="aculta-posting-overlay__text">Postando seu comentário…</p>'
-        + '</div>';
-      dialog.appendChild(overlay);
-    }
-    overlay.hidden = !visible;
   }
   // Visitante (sem sessão): Comentar, Responder e Citar abrem o popup de login já existente.
-  const anonymousTriggerSelector = '[data-aculta-comment-new], [data-action="resposta-responder"], [data-action="resposta-citar"], [data-action="resposta-editar"], [data-action="resposta-apagar"]';
+  const anonymousTriggerSelector = '[data-aculta-comment-new], [data-aculta-dialog-trigger][aria-controls="aculta-reply-dialog"], [data-action="resposta-responder"], [data-action="resposta-citar"], [data-action="resposta-editar"], [data-action="resposta-apagar"]';
 
   function isAnonymous() {
     if (window.drupalSettings && window.drupalSettings.user && typeof window.drupalSettings.user.uid !== 'undefined') {
@@ -67,35 +51,13 @@
 
   const triggerSelector = '[data-action="resposta-responder"], [data-action="resposta-citar"], [data-action="resposta-editar"], [data-action="resposta-apagar"]';
 
-  function ensureDialog() {
-    let dialog = document.getElementById(dialogId);
-    if (!dialog) {
-      dialog = document.createElement('dialog');
-      dialog.id = dialogId;
-      dialog.className = 'aculta-dialog';
-      dialog.setAttribute('aria-modal', 'true');
-      dialog.innerHTML = '<div class="aculta-dialog__inner">'
-        + '<div class="aculta-dialog__header">'
-        + '<h2 class="aculta-dialog__title">Discussão</h2>'
-        + '<button type="button" class="aculta-dialog__close" data-aculta-dialog-close aria-label="Fechar">✕</button>'
-        + '</div>'
-        + '<div class="aculta-dialog__content"><div id="' + dialogBodyId + '" class="aculta-reply-dialog__body"></div></div>'
-        + '</div>';
-      document.body.appendChild(dialog);
-    }
-    if (!document.getElementById(dialogBodyId)) {
-      const container = dialog.querySelector('.aculta-dialog__content') || dialog.querySelector('.aculta-dialog__inner') || dialog;
-      container.insertAdjacentHTML('beforeend', '<div id="' + dialogBodyId + '" class="aculta-reply-dialog__body"></div>');
-    }
-    return dialog;
-  }
-
+  // O diálogo é o SDC popup, renderizado uma vez na página pelo módulo (DiscussionProgressHooks).
+  // O JS só o localiza; não cria marcação.
   function getDialog() {
-    return ensureDialog();
+    return document.getElementById(dialogId);
   }
 
   function getDialogBody() {
-    ensureDialog();
     return document.getElementById(dialogBodyId);
   }
 
@@ -122,13 +84,25 @@
     attach(context) {
       // Visitante: o diálogo de resposta (compositor) não existe nessa página; Comentar, Responder e
       // Citar abrem só o login da barra.
-      if (isAnonymous()) {
-        const replyDialog = getDialog();
-        if (replyDialog) {
-          replyDialog.remove();
-        }
-      }
       once('aculta-reply-popup', document.body, context).forEach((body) => {
+        // Responder (gatilho do popup): carrega o compositor no corpo antes de abrir a janela.
+        // Sem isso o popup abre vazio. O afterSwap abre o diálogo quando o compositor chega.
+        document.addEventListener('click', (event) => {
+          const trigger = event.target && event.target.closest
+            ? event.target.closest('[data-aculta-dialog-trigger][aria-controls="aculta-reply-dialog"]')
+            : null;
+          if (!trigger || isAnonymous()) {
+            return;
+          }
+          const url = trigger.getAttribute('href');
+          const bodyEl = getDialogBody();
+          event.preventDefault();
+          event.stopImmediatePropagation();
+          if (window.htmx && bodyEl && url) {
+            window.htmx.ajax('GET', url, { target: '#' + dialogBodyId, swap: 'innerHTML' });
+          }
+        }, true);
+
         // Visitante: os gatilhos abrem o popup de login, sem abrir o compositor.
         document.addEventListener('click', (event) => {
           if (!isAnonymous()) {
@@ -142,9 +116,6 @@
           event.stopImmediatePropagation();
           openLoginPopup();
         }, true);
-
-        // Garante que o corpo do diálogo exista antes de o HTMX processar os links na página.
-        ensureDialog();
 
         // Responder/Citar: antes de o HTMX ler o alvo, o link passa a apontar para o corpo do diálogo.
         // Fase de captura: roda antes do listener do HTMX no próprio link.
@@ -274,12 +245,6 @@
             window.htmx.ajax('GET', url.toString(), { target: '#' + dialogBodyId, swap: 'innerHTML' });
           }
         });
-      }
-
-      // Garante o corpo do diálogo: o slot do SDC não o entrega, então o JS cria a div dentro do conteúdo.
-      const dialogContent = getDialog() ? getDialog().querySelector('.aculta-dialog__content') : null;
-      if (dialogContent && !getDialogBody()) {
-        dialogContent.insertAdjacentHTML('beforeend', '<div id="' + dialogBodyId + '" class="aculta-reply-dialog__body"></div>');
       }
 
       // Ao fechar, esvazia o corpo para o próximo Responder/Citar começar limpo.

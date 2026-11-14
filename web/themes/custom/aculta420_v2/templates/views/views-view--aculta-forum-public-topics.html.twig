@@ -99,4 +99,11 @@
   }, with_context = false) }}
 {% endblock %}
 {% endembed %}
+{% set topic_dialog_body %}<div id="aculta-topic-dialog-body" class="aculta-reply-dialog__body"></div>{% endset %}
+{{ include('aculta420_v2:popup', {
+  id: 'aculta-topic-dialog',
+  title: 'Criar tópico'|t,
+  close_label: 'Fechar'|t,
+  content: topic_dialog_body|raw,
+}, with_context = false) }}
 {{ forum_list_cache_metadata }}

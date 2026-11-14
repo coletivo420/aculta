@@ -29,15 +29,6 @@
       </dl>
     </section>
   </aside>
-  {% set reply_dialog_content %}<div id="aculta-reply-dialog-body" class="aculta-reply-dialog__body"></div>{% endset %}
-  {{ include('aculta420_v2:dialog', {
-    id: 'aculta-reply-dialog',
-    title: 'Responder à discussão'|t,
-    trigger_label: 'Responder'|t,
-    trigger_url: '#aculta-reply-dialog',
-    close_label: 'Fechar'|t,
-    content: reply_dialog_content,
-  }, with_context: false) }}
   {{ include('aculta420_v2:button', {
     text: 'Comentar'|t,
     variant: 'primary',

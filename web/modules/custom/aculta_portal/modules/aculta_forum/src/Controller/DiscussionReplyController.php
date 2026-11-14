@@ -71,6 +71,11 @@ class DiscussionReplyController extends ControllerBase {
     $editId = $request->query->get('editar');
     if ($editId !== NULL && ctype_digit((string) $editId)) {
       $editComment = $this->forumEntityTypeManager->getStorage('comment')->load((int) $editId);
+      $tombstoned = $editComment instanceof CommentInterface && (bool) \Drupal::keyValue('aculta_forum_comment_tombstones')->get((string) $editComment->id());
+      // Resposta excluída pelo autor não pode mais ser editada, nem pelo administrador.
+      if ($tombstoned) {
+        throw new \Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException('Resposta excluída.');
+      }
       if ($editComment instanceof CommentInterface && (string) $editComment->getCommentedEntityId() === (string) $host->id()) {
         return $this->replyFormBuilder->buildEditForm($editComment, $this->forumCurrentUser);
       }
@@ -87,7 +92,7 @@ class DiscussionReplyController extends ControllerBase {
       $quote = $this->quoteBuilder->build($rawBody, $host->getOwner()->getDisplayName());
     }
 
-    $quoteId = $request->query->get('quote') ?? $request->query->get('citacao');
+    $quoteId = $request->query->get('citar') ?? $request->query->get('citacao');
     if ($quoteId !== NULL && ctype_digit((string) $quoteId)) {
       $quoteComment = $this->forumEntityTypeManager->getStorage('comment')->load((int) $quoteId);
       if ($quoteComment instanceof CommentInterface && $quoteComment->isPublished() && $quoteComment->hasField('comment_body')) {

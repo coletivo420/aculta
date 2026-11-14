@@ -53,7 +53,7 @@ services:
     arguments: ['@aculta_forum.attachment_publication', '@aculta_forum.gallery_publication']
   Drupal\aculta_forum\Hook\DiscussionReplyActionsHooks:
     class: Drupal\aculta_forum\Hook\DiscussionReplyActionsHooks
-    arguments: ['@current_user', '@aculta_forum.discussion_reply_access', '@aculta_forum.discussion_reply_url_builder', '@string_translation']
+    arguments: ['@current_user', '@aculta_forum.discussion_reply_access', '@aculta_forum.discussion_reply_url_builder', '@string_translation', '@keyvalue']
   Drupal\aculta_forum\Hook\TopicComposerFormHooks:
     class: Drupal\aculta_forum\Hook\TopicComposerFormHooks
     arguments:
@@ -99,6 +99,14 @@ services:
   Drupal\aculta_forum\Hook\DiscussionProgressHooks:
     class: Drupal\aculta_forum\Hook\DiscussionProgressHooks
     arguments: ['@entity_type.manager', '@entity.form_builder', '@renderer']
+  aculta_forum.comment_moderation_access:
+    class: Drupal\aculta_forum\Access\CommentModerationAccess
+  Drupal\aculta_forum\Form\DiscussionCommentModerationForm:
+    class: Drupal\aculta_forum\Form\DiscussionCommentModerationForm
+    arguments: ['@current_route_match', '@keyvalue', '@logger.factory', '@current_user', '@date.formatter', '@entity_type.manager', '@aculta_forum.discussion_reaction_manager']
+  Drupal\aculta_forum\Hook\RevistaDiscussionPageHooks:
+    class: Drupal\aculta_forum\Hook\RevistaDiscussionPageHooks
+    arguments: ['@current_route_match', '@current_user']
   Drupal\aculta_forum\Hook\ForumPostBundleHooks:
     class: Drupal\aculta_forum\Hook\ForumPostBundleHooks
   Drupal\aculta_forum\Hook\PublicForumViewsDataHooks:
@@ -275,7 +283,7 @@ services:
     arguments: ['@aculta_forum.discussion_comment_permalink_builder', '@extension.list.theme', '@aculta_forum.discussion_thread_depth_resolver']
 
   Drupal\aculta_forum\Hook\DiscussionReactionEntityViewHooks:
-    arguments: ['@aculta_forum.discussion_reaction_builder', '@aculta_forum.discussion_reaction_manager', '@current_user', '@entity_type.manager']
+    arguments: ['@aculta_forum.discussion_reaction_builder', '@aculta_forum.discussion_reaction_manager', '@current_user', '@entity_type.manager', '@keyvalue', '@csrf_token']
 
   Drupal\aculta_forum\Hook\ForumProfileReactionHooks:
     arguments: ['@aculta_forum.discussion_reaction_manager']
