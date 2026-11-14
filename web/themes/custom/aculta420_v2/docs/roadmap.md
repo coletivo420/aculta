@@ -100,10 +100,10 @@ anteriores e não substituem a conferência do código atual.
    passou para 150 SDCs/244 stories, confirmando UI Patterns Library oficial
    habilitada e ausência de catálogo customizado. O validator Drupal passou
    isoladamente em 95 SDCs; essa validação não cobre `forum-quote` nem `reply-indent`.
-   Auditoria atual do worktree (150 manifests): 549 props de topo, das quais
-   120 ainda não têm descrição em 28 SDCs. Considerando todos os nós de schema
+   Auditoria atual do worktree (150 manifests): 556 props de topo, das quais
+   111 ainda não têm descrição em 26 SDCs. Considerando todos os nós de schema
    tipados sob essas props, incluindo itens de arrays e schemas aninhados, são
-   714 nós tipados, com 193 sem descrição em 35 SDCs. Há 78 SDCs com 161 props
+   720 nós tipados, com 183 sem descrição em 32 SDCs. Há 80 SDCs com 159 props
    obrigatórias e 13 SDCs
    com prop `variant` enum; nenhum manifest declara `tags`, `links`, metadados
    de `variants` ou `slots.expected`. A leitura inicial classifica sete
@@ -111,7 +111,7 @@ anteriores e não substituem a conferência do código atual.
    `button`, `card-cultural`, `dialog`, `icon`, `reaction-emoji`) e mantém seis
    props comuns por representarem contexto/conteúdo/estrutura; conferir consumidores
    e compatibilidade do render SDC direto antes de migrar. Avaliar também as
-   160 props obrigatórias, defaults e estados vazios; ausência de metadados não
+   159 props obrigatórias, defaults e estados vazios; ausência de metadados não
    é falha automática. O worktree tem 275 slots; a varredura lexical apontou 16
    candidatos;
    triagem manual classificou 11 usos com conversão/inspeção de conteúdo, quatro
