@@ -14,6 +14,7 @@
         <div class="forum-quote__author-row">
                     {{ include('aculta420_v2:avatar', { size: 'sm', media: avatar ? avatar|raw : avatar_media }, with_context = false) }}
           <cite class="forum-quote__author">{{ author_name }}</cite>
+          {% if timestamp %}<time class="forum-quote__time">· {{ timestamp }}</time>{% endif %}
         </div>
       {% endif %}
       {{ content }}

@@ -29,6 +29,11 @@ props:
       type: [string, 'null']
       title: Autor citado
       description: Nome do autor original mostrado na identificação da citação.
+    timestamp:
+      type: [string, 'null']
+      title: Data da postagem original
+      description: Data já formatada da publicação citada, mostrada ao lado do autor.
+      default: null
       default: null
     avatar:
       type: [string, 'null']

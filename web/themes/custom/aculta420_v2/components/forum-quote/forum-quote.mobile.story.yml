@@ -2,6 +2,7 @@ name: Citação (mobile)
 props:
   density: compact
   author_name: PiradoPirata
+  timestamp: 07/11/2026 14:36
   permalink_url: /forum/topico/123#post-456
   reply_url: /discussoes/responder/comment/456
   edit_url: /discussoes/editar/comment/456
