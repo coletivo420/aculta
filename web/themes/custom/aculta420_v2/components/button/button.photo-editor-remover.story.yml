@@ -1,5 +1,5 @@
 name: Editor de foto — Remover
-description: Botão vermelho danger do Esquema de botões para remover a foto personalizada.
+description: Variante danger do Esquema de botões para remover a foto personalizada; usa os tokens do tema claro ou escuro.
 props:
   text: Remover foto
   variant: danger
