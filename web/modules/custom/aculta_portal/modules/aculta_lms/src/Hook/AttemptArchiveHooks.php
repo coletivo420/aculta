@@ -99,7 +99,11 @@ final class AttemptArchiveHooks {
         }
         return $result;
       }
-      $course = $this->entityTypeManager->getStorage('group')->load($entity->get('group_id')->value);
+      $groupId = self::storageId($entity->get('group_id')->value);
+      if ($groupId === NULL) {
+        return AccessResult::forbidden()->addCacheableDependency($entity);
+      }
+      $course = $this->entityTypeManager->getStorage('group')->load($groupId);
       if (!$course instanceof GroupInterface) {
         return AccessResult::forbidden()->addCacheableDependency($entity);
       }
@@ -110,7 +114,9 @@ final class AttemptArchiveHooks {
           ->addCacheTags(['group_relationship_list:plugin:group_membership:group:' . $course->id()])
           ->cachePerUser();
       }
-      $permissions = (string) $account->id() === (string) $entity->get('uid')->value
+      $accountId = self::entityIdString($account->id());
+      $archiveUserId = self::entityIdString($entity->get('uid')->value);
+      $permissions = $accountId !== '' && $archiveUserId !== '' && $accountId === $archiveUserId
         ? ['take course']
         : ['grade students'];
       return GroupAccessResult::allowedIfHasGroupPermissions($course, $account, $permissions)
@@ -126,7 +132,7 @@ final class AttemptArchiveHooks {
    *
    * @param \Drupal\Core\Session\AccountInterface $account
    *   Conta que solicita a criação.
-   * @param array $context
+   * @param array<array-key, mixed> $context
    *   Contexto da operação de criação.
    * @param string|null $entityBundle
    *   Bundle da entidade, quando aplicável.
@@ -145,7 +151,7 @@ final class AttemptArchiveHooks {
   /**
    * Acrescenta o histórico de tentativas à exibição completa da resposta.
    *
-   * @param array $build
+   * @param array<array-key, mixed> $build
    *   Render array da resposta, alterado no lugar.
    * @param \Drupal\Core\Entity\EntityInterface $entity
    *   Entidade exibida.
@@ -179,27 +185,34 @@ final class AttemptArchiveHooks {
         default => $this->translation->translate('Tentativa reiniciada'),
       };
       $rows[] = [
-        ['data' => ['#plain_text' => $this->dateFormatter->format((int) $record->get('answered')->value, 'short')]],
+          ['data' => ['#plain_text' => $this->dateFormatter->format(self::integerValue($record->get('answered')->value), 'short')]],
         ['data' => ['#plain_text' => $event_label]],
         ['data' => ['#plain_text' => $record->get('evaluated')->value
             ? $this->translation->translate('Avaliada: @score de @maximum pontos', [
-              '@score' => $record->get('score_precise')->value ?? $record->get('score')->value,
-              '@maximum' => $record->get('max_score')->value,
+              '@score' => self::translationArgument($record->get('score_precise')->value ?? $record->get('score')->value),
+              '@maximum' => self::translationArgument($record->get('max_score')->value),
             ])
             : $this->translation->translate('Aguardando avaliação do educador')]],
-        ['data' => ['#plain_text' => $this->answerText($record->get('answer_data')->value)]],
+        ['data' => ['#plain_text' => $this->answerText(self::stringValue($record->get('answer_data')->value))]],
       ];
-      $comments = Json::decode((string) $record->get('answer_comments')->value) ?: [];
+      $decodedComments = Json::decode(self::stringValue($record->get('answer_comments')->value));
+      $comments = is_array($decodedComments) ? $decodedComments : [];
       foreach ($comments as $comment) {
-        $author_type = ($comment['author_type'] ?? '') === 'student' ? 'estudante' : 'educador';
+        if (!is_array($comment)) {
+          continue;
+        }
+        $author_type = self::stringValue($comment['author_type'] ?? NULL) === 'student' ? 'estudante' : 'educador';
+        $created = self::integerValue($comment['created'] ?? NULL);
+        $author = $comment['author'] ?? $this->translation->translate('educador');
+        $body = self::stringValue($comment['body'] ?? NULL);
         $rows[] = [
-          ['data' => ['#plain_text' => $this->dateFormatter->format((int) ($comment['created'] ?? 0), 'short')]],
+          ['data' => ['#plain_text' => $this->dateFormatter->format($created, 'short')]],
           ['data' => ['#plain_text' => $this->translation->translate('Comentário de @author (@type)', [
-            '@author' => $comment['author'] ?? $this->translation->translate('educador'),
+            '@author' => self::translationArgument($author),
             '@type' => $this->translation->translate($author_type),
           ])]],
           ['data' => ['#plain_text' => '']],
-          ['data' => ['#plain_text' => \strip_tags((string) ($comment['body'] ?? ''))]],
+          ['data' => ['#plain_text' => \strip_tags($body)]],
         ];
       }
     }
@@ -237,12 +250,15 @@ final class AttemptArchiveHooks {
    */
   private function answerText(string $json): string {
     $data = Json::decode($json);
+    if (!is_array($data)) {
+      return is_scalar($data) ? \strip_tags((string) $data) : '';
+    }
     $answer = $data['answer'] ?? $data;
     if (\is_string($answer)) {
       return \strip_tags($answer);
     }
     if (!\is_array($answer)) {
-      return (string) $answer;
+      return \is_scalar($answer) ? \strip_tags((string) $answer) : '';
     }
 
     $parts = [];
@@ -255,6 +271,55 @@ final class AttemptArchiveHooks {
       }
     }
     return \implode(' / ', $parts);
+  }
+
+  /**
+   * Reads a storage ID only when the value has an accepted scalar shape.
+   */
+  private static function storageId(mixed $value): int|string|null {
+    if (is_int($value)) {
+      return $value > 0 ? $value : NULL;
+    }
+    return is_string($value) && $value !== '' ? $value : NULL;
+  }
+
+  /**
+   * Converts a validated storage ID to its persisted string representation.
+   */
+  private static function entityIdString(mixed $value): string {
+    $id = self::storageId($value);
+    return $id === NULL ? '' : (string) $id;
+  }
+
+  /**
+   * Converts a known scalar value to plain text.
+   */
+  private static function stringValue(mixed $value): string {
+    return is_scalar($value) ? (string) $value : '';
+  }
+
+  /**
+   * Converts an integer value, defaulting malformed data to zero.
+   */
+  private static function integerValue(mixed $value): int {
+    if (is_int($value)) {
+      return $value;
+    }
+    if (is_string($value)) {
+      $integer = filter_var($value, FILTER_VALIDATE_INT);
+      return $integer === FALSE ? 0 : $integer;
+    }
+    return 0;
+  }
+
+  /**
+   * Narrows a translation argument to a supported scalar or stringable value.
+   */
+  private static function translationArgument(mixed $value): bool|float|int|string|\Stringable {
+    if (is_scalar($value)) {
+      return $value;
+    }
+    return $value instanceof \Stringable ? $value : '';
   }
 
 }
