@@ -675,6 +675,23 @@ final class PagePresentationHooks {
   }
 
   /**
+   * Wraps the photo editor's original render arrays in its presentation SDC.
+   */
+  #[Hook('preprocess_aculta_portal_photo_editor')]
+  public function preprocessPortalPhotoEditor(array &$variables): void {
+    if (!$this->componentAvailable('account-photo-editor')) {
+      return;
+    }
+
+    $variables['component'] = [
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:account-photo-editor',
+      '#props' => [],
+      '#slots' => ['content' => $variables['photo_form'] ?? []],
+    ];
+  }
+
+  /**
    * Builds a SDC render array for the neutral donation action hook.
    */
   private function preprocessDonationButton(array &$variables, string $variant): void {

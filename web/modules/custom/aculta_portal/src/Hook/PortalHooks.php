@@ -763,6 +763,7 @@ final class PortalHooks {
           'photo' => NULL,
           'photo_form' => NULL,
           'display_name' => NULL,
+          'component' => NULL,
         ],
         'template' => 'aculta-portal-photo-editor',
         'path' => $this->moduleList->getPath('aculta_portal') . '/templates',

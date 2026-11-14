@@ -1,0 +1,16 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Editor de foto da Conta
+description: Apresenta a prévia e o formulário de foto fornecidos pelo Portal.
+status: stable
+group: Conta
+props:
+  type: object
+  additionalProperties: false
+slots:
+  content:
+    title: Prévia e formulário
+    description: Render array original com acesso, cache, attachments e alterações dos módulos preservados.
+assets:
+  css:
+    component:
+      account-photo-editor.css: {}

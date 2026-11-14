@@ -1,0 +1,7 @@
+name: Editor de foto
+description: Prévia de avatar e ação demonstrativa; o formulário real continua no módulo Portal.
+component: aculta420_v2:account-photo-editor
+slots:
+  content:
+    type: inline_template
+    template: '{{ include("aculta420_v2:avatar", { size: "lg", label: "Foto de perfil" }, with_context = false) }}{{ include("aculta420_v2:button", { text: "Alterar foto", variant: "outline" }, with_context = false) }}'

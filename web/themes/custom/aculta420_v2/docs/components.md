@@ -255,9 +255,17 @@ global de autoria.
 - **Props:** `title`, `section_title`, `menu_items`, `accordion_items` e `logout`.
 - **Slots:** `content`.
 - **Story:** `account-shell.default.story.yml`.
-- **CSS:** navegação responsiva, conteúdo, foco, tabelas e ações da visão geral carregam pelo asset do SDC; os estilos do formulário de foto e outros elementos fora do shell permanecem na biblioteca contextual da Conta.
+- **CSS:** navegação responsiva, conteúdo, foco, tabelas e ações da visão geral carregam pelo asset do SDC; o editor de foto tem SDC e asset próprios, enquanto gatilho e ações continuam na biblioteca contextual da Conta.
 - **Regra:** o H1 "Minha conta" é entregue pelo SDC `heading` (nível 1, faixa tricolor); o tema não lê usuário nem decide acesso.
 - **Estado:** SM do H1 atualizado em 2026-11-12; validação autenticada continua pendente.
+
+### account-photo-editor — Editor de foto da Conta
+
+- **Papel:** envolve a prévia e o Form API original do editor, mantendo o ponto de extensão `aculta_portal_photo_editor_alter`.
+- **Props/slots:** nenhum prop; slot `content` recebe o render array já preparado pelo módulo.
+- **Story:** `account-photo-editor.default.story.yml`, com avatar e botão demonstrativos.
+- **CSS:** asset local do SDC contém apenas o posicionamento do editor; o formulário real preserva cache, acesso e attachments.
+- **Estado:** migrado via preprocess; validação autenticada no Runtime pendente.
 
 ### account-terms-modal — Modal de aceite dos termos
 

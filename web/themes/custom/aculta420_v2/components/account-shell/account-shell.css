@@ -296,11 +296,6 @@
   border-radius: 50%;
 }
 
-.portal-account-photo {
-  position: relative;
-  flex: 0 0 5rem;
-}
-
 :is(.portal-account-photo__trigger, [data-portal-ui="account-photo-trigger"]) {
   position: relative;
   display: grid;
