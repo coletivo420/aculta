@@ -81,6 +81,7 @@ final class CourseCompletionPublisherTest extends UnitTestCase {
         'changed' => 1760000000,
         'course_id' => 42,
         'uid' => 7,
+        default => throw new \LogicException(sprintf('Unexpected progress field "%s".', $field)),
       };
       $field_list = $this->createMock(FieldItemListInterface::class);
       $field_list->method('getValue')->willReturn([['value' => $value]]);

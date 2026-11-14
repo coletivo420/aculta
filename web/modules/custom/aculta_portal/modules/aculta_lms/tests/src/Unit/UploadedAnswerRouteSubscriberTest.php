@@ -37,6 +37,7 @@ final class UploadedAnswerRouteSubscriberTest extends UnitTestCase {
     $this->alterRoutes($routes);
 
     $route = $routes->get('lms_file_upload.answer_file_download');
+    self::assertInstanceOf(Route::class, $route);
     self::assertSame('/resposta/{lms_answer}/baixar-arquivo', $route->getPath());
     self::assertSame('aculta_lms.uploaded_answer_access::access', $route->getRequirement('_custom_access'));
   }

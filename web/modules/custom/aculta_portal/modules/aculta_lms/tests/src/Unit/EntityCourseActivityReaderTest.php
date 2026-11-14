@@ -80,6 +80,7 @@ final class EntityCourseActivityReaderTest extends UnitTestCase {
         'type' => $type,
         'graded' => $graded,
         'weight' => $weight,
+        default => throw new \LogicException(sprintf('Unexpected activity field "%s".', $field)),
       };
       $field_list = $this->createMock(FieldItemListInterface::class);
       $field_list->method('getValue')->willReturn([['value' => $value]]);

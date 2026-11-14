@@ -110,7 +110,7 @@ final class CourseContentEventHooksTest extends UnitTestCase {
    *   ID do tipo de entidade.
    * @param string $uuid
    *   UUID da entidade.
-   * @param array $fields
+   * @param array<string, mixed> $fields
    *   Valores dos campos indexados pelo nome.
    * @param \Drupal\Core\Entity\ContentEntityBase|null $original
    *   Entidade original, ou NULL.

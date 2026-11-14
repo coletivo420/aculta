@@ -15,6 +15,7 @@ use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -64,7 +65,10 @@ final class LearningDashboardControllerTest extends UnitTestCase {
     $course = $this->createMock(GroupInterface::class);
     $course->method('id')->willReturn('1');
 
-    self::assertSame('Turma indisponível.', (string) $controller->class($group, $course)['#plain_text']);
+    $build = $controller->class($group, $course);
+    self::assertArrayHasKey('#plain_text', $build);
+    self::assertInstanceOf(TranslatableMarkup::class, $build['#plain_text']);
+    self::assertSame('Turma indisponível.', (string) $build['#plain_text']);
   }
 
 }

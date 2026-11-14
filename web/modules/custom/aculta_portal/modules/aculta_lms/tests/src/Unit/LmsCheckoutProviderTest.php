@@ -25,7 +25,7 @@ final class LmsCheckoutProviderTest extends UnitTestCase {
    *
    * @param string|null $flow
    *   Checkout flow configurado no tipo de pedido.
-   * @param array $settings
+   * @param array<string, mixed> $settings
    *   Configurações do checkout.
    *
    * @return \Drupal\aculta_lms\Checkout\LmsCheckoutProvider

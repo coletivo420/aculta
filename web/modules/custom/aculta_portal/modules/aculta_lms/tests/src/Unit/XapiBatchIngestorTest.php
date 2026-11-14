@@ -84,6 +84,44 @@ final class XapiBatchIngestorTest extends UnitTestCase {
   }
 
   /**
+   * Malformed statements and contexts are refused at the decoded JSON boundary.
+   */
+  public function testRefusesMalformedDecodedStatementAndContextShapes(): void {
+    $ingestor = $this->ingestor();
+    $statementWithIntegerKey = $this->statement('a0000000-0000-4000-8000-000000000001');
+    $statementWithIntegerKey[0] = 'unexpected';
+    $statements = [
+      $statementWithIntegerKey,
+      array_replace($this->statement('a0000000-0000-4000-8000-000000000002'), ['context' => 'invalid']),
+      array_replace($this->statement('a0000000-0000-4000-8000-000000000003'), ['context' => ['registration' => 42]]),
+      array_replace($this->statement('a0000000-0000-4000-8000-000000000004'), ['id' => 42]),
+    ];
+
+    $result = $ingestor->ingestDecoded($statements, $this->claims(), []);
+
+    $this->assertSame([], $result['accepted']);
+    $this->assertCount(4, $result['refused']);
+    $this->assertSame('Declaração não é um objeto.', $result['refused'][0]['reason']);
+    $this->assertSame('context deve ser um objeto.', $result['refused'][1]['reason']);
+    $this->assertSame('Lançamento diferente do token.', $result['refused'][2]['reason']);
+    $this->assertSame('id deve ser um UUID.', $result['refused'][3]['reason']);
+  }
+
+  /**
+   * Claims with missing or unexpected values cannot enter the ingestion path.
+   */
+  public function testRejectsMalformedClaims(): void {
+    $claims = array_replace($this->claims(), ['uid' => '42']);
+
+    $this->expectException(\UnexpectedValueException::class);
+    $this->ingestor()->ingestDecoded(
+      [$this->statement('a0000000-0000-4000-8000-000000000001')],
+      $claims,
+      [],
+    );
+  }
+
+  /**
    * Statement ID repetido no mesmo lote: a segunda ocorrência é recusada.
    */
   public function testRefusesDuplicateInsideBatch(): void {

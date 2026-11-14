@@ -171,7 +171,6 @@ final class LearningNotificationSubscriberTest extends UnitTestCase {
 
     $subscriber = new LearningNotificationSubscriber($manager, $publisher, $logger);
     $subscriber->certificateIssued(new CertificateIssuedEvent('certificate-uuid', '27'));
-    $this->addToAssertionCount(1);
   }
 
   /**

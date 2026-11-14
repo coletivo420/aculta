@@ -70,8 +70,9 @@ final class AccountCoursesReaderTest extends UnitTestCase {
       ->getAccountCourses($account);
 
     self::assertCount(1, $summaries);
-    self::assertSame('entity.group.canonical', $summaries[0]->url?->getRouteName());
-    self::assertSame(['group' => '42'], $summaries[0]->url?->getRouteParameters());
+    self::assertNotNull($summaries[0]->url);
+    self::assertSame('entity.group.canonical', $summaries[0]->url->getRouteName());
+    self::assertSame(['group' => '42'], $summaries[0]->url->getRouteParameters());
   }
 
   /**

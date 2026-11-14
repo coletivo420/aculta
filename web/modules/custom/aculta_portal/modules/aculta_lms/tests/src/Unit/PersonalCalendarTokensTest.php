@@ -19,10 +19,11 @@ class PersonalCalendarTokensTest extends UnitTestCase {
    * Estado em memória para o serviço.
    */
   private function servico(): PersonalCalendarTokens {
+    /** @var array<string, array<int, string>> $valores */
     $valores = [];
     $estado = $this->createMock(StateInterface::class);
     $estado->method('get')->willReturnCallback(static function (string $chave, $padrao = NULL) use (&$valores) {
-      return $valores[$chave] ?? $padrao;
+      return array_key_exists($chave, $valores) ? $valores[$chave] : $padrao;
     });
     $estado->method('set')->willReturnCallback(static function (string $chave, $valor) use (&$valores): void {
       $valores[$chave] = $valor;

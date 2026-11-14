@@ -80,6 +80,7 @@ final class EntityCourseLessonReaderTest extends UnitTestCase {
         'title' => $title,
         'published' => $published,
         'weight' => $weight,
+        default => throw new \LogicException(sprintf('Unexpected lesson field "%s".', $field)),
       };
       $field_list = $this->createMock(FieldItemListInterface::class);
       $field_list->method('getValue')->willReturn([['value' => $value]]);

@@ -187,7 +187,9 @@ final class XapiStatementValidatorTest extends UnitTestCase {
       'result' => ['success' => TRUE, 'score' => ['scaled' => 0.9]],
       'timestamp' => '2026-11-02T10:00:00Z',
     ];
-    return array_replace_recursive($base, $overrides);
+    $statement = array_replace_recursive($base, $overrides);
+    $this->assertStringKeyedMap($statement);
+    return $statement;
   }
 
   /**
@@ -201,7 +203,25 @@ final class XapiStatementValidatorTest extends UnitTestCase {
    */
   private function validatedObject(array $object): array {
     $statement = $this->statement(['object' => $object]);
-    return (new XapiStatementValidator())->validate($statement)['object'];
+    $normalized = (new XapiStatementValidator())->validate($statement);
+    $normalizedObject = $normalized['object'] ?? NULL;
+    $this->assertIsArray($normalizedObject);
+    $this->assertStringKeyedMap($normalizedObject);
+    return $normalizedObject;
+  }
+
+  /**
+   * Ensures a JSON object fixture has string property names.
+   *
+   * @param array<array-key, mixed> $value
+   *   Object under test.
+   *
+   * @phpstan-assert array<string, mixed> $value
+   */
+  private function assertStringKeyedMap(array $value): void {
+    foreach (array_keys($value) as $key) {
+      $this->assertIsString($key);
+    }
   }
 
   /**

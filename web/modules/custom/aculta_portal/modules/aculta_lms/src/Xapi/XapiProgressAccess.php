@@ -34,7 +34,18 @@ final class XapiProgressAccess {
     }
 
     $values = $progress->get('uid')->getValue();
-    return isset($values[0]['value']) && (int) $values[0]['value'] === $uid;
+    if (!is_array($values)) {
+      return FALSE;
+    }
+    $first = $values[0] ?? NULL;
+    if (!is_array($first)) {
+      return FALSE;
+    }
+    $value = $first['value'] ?? NULL;
+    if (!is_int($value) && (!is_string($value) || !ctype_digit($value))) {
+      return FALSE;
+    }
+    return (int) $value === $uid;
   }
 
 }

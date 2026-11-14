@@ -80,6 +80,7 @@ final class EntityCourseAnswerReaderTest extends UnitTestCase {
         'uid' => $uid,
         'state' => $state,
         'score' => $score,
+        default => throw new \LogicException(sprintf('Unexpected answer field "%s".', $field)),
       };
       $field_list = $this->createMock(FieldItemListInterface::class);
       $field_list->method('getValue')->willReturn($value === NULL ? [] : [['value' => $value]]);

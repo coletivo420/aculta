@@ -12,6 +12,7 @@ use Drupal\aculta_lms\Learning\CourseAnswer;
 use Drupal\aculta_lms\Learning\CourseProgress;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DoesNotPerformAssertions;
 
 /**
  * Tests domain constraints shared by the internal learning entities. */
@@ -48,9 +49,9 @@ final class LearningEntitiesTest extends UnitTestCase {
   /**
    * Verifica que o status de progresso definido no contrato é aceito.
    */
+  #[DoesNotPerformAssertions]
   public function testProgressStatusFromContractIsAccepted(): void {
     ProgressEntity::assertValidStatus(CourseProgress::STATUS_PROGRESS);
-    $this->assertTrue(TRUE);
   }
 
   /**

@@ -107,6 +107,9 @@ final class XapiStatementValidator {
 
   /**
    * Actor: exatamente um identificador inverso funcional, e somente Agent.
+   *
+   * @return array<array-key, mixed>
+   *   Validated actor object.
    */
   private function actor(mixed $actor): array {
     if (!is_array($actor) || array_is_list($actor)) {
@@ -147,6 +150,9 @@ final class XapiStatementValidator {
 
   /**
    * Verb: id IRI obrigatório; display opcional.
+   *
+   * @return array<array-key, mixed>
+   *   Validated verb object.
    */
   private function verb(mixed $verb): array {
     if (!is_array($verb) || array_is_list($verb)) {
@@ -165,6 +171,9 @@ final class XapiStatementValidator {
 
   /**
    * Object: Activity ou StatementRef. Outros tipos são recusados nesta fase.
+   *
+   * @return array<array-key, mixed>
+   *   Validated object definition.
    */
   private function object(mixed $object): array {
     if (!is_array($object) || array_is_list($object)) {
@@ -194,6 +203,9 @@ final class XapiStatementValidator {
 
   /**
    * Result: score, success, completion, response, duration e extensions.
+   *
+   * @return array<array-key, mixed>
+   *   Validated result object.
    */
   private function result(mixed $result): array {
     if (!is_array($result) || array_is_list($result)) {
@@ -263,9 +275,9 @@ final class XapiStatementValidator {
   /**
    * Recusa chaves fora da lista permitida.
    *
-   * @param array<string, mixed> $data
+   * @param array<array-key, mixed> $data
    *   Estrutura a validar.
-   * @param string[] $allowed
+   * @param list<string> $allowed
    *   Chaves permitidas.
    * @param string $where
    *   Nome do contexto usado na mensagem de erro.
