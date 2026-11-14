@@ -171,16 +171,28 @@ final class StudioProfileController {
     if ($this->bioCard !== NULL && $this->socialCard !== NULL) {
       // The read-only textarea, network rows and cache metadata are produced
       // by aculta_user. Remove modal editors only in Studio; legacy is intact.
-      $bio = $this->bioCard->build($user);
-      unset($bio['title'], $bio['edit']);
+      $bioCard = $this->bioCard->build($user);
+      // The account card owns a surface panel, heading and dialog. The Studio
+      // section supplies its own panel, heading and editor action, so only the
+      // read-only field and its cache metadata belong in the body slot.
+      $bioSlots = $bioCard['#slots'] ?? [];
+      $bio = is_array($bioSlots) && is_array($bioSlots['content'] ?? NULL) ? $bioSlots['content'] : [];
+      unset($bio['title'], $bio['dialog']);
+      $bio['#cache'] = is_array($bioCard['#cache'] ?? NULL) ? $bioCard['#cache'] : [];
       $social = $this->socialCard->build($user);
       unset($social['title']);
-      if (isset($social['list']['items']) && is_array($social['list']['items'])) {
-        foreach ($social['list']['items'] as &$item) {
+      $socialList = is_array($social['list'] ?? NULL) ? $social['list'] : [];
+      $socialItems = is_array($socialList['items'] ?? NULL) ? $socialList['items'] : [];
+      foreach ($socialItems as &$item) {
+        if (is_array($item)) {
           unset($item['edit']);
         }
-        unset($item);
       }
+      unset($item);
+      // The slot receives the full card, so the filtered rows must be merged
+      // back into it rather than only into the copied row list.
+      $socialList['items'] = $socialItems;
+      $social['list'] = $socialList;
 
       $slots['biography'] = [
         '#theme' => 'aculta_portal_component',
@@ -225,7 +237,9 @@ final class StudioProfileController {
       ],
     ];
     $cache->applyTo($build);
-    return $build;
+    /** @var array<string, mixed> $result */
+    $result = $build;
+    return $result;
   }
 
 }

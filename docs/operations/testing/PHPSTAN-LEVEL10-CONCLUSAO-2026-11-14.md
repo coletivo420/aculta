@@ -165,3 +165,24 @@ Falhas preexistentes de PHPUnit, registradas e não mascaradas: `StudioProfileCo
 | `bb3e7f061` | Escopo do gate: incremento em push, PR semanal isolado |
 
 SHA validado pelo CI em `origin/dev`: **`bb3e7f061fce2c83d6cf20b81ea954616ad7fc42`**, com jobs `phpstan` e `PHPStan level 10 gate` em `success` no push `43624002407` e no PR `43624010341`. O commit concorrente `013b011f8` (métricas SDC) foi integrado e o crescimento de dívida que ele introduziu foi corrigido em `c9fa42b42`.
+
+## 14. Reduções posteriores à homologação (2026-11-14)
+
+As pendências de código foram resolvidas sem regenerar o baseline:
+
+- `StudioProfileController` voltou a compor a bio no formato do cartão composto
+  atual e removeu os editores sociais duplicados; as três entradas de dívida
+  obsoletas desse arquivo foram eliminadas.
+- O carregador do curso piloto foi migrado de `Drupal\lms\Entity\*` para
+  `aculta_lms_lesson`/`aculta_lms_activity`, eliminando toda a dívida
+  `class.notFound` e os erros de tipagem do arquivo (39 entradas). Prompts
+  `no_answer` da fonte editorial viram atividades `free_text` não avaliadas,
+  que é o tipo equivalente do modelo atual.
+- O teste de composição do fórum e o validador SDC foram alinhados ao contrato
+  atual (commits `302a9a9c8` e `e6131ba12`).
+- O baseline passou de **15.599 entradas / 26.848 ocorrências** para
+  **15.556 / 26.772**, sem nenhuma entrada nova: 43 entradas removidas e 4
+  contagens reduzidas. Checksum atual:
+  `9a626bd8bdafde375429983701d83dfbcb2152a82e549b1c0ad72bc7c9b46997`.
+- As duas falhas preexistentes de PHPUnit citadas na seção 11 agora passam:
+  `StudioProfileControllerTest` (7/7) e `PagePresentationHooksTest` (11/11).

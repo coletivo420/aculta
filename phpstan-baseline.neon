@@ -1709,240 +1709,6 @@ parameters:
 			path: scripts/content/institution/load-home-content.php
 
 		-
-			rawMessage: Anonymous function should return object|null but returns mixed.
-			identifier: return.type
-			count: 1
-			path: scripts/content/load-course-introducao-antiproibicionismo.php
-
-		-
-			rawMessage: 'Argument of an invalid type mixed supplied for foreach, only iterables are supported.'
-			identifier: foreach.nonIterable
-			count: 2
-			path: scripts/content/load-course-introducao-antiproibicionismo.php
-
-		-
-			rawMessage: Binary operation "." between mixed and ' ' results in an error.
-			identifier: binaryOp.invalid
-			count: 1
-			path: scripts/content/load-course-introducao-antiproibicionismo.php
-
-		-
-			rawMessage: Binary operation "." between non-falsy-string and mixed results in an error.
-			identifier: binaryOp.invalid
-			count: 1
-			path: scripts/content/load-course-introducao-antiproibicionismo.php
-
-		-
-			rawMessage: 'Call to an undefined method object::id().'
-			identifier: method.notFound
-			count: 1
-			path: scripts/content/load-course-introducao-antiproibicionismo.php
-
-		-
-			rawMessage: 'Call to an undefined method object::isPublished().'
-			identifier: method.notFound
-			count: 1
-			path: scripts/content/load-course-introducao-antiproibicionismo.php
-
-		-
-			rawMessage: 'Call to an undefined method object::save().'
-			identifier: method.notFound
-			count: 1
-			path: scripts/content/load-course-introducao-antiproibicionismo.php
-
-		-
-			rawMessage: 'Call to an undefined method object::set().'
-			identifier: method.notFound
-			count: 2
-			path: scripts/content/load-course-introducao-antiproibicionismo.php
-
-		-
-			rawMessage: 'Call to an undefined method object::setPublished().'
-			identifier: method.notFound
-			count: 1
-			path: scripts/content/load-course-introducao-antiproibicionismo.php
-
-		-
-			rawMessage: 'Call to method id() on an unknown class Drupal\lms\Entity\LessonInterface.'
-			identifier: class.notFound
-			count: 2
-			path: scripts/content/load-course-introducao-antiproibicionismo.php
-
-		-
-			rawMessage: 'Call to method save() on an unknown class Drupal\lms\Entity\LessonInterface.'
-			identifier: class.notFound
-			count: 1
-			path: scripts/content/load-course-introducao-antiproibicionismo.php
-
-		-
-			rawMessage: 'Call to method set() on an unknown class Drupal\lms\Entity\LessonInterface.'
-			identifier: class.notFound
-			count: 3
-			path: scripts/content/load-course-introducao-antiproibicionismo.php
-
-		-
-			rawMessage: 'Call to static method create() on an unknown class Drupal\lms\Entity\Activity.'
-			identifier: class.notFound
-			count: 1
-			path: scripts/content/load-course-introducao-antiproibicionismo.php
-
-		-
-			rawMessage: 'Call to static method create() on an unknown class Drupal\lms\Entity\Lesson.'
-			identifier: class.notFound
-			count: 1
-			path: scripts/content/load-course-introducao-antiproibicionismo.php
-
-		-
-			rawMessage: Cannot access offset 'activities' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: scripts/content/load-course-introducao-antiproibicionismo.php
-
-		-
-			rawMessage: Cannot access offset 'bool_expected' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: scripts/content/load-course-introducao-antiproibicionismo.php
-
-		-
-			rawMessage: Cannot access offset 'content' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: scripts/content/load-course-introducao-antiproibicionismo.php
-
-		-
-			rawMessage: Cannot access offset 'course' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: scripts/content/load-course-introducao-antiproibicionismo.php
-
-		-
-			rawMessage: Cannot access offset 'description' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 3
-			path: scripts/content/load-course-introducao-antiproibicionismo.php
-
-		-
-			rawMessage: Cannot access offset 'label' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 2
-			path: scripts/content/load-course-introducao-antiproibicionismo.php
-
-		-
-			rawMessage: Cannot access offset 'lessons' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: scripts/content/load-course-introducao-antiproibicionismo.php
-
-		-
-			rawMessage: Cannot access offset 'max_score' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: scripts/content/load-course-introducao-antiproibicionismo.php
-
-		-
-			rawMessage: Cannot access offset 'name' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 7
-			path: scripts/content/load-course-introducao-antiproibicionismo.php
-
-		-
-			rawMessage: Cannot access offset 'question' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: scripts/content/load-course-introducao-antiproibicionismo.php
-
-		-
-			rawMessage: Cannot access offset 'type' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 3
-			path: scripts/content/load-course-introducao-antiproibicionismo.php
-
-		-
-			rawMessage: 'Cannot call method accessCheck() on mixed.'
-			identifier: method.nonObject
-			count: 1
-			path: scripts/content/load-course-introducao-antiproibicionismo.php
-
-		-
-			rawMessage: 'Cannot call method condition() on mixed.'
-			identifier: method.nonObject
-			count: 1
-			path: scripts/content/load-course-introducao-antiproibicionismo.php
-
-		-
-			rawMessage: 'Cannot call method execute() on mixed.'
-			identifier: method.nonObject
-			count: 1
-			path: scripts/content/load-course-introducao-antiproibicionismo.php
-
-		-
-			rawMessage: 'Cannot call method getQuery() on mixed.'
-			identifier: method.nonObject
-			count: 1
-			path: scripts/content/load-course-introducao-antiproibicionismo.php
-
-		-
-			rawMessage: 'Cannot call method id() on mixed.'
-			identifier: method.nonObject
-			count: 1
-			path: scripts/content/load-course-introducao-antiproibicionismo.php
-
-		-
-			rawMessage: 'Cannot call method load() on mixed.'
-			identifier: method.nonObject
-			count: 1
-			path: scripts/content/load-course-introducao-antiproibicionismo.php
-
-		-
-			rawMessage: 'Cannot call method range() on mixed.'
-			identifier: method.nonObject
-			count: 1
-			path: scripts/content/load-course-introducao-antiproibicionismo.php
-
-		-
-			rawMessage: 'Cannot call method save() on mixed.'
-			identifier: method.nonObject
-			count: 1
-			path: scripts/content/load-course-introducao-antiproibicionismo.php
-
-		-
-			rawMessage: 'Cannot call method set() on mixed.'
-			identifier: method.nonObject
-			count: 5
-			path: scripts/content/load-course-introducao-antiproibicionismo.php
-
-		-
-			rawMessage: PHPDoc tag @var for variable $lesson contains unknown class Drupal\lms\Entity\LessonInterface.
-			identifier: class.notFound
-			count: 1
-			path: scripts/content/load-course-introducao-antiproibicionismo.php
-
-		-
-			rawMessage: 'Parameter #1 $array of function reset expects array|object, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: scripts/content/load-course-introducao-antiproibicionismo.php
-
-		-
-			rawMessage: 'Parameter #1 $json of function json_decode expects string, string|false given.'
-			identifier: argument.type
-			count: 1
-			path: scripts/content/load-course-introducao-antiproibicionismo.php
-
-		-
-			rawMessage: 'Parameter #1 $value of function count expects array|Countable, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: scripts/content/load-course-introducao-antiproibicionismo.php
-
-		-
-			rawMessage: 'Variable $lesson on left side of ??= always exists and is not nullable.'
-			identifier: nullCoalesce.variable
-			count: 1
-			path: scripts/content/load-course-introducao-antiproibicionismo.php
-
-		-
 			rawMessage: 'Cannot call method getConfigDependencyName() on Drupal\field\FieldConfigInterface|null.'
 			identifier: method.nonObject
 			count: 1
@@ -5886,7 +5652,7 @@ parameters:
 		-
 			rawMessage: 'Call to static method create() of internal class Drupal\Core\Render\Markup from outside its root namespace Drupal.'
 			identifier: staticMethod.internalClass
-			count: 106
+			count: 105
 			path: scripts/validate-aculta420-v2-sdc.php
 
 		-
@@ -75206,24 +74972,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/StudioCalendarController.php
 
 		-
-			rawMessage: Cannot access offset 'edit' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/StudioProfileController.php
-
-		-
-			rawMessage: Cannot access offset 'items' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/StudioProfileController.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_studio\Controller\StudioProfileController::page() should return array<string, mixed> but returns array.'
-			identifier: return.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/StudioProfileController.php
-
-		-
 			rawMessage: 'Method Drupal\aculta_studio\Controller\StudioUploadEmbedController::page() return type has no value type specified in iterable type array.'
 			identifier: missingType.iterableValue
 			count: 1
@@ -93194,19 +92942,19 @@ parameters:
 		-
 			rawMessage: Cannot access offset '#component' on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 6
+			count: 5
 			path: web/themes/custom/aculta420_v2/tests/src/Unit/PagePresentationHooksTest.php
 
 		-
 			rawMessage: Cannot access offset '#props' on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 7
+			count: 5
 			path: web/themes/custom/aculta420_v2/tests/src/Unit/PagePresentationHooksTest.php
 
 		-
 			rawMessage: Cannot access offset '#slots' on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 18
+			count: 9
 			path: web/themes/custom/aculta420_v2/tests/src/Unit/PagePresentationHooksTest.php
 
 		-
@@ -93297,12 +93045,6 @@ parameters:
 			rawMessage: Cannot access offset 'tags' on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 3
-			path: web/themes/custom/aculta420_v2/tests/src/Unit/PagePresentationHooksTest.php
-
-		-
-			rawMessage: Cannot access offset 'topic' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
 			path: web/themes/custom/aculta420_v2/tests/src/Unit/PagePresentationHooksTest.php
 
 		-

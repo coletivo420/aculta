@@ -1,12 +1,12 @@
 # Dívida PHPStan — ACULTA
 
-Gerado em 2026-11-14T17:52:22+00:00 por `scripts/phpstan-debt-report.php`.
+Gerado em 2026-11-14T19:22:41+00:00 por `scripts/phpstan-debt-report.php`.
 
 | Item | Valor |
 | --- | --- |
-| Commit | `c9fa42b42` |
-| PHP | 8.5.12 |
-| PHPStan | PHPStan 2.3.5 |
+| Commit | `302a9a9c8763fe335cec43e3b93bcad65e0e6ad0` |
+| PHP | 8.4.27 |
+| PHPStan | PHPStan - PHP Static Analysis Tool 2.3.5 |
 | Nível | 10 |
 | Escopo | web/modules/custom, web/themes/custom, scripts |
 | Inconsistências de baseline | 0 |
@@ -15,30 +15,30 @@ Gerado em 2026-11-14T17:52:22+00:00 por `scripts/phpstan-debt-report.php`.
 
 | Medida | Ocorrências |
 | --- | ---: |
-| Total bruto no nível 10 | 26848 |
-| Dívida congelada no baseline | 26848 |
+| Total bruto no nível 10 | 26772 |
+| Dívida congelada no baseline | 26772 |
 | Erros não suprimidos | 0 |
-| Entradas no baseline | 15599 |
-| Produção | 15816 |
-| Testes | 11032 |
+| Entradas no baseline | 15556 |
+| Produção | 15753 |
+| Testes | 11019 |
 
 ## Criticidade funcional
 
 | Criticidade | Ocorrências |
 | --- | ---: |
 | alta | 231 |
-| media | 23564 |
+| media | 23488 |
 | baixa | 3053 |
 
 ## Evolução desde o baseline de referência
 
 | Classificação | Entradas |
 | --- | ---: |
-| Dívida removida | 0 |
-| Dívida mantida | 15599 |
+| Dívida removida | 43 |
+| Dívida mantida | 15556 |
 | Nova dívida (bloqueante) | 0 |
 | Contagem aumentada (bloqueante) | 0 |
-| Contagem reduzida | 1 |
+| Contagem reduzida | 4 |
 | Identidade de erro alterada (revisão) | 0 |
 
 ## Dívida por módulo (prioridade de redução)
@@ -46,7 +46,7 @@ Gerado em 2026-11-14T17:52:22+00:00 por `scripts/phpstan-debt-report.php`.
 | Módulo | Ocorrências |
 | --- | ---: |
 | aculta_forum | 3096 |
-| scripts | 3056 |
+| scripts | 2996 |
 | aculta_lms | 2184 |
 | aculta_messenger | 2073 |
 | aculta_portal | 2020 |
@@ -57,9 +57,9 @@ Gerado em 2026-11-14T17:52:22+00:00 por `scripts/phpstan-debt-report.php`.
 | aculta_user | 899 |
 | aculta_commerce | 839 |
 | aculta_mailer | 665 |
-| aculta_studio | 625 |
+| aculta_studio | 622 |
 | aculta_pagamentos_mercadopago | 594 |
-| aculta420_v2 | 492 |
+| aculta420_v2 | 479 |
 | aculta_donation | 383 |
 | aculta_linkweed | 381 |
 | aculta_calendar | 358 |
@@ -80,22 +80,22 @@ Gerado em 2026-11-14T17:52:22+00:00 por `scripts/phpstan-debt-report.php`.
 
 | Identificador | Ocorrências |
 | --- | ---: |
-| `offsetAccess.nonOffsetAccessible` | 8234 |
-| `argument.type` | 4649 |
-| `method.nonObject` | 3059 |
+| `offsetAccess.nonOffsetAccessible` | 8197 |
+| `argument.type` | 4646 |
+| `method.nonObject` | 3046 |
 | `missingType.iterableValue` | 2820 |
 | `cast.string` | 2094 |
 | `cast.int` | 1350 |
-| `method.notFound` | 1004 |
+| `method.notFound` | 998 |
 | `property.nonObject` | 673 |
-| `return.type` | 371 |
-| `foreach.nonIterable` | 356 |
-| `binaryOp.invalid` | 301 |
+| `return.type` | 369 |
+| `foreach.nonIterable` | 354 |
+| `binaryOp.invalid` | 299 |
 | `offsetAccess.invalidOffset` | 197 |
 | `missingType.return` | 139 |
 | `property.notFound` | 134 |
 | `encapsedStringPart.nonString` | 115 |
-| `staticMethod.internalClass` | 106 |
+| `staticMethod.internalClass` | 105 |
 | `staticMethod.alreadyNarrowedType` | 102 |
 | `offsetAccess.notFound` | 97 |
 | `method.alreadyNarrowedType` | 85 |
@@ -115,7 +115,7 @@ Gerado em 2026-11-14T17:52:22+00:00 por `scripts/phpstan-debt-report.php`.
 | `web/modules/custom/aculta_portal/modules/aculta_pagamentos_mercadopago/src/Plugin/Commerce/PaymentGateway/CheckoutPro.php` | 189 |
 | `scripts/validate-portal-commerce-security.php` | 177 |
 | `web/modules/custom/aculta_portal/modules/aculta_index/src/Integrity/ContentIndexIntegrityChecker.php` | 177 |
-| `scripts/validate-aculta420-v2-sdc.php` | 174 |
+| `scripts/validate-aculta420-v2-sdc.php` | 173 |
 | `web/themes/custom/aculta420_v2/src/Hook/PagePresentationHooks.php` | 169 |
 | `scripts/install-institution.php` | 163 |
 | `web/modules/custom/aculta_portal/modules/aculta_events/tests/src/Kernel/EventOrganizationLifecycleKernelTest.php` | 140 |
