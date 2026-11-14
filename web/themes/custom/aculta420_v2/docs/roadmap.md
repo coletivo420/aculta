@@ -100,8 +100,9 @@ anteriores e não substituem a conferência do código atual.
    passou para 150 SDCs/244 stories, confirmando UI Patterns Library oficial
    habilitada e ausência de catálogo customizado. O validator Drupal passou
    isoladamente em 95 SDCs; essa validação não cobre `forum-quote` nem `reply-indent`.
-   Auditoria atual do worktree (150 manifests): 550 props de topo, das quais
-   todas têm descrição. Considerando os nós de schema tipados sob as props,
+   Auditoria atual do worktree (150 manifests): 550 props de topo, todas com
+   descrição e referência literal no Twig do próprio SDC; a busca não prova
+   validade dos valores dos producers. Considerando os nós de schema tipados sob as props,
    incluindo itens de arrays e schemas aninhados, são 714 nós, todos com
    descrição. O lote final conferiu `multidomain-bar`, `navigation-bar`,
    `payment-notice` e `purpose-showcase` contra templates/producers PHP, além
