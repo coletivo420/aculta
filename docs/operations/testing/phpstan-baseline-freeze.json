@@ -64,5 +64,19 @@
     "diff": "php scripts/phpstan-debt-guard.php diff --baseline=phpstan-baseline.neon --git-base=origin/dev",
     "report": "php scripts/phpstan-debt-report.php --baseline=phpstan-baseline.neon --analysis=artifacts/phpstan.json --out=docs/operations/testing/phpstan-debt.md",
     "guard_tests": "bats tests/shell/phpstan-debt-guard.bats"
+  },
+  "ci_verification": {
+    "sha": "bb3e7f061fce2c83d6cf20b81ea954616ad7fc42",
+    "push_run": 43624002407,
+    "pr_run": 43624010341,
+    "phpstan_job": "success",
+    "stable_gate": "success",
+    "artifact": "phpstan-debt",
+    "php": "8.4.27",
+    "verified_totals": {
+      "frozen": 26848,
+      "uncovered": 0,
+      "entries": 15599
+    }
   }
 }

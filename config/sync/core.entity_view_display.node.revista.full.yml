@@ -48,7 +48,7 @@ third_party_settings:
               has_meta:
                 source_id: select
                 source:
-                  value: true
+                  value: '1'
               has_subtitle:
                 source_id: 'field_property:node:field_subtitle:value'
                 source: {  }
@@ -61,15 +61,15 @@ third_party_settings:
               has_footer:
                 source_id: select
                 source:
-                  value: true
+                  value: '1'
               has_authors:
                 source_id: select
                 source:
-                  value: true
+                  value: '1'
               has_discussion:
                 source_id: select
                 source:
-                  value: true
+                  value: '1'
             slots: {  }
         components:
           8404d4d8-1f70-44f5-99a5-5ec8f7365797:
@@ -237,8 +237,8 @@ bundle: revista
 mode: full
 content: {  }
 hidden:
-  body: true
   aculta_coauthors: true
+  body: true
   content_moderation_control: true
   entity_print_view_epub: true
   entity_print_view_pdf: true

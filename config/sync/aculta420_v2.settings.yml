@@ -1,11 +1,3 @@
-aculta_radius_button: lg
-aculta_radius_card: lg
-aculta_radius_field: base
-aculta_accent_override: mapping
-aculta_show_accent_stripe: true
-aculta_revista_accent:
-  selected: {  }
-  extra: ''
 third_party_settings:
   ui_skins:
     css_variables:
@@ -119,3 +111,11 @@ third_party_settings:
       selected:
         unpublished_preview: aculta-content-status--unpublished
       extra: ''
+aculta_radius_button: lg
+aculta_radius_card: lg
+aculta_radius_field: base
+aculta_accent_override: mapping
+aculta_show_accent_stripe: true
+aculta_revista_accent:
+  selected: {  }
+  extra: ''

@@ -130,9 +130,15 @@ Escopo do diff: pushes a `dev` validam o incremento real (`event.before`) e PRs 
 | Actionlint | PASS |
 | `validate-agent-skills.py` | PASS |
 | `validate-agent-token-budget.php` | PASS |
-| PHP Lint dos arquivos alterados | PASS |
+| PHP Lint dos arquivos alterados (49) | PASS |
+| CI — job `phpstan` no push `43624002407` | **success** (PHP 8.4.27) |
+| CI — job `phpstan` no PR `43624010341` | **success** |
+| CI — job `PHPStan level 10 gate` (push e PR) | **success** |
+| Artefato `phpstan-debt` | 26.848 congeladas, 0 não suprimidas, 15.599 entradas |
 
-Falha preexistente registrada e não mascarada: `PagePresentationHooksTest::testForumTopicViewModesUseSdcComposition` já falhava no SHA inicial, fora do escopo desta tarefa. O job Kernel continua informativo no CI por dívida preexistente documentada.
+O relatório do artefato de CI confirma PHP 8.4.27, PHPStan 2.3.5, nível 10, zero inconsistências de baseline e zero erros não suprimidos.
+
+Falhas preexistentes de PHPUnit, registradas e não mascaradas: `StudioProfileControllerTest` (2 falhas de asserção) e `PagePresentationHooksTest::testForumTopicViewModesUseSdcComposition`. Os arquivos de teste e os controladores correspondentes não foram alterados desde `f4399abb9`; a segunda falha foi reproduzida no código anterior às mudanças desta entrega. O job `phpunit-unit` falha por essas dívidas, separadamente do gate PHPStan. O job Kernel continua informativo no CI por dívida preexistente documentada.
 
 ## 12. Pendências e oportunidades
 
@@ -155,4 +161,7 @@ Falha preexistente registrada e não mascarada: `PagePresentationHooksTest::test
 | `b9939d941` | Correção da dívida dos próprios gates |
 | `c9fa42b42` | Correção do validador SDC e refinamento do gate por arquivo |
 
-SHA final publicado em `origin/dev`: registrado no relatório de entrega da sessão. O commit concorrente `013b011f8` (métricas SDC) foi integrado e o crescimento de dívida que ele introduziu foi corrigido em `c9fa42b42`.
+| `ea3d46219` | Relatório final, manifesto e documentação |
+| `bb3e7f061` | Escopo do gate: incremento em push, PR semanal isolado |
+
+SHA validado pelo CI em `origin/dev`: **`bb3e7f061fce2c83d6cf20b81ea954616ad7fc42`**, com jobs `phpstan` e `PHPStan level 10 gate` em `success` no push `43624002407` e no PR `43624010341`. O commit concorrente `013b011f8` (métricas SDC) foi integrado e o crescimento de dívida que ele introduziu foi corrigido em `c9fa42b42`.

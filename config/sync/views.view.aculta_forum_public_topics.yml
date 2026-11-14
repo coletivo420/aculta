@@ -527,14 +527,6 @@ display:
           hierarchy: true
           limit: true
           error_message: false
-      relationships:
-        uid:
-          id: uid
-          table: node_field_data
-          field: uid
-          admin_label: Autor
-          plugin_id: standard
-          required: false
       style:
         type: default
         options:
@@ -558,31 +550,31 @@ display:
               title:
                 sources:
                   -
+                    source_id: view_field
                     source:
                       ui_patterns_views_field: title
-                    source_id: view_field
               meta:
                 sources:
                   -
+                    source_id: view_field
                     source:
                       ui_patterns_views_field: author_card
-                    source_id: view_field
                   -
+                    source_id: view_field
                     source:
                       ui_patterns_views_field: field_aculta_categories
-                    source_id: view_field
               replies_content:
                 sources:
                   -
+                    source_id: view_field
                     source:
                       ui_patterns_views_field: comment_count
-                    source_id: view_field
               activity_content:
                 sources:
                   -
+                    source_id: view_field
                     source:
                       ui_patterns_views_field: last_updated
-                    source_id: view_field
       query:
         type: views_query
         options:
@@ -590,6 +582,14 @@ display:
           disable_sql_rewrite: false
           distinct: false
           replica: false
+      relationships:
+        uid:
+          id: uid
+          table: node_field_data
+          field: uid
+          admin_label: Autor
+          plugin_id: standard
+          required: false
       display_extenders: {  }
     cache_metadata:
       max-age: -1

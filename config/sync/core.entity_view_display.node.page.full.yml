@@ -72,8 +72,8 @@ bundle: page
 mode: full
 content: {  }
 hidden:
-  body: true
   aculta_coauthors: true
+  body: true
   entity_print_view_epub: true
   entity_print_view_pdf: true
   entity_print_view_word_docx: true

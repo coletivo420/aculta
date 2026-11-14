@@ -203,6 +203,162 @@ display:
         - 'languages:language_interface'
         - user.permissions
       tags: {  }
+  block_landing:
+    id: block_landing
+    display_title: 'Categorias da entrada'
+    display_plugin: block
+    position: 2
+    display_options:
+      title: 'Categorias e subcategorias'
+      filters:
+        vid:
+          id: vid
+          table: taxonomy_term_field_data
+          field: vid
+          entity_type: taxonomy_term
+          entity_field: vid
+          plugin_id: bundle
+          value:
+            aculta_forum_categories: aculta_forum_categories
+        parent_target_id:
+          id: parent_target_id
+          table: taxonomy_term__parent
+          field: parent_target_id
+          relationship: none
+          group_type: group
+          admin_label: 'Somente categorias principais'
+          plugin_id: numeric
+          operator: '='
+          value:
+            min: ''
+            max: ''
+            value: '0'
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+      row:
+        type: ui_patterns
+        options:
+          hide_empty: false
+          ui_patterns:
+            component_id: 'aculta420_v2:forum-category'
+            variant_id: null
+            props:
+              title_level:
+                source_id: select
+                source:
+                  value: h2
+            slots:
+              parent:
+                sources:
+                  -
+                    source_id: view_field
+                    source:
+                      ui_patterns_views_field: parent_name
+              title:
+                sources:
+                  -
+                    source_id: view_field
+                    source:
+                      ui_patterns_views_field: name
+              description:
+                sources:
+                  -
+                    source_id: view_field
+                    source:
+                      ui_patterns_views_field: description__value
+      defaults:
+        row: false
+        filters: false
+        header: false
+      header:
+        area_text_custom:
+          id: area_text_custom
+          table: views
+          field: area_text_custom
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: text_custom
+          empty: false
+          content: '<p><a href="/categorias">Ver todas as categorias</a></p>'
+          tokenize: false
+      display_extenders: {  }
+      ui_patterns:
+        component_id: 'aculta420_v2:views-display'
+        variant_id: null
+        slots:
+          attachment_before:
+            sources:
+              -
+                source_id: view_attachment_before
+          header:
+            sources:
+              -
+                source_id: view_header
+          exposed:
+            sources:
+              -
+                source_id: view_exposed
+          rows:
+            sources:
+              -
+                source_id: view_rows
+          empty:
+            sources:
+              -
+                source_id: view_empty
+          pager:
+            sources:
+              -
+                source_id: view_pager
+          more:
+            sources:
+              -
+                source_id: view_more
+          footer:
+            sources:
+              -
+                source_id: view_footer
+          attachment_after:
+            sources:
+              -
+                source_id: view_attachment_after
+      block_description: 'Categorias da entrada do Growroom420'
+      allow:
+        items_per_page: true
+        pager: pager
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_interface'
+        - user.permissions
+      tags: {  }
   page_categories:
     id: page_categories
     display_title: Categorias
@@ -210,12 +366,6 @@ display:
     position: 1
     display_options:
       title: 'Categorias do Growroom420'
-      defaults:
-        fields: false
-        header: false
-        style: false
-        row: false
-        ui_patterns: false
       fields:
         tid:
           id: tid
@@ -321,7 +471,7 @@ display:
             strip_tags: false
             trim: false
             html: false
-          element_type: ""
+          element_type: ''
           element_class: ''
           element_label_type: ''
           element_label_class: ''
@@ -380,12 +530,13 @@ display:
             ui_patterns:
               component_id: 'aculta420_v2:layout-grid'
               variant_id: null
+              props: {  }
               slots:
                 content:
                   sources:
-                    - source: {  }
+                    -
                       source_id: view_rows
-              props: {  }
+                      source: {  }
       row:
         type: ui_patterns
         options:
@@ -393,32 +544,42 @@ display:
           ui_patterns:
             component_id: 'aculta420_v2:forum-category'
             variant_id: null
+            props:
+              title_level:
+                source_id: select
+                source:
+                  value: h3
             slots:
               parent:
                 sources:
-                  - source:
-                      ui_patterns_views_field: parent_card
+                  -
                     source_id: view_field
+                    source:
+                      ui_patterns_views_field: parent_card
               title:
                 sources:
-                  - source:
-                      ui_patterns_views_field: name
+                  -
                     source_id: view_field
+                    source:
+                      ui_patterns_views_field: name
               description:
                 sources:
-                  - source:
-                      ui_patterns_views_field: description__value
+                  -
                     source_id: view_field
+                    source:
+                      ui_patterns_views_field: description__value
               count:
                 sources:
-                  - source:
-                      ui_patterns_views_field: aculta_forum_category_topic_count
+                  -
                     source_id: view_field
-            props:
-              title_level:
-                source:
-                  value: h3
-                source_id: select
+                    source:
+                      ui_patterns_views_field: aculta_forum_category_topic_count
+      defaults:
+        style: false
+        row: false
+        fields: false
+        header: false
+        ui_patterns: false
       header:
         area_text_custom:
           id: area_text_custom
@@ -431,38 +592,47 @@ display:
           empty: false
           content: '<p><a href="/">Discussões recentes</a></p>'
           tokenize: false
+      display_extenders: {  }
       ui_patterns:
         component_id: 'aculta420_v2:views-display'
         variant_id: null
         slots:
           attachment_before:
             sources:
-              - source_id: view_attachment_before
+              -
+                source_id: view_attachment_before
           header:
             sources:
-              - source_id: view_header
+              -
+                source_id: view_header
           exposed:
             sources:
-              - source_id: view_exposed
+              -
+                source_id: view_exposed
           rows:
             sources:
-              - source_id: view_rows
+              -
+                source_id: view_rows
           empty:
             sources:
-              - source_id: view_empty
+              -
+                source_id: view_empty
           pager:
             sources:
-              - source_id: view_pager
+              -
+                source_id: view_pager
           more:
             sources:
-              - source_id: view_more
+              -
+                source_id: view_more
           footer:
             sources:
-              - source_id: view_footer
+              -
+                source_id: view_footer
           attachment_after:
             sources:
-              - source_id: view_attachment_after
-      display_extenders: {  }
+              -
+                source_id: view_attachment_after
       path: categorias
       menu:
         type: none
@@ -472,148 +642,4 @@ display:
         - 'languages:language_interface'
         - user.permissions
         - 'user.node_grants:view'
-      tags: {  }
-  block_landing:
-    id: block_landing
-    display_title: 'Categorias da entrada'
-    display_plugin: block
-    position: 2
-    display_options:
-      ui_patterns:
-        component_id: 'aculta420_v2:views-display'
-        variant_id: null
-        slots:
-          attachment_before:
-            sources:
-              - source_id: view_attachment_before
-          header:
-            sources:
-              - source_id: view_header
-          exposed:
-            sources:
-              - source_id: view_exposed
-          rows:
-            sources:
-              - source_id: view_rows
-          empty:
-            sources:
-              - source_id: view_empty
-          pager:
-            sources:
-              - source_id: view_pager
-          more:
-            sources:
-              - source_id: view_more
-          footer:
-            sources:
-              - source_id: view_footer
-          attachment_after:
-            sources:
-              - source_id: view_attachment_after
-      title: 'Categorias e subcategorias'
-      block_description: 'Categorias da entrada do Growroom420'
-      defaults:
-        filters: false
-        row: false
-        header: false
-      row:
-        type: ui_patterns
-        options:
-          hide_empty: false
-          ui_patterns:
-            component_id: 'aculta420_v2:forum-category'
-            variant_id: null
-            slots:
-              parent:
-                sources:
-                  - source:
-                      ui_patterns_views_field: parent_name
-                    source_id: view_field
-              title:
-                sources:
-                  - source:
-                      ui_patterns_views_field: name
-                    source_id: view_field
-              description:
-                sources:
-                  - source:
-                      ui_patterns_views_field: description__value
-                    source_id: view_field
-            props:
-              title_level:
-                source:
-                  value: h2
-                source_id: select
-      filters:
-        vid:
-          id: vid
-          table: taxonomy_term_field_data
-          field: vid
-          entity_type: taxonomy_term
-          entity_field: vid
-          plugin_id: bundle
-          value:
-            aculta_forum_categories: aculta_forum_categories
-        parent_target_id:
-          id: parent_target_id
-          table: taxonomy_term__parent
-          field: parent_target_id
-          relationship: none
-          group_type: group
-          admin_label: 'Somente categorias principais'
-          plugin_id: numeric
-          operator: '='
-          value:
-            min: ''
-            max: ''
-            value: '0'
-          group: 1
-          exposed: false
-          expose:
-            operator_id: ''
-            label: ''
-            description: ''
-            use_operator: false
-            operator: ''
-            operator_limit_selection: false
-            operator_list: {  }
-            identifier: ''
-            required: false
-            remember: false
-            multiple: false
-            remember_roles:
-              authenticated: authenticated
-          is_grouped: false
-          group_info:
-            label: ''
-            description: ''
-            identifier: ''
-            optional: true
-            widget: select
-            multiple: false
-            remember: false
-            default_group: All
-            default_group_multiple: {  }
-            group_items: {  }
-      allow:
-        items_per_page: true
-        pager: pager
-      header:
-        area_text_custom:
-          id: area_text_custom
-          table: views
-          field: area_text_custom
-          relationship: none
-          group_type: group
-          admin_label: ''
-          plugin_id: text_custom
-          empty: false
-          content: '<p><a href="/categorias">Ver todas as categorias</a></p>'
-          tokenize: false
-      display_extenders: {  }
-    cache_metadata:
-      max-age: -1
-      contexts:
-        - 'languages:language_interface'
-        - user.permissions
       tags: {  }

@@ -17,14 +17,6 @@ targetEntityType: node
 bundle: aculta_faq
 mode: default
 content:
-  body:
-    type: text_textarea
-    weight: 1
-    region: content
-    settings:
-      rows: 8
-      placeholder: ''
-    third_party_settings: {  }
   aculta_coauthors:
     type: entity_reference_autocomplete_tags
     weight: 17
@@ -33,6 +25,14 @@ content:
       match_operator: CONTAINS
       match_limit: 10
       size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  body:
+    type: text_textarea
+    weight: 1
+    region: content
+    settings:
+      rows: 8
       placeholder: ''
     third_party_settings: {  }
   langcode:

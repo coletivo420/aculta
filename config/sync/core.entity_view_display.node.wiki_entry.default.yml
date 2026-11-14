@@ -160,8 +160,8 @@ bundle: wiki_entry
 mode: default
 content: {  }
 hidden:
-  body: true
   aculta_coauthors: true
+  body: true
   content_moderation_control: true
   entity_print_view_epub: true
   entity_print_view_pdf: true

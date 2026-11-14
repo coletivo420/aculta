@@ -23,15 +23,6 @@ targetEntityType: node
 bundle: aculta_notice
 mode: default
 content:
-  body:
-    type: text_textarea_with_summary
-    weight: 0
-    region: content
-    settings:
-      rows: 9
-      summary_rows: 3
-      placeholder: ''
-    third_party_settings: {  }
   aculta_coauthors:
     type: entity_reference_autocomplete_tags
     weight: 17
@@ -40,6 +31,15 @@ content:
       match_operator: CONTAINS
       match_limit: 10
       size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  body:
+    type: text_textarea_with_summary
+    weight: 0
+    region: content
+    settings:
+      rows: 9
+      summary_rows: 3
       placeholder: ''
     third_party_settings: {  }
   created:

@@ -168,7 +168,7 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
   /**
    * The field display does not expose comment settings or legacy author data.
    */
-  public function testFormDoesNotExposeCommentStatusOrHistoricalAuthor(): void {
+  public function testFormDoesNotExposeCommentStatusOrCoAuthorWidget(): void {
     $config = Yaml::parseFile(
       dirname(__DIR__, 3) . '/config/install/core.entity_form_display.node.aculta_forum_topic.default.yml',
     );
@@ -177,7 +177,7 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
     self::assertArrayHasKey('field_aculta_discussion', $config['hidden']);
     self::assertArrayHasKey('field_autor_legado', $config['hidden']);
     self::assertArrayNotHasKey('co_authors', $config['hidden']);
-    self::assertArrayNotHasKey('aculta_coauthors', $config['hidden']);
+    self::assertTrue($config['hidden']['aculta_coauthors']);
     foreach (['moderation_state', 'path', 'simple_sitemap', 'url_redirects'] as $field) {
       self::assertArrayHasKey($field, $config['hidden'], $field);
     }

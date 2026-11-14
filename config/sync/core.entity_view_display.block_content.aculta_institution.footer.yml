@@ -56,10 +56,10 @@ third_party_settings:
               label: 'Rodapé legal'
               label_display: '0'
               provider: system
+              context_mapping: {  }
               level: 1
               depth: 1
               expand_all_items: false
-              context_mapping: {  }
             weight: 0
             additional: {  }
           80b67eab-2f77-4fe7-9cd7-5ce2f94938d2:
