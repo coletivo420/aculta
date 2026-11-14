@@ -107,10 +107,13 @@ anteriores e não substituem a conferência do código atual.
    entrar no Runtime. A API do Component Display Extender não oferece Source
    para `title_prefix/title_suffix`/contextual links. Runtime, cache e os seis
    paths ainda precisam de homologação após liberar o preflight.
-4. **P3 — tentar eliminar os 21 templates:** a triagem por fonte está abaixo.
-   Buscar substituição por displays/UI Patterns ou render arrays SDC em cada
-   arquivo. Testar fallback Core e preservar apenas presenters mínimos quando
-   não houver display builder ou plugin substituto.
+4. **P3 — reduzir os 21 templates com substituição comprovada:** a triagem por
+   fonte está abaixo. Para cada arquivo, classificar se é markup de domínio
+   removível, adapter Drupal→SDC/UI Patterns ou infraestrutura do hook Core.
+   Remover templates de domínio quando o display/UI Patterns assumir o contrato;
+   manter somente adapters inevitáveis e shell estrutural. Antes de trocar por
+   fallback Core, comparar o markup e os consumidores do projeto, inclusive
+   dialogs, atributos, regiões, prefix/suffix, contextual links e placeholders.
 5. **P4 — homologar:** gates focais e comparação real por consumidor, incluindo
    cache-hit, acesso público/autenticado, tradução, claro/escuro, teclado e
    larguras aplicáveis. Runtime Sync/rebuild somente após preflight liberado.
@@ -164,7 +167,7 @@ Cada um exige revisão de fronteira com seu módulo owner antes de remoção.
 
 | Grupo/arquivos | Evidência encontrada | Direção de planejamento |
 | --- | --- | --- |
-| `layout/html.html.twig`, `layout/page.html.twig` | Infraestrutura de documento/página Drupal; `page.html.twig` compõe `layout-page`. | Tentar remover os overrides e validar fallback Core. `page.html.twig` é exceção oficial válida se for o único ponto de composição das regiões; se permanecer, deve ser presenter mínimo, sem markup de domínio. |
+| `layout/html.html.twig`, `layout/page.html.twig` | Infraestrutura de documento/página Drupal. O override HTML mantém `#drupal-modal` (consumido pelos comandos Dialog/AJAX do Core e pelo UI Icons Picker), favicon, Apple touch icon, manifest e configuração HTMX. O fallback `core/modules/system/templates/html.html.twig` não contém o contêiner `#drupal-modal` nem esses quatro metadados. `page.html.twig` compõe `layout-page`, mas também seleciona conteúdo/variantes para LMS, Studio e rodapé social. | Não remover `html.html.twig` por comparação superficial com o Core. Para retirá-lo, primeiro migrar os metadados para attachments do Drupal e fornecer o alvo `#drupal-modal` por uma integração renderizável, preservando a ordem dos placeholders; validar diálogos AJAX, Entity Embed e UI Icons. Para `page.html.twig`, mover decisões de domínio para preprocess/render arrays; manter a ponte de regiões somente enquanto nenhum plugin/layout UI Suite substituir essa composição sem perder os contratos do page hook. |
 | `ui-patterns-overview-page.html.twig`, `ui-patterns-stories-compact.html.twig`, `ui-patterns-stories-full.html.twig` | Overrides remanescentes da Library; implementam catálogo e prévias progressivas/HTMX, exibem metadados e hidratam props/slots de stories. `ui-patterns-single-page.html.twig` foi removido em 2026-11-14 e voltou ao template upstream. | Manter overview/stories enquanto o upstream não oferecer preview sob demanda: a implementação oficial renderiza as stories no overview, incluindo 228 no checkout atual. A documentação oficial permite overrides de template e informa migração futura para SDC/display building em 2.1/2.2. Migrar só quando a API suportar lazy loading e mantiver todas as stories disponíveis; preservar todos os SDCs e stories catalogados. |
 | Override do tema `aculta-maps-marker-icon-template.html.twig` | Removido em 2026-11-14. `PagePresentationHooks::preprocessMapMarkerIconTemplate()` entrega `aculta420_v2:icon` ao template neutro owner do módulo Maps; wrapper `<template>` e `data-icon-template-id` continuam no módulo para o JavaScript. | Corte concluído no tema; verificar rendering e clone do ícone no mapa quando o Runtime estiver liberado. Não mover o wrapper para o tema nem acoplar o módulo a um SDC específico. |
 | Overrides do tema `page-title.html.twig`, `misc/status-messages.html.twig`, `navigation/breadcrumb.html.twig`, `navigation/pager.html.twig`; template owner `aculta-maps-popup-content.html.twig` | Composição leve de SDCs (`map-popup`, `heading`, `status-messages`, `breadcrumb`, `pagination`) com dados/atributos Drupal. O popup é template do módulo Maps, não override do tema; o modal de termos já compõe SDC direto pelo tema. | Para os overrides do tema, tentar render array SDC/configuração ou integração UI Patterns. Manter presenter fino apenas se o hook Drupal/Core for inevitável; revisar prop type `links` e atributos. Migrar o template owner apenas respeitando a fronteira do módulo Maps. |
