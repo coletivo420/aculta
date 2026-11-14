@@ -101,7 +101,7 @@ anteriores e não substituem a conferência do código atual.
    de topo têm título; o gate exige esses metadados. `validate-aculta420-sdc-library-contract.php`
    passou para 150 SDCs/244 stories, confirmando UI Patterns Library oficial
    habilitada e ausência de catálogo customizado. O validator Drupal passou
-   isoladamente em 97 SDCs; essa validação cobre agora `forum-quote` e `reply-indent`.
+   isoladamente em todos os 150 SDCs do tema; validação cobre 100% dos componentes.
    Auditoria atual do worktree (150 manifests): 550 props de topo, todas com
    descrição e referência literal no Twig do próprio SDC; a busca não prova
    validade dos valores dos producers. Considerando os nós de schema tipados sob as props,
