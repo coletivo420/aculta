@@ -19,9 +19,10 @@ PASS. `author-card` mantém o slot de autoria atual.
 O contrato de autoria do `aculta_user` documenta a caixa de autoria como slot
 `authors` de `revista-publication`; o SDC compartilhado `author-card` renderiza
 identidade, avatar e biografia autorizados. O gate Drupal agora renderiza esse
-SDC. Não foi criado outro componente com markup redundante. O template do tema
-`templates/aculta-user-author-card.html.twig` integra o componente como consumer
-real de apresentação para a renderização de perfil e autoria. Fixture composta em
+SDC. Não foi criado outro componente com markup redundante. `PagePresentationHooks`
+encaminha diretamente o contrato neutro do módulo como consumer real de
+apresentação para a renderização de perfil e autoria; o fallback semântico do
+módulo permanece para outros temas. Fixture composta em
 Firefox passou nos seis viewports, claro/escuro, zoom 200% em 320 CSS px e Tab
 com foco visível. Validação visual automatizada de conteúdo publicado/autenticado
 segue com outro agente.

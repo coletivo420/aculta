@@ -70,7 +70,7 @@ O tema não conhece hostnames, domínio Drupal ou regras de acesso. Ele recebe v
 | `aculta_search_utility` | Portal (`aculta_portal/search-preview`) | gatilho de busca |
 | `aculta_brand_home` | Portal | destino do logotipo |
 | `aculta_color_mode` | Portal | `light` ou `dark` (demais valores viram `light`) |
-| `aculta_user_author_card` | `aculta_user` | render array cacheável de identidade pública; o template do tema o encaminha ao SDC `author-card` |
+| `aculta_user_author_card` | `aculta_user` | render array cacheável de identidade pública; `PagePresentationHooks` o encaminha diretamente ao SDC `author-card`, mantendo o fallback neutro do módulo para outros temas |
 
 Regras:
 

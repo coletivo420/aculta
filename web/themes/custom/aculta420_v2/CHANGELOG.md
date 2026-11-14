@@ -1867,3 +1867,12 @@ State: Dev. No RC, production deployment, or release tag is declared.
 - Removidos o hook de tema e os templates duplicados do módulo e do tema.
 - Restam 46 templates no tema; revisão visual/autenticada no Runtime segue
   pendente.
+
+## Atualização — cartão de autoria encaminhado diretamente ao SDC (2026-11-14)
+
+- `PagePresentationHooks` encaminha `aculta_user_author_card` diretamente a
+  `author-card`, preservando avatar, ações e atributos como contratos do
+  render array; o Twig genérico do módulo continua como fallback para outros
+  temas.
+- Removido o override adaptador do tema. Restam 45 templates; validação visual
+  autenticada no Runtime segue pendente.

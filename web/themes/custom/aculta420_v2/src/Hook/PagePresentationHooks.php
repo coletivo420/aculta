@@ -353,6 +353,54 @@ final class PagePresentationHooks {
   }
 
   /**
+   * Sends the neutral author-card contract directly to the theme SDC.
+   *
+   * The module-owned template remains a semantic fallback for other themes;
+   * ACULTA420 supplies its implementation as a component render array so the
+   * avatar and action render arrays keep their cache and access metadata.
+   */
+  #[Hook('preprocess_aculta_user_author_card')]
+  public function preprocessAuthorCard(array &$variables): void {
+    if (!$this->componentAvailable('author-card')) {
+      return;
+    }
+
+    $props = [
+      'variant' => (string) ($variables['variant'] ?? 'author_minimal'),
+      'size' => (string) ($variables['size'] ?? 'md'),
+      'display_name' => (string) ($variables['display_name'] ?? ''),
+      'profile_url' => $variables['profile_url'] ?? NULL,
+      'has_avatar' => (bool) ($variables['has_avatar'] ?? FALSE),
+      'member_since' => $variables['member_since'] ?? NULL,
+      'designation' => $variables['designation'] ?? NULL,
+      'source_label' => $variables['source_label'] ?? NULL,
+      'bio' => $variables['bio'] ?? NULL,
+      'social_links' => $variables['social_links'] ?? [],
+      'reactions_received' => (int) ($variables['reactions_received'] ?? 0),
+      'reactions_given' => (int) ($variables['reactions_given'] ?? 0),
+      'has_actions' => !empty($variables['actions']),
+    ];
+    $slots = [];
+    foreach (['avatar', 'actions'] as $slot) {
+      if (!empty($variables[$slot])) {
+        $slots[$slot] = $variables[$slot];
+      }
+    }
+
+    $attributes = $variables['attributes'] ?? [];
+    if ($attributes instanceof Attribute) {
+      $attributes = $attributes->toArray();
+    }
+    $variables['component'] = [
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:author-card',
+      '#props' => $props,
+      '#slots' => $slots,
+      '#attributes' => is_array($attributes) ? $attributes : [],
+    ];
+  }
+
+  /**
    * Maps compatible Portal components to V2 SDCs.
    *
    * The Portal fallback preprocess runs before theme preprocess and fills a
