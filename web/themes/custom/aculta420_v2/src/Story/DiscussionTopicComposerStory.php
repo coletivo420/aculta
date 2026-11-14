@@ -8,7 +8,6 @@ use Drupal\Core\Entity\EntityFormBuilderInterface;
 use Drupal\aculta_forum\Form\TopicPopupLayout;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
-use Drupal\Core\Render\Markup;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\ui_patterns_library\StoryDefault;
@@ -23,19 +22,25 @@ final class DiscussionTopicComposerStory extends StoryDefault implements Contain
 
   use StringTranslationTrait;
 
+  /**
+   * @param array<string, mixed> $configuration
+   * @param mixed $plugin_definition
+   */
   public function __construct(
     array $configuration,
     $plugin_id,
     $plugin_definition,
-    private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly EntityFormBuilderInterface $entityFormBuilder,
-    private readonly RendererInterface $renderer,
+    protected EntityTypeManagerInterface $entityTypeManager,
+    protected EntityFormBuilderInterface $entityFormBuilder,
+    protected RendererInterface $renderer,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $configuration
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): static {
     $instance = new static(
@@ -52,6 +57,8 @@ final class DiscussionTopicComposerStory extends StoryDefault implements Contain
 
   /**
    * {@inheritdoc}
+   *
+   * @return array<string, mixed>
    */
   public function props(): array {
     return [
@@ -66,6 +73,8 @@ final class DiscussionTopicComposerStory extends StoryDefault implements Contain
 
   /**
    * {@inheritdoc}
+   *
+   * @return array<string, mixed>
    */
   public function slots(): array {
     $node = $this->entityTypeManager->getStorage('node')->create([
@@ -76,13 +85,14 @@ final class DiscussionTopicComposerStory extends StoryDefault implements Contain
     // Mesmo layout do popup Criar tópico (fórum).
     TopicPopupLayout::apply($form);
 
-    $renderedHtml = (string) $this->renderer->renderPlain($form);
+    $rendered = $this->renderer->renderInIsolation($form);
+    $attached = $form['#attached'] ?? [];
 
     return [
       'messages' => [],
       'form' => [
-        '#markup' => Markup::create($renderedHtml),
-        '#attached' => $form['#attached'] ?? [],
+        '#markup' => $rendered,
+        '#attached' => is_array($attached) ? $attached : [],
       ],
     ];
   }

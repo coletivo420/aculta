@@ -53,34 +53,47 @@ $supportedClassTypes = [
 $components = [];
 $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($root . '/components', FilesystemIterator::SKIP_DOTS));
 foreach ($iterator as $file) {
+  if (!$file instanceof SplFileInfo) {
+    continue;
+  }
   if (!str_ends_with($file->getFilename(), '.component.yml')) {
     continue;
   }
   $name = basename($file->getPath());
   $relative = str_replace($root . '/', '', $file->getPathname());
   $meta = Yaml::parseFile($file->getPathname());
+  if (!is_array($meta)) {
+    $failures[] = "$relative: component metadata must be a YAML map.";
+    continue;
+  }
   $components[$name] = ['meta' => $meta, 'path' => $file->getPathname()];
 
   $assert(is_string($meta['name'] ?? NULL) && $meta['name'] !== '', "$relative: missing name.");
   $assert(in_array($meta['status'] ?? NULL, $allowedStatus, TRUE), "$relative: status must be stable, experimental or deprecated.");
   $assert(is_string($meta['group'] ?? NULL) && $meta['group'] !== '', "$relative: missing group.");
-  $assert(is_string($meta['description'] ?? NULL) && trim((string) $meta['description']) !== '', "$relative: missing description.");
+  $assert(is_string($meta['description'] ?? NULL) && trim($meta['description']) !== '', "$relative: missing description.");
   if (($meta['status'] ?? NULL) === 'stable') {
-    $assert(trim((string) ($meta['description'] ?? '')) !== '', "$relative: stable component needs a description.");
+    $assert(is_string($meta['description'] ?? NULL) && trim($meta['description']) !== '', "$relative: stable component needs a description.");
   }
 
-  $props = $meta['props']['properties'] ?? NULL;
-  $assert(($meta['props']['type'] ?? NULL) === 'object', "$relative: props must be an object schema.");
+  $propsSchema = $meta['props'] ?? NULL;
+  $propsSchema = is_array($propsSchema) ? $propsSchema : [];
+  $props = $propsSchema['properties'] ?? NULL;
+  $assert(($propsSchema['type'] ?? NULL) === 'object', "$relative: props must be an object schema.");
   $props = is_array($props) ? $props : [];
   foreach ($props as $propName => $prop) {
-    if (isset($prop['$ref']) && str_starts_with($prop['$ref'], 'ui-patterns://')) {
+    if (!is_array($prop)) {
+      $assert(FALSE, "$relative: prop '$propName' must be a schema map.");
+      continue;
+    }
+    if (is_string($prop['$ref'] ?? NULL) && str_starts_with($prop['$ref'], 'ui-patterns://')) {
       continue;
     }
     $type = $prop['type'] ?? NULL;
     $types = is_array($type) ? $type : [$type];
     $ok = TRUE;
     foreach ($types as $t) {
-      if ($t !== 'null' && !isset($typeMap[(string) $t]) && !in_array((string) $t, $supportedClassTypes, TRUE)) {
+      if ($t !== 'null' && (!is_string($t) || (!isset($typeMap[$t]) && !in_array($t, $supportedClassTypes, TRUE)))) {
         $ok = FALSE;
       }
     }
@@ -96,8 +109,9 @@ foreach ($iterator as $file) {
   if (isset($meta['variants'])) {
     $variants = $meta['variants'];
     $variantProp = $props['variant'] ?? NULL;
+    $variantProp = is_array($variantProp) ? $variantProp : [];
     $assert(is_array($variants) && $variants !== [], "$relative: variants metadata must be a non-empty map.");
-    $assert(is_array($variantProp) && is_array($variantProp['enum'] ?? NULL), "$relative: variants metadata requires a declared SDC variant enum for direct Core rendering.");
+    $assert(is_array($variantProp['enum'] ?? NULL), "$relative: variants metadata requires a declared SDC variant enum for direct Core rendering.");
     if (is_array($variants) && is_array($variantProp['enum'] ?? NULL)) {
       $assert(array_keys($variants) === $variantProp['enum'], "$relative: variants metadata keys must match the SDC variant enum in the same order.");
       foreach ($variants as $variantId => $variant) {
@@ -109,7 +123,7 @@ foreach ($iterator as $file) {
   $slots = $meta['slots'] ?? [];
   $assert(is_array($slots), "$relative: slots must be a map.");
   foreach (is_array($slots) ? $slots : [] as $slotName => $slot) {
-    $assert(is_array($slot) && isset($slot['title']) && is_string($slot['title']), "$relative: slot '$slotName' needs a title.");
+    $assert(is_array($slot) && is_string($slot['title'] ?? NULL), "$relative: slot '$slotName' needs a title.");
   }
 
   $components[$name]['declared'] = array_merge(array_keys($props), array_keys(is_array($slots) ? $slots : []));
@@ -199,12 +213,19 @@ $calls = [];
 foreach (['templates', 'components'] as $dir) {
   $walker = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($root . '/' . $dir, FilesystemIterator::SKIP_DOTS));
   foreach ($walker as $file) {
+    if (!$file instanceof SplFileInfo) {
+      continue;
+    }
     if (!str_ends_with($file->getFilename(), '.twig')) {
       continue;
     }
     $source = file_get_contents($file->getPathname());
+    if ($source === FALSE) {
+      $failures[] = str_replace($root . '/', '', $file->getPathname()) . ': could not read Twig template.';
+      continue;
+    }
     preg_match_all("/include\\(\\s*'aculta420(?:_v2)?:([a-z0-9-]+)'\\s*,\\s*\\{/", $source, $matches, PREG_OFFSET_CAPTURE);
-    foreach ($matches[0] ?? [] as $index => $match) {
+    foreach ($matches[0] as $index => $match) {
       $openBraceOffset = strpos($match[0], '{') + $match[1];
       $arguments = $extractIncludeArguments($source, $openBraceOffset);
       if ($arguments === NULL) {

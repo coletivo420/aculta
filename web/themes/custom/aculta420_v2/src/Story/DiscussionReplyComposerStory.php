@@ -8,9 +8,7 @@ use Drupal\Core\Entity\EntityFormBuilderInterface;
 use Drupal\aculta_forum\Form\DiscussionReplyPopupLayout;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
-use Drupal\Core\Render\Markup;
 use Drupal\Core\Render\RendererInterface;
-use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\ui_patterns_library\StoryDefault;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -25,20 +23,25 @@ final class DiscussionReplyComposerStory extends StoryDefault implements Contain
 
   use StringTranslationTrait;
 
+  /**
+   * @param array<string, mixed> $configuration
+   * @param mixed $plugin_definition
+   */
   public function __construct(
     array $configuration,
     $plugin_id,
     $plugin_definition,
-    private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly EntityFormBuilderInterface $entityFormBuilder,
-    private readonly RendererInterface $renderer,
-    private readonly AccountProxyInterface $currentUser,
+    protected EntityTypeManagerInterface $entityTypeManager,
+    protected EntityFormBuilderInterface $entityFormBuilder,
+    protected RendererInterface $renderer,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $configuration
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): static {
     $instance = new static(
@@ -48,7 +51,6 @@ final class DiscussionReplyComposerStory extends StoryDefault implements Contain
       $container->get('entity_type.manager'),
       $container->get('entity.form_builder'),
       $container->get('renderer'),
-      $container->get('current_user'),
     );
     $instance->setStringTranslation($container->get('string_translation'));
     return $instance;
@@ -56,6 +58,8 @@ final class DiscussionReplyComposerStory extends StoryDefault implements Contain
 
   /**
    * {@inheritdoc}
+   *
+   * @return array<string, mixed>
    */
   public function props(): array {
     return [
@@ -74,6 +78,8 @@ final class DiscussionReplyComposerStory extends StoryDefault implements Contain
 
   /**
    * {@inheritdoc}
+   *
+   * @return array<string, mixed>
    */
   public function slots(): array {
     $commentStorage = $this->entityTypeManager->getStorage('comment');
@@ -99,20 +105,24 @@ final class DiscussionReplyComposerStory extends StoryDefault implements Contain
     DiscussionReplyPopupLayout::apply($form, $comment->isNew());
 
     // Ajusta título do botão e action para visualização limpa na story.
-    if (isset($form['actions']['submit'])) {
-      $form['actions']['submit']['#value'] = $this->t('Enviar resposta');
+    $actions = $form['actions'] ?? [];
+    if (is_array($actions) && is_array($actions['submit'] ?? NULL)) {
+      $submit = $actions['submit'];
+      $submit['#value'] = $this->t('Enviar resposta');
+      $actions['submit'] = $submit;
+      $form['actions'] = $actions;
     }
 
-    // Renderiza o formulário capturando a marcação e bibliotecas do CKEditor 5
-    // e envolve em Markup para impedir que o Twig sanitize o <textarea>.
-    $renderedHtml = (string) $this->renderer->renderPlain($form);
+    // Renderiza o formulário e preserva os anexos produzidos pelo CKEditor 5.
+    $rendered = $this->renderer->renderInIsolation($form);
+    $attached = $form['#attached'] ?? [];
 
     return [
       'messages' => [],
       'context' => [],
       'form' => [
-        '#markup' => Markup::create($renderedHtml),
-        '#attached' => $form['#attached'] ?? [],
+        '#markup' => $rendered,
+        '#attached' => is_array($attached) ? $attached : [],
       ],
     ];
   }

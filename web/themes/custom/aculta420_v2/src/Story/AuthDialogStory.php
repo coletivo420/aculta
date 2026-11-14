@@ -6,7 +6,6 @@ namespace Drupal\aculta420_v2\Story;
 
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
-use Drupal\Core\Render\Markup;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\ui_patterns_library\StoryDefault;
@@ -23,18 +22,24 @@ final class AuthDialogStory extends StoryDefault implements ContainerFactoryPlug
 
   use StringTranslationTrait;
 
+  /**
+   * @param array<string, mixed> $configuration
+   * @param mixed $plugin_definition
+   */
   public function __construct(
     array $configuration,
     $plugin_id,
     $plugin_definition,
-    private readonly FormBuilderInterface $formBuilder,
-    private readonly RendererInterface $renderer,
+    protected FormBuilderInterface $formBuilder,
+    protected RendererInterface $renderer,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $configuration
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): static {
     $instance = new static(
@@ -50,6 +55,8 @@ final class AuthDialogStory extends StoryDefault implements ContainerFactoryPlug
 
   /**
    * {@inheritdoc}
+   *
+   * @return array<string, mixed>
    */
   public function props(): array {
     $isInstitutional = str_contains($this->pluginId, 'institutional');
@@ -68,23 +75,37 @@ final class AuthDialogStory extends StoryDefault implements ContainerFactoryPlug
 
   /**
    * {@inheritdoc}
+   *
+   * @return array<string, mixed>
    */
   public function slots(): array {
     $form = $this->formBuilder->getForm(UserLoginForm::class);
-    // Aplica atributo de design portal-ui no formulário
-    $form['#attributes']['data-portal-ui'] = 'login-popup';
-    $form['#attributes']['class'][] = 'aculta-login-popup';
+    $attributes = $form['#attributes'] ?? [];
+    $attributes = is_array($attributes) ? $attributes : [];
+    $attributes['data-portal-ui'] = 'login-popup';
+    $classes = $attributes['class'] ?? [];
+    $classes = is_array($classes) ? $classes : [];
+    $classes[] = 'aculta-login-popup';
+    $attributes['class'] = $classes;
+    $form['#attributes'] = $attributes;
 
-    if (isset($form['actions']['submit'])) {
-      $form['actions']['submit']['#attributes']['data-portal-ui'] = 'button-primary';
+    $actions = $form['actions'] ?? [];
+    if (is_array($actions) && is_array($actions['submit'] ?? NULL)) {
+      $submit = $actions['submit'];
+      $submitAttributes = $submit['#attributes'] ?? [];
+      $submitAttributes = is_array($submitAttributes) ? $submitAttributes : [];
+      $submitAttributes['data-portal-ui'] = 'button-primary';
+      $submit['#attributes'] = $submitAttributes;
+      $actions['submit'] = $submit;
+      $form['actions'] = $actions;
     }
 
-    $renderedHtml = (string) $this->renderer->renderPlain($form);
-
+    $rendered = $this->renderer->renderInIsolation($form);
+    $attached = $form['#attached'] ?? [];
     return [
       'content' => [
-        '#markup' => Markup::create($renderedHtml),
-        '#attached' => $form['#attached'] ?? [],
+        '#markup' => $rendered,
+        '#attached' => is_array($attached) ? $attached : [],
       ],
     ];
   }
