@@ -10,14 +10,17 @@ props:
   properties:
     action:
       title: Endereço de envio do filtro
+      description: URL de destino do formulário GET.
       type: string
       minLength: 1
     label:
       title: Rótulo do filtro de período
+      description: Texto visível associado à lista de períodos.
       type: string
       default: Período
     options:
       title: Períodos disponíveis
+      description: Opções oferecidas no seletor enviado pelo parâmetro dias.
       type: array
       items:
         type: object
@@ -26,17 +29,22 @@ props:
         properties:
           value:
             type: string
+            description: Valor enviado no parâmetro dias quando a opção é selecionada.
           label:
             type: string
+            description: Texto visível da opção de período.
     selected:
       title: Período selecionado
+      description: Valor da opção que aparece selecionada no formulário.
       type: string
     submit_label:
       title: Texto do botão de aplicação
+      description: Texto visível no botão que envia o formulário.
       type: string
       minLength: 1
     hidden:
       title: Campos ocultos do formulário
+      description: Valores adicionais preservados como campos ocultos durante o envio do filtro.
       type: array
       items:
         type: object
@@ -45,5 +53,7 @@ props:
         properties:
           name:
             type: string
+            description: Nome do parâmetro adicional enviado no formulário.
           value:
             type: string
+            description: Valor do parâmetro adicional enviado no formulário.

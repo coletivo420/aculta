@@ -10,18 +10,22 @@ props:
   properties:
     title:
       title: Título do gráfico de tendência
+      description: Título visível e nome acessível da lista de barras.
       type: string
       minLength: 1
     caption:
       title: Legenda do gráfico
+      description: Texto opcional exibido após a lista de dados.
       type: string
       default: ''
     summary:
       title: Resumo acessível dos dados
+      description: Resumo opcional exibido antes das barras para contextualizar a série.
       type: string
       default: ''
     bars:
       title: Barras de dados do gráfico
+      description: Pontos da série apresentados em ordem dentro da lista.
       type: array
       items:
         type: object
@@ -30,7 +34,10 @@ props:
         properties:
           label:
             type: string
+            description: Rótulo do período ou categoria representado pela barra.
           value:
             type: string
+            description: Valor textual apresentado junto ao rótulo.
           percent:
             type: number
+            description: Largura percentual da barra visual, interpolada na propriedade CSS da largura.

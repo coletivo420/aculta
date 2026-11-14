@@ -10,12 +10,15 @@ props:
   properties:
     src:
       title: Endereço do arquivo de áudio
+      description: Caminho ou URL do arquivo carregado pelo elemento de áudio nativo.
       type: string
       format: uri-reference
     title:
       title: Título do áudio
+      description: Texto visível na legenda do player e usado para identificar a gravação.
       type: string
       minLength: 1
     artist:
       title: Artista ou autoria
+      description: Texto opcional exibido junto ao título para identificar quem criou ou interpreta o áudio.
       type: [string, 'null']

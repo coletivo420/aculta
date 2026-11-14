@@ -13,10 +13,12 @@ props:
       minLength: 1
       pattern: '^[A-Za-z][A-Za-z0-9_-]*$'
       title: Identificador do campo
+      description: Identificador usado para formar os IDs das instruções e da mensagem de erro.
     invalid:
       type: boolean
       default: false
       title: Campo inválido
+      description: Aplica a apresentação visual de campo inválido e exibe o slot error se houver conteúdo.
 slots:
   label:
     title: Rótulo

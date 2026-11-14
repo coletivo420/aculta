@@ -10,19 +10,23 @@ props:
   properties:
     title:
       title: Título principal
+      description: Título de nível 1 que identifica a página ou seção em destaque.
       type: string
       minLength: 1
     tagline:
       title: Texto de apoio
+      description: Texto opcional exibido abaixo do título principal.
       type: [string, 'null']
     cta_text:
       title: Texto do botão de ação
+      description: Rótulo opcional da chamada de ação; o botão aparece quando texto e endereço estão preenchidos.
       type: [string, 'null']
     cta_url:
       title: Endereço do botão de ação
+      description: Destino da chamada de ação; o botão aparece quando texto e endereço estão preenchidos.
       type: [string, 'null']
       format: uri-reference
 slots:
   background_media:
     title: Mídia de fundo
-    description: Imagem ou vídeo decorativo, com texto alternativo tratado no campo de mídia.
+    description: Imagem ou vídeo decorativo renderizado como conteúdo oculto de tecnologias assistivas.

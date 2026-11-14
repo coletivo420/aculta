@@ -16,11 +16,13 @@ props:
       type: string
       minLength: 1
       title: Nome da região rolável
+      description: Nome acessível da região que permite navegar pela tabela em telas estreitas.
     mobile_variant:
       type: string
       enum: [cards, scroll]
       default: scroll
       title: Apresentação estreita
+      description: Define se a tabela usa cartões ou rolagem horizontal em telas estreitas.
 slots:
   table:
     title: Tabela

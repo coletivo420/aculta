@@ -10,13 +10,26 @@ props:
   properties:
     items:
       title: Filtros ativos a exibir
+      description: Links que representam filtros e seus estados atuais.
       type: array
       items:
         type: object
         additionalProperties: false
         required: [label, url]
         properties:
-          label: { type: string, minLength: 1 }
-          url: { type: string, format: uri-reference }
-          is_active: { type: boolean, default: false }
-          count: { type: [integer, 'null'], minimum: 0 }
+          label:
+            type: string
+            minLength: 1
+            description: Texto visível do filtro.
+          url:
+            type: string
+            format: uri-reference
+            description: Endereço de destino aplicado ao ativar o filtro.
+          is_active:
+            type: boolean
+            default: false
+            description: Indica o filtro aplicado; adiciona o estado visual ativo e aria-current.
+          count:
+            type: [integer, 'null']
+            minimum: 0
+            description: Quantidade opcional de resultados associados ao filtro.
