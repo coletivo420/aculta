@@ -264,8 +264,11 @@ services:
     class: Drupal\aculta_forum\Service\DiscussionCommentPermalinkBuilder
     arguments: ['@entity_type.manager']
 
+  Drupal\aculta_forum\Hook\PublicForumListViewHooks:
+    arguments: ['@entity_type.manager']
+
   Drupal\aculta_forum\Hook\TopicOpeningPostHooks:
-    arguments: ['@current_user', '@extension.list.theme', '@aculta_forum.topic_deletion_moderation_manager', '@aculta_forum.discussion_reply_access']
+    arguments: ['@current_user', '@aculta_forum.topic_deletion_moderation_manager', '@aculta_forum.discussion_reply_access']
 
   Drupal\aculta_forum\Hook\DiscussionCommentPermalinkHooks:
     arguments: ['@aculta_forum.discussion_comment_permalink_builder', '@extension.list.theme', '@aculta_forum.discussion_thread_depth_resolver']
