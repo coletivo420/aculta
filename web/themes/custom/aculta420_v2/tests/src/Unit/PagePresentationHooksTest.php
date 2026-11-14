@@ -16,6 +16,7 @@ use Drupal\Core\Template\Attribute;
 use Drupal\Core\Theme\ComponentPluginManager;
 use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
+use Drupal\user\UserInterface;
 use Drupal\Tests\UnitTestCase;
 use Drupal\aculta420_v2\Hook\PagePresentationHooks;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -103,6 +104,70 @@ final class PagePresentationHooksTest extends UnitTestCase {
     self::assertSame('green', $variables['aculta_revista_accent']);
     self::assertTrue($variables['attributes']->hasClass('revista-teaser--accent-green'));
     self::assertContains('config:aculta420_v2.settings', $variables['elements']['#cache']['tags']);
+  }
+
+  /**
+   * Composes both Forum topic view modes while retaining their render arrays.
+   */
+  public function testForumTopicViewModesUseSdcComposition(): void {
+    foreach (['full', 'teaser', 'search_index'] as $viewMode) {
+      $owner = $this->createMock(UserInterface::class);
+      $owner->method('getDisplayName')->willReturn('Autoria pública');
+      $owner->method('getCacheTags')->willReturn(['user:1']);
+      $owner->method('getCacheContexts')->willReturn([]);
+      $owner->method('getCacheMaxAge')->willReturn(Cache::PERMANENT);
+      $node = $this->createMock(NodeInterface::class);
+      $node->method('bundle')->willReturn('aculta_forum_topic');
+      $node->method('getOwner')->willReturn($owner);
+      $node->method('getCreatedTime')->willReturn(1793836800);
+      $node->method('hasField')->with('field_aculta_categories')->willReturn(FALSE);
+      $hooks = $this->newHooks($this->createMock(ComponentPluginManager::class));
+      $body = ['#type' => 'processed_text', '#text' => '<p>Corpo</p>'];
+      $authorCard = ['#type' => 'component', '#component' => 'aculta420_v2:author-card'];
+      $reactions = ['#type' => 'component', '#component' => 'aculta420_v2:discussion-reaction-bar'];
+      $bookmark = ['#type' => 'link', '#title' => 'Salvar'];
+      $variables = [
+        'node' => $node,
+        'view_mode' => $viewMode,
+        'attributes' => new Attribute(),
+        'title_attributes' => new Attribute(),
+        'label' => 'Título do tópico',
+        'url' => '/forum/topico/1',
+        'date' => ['#plain_text' => 'Hoje'],
+        'display_submitted' => TRUE,
+        'content' => [
+          'body' => $body,
+          'author_card' => $authorCard,
+          'reaction_bar' => $reactions,
+          'flag_salvar_topico' => $bookmark,
+          'field_aculta_categories' => ['#plain_text' => 'Categoria'],
+          'comments' => ['#theme' => 'comment_list'],
+        ],
+      ];
+
+      $hooks->preprocessNode($variables);
+
+      $topic = $viewMode === 'full' ? $variables['content']['#slots']['topic'] : $variables['content'];
+      self::assertSame('aculta420_v2:forum-topic', $topic['#component']);
+      self::assertTrue($variables['attributes']->hasClass('aculta-forum-topic--' . $viewMode));
+      self::assertTrue($variables['title_attributes']->hasClass('aculta-forum-topic__title'));
+      self::assertFalse($variables['display_submitted']);
+      self::assertSame($viewMode === 'full' ? 'full' : 'teaser', $topic['#props']['variant']);
+      self::assertSame($viewMode !== 'full', $topic['#props']['has_meta']);
+      self::assertSame($bookmark, $topic['#slots']['bookmark']);
+      self::assertSame($body, $topic['#slots']['content']['aculta_opening']['#slots']['body']);
+      self::assertSame($authorCard, $topic['#slots']['content']['aculta_opening']['#slots']['avatar']);
+      self::assertSame($reactions, $topic['#slots']['content']['aculta_opening']['#slots']['reactions_slot']);
+      self::assertContains('languages:language_interface', $topic['#slots']['content']['aculta_opening']['#cache']['contexts']);
+      self::assertContains('user:1', $topic['#slots']['content']['aculta_opening']['#cache']['tags']);
+      self::assertArrayHasKey('comments', $topic['#slots']['content']);
+      self::assertArrayNotHasKey('field_aculta_categories', $topic['#slots']['content']);
+      if ($viewMode === 'full') {
+        self::assertSame('aculta420_v2:forum-topic-page', $variables['content']['#component']);
+        self::assertSame('Autoria pública', $variables['content']['#props']['author_name']);
+        self::assertContains('user:1', $variables['content']['#cache']['tags']);
+      }
+    }
   }
 
   /**

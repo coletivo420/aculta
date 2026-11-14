@@ -12,8 +12,10 @@ render array público do `aculta_user`.
 - CSS mobile-first com tokens; o consumer mantém a estrutura de cinco posições
   da barra administrativa local do módulo fora do SDC.
 
-O adapter `node--aculta-forum-topic.html.twig` consome o componente nos modos
-teaser e full. A View pública preserva seu render array pelo adapter em
+O hook `PagePresentationHooks::composeForumTopic()` consome o componente em
+todos os view modes: `full` é envolvido pelo SDC `forum-topic-page`; os demais
+usam a variante teaser.
+A View pública preserva seu render array pelo adapter em
 `templates/views/` e reaproveita o layout de atividade.
 
 As Views de lista, categoria e busca carregam seus estilos nos SDCs

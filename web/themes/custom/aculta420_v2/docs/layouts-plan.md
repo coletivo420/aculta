@@ -149,7 +149,7 @@ Observações sobre o material:
 - `page.html.twig` passa a renderizar `layout-page` no lugar do `<main>` atual. As regiões do Drupal (`page.header`, `page.highlighted`, `page.help`, `page.breadcrumb`, `page.content`, `page.sidebar_first`, `page.footer`) continuam as mesmas: nenhum bloco é remapeado.
 - `page__main--with-sidebar` e `page__sidebar` deixam de existir; a regra vira a variante `aside`.
 - A barra institucional, o menu de conta e as utilidades não mudam.
-- Os templates `node--wiki-entry--*`, `node--revista--*` e `node--aculta-forum-topic` continuam com seus SDCs. Recebem apenas a variante definida no `preprocess_page`.
+- Wiki e Revista continuam com seus adapters e SDCs. O tópico completo do Fórum é composto por `PagePresentationHooks::composeForumTopic()` e pelo SDC `forum-topic-page`; o override `node--aculta-forum-topic.html.twig` foi removido. O `preprocess_page` continua definindo apenas a variante do shell.
 - Layout Builder continua instalado e **desabilitado** nas exibições. Este plano não o ativa.
 
 ## 7. Fases

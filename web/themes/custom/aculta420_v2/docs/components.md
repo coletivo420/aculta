@@ -1,6 +1,6 @@
 # Catálogo de componentes do tema V2
 
-Componentes SDC com schemas estritos (`additionalProperties: false`). Os nomes de prop e slot abaixo são os do `*.component.yml`. "Estado" indica o que foi entregue e verificado. Inventário do checkout atualizado em 2026-11-14: 145 manifests SDC e 227 stories; schemas e renderização isolada são conferidos pelos gates de `docs/gates.md`. A existência do manifest/story não prova, por si só, que um consumidor de produção esteja configurado.
+Componentes SDC com schemas estritos (`additionalProperties: false`). Os nomes de prop e slot abaixo são os do `*.component.yml`. "Estado" indica o que foi entregue e verificado. Inventário do checkout atualizado em 2026-11-14: 146 manifests SDC e 228 stories; schemas e renderização isolada são conferidos pelos gates de `docs/gates.md`. A existência do manifest/story não prova, por si só, que um consumidor de produção esteja configurado.
 
 Prefixo de uso: `aculta420_v2:<nome>`. Em Twig, use `include` com `with_context = false`, ou `embed` quando o componente tem slots.
 
@@ -15,7 +15,7 @@ Prefixo de uso: `aculta420_v2:<nome>`. Em Twig, use `include` com `with_context 
 
 A UI Patterns Library descobre os componentes diretamente dos arquivos
 `*.component.yml` e suas stories; não há uma lista paralela para manter. Neste
-checkout há 145 manifests SDC e 227 stories. O Drupal precisa reconstruir seus
+checkout há 146 manifests SDC e 228 stories. O Drupal precisa reconstruir seus
 caches de descoberta para refletir alterações no Runtime. Todos os SDCs têm ao
 menos uma story. A configuração habilita
 `ui_patterns_library`; descoberta no Runtime não foi confirmada nesta revisão.
@@ -717,7 +717,15 @@ autorizada.
 - **Props:** `variant` (`teaser` ou `full`), `has_title`, `has_meta`, `has_bookmark`.
 - **Slots:** `title`, `meta`, `bookmark`, `content`.
 - **Consumers:** view mode de node `aculta_forum_topic`, View pública de tópicos e discussão compartilhada.
-- **Estado:** adapter, CSS e testes visuais anônimos no Runtime concluídos em `1.2.0-dev.15`; estados de comentário/autenticado pendentes.
+- **Estado:** todos os view modes continuam usando o SDC; `full` é composto pelo hook `PagePresentationHooks::composeForumTopic()` com o SDC `forum-topic-page`, e os demais usam a variante teaser. Render isolado passou no checkout; homologação Runtime e visual da retirada do template permanecem pendentes.
+
+### forum-topic-page — Página de tópico do Fórum
+- **Papel:** compõe o tópico completo, painel lateral de contexto, diálogo HTMX de resposta e botão Comentar.
+- **Props:** `category_label`, `author_name`, `created`.
+- **Slots:** `topic` (SDC `forum-topic` com os render arrays do node).
+- **Story:** `forum-topic-page.default.story.yml`.
+- **Regra:** não recebe entidades nem decide acesso. O módulo Fórum prepara URLs autorizadas, reações, biblioteca HTMX e metadados; o Core mantém wrapper do node, title prefix/suffix e contextual links.
+- **Estado:** schema, story, renderização isolada e teste focal passam; validação visual e Runtime pendentes devido ao preflight bloqueado.
 
 ### forum-category — Categoria do Fórum
 - **Papel:** cartão de categoria para a View pública e o bloco de categorias da landing.
@@ -893,7 +901,7 @@ Cada entrada tem: papel, props, slots, JavaScript (se houver), estado e a regra 
 - **Slots:** `body`.
 - **Story:** `forum-opening-post.default.story.yml`.
 - **Regra:** destaque usa barra lateral `--color-brand-primary` e fundo `--color-surface-highlight`; o corpo vem do Drupal, sem leitura de entidade no componente.
-- **Uso:** `node--aculta-forum-topic` (visualização completa), nos purposes Fórum e Fórum LMS.
+- **Uso:** view mode full de `aculta_forum_topic`, composto por `PagePresentationHooks::composeForumTopic()` nos purposes Fórum e Fórum LMS.
 - **Estado:** novo; story e documentação incluídas.
 
 ### forum-topic-card — Cartão de Tópico do Fórum

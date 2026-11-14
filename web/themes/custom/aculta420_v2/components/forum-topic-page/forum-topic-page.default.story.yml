@@ -1,0 +1,11 @@
+name: Página de tópico do Fórum
+description: Composição completa com tópico, categoria, autoria, data e controles da página.
+component: aculta420_v2:forum-topic-page
+props:
+  category_label: Cultura
+  author_name: Pessoa autora demonstrativa
+  created: 1793836800
+slots:
+  topic:
+    type: inline_template
+    template: '<section class="aculta-forum-topic__presentation aculta-forum-topic__presentation--full"><h1>Conversa sobre cultura e direitos</h1><p>Conteúdo demonstrativo para a biblioteca de componentes.</p></section>'

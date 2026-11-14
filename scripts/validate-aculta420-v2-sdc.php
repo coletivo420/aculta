@@ -101,6 +101,7 @@ $component_ids = [
   'forum-list-page',
   'forum-search-page',
   'forum-topic',
+  'forum-topic-page',
   'forum-topic-row',
   'green-stash-page',
   'heading',
@@ -488,6 +489,16 @@ $samples = [
       'meta' => 'Publicado recentemente',
       'bookmark' => '',
       'content' => '<div class="aculta-author-card">Autoria pública</div><div class="field--name-body">Descrição do tópico.</div>',
+    ],
+  ],
+  'forum-topic-page' => [
+    '#props' => [
+      'category_label' => 'Cultura',
+      'author_name' => 'Autoria pública',
+      'created' => 1793836800,
+    ],
+    '#slots' => [
+      'topic' => Markup::create('<section class="aculta-forum-topic__presentation aculta-forum-topic__presentation--full"><p>Conteúdo do tópico.</p></section>'),
     ],
   ],
   'forum-topic-row' => [

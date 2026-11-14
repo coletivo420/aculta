@@ -18,6 +18,7 @@ use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Path\PathMatcherInterface;
 use Drupal\Core\Routing\CurrentRouteMatch;
 use Drupal\Core\Theme\ComponentPluginManager;
+use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\node\NodeInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\Url;
@@ -63,6 +64,8 @@ final class PagePresentationHooks {
     private readonly ?PathMatcherInterface $pathMatcher = NULL,
     #[Autowire(service: 'plugin.manager.sdc')]
     private readonly ?ComponentPluginManager $componentManager = NULL,
+    #[Autowire(service: 'date.formatter')]
+    private readonly ?DateFormatterInterface $dateFormatter = NULL,
   ) {}
 
   /**
@@ -314,6 +317,12 @@ final class PagePresentationHooks {
   public function preprocessNode(array &$variables): void {
     $node = $variables['node'] ?? NULL;
     if ($node instanceof NodeInterface
+      && $node->bundle() === 'aculta_forum_topic'
+      && is_string($variables['view_mode'] ?? NULL)
+      && $variables['view_mode'] !== '') {
+      $this->composeForumTopic($variables, $node);
+    }
+    if ($node instanceof NodeInterface
       && $node->bundle() === 'aculta_faq'
       && ($variables['view_mode'] ?? NULL) === 'full') {
       $this->composeFaqFull($variables, $node);
@@ -356,6 +365,121 @@ final class PagePresentationHooks {
       && ($variables['view_mode'] ?? NULL) === 'teaser') {
       $this->composeDocumentTeaser($variables);
     }
+  }
+
+  /**
+   * Composes Forum topic view modes with the page SDC and Drupal render arrays.
+   */
+  private function composeForumTopic(array &$variables, NodeInterface $node): void {
+    $content = $variables['content'] ?? [];
+    if (!is_array($content)) {
+      return;
+    }
+
+    $viewMode = (string) ($variables['view_mode'] ?? 'teaser');
+    $displaySubmitted = !empty($variables['display_submitted']);
+    $attributes = $variables['attributes'] ?? new Attribute();
+    if (!$attributes instanceof Attribute) {
+      $attributes = new Attribute((array) $attributes);
+    }
+    $attributes->addClass('node', 'aculta-forum-topic', 'aculta-forum-topic--' . $viewMode);
+    $variables['attributes'] = $attributes;
+    // The Forum adapter has always owned this presentation; Core's generic
+    // submitted-by footer would duplicate the author's opening-post card.
+    $variables['display_submitted'] = FALSE;
+
+    $titleAttributes = $variables['title_attributes'] ?? new Attribute();
+    if (!$titleAttributes instanceof Attribute) {
+      $titleAttributes = new Attribute((array) $titleAttributes);
+    }
+    $titleAttributes->addClass('aculta-forum-topic__title');
+    $variables['title_attributes'] = $titleAttributes;
+
+    $bookmark = $content['flag_salvar_topico'] ?? [];
+    $openingReactionBar = $variables['reaction_bar'] ?? $content['reaction_bar'] ?? [];
+    $owner = $node->getOwner();
+    $excludedContentKeys = [
+      'flag_salvar_topico',
+      'flag_seguir_topico',
+      'field_aculta_categories',
+      'body',
+      'reaction_bar',
+      'author_card',
+    ];
+    foreach ($excludedContentKeys as $key) {
+      unset($content[$key]);
+    }
+
+    $openingPost = [
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:forum-opening-post',
+      '#cache' => ['contexts' => ['languages:language_interface']],
+      '#props' => [
+        'author_name' => $owner->getDisplayName(),
+        'author_posts' => $variables['author_posts'] ?? NULL,
+        'author_reactions' => $variables['author_reactions_received'] ?? NULL,
+        'timestamp' => $this->dateFormatter?->format($node->getCreatedTime(), 'custom', 'd/m/Y H:i')
+          ?? date('d/m/Y H:i', $node->getCreatedTime()),
+        'permalink_url' => $variables['url'] ?? NULL,
+        'delete_url' => $variables['opening_delete_url'] ?? NULL,
+        'edit_url' => $variables['opening_edit_url'] ?? NULL,
+        'quote_url' => $variables['opening_quote_url'] ?? NULL,
+        'reply_url' => $variables['opening_reply_url'] ?? NULL,
+      ],
+      '#slots' => [
+        'body' => $variables['content']['body'] ?? [],
+        'avatar' => $variables['content']['author_card'] ?? [],
+        'reactions_slot' => $openingReactionBar,
+      ],
+      '#weight' => -100,
+    ];
+    CacheableMetadata::createFromRenderArray($openingPost)
+      ->addCacheableDependency($owner)
+      ->applyTo($openingPost);
+    $content['aculta_opening'] = $openingPost;
+
+    $topic = [
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:forum-topic',
+      '#props' => [
+        'variant' => $viewMode === 'full' ? 'full' : 'teaser',
+        'has_title' => FALSE,
+        'has_meta' => $viewMode !== 'full' && $displaySubmitted && !empty($variables['date']),
+        'has_bookmark' => $viewMode !== 'full' && !empty($bookmark),
+      ],
+      '#slots' => [
+        'meta' => $variables['date'] ?? [],
+        'bookmark' => $bookmark,
+        'content' => $content,
+      ],
+    ];
+
+    if ($viewMode === 'full') {
+      $categoryEntity = $node->hasField('field_aculta_categories') && !$node->get('field_aculta_categories')->isEmpty()
+        ? $node->get('field_aculta_categories')->entity
+        : NULL;
+      $page = [
+        '#type' => 'component',
+        '#component' => 'aculta420_v2:forum-topic-page',
+        '#cache' => ['contexts' => ['languages:language_interface']],
+        '#props' => [
+          'category_label' => $categoryEntity?->label() ?? '—',
+          'author_name' => $owner->getDisplayName(),
+          'created' => $node->getCreatedTime(),
+        ],
+        '#slots' => ['topic' => $topic],
+      ];
+      $cacheability = CacheableMetadata::createFromRenderArray($page)
+        ->addCacheableDependency($owner);
+      if ($categoryEntity !== NULL) {
+        $cacheability->addCacheableDependency($categoryEntity);
+      }
+      $cacheability->applyTo($page);
+      $variables['content'] = $page;
+      return;
+    }
+
+    $variables['content'] = $topic;
   }
 
   /**
