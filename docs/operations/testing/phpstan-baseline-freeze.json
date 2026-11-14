@@ -61,14 +61,14 @@
   "generation_command": "vendor/bin/phpstan analyse --configuration=.phpstan-audit.neon --level=10 --generate-baseline=phpstan-baseline.neon --memory-limit=5G",
   "post_freeze_reductions": {
     "date": "2026-11-14",
-    "entries_removed": 218,
-    "occurrences_removed": 557,
-    "current_entries": 15381,
-    "current_occurrences": 26291,
+    "entries_removed": 230,
+    "occurrences_removed": 605,
+    "current_entries": 15369,
+    "current_occurrences": 26243,
     "current_production": 15696,
-    "current_tests": 10595,
-    "current_baseline_sha256": "cd9ce5e544b22226228a08b9f6d7fcea00743998aa2df7d0671ba29d9cde0244",
-    "reason": "Correções em aculta_studio, no carregador do curso piloto, na tipagem e validação de testes do LMS, na validação do envio de respostas, no teste de materiais do curso, na tipagem das fixtures de exclusão de conteúdo, nos render arrays de materiais do curso, nas fixtures dos testes de acesso a anexos e revisão de respostas, na fixture de pedido de matrícula, na validação da configuração de Views e nas estruturas do render array de discussões; sem regeneração automática do baseline."
+    "current_tests": 10547,
+    "current_baseline_sha256": "3d00d71fff1817d0d70b8dfaed0821b19473857cebda45f3458e1e5ff6b9d401",
+    "reason": "Correções em aculta_studio, no carregador do curso piloto, na tipagem e validação de testes do LMS, na validação do envio de respostas, no teste de materiais do curso, na tipagem das fixtures de exclusão de conteúdo, nos render arrays de materiais do curso, nas fixtures dos testes de acesso a anexos e revisão de respostas, na fixture de pedido de matrícula, na validação da configuração de Views, nas estruturas do render array de discussões e nas fixtures de limpeza e acesso a documentos; sem regeneração automática do baseline."
   },
   "gates": {
     "check": "php scripts/phpstan-debt-guard.php check --baseline=phpstan-baseline.neon --config=phpstan.neon --git-base=origin/dev --analysis=artifacts/phpstan.json",

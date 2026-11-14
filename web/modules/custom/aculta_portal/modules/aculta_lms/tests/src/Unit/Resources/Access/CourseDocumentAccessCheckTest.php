@@ -17,6 +17,7 @@ use Drupal\media\MediaInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Tests Group-scoped create and update access for private course documents.
@@ -80,7 +81,7 @@ final class CourseDocumentAccessCheckTest extends UnitTestCase {
   /**
    * Creates a real policy checker with isolated Group and account doubles.
    *
-   * @return array{\Drupal\aculta_lms\Resources\Access\CourseDocumentAccessCheck, \Drupal\Core\Session\AccountProxyInterface, \Drupal\group\Entity\GroupInterface, \Drupal\group\Plugin\Group\Relation\GroupRelationTypeManagerInterface}
+   * @return array{0: \Drupal\aculta_lms\Resources\Access\CourseDocumentAccessCheck, 1: \Drupal\Core\Session\AccountProxyInterface&MockObject, 2: \Drupal\group\Entity\GroupInterface&MockObject, 3: \Drupal\group\Plugin\Group\Relation\GroupRelationTypeManagerInterface&MockObject}
    *   The checker, account, course and relation manager.
    */
   private function fixtures(): array {

@@ -25,6 +25,7 @@ use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
 
@@ -127,7 +128,7 @@ final class CourseDocumentCleanupTest extends UnitTestCase {
   /**
    * Creates the real Portal cleaners with controlled reference inspection.
    *
-   * @return array{0: \Drupal\aculta_lms\Resources\Cleanup\CourseDocumentCleanup, 1: \Drupal\media\MediaInterface, 2: \Drupal\file\FileInterface, 3: \Drupal\aculta_file_uploader\Cleanup\FileReferenceInspectorInterface, 4: \Drupal\aculta_file_uploader\Cleanup\FileDeletionOwnerInterface}
+   * @return array{0: \Drupal\aculta_lms\Resources\Cleanup\CourseDocumentCleanup, 1: \Drupal\media\MediaInterface&MockObject, 2: \Drupal\file\FileInterface&MockObject, 3: \Drupal\aculta_file_uploader\Cleanup\FileReferenceInspectorInterface&MockObject, 4: \Drupal\aculta_file_uploader\Cleanup\FileDeletionOwnerInterface&MockObject}
    *   Cleanup service, Media, File, reference inspector, and file owner.
    */
   private function cleanup(
