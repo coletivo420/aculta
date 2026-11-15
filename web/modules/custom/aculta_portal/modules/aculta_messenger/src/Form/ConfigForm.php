@@ -22,23 +22,11 @@ class ConfigForm extends ConfigFormBase {
 
   /**
    * Blocking type: passive.
-   *
-   * @deprecated in private_message:4.0.0 and is removed from
-   *   private_message:5.0.0. Instead, use
-   *   \Drupal\aculta_messenger\Model\BlockType::Passive.
-   *
-   * @see https://www.drupal.org/node/3490530
    */
   const PASSIVE = 'passive';
 
   /**
    * Blocking type: active.
-   *
-   * @deprecated in private_message:4.0.0 and is removed from
-   *   private_message:5.0.0. Instead, use
-   *   \Drupal\aculta_messenger\Model\BlockType::Active.
-   *
-   * @see https://www.drupal.org/node/3490530
    */
   const ACTIVE = 'active';
 
@@ -59,6 +47,8 @@ class ConfigForm extends ConfigFormBase {
 
   /**
    * {@inheritdoc}
+   * @param array<string, mixed> $form
+   * @return array<string, mixed>
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $config = $this->config('private_message.settings');
@@ -265,6 +255,7 @@ class ConfigForm extends ConfigFormBase {
 
   /**
    * {@inheritdoc}
+   * @param array<string, mixed> $form
    */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
     $definitions = $this->privateMessageConfigFormManager->getDefinitions();
@@ -276,6 +267,7 @@ class ConfigForm extends ConfigFormBase {
 
   /**
    * {@inheritdoc}
+   * @param array<string, mixed> $form
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $definitions = $this->privateMessageConfigFormManager->getDefinitions();
@@ -289,6 +281,7 @@ class ConfigForm extends ConfigFormBase {
 
   /**
    * {@inheritdoc}
+   * @return array<string, mixed>
    */
   protected function getEditableConfigNames(): array {
     return [

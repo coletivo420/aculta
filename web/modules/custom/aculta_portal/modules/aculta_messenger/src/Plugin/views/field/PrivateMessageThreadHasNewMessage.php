@@ -20,6 +20,10 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 #[ViewsField("private_message_thread_has_new_message_marker")]
 class PrivateMessageThreadHasNewMessage extends FieldPluginBase {
 
+  /**
+   * Tipagem do porte Private Message.
+   * @param array<string, mixed> $configuration
+   */
   public function __construct(
     array $configuration,
     $plugin_id,
@@ -32,6 +36,7 @@ class PrivateMessageThreadHasNewMessage extends FieldPluginBase {
 
   /**
    * {@inheritdoc}
+   * @param array<string, mixed> $configuration
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
     return new static(

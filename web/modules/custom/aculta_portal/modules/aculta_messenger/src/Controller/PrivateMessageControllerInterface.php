@@ -12,7 +12,7 @@ interface PrivateMessageControllerInterface {
   /**
    * The Private message page.
    *
-   * @return array
+   * @return array<string, mixed>
    *   Render array.
    */
   public function privateMessagePage(): array;
@@ -20,7 +20,7 @@ interface PrivateMessageControllerInterface {
   /**
    * The private message module settings page.
    *
-   * @return array
+   * @return array<string, mixed>
    *   Render array.
    */
   public function pmSettingsPage(): array;
@@ -28,7 +28,7 @@ interface PrivateMessageControllerInterface {
   /**
    * The settings page specific to private message threads.
    *
-   * @return array
+   * @return array<string, mixed>
    *   Render array.
    */
   public function pmThreadSettingsPage(): array;
@@ -36,7 +36,7 @@ interface PrivateMessageControllerInterface {
   /**
    * Provides a controller for the private_message.admin_config.config route.
    *
-   * @return array
+   * @return array<string, mixed>
    *   Render array.
    */
   public function configPage(): array;
@@ -44,7 +44,7 @@ interface PrivateMessageControllerInterface {
   /**
    * The page for preparing to uninstall the module.
    *
-   * @return array
+   * @return array<string, mixed>
    *   Render array.
    */
   public function adminUninstallPage(): array;
@@ -52,7 +52,7 @@ interface PrivateMessageControllerInterface {
   /**
    * The page for banning and unbanning users.
    *
-   * @return array
+   * @return array<string, mixed>
    *   Render array.
    */
   public function banUnbanPage(): array;

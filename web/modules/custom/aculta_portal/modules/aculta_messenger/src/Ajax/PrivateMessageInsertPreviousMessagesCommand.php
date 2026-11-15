@@ -29,6 +29,7 @@ class PrivateMessageInsertPreviousMessagesCommand extends PrivateMessageInsertMe
 
   /**
    * {@inheritdoc}
+   * @return array<string, mixed>
    */
   public function render(): array {
     $return = parent::render();

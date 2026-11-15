@@ -31,6 +31,11 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 )]
 class PrivateMessageThreadMemberFormatter extends FormatterBase implements ContainerFactoryPluginInterface {
 
+  /**
+   * Tipagem do porte Private Message.
+   * @param array<string, mixed> $settings
+   * @param array<string, mixed> $third_party_settings
+   */
   public function __construct(
     $plugin_id,
     $plugin_definition,
@@ -49,6 +54,7 @@ class PrivateMessageThreadMemberFormatter extends FormatterBase implements Conta
 
   /**
    * {@inheritdoc}
+   * @param array<string, mixed> $configuration
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
     return new static(
@@ -127,6 +133,7 @@ class PrivateMessageThreadMemberFormatter extends FormatterBase implements Conta
 
   /**
    * {@inheritdoc}
+   * @return array<string, mixed>
    */
   public static function defaultSettings(): array {
     return [
@@ -141,6 +148,8 @@ class PrivateMessageThreadMemberFormatter extends FormatterBase implements Conta
 
   /**
    * {@inheritdoc}
+   * @param array<string, mixed> $form
+   * @return array<string, mixed>
    */
   public function settingsForm(array $form, FormStateInterface $form_state): array {
     $element['display_type'] = [
@@ -223,6 +232,8 @@ class PrivateMessageThreadMemberFormatter extends FormatterBase implements Conta
 
   /**
    * Ajax callback for settings form.
+   * @param array<string, mixed> $form
+   * @return array<string, mixed>
    */
   public function ajaxCallback(array $form, FormStateInterface $form_state): array {
     return $form['fields'][$this->getFieldName()]['plugin']['settings_edit_form']['settings']['entity_display_mode'];

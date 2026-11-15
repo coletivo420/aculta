@@ -34,6 +34,11 @@ class PrivateMessageThreadMessageFormatter extends FormatterBase implements Cont
 
   use PrivateMessageSettingsTrait;
 
+  /**
+   * Tipagem do porte Private Message.
+   * @param array<string, mixed> $settings
+   * @param array<string, mixed> $third_party_settings
+   */
   public function __construct(
     $plugin_id,
     $plugin_definition,
@@ -53,6 +58,7 @@ class PrivateMessageThreadMessageFormatter extends FormatterBase implements Cont
 
   /**
    * {@inheritdoc}
+   * @param array<string, mixed> $configuration
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
     return new static(
@@ -80,6 +86,7 @@ class PrivateMessageThreadMessageFormatter extends FormatterBase implements Cont
 
   /**
    * {@inheritdoc}
+   * @return array<string, mixed>
    */
   public static function defaultSettings(): array {
     return [
@@ -117,6 +124,8 @@ class PrivateMessageThreadMessageFormatter extends FormatterBase implements Cont
 
   /**
    * {@inheritdoc}
+   * @param array<string, mixed> $form
+   * @return array<string, mixed>
    */
   public function settingsForm(array $form, FormStateInterface $form_state): array {
     $element['message_count'] = [

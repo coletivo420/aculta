@@ -14,7 +14,7 @@ trait InboxBlockTestTrait {
   /**
    * Get threads.
    *
-   * @return array
+   * @return array<string, mixed>
    *   Threads.
    */
   protected function getThreads(): array {

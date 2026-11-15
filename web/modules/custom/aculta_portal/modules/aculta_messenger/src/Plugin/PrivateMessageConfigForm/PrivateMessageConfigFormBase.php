@@ -15,6 +15,10 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 abstract class PrivateMessageConfigFormBase extends PluginBase implements PrivateMessageConfigFormPluginInterface {
 
+  /**
+   * Tipagem do porte Private Message.
+   * @param array<string, mixed> $configuration
+   */
   public function __construct(
     array $configuration,
     string $plugin_id,
@@ -26,6 +30,7 @@ abstract class PrivateMessageConfigFormBase extends PluginBase implements Privat
 
   /**
    * {@inheritdoc}
+   * @param array<string, mixed> $configuration
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
     return new static(
@@ -40,7 +45,6 @@ abstract class PrivateMessageConfigFormBase extends PluginBase implements Privat
    * {@inheritdoc}
    */
   public function getName(): MarkupInterface|string {
-    @trigger_error(__METHOD__ . '() is deprecated in private_message:4.0.0 and is removed from private_message:5.0.0. Instead, you should just use the plugin definition "name" value $plugin->getPluginDefinition()["name"]. See https://www.drupal.org/node/3501696', E_USER_DEPRECATED);
     return $this->pluginDefinition['name'];
   }
 
@@ -48,12 +52,12 @@ abstract class PrivateMessageConfigFormBase extends PluginBase implements Privat
    * {@inheritdoc}
    */
   public function getId(): string {
-    @trigger_error(__METHOD__ . '() is deprecated in private_message:4.0.0 and is removed from private_message:5.0.0. Instead, you should just use the plugin ::getPluginId() method. See https://www.drupal.org/node/3501696', E_USER_DEPRECATED);
     return $this->getPluginId();
   }
 
   /**
    * {@inheritdoc}
+   * @param array<string, mixed> $form
    */
   public function validateForm(array &$form, FormStateInterface $formState): void {
   }

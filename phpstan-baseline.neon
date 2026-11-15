@@ -57634,12 +57634,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php
 
 		-
-			rawMessage: 'Parameter #1 $id of method Drupal\private_message\Entity\PrivateMessageThreadInterface::isMember() expects int|string, int|string|null given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php
-
-		-
 			rawMessage: 'Parameter #1 $items of method Drupal\aculta_messenger\Service\NoticeListFilter::apply() expects array, mixed given.'
 			identifier: argument.type
 			count: 1
@@ -57742,26 +57736,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php
 
 		-
-			rawMessage: '''
-				Call to deprecated method isCurrentUserBannedByUser() of interface Drupal\private_message\Service\PrivateMessageBanManagerInterface:
-				in private_message:4.0.0 and is removed from
-				  private_message:5.0.0. No replacement is provided.
-			'''
-			identifier: method.deprecated
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/NewConversationController.php
-
-		-
-			rawMessage: '''
-				Call to method getThreadIdForMembers() of deprecated interface Drupal\private_message\Mapper\PrivateMessageMapperInterface:
-				in private_message:4.0.0 and is removed from
-				  private_message:5.0.0. No replacement is provided.
-			'''
-			identifier: method.deprecatedInterface
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/NewConversationController.php
-
-		-
 			rawMessage: Cannot cast mixed to string.
 			identifier: cast.string
 			count: 2
@@ -57801,32 +57775,6 @@ parameters:
 			rawMessage: 'Parameter #1 $candidates of method Drupal\aculta_messenger\Controller\NewConversationController::memberResults() expects array<int, array{user: Drupal\user\UserInterface, name: string}>, non-empty-array given.'
 			identifier: argument.type
 			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/NewConversationController.php
-
-		-
-			rawMessage: '''
-				Parameter $privateMessageMapper of method Drupal\aculta_messenger\Controller\NewConversationController::__construct() has typehint with deprecated interface Drupal\private_message\Mapper\PrivateMessageMapperInterface:
-				in private_message:4.0.0 and is removed from
-				  private_message:5.0.0. No replacement is provided.
-			'''
-			identifier: parameter.deprecatedInterface
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/NewConversationController.php
-
-		-
-			rawMessage: '''
-				Property $privateMessageMapper references deprecated interface Drupal\private_message\Mapper\PrivateMessageMapperInterface in its type:
-				in private_message:4.0.0 and is removed from
-				  private_message:5.0.0. No replacement is provided.
-			'''
-			identifier: property.deprecatedInterface
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/NewConversationController.php
-
-		-
-			rawMessage: The "private_message.mapper" service is deprecated in private_message:4.0.0 and is removed from private_message:5.0.0. No replacement is provided. See https://www.drupal.org/node/3490530
-			identifier: getDeprecatedService.deprecated
-			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/NewConversationController.php
 
 		-
@@ -58232,16 +58180,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/MessengerSettingsForm.php
 
 		-
-			rawMessage: '''
-				Call to method getThreadIdForMembers() of deprecated interface Drupal\private_message\Mapper\PrivateMessageMapperInterface:
-				in private_message:4.0.0 and is removed from
-				  private_message:5.0.0. No replacement is provided.
-			'''
-			identifier: method.deprecatedInterface
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/NewConversationForm.php
-
-		-
 			rawMessage: Cannot access an offset on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
@@ -58320,32 +58258,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/NewConversationForm.php
 
 		-
-			rawMessage: '''
-				Parameter $privateMessageMapper of method Drupal\aculta_messenger\Form\NewConversationForm::__construct() has typehint with deprecated interface Drupal\private_message\Mapper\PrivateMessageMapperInterface:
-				in private_message:4.0.0 and is removed from
-				  private_message:5.0.0. No replacement is provided.
-			'''
-			identifier: parameter.deprecatedInterface
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/NewConversationForm.php
-
-		-
-			rawMessage: '''
-				Property $privateMessageMapper references deprecated interface Drupal\private_message\Mapper\PrivateMessageMapperInterface in its type:
-				in private_message:4.0.0 and is removed from
-				  private_message:5.0.0. No replacement is provided.
-			'''
-			identifier: property.deprecatedInterface
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/NewConversationForm.php
-
-		-
-			rawMessage: The "private_message.mapper" service is deprecated in private_message:4.0.0 and is removed from private_message:5.0.0. No replacement is provided. See https://www.drupal.org/node/3490530
-			identifier: getDeprecatedService.deprecated
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/NewConversationForm.php
-
-		-
 			rawMessage: Cannot access offset 'data-portal-ui' on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
@@ -58380,16 +58292,6 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/NoticeReadStateForm.php
-
-		-
-			rawMessage: '''
-				Call to deprecated method isCurrentUserBannedByUser() of interface Drupal\private_message\Service\PrivateMessageBanManagerInterface:
-				in private_message:4.0.0 and is removed from
-				  private_message:5.0.0. No replacement is provided.
-			'''
-			identifier: method.deprecated
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/PrivateMessageFormValidator.php
 
 		-
 			rawMessage: Cannot access offset '#access' on mixed.
@@ -58454,12 +58356,6 @@ parameters:
 		-
 			rawMessage: 'Method Drupal\aculta_messenger\Form\PrivateMessageFormValidator::validateRateLimit() has parameter $form with no value type specified in iterable type array.'
 			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/PrivateMessageFormValidator.php
-
-		-
-			rawMessage: 'Parameter #1 $id of method Drupal\private_message\Entity\PrivateMessageThreadInterface::isMember() expects int|string, int|string|null given.'
-			identifier: argument.type
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/PrivateMessageFormValidator.php
 
@@ -60210,26 +60106,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Mail/AvisosResumoMailType.php
 
 		-
-			rawMessage: '''
-				Access to property $database of deprecated class Drupal\private_message\Mapper\PrivateMessageMapper:
-				in private_message:4.0.0 and is removed from
-				  private_message:5.0.0. No replacement is provided.
-			'''
-			identifier: property.deprecatedClass
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Mapper/MessengerPrivateMessageMapper.php
-
-		-
-			rawMessage: '''
-				Class Drupal\aculta_messenger\Mapper\MessengerPrivateMessageMapper extends deprecated class Drupal\private_message\Mapper\PrivateMessageMapper:
-				in private_message:4.0.0 and is removed from
-				  private_message:5.0.0. No replacement is provided.
-			'''
-			identifier: class.extendsDeprecatedClass
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Mapper/MessengerPrivateMessageMapper.php
-
-		-
 			rawMessage: Binary operation "." between 'forum:' and mixed results in an error.
 			identifier: binaryOp.invalid
 			count: 1
@@ -60342,16 +60218,6 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Plugin/QueueWorker/PrivateMessageNotificationWorker.php
-
-		-
-			rawMessage: '''
-				Call to deprecated method isCurrentUserBannedByUser() of interface Drupal\private_message\Service\PrivateMessageBanManagerInterface:
-				in private_message:4.0.0 and is removed from
-				  private_message:5.0.0. No replacement is provided.
-			'''
-			identifier: method.deprecated
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Service/ConversationMessagingState.php
 
 		-
 			rawMessage: Cannot cast mixed to int.
@@ -61740,12 +61606,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Kernel/PrivateMessageRetentionKernelTest.php
 
 		-
-			rawMessage: 'Parameter #1 $id of method Drupal\private_message\Entity\PrivateMessageThread::addMessageById() expects int|string, int|string|null given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Kernel/PrivateMessageRetentionKernelTest.php
-
-		-
 			rawMessage: Binary operation "." between '/' and mixed results in an error.
 			identifier: binaryOp.invalid
 			count: 4
@@ -62784,16 +62644,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Unit/MessengerSettingsFormTest.php
 
 		-
-			rawMessage: '''
-				Access to constant on deprecated interface Drupal\private_message\Mapper\PrivateMessageMapperInterface:
-				in private_message:4.0.0 and is removed from
-				  private_message:5.0.0. No replacement is provided.
-			'''
-			identifier: classConstant.deprecatedInterface
-			count: 5
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Unit/NewConversationControllerTest.php
-
-		-
 			rawMessage: Cannot access offset '#action' on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
@@ -62864,16 +62714,6 @@ parameters:
 			identifier: argument.type
 			count: 2
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Unit/NewConversationControllerTest.php
-
-		-
-			rawMessage: '''
-				Access to constant on deprecated interface Drupal\private_message\Mapper\PrivateMessageMapperInterface:
-				in private_message:4.0.0 and is removed from
-				  private_message:5.0.0. No replacement is provided.
-			'''
-			identifier: classConstant.deprecatedInterface
-			count: 6
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Unit/NewConversationRecipientIdsTest.php
 
 		-
 			rawMessage: Cannot cast mixed to string.
@@ -63450,12 +63290,6 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Unit/PrivateMessageUnreadIndicatorHooksTest.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\private_message\Entity\PrivateMessageInterface::expects().'
-			identifier: method.notFound
-			count: 8
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Unit/UnreadThreadCounterTest.php
 
 		-
 			rawMessage: 'Cannot call method method() on mixed.'
@@ -70860,16 +70694,6 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Role/HerancaDePapeis.php
-
-		-
-			rawMessage: '''
-				Call to deprecated method isCurrentUserBannedByUser() of interface Drupal\private_message\Service\PrivateMessageBanManagerInterface:
-				in private_message:4.0.0 and is removed from
-				  private_message:5.0.0. No replacement is provided.
-			'''
-			identifier: method.deprecated
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Social/ConnectionQueryService.php
 
 		-
 			rawMessage: Binary operation "." between mixed and '/core/lib/Drupal…' results in an error.

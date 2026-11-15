@@ -85,7 +85,6 @@ class PrivateMessageThread extends ContentEntityBase implements PrivateMessageTh
    * {@inheritdoc}
    */
   public function getMembersId(): array {
-    @trigger_error(__METHOD__ . '() is deprecated in private_message:4.0.0 and is removed from private_message:5.0.0. Use self::getMemberIds() instead. See https://www.drupal.org/node/3490530', E_USER_DEPRECATED);
     return $this->getMemberIds();
   }
 
@@ -139,7 +138,6 @@ class PrivateMessageThread extends ContentEntityBase implements PrivateMessageTh
    * {@inheritdoc}
    */
   public function filterNewestMessages() {
-    @trigger_error(__METHOD__ . "() is deprecated in private_message:4.0.0 and is removed from private_message:5.0.0. No replacement is provided. See https://www.drupal.org/node/3490530", E_USER_DEPRECATED);
 
     $messages = $this->getMessages();
     if (count($messages) > \Drupal::config('private_message_thread.settings')->get('message_count')) {

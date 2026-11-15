@@ -18,6 +18,10 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 #[ViewsFilter('private_message_thread_has_history')]
 class PrivateMessageThreadCleanHistory extends FilterPluginBase {
 
+  /**
+   * Tipagem do porte Private Message.
+   * @param array<string, mixed> $configuration
+   */
   public function __construct(
     array $configuration,
     $plugin_id,
@@ -30,6 +34,7 @@ class PrivateMessageThreadCleanHistory extends FilterPluginBase {
 
   /**
    * {@inheritdoc}
+   * @param array<string, mixed> $configuration
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
     return new static(

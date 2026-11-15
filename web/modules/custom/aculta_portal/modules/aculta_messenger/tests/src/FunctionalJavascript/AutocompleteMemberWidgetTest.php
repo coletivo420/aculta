@@ -99,7 +99,7 @@ class AutocompleteMemberWidgetTest extends WebDriverTestBase {
   /**
    * Creates a user whose name begins with 'test'.
    *
-   * @param array $permissions
+   * @param array<string, mixed> $permissions
    *   Permissions.
    *
    * @return \Drupal\user\UserInterface

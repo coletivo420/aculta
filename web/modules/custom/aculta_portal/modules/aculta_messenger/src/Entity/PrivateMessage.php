@@ -54,7 +54,6 @@ class PrivateMessage extends ContentEntityBase implements PrivateMessageInterfac
    * {@inheritdoc}
    */
   public function getMessage() {
-    @trigger_error(__METHOD__ . "() is deprecated in private_message:4.0.0 and is removed from private_message:5.0.0. Instead, access the 'message' field. See https://www.drupal.org/node/3490530", E_USER_DEPRECATED);
     return $this->get('message')->value;
   }
 

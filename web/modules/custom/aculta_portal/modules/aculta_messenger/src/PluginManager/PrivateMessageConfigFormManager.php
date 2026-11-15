@@ -16,6 +16,11 @@ use Drupal\aculta_messenger\Plugin\PrivateMessageConfigForm\PrivateMessageConfig
  */
 class PrivateMessageConfigFormManager extends DefaultPluginManager implements PrivateMessageConfigFormManagerInterface {
 
+  /**
+   * Tipagem do porte Private Message.
+   * @param array<string, mixed> $namespaces
+   * @param array<string, mixed> $namespaces
+   */
   public function __construct(
     \Traversable $namespaces,
     CacheBackendInterface $cacheBackend,

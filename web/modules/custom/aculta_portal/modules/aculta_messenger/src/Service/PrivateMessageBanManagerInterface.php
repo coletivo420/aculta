@@ -28,11 +28,6 @@ interface PrivateMessageBanManagerInterface {
    *
    * @return bool
    *   TRUE if the current user is banned by the given user. FALSE otherwise.
-   *
-   * @deprecated in private_message:4.0.0 and is removed from
-   *   private_message:5.0.0. No replacement is provided.
-   *
-   * @see https://www.drupal.org/node/3490530
    */
   public function isCurrentUserBannedByUser(int $user_id): bool;
 
@@ -42,7 +37,7 @@ interface PrivateMessageBanManagerInterface {
    * @param int|string $user_id
    *   ID of the user to test.
    *
-   * @return array
+   * @return array<string, mixed>
    *   An array of user ids that the user has banned.
    */
   public function getBannedUsers(int|string $user_id): array;

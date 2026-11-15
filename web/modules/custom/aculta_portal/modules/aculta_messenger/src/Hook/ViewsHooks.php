@@ -16,6 +16,7 @@ class ViewsHooks {
 
   /**
    * Implements hook_views_data().
+   * @return array<string, mixed>
    */
   #[Hook('views_data')]
   public function viewsData(): array {

@@ -33,6 +33,11 @@ class PrivateMessageThreadMemberWidget extends EntityReferenceAutocompleteWidget
 
   use PrivateMessageSettingsTrait;
 
+  /**
+   * Tipagem do porte Private Message.
+   * @param array<string, mixed> $settings
+   * @param array<string, mixed> $third_party_settings
+   */
   public function __construct(
     string $plugin_id,
     mixed $plugin_definition,
@@ -48,6 +53,7 @@ class PrivateMessageThreadMemberWidget extends EntityReferenceAutocompleteWidget
 
   /**
    * {@inheritdoc}
+   * @param array<string, mixed> $configuration
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
     return new static(
@@ -73,6 +79,7 @@ class PrivateMessageThreadMemberWidget extends EntityReferenceAutocompleteWidget
 
   /**
    * {@inheritdoc}
+   * @return array<string, mixed>
    */
   public static function defaultSettings(): array {
     return [
@@ -85,6 +92,7 @@ class PrivateMessageThreadMemberWidget extends EntityReferenceAutocompleteWidget
    *
    * The settings summary is returned empty, as the parent settings have no
    * effect on this form.
+   * @return array<string, mixed>
    */
   public function settingsSummary(): array {
     $summary = parent::settingsSummary();
@@ -97,6 +105,8 @@ class PrivateMessageThreadMemberWidget extends EntityReferenceAutocompleteWidget
 
   /**
    * {@inheritdoc}
+   * @param array<string, mixed> $form
+   * @return array<string, mixed>
    */
   public function settingsForm(array $form, FormStateInterface $form_state): array {
     $form = parent::settingsForm($form, $form_state);
@@ -114,6 +124,9 @@ class PrivateMessageThreadMemberWidget extends EntityReferenceAutocompleteWidget
 
   /**
    * {@inheritdoc}
+   * @param array<string, mixed> $element
+   * @param array<string, mixed> $form
+   * @return array<string, mixed>
    */
   public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state): array {
     $element = parent::formElement($items, $delta, $element, $form, $form_state);
@@ -175,6 +188,7 @@ class PrivateMessageThreadMemberWidget extends EntityReferenceAutocompleteWidget
    * of allowed users has been entered. This is because the field itself is
    * created as an unlimited cardinality field, but the widget allows for
    * setting a maximum number of users.
+   * @param array<string, mixed> $element
    */
   public static function validateFormElement(array $element, FormStateInterface $form_state): void {
     $inputExists = FALSE;
@@ -187,6 +201,9 @@ class PrivateMessageThreadMemberWidget extends EntityReferenceAutocompleteWidget
 
   /**
    * {@inheritdoc}
+   * @param array<string, mixed> $form
+   * @param array<string, mixed> $values
+   * @return array<string, mixed>
    */
   public function massageFormValues(array $values, array $form, FormStateInterface $form_state): array {
     return $values['target_id'] ?? [];

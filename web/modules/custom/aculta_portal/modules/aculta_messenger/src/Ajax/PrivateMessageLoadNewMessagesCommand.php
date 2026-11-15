@@ -13,6 +13,7 @@ class PrivateMessageLoadNewMessagesCommand implements CommandInterface {
 
   /**
    * {@inheritdoc}
+   * @return array<string, mixed>
    */
   public function render(): array {
     return [

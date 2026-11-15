@@ -23,6 +23,7 @@ class PrivateMessageController extends ControllerBase implements PrivateMessageC
 
   /**
    * {@inheritdoc}
+   * @return array<string, mixed>
    */
   public function privateMessagePage(): array {
     $this->privateMessageService->updateLastCheckTime();
@@ -57,6 +58,7 @@ class PrivateMessageController extends ControllerBase implements PrivateMessageC
 
   /**
    * {@inheritdoc}
+   * @return array<string, mixed>
    */
   public function pmSettingsPage(): array {
     $url = Url::fromRoute('private_message.admin_config.config')->toString();
@@ -68,6 +70,7 @@ class PrivateMessageController extends ControllerBase implements PrivateMessageC
 
   /**
    * {@inheritdoc}
+   * @return array<string, mixed>
    */
   public function pmThreadSettingsPage(): array {
     return [
@@ -77,6 +80,7 @@ class PrivateMessageController extends ControllerBase implements PrivateMessageC
 
   /**
    * {@inheritdoc}
+   * @return array<string, mixed>
    */
   public function configPage(): array {
     return [
@@ -88,6 +92,7 @@ class PrivateMessageController extends ControllerBase implements PrivateMessageC
 
   /**
    * {@inheritdoc}
+   * @return array<string, mixed>
    */
   public function adminUninstallPage(): array {
     return [
@@ -109,6 +114,7 @@ class PrivateMessageController extends ControllerBase implements PrivateMessageC
 
   /**
    * {@inheritdoc}
+   * @return array<string, mixed>
    */
   public function banUnbanPage(): array {
     $user_has_permission = $this->currentUser()->hasPermission('use private messaging system')

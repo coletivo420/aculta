@@ -18,6 +18,10 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 #[ViewsField("private_message_thread_all_messages_number")]
 class PrivateMessageThreadMessagesCount extends FieldPluginBase {
 
+  /**
+   * Tipagem do porte Private Message.
+   * @param array<string, mixed> $configuration
+   */
   public function __construct(
     array $configuration,
     $plugin_id,
@@ -29,6 +33,7 @@ class PrivateMessageThreadMessagesCount extends FieldPluginBase {
 
   /**
    * {@inheritdoc}
+   * @param array<string, mixed> $configuration
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
     return new static(

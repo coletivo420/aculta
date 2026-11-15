@@ -76,7 +76,7 @@ interface PrivateMessageServiceInterface {
    * @param int $messageId
    *   The ID after which messages should be retrieved.
    *
-   * @return array
+   * @return array<string, mixed>
    *   An array containing any new messages that the user has permission to view
    */
   public function getNewMessages($threadId, $messageId);
@@ -89,7 +89,7 @@ interface PrivateMessageServiceInterface {
    * @param int $messageId
    *   The ID before which messages should be retrieved.
    *
-   * @return array
+   * @return array<string, mixed>
    *   An array containing the following to keys:
    *   - messages: an array of \Drupal\aculta_messenger\Entity\PrivateMessage
    *   - next_exists: a boolean indicating whether or not any messages appear
@@ -107,12 +107,12 @@ interface PrivateMessageServiceInterface {
    * provided it means the inbox is empty, so a maximum of $count number of
    * threads is instead returned.
    *
-   * @param array $existingThreadIds
+   * @param array<string, mixed> $existingThreadIds
    *   An array of private message thread last update times, keyed by thread ID.
    * @param int $count
    *   The number of threads to return if no existing thread IDs were provided.
    *
-   * @return array
+   * @return array<string, mixed>
    *   An array containing the following keys:
    *   - thread_ids: The IDs of any threads in the inbox, in the order in which
    *     they should appear in the inbox. This array will be used to (re) order
@@ -168,7 +168,7 @@ interface PrivateMessageServiceInterface {
   /**
    * Add a link to send a private message to the owner of the given entity.
    *
-   * @param array $build
+   * @param array<string, mixed> $build
    *   A render array representing the given entity. Chances should be made to
    *   this render array.
    * @param \Drupal\Core\Entity\EntityInterface $entity
@@ -183,7 +183,7 @@ interface PrivateMessageServiceInterface {
   /**
    * Retrieve the IDs of all threads in the system.
    *
-   * @return array
+   * @return array<string, mixed>
    *   An array of thread IDs for threads in the system.
    */
   public function getThreadIds();

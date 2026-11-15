@@ -45,11 +45,6 @@ interface PrivateMessageThreadInterface extends ContentEntityInterface {
    *
    * @return int[]
    *   A list of member IDs
-   *
-   * @deprecated in private_message:4.0.0 and is removed from
-   *   private_message:5.0.0. Use self::getMemberIds() instead.
-   *
-   * @see https://www.drupal.org/node/3490530
    */
   public function getMembersId(): array;
 
@@ -107,11 +102,6 @@ interface PrivateMessageThreadInterface extends ContentEntityInterface {
    * Filters the list down to only the newest messages.
    *
    * Note that other messages will be loadable through AJAX.
-   *
-   * @deprecated in private_message:4.0.0 and is removed from
-   *   private_message:5.0.0. No replacement is provided.
-   *
-   * @see https://www.drupal.org/node/3490530
    */
   public function filterNewestMessages();
 

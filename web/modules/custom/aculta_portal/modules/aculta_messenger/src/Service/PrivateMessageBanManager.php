@@ -43,7 +43,6 @@ class PrivateMessageBanManager implements PrivateMessageBanManagerInterface {
    * {@inheritdoc}
    */
   public function isCurrentUserBannedByUser(int $user_id): bool {
-    @trigger_error(__METHOD__ . '() is deprecated in private_message:4.0.0 and is removed from private_message:5.0.0. No replacement is provided. See https://www.drupal.org/node/3490530', E_USER_DEPRECATED);
 
     $select = $this
       ->database
@@ -59,6 +58,7 @@ class PrivateMessageBanManager implements PrivateMessageBanManagerInterface {
 
   /**
    * {@inheritdoc}
+   * @return array<string, mixed>
    */
   public function getBannedUsers(int|string $user_id): array {
     return $this

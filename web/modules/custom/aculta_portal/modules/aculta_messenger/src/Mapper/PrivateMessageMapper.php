@@ -2,7 +2,6 @@
 
 namespace Drupal\aculta_messenger\Mapper;
 
-@trigger_error(__NAMESPACE__ . '\PrivateMessageMapper is deprecated in private_message:4.0.0 and is removed from private_message:5.0.0. No replacement is provided. See https://www.drupal.org/node/3490530', E_USER_DEPRECATED);
 
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Database\Query\SelectInterface;
@@ -12,11 +11,6 @@ use Drupal\user\UserInterface;
 
 /**
  * Interface for the Private Message Mapper class.
- *
- * @deprecated in private_message:4.0.0 and is removed from
- *   private_message:5.0.0. No replacement is provided.
- *
- * @see https://www.drupal.org/node/3490530
  */
 class PrivateMessageMapper implements PrivateMessageMapperInterface {
 
@@ -27,6 +21,7 @@ class PrivateMessageMapper implements PrivateMessageMapperInterface {
 
   /**
    * {@inheritdoc}
+   * @param array<string, mixed> $members
    */
   public function getThreadIdForMembers(array $members) {
     $uids = [];
@@ -83,6 +78,7 @@ class PrivateMessageMapper implements PrivateMessageMapperInterface {
 
   /**
    * {@inheritdoc}
+   * @return array<string, mixed>
    */
   public function getThreadIdsForUser(UserInterface $user, $count = FALSE, $timestamp = FALSE): array {
 
@@ -145,6 +141,8 @@ class PrivateMessageMapper implements PrivateMessageMapperInterface {
 
   /**
    * {@inheritdoc}
+   * @param array<string, mixed> $existingThreadIds
+   * @return array<string, mixed>
    */
   public function getUpdatedInboxThreadIds(array $existingThreadIds, $count = FALSE): array {
 
@@ -277,6 +275,7 @@ class PrivateMessageMapper implements PrivateMessageMapperInterface {
 
   /**
    * {@inheritdoc}
+   * @return array<string, mixed>
    */
   public function getThreadIds(): array {
     return $this->database->select('private_message_threads', 'pmt')

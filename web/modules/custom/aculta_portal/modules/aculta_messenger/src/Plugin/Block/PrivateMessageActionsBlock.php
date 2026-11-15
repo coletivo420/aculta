@@ -28,6 +28,10 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 )]
 class PrivateMessageActionsBlock extends BlockBase implements ContainerFactoryPluginInterface {
 
+  /**
+   * Tipagem do porte Private Message.
+   * @param array<string, mixed> $configuration
+   */
   public function __construct(
     array $configuration,
     $plugin_id,
@@ -40,6 +44,7 @@ class PrivateMessageActionsBlock extends BlockBase implements ContainerFactoryPl
 
   /**
    * {@inheritdoc}
+   * @param array<string, mixed> $configuration
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
     return new static(
@@ -61,6 +66,7 @@ class PrivateMessageActionsBlock extends BlockBase implements ContainerFactoryPl
 
   /**
    * {@inheritdoc}
+   * @return array<string, mixed>
    */
   public function build(): array {
     if (!$this->currentUser->hasPermission('use private messaging system')) {

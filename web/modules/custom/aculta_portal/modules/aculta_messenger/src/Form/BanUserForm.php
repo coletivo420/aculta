@@ -31,6 +31,8 @@ class BanUserForm extends FormBase {
 
   /**
    * {@inheritdoc}
+   * @param array<string, mixed> $form
+   * @return array<string, mixed>
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $config = $this->config('private_message.settings');
@@ -61,6 +63,7 @@ class BanUserForm extends FormBase {
 
   /**
    * {@inheritdoc}
+   * @param array<string, mixed> $form
    */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
     $userId = $form_state->getValue('banned_user');
@@ -82,6 +85,7 @@ class BanUserForm extends FormBase {
 
   /**
    * {@inheritdoc}
+   * @param array<string, mixed> $form
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $userId = $form_state->getValue('banned_user');

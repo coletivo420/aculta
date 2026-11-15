@@ -47,6 +47,7 @@ class PrivateMessageThreadDeleteForm extends ContentEntityConfirmFormBase {
 
   /**
    * {@inheritdoc}
+   * @param array<string, mixed> $form
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     parent::submitForm($form, $form_state);

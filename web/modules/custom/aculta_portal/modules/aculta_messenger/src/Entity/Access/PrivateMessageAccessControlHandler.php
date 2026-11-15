@@ -84,6 +84,7 @@ class PrivateMessageAccessControlHandler extends EntityAccessControlHandler impl
    *
    * Separate from the checkAccess because the entity does not yet exist, it
    * will be created during the 'add' process.
+   * @param array<string, mixed> $context
    */
   protected function checkCreateAccess(AccountInterface $account, array $context, $entity_bundle = NULL): AccessResultInterface {
     return AccessResult::allowedIfHasPermission($account, 'use private messaging system');

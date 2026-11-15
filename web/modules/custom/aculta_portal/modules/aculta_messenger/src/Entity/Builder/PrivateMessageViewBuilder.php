@@ -47,6 +47,7 @@ class PrivateMessageViewBuilder extends EntityViewBuilder {
 
   /**
    * {@inheritdoc}
+   * @return array<string, mixed>
    */
   public function view(EntityInterface $entity, $view_mode = 'default', $langcode = NULL): array {
     assert($entity instanceof PrivateMessageInterface);

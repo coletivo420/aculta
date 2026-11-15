@@ -67,14 +67,8 @@ class PrivateMessageForm extends ContentEntityForm {
    *
    * @param mixed $id
    *   An ID required to be unique each time the form is called on a page.
-   *
-   * @deprecated in private_message:4.0.0 and is removed from
-   *   private_message:5.0.0. No replacement is provided.
-   *
-   * @see https://www.drupal.org/node/3490530
    */
   public function setFormId($id) {
-    @trigger_error(__METHOD__ . '() is deprecated in private_message:4.0.0 and is removed from private_message:5.0.0. No replacement is provided. See https://www.drupal.org/node/3490530', E_USER_DEPRECATED);
     $this->formId = Html::escape($id);
   }
 
@@ -93,6 +87,8 @@ class PrivateMessageForm extends ContentEntityForm {
 
   /**
    * {@inheritdoc}
+   * @param array<string, mixed> $form
+   * @return array<string, mixed>
    */
   public function buildForm(array $form, FormStateInterface $form_state, ?PrivateMessageThreadInterface $privateMessageThread = NULL): array {
     $form = parent::buildForm($form, $form_state);
@@ -214,6 +210,7 @@ class PrivateMessageForm extends ContentEntityForm {
    * form.
    *
    * @see \Drupal\aculta_messenger\Entity\PrivateMessageThead::baseFieldDefinitions
+   * @param array<string, mixed> $form
    */
   public function validateMembers(array &$form, FormStateInterface $formState): void {
     // The members form element was loaded from the PrivateMessageThread entity
@@ -277,6 +274,7 @@ class PrivateMessageForm extends ContentEntityForm {
 
   /**
    * Validates that the current user isn't replying to a banned member.
+   * @param array<string, mixed> $form
    */
   public function validateBannedMembers(array &$form, FormStateInterface $formState): void {
     /** @var \Drupal\aculta_messenger\Entity\PrivateMessageThread|null $privateMessageThread */
@@ -296,6 +294,7 @@ class PrivateMessageForm extends ContentEntityForm {
    * Ajax callback for the PrivateMessageForm.
    *
    * Re-render form after submission, so user could write new message.
+   * @param array<string, mixed> $form
    */
   public function ajaxCallback(array $form, FormStateInterface $formState): AjaxResponse {
     $response = new AjaxResponse();
@@ -349,6 +348,8 @@ class PrivateMessageForm extends ContentEntityForm {
 
   /**
    * After build callback for the Private Message Form.
+   * @param array<string, mixed> $element
+   * @return array<string, mixed>
    */
   public function afterBuild(array $element, FormStateInterface $form_state): array {
     $element['message']['widget'][0]['format']['#attributes']['class'][] = 'hidden';
@@ -357,6 +358,7 @@ class PrivateMessageForm extends ContentEntityForm {
 
   /**
    * {@inheritdoc}
+   * @param array<string, mixed> $form
    */
   public function save(array $form, FormStateInterface $form_state): int {
     $status = parent::save($form, $form_state);

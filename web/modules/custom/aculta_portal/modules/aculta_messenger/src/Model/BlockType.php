@@ -15,7 +15,7 @@ enum BlockType: string {
   /**
    * Returns the enum as options.
    *
-   * @return array
+   * @return array<string, mixed>
    *   Options.
    */
   public static function asOptions(): array {

@@ -2,18 +2,12 @@
 
 namespace Drupal\aculta_messenger\Mapper;
 
-@trigger_error(__NAMESPACE__ . '\PrivateMessageMapperInterface is deprecated in private_message:4.0.0 and is removed from private_message:5.0.0. No replacement is provided. See https://www.drupal.org/node/3490530', E_USER_DEPRECATED);
 
 use Drupal\aculta_messenger\Entity\PrivateMessageInterface;
 use Drupal\user\UserInterface;
 
 /**
  * Interface for the Private Message Thread mapper class.
- *
- * @deprecated in private_message:4.0.0 and is removed from
- *   private_message:5.0.0. No replacement is provided.
- *
- * @see https://www.drupal.org/node/3490530
  */
 interface PrivateMessageMapperInterface {
 
@@ -23,7 +17,7 @@ interface PrivateMessageMapperInterface {
    * The thread returned will contain all of the given UIDs, and only the given
    * UIDs.
    *
-   * @param array $uids
+   * @param array<string, mixed> $uids
    *   An array of User IDs of users whose thread should be
    *   retrieved.
    *
@@ -56,7 +50,7 @@ interface PrivateMessageMapperInterface {
    *   A timestamp relative to which only thread IDs with an earlier timestamp
    *   should be returned.
    *
-   * @return array
+   * @return array<string, mixed>
    *   An array of thread IDs if any threads exist.
    */
   public function getThreadIdsForUser(UserInterface $user, $count = FALSE, $timestamp = FALSE);
@@ -83,12 +77,12 @@ interface PrivateMessageMapperInterface {
    * Otherwise the number of IDs returned will be the number provided for
    * $count.
    *
-   * @param array $existingThreadIds
+   * @param array<string, mixed> $existingThreadIds
    *   An array of thread IDs to be compared against.
    * @param int $count
    *   The number of threads to return if no existing thread IDs were provided.
    *
-   * @return array
+   * @return array<string, mixed>
    *   An array, keyed by thread ID, with each element of the array containing
    *   an object with the following two properties:
    *   - id: The thread ID
@@ -160,7 +154,7 @@ interface PrivateMessageMapperInterface {
   /**
    * Retrieve the IDs of all threads in the system.
    *
-   * @return array
+   * @return array<string, mixed>
    *   An array of thread IDs for threads in the system.
    */
   public function getThreadIds();

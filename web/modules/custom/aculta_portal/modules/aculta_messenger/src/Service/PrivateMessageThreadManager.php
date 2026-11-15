@@ -18,6 +18,7 @@ class PrivateMessageThreadManager implements PrivateMessageThreadManagerInterfac
 
   /**
    * {@inheritdoc}
+   * @param array<string, mixed> $members
    */
   public function saveThread(PrivateMessageInterface $message, array $members = [], ?PrivateMessageThreadInterface $thread = NULL): void {
     if ($thread === NULL && $members) {

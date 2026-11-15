@@ -84,8 +84,6 @@ class PrivateMessageService implements PrivateMessageServiceInterface {
    */
   public function getThreadsForUser(int $count, /* ?int */$timestamp = NULL): array {
     if ($timestamp === FALSE) {
-      // @deprecated
-      @trigger_error('Passing FALSE to second argument of ' . __METHOD__ . '() is deprecated in private_message:4.0.0 and removed from private_message:5.0.0. Pass NULL instead. See https://www.drupal.org/node/3490530', E_USER_DEPRECATED);
       $timestamp = NULL;
     }
 
@@ -126,6 +124,7 @@ class PrivateMessageService implements PrivateMessageServiceInterface {
 
   /**
    * {@inheritdoc}
+   * @return array<string, mixed>
    */
   public function getNewMessages($threadId, $messageId) {
     $private_message_thread = $this->entityTypeManager
@@ -147,6 +146,7 @@ class PrivateMessageService implements PrivateMessageServiceInterface {
 
   /**
    * {@inheritdoc}
+   * @return array<string, mixed>
    */
   public function getPreviousMessages($threadId, $messageId) {
     $return = [
@@ -197,6 +197,8 @@ class PrivateMessageService implements PrivateMessageServiceInterface {
 
   /**
    * {@inheritdoc}
+   * @param array<string, mixed> $existingThreadInfo
+   * @return array<string, mixed>
    */
   public function getUpdatedInboxThreads(array $existingThreadInfo, $count = FALSE) {
     $thread_info = $this->getUpdatedInboxThreadIds(array_keys($existingThreadInfo), $count);
@@ -280,6 +282,7 @@ class PrivateMessageService implements PrivateMessageServiceInterface {
 
   /**
    * {@inheritdoc}
+   * @param array<string, mixed> $build
    */
   public function createRenderablePrivateMessageThreadLink(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, $view_mode) {
     if ($display->getComponent('private_message_link')) {
@@ -332,6 +335,7 @@ class PrivateMessageService implements PrivateMessageServiceInterface {
 
   /**
    * {@inheritdoc}
+   * @return array<string, mixed>
    */
   public function getThreadIds() {
     return $this->database->select('private_message_threads', 'pmt')
@@ -462,7 +466,7 @@ class PrivateMessageService implements PrivateMessageServiceInterface {
    *   A timestamp relative to which only thread IDs with an earlier timestamp
    *   should be returned.
    *
-   * @return array
+   * @return array<string, mixed>
    *   An array of thread IDs if any threads exist.
    */
   protected function getThreadIdsForUser(UserInterface $user, $count = FALSE, $timestamp = FALSE): array {
@@ -539,12 +543,12 @@ class PrivateMessageService implements PrivateMessageServiceInterface {
    * Otherwise the number of IDs returned will be the number provided for
    * $count.
    *
-   * @param array $existingThreadIds
+   * @param array<string, mixed> $existingThreadIds
    *   An array of thread IDs to be compared against.
    * @param int $count
    *   The number of threads to return if no existing thread IDs were provided.
    *
-   * @return array
+   * @return array<string, mixed>
    *   An array, keyed by thread ID, with each element of the array containing
    *   an object with the following two properties:
    *   - id: The thread ID

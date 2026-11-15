@@ -35,6 +35,10 @@ class PrivateMessageInboxBlock extends BlockBase implements BlockPluginInterface
 
   use PrivateMessageSettingsTrait;
 
+  /**
+   * Tipagem do porte Private Message.
+   * @param array<string, mixed> $configuration
+   */
   public function __construct(
     array $configuration,
     $plugin_id,
@@ -50,6 +54,7 @@ class PrivateMessageInboxBlock extends BlockBase implements BlockPluginInterface
 
   /**
    * {@inheritdoc}
+   * @param array<string, mixed> $configuration
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
     return new static(
@@ -76,6 +81,7 @@ class PrivateMessageInboxBlock extends BlockBase implements BlockPluginInterface
 
   /**
    * {@inheritdoc}
+   * @return array<string, mixed>
    */
   public function build(): array {
     $config = $this->getConfiguration();
@@ -165,6 +171,7 @@ class PrivateMessageInboxBlock extends BlockBase implements BlockPluginInterface
 
   /**
    * {@inheritdoc}
+   * @return array<string, mixed>
    */
   public function defaultConfiguration(): array {
     return [
@@ -176,6 +183,8 @@ class PrivateMessageInboxBlock extends BlockBase implements BlockPluginInterface
 
   /**
    * {@inheritdoc}
+   * @param array<string, mixed> $form
+   * @return array<string, mixed>
    */
   public function blockForm($form, FormStateInterface $form_state): array {
     $form = parent::blockForm($form, $form_state);
@@ -211,6 +220,7 @@ class PrivateMessageInboxBlock extends BlockBase implements BlockPluginInterface
 
   /**
    * {@inheritdoc}
+   * @param array<string, mixed> $form
    */
   public function blockSubmit($form, FormStateInterface $form_state): void {
     $this->configuration['thread_count'] = $form_state->getValue('thread_count');

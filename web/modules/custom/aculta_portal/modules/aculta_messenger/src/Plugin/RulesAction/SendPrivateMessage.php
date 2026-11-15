@@ -41,6 +41,10 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 )]
 class SendPrivateMessage extends RulesActionBase implements ContainerFactoryPluginInterface {
 
+  /**
+   * Tipagem do porte Private Message.
+   * @param array<string, mixed> $configuration
+   */
   public function __construct(
     array $configuration,
     $plugin_id,
@@ -52,6 +56,7 @@ class SendPrivateMessage extends RulesActionBase implements ContainerFactoryPlug
 
   /**
    * {@inheritdoc}
+   * @param array<string, mixed> $configuration
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
     return new static(

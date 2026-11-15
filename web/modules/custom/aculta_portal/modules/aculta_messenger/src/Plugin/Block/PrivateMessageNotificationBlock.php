@@ -34,6 +34,10 @@ class PrivateMessageNotificationBlock extends BlockBase implements BlockPluginIn
 
   use PrivateMessageSettingsTrait;
 
+  /**
+   * Tipagem do porte Private Message.
+   * @param array<string, mixed> $configuration
+   */
   public function __construct(
     array $configuration,
     $plugin_id,
@@ -48,6 +52,7 @@ class PrivateMessageNotificationBlock extends BlockBase implements BlockPluginIn
 
   /**
    * {@inheritdoc}
+   * @param array<string, mixed> $configuration
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
     return new static(
@@ -73,6 +78,7 @@ class PrivateMessageNotificationBlock extends BlockBase implements BlockPluginIn
 
   /**
    * {@inheritdoc}
+   * @return array<string, mixed>
    */
   public function build(): array {
     $block = [
@@ -139,6 +145,7 @@ class PrivateMessageNotificationBlock extends BlockBase implements BlockPluginIn
 
   /**
    * {@inheritdoc}
+   * @return array<string, mixed>
    */
   public function defaultConfiguration(): array {
     return [
@@ -149,6 +156,8 @@ class PrivateMessageNotificationBlock extends BlockBase implements BlockPluginIn
 
   /**
    * {@inheritdoc}
+   * @param array<string, mixed> $form
+   * @return array<string, mixed>
    */
   public function blockForm($form, FormStateInterface $form_state): array {
     $form = parent::blockForm($form, $form_state);
@@ -178,6 +187,7 @@ class PrivateMessageNotificationBlock extends BlockBase implements BlockPluginIn
 
   /**
    * {@inheritdoc}
+   * @param array<string, mixed> $form
    */
   public function blockSubmit($form, FormStateInterface $form_state): void {
     $this->configuration['ajax_refresh_rate'] = $form_state->getValue('ajax_refresh_rate');
