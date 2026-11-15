@@ -472,7 +472,9 @@ class PrivateMessageService implements PrivateMessageServiceInterface {
    *   FALSE if one doesn't exist.
    */
   protected function getFirstThreadIdForUser(UserInterface $user) {
-    $bannedThreadsQuery = $this->getBannedThreads($user->id());
+    /** @var int|string $user_id */
+    $user_id = $user->id();
+    $bannedThreadsQuery = $this->getBannedThreads($user_id);
 
     $query = $this->database->select('private_message_threads', 'thread');
     $query->addField('thread', 'id');
@@ -506,7 +508,9 @@ class PrivateMessageService implements PrivateMessageServiceInterface {
    *   An array of thread IDs if any threads exist.
    */
   protected function getThreadIdsForUser(UserInterface $user, $count = FALSE, $timestamp = FALSE): array {
-    $bannedThreadsQuery = $this->getBannedThreads($user->id());
+    /** @var int|string $user_id */
+    $user_id = $user->id();
+    $bannedThreadsQuery = $this->getBannedThreads($user_id);
 
     $query = $this->database->select('private_message_threads', 'thread');
     $query->addField('thread', 'id');

@@ -48,7 +48,7 @@ class PrivateMessageThreadDeleteForm extends ContentEntityConfirmFormBase {
   /**
    * Deletes the thread after the parent submit handler runs.
    *
-   * @param array &$form
+   * @param array<string, mixed> &$form
    *   The form structure, passed by reference.
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {

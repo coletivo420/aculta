@@ -24,8 +24,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * Defines the private message thread message field formatter.
  *
  * @extends \Drupal\Core\Field\FormatterBase<\Drupal\Core\Field\FieldItemListInterface<\Drupal\Core\Field\FieldItemInterface>>
- */
-/**
+ *
  * @phpstan-consistent-constructor
  */
 #[FieldFormatter(
@@ -66,14 +65,25 @@ class PrivateMessageThreadMessageFormatter extends FormatterBase implements Cont
    * @param array<string, mixed> $configuration
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): static {
+    /** @var \Drupal\Core\Field\FieldDefinitionInterface $field_definition */
+    $field_definition = $configuration['field_definition'];
+    /** @var array<string, mixed> $settings */
+    $settings = $configuration['settings'];
+    /** @var string $label */
+    $label = $configuration['label'];
+    /** @var string $view_mode */
+    $view_mode = $configuration['view_mode'];
+    /** @var array<string, mixed> $third_party_settings */
+    $third_party_settings = $configuration['third_party_settings'];
+
     return new static(
       $plugin_id,
       $plugin_definition,
-      $configuration['field_definition'],
-      $configuration['settings'],
-      $configuration['label'],
-      $configuration['view_mode'],
-      $configuration['third_party_settings'],
+      $field_definition,
+      $settings,
+      $label,
+      $view_mode,
+      $third_party_settings,
       $container->get('entity_type.manager'),
       $container->get('current_user'),
       $container->get('csrf_token'),
@@ -216,16 +226,23 @@ class PrivateMessageThreadMessageFormatter extends FormatterBase implements Cont
       ->load($this->currentUser->id());
     $messages = $private_message_thread->filterUserDeletedMessages($user);
     $total = count($messages);
-    $messages = array_slice($messages, -1 * (int) $this->getSetting('message_count'));
+    /** @var int|string $message_count */
+    $message_count = $this->getSetting('message_count');
+    $messages = array_slice($messages, -1 * (int) $message_count);
 
+    /** @var string $view_mode */
+    $view_mode = $this->getSetting('view_mode');
     foreach ($messages as $message) {
       /** @var \Drupal\aculta_messenger\Entity\PrivateMessageInterface $message */
-      $element[(string) $message->id()] = $view_builder->view($message, (string) $this->getSetting('view_mode'));
+      $element[(string) $message->id()] = $view_builder->view($message, $view_mode);
     }
 
     if ($this->getSetting('message_order') == 'desc') {
       $element = array_reverse($element);
     }
+
+    /** @var int|string $ajax_refresh_rate */
+    $ajax_refresh_rate = $this->getSetting('ajax_refresh_rate');
 
     $thread_url = Url::fromRoute('entity.private_message_thread.canonical',
       ['private_message_thread' => $private_message_thread->id()]
@@ -243,13 +260,14 @@ class PrivateMessageThreadMessageFormatter extends FormatterBase implements Cont
     $load_token = $this->csrfTokenGenerator->get($load_url->getInternalPath());
     $load_url->setOptions(['query' => ['token' => $load_token]]);
 
+    /** @var array{'#attached'?: array{drupalSettings?: array<string, mixed>, library?: list<string>, ...<string, mixed>}, ...<string, mixed>} $element */
     $element['#attached']['drupalSettings']['privateMessageThread'] = [
       'threadId' => (int) $private_message_thread->id(),
       'threadUrl' => $thread_url->toString(),
       'newMessageCheckUrl' => $new_url->toString(),
       'previousMessageCheckUrl' => $prev_url->toString(),
       'messageOrder' => $this->getSetting('message_order'),
-      'refreshRate' => (int) $this->getSetting('ajax_refresh_rate') * 1000,
+      'refreshRate' => (int) $ajax_refresh_rate * 1000,
       'loadThreadUrl' => $load_url->toString(),
       'previousLoadCount' => $this->getSetting('ajax_previous_load_count'),
       'messageCount' => $this->getSetting('message_count'),

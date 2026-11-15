@@ -66,6 +66,7 @@ class AjaxController extends ControllerBase implements AjaxControllerInterface {
         $this->privateMessageService->updateThreadAccessTime($thread);
         $count = count($new_messages);
         if ($count) {
+          /** @var array{'#attached'?: array{drupalSettings: array{privateMessageThread: array{threadId: int}}}, ...<int|string, mixed>} $messages */
           $messages = [];
           $view_builder = $this->entityTypeManager()->getViewBuilder('private_message');
           foreach ($new_messages as $message) {
@@ -262,6 +263,7 @@ class AjaxController extends ControllerBase implements AjaxControllerInterface {
         $this->privateMessageService->updateLastCheckTime();
 
         $view_builder = $this->entityTypeManager()->getViewBuilder('private_message_thread');
+        /** @var array{'#attached': array{drupalSettings: array<string, mixed>}} $renderable */
         $renderable = $view_builder->view($thread);
         $rendered_thread = (string) $this->renderer->renderRoot($renderable);
 

@@ -298,6 +298,7 @@ function aculta_messenger_preprocess_private_message_thread(array &$variables): 
 
   // Helpful $content variable for templates.
   $variables += ['content' => []];
+  /** @var array{content: array<string, mixed>} $variables */
   /** @var string $key */
   foreach (Element::children($elements) as $key) {
     $variables['content'][$key] = $elements[$key];
@@ -330,6 +331,7 @@ function aculta_messenger_preprocess_private_message(array &$variables): void {
 
   // Helpful $content variable for templates.
   $variables += ['content' => []];
+  /** @var array{content: array<string, mixed>} $variables */
   /** @var string $key */
   foreach (Element::children($elements) as $key) {
     $variables['content'][$key] = $elements[$key];

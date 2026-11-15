@@ -23,8 +23,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * Defines the private message member field formatter.
  *
  * @extends FormatterBase<\Drupal\Core\Field\FieldItemListInterface>
- */
-/**
  * @phpstan-consistent-constructor
  */
 #[FieldFormatter(
@@ -59,7 +57,7 @@ class PrivateMessageThreadMemberFormatter extends FormatterBase implements Conta
 
   /**
    * {@inheritdoc}
-   * @param array<string, mixed> $configuration
+   * @param array{field_definition: \Drupal\Core\Field\FieldDefinitionInterface, settings: array<string, mixed>, label: string, view_mode: string, third_party_settings: array<string, mixed>, ...} $configuration
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): static {
     return new static(
@@ -263,7 +261,7 @@ class PrivateMessageThreadMemberFormatter extends FormatterBase implements Conta
     $display_current_user = $this->getSetting('display_current_user');
 
     $view_builder = $this->entityTypeManager->getViewBuilder('user');
-    /** @var \Drupal\Core\Field\FieldItemInterface&\Drupal\Core\Field\Plugin\Field\FieldType\EntityReferenceItem<\Drupal\Core\Entity\EntityInterface> $item */
+    /** @var \Drupal\Core\Field\Plugin\Field\FieldType\EntityReferenceItem $item */
     foreach ($items as $delta => $item) {
       /** @var \Drupal\user\UserInterface|null $user */
       $user = $item->entity;

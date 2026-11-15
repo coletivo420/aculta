@@ -116,7 +116,13 @@ class PrivateMessageForm extends ContentEntityForm {
             ];
           }
 
-          $form['actions']['submit']['#attributes']['disabled'] = 'disabled';
+          /** @var array<string, mixed> $actions */
+          $actions = &$form['actions'];
+          /** @var array<string, mixed> $submit */
+          $submit = &$actions['submit'];
+          /** @var array<string, mixed> $submit_attributes */
+          $submit_attributes = &$submit['#attributes'];
+          $submit_attributes['disabled'] = 'disabled';
           unset($form['message']);
           $banned = TRUE;
           break;
@@ -143,7 +149,13 @@ class PrivateMessageForm extends ContentEntityForm {
                 ];
               }
 
-              $form['actions']['submit']['#attributes']['disabled'] = 'disabled';
+              /** @var array<string, mixed> $actions */
+              $actions = &$form['actions'];
+              /** @var array<string, mixed> $submit */
+              $submit = &$actions['submit'];
+              /** @var array<string, mixed> $submit_attributes */
+              $submit_attributes = &$submit['#attributes'];
+              $submit_attributes['disabled'] = 'disabled';
               unset($form['message']);
               $banned = TRUE;
               break;
@@ -154,16 +166,34 @@ class PrivateMessageForm extends ContentEntityForm {
 
       if (!$banned) {
         $form_state->set('thread', $privateMessageThread);
-        $form['actions']['submit']['#ajax'] = [
+        /** @var array<string, mixed> $actions */
+        $actions = &$form['actions'];
+        /** @var array<string, mixed> $submit */
+        $submit = &$actions['submit'];
+        $submit['#ajax'] = [
           'callback' => '::ajaxCallback',
         ];
 
         // Only to do these when using #ajax.
-        $form['#attached']['library'][] = 'private_message/message_form';
-        $form['#attached']['drupalSettings']['privateMessageSendKey'] = $this->getPrivateMessageSettings()->get('keys_send');
+        /** @var array<string, mixed> $attached */
+        $attached = &$form['#attached'];
+        /** @var array<int|string, mixed> $libraries */
+        $libraries = &$attached['library'];
+        $libraries[] = 'private_message/message_form';
+        /** @var array<string, mixed> $drupal_settings */
+        $drupal_settings = &$attached['drupalSettings'];
+        $drupal_settings['privateMessageSendKey'] = $this->getPrivateMessageSettings()->get('keys_send');
         $autofocus_enabled = $this->getPrivateMessageSettings()->get('autofocus_enable');
         if ($autofocus_enabled) {
-          $form['message']['widget'][0]['#attributes']['autofocus'] = 'autofocus';
+          /** @var array<string, mixed> $message_element */
+          $message_element = &$form['message'];
+          /** @var array<int|string, mixed> $widget */
+          $widget = &$message_element['widget'];
+          /** @var array<string, mixed> $widget_item */
+          $widget_item = &$widget[0];
+          /** @var array<string, mixed> $widget_attributes */
+          $widget_attributes = &$widget_item['#attributes'];
+          $widget_attributes['autofocus'] = 'autofocus';
         }
       }
 
@@ -181,7 +211,19 @@ class PrivateMessageForm extends ContentEntityForm {
       if (empty($form_state->get(['field_storage', '#parents', '#fields', 'members']))) {
         $storage = $form_state_copy->getStorage();
         $copy_storage = $form_state_copy->getStorage();
-        $storage['field_storage']['#parents']['#fields']['members'] = $copy_storage['field_storage']['#parents']['#fields']['members'];
+        /** @var array<string, mixed> $copy_field */
+        $copy_field = $copy_storage['field_storage'];
+        /** @var array<string, mixed> $copy_parents */
+        $copy_parents = $copy_field['#parents'];
+        /** @var array<string, mixed> $copy_fields */
+        $copy_fields = $copy_parents['#fields'];
+        /** @var array<string, mixed> $storage_field */
+        $storage_field = &$storage['field_storage'];
+        /** @var array<string, mixed> $storage_parents */
+        $storage_parents = &$storage_field['#parents'];
+        /** @var array<string, mixed> $storage_fields */
+        $storage_fields = &$storage_parents['#fields'];
+        $storage_fields['members'] = $copy_fields['members'];
         $form_state->setStorage($storage);
       }
       $form_state->set('pmt_form_display', $form_display);
@@ -194,13 +236,21 @@ class PrivateMessageForm extends ContentEntityForm {
       }
       $form['members'] = $form_copy['members'];
 
-      $form['#validate'][] = '::validateMembers';
+      /** @var array<int|string, mixed> $validate_callbacks */
+      $validate_callbacks = &$form['#validate'];
+      $validate_callbacks[] = '::validateMembers';
     }
 
-    $form['#validate'][] = '::validateBannedMembers';
+    /** @var array<int|string, mixed> $validate_callbacks */
+    $validate_callbacks = &$form['#validate'];
+    $validate_callbacks[] = '::validateBannedMembers';
 
     if ($save_label = $this->getPrivateMessageSettings()->get('save_message_label')) {
-      $form['actions']['submit']['#value'] = $save_label;
+      /** @var array<string, mixed> $actions */
+      $actions = &$form['actions'];
+      /** @var array<string, mixed> $submit */
+      $submit = &$actions['submit'];
+      $submit['#value'] = $save_label;
     }
 
     return $form;
@@ -217,7 +267,7 @@ class PrivateMessageForm extends ContentEntityForm {
    * form.
    *
    * @see \Drupal\aculta_messenger\Entity\PrivateMessageThead::baseFieldDefinitions
-   * @param array<string, mixed> $form
+   * @param array<string, mixed> &$form
    */
   public function validateMembers(array &$form, FormStateInterface $formState): void {
     // The members form element was loaded from the PrivateMessageThread entity
@@ -289,7 +339,7 @@ class PrivateMessageForm extends ContentEntityForm {
 
   /**
    * Validates that the current user isn't replying to a banned member.
-   * @param array<string, mixed> $form
+   * @param array<string, mixed> &$form
    */
   public function validateBannedMembers(array &$form, FormStateInterface $formState): void {
     /** @var \Drupal\aculta_messenger\Entity\PrivateMessageThread|null $privateMessageThread */
@@ -371,7 +421,19 @@ class PrivateMessageForm extends ContentEntityForm {
    * @return array<string, mixed>
    */
   public function afterBuild(array $element, FormStateInterface $form_state): array {
-    $element['message']['widget'][0]['format']['#attributes']['class'][] = 'hidden';
+    /** @var array<string, mixed> $message_element */
+    $message_element = &$element['message'];
+    /** @var array<int|string, mixed> $widget */
+    $widget = &$message_element['widget'];
+    /** @var array<string, mixed> $widget_item */
+    $widget_item = &$widget[0];
+    /** @var array<string, mixed> $format */
+    $format = &$widget_item['format'];
+    /** @var array<string, mixed> $format_attributes */
+    $format_attributes = &$format['#attributes'];
+    /** @var array<int|string, mixed> $format_classes */
+    $format_classes = &$format_attributes['class'];
+    $format_classes[] = 'hidden';
     return $element;
   }
 

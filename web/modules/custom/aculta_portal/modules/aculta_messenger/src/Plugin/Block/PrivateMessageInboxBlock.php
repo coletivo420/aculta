@@ -97,6 +97,7 @@ class PrivateMessageInboxBlock extends BlockBase implements BlockPluginInterface
       $threads = $thread_info['threads'];
 
       foreach ($threads as $thread) {
+        /** @var array{'#attached'?: array{library?: list<string>, drupalSettings?: array{privateMessageInboxBlock?: array<string, mixed>, ...<string, mixed>}, ...<string, mixed>}, '#attributes'?: array{class?: list<string>, ...<string, mixed>}, ...<int|string, mixed>} $block */
         $block[$thread->id()] = $view_builder->view($thread, 'inbox');
       }
 
