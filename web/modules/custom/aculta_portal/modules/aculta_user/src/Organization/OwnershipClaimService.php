@@ -129,8 +129,8 @@ final class OwnershipClaimService {
     $claim->set('decision_notes', trim($notes));
     $claim->save();
 
-    $targetType = (string) $claim->get('target_type')->value;
-    $targetId = (int) $claim->get('target_id')->value;
+    $targetType = $this->textValue($claim->get('target_type')->value);
+    $targetId = $this->intValue($claim->get('target_id')->value);
 
     if ($approved) {
       $applicantUid = (int) $claim->get('uid')->target_id;
@@ -195,7 +195,7 @@ final class OwnershipClaimService {
       if ($remainingPending === 0) {
         $targetEntity = $this->entityTypeManager->getStorage($targetType)->load($targetId);
         if ($targetEntity instanceof ContentEntityInterface && $targetEntity->hasField('reivindicacao_status')) {
-          if ((string) $targetEntity->get('reivindicacao_status')->value === 'pendente') {
+          if ($this->textValue($targetEntity->get('reivindicacao_status')->value) === 'pendente') {
             $targetEntity->set('reivindicacao_status', 'nao_reivindicada');
             $targetEntity->save();
           }
@@ -299,6 +299,20 @@ final class OwnershipClaimService {
       $entity->set('reivindicacao_status', 'confirmada');
     }
     $entity->save();
+  }
+
+  /**
+   * Texto de um valor; vazio quando o valor não é escalar.
+   */
+  private function textValue(mixed $value): string {
+    return is_scalar($value) || $value instanceof \Stringable ? (string) $value : '';
+  }
+
+  /**
+   * Inteiro de um valor; zero quando não é numérico.
+   */
+  private function intValue(mixed $value): int {
+    return is_numeric($value) ? (int) $value : 0;
   }
 
 }

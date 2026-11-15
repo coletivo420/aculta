@@ -32,7 +32,7 @@ final class SocialAuthFieldsSubscriber implements EventSubscriberInterface {
    */
   public function onUserFields(UserFieldsEvent $event): void {
     $fields = $event->getUserFields();
-    $email = (string) ($fields['mail'] ?? '');
+    $email = $this->textValue($fields['mail'] ?? '');
     if ($email === '' || !str_contains($email, '@')) {
       return;
     }
@@ -50,6 +50,13 @@ final class SocialAuthFieldsSubscriber implements EventSubscriberInterface {
       $candidate = $base . '-' . $i++;
     }
     return $candidate;
+  }
+
+  /**
+   * Texto de um valor; vazio quando o valor não é escalar.
+   */
+  private function textValue(mixed $value): string {
+    return is_scalar($value) || $value instanceof \Stringable ? (string) $value : '';
   }
 
 }

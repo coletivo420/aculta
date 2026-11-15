@@ -27,6 +27,9 @@ final class PeopleListController extends ControllerBase {
 
   /**
    * Lists only display name, nickname, and account status. */
+  /**
+   * @return array<array-key, mixed>
+   */
   public function listing(): array {
     $userStorage = $this->entityTypeManager->getStorage('user');
     $profileStorage = $this->entityTypeManager->getStorage('profile');
@@ -41,10 +44,10 @@ final class PeopleListController extends ControllerBase {
     foreach ($userStorage->loadMultiple($userIds) as $account) {
       $profile = PerfilDoPapel::principal($profileStorage, $account);
       $displayName = $profile !== NULL && $profile->hasField('field_first_name')
-        ? trim((string) $profile->get('field_first_name')->value)
+        ? trim($this->textValue($profile->get('field_first_name')->value))
         : '';
       $nickname = $profile !== NULL && $profile->hasField('field_nickname')
-        ? trim((string) $profile->get('field_nickname')->value)
+        ? trim($this->textValue($profile->get('field_nickname')->value))
         : '';
 
       // Never fall back to the account name: some legacy accounts use an
@@ -71,6 +74,13 @@ final class PeopleListController extends ControllerBase {
       ],
       'pager' => ['#type' => 'pager'],
     ];
+  }
+
+  /**
+   * Texto de um valor; vazio quando o valor não é escalar.
+   */
+  private function textValue(mixed $value): string {
+    return is_scalar($value) || $value instanceof \Stringable ? (string) $value : '';
   }
 
 }

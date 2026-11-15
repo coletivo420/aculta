@@ -62,8 +62,8 @@ class AvatarResolver {
         // member explicitly selected them in the photo editor, so keep that
         // selection consistent in public profiles and author cards even when
         // public-photo opt-in is off. Uploaded personal photos remain private.
-        $isPoolAvatar = str_starts_with($uri, AvatarPool::DIRECTORY . '/');
-        if ($showPhoto || $isPoolAvatar) {
+        $isPoolAvatar = is_string($uri) && str_starts_with($uri, AvatarPool::DIRECTORY . '/');
+        if (is_string($uri) && ($showPhoto || $isPoolAvatar)) {
           $cacheability->addCacheableDependency($file);
           $avatar = $this->imageRenderer->build('avatar', $uri, $name, ['loading' => 'lazy']);
           if ($avatar !== NULL) {

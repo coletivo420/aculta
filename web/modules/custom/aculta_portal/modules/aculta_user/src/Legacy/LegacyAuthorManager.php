@@ -37,6 +37,9 @@ final class LegacyAuthorManager {
    * @throws \InvalidArgumentException
    *   Origem fora do formato ou nome vazio, longo demais ou com caracteres de controle.
    */
+  /**
+   * @return array<array-key, mixed>
+   */
   public function upsert(string $sourceId, string $displayName): array {
     if (!self::isValidSourceId($sourceId)) {
       throw new \InvalidArgumentException('Origem fora do formato aceito.');
@@ -50,16 +53,30 @@ final class LegacyAuthorManager {
     $ids = $storage->getQuery()->accessCheck(FALSE)->condition('origem_id', $sourceId)->range(0, 1)->execute();
     if ($ids) {
       $autoria = $storage->load(reset($ids));
-      if ($autoria instanceof ContentEntityInterface && (string) $autoria->get('nome')->value !== $nome) {
+      if ($autoria instanceof ContentEntityInterface && $this->textValue($autoria->get('nome')->value) !== $nome) {
         $autoria->set('nome', $nome);
         $autoria->save();
       }
-      return ['id' => (int) $autoria->id(), 'created' => FALSE];
+      return ['id' => $this->intValue($autoria?->id()), 'created' => FALSE];
     }
 
     $autoria = $storage->create(['origem_id' => $sourceId, 'nome' => $nome]);
     $autoria->save();
     return ['id' => (int) $autoria->id(), 'created' => TRUE];
+  }
+
+  /**
+   * Texto de um valor; vazio quando o valor não é escalar.
+   */
+  private function textValue(mixed $value): string {
+    return is_scalar($value) || $value instanceof \Stringable ? (string) $value : '';
+  }
+
+  /**
+   * Inteiro de um valor; zero quando não é numérico.
+   */
+  private function intValue(mixed $value): int {
+    return is_numeric($value) ? (int) $value : 0;
   }
 
 }

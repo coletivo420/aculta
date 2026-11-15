@@ -81,7 +81,7 @@ final class OrganizationAccessService {
 
     if ($entity->hasField('field_organizacao') && !$entity->get('field_organizacao')->isEmpty()) {
       $orgField = $entity->get('field_organizacao');
-      $orgId = (string) ($orgField->target_id ?? $orgField->value);
+      $orgId = $this->textValue($orgField->target_id ?? $orgField->value);
       return $this->canPublishForOrganization($account, $orgId);
     }
 
@@ -154,7 +154,7 @@ final class OrganizationAccessService {
           }
         }
 
-        $orgId = (string) ($orgField->target_id ?? $orgField->value);
+        $orgId = $this->textValue($orgField->target_id ?? $orgField->value);
         if ($this->canActOnBehalf($account, $orgId)) {
           return TRUE;
         }
@@ -164,7 +164,8 @@ final class OrganizationAccessService {
     // Coorganizadores do evento: concedem acesso de edição (update).
     if ($entity->hasField('field_coorganizadores')) {
       $coOrgsField = $entity->get('field_coorganizadores');
-      foreach ($coOrgsField->referencedEntities() as $coOrgEntity) {
+      $coOrgEntities = $coOrgsField->referencedEntities();
+      foreach (is_array($coOrgEntities) ? $coOrgEntities : [] as $coOrgEntity) {
         if (!$coOrgEntity instanceof ContentEntityInterface) {
           continue;
         }
@@ -182,6 +183,13 @@ final class OrganizationAccessService {
     }
 
     return FALSE;
+  }
+
+  /**
+   * Texto de um valor; vazio quando o valor não é escalar.
+   */
+  private function textValue(mixed $value): string {
+    return is_scalar($value) || $value instanceof \Stringable ? (string) $value : '';
   }
 
 }

@@ -112,7 +112,14 @@ final class AcultaFriendship extends ContentEntityBase implements AcultaFriendsh
    * Retorna o estado atual do relacionamento.
    */
   public function getStatus(): string {
-    return (string) $this->get('status')->value;
+    return $this->textValue($this->get('status')->value);
+  }
+
+  /**
+   * Texto de um valor; vazio quando o valor não é escalar.
+   */
+  private function textValue(mixed $value): string {
+    return is_scalar($value) || $value instanceof \Stringable ? (string) $value : '';
   }
 
 }

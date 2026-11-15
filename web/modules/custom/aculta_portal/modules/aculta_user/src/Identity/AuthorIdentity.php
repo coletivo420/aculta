@@ -14,6 +14,10 @@ use Drupal\Core\Cache\CacheableMetadata;
  */
 final class AuthorIdentity implements CacheableDependencyInterface {
 
+  /**
+   * @param array<array-key, mixed>|null $avatar
+   * @param array<array-key, mixed> $socialLinks
+   */
   public function __construct(
     private readonly string $variant,
     private readonly ?string $displayName,
@@ -32,6 +36,9 @@ final class AuthorIdentity implements CacheableDependencyInterface {
    *
    * @return array{variant: string, display_name: ?string, profile_url: ?string, avatar: ?array, member_since: ?string, bio: ?string, social_links: array, reactions_received: int, reactions_given: int}
    *   Identidade pública preparada para apresentação.
+   */
+  /**
+   * @return array<array-key, mixed>
    */
   public function toArray(): array {
     return [

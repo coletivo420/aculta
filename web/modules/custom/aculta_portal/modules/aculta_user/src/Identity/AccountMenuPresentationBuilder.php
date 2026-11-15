@@ -38,7 +38,7 @@ final class AccountMenuPresentationBuilder {
     }
 
     $nickname = $profile !== NULL && $profile->hasField('field_nickname')
-      ? trim((string) $profile->get('field_nickname')->value)
+      ? trim($this->textValue($profile->get('field_nickname')->value))
       : '';
     $fieldValue = static function ($entity, string $field, bool $default): bool {
       return $entity === NULL || !$entity->hasField($field) || $entity->get($field)->isEmpty()
@@ -47,7 +47,7 @@ final class AccountMenuPresentationBuilder {
     };
     $visibleItems = $this->profilePolicy->publicItems([
       'publico' => $fieldValue($profile, 'field_perfil_publico', TRUE),
-      'obrigatorio' => PublicProfilePolicy::isObrigatorioPublico($account->getRoles()),
+      'obrigatorio' => PublicProfilePolicy::isObrigatorioPublico($this->stringsOf($account->getRoles())),
       'apelido' => $nickname,
       'exibir_foto' => $fieldValue($profile, 'field_exibir_foto', FALSE),
       'exibir_bio' => $fieldValue($profile, 'field_exibir_bio', FALSE),
@@ -69,6 +69,32 @@ final class AccountMenuPresentationBuilder {
       'avatar' => $avatar,
       'cacheability' => $cacheability,
     ];
+  }
+
+  /**
+   * Texto de um valor; vazio quando o valor não é escalar.
+   */
+  private function textValue(mixed $value): string {
+    return is_scalar($value) || $value instanceof \Stringable ? (string) $value : '';
+  }
+
+  /**
+   * Só os itens textuais de uma lista (papéis são strings).
+   *
+   * @param array<array-key, mixed> $values
+   *   Lista de valores não tipados.
+   *
+   * @return list<string>
+   *   Itens que são strings, na mesma ordem.
+   */
+  private function stringsOf(array $values): array {
+    $strings = [];
+    foreach ($values as $value) {
+      if (is_string($value)) {
+        $strings[] = $value;
+      }
+    }
+    return $strings;
   }
 
 }

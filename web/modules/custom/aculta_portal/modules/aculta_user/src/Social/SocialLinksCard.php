@@ -30,6 +30,9 @@ final class SocialLinksCard {
   /**
    * Monta a caixa da conta informada.
    */
+  /**
+   * @return array<array-key, mixed>
+   */
   public function build(AccountInterface $account): array {
     $profile = PerfilDoPapel::principal($this->entityTypeManager->getStorage('profile'), $account);
     $links = $profile ? $this->networks->linksOf($profile) : [];
@@ -86,6 +89,11 @@ final class SocialLinksCard {
 
   /**
    * Elemento neutro do módulo (template do tema), com token data-portal-ui.
+   */
+  /**
+   * @param array<array-key, mixed> $attributes
+   *
+   * @return array<array-key, mixed>
    */
   private function element(string $tag, string $value, string $token, array $attributes = []): array {
     return [

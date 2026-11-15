@@ -57,7 +57,7 @@ final class ParticipationEditWindow {
 
     [$configName, $key] = $this->settingFor($entity);
     $config = $this->configFactory->get($configName);
-    $minutes = max(0, (int) ($config->get($key) ?? 10));
+    $minutes = max(0, $this->intValue($config->get($key) ?? 10));
     $publishedAt = $this->publishedAt($entity);
     $cacheContexts = ['user', 'user.permissions'];
 
@@ -156,14 +156,21 @@ final class ParticipationEditWindow {
       default => NULL,
     };
     if ($field !== NULL && $entity->hasField($field) && !$entity->get($field)->isEmpty()) {
-      return (int) $entity->get($field)->value;
+      return $this->intValue($entity->get($field)->value);
     }
 
     if ($entity->hasField('created') && !$entity->get('created')->isEmpty()) {
-      return (int) $entity->get('created')->value;
+      return $this->intValue($entity->get('created')->value);
     }
 
     return NULL;
+  }
+
+  /**
+   * Inteiro de um valor; zero quando não é numérico.
+   */
+  private function intValue(mixed $value): int {
+    return is_numeric($value) ? (int) $value : 0;
   }
 
 }
