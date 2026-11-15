@@ -21,7 +21,10 @@ final class IcsCalendarFileReader implements CalendarFileReaderInterface {
   public const MAX_EVENTS = 2000;
 
   /**
-   * {@inheritdoc} */
+   * {@inheritdoc}
+   *
+   * @return list<ParsedCalendarEvent>
+   */
   public function read(string $path): array {
     if (preg_match('/^[a-z][a-z0-9+.-]*:\/\//i', $path) === 1 || !is_file($path) || !is_readable($path)) {
       throw new \InvalidArgumentException('A importação aceita apenas um arquivo ICS local legível.');
@@ -83,7 +86,9 @@ final class IcsCalendarFileReader implements CalendarFileReaderInterface {
       [$name, $parameters, $value] = $property;
       // For duplicate properties, retain the first value; multiple ATTENDEE or
       // other properties are outside the fields consumed by this importer.
-      $event[$name] ??= ['parameters' => $parameters, 'value' => $value];
+      if (!array_key_exists($name, $event)) {
+        $event[$name] = ['parameters' => $parameters, 'value' => $value];
+      }
     }
 
     if ($event !== NULL || $componentDepth !== 0) {
@@ -97,7 +102,11 @@ final class IcsCalendarFileReader implements CalendarFileReaderInterface {
   }
 
   /**
-   * Unfolds RFC 5545 continuation lines. */
+   * Unfolds RFC 5545 continuation lines.
+   *
+   * @return list<string>
+   *   Unfolded content lines.
+   */
   private function unfoldLines(string $contents): array {
     $physicalLines = preg_split('/\r\n|\n|\r/', $contents) ?: [];
     $lines = [];
@@ -120,7 +129,11 @@ final class IcsCalendarFileReader implements CalendarFileReaderInterface {
   }
 
   /**
-   * Parses a content line into property name, parameters, and value. */
+   * Parses a content line into property name, parameters, and value.
+   *
+   * @return array{string, array<string, string>, string}|null
+   *   The property name, its parameters, and its value.
+   */
   private function parseProperty(string $line): ?array {
     $separator = strpos($line, ':');
     if ($separator === FALSE) {
@@ -129,7 +142,7 @@ final class IcsCalendarFileReader implements CalendarFileReaderInterface {
     $left = substr($line, 0, $separator);
     $value = substr($line, $separator + 1);
     $parts = explode(';', $left);
-    $name = strtoupper(array_shift($parts) ?? '');
+    $name = strtoupper(array_shift($parts));
     if ($name === '') {
       return NULL;
     }
@@ -144,7 +157,11 @@ final class IcsCalendarFileReader implements CalendarFileReaderInterface {
   }
 
   /**
-   * Creates the normalized event DTO from its supported properties. */
+   * Creates the normalized event DTO from its supported properties.
+   *
+   * @param array<string, array{parameters: array<string, string>, value: string}> $properties
+   *   Parsed event properties, keyed by property name.
+   */
   private function createEvent(array $properties): ParsedCalendarEvent {
     $uid = $properties['UID']['value'] ?? '';
     if ($uid === '') {
@@ -182,7 +199,14 @@ final class IcsCalendarFileReader implements CalendarFileReaderInterface {
   }
 
   /**
-   * Parses DTSTART/DTEND and returns whether it is an all-day date. */
+   * Parses DTSTART/DTEND and returns whether it is an all-day date.
+   *
+   * @param array{parameters: array<string, string>, value: string} $property
+   *   Parsed DTSTART or DTEND property.
+   *
+   * @return array{\DateTimeImmutable, bool, string|null}
+   *   The date, whether it is an all-day date, and its explicit timezone.
+   */
   private function parseDate(array $property): array {
     $value = $property['value'];
     $timezoneId = $property['parameters']['TZID'] ?? NULL;
