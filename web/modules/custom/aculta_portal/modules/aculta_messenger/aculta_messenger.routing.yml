@@ -390,3 +390,19 @@ aculta_messenger.donation_notice_open:
     parameters:
       message:
         type: entity:message
+
+aculta_messenger.pm_settings_page:
+  path: '/admin/structure/aculta-messenger/private-message'
+  defaults:
+    _controller: '\Drupal\aculta_messenger\Controller\PrivateMessageController::pmSettingsPage'
+    _title: 'Mensagens privadas: campos e exibição'
+  requirements:
+    _permission: 'administer aculta messenger'
+
+aculta_messenger.pm_thread_settings_page:
+  path: '/admin/structure/aculta-messenger/private-message-thread'
+  defaults:
+    _controller: '\Drupal\aculta_messenger\Controller\PrivateMessageController::pmThreadSettingsPage'
+    _title: 'Conversas privadas: campos e exibição'
+  requirements:
+    _permission: 'administer aculta messenger'

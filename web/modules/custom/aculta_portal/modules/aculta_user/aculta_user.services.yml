@@ -21,7 +21,7 @@ services:
       - '@current_user'
       - '@database'
       - '@aculta_user.friendship_manager'
-      - '@?private_message.ban_manager'
+      - '@?aculta_messenger.pm.ban_manager'
       - '@?aculta_user.author_identity_resolver'
   aculta_user.friendship_manager:
     class: Drupal\aculta_user\Social\FriendshipManager

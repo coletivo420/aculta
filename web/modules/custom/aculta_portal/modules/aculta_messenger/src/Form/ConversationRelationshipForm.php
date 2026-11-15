@@ -15,8 +15,8 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\Template\Attribute;
 use Drupal\Core\Url;
-use Drupal\private_message\Entity\PrivateMessageThreadInterface;
-use Drupal\private_message\Service\PrivateMessageBanManagerInterface;
+use Drupal\aculta_messenger\Entity\PrivateMessageThreadInterface;
+use Drupal\aculta_messenger\Service\PrivateMessageBanManagerInterface;
 use Drupal\user\UserInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -50,7 +50,7 @@ final class ConversationRelationshipForm extends FormBase {
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('aculta_user.friendship_manager'),
-      $container->get('private_message.ban_manager'),
+      $container->get('aculta_messenger.pm.ban_manager'),
       $container->get('current_user'),
       $container->get('entity_type.manager'),
       $container->get('cache_tags.invalidator'),

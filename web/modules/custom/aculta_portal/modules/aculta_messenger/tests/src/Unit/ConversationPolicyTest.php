@@ -6,7 +6,7 @@ namespace Drupal\Tests\aculta_messenger\Unit;
 
 use Drupal\aculta_messenger\Service\ConversationPolicy;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\private_message\Entity\PrivateMessageThreadInterface;
+use Drupal\aculta_messenger\Entity\PrivateMessageThreadInterface;
 use Drupal\Tests\UnitTestCase;
 use Drupal\user\UserInterface;
 use PHPUnit\Framework\Attributes\CoversClass;

@@ -9,7 +9,6 @@ dependencies:
   - aculta_portal:aculta_user
   - aculta_portal:aculta_mailer
   - aculta_portal:aculta_forum
-  - private_message:private_message
   - message:message
   - message_notify:message_notify
   - message_subscribe:message_subscribe

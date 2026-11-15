@@ -13,9 +13,9 @@ use Drupal\Core\Queue\Attribute\QueueWorker;
 use Drupal\Core\Queue\QueueWorkerBase;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\message\MessageInterface;
-use Drupal\private_message\Entity\PrivateMessageInterface;
-use Drupal\private_message\Entity\PrivateMessageThreadInterface;
-use Drupal\private_message\Service\PrivateMessageServiceInterface;
+use Drupal\aculta_messenger\Entity\PrivateMessageInterface;
+use Drupal\aculta_messenger\Entity\PrivateMessageThreadInterface;
+use Drupal\aculta_messenger\Service\PrivateMessageServiceInterface;
 use Drupal\message_notify\MessageNotifyInterface;
 use Drupal\user\UserInterface;
 use Drupal\aculta_mailer\Api\AcultaMailerInterface;
@@ -77,7 +77,7 @@ final class PrivateMessageNotificationWorker extends QueueWorkerBase implements 
       $plugin_id,
       $plugin_definition,
       $container->get('entity_type.manager'),
-      $container->get('private_message.service'),
+      $container->get('aculta_messenger.pm.service'),
       $container->get('aculta_messenger.conversation_write_lock'),
       $container->get('message_notify.sender'),
       $container->get('aculta_mailer.mailer'),

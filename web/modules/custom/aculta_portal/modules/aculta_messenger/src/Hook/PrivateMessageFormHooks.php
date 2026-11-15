@@ -7,7 +7,7 @@ namespace Drupal\aculta_messenger\Hook;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
-use Drupal\private_message\Entity\PrivateMessageThreadInterface;
+use Drupal\aculta_messenger\Entity\PrivateMessageThreadInterface;
 
 /**
  * Integrates safe ACULTA policies with the native Private Message form.

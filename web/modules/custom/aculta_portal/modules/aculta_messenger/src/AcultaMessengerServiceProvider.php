@@ -66,8 +66,8 @@ final class AcultaMessengerServiceProvider extends ServiceProviderBase {
   /**
    * {@inheritdoc} */
   public function register(ContainerBuilder $container): void {
-    if ($container->hasDefinition('private_message.mapper')) {
-      $container->getDefinition('private_message.mapper')->setClass(MessengerPrivateMessageMapper::class);
+    if ($container->hasDefinition('aculta_messenger.pm.mapper')) {
+      $container->getDefinition('aculta_messenger.pm.mapper')->setClass(MessengerPrivateMessageMapper::class);
     }
   }
 

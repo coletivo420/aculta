@@ -19,9 +19,9 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\user\UserDataInterface;
 use Drupal\user\UserInterface;
-use Drupal\private_message\Entity\PrivateMessageThreadInterface;
-use Drupal\private_message\Mapper\PrivateMessageMapperInterface;
-use Drupal\private_message\Service\PrivateMessageBanManagerInterface;
+use Drupal\aculta_messenger\Entity\PrivateMessageThreadInterface;
+use Drupal\aculta_messenger\Mapper\PrivateMessageMapperInterface;
+use Drupal\aculta_messenger\Service\PrivateMessageBanManagerInterface;
 use Drupal\profile\Entity\ProfileInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -63,8 +63,8 @@ final class NewConversationController extends ControllerBase {
       $container->get('entity_type.manager'),
       $container->get('current_user'),
       $container->get('user.data'),
-      $container->get('private_message.ban_manager'),
-      $container->get('private_message.mapper'),
+      $container->get('aculta_messenger.pm.ban_manager'),
+      $container->get('aculta_messenger.pm.mapper'),
       $container->get('aculta_user.friendship_manager'),
       $container->get('form_builder'),
       $container->get('renderer'),

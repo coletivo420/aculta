@@ -7,8 +7,8 @@ namespace Drupal\aculta_messenger\Hook;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Queue\QueueFactory;
-use Drupal\private_message\Entity\PrivateMessageInterface;
-use Drupal\private_message\Entity\PrivateMessageThreadInterface;
+use Drupal\aculta_messenger\Entity\PrivateMessageInterface;
+use Drupal\aculta_messenger\Entity\PrivateMessageThreadInterface;
 
 /**
  * Queues private-message notices after the upstream event is raised. */

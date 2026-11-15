@@ -58,3 +58,25 @@ vendor/bin/drush scr scripts/private_message_preflight.php --uri=https://dominio
 ```
 
 Este script consulta os providers atuais/instalados de três tipos de entidade, field storage providers, contagens de tabelas, UUIDs distintos quando presentes, nomes de configurações dependentes do contrib e a presença do token de corpo no modelo legado. **Não inclui corpos ou dados pessoais no relatório e não executa migração.** Rodar somente após confirmar que Drush aponta para o banco clonado correto, e comparar com relatório pós-corte. Dados operacionais e backups ficam fora do Git e do docroot.
+
+## Execução do corte (15/11/2026)
+
+Janela única autorizada. Aplicada em `aculta_runtime` e ensaiada antes em `aculta_runtime_copia` (clone `clone-pm`, `--uri=http://clone-pm`).
+
+**Feito e verificado:**
+
+- Backups restauráveis antes de qualquer escrita: `aculta_runtime_pre_corte.sql.gz` (628 tabelas) e `aculta_runtime_copia_pre_clone.sql.gz` (628 tabelas); restauração da cópia validada por contagens iguais às do Runtime.
+- Inventário e dry-run somente leitura. Antes: `private_message` 15, `private_message_thread` 5, `private_message_ban` 0, `pm_thread_history` 13, `private_message_thread__members` 13, `message` 76 (sendo 1 aviso com `field_aculta_messenger_source_pm`, alvo 516, e 58 com `source_fr`).
+- Purge por Entity API (filtro: template `aculta_msg_private_notification` com alvo em `private_message`; `pm_thread_history` truncada; preferências `users_data` do módulo `private_message`). Depois: PM 0, threads 0, bans 0, histórico 0, `message` 75, `source_fr` 58 (preservados).
+- Desinstalação do contrib pelo caminho suportado do Core (`pm:uninstall private_message`), sem cascata (única dependência direta era `aculta_messenger`, removida).
+- Motor sob provider `aculta_messenger`: `private_message`, `private_message_thread`, `private_message_ban` com provider `aculta_messenger`; tabela `aculta_pm_thread_history` criada vazia; configs de display/settings criadas; `hook_update_10019` instala tudo (idempotente; recusa se `private_message` estiver habilitado).
+- `composer.json` e `composer.lock` sem `drupal/private_message` (única mudança no lock); `composer validate` válido.
+- Testes unitários: `aculta_messenger` 403 testes OK (1 deprecação herdada do upstream em `PrivateMessageMapperInterface`); `aculta_user` Social 4 testes OK.
+
+**Pendente (não executado nesta janela):**
+
+- Gates completos: PHPStan nível 10 com baseline, PHPCS, Kernel/MariaDB, Functional, Playwright, Semgrep.
+- Testes de navegador e smoke HTTP nos dez site keys (não feitos: o Runtime não foi acessado via HTTP nesta janela).
+- Hooks de formulário de usuário e de perfil do PM não foram portados (UI paralela; plano P1.4).
+- Skills e README/ARCHITECTURE/CHANGELOG: apenas esta seção foi atualizada.
+- Remoção de `captcha.captcha_point.private_message_add_form` (mantida; config do captcha para o formulário portado).

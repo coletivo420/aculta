@@ -6,8 +6,8 @@ namespace Drupal\Tests\aculta_messenger\Kernel;
 
 use Drupal\Component\Serialization\Yaml;
 use Drupal\KernelTests\KernelTestBase;
-use Drupal\private_message\Entity\PrivateMessage;
-use Drupal\private_message\Entity\PrivateMessageThread;
+use Drupal\aculta_messenger\Entity\PrivateMessage;
+use Drupal\aculta_messenger\Entity\PrivateMessageThread;
 use Drupal\user\Entity\Role;
 use Drupal\user\Entity\User;
 use Drupal\Core\Routing\RouteMatch;
@@ -51,7 +51,7 @@ final class PrivateMessageRouteAccessKernelTest extends KernelTestBase {
     $this->installEntitySchema('user');
     $this->installEntitySchema('private_message_thread');
     $this->installEntitySchema('private_message');
-    $this->installSchema('private_message', ['pm_thread_history']);
+    $this->installSchema('private_message', ['aculta_pm_thread_history']);
     $this->installConfig(['system', 'user', 'filter']);
     $this->grantMessagingPermissions();
   }

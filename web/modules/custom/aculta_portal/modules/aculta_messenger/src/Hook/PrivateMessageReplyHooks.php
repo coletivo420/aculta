@@ -16,7 +16,7 @@ use Drupal\Core\Url;
 use Drupal\aculta_messenger\Form\ConversationRelationshipForm;
 use Drupal\aculta_messenger\Service\ConversationMessagingState;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
-use Drupal\private_message\Entity\PrivateMessageThreadInterface;
+use Drupal\aculta_messenger\Entity\PrivateMessageThreadInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /**

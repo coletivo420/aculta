@@ -17,8 +17,8 @@ use Drupal\KernelTests\KernelTestBase;
 use Drupal\message\Entity\Message;
 use Drupal\message\Entity\MessageTemplate;
 use Drupal\message\MessageInterface;
-use Drupal\private_message\Entity\PrivateMessage;
-use Drupal\private_message\Entity\PrivateMessageThread;
+use Drupal\aculta_messenger\Entity\PrivateMessage;
+use Drupal\aculta_messenger\Entity\PrivateMessageThread;
 use Drupal\user\Entity\User;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
@@ -66,7 +66,7 @@ final class PrivateMessageRetentionKernelTest extends KernelTestBase {
     $this->installEntitySchema('private_message_ban');
     $this->installEntitySchema('private_message_thread');
     $this->installEntitySchema('private_message');
-    $this->installSchema('private_message', ['pm_thread_history']);
+    $this->installSchema('private_message', ['aculta_pm_thread_history']);
     $this->installConfig([
       'system',
       'user',
@@ -111,7 +111,7 @@ final class PrivateMessageRetentionKernelTest extends KernelTestBase {
     for ($index = 0; $index < 101; $index++) {
       $this->createThread([$first, $second], (int) $second->id(), $timestamp, 'Unread thread ' . $index);
     }
-    $this->container->get('database')->update('pm_thread_history')
+    $this->container->get('database')->update('aculta_pm_thread_history')
       ->fields(['access_timestamp' => $timestamp - 1])
       ->condition('uid', $firstId)
       ->execute();

@@ -15,7 +15,7 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\node\NodeInterface;
 use Drupal\Core\Url;
-use Drupal\private_message\Entity\PrivateMessageThreadInterface;
+use Drupal\aculta_messenger\Entity\PrivateMessageThreadInterface;
 use Drupal\aculta_messenger\Service\MessengerCounts;
 use Drupal\aculta_messenger\Service\UnreadThreadCounter;
 use Drupal\aculta_messenger\Support\StorageDateTime;

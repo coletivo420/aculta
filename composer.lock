@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "74d57f30450c7f16a11ab02c82648f75",
+    "content-hash": "9618fcbec728aacfa07857274028f2af",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -6191,89 +6191,6 @@
             "homepage": "https://drupal.org/project/physical",
             "support": {
                 "source": "https://git.drupalcode.org/project/physical"
-            }
-        },
-        {
-            "name": "drupal/private_message",
-            "version": "4.0.0-alpha5",
-            "source": {
-                "type": "git",
-                "url": "https://git.drupalcode.org/project/private_message.git",
-                "reference": "4.0.0-alpha5"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/private_message-4.0.0-alpha5.zip",
-                "reference": "4.0.0-alpha5",
-                "shasum": "fda3de033d63ad16402489d20e049e24a06fa4cc"
-            },
-            "require": {
-                "drupal/core": "^10.3 || ^11",
-                "drupal/message": "^1.0",
-                "drupal/message_notify": "^1.0",
-                "php": ">=8.1"
-            },
-            "require-dev": {
-                "drupal/message_notify": "*",
-                "drupal/rules": "^4.0",
-                "drupal/symfony_mailer_lite": "^2.0",
-                "drush/drush": "^12.5 || ^13.3"
-            },
-            "type": "drupal-module",
-            "extra": {
-                "drupal": {
-                    "version": "4.0.0-alpha5",
-                    "datestamp": "1794261816",
-                    "security-coverage": {
-                        "status": "not-covered",
-                        "message": "Alpha releases are not covered by Drupal security advisories."
-                    }
-                }
-            },
-            "notification-url": "https://packages.drupal.org/8/downloads",
-            "license": [
-                "GPL-2.0-or-later"
-            ],
-            "authors": [
-                {
-                    "name": "Jay Friendly (Jaypan)",
-                    "homepage": "https://www.jaypan.com",
-                    "role": "Maintainer"
-                },
-                {
-                    "name": "artem_sylchuk",
-                    "homepage": "https://www.drupal.org/user/2511902"
-                },
-                {
-                    "name": "bohart",
-                    "homepage": "https://www.drupal.org/user/289861"
-                },
-                {
-                    "name": "claudiu.cristea",
-                    "homepage": "https://www.drupal.org/user/56348"
-                },
-                {
-                    "name": "edutrul",
-                    "homepage": "https://www.drupal.org/user/1621444"
-                },
-                {
-                    "name": "heddn",
-                    "homepage": "https://www.drupal.org/user/1463982"
-                },
-                {
-                    "name": "jaypan",
-                    "homepage": "https://www.drupal.org/user/324696"
-                },
-                {
-                    "name": "phjou",
-                    "homepage": "https://www.drupal.org/user/3344054"
-                }
-            ],
-            "description": "A private message system for users to send messages to each other.",
-            "homepage": "https://drupal.org/project/private_message",
-            "support": {
-                "source": "https://git.drupalcode.org/project/private_message",
-                "issues": "https://drupal.org/project/issues/private_message"
             }
         },
         {
@@ -22725,7 +22642,6 @@
         "drupal/media_duplicates": 15,
         "drupal/pathauto": 20,
         "drupal/pdfpreview": 20,
-        "drupal/private_message": 15,
         "drupal/simple_oauth": 20,
         "drupal/simple_sitemap": 20,
         "drupal/social_api": 10,

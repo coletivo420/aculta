@@ -41,7 +41,7 @@ permitidos dez envios que passaram pelas validações anteriores em uma janela d
 uma hora; entradas já inválidas não consomem limite. Mensagens acima do limite
 são rejeitadas antes do submit/save nativo. Esse valor é um limite inicial do
 Messenger e deve ser reavaliado após métricas de uso controladas.
-Um callback separado consulta `private_message.ban_manager` e rejeita também
+Um callback separado consulta `aculta_messenger.pm.ban_manager` e rejeita também
 destinatários que bloquearam o remetente, inclusive quando o modo nativo estiver
 configurado como passivo. A resposta é genérica para reduzir enumeração.
 Ao responder uma thread existente, o Messenger adquire o lock da conversa,
@@ -133,7 +133,7 @@ Message Subscribe revalida visibilidade no dispatch.
 ## Bloqueio e denúncia
 
 Private Message 3.0.7 inclui a entidade `private_message_ban` e o serviço
-`private_message.ban_manager`, com operações `isBanned()`,
+`aculta_messenger.pm.ban_manager`, com operações `isBanned()`,
 `isCurrentUserBannedByUser()`, `banUser()` e `unbanUser()`. Reutilizar esse
 mecanismo e suas rotas/formulários; não criar storage de bloqueio próprio. A
 política ACULTA de denúncia ainda não foi aprovada; não criar fluxo ou registro

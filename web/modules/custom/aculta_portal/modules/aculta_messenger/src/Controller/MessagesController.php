@@ -34,10 +34,10 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
 use Drupal\user\EntityOwnerInterface;
-use Drupal\private_message\Entity\PrivateMessageInterface;
-use Drupal\private_message\Entity\PrivateMessageThread;
-use Drupal\private_message\Entity\PrivateMessageThreadInterface;
-use Drupal\private_message\Service\PrivateMessageServiceInterface;
+use Drupal\aculta_messenger\Entity\PrivateMessageInterface;
+use Drupal\aculta_messenger\Entity\PrivateMessageThread;
+use Drupal\aculta_messenger\Entity\PrivateMessageThreadInterface;
+use Drupal\aculta_messenger\Service\PrivateMessageServiceInterface;
 use Drupal\aculta_messenger\Form\PrivateMessageFormValidator;
 use Drupal\Core\Access\CsrfTokenGenerator;
 use Drupal\Component\Utility\Crypt;
@@ -101,7 +101,7 @@ final class MessagesController extends ControllerBase {
       $container->get('aculta_portal.domain_site'),
       $container->get('entity_type.manager'),
       $container->get('current_user'),
-      $container->get('private_message.service'),
+      $container->get('aculta_messenger.pm.service'),
       $container->get('aculta_messenger.unread_thread_counter'),
       $container->get('aculta_user.friendship_manager'),
       $container->get('site_alert.get_alerts'),

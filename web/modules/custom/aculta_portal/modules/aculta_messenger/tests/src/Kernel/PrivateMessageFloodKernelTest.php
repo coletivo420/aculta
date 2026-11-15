@@ -8,7 +8,7 @@ use Drupal\aculta_messenger\Form\PrivateMessageFormValidator;
 use Drupal\aculta_messenger\Service\ConversationPolicy;
 use Drupal\aculta_messenger\Service\ConversationWriteLock;
 use Drupal\KernelTests\KernelTestBase;
-use Drupal\private_message\Service\PrivateMessageBanManagerInterface;
+use Drupal\aculta_messenger\Service\PrivateMessageBanManagerInterface;
 use Drupal\aculta_user\Social\FriendshipManagerInterface;
 use Drupal\user\Entity\User;
 use Drupal\Core\Form\FormState;

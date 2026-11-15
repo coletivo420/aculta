@@ -10,8 +10,8 @@ use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Query\QueryInterface;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\private_message\Entity\PrivateMessageInterface;
-use Drupal\private_message\Entity\PrivateMessageThreadInterface;
+use Drupal\aculta_messenger\Entity\PrivateMessageInterface;
+use Drupal\aculta_messenger\Entity\PrivateMessageThreadInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Group;
 
@@ -222,7 +222,7 @@ final class UnreadThreadCounterTest extends UnitTestCase {
    *   Last updated timestamp.
    * @param int $lastAccess
    *   Current user's last access timestamp.
-   * @param \Drupal\private_message\Entity\PrivateMessageInterface[] $messages
+   * @param \Drupal\aculta_messenger\Entity\PrivateMessageInterface[] $messages
    *   Messages attached to the thread.
    * @param \PHPUnit\Framework\MockObject\Rule\InvocationOrder|null $loadMessages
    *   Expected call count for loading messages.
@@ -231,7 +231,7 @@ final class UnreadThreadCounterTest extends UnitTestCase {
    * @param \PHPUnit\Framework\MockObject\Rule\InvocationOrder|null $checkAccess
    *   Expected access-check invocation count.
    *
-   * @return \Drupal\private_message\Entity\PrivateMessageThreadInterface
+   * @return \Drupal\aculta_messenger\Entity\PrivateMessageThreadInterface
    *   Thread mock.
    */
   private function thread(

@@ -16,7 +16,83 @@ use Drupal\Core\Config\FileStorage;
 function aculta_messenger_schema(): array {
   return [
     ForumNoticeEventSchema::TABLE => ForumNoticeEventSchema::definition(),
+    'aculta_pm_thread_history' => [
+      'description' => 'Histórico de leitura e exclusão por participante de conversa privada (motor aculta_messenger).',
+      'fields' => [
+        'uid' => ['type' => 'int', 'not null' => TRUE, 'default' => 0],
+        'thread_id' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+        'access_timestamp' => ['type' => 'int', 'not null' => TRUE, 'default' => 0],
+        'delete_timestamp' => ['type' => 'int', 'not null' => TRUE, 'default' => 0],
+      ],
+      'primary key' => ['uid', 'thread_id'],
+      'indexes' => ['thread_id' => ['thread_id']],
+    ],
   ];
+}
+
+/**
+ * Implements hook_install().
+ */
+function aculta_messenger_install(bool $is_syncing): void {
+  aculta_messenger_pm_engine_install();
+}
+
+/**
+ * Instala o motor de conversas privadas sob o provider aculta_messenger.
+ *
+ * Instalação limpa: nenhuma linha legada é reaproveitada. Só pode rodar depois
+ * que o módulo contrib private_message foi desinstalado.
+ *
+ * @return string[]
+ *   Relatório das ações executadas.
+ */
+function aculta_messenger_pm_engine_install(): array {
+  if (\Drupal::moduleHandler()->moduleExists('private_message')) {
+    throw new \RuntimeException('private_message ainda está habilitado; desinstale o contrib antes de instalar o motor aculta_messenger.');
+  }
+  $report = [];
+  $manager = \Drupal::entityDefinitionUpdateManager();
+  $types = \Drupal::entityTypeManager();
+  foreach (['private_message', 'private_message_thread', 'private_message_ban'] as $entity_type_id) {
+    if ($manager->getEntityType($entity_type_id) === NULL) {
+      $manager->installEntityType($types->getDefinition($entity_type_id));
+      $report[] = "entidade $entity_type_id instalada";
+    }
+  }
+  $database = \Drupal::database();
+  if (!$database->schema()->tableExists('aculta_pm_thread_history')) {
+    $database->schema()->createTable('aculta_pm_thread_history', aculta_messenger_schema()['aculta_pm_thread_history']);
+    $report[] = 'tabela aculta_pm_thread_history criada vazia';
+  }
+  $config_factory = \Drupal::configFactory();
+  $pm_configs = [
+    'core.entity_form_display.private_message.private_message.default',
+    'core.entity_form_display.private_message_thread.private_message_thread.default',
+    'core.entity_view_display.private_message.private_message.default',
+    'core.entity_view_display.private_message.private_message.inbox',
+    'core.entity_view_display.private_message_thread.private_message_thread.default',
+    'core.entity_view_display.private_message_thread.private_message_thread.inbox',
+    'core.entity_view_mode.private_message.inbox',
+    'core.entity_view_mode.private_message_thread.inbox',
+    'private_message.settings',
+  ];
+  foreach ($pm_configs as $name) {
+    if (!$config_factory->get($name)->isNew()) {
+      continue;
+    }
+    $data = \Symfony\Component\Yaml\Yaml::parseFile(__DIR__ . '/config/install/' . $name . '.yml');
+    $config_factory->getEditable($name)->setData($data)->save();
+    $report[] = "config $name criada";
+  }
+  return $report;
+}
+
+/**
+ * Corte do Private Message: instala o motor limpo sob aculta_messenger.
+ */
+function aculta_messenger_update_10019(): string {
+  $report = aculta_messenger_pm_engine_install();
+  return $report ? implode('; ', $report) : 'Motor de conversas já instalado; nada alterado.';
 }
 
 /**

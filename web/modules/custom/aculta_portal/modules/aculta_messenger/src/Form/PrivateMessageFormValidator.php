@@ -15,8 +15,8 @@ use Drupal\user\UserInterface;
 use Drupal\aculta_messenger\Service\ConversationPolicy;
 use Drupal\aculta_messenger\Service\ConversationWriteLock;
 use Drupal\aculta_user\Social\FriendshipManagerInterface;
-use Drupal\private_message\Entity\PrivateMessageThreadInterface;
-use Drupal\private_message\Service\PrivateMessageBanManagerInterface;
+use Drupal\aculta_messenger\Entity\PrivateMessageThreadInterface;
+use Drupal\aculta_messenger\Service\PrivateMessageBanManagerInterface;
 
 /**
  * Applies block and send-frequency rules to the native Private Message form. */
@@ -255,7 +255,7 @@ final class PrivateMessageFormValidator {
    * Called by the custom first-message workflow after it resolves an existing
    * thread; native replies acquire the same lock in validateRateLimit().
    *
-   * @return \Drupal\private_message\Entity\PrivateMessageThreadInterface|null
+   * @return \Drupal\aculta_messenger\Entity\PrivateMessageThreadInterface|null
    *   Fresh thread when locked, or NULL when another operation owns it or it
    *   was deleted before the lock could be acquired.
    */

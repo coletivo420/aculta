@@ -8,7 +8,7 @@ use Drupal\aculta_user\Avatar\AvatarResolver;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\private_message\Entity\PrivateMessageInterface;
+use Drupal\aculta_messenger\Entity\PrivateMessageInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /**

@@ -3,7 +3,7 @@ status: true
 dependencies:
   module:
     - message
-    - private_message
+    - aculta_messenger
   enforced:
     module:
       - aculta_messenger

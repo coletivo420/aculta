@@ -14,11 +14,11 @@ use Drupal\Core\Url;
 use Drupal\aculta_messenger\Controller\NewConversationController;
 use Drupal\aculta_messenger\Service\ConversationPolicy;
 use Drupal\aculta_user\Identity\PublicMemberIdentityInterface;
-use Drupal\private_message\Entity\PrivateMessage;
-use Drupal\private_message\Entity\PrivateMessageThread;
-use Drupal\private_message\Entity\PrivateMessageThreadInterface;
-use Drupal\private_message\Mapper\PrivateMessageMapperInterface;
-use Drupal\private_message\Service\PrivateMessageServiceInterface;
+use Drupal\aculta_messenger\Entity\PrivateMessage;
+use Drupal\aculta_messenger\Entity\PrivateMessageThread;
+use Drupal\aculta_messenger\Entity\PrivateMessageThreadInterface;
+use Drupal\aculta_messenger\Mapper\PrivateMessageMapperInterface;
+use Drupal\aculta_messenger\Service\PrivateMessageServiceInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -46,8 +46,8 @@ final class NewConversationForm extends FormBase {
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('current_user'),
-      $container->get('private_message.service'),
-      $container->get('private_message.mapper'),
+      $container->get('aculta_messenger.pm.service'),
+      $container->get('aculta_messenger.pm.mapper'),
       $container->get('aculta_messenger.private_message_form_validator'),
       $container->get('entity_type.manager'),
       $container->get(PublicMemberIdentityInterface::class),
@@ -333,7 +333,7 @@ final class NewConversationForm extends FormBase {
    * @param \Drupal\Core\Form\FormStateInterface $formState
    *   Current form input and validation state.
    *
-   * @return \Drupal\private_message\Entity\PrivateMessageThreadInterface|null
+   * @return \Drupal\aculta_messenger\Entity\PrivateMessageThreadInterface|null
    *   An existing or newly created thread, or NULL when creation is refused.
    */
   private function resolveThreadForSubmission(array $members, FormStateInterface $formState): ?PrivateMessageThreadInterface {
