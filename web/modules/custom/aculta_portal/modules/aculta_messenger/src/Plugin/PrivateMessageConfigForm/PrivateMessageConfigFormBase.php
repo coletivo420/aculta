@@ -51,12 +51,13 @@ abstract class PrivateMessageConfigFormBase extends PluginBase implements Privat
    *   A definição do plugin.
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
-    return new static(
+    $instance = (new \ReflectionClass(static::class))->newInstanceArgs([
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('config.factory')
-    );
+      $container->get('config.factory'),
+    ]);
+    return $instance;
   }
 
   /**
