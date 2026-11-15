@@ -129,6 +129,9 @@ final class PrivateMessageRetentionKernelTest extends KernelTestBase {
     $this->installEntitySchema('private_message');
     $this->installSchema('aculta_user', ['aculta_user_nickname']);
     $this->installEntitySchema('flagging');
+    $this->installEntitySchema('comment');
+    $this->installConfig('comment');
+    $this->installSchema('comment', ['comment_entity_statistics']);
     $this->installSchema('file', ['file_usage']);
     $this->installSchema('entity_usage', ['entity_usage']);
     $this->installConfig('aculta_user');
