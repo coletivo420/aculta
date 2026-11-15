@@ -320,6 +320,9 @@ final class ParticipationRulesTest extends TestCase {
 
   /**
    * Builds ParticipationRules with a scripted configuration factory.
+   *
+   * @param array<string, mixed> $settings
+   * @param list<string> $cacheTags
    */
   private function rules(
     array $settings,
@@ -355,7 +358,7 @@ final class ParticipationRulesTest extends TestCase {
   /**
    * Builds an entity type manager returning comment queries in order.
    *
-   * @param \Drupal\Core\Entity\Query\QueryInterface[] $commentQueries
+   * @param list<\Drupal\Core\Entity\Query\QueryInterface> $commentQueries
    *   Queries returned by successive getStorage('comment')->getQuery() calls.
    * @param bool $hasForumPost
    *   Whether the aculta_forum_post entity type is defined.
@@ -393,6 +396,10 @@ final class ParticipationRulesTest extends TestCase {
 
   /**
    * Builds a query double that records every call in $log.
+   */
+  /**
+   * @param array<int, list<mixed>>|null $log
+   * @param-out array<int, list<mixed>> $log
    */
   private function queryMock(int|string $result, ?array &$log = NULL): QueryInterface {
     $log = [];
@@ -437,6 +444,9 @@ final class ParticipationRulesTest extends TestCase {
   /**
    * Builds a field item list double with a fixed emptiness.
    */
+  /**
+   * @return FieldItemListInterface<\Drupal\Core\Field\FieldItemInterface>
+   */
   private function fieldList(bool $empty): FieldItemListInterface {
     $list = $this->createMock(FieldItemListInterface::class);
     $list->method('isEmpty')->willReturn($empty);
@@ -445,6 +455,9 @@ final class ParticipationRulesTest extends TestCase {
 
   /**
    * Builds an account double.
+   */
+  /**
+   * @param list<string> $roles
    */
   private function account(int $uid, array $roles = ['authenticated']): AccountInterface {
     $account = $this->createMock(AccountInterface::class);
@@ -456,13 +469,15 @@ final class ParticipationRulesTest extends TestCase {
   /**
    * Asserts a condition call with field and value (and optional operator).
    */
+  /**
+   * @param array<int, list<mixed>> $log
+   */
   private static function assertQueryLogContainsCondition(array $log, string $field, mixed $value, ?string $operator = NULL): void {
     foreach ($log as $call) {
       if ($call[0] !== 'condition' || $call[1] !== $field || $call[2] !== $value) {
         continue;
       }
       if ($operator === NULL || ($call[3] ?? NULL) === $operator) {
-        self::assertTrue(TRUE);
         return;
       }
     }
@@ -472,22 +487,26 @@ final class ParticipationRulesTest extends TestCase {
   /**
    * Asserts no condition call was recorded for a field.
    */
+  /**
+   * @param array<int, list<mixed>> $log
+   */
   private static function assertQueryLogOmitsCondition(array $log, string $field): void {
     foreach ($log as $call) {
       if ($call[0] === 'condition' && $call[1] === $field) {
         self::fail(sprintf('Unexpected condition on %s.', $field));
       }
     }
-    self::assertTrue(TRUE);
   }
 
   /**
    * Asserts a recorded call with exact arguments after the call name.
    */
+  /**
+   * @param array<int, list<mixed>> $log
+   */
   private static function assertQueryLogContainsCall(array $log, string $name, mixed ...$arguments): void {
     foreach ($log as $call) {
       if ($call[0] === $name && array_slice($call, 1) === $arguments) {
-        self::assertTrue(TRUE);
         return;
       }
     }
