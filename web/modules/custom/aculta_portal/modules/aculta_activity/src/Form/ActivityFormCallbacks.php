@@ -23,14 +23,20 @@ final class ActivityFormCallbacks {
 
   /**
    * Validates the conditional Activity fields.
+   *
+   * @param array<string, mixed> $form
+   *   Formulário em validação.
+   * @param \Drupal\Core\Form\FormStateInterface $formState
+   *   Estado do formulário.
    */
   public function validateActivity(array &$form, FormStateInterface $formState): void {
     $formObject = $formState->getFormObject();
-    $node = ($formObject && method_exists($formObject, 'getEntity')) ? $formObject->getEntity() : NULL;
+    $node = method_exists($formObject, 'getEntity') ? $formObject->getEntity() : NULL;
     if (!$node instanceof NodeInterface || $node->bundle() !== 'activity') {
       return;
     }
-    $mode = (string) $this->fieldValue($node, $formState, 'field_modality');
+    $modalidade = $this->fieldValue($node, $formState, 'field_modality');
+    $mode = is_string($modalidade) ? $modalidade : '';
 
     if (in_array($mode, ['presencial', 'hibrido'], TRUE)) {
       $hasLocation = ($node->hasField('field_event_location') && $this->fieldHasValue($node, $formState, 'field_event_location'))
@@ -46,7 +52,8 @@ final class ActivityFormCallbacks {
     }
 
     if ($node->hasField('field_event_location') && $this->fieldHasValue($node, $formState, 'field_event_location')) {
-      $locationId = (int) $this->fieldValue($node, $formState, 'field_event_location', 'target_id');
+      $valorLocal = $this->fieldValue($node, $formState, 'field_event_location', 'target_id');
+      $locationId = is_numeric($valorLocal) ? (int) $valorLocal : 0;
       if ($this->entityTypeManager->hasDefinition('aculta_event_location')) {
         $location = $this->entityTypeManager->getStorage('aculta_event_location')->load($locationId);
         if ($location === NULL || !$location->access('view', $this->currentUser)) {

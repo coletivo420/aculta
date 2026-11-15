@@ -6,7 +6,6 @@ namespace Drupal\aculta_editor\Service;
 
 use Drupal\aculta_editor\FluentEmojiCatalog;
 use Drupal\Core\Theme\Icon\IconDefinition;
-use Drupal\Core\Theme\Icon\Plugin\IconPackManagerInterface;
 
 /**
  * Adaptador centralizado entre UI Icons e FluentEmojiCatalog.
@@ -15,7 +14,6 @@ final class FluentEmojiIconAdapter implements FluentEmojiIconAdapterInterface {
 
   public function __construct(
     private readonly FluentEmojiCatalog $catalog,
-    private readonly IconPackManagerInterface $iconPackManager,
   ) {}
 
   /**
@@ -39,7 +37,8 @@ final class FluentEmojiIconAdapter implements FluentEmojiIconAdapterInterface {
       if (!$data || $data['pack_id'] !== self::ICON_PACK) {
         return NULL;
       }
-      return $data['icon_id'];
+      $iconId = $data['icon_id'] ?? NULL;
+      return is_string($iconId) ? $iconId : NULL;
     }
     return $this->catalog->get($iconFullId) !== NULL ? $iconFullId : NULL;
   }
@@ -66,7 +65,7 @@ final class FluentEmojiIconAdapter implements FluentEmojiIconAdapterInterface {
   public function getCategories(): array {
     $categories = [];
     foreach ($this->catalog->all() as $id => $item) {
-      $cat = $item['category'] ?? 'outros';
+      $cat = $item['category'];
       $item['icon_full_id'] = self::ICON_PACK . ':' . $id;
       $categories[$cat][$id] = $item;
     }

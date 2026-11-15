@@ -9382,30 +9382,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_activity/src/ContentIndex/ActivityContentIndexProvider.php
 
 		-
-			rawMessage: Cannot cast mixed to int.
-			identifier: cast.int
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_activity/src/Form/ActivityFormCallbacks.php
-
-		-
-			rawMessage: Cannot cast mixed to string.
-			identifier: cast.string
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_activity/src/Form/ActivityFormCallbacks.php
-
-		-
-			rawMessage: Left side of && is always true.
-			identifier: booleanAnd.leftAlwaysTrue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_activity/src/Form/ActivityFormCallbacks.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_activity\Form\ActivityFormCallbacks::validateActivity() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_activity/src/Form/ActivityFormCallbacks.php
-
-		-
 			rawMessage: Access to an undefined property Drupal\Core\Field\FieldItemInterface::$address_line1.
 			identifier: property.notFound
 			count: 2
@@ -19832,24 +19808,6 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_editor/src/Plugin/Filter/FluentEmojiFilter.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_editor\Service\FluentEmojiIconAdapter::fromIconId() should return string|null but returns mixed.'
-			identifier: return.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_editor/src/Service/FluentEmojiIconAdapter.php
-
-		-
-			rawMessage: 'Offset ''category'' on array{id: string, name: string, glyph: string, category: string, keywords: list<string>, svg: string} on left side of ?? always exists and is not nullable.'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_editor/src/Service/FluentEmojiIconAdapter.php
-
-		-
-			rawMessage: 'Property Drupal\aculta_editor\Service\FluentEmojiIconAdapter::$iconPackManager is never read, only written.'
-			identifier: property.onlyWritten
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_editor/src/Service/FluentEmojiIconAdapter.php
 
 		-
 			rawMessage: Access to an undefined property Drupal\filter\FilterPluginCollection|Drupal\filter\Plugin\FilterInterface::$status.

@@ -6,7 +6,6 @@ namespace Drupal\Tests\aculta_editor\Unit;
 
 use Drupal\aculta_editor\FluentEmojiCatalog;
 use Drupal\aculta_editor\Service\FluentEmojiIconAdapter;
-use Drupal\Core\Theme\Icon\Plugin\IconPackManagerInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
@@ -23,8 +22,7 @@ class FluentEmojiIconAdapterTest extends UnitTestCase {
   protected function setUp(): void {
     parent::setUp();
     $catalog = new FluentEmojiCatalog();
-    $iconPackManager = $this->createMock(IconPackManagerInterface::class);
-    $this->adapter = new FluentEmojiIconAdapter($catalog, $iconPackManager);
+    $this->adapter = new FluentEmojiIconAdapter($catalog);
   }
 
   public function testToAndFromIconId(): void {
