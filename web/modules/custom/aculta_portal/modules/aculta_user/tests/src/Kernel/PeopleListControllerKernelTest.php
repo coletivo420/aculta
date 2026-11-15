@@ -38,6 +38,9 @@ final class PeopleListControllerKernelTest extends KernelTestBase {
   protected function setUp(): void {
     parent::setUp();
     $loader = require dirname(DRUPAL_ROOT) . '/vendor/autoload.php';
+    if (!$loader instanceof \Composer\Autoload\ClassLoader) {
+      throw new \RuntimeException('Autoloader do Composer indisponível.');
+    }
     $loader->addPsr4('Drupal\\aculta_user\\', dirname(__DIR__, 3) . '/src', TRUE);
     $loader->addPsr4('Drupal\\aculta_portal\\', dirname(__DIR__, 5) . '/src', TRUE);
     $this->installEntitySchema('user');
@@ -95,8 +98,20 @@ final class PeopleListControllerKernelTest extends KernelTestBase {
    */
   public function testCommonAccountCannotAccessPeopleListRoute(): void {
     $modulePath = DRUPAL_ROOT . '/modules/custom/aculta_portal/modules/aculta_user/aculta_user.routing.yml';
-    $definition = Yaml::parseFile($modulePath)['aculta_user.people'];
-    $route = new Route($definition['path'], $definition['defaults'], $definition['requirements']);
+    $routing = Yaml::parseFile($modulePath);
+    self::assertIsArray($routing);
+    $definition = $routing['aculta_user.people'];
+    self::assertIsArray($definition);
+    self::assertIsString($definition['path']);
+    self::assertIsArray($definition['defaults']);
+    self::assertIsArray($definition['requirements']);
+    $requirements = [];
+    foreach ($definition['requirements'] as $key => $pattern) {
+      self::assertIsString($key);
+      self::assertIsString($pattern);
+      $requirements[$key] = $pattern;
+    }
+    $route = new Route($definition['path'], $definition['defaults'], $requirements);
     $request = Request::create('/painel-administrativo/pessoas');
     $request->attributes->set('_route', 'aculta_user.people');
     $request->attributes->set('_route_object', $route);

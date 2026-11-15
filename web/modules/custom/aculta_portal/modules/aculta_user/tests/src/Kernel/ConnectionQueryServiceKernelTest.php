@@ -34,7 +34,7 @@ final class ConnectionQueryServiceKernelTest extends KernelTestBase {
   /**
    * Módulos necessários para o teste.
    *
-   * @var array
+   * @var array<int, string>
    */
   protected static $modules = [
     'system',
@@ -61,6 +61,9 @@ final class ConnectionQueryServiceKernelTest extends KernelTestBase {
   public function register(ContainerBuilder $container): void {
     parent::register($container);
     $loader = require dirname(DRUPAL_ROOT) . '/vendor/autoload.php';
+    if (!$loader instanceof \Composer\Autoload\ClassLoader) {
+      throw new \RuntimeException('Autoloader do Composer indisponível.');
+    }
     $loader->addPsr4('Drupal\\aculta_portal\\', dirname(__DIR__, 5) . '/src', TRUE);
     $loader->addPsr4('Drupal\\aculta_image\\', dirname(__DIR__, 5) . '/modules/aculta_image/src', TRUE);
 
