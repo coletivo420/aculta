@@ -89,6 +89,9 @@ final class OrganizationClaimKernelTest extends KernelTestBase {
     parent::register($container);
 
     $loader = require dirname(DRUPAL_ROOT) . '/vendor/autoload.php';
+    if (!$loader instanceof \Composer\Autoload\ClassLoader) {
+      throw new \RuntimeException('Autoloader do Composer indisponível.');
+    }
     $loader->addPsr4('Drupal\\aculta_portal\\', dirname(__DIR__, 5) . '/src', TRUE);
     $loader->addPsr4('Drupal\\aculta_image\\', dirname(__DIR__, 5) . '/modules/aculta_image/src', TRUE);
     $loader->addPsr4('Drupal\\aculta_user\\', dirname(__DIR__, 3) . '/src', TRUE);
@@ -215,11 +218,12 @@ final class OrganizationClaimKernelTest extends KernelTestBase {
       'contato@festival.org'
     );
 
-    $this->assertInstanceOf(OwnershipClaim::class, $claim);
     $this->assertSame('pending', $claim->get('status')->value);
     $this->assertSame((int) $this->commonUser->id(), (int) $claim->get('uid')->target_id);
 
     $reloadedEvent = Event::load($event->id());
+
+    self::assertInstanceOf(Event::class, $reloadedEvent);
     $this->assertSame((int) $originalOwner->id(), (int) $reloadedEvent->get('field_organizador')->target_id);
 
     $this->assertFalse($claimService->canClaim($event, $this->commonUser));
@@ -228,16 +232,20 @@ final class OrganizationClaimKernelTest extends KernelTestBase {
       $claimService->decideClaim($claim, $this->commonUser, TRUE, 'Tentativa não autorizada');
       $this->fail('Deveria ter lançado AccessDeniedHttpException');
     }
-    catch (AccessDeniedHttpException $e) {
-      $this->assertTrue(TRUE);
+    catch (AccessDeniedHttpException) {
+      // A recusa é o comportamento esperado; a falha acima cobre o caso de não lançar.
     }
 
     $claimService->decideClaim($claim, $this->adminUser, TRUE, 'Documentação e posse comprovadas pela ata.');
 
     $this->assertSame('approved', $claim->get('status')->value);
-    $this->assertSame((int) $this->adminUser->id(), (int) $claim->get('decided_by')->value);
+    $decidedBy = $claim->get('decided_by')->value;
+    $this->assertIsNumeric($decidedBy);
+    $this->assertSame((int) $this->adminUser->id(), (int) $decidedBy);
 
     $reloadedEvent = Event::load($event->id());
+
+    self::assertInstanceOf(Event::class, $reloadedEvent);
     $this->assertSame((int) $this->commonUser->id(), (int) $reloadedEvent->get('field_organizador')->target_id);
 
     $this->expectException(\LogicException::class);
@@ -267,6 +275,8 @@ final class OrganizationClaimKernelTest extends KernelTestBase {
     $this->assertSame('Comprovante não apresentado.', $claim->get('decision_notes')->value);
 
     $reloadedEvent = Event::load($event->id());
+
+    self::assertInstanceOf(Event::class, $reloadedEvent);
     $this->assertSame((int) $this->editorUser->id(), (int) $reloadedEvent->get('field_organizador')->target_id);
   }
 
@@ -341,7 +351,10 @@ final class OrganizationClaimKernelTest extends KernelTestBase {
     $request = Request::create('/painel-administrativo/pessoas/reivindicacoes');
     $build = $controller->overview($request);
     $this->assertArrayHasKey('table', $build);
+    self::assertIsArray($build['table']);
+    self::assertIsArray($build['table']['#rows']);
     $this->assertCount(1, $build['table']['#rows']);
+    self::assertIsArray($build['table']['#rows'][0]);
     $this->assertSame($claim->id(), $build['table']['#rows'][0]['id']);
 
     // 2. Decision form build & submission.
@@ -360,10 +373,13 @@ final class OrganizationClaimKernelTest extends KernelTestBase {
     $reloadedClaim = OwnershipClaim::load($claim->id());
     $this->assertNotNull($reloadedClaim);
     $this->assertSame('approved', $reloadedClaim->get('status')->value);
-    $this->assertSame((int) $this->adminUser->id(), (int) $reloadedClaim->get('decided_by')->value);
+    $decidedBy = $reloadedClaim->get('decided_by')->value;
+    $this->assertIsNumeric($decidedBy);
+    $this->assertSame((int) $this->adminUser->id(), (int) $decidedBy);
 
     $reloadedEvent = Event::load($event->id());
-    $this->assertNotNull($reloadedEvent);
+
+    self::assertInstanceOf(Event::class, $reloadedEvent);
     $this->assertSame((int) $this->commonUser->id(), (int) $reloadedEvent->get('field_organizador')->target_id);
   }
 

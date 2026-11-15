@@ -290,6 +290,7 @@ final class SharedParticipationIsolationKernelTest extends KernelTestBase {
 
     $unconfirmed = $hooks->entityAccess($topic, 'update', $editor);
     self::assertNotNull($unconfirmed);
+    self::assertInstanceOf(\Drupal\Core\Access\AccessResult::class, $unconfirmed);
     self::assertTrue($unconfirmed->isForbidden());
     self::assertContains('user.roles', $unconfirmed->getCacheContexts());
     self::assertContains('node:' . $topic->id(), $unconfirmed->getCacheTags());
@@ -297,6 +298,7 @@ final class SharedParticipationIsolationKernelTest extends KernelTestBase {
     $this->emailPolicy()->markConfirmed((int) $editor->id());
     $confirmed = $hooks->entityAccess($topic, 'update', $editor);
     self::assertNotNull($confirmed);
+    self::assertInstanceOf(\Drupal\Core\Access\AccessResult::class, $confirmed);
     self::assertTrue($confirmed->isAllowed());
     self::assertContains('user.roles', $confirmed->getCacheContexts());
 
@@ -327,6 +329,7 @@ final class SharedParticipationIsolationKernelTest extends KernelTestBase {
 
     $result = $hooks->entityAccess($historic, 'update', $admin);
     self::assertNotNull($result);
+    self::assertInstanceOf(\Drupal\Core\Access\AccessResult::class, $result);
     self::assertTrue($result->isForbidden());
     self::assertContains('node:' . $historic->id(), $result->getCacheTags());
   }
@@ -371,6 +374,10 @@ final class SharedParticipationIsolationKernelTest extends KernelTestBase {
 
   /**
    * Builds a scripted exemption with a fixed decision and cache metadata.
+   */
+  /**
+   * @param list<string> $tags
+   * @param list<string> $contexts
    */
   private function exemption(string $decision, array $tags, array $contexts): EditWindowExemptionInterface {
     return new SharedParticipationIsolationExemption($decision, $tags, $contexts);
@@ -502,6 +509,10 @@ final class SharedParticipationIsolationKernelTest extends KernelTestBase {
  */
 final class SharedParticipationIsolationExemption implements EditWindowExemptionInterface {
 
+  /**
+   * @param list<string> $cacheTags
+   * @param list<string> $cacheContexts
+   */
   public function __construct(
     private readonly string $decision,
     private readonly array $cacheTags,
