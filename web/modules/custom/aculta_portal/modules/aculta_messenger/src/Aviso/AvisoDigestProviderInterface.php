@@ -11,6 +11,9 @@ interface AvisoDigestProviderInterface {
 
   /**
    * Returns user IDs with pending digest entries.
+   *
+   * @return array<mixed>
+   *   IDs dos destinatários pendentes.
    */
   public function pendingRecipientIds(): array;
 

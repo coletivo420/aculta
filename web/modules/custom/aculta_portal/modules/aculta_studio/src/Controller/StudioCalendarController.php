@@ -21,6 +21,9 @@ final class StudioCalendarController {
 
   /**
    * Retorna o componente studio-calendar renderizado.
+   *
+   * @return array<mixed>
+   *   Render array do fragmento.
    */
   public function fragment(Request $request): array {
     $ano = $request->query->has('ano') ? (int) $request->query->get('ano') : NULL;

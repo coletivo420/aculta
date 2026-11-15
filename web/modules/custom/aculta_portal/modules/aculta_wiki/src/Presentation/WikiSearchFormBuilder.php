@@ -24,6 +24,9 @@ final class WikiSearchFormBuilder implements WikiSearchFormBuilderInterface {
    * Returns a render array for the canonical Wiki search route.
    *
    * The current query value is repeated in the shared header on search results.
+   *
+   * @return array<mixed>
+   *   Render array do formulário.
    */
   public function build(): array {
     // InputBag::get() throws on non-scalar values; read the raw bag so that

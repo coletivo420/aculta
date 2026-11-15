@@ -10,6 +10,9 @@ use Drupal\aculta_messenger\Database\ForumNoticeEventSchema;
 
 /**
  * Implements hook_schema().
+ *
+ * @phpstan-return array<mixed>
+ *   Schema do módulo de teste.
  */
 function aculta_messenger_aviso_test_schema(): array {
   return [

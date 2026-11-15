@@ -66,7 +66,7 @@ final class EmailPendingAviso {
     $items = $message->getText(NULL, $delta);
     // O modelo guarda HTML (<p>) e devolve Markup: o texto de aviso é sempre texto puro.
     $item = is_array($items) ? reset($items) : $items;
-    $plain = trim(html_entity_decode(strip_tags((string) $item), ENT_QUOTES | ENT_HTML5, 'UTF-8'));
+    $plain = trim(html_entity_decode(strip_tags((($item instanceof \Stringable || is_scalar($item)) ? (string) $item : '')), ENT_QUOTES | ENT_HTML5, 'UTF-8'));
     return $plain !== '' ? $plain : NULL;
   }
 

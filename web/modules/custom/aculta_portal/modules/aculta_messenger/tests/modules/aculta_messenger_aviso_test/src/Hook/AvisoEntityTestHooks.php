@@ -15,6 +15,9 @@ final class AvisoEntityTestHooks {
 
   /**
    * Implements hook_entity_type_alter().
+   *
+   * @param array<mixed> $entity_types
+   *   Definições de tipo de entidade.
    */
   #[Hook('entity_type_alter')]
   public function entityTypeAlter(array &$entity_types): void {

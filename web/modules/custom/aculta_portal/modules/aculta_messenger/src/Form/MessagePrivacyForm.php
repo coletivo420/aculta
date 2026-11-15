@@ -29,7 +29,13 @@ final class MessagePrivacyForm {
   }
 
   /**
-   * Submit callback added to the Privacidade form. */
+   * Submit callback added to the Privacidade form.
+   *
+   * @param array<mixed> $form
+   *   Formulário.
+   * @param \Drupal\Core\Form\FormStateInterface $formState
+   *   Estado do formulário.
+   */
   public function submit(array &$form, FormStateInterface $formState): void {
     $preference = $formState->getValue('message_privacy') === 'friends' ? 'friends' : 'all';
     $this->userData->set('aculta_messenger', (int) $this->currentUser->id(), 'message_privacy', $preference);

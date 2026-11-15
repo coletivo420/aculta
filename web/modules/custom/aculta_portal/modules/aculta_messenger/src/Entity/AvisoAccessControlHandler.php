@@ -30,6 +30,13 @@ final class AvisoAccessControlHandler extends EntityAccessControlHandler {
 
   /**
    * {@inheritdoc}
+   *
+   * @param \Drupal\Core\Session\AccountInterface $account
+   *   Conta avaliada.
+   * @param array<mixed> $context
+   *   Contexto da criação.
+   * @param string|null $entity_bundle
+   *   Bundle da entidade, quando informado.
    */
   protected function checkCreateAccess(AccountInterface $account, array $context, $entity_bundle = NULL) {
     return AccessResult::allowedIfHasPermission($account, 'administer aculta avisos');

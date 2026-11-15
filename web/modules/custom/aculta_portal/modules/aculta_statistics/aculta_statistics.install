@@ -9,6 +9,9 @@ declare(strict_types=1);
 
 /**
  * Implements hook_schema().
+ *
+ * @phpstan-return array<mixed>
+ *   Schema do módulo.
  */
 function aculta_statistics_schema(): array {
   return [

@@ -19,6 +19,9 @@ final class StudioUploadEmbedController {
 
   /**
    * Monta o formulário de envio da integração, ou responde 404 se não existir.
+   *
+   * @return array<mixed>
+   *   Render array da página.
    */
   public function page(string $integracao): array {
     if (!isset(StudioUploadEmbedForm::INTEGRACOES[$integracao])) {

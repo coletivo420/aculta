@@ -18,7 +18,11 @@ interface WikiNoticeManagerInterface extends PaginatedPersonalNoticeAdapterInter
   public function record(MessengerNoticeEvent $event): ?MessageInterface;
 
   /**
-   * Resolves a current, accessible source and its safe presentation. */
+   * Resolves a current, accessible source and its safe presentation.
+   *
+   * @return array<mixed>
+   *   Avisos resolvidos.
+   */
   public function resolve(MessageInterface $message, AccountInterface $account): ?array;
 
   /**

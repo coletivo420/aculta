@@ -35,7 +35,7 @@ final class CommercePaymentRefundHooks {
    */
   #[Hook('commerce_payment_update')]
   public function paymentUpdate(PaymentInterface $payment): void {
-    $original = DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.2.0', fn() => $payment->getOriginal(), fn() => $payment->original) ?? NULL;
+    $original = DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.2.0', fn() => $payment->getOriginal(), fn() => $payment->original);
     $before = $original instanceof PaymentInterface ? $original->getRefundedAmount() : NULL;
     $increment = self::refundIncrement($payment->getRefundedAmount(), $before);
     if ($increment === NULL) {

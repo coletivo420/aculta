@@ -31,7 +31,8 @@ final class ColorModePreference {
   /**
    * Padrão do site, definido pelo administrador. */
   public function siteDefault(): string {
-    $mode = (string) $this->configFactory->get('aculta_portal.appearance')->get('default_mode');
+    $modoBruto = $this->configFactory->get('aculta_portal.appearance')->get('default_mode');
+    $mode = (is_scalar($modoBruto) ? (string) $modoBruto : '');
     return in_array($mode, self::MODES, TRUE) ? $mode : self::DEFAULT_MODE;
   }
 

@@ -29,7 +29,8 @@ final class BadgeAwardNoticeEventProducer {
     $uid = (int) $award->get('uid')->target_id;
     $awardId = (int) $award->id();
     $uuid = (string) $award->uuid();
-    $timestamp = (int) $award->get('concedido_em')->value;
+    $concedidoBruto = $award->get('concedido_em')->value;
+    $timestamp = (is_scalar($concedidoBruto) ? (int) $concedidoBruto : 0);
     if ($uid < 1 || $awardId < 1 || $uuid === '' || $timestamp < 1) {
       return;
     }

@@ -28,6 +28,9 @@ final class GanjalabController {
 
   /**
    * Renders the learner dashboard through its registered provider.
+   *
+   * @return array<mixed>
+   *   Render array.
    */
   public function student(): array {
     $provider = $this->experiences->get('ganjalab');

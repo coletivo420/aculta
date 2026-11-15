@@ -64,7 +64,7 @@ final class ProfileRelationshipController extends ControllerBase {
     $this->forms->buildForm(ConversationRelationshipForm::class, $formState);
     $message = $formState->get('message');
     if ($message !== NULL) {
-      $this->statusMessenger->addStatus((string) $message);
+      $this->statusMessenger->addStatus((is_scalar($message) ? (string) $message : ''));
     }
     return new RedirectResponse($return, Response::HTTP_SEE_OTHER);
   }

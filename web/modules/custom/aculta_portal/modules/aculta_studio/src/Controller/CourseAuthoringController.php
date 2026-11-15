@@ -35,6 +35,9 @@ final class CourseAuthoringController {
 
   /**
    * Lists courses this educator can update through Group entity access.
+   *
+   * @return array<mixed>
+   *   Render array do painel.
    */
   public function dashboard(): array {
     if (!$this->account->hasPermission('create lms_course group')) {

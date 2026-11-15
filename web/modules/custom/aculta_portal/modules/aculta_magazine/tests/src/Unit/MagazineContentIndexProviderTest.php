@@ -305,6 +305,9 @@ final class MagazineContentIndexProviderTest extends UnitTestCase {
    *
    * @param list<string> $targetIds
    *   The referenced IDs.
+   *
+   * @return \Drupal\Core\Field\FieldItemListInterface<\Drupal\Core\Field\FieldItemInterface>
+   *   Campo de referência simulado.
    */
   private function referenceField(array $targetIds): FieldItemListInterface {
     $field = $this->createMock(FieldItemListInterface::class);

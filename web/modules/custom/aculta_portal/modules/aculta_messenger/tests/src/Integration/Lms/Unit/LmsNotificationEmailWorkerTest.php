@@ -379,8 +379,8 @@ final class LmsNotificationEmailWorkerTest extends UnitTestCase {
    * @param mixed $value
    *   Field value.
    *
-   * @return \Drupal\Core\Field\FieldItemListInterface
-   *   Field list mock.
+   * @return \Drupal\Core\Field\FieldItemListInterface<\Drupal\Core\Field\FieldItemInterface>
+   *   Campo simulado.
    */
   private function field(mixed $value): FieldItemListInterface {
     $field = $this->createMock(FieldItemListInterface::class);

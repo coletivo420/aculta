@@ -341,6 +341,9 @@ final class PrivateMessageDigestProviderTest extends UnitTestCase {
 
   /**
    * Builds the idempotent pending-message query.
+   *
+   * @param array<mixed> $ids
+   *   Identificadores.
    */
   private function pendingQuery(array $ids): QueryInterface {
     $query = $this->createMock(QueryInterface::class);

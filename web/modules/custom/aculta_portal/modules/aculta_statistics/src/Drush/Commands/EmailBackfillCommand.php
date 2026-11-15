@@ -49,7 +49,8 @@ final class EmailBackfillCommand extends Command {
    * Executa a reconciliação do histórico.
    */
   protected function execute(InputInterface $input, OutputInterface $output): int {
-    $days = (int) $input->getOption('days');
+    $diasBruto = $input->getOption('days');
+    $days = (is_scalar($diasBruto) ? (int) $diasBruto : 0);
     if ($days < 1 || $days > self::MAX_DAYS) {
       $output->writeln('<error>--days precisa estar entre 1 e ' . self::MAX_DAYS . '.</error>');
       return Command::FAILURE;

@@ -35,7 +35,8 @@ final class SiteAlertNoticeSorter {
     if (!$alert->hasField('created') || $alert->get('created')->isEmpty()) {
       return 0;
     }
-    return (int) $alert->get('created')->value;
+    $criadoBruto = $alert->get('created')->value;
+    return (is_scalar($criadoBruto) ? (int) $criadoBruto : 0);
   }
 
 }

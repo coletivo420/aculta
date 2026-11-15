@@ -20,6 +20,9 @@ final class DigestCrashTestMailer extends TestMailCollector {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<mixed> $message
+   *   Mensagem de e-mail.
    */
   public function mail(array $message): bool {
     $marker = getenv('ACULTA_DIGEST_CRASH_COUNT_MARKER');

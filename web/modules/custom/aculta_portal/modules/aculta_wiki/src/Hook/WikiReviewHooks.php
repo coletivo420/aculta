@@ -86,7 +86,8 @@ final class WikiReviewHooks {
     if (!$node->hasField('moderation_state') || $node->get('moderation_state')->isEmpty()) {
       return '';
     }
-    return (string) $node->get('moderation_state')->value;
+    $estadoBruto = $node->get('moderation_state')->value;
+    return (is_scalar($estadoBruto) ? (string) $estadoBruto : '');
   }
 
 }

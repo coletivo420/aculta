@@ -20,7 +20,11 @@ interface MagazineNoticeManagerInterface extends PaginatedPersonalNoticeAdapterI
   public function record(MessengerNoticeEvent $event): ?MessageInterface;
 
   /**
-   * Resolves a current accessible publication and safe notice presentation. */
+   * Resolves a current accessible publication and safe notice presentation.
+   *
+   * @return array<mixed>
+   *   Avisos resolvidos.
+   */
   public function resolve(MessageInterface $message, AccountInterface $account): ?array;
 
   /**

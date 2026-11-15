@@ -21,6 +21,9 @@ final class ConversationPolicyTest extends UnitTestCase {
 
   /**
    * Creates the conversation policy with test settings.
+   *
+   * @param array<mixed> $settings
+   *   Configurações da política.
    */
   private function policy(array $settings = []): ConversationPolicy {
     return new ConversationPolicy($this->getConfigFactoryStub(['aculta_messenger.settings' => $settings]));

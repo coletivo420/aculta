@@ -39,7 +39,8 @@ final class SecretsResponseSubscriber implements EventSubscriberInterface {
     if (!$event->isMainRequest()) {
       return;
     }
-    $route = (string) $event->getRequest()->attributes->get('_route');
+    $rota = $event->getRequest()->attributes->get('_route');
+    $route = (is_scalar($rota) ? (string) $rota : '');
     if (!in_array($route, self::ROUTES, TRUE)) {
       return;
     }

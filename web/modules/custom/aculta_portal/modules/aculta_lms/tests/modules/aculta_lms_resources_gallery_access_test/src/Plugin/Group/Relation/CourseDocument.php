@@ -26,6 +26,9 @@ final class CourseDocument extends GroupRelationBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @return array<mixed>
+   *   Configuração padrão.
    */
   public function defaultConfiguration(): array {
     $configuration = parent::defaultConfiguration();
