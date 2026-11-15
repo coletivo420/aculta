@@ -11,6 +11,8 @@ use Drupal\Core\Entity\Query\QueryInterface;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Url;
 use Drupal\aculta_messenger\Entity\PrivateMessage;
+use Drupal\aculta_messenger\Entity\PrivateMessageInterface;
+use Drupal\aculta_messenger\Entity\PrivateMessageThreadInterface;
 use Drupal\aculta_messenger\Hook\ViewsHooks;
 use Drupal\user\Entity\User;
 use Drupal\user\RoleInterface;
