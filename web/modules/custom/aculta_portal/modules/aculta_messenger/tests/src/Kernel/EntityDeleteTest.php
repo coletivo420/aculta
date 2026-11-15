@@ -117,6 +117,9 @@ final class EntityDeleteTest extends KernelTestBase {
     $this->installEntitySchema('private_message_thread');
     $this->installEntitySchema('private_message');
     $this->installSchema('aculta_user', ['aculta_user_nickname']);
+    $this->installEntitySchema('flagging');
+    $this->installSchema('file', ['file_usage']);
+    $this->installSchema('entity_usage', ['entity_usage']);
     $this->installConfig('aculta_user');
     $this->installSchema('user', ['users_data']);
     $this->installEntitySchema('profile');
