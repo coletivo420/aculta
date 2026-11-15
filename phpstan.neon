@@ -7,6 +7,8 @@ includes:
 # A extensão mglaman/phpstan-drupal é carregada automaticamente pelo phpstan/extension-installer.
 parameters:
     level: 10
+    stubFiles:
+        - phpstan/stubs/h5p-core-filter-parameters.stub
     # Dívida resolvida em ignores revisados precisa aparecer, não ficar oculta.
     reportUnmatchedIgnoredErrors: true
     paths:

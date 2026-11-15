@@ -17,6 +17,7 @@ use Drupal\group\Entity\GroupRole;
 use Drupal\group\Entity\GroupType;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\media\Entity\Media;
+use Drupal\node\Entity\NodeType;
 use Drupal\media\Entity\MediaType;
 use Drupal\media\MediaInterface;
 use Drupal\group\PermissionScopeInterface;
@@ -42,6 +43,7 @@ final class aculta_H5PCourseAccessIntegrationTest extends KernelTestBase {
     'system',
     'user',
     'field',
+    'node',
     'file',
     'image',
     'media',
@@ -90,12 +92,27 @@ final class aculta_H5PCourseAccessIntegrationTest extends KernelTestBase {
     $this->installConfig([
       'system',
       'user',
+      'node',
       'filter',
       'group',
       'media',
       'aculta_document_viewer',
     ]);
     $this->installEntitySchema('user');
+    $this->installEntitySchema('node');
+    NodeType::create(['type' => 'aculta_lms_topic', 'name' => 'LMS topic'])->save();
+    FieldStorageConfig::create([
+      'field_name' => 'field_h5p_content',
+      'entity_type' => 'node',
+      'type' => 'entity_reference',
+      'settings' => ['target_type' => 'aculta_h5p_content'],
+    ])->save();
+    FieldConfig::create([
+      'field_name' => 'field_h5p_content',
+      'entity_type' => 'node',
+      'bundle' => 'aculta_lms_topic',
+      'label' => 'H5P content',
+    ])->save();
     $this->installEntitySchema('file');
     $this->installEntitySchema('media');
     $this->installEntitySchema('group');
@@ -274,9 +291,9 @@ final class aculta_H5PCourseAccessIntegrationTest extends KernelTestBase {
       'runnable' => 1,
       'fullscreen' => 1,
       'embed_types' => 'iframe',
+      'semantics' => '[]',
       'preloaded_js' => 'js/iframe-test.js',
       'preloaded_css' => 'css/iframe-test.css',
-      'semantics' => '[]',
     ])->execute();
     mkdir($this->siteDirectory . '/private/h5p/libraries/H5P.IframeTest-1.0', 0775, TRUE);
 

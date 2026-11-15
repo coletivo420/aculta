@@ -10,6 +10,7 @@ use Drupal\Core\Field\FormatterBase;
 use Drupal\Core\Field\Attribute\FieldFormatter;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
+use Drupal\Core\Field\EntityReferenceFieldItemListInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\aculta_lms_h5p\aculta_H5PDrupal\aculta_H5PDrupal;
@@ -22,6 +23,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Plugin implementation of the H5P formatter.
+ *
+ * @extends \Drupal\Core\Field\FormatterBase<\Drupal\Core\Field\FieldItemListInterface<\Drupal\aculta_lms_h5p\Plugin\Field\FieldType\aculta_H5PItem>>
  */
 #[FieldFormatter(
   id: 'h5p_default',
@@ -29,7 +32,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
   field_types: ['h5p'],
 )]
 // phpcs:ignore Drupal.NamingConventions.ValidClassName.StartWithCapital,Drupal.NamingConventions.ValidClassName.NoUnderscores -- Preserve the historical H5P fork class identifier used by plugin discovery and cached forms.
-class aculta_H5PDefaultFormatter extends FormatterBase {
+final class aculta_H5PDefaultFormatter extends FormatterBase {
 
   /**
    * The h5p settings config.
@@ -40,14 +43,21 @@ class aculta_H5PDefaultFormatter extends FormatterBase {
 
   /**
    * Constructor.
+   *
+   * @param array<mixed> $settings
+   *   Formatter settings.
+   * @param array<mixed> $third_party_settings
+   *   Third party settings.
    */
   public function __construct(
     $plugin_id,
     $plugin_definition,
     FieldDefinitionInterface $field_definition,
+    /** @var array<string, mixed> $settings */
     array $settings,
     $label,
     $view_mode,
+    /** @var array<string, mixed> $third_party_settings */
     array $third_party_settings,
     protected ModuleHandlerInterface $moduleHandler,
     ConfigFactoryInterface $config_factory,
@@ -61,15 +71,30 @@ class aculta_H5PDefaultFormatter extends FormatterBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $configuration
+   *   Formatter configuration.
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): static {
+    $fieldDefinition = $configuration['field_definition'] ?? NULL;
+    $settings = $configuration['settings'] ?? NULL;
+    $label = $configuration['label'] ?? NULL;
+    $viewMode = $configuration['view_mode'] ?? NULL;
+    $thirdPartySettings = $configuration['third_party_settings'] ?? NULL;
+    if (!$fieldDefinition instanceof FieldDefinitionInterface
+      || !is_array($settings)
+      || !is_string($label)
+      || !is_string($viewMode)
+      || !is_array($thirdPartySettings)) {
+      throw new \InvalidArgumentException('The H5P formatter configuration is invalid.');
+    }
     return new static($plugin_id,
       $plugin_definition,
-      $configuration['field_definition'],
-      $configuration['settings'],
-      $configuration['label'],
-      $configuration['view_mode'],
-      $configuration['third_party_settings'],
+      $fieldDefinition,
+      $settings,
+      $label,
+      $viewMode,
+      $thirdPartySettings,
       $container->get('module_handler'),
       $container->get('config.factory'),
       $container->get('current_user'),
@@ -92,7 +117,16 @@ class aculta_H5PDefaultFormatter extends FormatterBase {
   /**
    * {@inheritdoc}
    */
-  public function viewElements(FieldItemListInterface $items, $langcode) {
+  /**
+   * {@inheritdoc}
+   *
+   * @param \Drupal\Core\Field\FieldItemListInterface<\Drupal\aculta_lms_h5p\Plugin\Field\FieldType\aculta_H5PItem> $items
+   *   H5P field items.
+   *
+   * @return array<int, array<array-key, mixed>>
+   *   Render arrays for each H5P item.
+   */
+  public function viewElements(FieldItemListInterface $items, $langcode): array {
     $element = [];
 
     $course = $items->getEntity();
@@ -114,10 +148,15 @@ class aculta_H5PDefaultFormatter extends FormatterBase {
     }
 
     foreach ($items as $delta => $item) {
+      /** @var array{h5p_content_id?: mixed} $value */
       $value = $item->getValue();
+      $contentId = $value['h5p_content_id'] ?? NULL;
+      if (!is_int($contentId) && !(is_string($contentId) && ctype_digit($contentId))) {
+        continue;
+      }
 
       // Load H5P Content entity.
-      $h5p_content = aculta_H5PContent::load($value['h5p_content_id']);
+      $h5p_content = aculta_H5PContent::load((int) $contentId);
       if (empty($h5p_content)) {
         continue;
       }
@@ -126,21 +165,47 @@ class aculta_H5PDefaultFormatter extends FormatterBase {
       $course = $item->getEntity();
       $h5p_integration = aculta_H5PDrupal::getGenericaculta_H5PIntegrationSettings($course instanceof GroupInterface ? $course : NULL);
       $core = aculta_H5PDrupal::getInstance('core');
-      $preloaded_dependencies = $core->loadContentDependencies($h5p_content->id(), 'preloaded');
+      if (!$core instanceof \H5PCore) {
+        throw new \LogicException('The H5P core instance is unavailable.');
+      }
+      $contentEntityId = $h5p_content->id();
+      if (!is_int($contentEntityId) && !(is_string($contentEntityId) && ctype_digit($contentEntityId))) {
+        continue;
+      }
+      $preloaded_dependencies = $this->framework->loadContentDependencies((int) $contentEntityId, 'preloaded');
 
       // Add content specific settings.
-      $content_id_string = 'cid-' . $h5p_content->id();
+      $content_id = $h5p_content->id();
+      if (!is_int($content_id) && !is_string($content_id)) {
+        continue;
+      }
+      $content_id_string = 'cid-' . $content_id;
       $embedType = $h5p_content->getEmbedType();
-      $content_settings = $h5p_content->getaculta_H5PIntegrationSettings($item->getEntity()->access('update'));
+
+      $contentSettingsEntity = $item->getEntity();
+      $content_settings = $h5p_content->getaculta_H5PIntegrationSettings($contentSettingsEntity->access('update'));
+      if ($content_settings === []) {
+        continue;
+      }
       $dependency_assets = $core->getDependenciesFiles($preloaded_dependencies, 'h5p-library-assets');
-      $content_settings['scripts'] = $core->getAssetsUrls($dependency_assets['scripts']);
-      $content_settings['styles'] = $core->getAssetsUrls($dependency_assets['styles']);
+      $scripts = $dependency_assets['scripts'] ?? [];
+      $styles = $dependency_assets['styles'] ?? [];
+      $content_settings['scripts'] = $core->getAssetsUrls(is_array($scripts) ? $scripts : []);
+      $content_settings['styles'] = $core->getAssetsUrls(is_array($styles) ? $styles : []);
       if ($course instanceof GroupInterface) {
-        $content_settings['contentUrl'] = base_path() . 'h5p-content/' . $course->id() . '/' . $h5p_content->id();
+        $courseId = $course->id();
+        $basePath = base_path();
+        if ((is_int($courseId) || is_string($courseId)) && is_string($basePath)) {
+          $content_settings['contentUrl'] = sprintf('%sh5p-content/%s/%s', $basePath, (string) $courseId, (string) $content_id);
+        }
       }
       $content_settings['exportUrl'] = '';
+      $displayOptions = $content_settings['displayOptions'] ?? [];
+      $content_settings['displayOptions'] = is_array($displayOptions) ? $displayOptions : [];
       $content_settings['displayOptions']['download'] = FALSE;
       $content_settings['displayOptions']['embed'] = FALSE;
+      $integrationContents = $h5p_integration['contents'] ?? [];
+      $h5p_integration['contents'] = is_array($integrationContents) ? $integrationContents : [];
       $h5p_integration['contents'][$content_id_string] = $content_settings;
 
       $loadpackages = [
@@ -150,25 +215,24 @@ class aculta_H5PDefaultFormatter extends FormatterBase {
       // Get the H5P interactive's dependencies.
       $h5p_packages = [];
       foreach ($preloaded_dependencies as $dependency) {
-        $h5p_packages[] = 'aculta_lms_h5p/' . aculta_H5PLibraryIdentifier::toDrupalLibraryId($dependency);
+        if ($dependency instanceof \stdClass) {
+          $h5p_packages[] = 'aculta_lms_h5p/' . aculta_H5PLibraryIdentifier::toDrupalLibraryId($dependency);
+        }
+        elseif (is_array($dependency)) {
+          $library = [];
+          foreach ($dependency as $key => $value) {
+            if (is_string($key)) {
+              $library[$key] = $value;
+            }
+          }
+          $h5p_packages[] = 'aculta_lms_h5p/' . aculta_H5PLibraryIdentifier::toDrupalLibraryId($library);
+        }
       }
 
       // Render only in-context content. The former public iframe endpoint
       // loaded H5P by ID without authorizing its parent entity or Group. H5P
       // Core's internal iframe mode stays inside this authorized page and
       // initializes an about:blank document; it does not use that endpoint.
-      if ($embedType === NULL) {
-        $element[$delta] = [
-          '#type' => 'component',
-          '#component' => 'aculta420_v2:empty-state',
-          '#props' => ['compact' => TRUE],
-          '#slots' => [
-            'message' => ['#plain_text' => $this->t('Esta atividade interativa não está disponível neste curso.')],
-          ],
-        ];
-        continue;
-      }
-
       $loadpackages = array_merge($loadpackages, $h5p_packages);
       $player = $embedType === 'iframe'
         ? [
@@ -239,7 +303,11 @@ class aculta_H5PDefaultFormatter extends FormatterBase {
         $cacheability->addCacheTags([
           $relationshipListTag,
         ]);
-        foreach ($h5p_content->get('course_documents')->referencedEntities() as $media) {
+        $documentFieldList = $h5p_content->get('course_documents');
+        $referencedDocuments = $documentFieldList instanceof EntityReferenceFieldItemListInterface
+          ? $documentFieldList->referencedEntities()
+          : [];
+        foreach ($referencedDocuments as $media) {
           if (
             !$media instanceof MediaInterface
             || $media->bundle() !== 'course_document'
@@ -285,6 +353,17 @@ class aculta_H5PDefaultFormatter extends FormatterBase {
     }
     $this->moduleHandler->alter('h5p_formatter', $element, $items);
 
+    /** @var array<int, array<array-key, mixed>> $element */
+    foreach ($element as &$renderArray) {
+      $cacheability = CacheableMetadata::createFromRenderArray($renderArray);
+      // H5P integration includes a short-lived token. Alter hooks may add
+      // cache dependencies, but must not remove the token expiry cap.
+      $cacheability->setCacheMaxAge(12 * 60 * 60);
+      $cacheability->applyTo($renderArray);
+    }
+    unset($renderArray);
+
+    /** @var array<int, array<string, mixed>> $element */
     return $element;
   }
 

@@ -53,9 +53,14 @@ final class aculta_H5PManagedFileStorage extends \H5PDefaultStorage {
   }
 
   /**
-   * Stores a validated library without bypassing managed image ingestion. */
-  public function saveLibrary($library) {
-    $source = realpath((string) ($library['uploadDirectory'] ?? ''));
+   * Stores a validated library without bypassing managed image ingestion.
+   *
+   * @param array<string, mixed> $library
+   *   Library data validated by H5P.
+   */
+  public function saveLibrary($library): void {
+    $library = $this->validatedLibrary($library);
+    $source = realpath($library['uploadDirectory']);
     if ($source === FALSE || !is_dir($source) || !str_starts_with($source, $this->h5pPath . DIRECTORY_SEPARATOR)) {
       throw new \RuntimeException('The H5P library package directory is unavailable.');
     }
@@ -66,6 +71,9 @@ final class aculta_H5PManagedFileStorage extends \H5PDefaultStorage {
     $destinationUri = "{$this->h5pUri}/libraries/{$directoryName}";
     $iterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($source, \FilesystemIterator::SKIP_DOTS));
     foreach ($iterator as $sourceFile) {
+      if (!$sourceFile instanceof \SplFileInfo) {
+        throw new \RuntimeException('The H5P library contains an unsupported filesystem entry.');
+      }
       if ($sourceFile->isLink() || !$sourceFile->isFile()) {
         throw new \RuntimeException('The H5P library contains an unsupported filesystem entry.');
       }
@@ -92,7 +100,7 @@ final class aculta_H5PManagedFileStorage extends \H5PDefaultStorage {
         throw new \RuntimeException('An H5P library asset exceeds the allowed file size.');
       }
       $managed = $this->fileRepository->loadByUri($uri);
-      if ($managed !== NULL) {
+      if ($managed instanceof FileInterface) {
         $storedPath = $this->fileSystem->realpath($uri);
         if ($storedPath === FALSE || !hash_equals(hash('sha256', $bytes), hash_file('sha256', $storedPath) ?: '')) {
           throw new \RuntimeException('An installed H5P library cannot be replaced silently.');
@@ -104,24 +112,28 @@ final class aculta_H5PManagedFileStorage extends \H5PDefaultStorage {
           throw new \RuntimeException('An H5P library asset directory could not be prepared.');
         }
         $managed = $this->fileRepository->writeData($bytes, $uri, FileExists::Error);
-        if ($managed === FALSE) {
-          throw new \RuntimeException('An H5P library asset could not be stored.');
-        }
         $managed->setPermanent();
         $managed->save();
       }
       $usage = $this->fileUsage->listUsage($managed);
-      if (empty($usage['aculta_lms_h5p']['h5p_library'][$directoryName])) {
+      $h5pUsage = $usage['aculta_lms_h5p'] ?? NULL;
+      $libraryUsage = is_array($h5pUsage) ? ($h5pUsage['h5p_library'] ?? NULL) : NULL;
+      if (!is_array($libraryUsage) || empty($libraryUsage[$directoryName])) {
         $this->fileUsage->add($managed, 'aculta_lms_h5p', 'h5p_library', $directoryName);
       }
     }
   }
 
   /**
-   * Preflights every library asset before the H5P package writes any records. */
+   * Preflights every library asset before the H5P package writes any records.
+   *
+   * @param array<mixed> $libraries
+   *   Library records from H5P package validation.
+   */
   public function validateLibraries(array $libraries): void {
     foreach ($libraries as $library) {
-      $source = realpath((string) ($library['uploadDirectory'] ?? ''));
+      $library = $this->validatedLibrary($library);
+      $source = realpath($library['uploadDirectory']);
       if ($source === FALSE || !is_dir($source) || !str_starts_with($source, $this->h5pPath . DIRECTORY_SEPARATOR)) {
         throw new \RuntimeException('The H5P library package directory is unavailable.');
       }
@@ -132,6 +144,9 @@ final class aculta_H5PManagedFileStorage extends \H5PDefaultStorage {
       $destinationUri = "{$this->h5pUri}/libraries/{$directoryName}";
       $iterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($source, \FilesystemIterator::SKIP_DOTS));
       foreach ($iterator as $sourceFile) {
+        if (!$sourceFile instanceof \SplFileInfo) {
+          throw new \RuntimeException('The H5P library contains an unsupported filesystem entry.');
+        }
         if ($sourceFile->isLink() || !$sourceFile->isFile()) {
           throw new \RuntimeException('The H5P library contains an unsupported filesystem entry.');
         }
@@ -158,7 +173,7 @@ final class aculta_H5PManagedFileStorage extends \H5PDefaultStorage {
           throw new \RuntimeException('An H5P library asset exceeds the allowed file size.');
         }
         $existing = $this->fileRepository->loadByUri($uri);
-        if ($existing !== NULL) {
+        if ($existing instanceof FileInterface) {
           $storedPath = $this->fileSystem->realpath($uri);
           if ($storedPath === FALSE || !hash_equals(hash('sha256', $bytes), hash_file('sha256', $storedPath) ?: '')) {
             throw new \RuntimeException('An installed H5P library cannot be replaced silently.');
@@ -169,9 +184,16 @@ final class aculta_H5PManagedFileStorage extends \H5PDefaultStorage {
   }
 
   /**
-   * Removes managed files for a library that Core has confirmed deletable. */
-  public function removeLibraryFiles($library) {
-    $directoryName = \H5PCore::libraryToFolderName((array) $library);
+   * Removes managed files for a library that Core has confirmed deletable.
+   *
+   * @param mixed $library
+   *   Library data approved for deletion by H5P Core.
+   */
+  public function removeLibraryFiles($library): void {
+    if (!is_array($library)) {
+      throw new \InvalidArgumentException('The H5P library record is invalid.');
+    }
+    $directoryName = \H5PCore::libraryToFolderName($library);
     if (!preg_match('@^[A-Za-z0-9_.-]+$@D', $directoryName)) {
       throw new \InvalidArgumentException('The H5P library name is invalid.');
     }
@@ -181,6 +203,9 @@ final class aculta_H5PManagedFileStorage extends \H5PDefaultStorage {
     }
     $iterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($directory, \FilesystemIterator::SKIP_DOTS));
     foreach ($iterator as $item) {
+      if (!$item instanceof \SplFileInfo) {
+        throw new \RuntimeException('The H5P library contains an unsupported filesystem entry.');
+      }
       if ($item->isLink()) {
         throw new \RuntimeException('Refusing to delete a library containing a symbolic link.');
       }
@@ -221,7 +246,7 @@ final class aculta_H5PManagedFileStorage extends \H5PDefaultStorage {
    * @param int $toid
    *   Destination content ID.
    */
-  public function cloneContentFile($file, $fromid, $toid) {
+  public function cloneContentFile($file, $fromid, $toid): void {
     $relative = $this->validatedRelativeFile((string) $file);
     $sourceId = $fromid === 'editor' ? 'editor' : 'content/' . (int) $fromid;
     $sourceUri = "{$this->h5pUri}/{$sourceId}/{$relative}";
@@ -243,13 +268,16 @@ final class aculta_H5PManagedFileStorage extends \H5PDefaultStorage {
   /**
    * Copies existing content files only when Drupal manages their records.
    */
-  public function cloneContent($id, $newId) {
+  public function cloneContent($id, $newId): void {
     $sourceDirectory = "{$this->h5pPath}/content/" . (int) $id;
     if (!is_dir($sourceDirectory)) {
       return;
     }
     $iterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($sourceDirectory, \FilesystemIterator::SKIP_DOTS));
     foreach ($iterator as $sourcePath) {
+      if (!$sourcePath instanceof \SplFileInfo) {
+        throw new \RuntimeException('The H5P content contains an unsupported filesystem entry.');
+      }
       if ($sourcePath->isLink()) {
         throw new \RuntimeException('Refusing to clone an H5P content symbolic link.');
       }
@@ -259,7 +287,8 @@ final class aculta_H5PManagedFileStorage extends \H5PDefaultStorage {
       $relative = str_replace(DIRECTORY_SEPARATOR, '/', substr($sourcePath->getPathname(), strlen($sourceDirectory) + 1));
       if ($relative === 'content.json') {
         $destinationUri = "{$this->h5pUri}/content/" . (int) $newId . '/content.json';
-        $this->fileSystem->prepareDirectory(dirname($destinationUri), FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS);
+        $destinationDirectory = dirname($destinationUri);
+        $this->fileSystem->prepareDirectory($destinationDirectory, FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS);
         $this->fileSystem->copy($sourcePath->getPathname(), $destinationUri, FileExists::Error);
         continue;
       }
@@ -282,9 +311,15 @@ final class aculta_H5PManagedFileStorage extends \H5PDefaultStorage {
    * asset, is kept on disk: the directory is then left in place so the kept
    * file is not deleted under its other references. The other files are still
    * processed, so one refusal does not stop the deletion midway.
+   *
+   * @param array<string, mixed> $content
+   *   H5P content data.
    */
-  public function deleteContent($content) {
-    $contentId = (int) ($content['id'] ?? 0);
+  public function deleteContent($content): void {
+    $contentIdValue = $content['id'] ?? NULL;
+    $contentId = is_int($contentIdValue) || (is_string($contentIdValue) && ctype_digit($contentIdValue))
+      ? (int) $contentIdValue
+      : 0;
     if ($contentId < 1) {
       return;
     }
@@ -298,6 +333,9 @@ final class aculta_H5PManagedFileStorage extends \H5PDefaultStorage {
     );
     $retained = FALSE;
     foreach ($iterator as $item) {
+      if (!$item instanceof \SplFileInfo) {
+        throw new \RuntimeException('The H5P content contains an unsupported filesystem entry.');
+      }
       if (!$item->isFile()) {
         continue;
       }
@@ -326,10 +364,10 @@ final class aculta_H5PManagedFileStorage extends \H5PDefaultStorage {
    * @param int $contentid
    *   H5P content ID.
    *
-   * @return void
-   *   No value is returned.
+   * @return int|string|null
+   *   The historical H5P API's optional file identifier.
    */
-  public function removeContentFile($file, $contentid) {
+  public function removeContentFile($file, $contentid): string|int|null {
     $relative = $this->validatedRelativeFile((string) $file);
     $uri = "{$this->h5pUri}/content/" . (int) $contentid . "/{$relative}";
     $managed = $this->fileRepository->loadByUri($uri);
@@ -340,11 +378,42 @@ final class aculta_H5PManagedFileStorage extends \H5PDefaultStorage {
     $this->assertSupportedImage($managed);
     $this->fileUsage->delete($managed, 'aculta_lms_h5p', 'h5p_content', (string) $contentid);
     $this->imageUsage->removeH5PReference($managed, (int) $contentid);
-    $isImage = $this->isImageAsset(strtolower(pathinfo($managed->getFilename(), PATHINFO_EXTENSION)), (string) $managed->getMimeType());
+    $filename = $managed->getFilename();
+    if ($filename === NULL) {
+      throw new \RuntimeException('An H5P managed file has no filename.');
+    }
+    $isImage = $this->isImageAsset(strtolower(pathinfo($filename, PATHINFO_EXTENSION)), (string) $managed->getMimeType());
     if ($this->unusedFileCleaner->removeIfUnused($managed) !== FileCleanupStatus::Deleted) {
       $type = $isImage ? 'image' : 'asset';
       throw new \RuntimeException("An H5P content {$type} is still referenced and cannot be removed.");
     }
+    return NULL;
+  }
+
+  /**
+   * Validates the library data shape required by the managed storage adapter.
+   *
+   * @param mixed $library
+   *   H5P library data.
+   *
+   * @return array{machineName: string, majorVersion: int|string, minorVersion: int|string, uploadDirectory: string}
+   *   Validated library data.
+   */
+  private function validatedLibrary(mixed $library): array {
+    if (!is_array($library)
+      || !isset($library['machineName'], $library['majorVersion'], $library['minorVersion'], $library['uploadDirectory'])
+      || !is_string($library['machineName'])
+      || !(is_int($library['majorVersion']) || (is_string($library['majorVersion']) && ctype_digit($library['majorVersion'])))
+      || !(is_int($library['minorVersion']) || (is_string($library['minorVersion']) && ctype_digit($library['minorVersion'])))
+      || !is_string($library['uploadDirectory'])) {
+      throw new \InvalidArgumentException('The H5P library record is invalid.');
+    }
+    return [
+      'machineName' => $library['machineName'],
+      'majorVersion' => $library['majorVersion'],
+      'minorVersion' => $library['minorVersion'],
+      'uploadDirectory' => $library['uploadDirectory'],
+    ];
   }
 
   /**
@@ -361,7 +430,11 @@ final class aculta_H5PManagedFileStorage extends \H5PDefaultStorage {
    * Rejects image formats that cannot be safely retained by aculta_image.
    */
   private function assertSupportedImage(FileInterface $file): void {
-    $extension = strtolower(pathinfo($file->getFilename(), PATHINFO_EXTENSION));
+    $filename = $file->getFilename();
+    if ($filename === NULL) {
+      throw new \RuntimeException('An H5P managed file has no filename.');
+    }
+    $extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
     $mime = (string) $file->getMimeType();
     if (!$this->isImageAsset($extension, $mime)) {
       return;

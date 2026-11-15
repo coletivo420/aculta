@@ -41,12 +41,19 @@ class aculta_H5PContent extends ContentEntityBase implements ContentEntityInterf
   /**
    * Defines base fields for H5P content and course document references.
    */
-  public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
+  /**
+   * {@inheritdoc}
+   *
+   * @return array<string, mixed>
+   *   Base fields for H5P content.
+   */
+  public static function baseFieldDefinitions(EntityTypeInterface $entity_type): array {
     $fields = parent::baseFieldDefinitions($entity_type);
 
     // Standard field, used as unique if primary index.
-    $fields['id']
-      ->setDescription(t('The ID of the H5P Content entity.'));
+    if ($fields['id'] instanceof BaseFieldDefinition) {
+      $fields['id']->setDescription(t('The ID of the H5P Content entity.'));
+    }
 
     $fields['library_id'] = BaseFieldDefinition::create('integer')
       ->setLabel(t('Library ID'))
@@ -163,8 +170,12 @@ class aculta_H5PContent extends ContentEntityBase implements ContentEntityInterf
   /**
    * Load library used by content.
    */
-  protected function loadLibrary() {
-    $this->library = aculta_H5PDrupal::getInstance()->getDatabaseConnection()->query("
+  protected function loadLibrary(): void {
+    $framework = aculta_H5PDrupal::getInstance();
+    if (!$framework instanceof aculta_H5PDrupal) {
+      throw new \LogicException('The H5P framework instance is unavailable.');
+    }
+    $statement = $framework->getDatabaseConnection()->query("
       SELECT title,
             machine_name AS name,
             major_version AS major,
@@ -175,27 +186,40 @@ class aculta_H5PContent extends ContentEntityBase implements ContentEntityInterf
       WHERE library_id = :id",
       [
         ':id' => $this->get('library_id')->value,
-      ])
-      ->fetchObject();
-    if (!$this->library) {
-      $this->library = NULL;
-    }
+      ]);
+    $result = $statement?->fetchObject();
+    $this->library = $result instanceof \stdClass ? $result : NULL;
   }
 
   /**
    * Returns library metadata in the requested format.
+   *
+   * @param bool $assoc
+   *   Whether to return an associative array.
+   *
+   * @return ($assoc is true ? array{machineName: string, majorVersion: int|string, minorVersion: int|string, name: string}|null : \stdClass|null)
+   *   Library data in the requested shape, or NULL when its record is missing.
    */
-  public function getLibrary($assoc = FALSE) {
+  public function getLibrary(bool $assoc = FALSE): array|\stdClass|null {
     if (empty($this->library)) {
       $this->loadLibrary();
     }
 
+    if ($this->library === NULL) {
+      return NULL;
+    }
+    $name = $this->library->name ?? NULL;
+    $major = $this->library->major ?? NULL;
+    $minor = $this->library->minor ?? NULL;
+    if (!is_string($name) || !(is_string($major) || is_int($major)) || !(is_string($minor) || is_int($minor))) {
+      return NULL;
+    }
     if ($assoc) {
       return [
-        'name' => $this->library->name,
-        'machineName' => $this->library->name,
-        'majorVersion' => $this->library->major,
-        'minorVersion' => $this->library->minor,
+        'name' => $name,
+        'machineName' => $name,
+        'majorVersion' => $major,
+        'minorVersion' => $minor,
       ];
     }
 
@@ -205,19 +229,28 @@ class aculta_H5PContent extends ContentEntityBase implements ContentEntityInterf
   /**
    * Returns the H5P library name and version.
    */
-  public function getLibraryString() {
+  public function getLibraryString(): string {
     if (empty($this->library)) {
       $this->loadLibrary();
     }
 
-    return "{$this->library->name} {$this->library->major}.{$this->library->minor}";
+    if ($this->library === NULL) {
+      return '';
+    }
+    $name = $this->library->name ?? NULL;
+    $major = $this->library->major ?? NULL;
+    $minor = $this->library->minor ?? NULL;
+    return is_string($name) && (is_string($major) || is_int($major)) && (is_string($minor) || is_int($minor))
+      ? "{$name} {$major}.{$minor}"
+      : '';
   }
 
   /**
    * Returns the library database ID used by this content entity.
    */
-  public function getLibraryId() {
-    return $this->get('library_id')->value;
+  public function getLibraryId(): int|string|null {
+    $id = $this->get('library_id')->value;
+    return is_int($id) || is_string($id) ? $id : NULL;
   }
 
   /**
@@ -234,7 +267,11 @@ class aculta_H5PContent extends ContentEntityBase implements ContentEntityInterf
       return NULL;
     }
 
-    $embedTypes = array_map('trim', explode(',', strtolower((string) $this->library->embed_types)));
+    $embedTypesValue = $this->library->embed_types ?? NULL;
+    if (!is_string($embedTypesValue)) {
+      return NULL;
+    }
+    $embedTypes = array_map('trim', explode(',', strtolower($embedTypesValue)));
     if (in_array('div', $embedTypes, TRUE)) {
       return 'div';
     }
@@ -252,7 +289,7 @@ class aculta_H5PContent extends ContentEntityBase implements ContentEntityInterf
    * Keeps H5P's export hook disabled to avoid exposing package sources.
    */
   // phpcs:ignore Drupal.NamingConventions.ValidFunctionName.ScopeNotCamelCaps -- Preserve the H5P export hook identifier.
-  protected function getExportURL() {
+  protected function getExportURL(): string {
     // Exports contain all package source files. Do not expose a direct URL;
     // an authenticated export endpoint requires a separate access contract.
     return '';
@@ -261,27 +298,31 @@ class aculta_H5PContent extends ContentEntityBase implements ContentEntityInterf
   /**
    * Only use for data comparison. Must not be used for content display.
    */
-  public function getParameters() {
-    return json_decode($this->get('parameters')->value);
+  public function getParameters(): mixed {
+    $value = $this->get('parameters')->value;
+    return is_string($value) ? json_decode($value) : NULL;
   }
 
   /**
    * Returns parameters filtered by H5P Core for presentation.
    */
-  public function getFilteredParameters() {
+  public function getFilteredParameters(): string {
     if (empty($this->library)) {
       $this->loadLibrary();
     }
 
+    if ($this->library === NULL) {
+      return '';
+    }
+    $library = $this->getLibrary(TRUE);
+    if (!is_array($library)) {
+      return '';
+    }
     $content = [
       'title' => $this->get('title')->value,
       'id' => $this->id(),
       'slug' => 'interactive-content',
-      'library' => [
-        'name' => $this->library->name,
-        'majorVersion' => $this->library->major,
-        'minorVersion' => $this->library->minor,
-      ],
+      'library' => $library,
       'params' => $this->get('parameters')->value,
       'filtered' => $this->get('filtered_parameters')->value,
       'embedType' => $this->getEmbedType() ?? 'div',
@@ -289,24 +330,35 @@ class aculta_H5PContent extends ContentEntityBase implements ContentEntityInterf
     ];
 
     $core = aculta_H5PDrupal::getInstance('core');
+    if (!$core instanceof \H5PCore) {
+      throw new \LogicException('The H5P core instance is unavailable.');
+    }
     $filteredParameters = $core->filterParameters($content);
+    if (!is_string($filteredParameters)) {
+      return '';
+    }
 
-    // Alters filtered params.
+    // H5P Core returns the filtered parameter object as JSON. Decode that
+    // JSON before invoking the alter hook, then encode the altered object.
     $filteredAsJson = json_decode($filteredParameters);
-    aculta_H5PDrupal::getInstance()->alterFilteredParameters($filteredAsJson);
-    return json_encode($filteredAsJson);
+    $framework = aculta_H5PDrupal::getInstance();
+    if (!$framework instanceof aculta_H5PDrupal) {
+      throw new \LogicException('The H5P framework instance is unavailable.');
+    }
+    $framework->alterFilteredParameters($filteredAsJson);
+    return json_encode($filteredAsJson, JSON_THROW_ON_ERROR);
   }
 
   /**
-   * Get an array containing all the metadata fields.
-   *
-   * @return array
-   *   Content metadata validated by the H5P library.
+   * @return array<mixed>
+   *   Metadata returned by H5P's metadata validator.
    */
-  public function getMetadata() {
+  public function getMetadata(): array {
+    $authorsValue = $this->get('authors')->value;
+    $changesValue = $this->get('changes')->value;
     $metadata = [
       'title' => $this->get('title')->value,
-      'authors' => json_decode($this->get('authors')->value ?? ''),
+      'authors' => is_string($authorsValue) ? json_decode($authorsValue) : NULL,
       'source' => $this->get('source')->value,
       'yearFrom' => $this->get('year_from')->value,
       'yearTo' => $this->get('year_to')->value,
@@ -315,7 +367,7 @@ class aculta_H5PContent extends ContentEntityBase implements ContentEntityInterf
       'licenseExtras' => $this->get('license_extras')->value,
       'authorComments' => $this->get('author_comments')->value,
       'defaultLanguage' => $this->get('default_language')->value,
-      'changes' => json_decode($this->get('changes')->value ?? ''),
+      'changes' => is_string($changesValue) ? json_decode($changesValue) : NULL,
       'a11yTitle' => $this->get('a11y_title')->value,
     ];
     foreach ($metadata as $key => $data) {
@@ -325,7 +377,14 @@ class aculta_H5PContent extends ContentEntityBase implements ContentEntityInterf
     }
 
     $core = aculta_H5PDrupal::getInstance('core');
-    $validator = new \H5PContentValidator($core->h5pF, $core);
+    if (!$core instanceof \H5PCore) {
+      throw new \LogicException('The H5P core instance is unavailable.');
+    }
+    $framework = aculta_H5PDrupal::getInstance();
+    if (!$framework instanceof aculta_H5PDrupal) {
+      throw new \LogicException('The H5P framework instance is unavailable.');
+    }
+    $validator = new \H5PContentValidator($framework, $core);
     return $validator->validateMetadata($metadata);
   }
 
@@ -336,48 +395,78 @@ class aculta_H5PContent extends ContentEntityBase implements ContentEntityInterf
    *   Filtered parameters and content metadata encoded as JSON.
    */
   // phpcs:ignore Drupal.NamingConventions.ValidFunctionName.ScopeNotCamelCaps -- Preserve the H5P editor protocol method identifier.
-  public function getEditorJSON() {
-    return '{"params":' . $this->getFilteredParameters() . ',"metadata":' . json_encode($this->getMetadata()) . '}';
+  public function getEditorJSON(): string {
+    $parameters = $this->getFilteredParameters();
+    return '{"params":' . ($parameters !== '' ? $parameters : '{}') . ',"metadata":' . json_encode($this->getMetadata(), JSON_THROW_ON_ERROR) . '}';
   }
 
   /**
    * Builds H5P integration settings for the current user and content.
    */
   // phpcs:ignore Drupal.NamingConventions.ValidFunctionName.ScopeNotCamelCaps -- Preserve the H5P integration protocol method identifier.
-  public function getaculta_H5PIntegrationSettings($canUpdateEntity = FALSE) {
+  /**
+   * @return array<string, mixed>
+   *   Player integration settings.
+   */
+  public function getaculta_H5PIntegrationSettings(bool $canUpdateEntity = FALSE): array {
     if (empty($this->library)) {
       $this->loadLibrary();
     }
 
     // Load user data for content.
-    $results = aculta_H5PDrupal::getInstance()->getDatabaseConnection()->query("
+    $framework = aculta_H5PDrupal::getInstance();
+    if (!$framework instanceof aculta_H5PDrupal) {
+      throw new \LogicException('The H5P framework instance is unavailable.');
+    }
+    if ($this->library === NULL) {
+      return [];
+    }
+    $statement = $framework->getDatabaseConnection()->query("
       SELECT sub_content_id, data_id, data
         FROM {h5p_content_user_data}
       WHERE user_id = :user_id
         AND content_main_id = :content_id
         AND preloaded = 1",
       [
-        ':user_id' => aculta_H5PDrupal::getInstance()->getCurrentUserId(),
+        ':user_id' => $framework->getCurrentUserId(),
         ':content_id' => $this->id(),
       ]);
+    if ($statement === NULL) {
+      return [];
+    }
 
     $content_user_data = [
       0 => [
         'state' => '{}',
       ],
     ];
-    foreach ($results as $result) {
-      $content_user_data[$result->sub_content_id][$result->data_id] = $result->data;
+    foreach ($statement as $result) {
+      if (!is_object($result)
+        || !isset($result->sub_content_id, $result->data_id)
+        || !is_int($result->sub_content_id) && !is_string($result->sub_content_id)
+        || !is_int($result->data_id) && !is_string($result->data_id)) {
+        continue;
+      }
+      if (isset($result->data) && is_string($result->data)) {
+        $content_user_data[$result->sub_content_id][$result->data_id] = $result->data;
+      }
     }
 
     $core = aculta_H5PDrupal::getInstance('core');
+    if (!$core instanceof \H5PCore) {
+      throw new \LogicException('The H5P core instance is unavailable.');
+    }
     $filtered_parameters = $this->getFilteredParameters();
-    $display_options = $core->getDisplayOptionsForView($this->get('disabled_features')->value, $canUpdateEntity);
+    $disabledFeatures = $this->get('disabled_features')->value;
+    $display_options = $core->getDisplayOptionsForView(
+      is_numeric($disabledFeatures) ? (int) $disabledFeatures : 0,
+      (int) $canUpdateEntity,
+    );
 
     return [
       'library' => $this->getLibraryString(),
       'jsonContent' => $filtered_parameters,
-      'fullScreen' => $this->library->fullscreen,
+      'fullScreen' => is_bool($this->library->fullscreen ?? NULL) ? $this->library->fullscreen : FALSE,
       'exportUrl' => $this->getExportURL(),
       'metadata' => $this->getMetadata(),
       'contentUserData' => $content_user_data,
@@ -388,26 +477,38 @@ class aculta_H5PContent extends ContentEntityBase implements ContentEntityInterf
   /**
    * {@inheritdoc}
    */
-  public function delete() {
+  public function delete(): void {
     if (empty($this->library)) {
       $this->loadLibrary();
     }
 
     // Delete entity.
+    $id = $this->id();
     parent::delete();
 
     // Delete all associated files and data.
     $storage = aculta_H5PDrupal::getInstance('storage');
+    if (!$storage instanceof \H5PStorage) {
+      throw new \LogicException('The H5P storage instance is unavailable.');
+    }
     $storage->deletePackage([
-      'id' => $this->id(),
+      'id' => $id,
       'slug' => 'interactive-content',
     ]);
 
     // Log content delete.
-    new aculta_H5PEvent('content', 'delete',
-      $this->id(), '',
-      $this->library->name, $this->library->major . '.' . $this->library->minor
-    );
+    if ($this->library === NULL) {
+      return;
+    }
+    $name = $this->library->name ?? NULL;
+    $major = $this->library->major ?? NULL;
+    $minor = $this->library->minor ?? NULL;
+    if (is_string($name) && (is_int($major) || is_string($major)) && (is_int($minor) || is_string($minor))) {
+      new aculta_H5PEvent('content', 'delete',
+        $id === NULL ? NULL : (string) $id, '',
+        $name, $major . '.' . $minor,
+      );
+    }
   }
 
 }
