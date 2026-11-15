@@ -48,6 +48,12 @@ final class AssociadoRequestForm extends FormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<array-key, mixed> $form
+   *   Estrutura do formulário.
+   *
+   * @return array<array-key, mixed>
+   *   Estrutura do formulário.
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $uid = (int) $this->currentUserService->id();
@@ -69,11 +75,15 @@ final class AssociadoRequestForm extends FormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<array-key, mixed> $form
+   *   Estrutura do formulário.
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $uid = (int) $this->currentUserService->id();
     // Convite: aceitar ou recusar, sem depender de e-mail confirmado além do que o convite já exige.
-    $acao = (string) ($form_state->getTriggeringElement()['#name'] ?? '');
+    $trigger = $form_state->getTriggeringElement();
+    $acao = is_array($trigger) ? $this->textValue($trigger['#name'] ?? '') : '';
     if ($acao === 'aceitar') {
       $this->messenger()->addStatus($this->marker->aceitarConvite($uid)
         ? $this->t('Convite aceito. Você agora é associado.')
@@ -124,6 +134,13 @@ final class AssociadoRequestForm extends FormBase {
       AssociadoMarker::CONVIDADO => (string) $this->t('A associação convidou você a ser associado. Aceite ou recuse o convite abaixo.'),
       default => (string) $this->t('Você ainda não é associado. Pedir adesão envia um pedido para a associação analisar; só a administração concede a situação.'),
     };
+  }
+
+  /**
+   * Texto de um valor; vazio quando o valor não é escalar.
+   */
+  private function textValue(mixed $value): string {
+    return is_scalar($value) || $value instanceof \Stringable ? (string) $value : '';
   }
 
 }

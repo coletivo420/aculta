@@ -37,6 +37,9 @@ final class AccountDashboardHooks {
 
   /**
    * Adiciona a caixa Bio à visão geral. O Portal dispara aculta_portal_dashboard.
+   *
+   * @param array<array-key, mixed> $build
+   *   Visão geral do painel, alterada no lugar.
    */
   #[Hook('aculta_portal_dashboard_alter')]
   public function dashboardAlter(array &$build, AccountInterface $account): void {
@@ -47,10 +50,13 @@ final class AccountDashboardHooks {
 
   /**
    * Ações do topo da visão geral: "Ver Perfil" leva ao perfil público (purpose main). Sem apelido, nada aparece.
+   *
+   * @return array<array-key, mixed>
+   *   Render array das ações, ou vazio.
    */
   private function overviewActions(AccountInterface $account): array {
     $profile = PerfilDoPapel::principal($this->entityTypeManager->getStorage('profile'), $account);
-    $nickname = $profile && $profile->hasField('field_nickname') ? trim((string) $profile->get('field_nickname')->value) : '';
+    $nickname = $profile && $profile->hasField('field_nickname') ? trim($this->textValue($profile->get('field_nickname')->value)) : '';
     // Preserve display casing, but generate the route from its lowercase slug.
     // Invalid legacy values omit this action rather than breaking the overview.
     $publicSlug = AccountNames::publicRouteSlug($nickname);
@@ -62,7 +68,9 @@ final class AccountDashboardHooks {
       return [];
     }
     $cache = new CacheableMetadata();
-    $cache->addCacheTags($profile->getCacheTags());
+    if ($profile !== NULL) {
+      $cache->addCacheTags($profile->getCacheTags());
+    }
     return [
       '#type' => 'container',
       '#attributes' => ['data-portal-ui' => 'account-overview-actions'],
@@ -74,6 +82,13 @@ final class AccountDashboardHooks {
         ['data-portal-ui' => 'account-view-profile', 'title' => (string) $this->t('Abrir o perfil público')],
       ),
     ];
+  }
+
+  /**
+   * Texto de um valor de campo; vazio quando o valor não é escalar.
+   */
+  private function textValue(mixed $value): string {
+    return is_scalar($value) || $value instanceof \Stringable ? (string) $value : '';
   }
 
 }

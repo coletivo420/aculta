@@ -31,7 +31,7 @@ final class BadgeService {
   public function award(int $uid, string $badge, ?int $grantedBy = NULL, string $reason = ''): bool {
     $definition = $this->definitions->all()[$badge] ?? NULL;
     if ($definition === NULL || empty($definition['enabled']) || !$this->isEligible($uid)
-      || ($grantedBy !== NULL && ($grantedBy <= 0 || !in_array('manual', $definition['triggers'], TRUE)))
+      || ($grantedBy !== NULL && ($grantedBy <= 0 || !in_array('manual', $this->triggersOf($definition), TRUE)))
       || ($grantedBy === NULL && $definition['triggers'] === ['manual'])) {
       return FALSE;
     }
@@ -86,7 +86,7 @@ final class BadgeService {
       return;
     }
     foreach ($this->definitions->all() as $id => $definition) {
-      if (in_array($trigger, $definition['triggers'], TRUE)) {
+      if (in_array($trigger, $this->triggersOf($definition), TRUE)) {
         $this->award($uid, $id);
       }
     }
@@ -105,6 +105,9 @@ final class BadgeService {
    * Hooks de entidade já executam em transação. Liberar ao sair de award()
    * permitiria outra requisição consultar antes do commit do comentário/perfil.
    * Escritas diretas no storage não fazem parte deste contrato.
+   *
+   * @param callable(): bool $operation
+   *   Operação que devolve se alterou algo.
    */
   private function serialized(int $uid, string $badge, callable $operation): bool {
     $name = 'aculta_user:badge:' . $uid . ':' . $badge;
@@ -194,6 +197,20 @@ final class BadgeService {
    */
   private function storage() {
     return $this->entityTypeManager->getStorage('aculta_badge_award');
+  }
+
+  /**
+   * Gatilhos de uma definição, como lista; vazia quando ausente.
+   *
+   * @param array<array-key, mixed> $definition
+   *   Definição da conquista.
+   *
+   * @return array<array-key, mixed>
+   *   Gatilhos configurados.
+   */
+  private function triggersOf(array $definition): array {
+    $triggers = $definition['triggers'] ?? [];
+    return is_array($triggers) ? $triggers : [];
   }
 
 }

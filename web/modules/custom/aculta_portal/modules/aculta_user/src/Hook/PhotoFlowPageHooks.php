@@ -30,7 +30,7 @@ final class PhotoFlowPageHooks {
   /**
    * Anexa a biblioteca do fluxo de foto e informa a foto salva ao script.
    *
-   * @param array $attachments
+   * @param array<array-key, mixed> $attachments
    *   Anexos da página, alterados no lugar.
    */
   #[Hook('page_attachments')]
@@ -39,9 +39,25 @@ final class PhotoFlowPageHooks {
       return;
     }
     $account = $this->entityTypeManager->getStorage('user')->load($this->currentUser->id());
-    $saved = $account instanceof UserInterface ? (int) ($account->get('user_picture')->target_id ?? 0) : 0;
-    $attachments['#attached']['library'][] = 'aculta_user/photo-flow';
-    $attachments['#attached']['drupalSettings']['acultaUser']['savedFid'] = $saved;
+    $saved = $account instanceof UserInterface ? $this->intValue($account->get('user_picture')->target_id ?? 0) : 0;
+    // Anexos são lidos e gravados de volta por nível, sem escrita aninhada em valores não tipados.
+    $attached = is_array($attachments['#attached'] ?? NULL) ? $attachments['#attached'] : [];
+    $libraries = is_array($attached['library'] ?? NULL) ? $attached['library'] : [];
+    $libraries[] = 'aculta_user/photo-flow';
+    $attached['library'] = $libraries;
+    $settings = is_array($attached['drupalSettings'] ?? NULL) ? $attached['drupalSettings'] : [];
+    $acultaUser = is_array($settings['acultaUser'] ?? NULL) ? $settings['acultaUser'] : [];
+    $acultaUser['savedFid'] = $saved;
+    $settings['acultaUser'] = $acultaUser;
+    $attached['drupalSettings'] = $settings;
+    $attachments['#attached'] = $attached;
+  }
+
+  /**
+   * Inteiro de um valor de campo; zero quando não é numérico.
+   */
+  private function intValue(mixed $value): int {
+    return is_numeric($value) ? (int) $value : 0;
   }
 
 }

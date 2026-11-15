@@ -55,7 +55,7 @@ final class SocialNetworks implements SocialNetworksInterface {
     }
     foreach ($profile->get('field_redes_sociais') as $item) {
       $itemValues = $item->getValue();
-      $uri = (string) ($itemValues['uri'] ?? '');
+      $uri = $this->fieldText($itemValues, 'uri');
       $key = $uri !== '' ? $this->keyForUri($uri) : NULL;
       if ($key !== NULL && !isset($links[$key])) {
         $links[$key] = $uri;
@@ -101,16 +101,24 @@ final class SocialNetworks implements SocialNetworksInterface {
     $items = [];
     foreach ($profile->get('field_redes_sociais') as $item) {
       $itemValues = $item->getValue();
-      $existing = (string) ($itemValues['uri'] ?? '');
+      $existing = $this->fieldText($itemValues, 'uri');
       if ($existing !== '' && $this->keyForUri($existing) === $key) {
         continue;
       }
-      $items[] = ['uri' => $existing, 'title' => (string) ($itemValues['title'] ?? '')];
+      $items[] = ['uri' => $existing, 'title' => $this->fieldText($itemValues, 'title')];
     }
     if ($uri !== NULL) {
       $items[] = ['uri' => $uri, 'title' => ''];
     }
     $profile->set('field_redes_sociais', $items);
+  }
+
+  /**
+   * Texto de uma chave de um item de campo; vazio quando ausente ou não escalar.
+   */
+  private function fieldText(mixed $values, string $key): string {
+    $value = is_array($values) ? ($values[$key] ?? NULL) : NULL;
+    return is_scalar($value) || $value instanceof \Stringable ? (string) $value : '';
   }
 
 }

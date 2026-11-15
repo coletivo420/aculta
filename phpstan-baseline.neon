@@ -1,6 +1,12 @@
 parameters:
 	ignoreErrors:
 		-
+			rawMessage: 'Method Drupal\aculta_user\Badge\BadgeService::definitions() return type has no value type specified in iterable type array.'
+			identifier: missingType.iterableValue
+			count: 1
+			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Badge/BadgeService.php
+
+		-
 			rawMessage: Cannot access offset 'address' on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
@@ -73781,24 +73787,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Avatar/AvatarResolver.php
 
 		-
-			rawMessage: 'Method Drupal\aculta_user\Badge\BadgeService::definitions() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Badge/BadgeService.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_user\Badge\BadgeService::serialized() should return bool but returns mixed.'
-			identifier: return.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Badge/BadgeService.php
-
-		-
-			rawMessage: 'Parameter #2 $haystack of function in_array expects array, mixed given.'
-			identifier: argument.type
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Badge/BadgeService.php
-
-		-
 			rawMessage: Cannot cast mixed to string.
 			identifier: cast.string
 			count: 1
@@ -73907,82 +73895,10 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_user/src/EventSubscriber/SocialAuthFieldsSubscriber.php
 
 		-
-			rawMessage: Cannot cast mixed to string.
-			identifier: cast.string
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Form/AssociadoRequestForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_user\Form\AssociadoRequestForm::buildForm() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Form/AssociadoRequestForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_user\Form\AssociadoRequestForm::buildForm() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Form/AssociadoRequestForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_user\Form\AssociadoRequestForm::submitForm() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Form/AssociadoRequestForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_user\Form\ProfileVisibilityForm::buildForm() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Form/ProfileVisibilityForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_user\Form\ProfileVisibilityForm::buildForm() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Form/ProfileVisibilityForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_user\Form\ProfileVisibilityForm::submitForm() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Form/ProfileVisibilityForm.php
-
-		-
-			rawMessage: 'Parameter #1 $roles of static method Drupal\aculta_user\PublicProfilePolicy::isObrigatorioPublico() expects array<string>, array given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Form/ProfileVisibilityForm.php
-
-		-
 			rawMessage: 'Parameter #1 $haystack of function str_starts_with expects string, string|null given.'
 			identifier: argument.type
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Hook/AccountCreationHooks.php
-
-		-
-			rawMessage: 'Cannot call method getCacheTags() on Drupal\profile\Entity\ProfileInterface|null.'
-			identifier: method.nonObject
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Hook/AccountDashboardHooks.php
-
-		-
-			rawMessage: Cannot cast mixed to string.
-			identifier: cast.string
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Hook/AccountDashboardHooks.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_user\Hook\AccountDashboardHooks::dashboardAlter() has parameter $build with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Hook/AccountDashboardHooks.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_user\Hook\AccountDashboardHooks::overviewActions() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Hook/AccountDashboardHooks.php
 
 		-
 			rawMessage: 'Method Drupal\aculta_user\Hook\AccountMenuPresentationHooks::preprocessPage() has parameter $variables with no value type specified in iterable type array.'
@@ -74037,42 +73953,6 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Hook/ParticipationHooks.php
-
-		-
-			rawMessage: Cannot access an offset on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Hook/PhotoFlowPageHooks.php
-
-		-
-			rawMessage: Cannot access offset 'acultaUser' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Hook/PhotoFlowPageHooks.php
-
-		-
-			rawMessage: Cannot access offset 'drupalSettings' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Hook/PhotoFlowPageHooks.php
-
-		-
-			rawMessage: Cannot access offset 'library' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Hook/PhotoFlowPageHooks.php
-
-		-
-			rawMessage: Cannot access offset 'savedFid' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Hook/PhotoFlowPageHooks.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_user\Hook\PhotoFlowPageHooks::pageAttachments() has parameter $attachments with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Hook/PhotoFlowPageHooks.php
 
 		-
 			rawMessage: 'Parameter #1 $haystack of function str_starts_with expects string, string|null given.'
@@ -74133,24 +74013,6 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Identity/AuthorIdentity.php
-
-		-
-			rawMessage: Cannot cast mixed to string.
-			identifier: cast.string
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Identity/AuthorIdentityResolver.php
-
-		-
-			rawMessage: 'Parameter #1 $roles of static method Drupal\aculta_user\PublicProfilePolicy::isObrigatorioPublico() expects array<string>, array given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Identity/AuthorIdentityResolver.php
-
-		-
-			rawMessage: 'Parameter #1 $string of function trim expects string, Drupal\Component\Render\MarkupInterface|string given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Identity/AuthorIdentityResolver.php
 
 		-
 			rawMessage: 'Cannot call method id() on Drupal\Core\Entity\EntityInterface|null.'
@@ -74347,24 +74209,6 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Social/SocialLinksCard.php
-
-		-
-			rawMessage: Cannot access offset 'title' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Social/SocialNetworks.php
-
-		-
-			rawMessage: Cannot access offset 'uri' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Social/SocialNetworks.php
-
-		-
-			rawMessage: Cannot cast mixed to string.
-			identifier: cast.string
-			count: 3
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Social/SocialNetworks.php
 
 		-
 			rawMessage: 'Method Drupal\aculta_user\Twig\AvatarTwigExtension::avatarSample() return type has no value type specified in iterable type array.'
