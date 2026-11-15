@@ -187,11 +187,14 @@ final class PrivateMessageRouteAccessKernelTest extends KernelTestBase {
     $access = $this->container->get('access_manager');
     $csrf = $this->container->get('csrf_token');
 
+    // The route's _csrf_token requirement is enforced by access_check.csrf.
+    $csrfCheck = $this->container->get('access_check.csrf');
     $missingToken = Request::create('/' . $path, 'POST');
-    self::assertFalse($access->check($routeMatch, $member, $missingToken));
+    self::assertTrue($csrfCheck->access($route, $missingToken, $routeMatch)->isForbidden());
     $invalidToken = Request::create('/' . $path . '?token=invalid', 'POST');
-    self::assertFalse($access->check($routeMatch, $member, $invalidToken));
+    self::assertTrue($csrfCheck->access($route, $invalidToken, $routeMatch)->isForbidden());
     $validToken = Request::create('/' . $path . '?token=' . rawurlencode($csrf->get($path)), 'POST');
+    self::assertTrue($csrfCheck->access($route, $validToken, $routeMatch)->isAllowed());
     self::assertTrue($access->check($routeMatch, $member, $validToken));
 
     $validTokenForStranger = Request::create('/' . $path . '?token=' . rawurlencode($csrf->get($path)), 'POST');
