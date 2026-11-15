@@ -36,6 +36,7 @@ class PrivateMessageThreadMemberFormatter extends FormatterBase implements Conta
 
   /**
    * Tipagem do porte Private Message.
+   *
    * @param array<string, mixed> $settings
    * @param array<string, mixed> $third_party_settings
    */
@@ -57,6 +58,7 @@ class PrivateMessageThreadMemberFormatter extends FormatterBase implements Conta
 
   /**
    * {@inheritdoc}
+   *
    * @param array{field_definition: \Drupal\Core\Field\FieldDefinitionInterface, settings: array<string, mixed>, label: string, view_mode: string, third_party_settings: array<string, mixed>, ...} $configuration
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): static {
@@ -140,6 +142,7 @@ class PrivateMessageThreadMemberFormatter extends FormatterBase implements Conta
 
   /**
    * {@inheritdoc}
+   *
    * @return array<string, mixed>
    */
   public static function defaultSettings(): array {
@@ -155,7 +158,9 @@ class PrivateMessageThreadMemberFormatter extends FormatterBase implements Conta
 
   /**
    * {@inheritdoc}
+   *
    * @param array<string, mixed> $form
+   *
    * @return array<string, mixed>
    */
   public function settingsForm(array $form, FormStateInterface $form_state): array {
@@ -241,7 +246,9 @@ class PrivateMessageThreadMemberFormatter extends FormatterBase implements Conta
 
   /**
    * Ajax callback for settings form.
+   *
    * @param array<string, mixed> $form
+   *
    * @return array<string, mixed>
    */
   public function ajaxCallback(array $form, FormStateInterface $form_state): array {

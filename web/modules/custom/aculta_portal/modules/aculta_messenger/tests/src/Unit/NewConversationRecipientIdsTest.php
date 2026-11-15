@@ -521,7 +521,6 @@ final class NewConversationRecipientIdsTest extends UnitTestCase {
     return $user;
   }
 
-
   /**
    * Creates an account with controllable eligibility for private messages.
    */

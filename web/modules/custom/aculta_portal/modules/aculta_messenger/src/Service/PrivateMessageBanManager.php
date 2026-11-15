@@ -60,6 +60,7 @@ class PrivateMessageBanManager implements PrivateMessageBanManagerInterface {
 
   /**
    * {@inheritdoc}
+   *
    * @return array<mixed, mixed>
    */
   public function getBannedUsers(int|string $user_id): array {

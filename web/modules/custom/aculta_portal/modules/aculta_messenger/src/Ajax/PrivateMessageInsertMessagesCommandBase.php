@@ -29,6 +29,7 @@ abstract class PrivateMessageInsertMessagesCommandBase implements CommandInterfa
 
   /**
    * {@inheritdoc}
+   *
    * @return array<string, mixed>
    */
   public function render(): array {

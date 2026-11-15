@@ -2,7 +2,6 @@
 
 namespace Drupal\aculta_messenger\Mapper;
 
-
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Database\Query\SelectInterface;
 use Drupal\Core\Session\AccountProxyInterface;
@@ -21,6 +20,7 @@ class PrivateMessageMapper implements PrivateMessageMapperInterface {
 
   /**
    * {@inheritdoc}
+   *
    * @param array<int, \Drupal\user\UserInterface> $members
    */
   public function getThreadIdForMembers(array $members) {
@@ -91,6 +91,7 @@ class PrivateMessageMapper implements PrivateMessageMapperInterface {
 
   /**
    * {@inheritdoc}
+   *
    * @return array<mixed, mixed>
    */
   public function getThreadIdsForUser(UserInterface $user, $count = FALSE, $timestamp = FALSE): array {
@@ -162,7 +163,9 @@ class PrivateMessageMapper implements PrivateMessageMapperInterface {
 
   /**
    * {@inheritdoc}
+   *
    * @param array<string, mixed> $existingThreadIds
+   *
    * @return array<mixed, mixed>
    */
   public function getUpdatedInboxThreadIds(array $existingThreadIds, $count = FALSE): array {
@@ -313,6 +316,7 @@ class PrivateMessageMapper implements PrivateMessageMapperInterface {
 
   /**
    * {@inheritdoc}
+   *
    * @return array<mixed, mixed>
    */
   public function getThreadIds(): array {

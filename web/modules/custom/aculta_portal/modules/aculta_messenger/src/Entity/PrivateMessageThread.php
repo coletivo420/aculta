@@ -21,23 +21,23 @@ use Drupal\Core\Session\AccountInterface;
   id: 'private_message_thread',
   label: new TranslatableMarkup('Private Message Thread'),
   handlers: [
-  'view_builder' => 'Drupal\aculta_messenger\Entity\Builder\PrivateMessageThreadViewBuilder',
-  'views_data' => 'Drupal\views\EntityViewsData',
-  'access' => 'Drupal\aculta_messenger\Entity\Access\PrivateMessageThreadAccessControlHandler',
-  'form' => [
-  'delete' => 'Drupal\aculta_messenger\Form\PrivateMessageThreadDeleteForm',
-  'clear_personal_history' => 'Drupal\aculta_messenger\Form\PrivateMessageThreadClearPersonalHistoryForm',
-  ],
+    'view_builder' => 'Drupal\aculta_messenger\Entity\Builder\PrivateMessageThreadViewBuilder',
+    'views_data' => 'Drupal\views\EntityViewsData',
+    'access' => 'Drupal\aculta_messenger\Entity\Access\PrivateMessageThreadAccessControlHandler',
+    'form' => [
+      'delete' => 'Drupal\aculta_messenger\Form\PrivateMessageThreadDeleteForm',
+      'clear_personal_history' => 'Drupal\aculta_messenger\Form\PrivateMessageThreadClearPersonalHistoryForm',
+    ],
   ],
   base_table: 'private_message_threads',
   admin_permission: 'administer private messages',
   entity_keys: [
-  'id' => 'id',
-  'uuid' => 'uuid',
+    'id' => 'id',
+    'uuid' => 'uuid',
   ],
   links: [
-  'canonical' => '/private-messages/{private_message_thread}',
-  'delete-form' => '/private-messages/{private_message_thread}/delete',
+    'canonical' => '/private-messages/{private_message_thread}',
+    'delete-form' => '/private-messages/{private_message_thread}/delete',
   ],
   field_ui_base_route: 'aculta_messenger.pm_thread_settings_page',
 )]

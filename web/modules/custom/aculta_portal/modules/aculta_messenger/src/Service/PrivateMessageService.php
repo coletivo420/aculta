@@ -85,6 +85,7 @@ class PrivateMessageService implements PrivateMessageServiceInterface {
 
   /**
    * {@inheritdoc}
+   *
    * @param int|false|null $timestamp
    */
   public function getThreadsForUser(int $count, /* ?int */$timestamp = NULL): array {
@@ -135,6 +136,7 @@ class PrivateMessageService implements PrivateMessageServiceInterface {
 
   /**
    * {@inheritdoc}
+   *
    * @return list<\Drupal\aculta_messenger\Entity\PrivateMessageInterface>
    */
   public function getNewMessages($threadId, $messageId) {
@@ -159,6 +161,7 @@ class PrivateMessageService implements PrivateMessageServiceInterface {
 
   /**
    * {@inheritdoc}
+   *
    * @return array<string, mixed>
    */
   public function getPreviousMessages($threadId, $messageId) {
@@ -215,7 +218,9 @@ class PrivateMessageService implements PrivateMessageServiceInterface {
 
   /**
    * {@inheritdoc}
+   *
    * @param array<string, mixed> $existingThreadInfo
+   *
    * @return array<string, mixed>
    */
   public function getUpdatedInboxThreads(array $existingThreadInfo, $count = FALSE) {
@@ -302,6 +307,7 @@ class PrivateMessageService implements PrivateMessageServiceInterface {
 
   /**
    * {@inheritdoc}
+   *
    * @param array<string, mixed> $build
    */
   public function createRenderablePrivateMessageThreadLink(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, $view_mode) {
@@ -359,6 +365,7 @@ class PrivateMessageService implements PrivateMessageServiceInterface {
 
   /**
    * {@inheritdoc}
+   *
    * @return list<mixed>
    */
   public function getThreadIds() {

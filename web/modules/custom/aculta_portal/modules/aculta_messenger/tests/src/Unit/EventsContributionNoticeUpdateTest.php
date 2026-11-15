@@ -13,9 +13,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use PHPUnit\Framework\Attributes\Group;
 
 /**
- * Atualização de notificação de Events para sites já instalados.
- *
-
+ * Atualização de notificação de Events para sites já instalados. *
  */
 #[Group('aculta_messenger')]
 final class EventsContributionNoticeUpdateTest extends UnitTestCase {

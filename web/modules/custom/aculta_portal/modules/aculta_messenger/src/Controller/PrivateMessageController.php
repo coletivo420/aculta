@@ -23,6 +23,7 @@ class PrivateMessageController extends ControllerBase implements PrivateMessageC
 
   /**
    * {@inheritdoc}
+   *
    * @return array<string, mixed>
    */
   public function privateMessagePage(): array {
@@ -59,6 +60,7 @@ class PrivateMessageController extends ControllerBase implements PrivateMessageC
 
   /**
    * {@inheritdoc}
+   *
    * @return array<string, mixed>
    */
   public function pmSettingsPage(): array {
@@ -71,6 +73,7 @@ class PrivateMessageController extends ControllerBase implements PrivateMessageC
 
   /**
    * {@inheritdoc}
+   *
    * @return array<string, mixed>
    */
   public function pmThreadSettingsPage(): array {
@@ -81,6 +84,7 @@ class PrivateMessageController extends ControllerBase implements PrivateMessageC
 
   /**
    * {@inheritdoc}
+   *
    * @return array<string, mixed>
    */
   public function configPage(): array {
@@ -93,6 +97,7 @@ class PrivateMessageController extends ControllerBase implements PrivateMessageC
 
   /**
    * {@inheritdoc}
+   *
    * @return array<string, mixed>
    */
   public function adminUninstallPage(): array {
@@ -115,6 +120,7 @@ class PrivateMessageController extends ControllerBase implements PrivateMessageC
 
   /**
    * {@inheritdoc}
+   *
    * @return array<string, mixed>
    */
   public function banUnbanPage(): array {

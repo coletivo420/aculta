@@ -21,35 +21,35 @@ use Drupal\user\UserInterface;
   id: 'private_message_ban',
   label: new TranslatableMarkup('Private Message Ban'),
   handlers: [
-  'view_builder' => 'Drupal\Core\Entity\EntityViewBuilder',
-  'list_builder' => 'Drupal\aculta_messenger\Entity\Builder\PrivateMessageBanListBuilder',
-  'views_data' => 'Drupal\views\EntityViewsData',
-  'form' => [
-  'default' => 'Drupal\aculta_messenger\Form\PrivateMessageBanForm',
-  'add' => 'Drupal\aculta_messenger\Form\PrivateMessageBanForm',
-  'edit' => 'Drupal\aculta_messenger\Form\PrivateMessageBanForm',
-  'delete' => 'Drupal\Core\Entity\ContentEntityDeleteForm',
-  ],
-  'route_provider' => [
-  'html' => 'Drupal\Core\Entity\Routing\AdminHtmlRouteProvider',
-  ],
-  'access' => 'Drupal\aculta_messenger\Entity\Access\PrivateMessageBanAccessControlHandler',
+    'view_builder' => 'Drupal\Core\Entity\EntityViewBuilder',
+    'list_builder' => 'Drupal\aculta_messenger\Entity\Builder\PrivateMessageBanListBuilder',
+    'views_data' => 'Drupal\views\EntityViewsData',
+    'form' => [
+      'default' => 'Drupal\aculta_messenger\Form\PrivateMessageBanForm',
+      'add' => 'Drupal\aculta_messenger\Form\PrivateMessageBanForm',
+      'edit' => 'Drupal\aculta_messenger\Form\PrivateMessageBanForm',
+      'delete' => 'Drupal\Core\Entity\ContentEntityDeleteForm',
+    ],
+    'route_provider' => [
+      'html' => 'Drupal\Core\Entity\Routing\AdminHtmlRouteProvider',
+    ],
+    'access' => 'Drupal\aculta_messenger\Entity\Access\PrivateMessageBanAccessControlHandler',
   ],
   base_table: 'private_message_ban',
   admin_permission: 'administer private message ban entities',
   entity_keys: [
-  'id' => 'id',
-  'uuid' => 'uuid',
-  'owner' => 'owner',
+    'id' => 'id',
+    'uuid' => 'uuid',
+    'owner' => 'owner',
   ],
   links: [
-  'add-form' => '/admin/structure/private_message_ban/add',
-  'edit-form' => '/admin/structure/private_message_ban/{private_message_ban}/edit',
-  'delete-form' => '/admin/structure/private_message_ban/{private_message_ban}/delete',
-  'collection' => '/admin/structure/private_message_ban',
+    'add-form' => '/admin/structure/private_message_ban/add',
+    'edit-form' => '/admin/structure/private_message_ban/{private_message_ban}/edit',
+    'delete-form' => '/admin/structure/private_message_ban/{private_message_ban}/delete',
+    'collection' => '/admin/structure/private_message_ban',
   ],
   constraints: [
-  'UniquePrivateMessageBan' => [],
+    'UniquePrivateMessageBan' => [],
   ],
 )]
 class PrivateMessageBan extends ContentEntityBase implements PrivateMessageBanInterface {

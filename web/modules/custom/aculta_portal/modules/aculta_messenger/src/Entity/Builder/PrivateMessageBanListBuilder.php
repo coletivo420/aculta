@@ -15,6 +15,7 @@ class PrivateMessageBanListBuilder extends EntityListBuilder {
 
   /**
    * {@inheritdoc}
+   *
    * @return array<string, mixed>
    */
   public function buildHeader(): array {
@@ -26,6 +27,7 @@ class PrivateMessageBanListBuilder extends EntityListBuilder {
 
   /**
    * {@inheritdoc}
+   *
    * @return array<string, mixed>
    */
   public function buildRow(EntityInterface $entity): array {

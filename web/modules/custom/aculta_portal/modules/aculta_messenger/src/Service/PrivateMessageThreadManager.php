@@ -18,6 +18,7 @@ class PrivateMessageThreadManager implements PrivateMessageThreadManagerInterfac
 
   /**
    * {@inheritdoc}
+   *
    * @param \Drupal\user\UserInterface[] $members
    */
   public function saveThread(PrivateMessageInterface $message, array $members = [], ?PrivateMessageThreadInterface $thread = NULL): void {

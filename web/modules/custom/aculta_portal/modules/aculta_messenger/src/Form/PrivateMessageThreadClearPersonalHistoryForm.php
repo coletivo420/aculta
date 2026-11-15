@@ -47,6 +47,7 @@ class PrivateMessageThreadClearPersonalHistoryForm extends ContentEntityConfirmF
 
   /**
    * {@inheritdoc}
+   *
    * @param array<array-key, mixed> &$form
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {

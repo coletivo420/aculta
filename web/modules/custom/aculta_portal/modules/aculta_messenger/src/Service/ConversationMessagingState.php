@@ -6,7 +6,6 @@ namespace Drupal\aculta_messenger\Service;
 
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\aculta_messenger\Entity\PrivateMessageThreadInterface;
-use Drupal\aculta_messenger\Service\PrivateMessageBanManagerInterface;
 
 /**
  * Whether bilateral blocking prevents a reply in an existing conversation.

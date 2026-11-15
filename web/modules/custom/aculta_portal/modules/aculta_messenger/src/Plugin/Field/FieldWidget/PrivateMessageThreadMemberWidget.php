@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_messenger\Plugin\Field\FieldWidget;
 
+use Symfony\Component\HttpFoundation\Request;
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -38,6 +39,7 @@ class PrivateMessageThreadMemberWidget extends EntityReferenceAutocompleteWidget
 
   /**
    * Tipagem do porte Private Message.
+   *
    * @param array<string, mixed> $settings
    * @param array<string, mixed> $third_party_settings
    */
@@ -56,6 +58,7 @@ class PrivateMessageThreadMemberWidget extends EntityReferenceAutocompleteWidget
 
   /**
    * {@inheritdoc}
+   *
    * @param array<string, mixed> $configuration
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): static {
@@ -89,6 +92,7 @@ class PrivateMessageThreadMemberWidget extends EntityReferenceAutocompleteWidget
 
   /**
    * {@inheritdoc}
+   *
    * @return array<string, mixed>
    */
   public static function defaultSettings(): array {
@@ -102,6 +106,7 @@ class PrivateMessageThreadMemberWidget extends EntityReferenceAutocompleteWidget
    *
    * The settings summary is returned empty, as the parent settings have no
    * effect on this form.
+   *
    * @return array<int|string, mixed>
    */
   public function settingsSummary(): array {
@@ -118,7 +123,9 @@ class PrivateMessageThreadMemberWidget extends EntityReferenceAutocompleteWidget
 
   /**
    * {@inheritdoc}
+   *
    * @param array<string, mixed> $form
+   *
    * @return array<string, mixed>
    */
   public function settingsForm(array $form, FormStateInterface $form_state): array {
@@ -138,9 +145,11 @@ class PrivateMessageThreadMemberWidget extends EntityReferenceAutocompleteWidget
 
   /**
    * {@inheritdoc}
+   *
    * @param \Drupal\Core\Field\FieldItemListInterface<\Drupal\Core\Field\FieldItemInterface> $items
    * @param array<string, mixed> $element
    * @param array<array-key, mixed> &$form
+   *
    * @return array<string, mixed>
    */
   public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state): array {
@@ -208,6 +217,7 @@ class PrivateMessageThreadMemberWidget extends EntityReferenceAutocompleteWidget
    * of allowed users has been entered. This is because the field itself is
    * created as an unlimited cardinality field, but the widget allows for
    * setting a maximum number of users.
+   *
    * @param array{'#parents': array<int|string>, '#max_members': int, ...} $element
    */
   public static function validateFormElement(array $element, FormStateInterface $form_state): void {
@@ -223,8 +233,10 @@ class PrivateMessageThreadMemberWidget extends EntityReferenceAutocompleteWidget
 
   /**
    * {@inheritdoc}
+   *
    * @param array<string, mixed> $form
    * @param array<string, mixed> $values
+   *
    * @return array<string, mixed>
    */
   public function massageFormValues(array $values, array $form, FormStateInterface $form_state): array {
@@ -236,7 +248,7 @@ class PrivateMessageThreadMemberWidget extends EntityReferenceAutocompleteWidget
   /**
    * Lê um parâmetro da requisição na mesma ordem de Request::get(): rota, query e corpo.
    */
-  private function requestParameter(\Symfony\Component\HttpFoundation\Request $request, string $key): mixed {
+  private function requestParameter(Request $request, string $key): mixed {
     if ($request->attributes->has($key)) {
       return $request->attributes->get($key);
     }

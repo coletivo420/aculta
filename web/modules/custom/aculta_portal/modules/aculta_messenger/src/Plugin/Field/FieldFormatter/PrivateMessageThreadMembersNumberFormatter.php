@@ -46,6 +46,7 @@ class PrivateMessageThreadMembersNumberFormatter extends FormatterBase implement
 
   /**
    * {@inheritdoc}
+   *
    * @return array<string, mixed>
    */
   public static function defaultSettings(): array {
@@ -56,7 +57,9 @@ class PrivateMessageThreadMembersNumberFormatter extends FormatterBase implement
 
   /**
    * {@inheritdoc}
+   *
    * @param array<string, mixed> $form
+   *
    * @return array<string, mixed>
    */
   public function settingsForm(array $form, FormStateInterface $form_state): array {
@@ -73,6 +76,7 @@ class PrivateMessageThreadMembersNumberFormatter extends FormatterBase implement
 
   /**
    * {@inheritdoc}
+   *
    * @param \Drupal\Core\Field\FieldItemListInterface<\Drupal\Core\Field\FieldItemInterface> $items
    */
   public function viewElements(FieldItemListInterface $items, $langcode): array {

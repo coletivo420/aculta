@@ -25,6 +25,7 @@ class PrivateMessageThreadHasNewMessage extends FieldPluginBase {
 
   /**
    * Tipagem do porte Private Message.
+   *
    * @param array<string, mixed> $configuration
    */
   public function __construct(
@@ -39,6 +40,7 @@ class PrivateMessageThreadHasNewMessage extends FieldPluginBase {
 
   /**
    * {@inheritdoc}
+   *
    * @param array<string, mixed> $configuration
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): static {

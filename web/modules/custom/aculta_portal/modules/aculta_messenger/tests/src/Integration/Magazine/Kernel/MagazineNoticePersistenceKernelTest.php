@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_messenger\Integration\Magazine\Kernel;
+
 use Drupal\aculta_portal\Domain\SiteKey;
 
 use Drupal\aculta_messenger\Aviso\AvisoPreferencias;

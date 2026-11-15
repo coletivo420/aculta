@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_messenger\Aviso;
 
+use Drupal\aculta_messenger\Entity\PrivateMessageThreadInterface;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -11,7 +12,6 @@ use Drupal\Core\Entity\Query\QueryInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\message\MessageInterface;
 use Drupal\aculta_messenger\Entity\PrivateMessageInterface;
-use Drupal\aculta_messenger\Entity\PrivateMessageThreadInterface;
 use Drupal\aculta_messenger\Service\PrivateMessageServiceInterface;
 use Drupal\user\UserInterface;
 use Drupal\user\UserDataInterface;
@@ -115,6 +115,10 @@ final class PrivateMessageDigestProvider implements AvisoDigestProviderIdentityI
       }
       $senderId = (int) $privateMessage->getOwnerId();
       $thread = $this->privateMessageService->getThreadFromMessage($privateMessage);
+      if (!$thread instanceof PrivateMessageThreadInterface) {
+        $this->markRecordsDone([$notice]);
+        continue;
+      }
       if (!$thread->access('view', $recipient, TRUE)->isAllowed()
         || !in_array($uid, array_map('intval', $thread->getMemberIds()), TRUE)
         || $this->isBlockedPair($senderId, $uid)

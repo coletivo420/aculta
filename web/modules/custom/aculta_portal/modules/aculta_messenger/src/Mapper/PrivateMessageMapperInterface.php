@@ -2,7 +2,6 @@
 
 namespace Drupal\aculta_messenger\Mapper;
 
-
 use Drupal\aculta_messenger\Entity\PrivateMessageInterface;
 use Drupal\user\UserInterface;
 

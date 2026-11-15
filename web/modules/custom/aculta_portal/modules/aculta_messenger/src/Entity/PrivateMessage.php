@@ -18,24 +18,24 @@ use Drupal\user\EntityOwnerTrait;
   id: 'private_message',
   label: new TranslatableMarkup('Private Message'),
   handlers: [
-  'view_builder' => 'Drupal\aculta_messenger\Entity\Builder\PrivateMessageViewBuilder',
-  'views_data' => 'Drupal\views\EntityViewsData',
-  'form' => [
-  'add' => 'Drupal\aculta_messenger\Form\PrivateMessageForm',
-  'delete' => 'Drupal\aculta_messenger\Form\PrivateMessageDeleteForm',
-  ],
-  'access' => 'Drupal\aculta_messenger\Entity\Access\PrivateMessageAccessControlHandler',
+    'view_builder' => 'Drupal\aculta_messenger\Entity\Builder\PrivateMessageViewBuilder',
+    'views_data' => 'Drupal\views\EntityViewsData',
+    'form' => [
+      'add' => 'Drupal\aculta_messenger\Form\PrivateMessageForm',
+      'delete' => 'Drupal\aculta_messenger\Form\PrivateMessageDeleteForm',
+    ],
+    'access' => 'Drupal\aculta_messenger\Entity\Access\PrivateMessageAccessControlHandler',
   ],
   base_table: 'private_messages',
   admin_permission: 'administer private messages',
   entity_keys: [
-  'id' => 'id',
-  'uuid' => 'uuid',
-  'owner' => 'owner',
+    'id' => 'id',
+    'uuid' => 'uuid',
+    'owner' => 'owner',
   ],
   links: [
-  'canonical' => '/private-message/{private_message}',
-  'delete-form' => '/private-message/{private_message}/delete',
+    'canonical' => '/private-message/{private_message}',
+    'delete-form' => '/private-message/{private_message}/delete',
   ],
   field_ui_base_route: 'aculta_messenger.pm_settings_page',
 )]

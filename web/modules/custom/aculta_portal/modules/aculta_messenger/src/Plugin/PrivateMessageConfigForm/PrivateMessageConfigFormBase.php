@@ -12,12 +12,14 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Base class for PrivateMessageConfigForm plugins.
+ *
  * @phpstan-consistent-constructor
  */
 abstract class PrivateMessageConfigFormBase extends PluginBase implements PrivateMessageConfigFormPluginInterface {
 
   /**
    * Tipagem do porte Private Message.
+   *
    * @param array<string, mixed> $configuration
    */
   public function __construct(
@@ -31,6 +33,7 @@ abstract class PrivateMessageConfigFormBase extends PluginBase implements Privat
 
   /**
    * {@inheritdoc}
+   *
    * @param array<string, mixed> $configuration
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
@@ -62,6 +65,7 @@ abstract class PrivateMessageConfigFormBase extends PluginBase implements Privat
 
   /**
    * {@inheritdoc}
+   *
    * @param array<string, mixed> $form
    */
   public function validateForm(array &$form, FormStateInterface $formState): void {

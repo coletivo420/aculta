@@ -5,6 +5,7 @@
  * Install and update hooks for ACULTA Messenger.
  */
 
+use Symfony\Component\Yaml\Yaml;
 use Drupal\Core\Config\Entity\ConfigDependencyManager;
 use Drupal\Core\Config\Entity\ConfigEntityStorageInterface;
 use Drupal\aculta_messenger\Database\ForumNoticeEventSchema;
@@ -33,7 +34,7 @@ function aculta_messenger_schema(): array {
 /**
  * Implements hook_install().
  */
-function aculta_messenger_install(bool $is_syncing): void {
+function aculta_messenger_install(): void {
   aculta_messenger_pm_engine_install();
 }
 
@@ -83,7 +84,7 @@ function aculta_messenger_pm_engine_install(): array {
       continue;
     }
     /** @var array<string, mixed> $data */
-    $data = \Symfony\Component\Yaml\Yaml::parseFile(__DIR__ . '/config/install/' . $name . '.yml');
+    $data = Yaml::parseFile(__DIR__ . '/config/install/' . $name . '.yml');
     $config_factory->getEditable($name)->setData($data)->save();
     $report[] = "config $name criada";
   }

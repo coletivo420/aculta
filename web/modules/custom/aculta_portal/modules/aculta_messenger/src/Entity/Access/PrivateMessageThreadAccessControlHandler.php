@@ -63,6 +63,7 @@ class PrivateMessageThreadAccessControlHandler extends EntityAccessControlHandle
    *
    * Separate from the checkAccess because the entity does not yet exist, it
    * will be created during the 'add' process.
+   *
    * @param array<string, mixed> $context
    */
   protected function checkCreateAccess(AccountInterface $account, array $context, $entity_bundle = NULL): AccessResultInterface {

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_messenger\Form;
 
+use Drupal\Core\Template\Attribute;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\user\UserInterface;
 use Drupal\Core\Form\FormBase;
@@ -114,7 +115,7 @@ final class NewConversationForm extends FormBase {
         '#type' => 'component',
         '#component' => 'aculta420_v2:search-preview',
         '#weight' => -9,
-        '#props' => ['attributes' => new \Drupal\Core\Template\Attribute([
+        '#props' => ['attributes' => new Attribute([
           'id' => 'aculta-new-conversation-preview',
           'role' => 'region',
           'aria-label' => $this->t('Resultados de membros'),

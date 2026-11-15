@@ -31,7 +31,9 @@ class BanUserForm extends FormBase {
 
   /**
    * {@inheritdoc}
+   *
    * @param array<string, mixed> $form
+   *
    * @return array<string, mixed>
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
@@ -63,6 +65,7 @@ class BanUserForm extends FormBase {
 
   /**
    * {@inheritdoc}
+   *
    * @param array<string, mixed> $form
    */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
@@ -86,6 +89,7 @@ class BanUserForm extends FormBase {
 
   /**
    * {@inheritdoc}
+   *
    * @param array<string, mixed> $form
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {

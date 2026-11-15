@@ -39,6 +39,7 @@ class PrivateMessageNotificationBlock extends BlockBase implements BlockPluginIn
 
   /**
    * Tipagem do porte Private Message.
+   *
    * @param array<string, mixed> $configuration
    */
   public function __construct(
@@ -55,6 +56,7 @@ class PrivateMessageNotificationBlock extends BlockBase implements BlockPluginIn
 
   /**
    * {@inheritdoc}
+   *
    * @param array<string, mixed> $configuration
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): static {
@@ -81,6 +83,7 @@ class PrivateMessageNotificationBlock extends BlockBase implements BlockPluginIn
 
   /**
    * {@inheritdoc}
+   *
    * @return array<string, mixed>
    */
   public function build(): array {
@@ -149,6 +152,7 @@ class PrivateMessageNotificationBlock extends BlockBase implements BlockPluginIn
 
   /**
    * {@inheritdoc}
+   *
    * @return array<string, mixed>
    */
   public function defaultConfiguration(): array {
@@ -160,7 +164,9 @@ class PrivateMessageNotificationBlock extends BlockBase implements BlockPluginIn
 
   /**
    * {@inheritdoc}
+   *
    * @param array<string, mixed> $form
+   *
    * @return array<string, mixed>
    */
   public function blockForm($form, FormStateInterface $form_state): array {
@@ -192,6 +198,7 @@ class PrivateMessageNotificationBlock extends BlockBase implements BlockPluginIn
 
   /**
    * {@inheritdoc}
+   *
    * @param array<string, mixed> $form
    */
   public function blockSubmit($form, FormStateInterface $form_state): void {

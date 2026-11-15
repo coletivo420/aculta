@@ -18,6 +18,7 @@ class PrivateMessageConfigFormManager extends DefaultPluginManager implements Pr
 
   /**
    * Tipagem do porte Private Message.
+   *
    * @param \Traversable<string, mixed> $namespaces
    */
   public function __construct(

@@ -42,7 +42,9 @@ class ConfirmBanUserForm extends ConfirmFormBase {
 
   /**
    * {@inheritdoc}
+   *
    * @param array<string, mixed> $form
+   *
    * @return array<string, mixed>
    */
   public function buildForm(array $form, FormStateInterface $form_state, ?UserInterface $user = NULL): array {
@@ -74,6 +76,7 @@ class ConfirmBanUserForm extends ConfirmFormBase {
 
   /**
    * {@inheritdoc}
+   *
    * @param array<array-key, mixed> &$form
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {

@@ -89,7 +89,9 @@ class PrivateMessageForm extends ContentEntityForm {
 
   /**
    * {@inheritdoc}
+   *
    * @param array<string, mixed> $form
+   *
    * @return array<string, mixed>
    */
   public function buildForm(array $form, FormStateInterface $form_state, ?PrivateMessageThreadInterface $privateMessageThread = NULL): array {
@@ -340,6 +342,7 @@ class PrivateMessageForm extends ContentEntityForm {
 
   /**
    * Validates that the current user isn't replying to a banned member.
+   *
    * @param array<array-key, mixed> &$form
    */
   public function validateBannedMembers(array &$form, FormStateInterface $formState): void {
@@ -351,7 +354,7 @@ class PrivateMessageForm extends ContentEntityForm {
     foreach ($bannedUsers as $bannedUser) {
       if (in_array($bannedUser, $threadMembers)) {
         /** @var array<string, mixed> $form */
-        $formState->setError($form,$this->t('You cannot send a message to a blocked user.'));
+        $formState->setError($form, $this->t('You cannot send a message to a blocked user.'));
         break;
       }
     }
@@ -361,6 +364,7 @@ class PrivateMessageForm extends ContentEntityForm {
    * Ajax callback for the PrivateMessageForm.
    *
    * Re-render form after submission, so user could write new message.
+   *
    * @param array<string, mixed> $form
    */
   public function ajaxCallback(array $form, FormStateInterface $formState): AjaxResponse {
@@ -419,7 +423,9 @@ class PrivateMessageForm extends ContentEntityForm {
 
   /**
    * After build callback for the Private Message Form.
+   *
    * @param array<string, mixed> $element
+   *
    * @return array<string, mixed>
    */
   public function afterBuild(array $element, FormStateInterface $form_state): array {
@@ -441,6 +447,7 @@ class PrivateMessageForm extends ContentEntityForm {
 
   /**
    * {@inheritdoc}
+   *
    * @param array<string, mixed> $form
    */
   public function save(array $form, FormStateInterface $form_state): int {

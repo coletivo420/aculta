@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_messenger\Controller;
 
+use Symfony\Component\HttpFoundation\Request;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\SettingsCommand;
 use Drupal\Core\Controller\ControllerBase;
@@ -33,7 +34,7 @@ class AjaxController extends ControllerBase implements AjaxControllerInterface {
    * {@inheritdoc}
    */
   public function ajaxCallback(string $op): AjaxResponse {
-    return match($op) {
+    return match ($op) {
       'get_new_messages' => $this->getNewPrivateMessages(),
       'get_old_messages' => $this->getOldPrivateMessages(),
       'get_old_inbox_threads' => $this->getOldInboxThreads(),
@@ -59,8 +60,8 @@ class AjaxController extends ControllerBase implements AjaxControllerInterface {
     $message_id = $this->requestParameter($request, 'messageid');
 
     if ($this->isDigitsId($thread_id) && $this->isDigitsId($message_id)) {
-      $thread_id = (int) $thread_id;
-      $message_id = (int) $message_id;
+      $thread_id = $this->digitsToInt($thread_id);
+      $message_id = $this->digitsToInt($message_id);
       $thread = $this->entityTypeManager()->getStorage('private_message_thread')
         ->load($thread_id);
       if ($thread instanceof PrivateMessageThreadInterface) {
@@ -106,8 +107,8 @@ class AjaxController extends ControllerBase implements AjaxControllerInterface {
     $thread_id = $this->requestParameter($current_request, 'threadid');
     $message_id = $this->requestParameter($current_request, 'messageid');
     if ($this->isDigitsId($thread_id) && $this->isDigitsId($message_id)) {
-      $thread_id = (int) $thread_id;
-      $message_id = (int) $message_id;
+      $thread_id = $this->digitsToInt($thread_id);
+      $message_id = $this->digitsToInt($message_id);
       /** @var array{messages: list<\Drupal\aculta_messenger\Entity\PrivateMessageInterface>, next_exists: bool} $message_info */
       $message_info = $this->privateMessageService->getPreviousMessages($thread_id, $message_id);
 
@@ -149,7 +150,7 @@ class AjaxController extends ControllerBase implements AjaxControllerInterface {
     $raw_count = $this->requestParameter($request, 'count');
     $thread_count = is_scalar($raw_count) ? (int) $raw_count : 0;
     if ($this->isDigitsId($timestamp)) {
-      $thread_info = $this->privateMessageService->getThreadsForUser($thread_count, (int) $timestamp);
+      $thread_info = $this->privateMessageService->getThreadsForUser($thread_count, $this->digitsToInt($timestamp));
       $has_next = FALSE;
       if (count($thread_info['threads'])) {
         $view_builder = $this->entityTypeManager()->getViewBuilder('private_message_thread');
@@ -264,7 +265,7 @@ class AjaxController extends ControllerBase implements AjaxControllerInterface {
     $request = $this->requestStack->getCurrentRequest();
     $thread_id = $this->requestParameter($request, 'id');
     if ($this->isDigitsId($thread_id)) {
-      $thread_id = (int) $thread_id;
+      $thread_id = $this->digitsToInt($thread_id);
       $thread = $this->entityTypeManager()->getStorage('private_message_thread')->load($thread_id);
 
       if ($thread && $thread->access('view', $this->currentUser())) {
@@ -287,6 +288,13 @@ class AjaxController extends ControllerBase implements AjaxControllerInterface {
   }
 
   /**
+   * Converte para int um valor já validado por isDigitsId (string ou int).
+   */
+  private function digitsToInt(mixed $value): int {
+    return is_string($value) || is_int($value) ? (int) $value : 0;
+  }
+
+  /**
    * Indica se o valor é um id composto só de dígitos (string ou int).
    */
   private function isDigitsId(mixed $value): bool {
@@ -296,7 +304,7 @@ class AjaxController extends ControllerBase implements AjaxControllerInterface {
   /**
    * Lê um parâmetro da requisição na mesma ordem de Request::get(): rota, query e corpo.
    */
-  private function requestParameter(\Symfony\Component\HttpFoundation\Request $request, string $key): mixed {
+  private function requestParameter(Request $request, string $key): mixed {
     if ($request->attributes->has($key)) {
       return $request->attributes->get($key);
     }

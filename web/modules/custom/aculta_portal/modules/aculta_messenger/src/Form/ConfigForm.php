@@ -47,7 +47,9 @@ class ConfigForm extends ConfigFormBase {
 
   /**
    * {@inheritdoc}
+   *
    * @param array<string, mixed> $form
+   *
    * @return array<string, mixed>
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
@@ -85,7 +87,7 @@ class ConfigForm extends ConfigFormBase {
       '#config_target' => new ConfigTarget(
         configName: 'private_message.settings',
         propertyPath: 'notify_by_default',
-        fromConfig: fn($value): int => intval($value),
+        fromConfig: fn($value): int => is_scalar($value) ? (int) $value : 0,
         toConfig: fn($value): bool => boolval($value),
       ),
       '#states' => [
@@ -117,7 +119,7 @@ class ConfigForm extends ConfigFormBase {
       '#config_target' => new ConfigTarget(
         configName: 'private_message.settings',
         propertyPath: 'number_of_seconds_considered_away',
-        toConfig: fn($value): int => intval($value),
+        toConfig: fn($value): int => is_scalar($value) ? (int) $value : 0,
       ),
       '#description' => $this->t('When users have a private message thread open, calls to the server update the last time they have accessed the thread. This setting determines how many seconds after they have closed the thread, they should be considered as not accessing the thread anymore. Users will be able to override this value on their profile settings page.'),
       '#states' => [
@@ -260,6 +262,7 @@ class ConfigForm extends ConfigFormBase {
 
   /**
    * {@inheritdoc}
+   *
    * @param array<string, mixed> $form
    */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
@@ -274,6 +277,7 @@ class ConfigForm extends ConfigFormBase {
 
   /**
    * {@inheritdoc}
+   *
    * @param array<array-key, mixed> &$form
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
@@ -295,6 +299,7 @@ class ConfigForm extends ConfigFormBase {
 
   /**
    * {@inheritdoc}
+   *
    * @return array<int, string>
    */
   protected function getEditableConfigNames(): array {

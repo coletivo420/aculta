@@ -40,6 +40,7 @@ class PrivateMessageInboxBlock extends BlockBase implements BlockPluginInterface
 
   /**
    * Tipagem do porte Private Message.
+   *
    * @param array<string, mixed> $configuration
    */
   public function __construct(
@@ -57,6 +58,7 @@ class PrivateMessageInboxBlock extends BlockBase implements BlockPluginInterface
 
   /**
    * {@inheritdoc}
+   *
    * @param array<string, mixed> $configuration
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): static {
@@ -84,6 +86,7 @@ class PrivateMessageInboxBlock extends BlockBase implements BlockPluginInterface
 
   /**
    * {@inheritdoc}
+   *
    * @return array<string, mixed>
    */
   public function build(): array {
@@ -178,6 +181,7 @@ class PrivateMessageInboxBlock extends BlockBase implements BlockPluginInterface
 
   /**
    * {@inheritdoc}
+   *
    * @return array<string, mixed>
    */
   public function defaultConfiguration(): array {
@@ -190,7 +194,9 @@ class PrivateMessageInboxBlock extends BlockBase implements BlockPluginInterface
 
   /**
    * {@inheritdoc}
+   *
    * @param array<string, mixed> $form
+   *
    * @return array<string, mixed>
    */
   public function blockForm($form, FormStateInterface $form_state): array {
@@ -228,6 +234,7 @@ class PrivateMessageInboxBlock extends BlockBase implements BlockPluginInterface
 
   /**
    * {@inheritdoc}
+   *
    * @param array<string, mixed> $form
    */
   public function blockSubmit($form, FormStateInterface $form_state): void {

@@ -40,6 +40,7 @@ class PrivateMessageThreadMessageFormatter extends FormatterBase implements Cont
 
   /**
    * Tipagem do porte Private Message.
+   *
    * @param array<string, mixed> $settings
    * @param array<string, mixed> $third_party_settings
    */
@@ -62,6 +63,7 @@ class PrivateMessageThreadMessageFormatter extends FormatterBase implements Cont
 
   /**
    * {@inheritdoc}
+   *
    * @param array<string, mixed> $configuration
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): static {
@@ -101,6 +103,7 @@ class PrivateMessageThreadMessageFormatter extends FormatterBase implements Cont
 
   /**
    * {@inheritdoc}
+   *
    * @return array<string, mixed>
    */
   public static function defaultSettings(): array {
@@ -140,7 +143,9 @@ class PrivateMessageThreadMessageFormatter extends FormatterBase implements Cont
 
   /**
    * {@inheritdoc}
+   *
    * @param array<string, mixed> $form
+   *
    * @return array<string, mixed>
    */
   public function settingsForm(array $form, FormStateInterface $form_state): array {
@@ -206,6 +211,7 @@ class PrivateMessageThreadMessageFormatter extends FormatterBase implements Cont
 
   /**
    * {@inheritdoc}
+   *
    * @param \Drupal\Core\Field\FieldItemListInterface<\Drupal\Core\Field\FieldItemInterface> $items
    */
   public function viewElements(FieldItemListInterface $items, $langcode): array {

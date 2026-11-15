@@ -33,6 +33,7 @@ class PrivateMessageActionsBlock extends BlockBase implements ContainerFactoryPl
 
   /**
    * Tipagem do porte Private Message.
+   *
    * @param array<string, mixed> $configuration
    */
   public function __construct(
@@ -47,6 +48,7 @@ class PrivateMessageActionsBlock extends BlockBase implements ContainerFactoryPl
 
   /**
    * {@inheritdoc}
+   *
    * @param array<string, mixed> $configuration
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): static {
@@ -69,6 +71,7 @@ class PrivateMessageActionsBlock extends BlockBase implements ContainerFactoryPl
 
   /**
    * {@inheritdoc}
+   *
    * @return array<string, mixed>
    */
   public function build(): array {

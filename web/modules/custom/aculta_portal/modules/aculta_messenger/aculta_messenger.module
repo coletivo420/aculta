@@ -1,17 +1,20 @@
 <?php
 
+/**
+ * @file
+ */
+
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\Query\QueryInterface;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Url;
 use Drupal\aculta_messenger\Entity\PrivateMessage;
-use Drupal\aculta_messenger\Entity\PrivateMessageInterface;
-use Drupal\aculta_messenger\Entity\PrivateMessageThreadInterface;
 use Drupal\aculta_messenger\Hook\ViewsHooks;
 use Drupal\user\Entity\User;
 use Drupal\user\RoleInterface;
 use Drupal\user\Plugin\EntityReferenceSelection\UserSelection;
+
 /**
  * @file
  * Hooks for the ACULTA Messenger module.
@@ -43,8 +46,10 @@ function aculta_messenger_queue_info_alter(array &$definitions): void {
 }
 
 // Hooks do motor de conversas portados do Private Message (ver docs/implementation/private-message-corte-direto-2026-11-15).
+
 /**
  * Tipagem do porte Private Message.
+ *
  * @return array<string, mixed>
  */
 function aculta_messenger_views_data(): array {
@@ -53,6 +58,7 @@ function aculta_messenger_views_data(): array {
 
 /**
  * Implements hook_entity_extra_field_info().
+ *
  * @return array<string, mixed>
  */
 function aculta_messenger_entity_extra_field_info(): array {
@@ -176,8 +182,7 @@ function aculta_messenger_entity_extra_field_info(): array {
  * @see hook_entity_view()
  * @param array<string, mixed> $build
  */
-function aculta_messenger_private_message_thread_view(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, string $view_mode): void {
-  unset($view_mode);
+function aculta_messenger_private_message_thread_view(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display): void {
   /** @var PrivateMessageThreadInterface $entity */
   if ($display->getComponent('last_message')) {
     $messages = $entity->getMessages();
@@ -243,6 +248,7 @@ function aculta_messenger_private_message_thread_view(array &$build, EntityInter
 
 /**
  * Implements hook_theme().
+ *
  * @return array<string, mixed>
  */
 function aculta_messenger_theme(): array {
@@ -345,6 +351,7 @@ function aculta_messenger_preprocess_private_message(array &$variables): void {
  * Adds a custom class to the field that can be targeted, as the default classes
  * may be altered in themes/templates, and therefore should not be depended
  * upon.
+ *
  * @param array<string, mixed> $vars
  */
 function aculta_messenger_preprocess_field__private_message_thread__private_messages(array &$vars): void {
@@ -363,6 +370,7 @@ function aculta_messenger_preprocess_field__private_message_thread__private_mess
  * Adds a custom class to the containers that can be targeted, as the default
  * classes may be altered in themes/templates, and therefore should not be
  * depended upon.
+ *
  * @param array<string, mixed> $vars
  */
 function aculta_messenger_preprocess_container(array &$vars): void {
@@ -388,6 +396,7 @@ function aculta_messenger_preprocess_container(array &$vars): void {
  * Implements hook_message_view_alter().
  *
  * Swaps out tokens with values.
+ *
  * @param array<string, mixed> $build
  */
 function aculta_messenger_message_view_alter(array &$build): void {
@@ -419,6 +428,7 @@ function aculta_messenger_message_view_alter(array &$build): void {
 
 /**
  * Implements hook_suggestions_HOOK_alter().
+ *
  * @param array<int|string, mixed> $suggestions
  * @param array<string, mixed> $vars
  */
@@ -432,6 +442,7 @@ function aculta_messenger_theme_suggestions_private_message_thread_alter(array &
 
 /**
  * Implements hook_suggestions_HOOK_alter().
+ *
  * @param array<int|string, mixed> $suggestions
  * @param array<string, mixed> $vars
  */
@@ -487,6 +498,7 @@ function aculta_messenger_entity_query_user_alter(QueryInterface $query): void {
 
 /**
  * Implements hook_config_schema_info_alter().
+ *
  * @param array<string, mixed> $definitions
  */
 function aculta_messenger_config_schema_info_alter(array &$definitions): void {
@@ -504,4 +516,3 @@ function aculta_messenger_config_schema_info_alter(array &$definitions): void {
     ];
   }
 }
-

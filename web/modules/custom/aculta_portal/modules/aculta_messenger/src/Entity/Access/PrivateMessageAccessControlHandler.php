@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_messenger\Entity\Access;
 
+use Drupal\aculta_messenger\Entity\PrivateMessageThreadInterface;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Entity\EntityAccessControlHandler;
@@ -17,6 +18,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Access control handler for private message entities.
+ *
  * @phpstan-consistent-constructor
  */
 class PrivateMessageAccessControlHandler extends EntityAccessControlHandler implements EntityHandlerInterface {
@@ -55,7 +57,7 @@ class PrivateMessageAccessControlHandler extends EntityAccessControlHandler impl
           }
 
           $private_message_thread = $this->privateMessageService->getThreadFromMessage($entity);
-          if ($private_message_thread->isMember($account->id())) {
+          if ($private_message_thread instanceof PrivateMessageThreadInterface && $private_message_thread->isMember($account->id())) {
             return AccessResult::allowed();
           }
 
@@ -85,6 +87,7 @@ class PrivateMessageAccessControlHandler extends EntityAccessControlHandler impl
    *
    * Separate from the checkAccess because the entity does not yet exist, it
    * will be created during the 'add' process.
+   *
    * @param array<string, mixed> $context
    */
   protected function checkCreateAccess(AccountInterface $account, array $context, $entity_bundle = NULL): AccessResultInterface {

@@ -1,9 +1,8 @@
 <?php
 
 /**
- * Módulo de teste da retenção do Mensagens.
- *
  * @file
+ * Módulo de teste da retenção do Mensagens.
  */
 
 declare(strict_types=1);
