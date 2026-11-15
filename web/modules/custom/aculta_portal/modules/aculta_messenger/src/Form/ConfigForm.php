@@ -250,9 +250,7 @@ class ConfigForm extends ConfigFormBase {
         '#tree' => TRUE,
         '#open' => TRUE,
       ];
-      foreach ($instance->buildForm($form_state) as $key => $element) {
-        $form[$instance->getPluginId()][$key] = $element;
-      }
+      $form[$instance->getPluginId()] = array_replace($form[$instance->getPluginId()], $instance->buildForm($form_state));
     }
 
     /** @var array<string, mixed> $builtForm */
