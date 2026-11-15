@@ -24,11 +24,11 @@ final class TurnstileKeyOverride implements ConfigFactoryOverrideInterface {
   /**
    * Aplica a chave do Turnstile conforme o ambiente do deployer.
    *
-   * @param array $names
-   *   Nomes das configurações carregadas.
+   * @param array<mixed> $names
+   *   Dados de entrada (names).
    *
-   * @return array
-   *   Sobrescritas da configuração do Turnstile.
+   * @return array<mixed>
+   *   Dados retornados.
    */
   public function loadOverrides($names): array {
     if (!in_array(self::CONFIG_NAME, $names, TRUE)) {

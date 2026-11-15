@@ -73,6 +73,9 @@ final class RestrictedForumAccessHooks {
    * Só `view`: atualizar/apagar tópico continua nas permissões existentes.
    * Sem tipo de Group configurado, sem associação ativa ou sem membership, não
    * há grant. Falha de consulta também não concede (fail closed).
+   *
+   * @return array<mixed>
+   *   Dados retornados.
    */
   #[Hook('node_grants')]
   public function nodeGrants(AccountInterface $account, string $operation): array {
@@ -110,6 +113,9 @@ final class RestrictedForumAccessHooks {
 
   /**
    * Implements hook_node_access_records().
+   *
+   * @return array<mixed>
+   *   Dados retornados.
    */
   #[Hook('node_access_records')]
   public function nodeAccessRecords(NodeInterface $node): array {

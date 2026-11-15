@@ -150,8 +150,8 @@ final class DomainPresentationBuilder {
   /**
    * Builds the cross-site navigation contract from enabled Domain entities.
    *
-   * @return array
-   *   Published sites with environment-specific absolute URLs.
+   * @return array<mixed>
+   *   Dados retornados.
    */
   private function buildDomainSites(
     string $currentSiteKey,

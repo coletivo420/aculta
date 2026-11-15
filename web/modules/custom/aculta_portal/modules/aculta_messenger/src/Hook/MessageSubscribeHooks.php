@@ -20,10 +20,10 @@ final class MessageSubscribeHooks {
    * returning an empty array from that hook does not suppress its Flag
    * recipients. The alter hook is required to enforce the Forum policy.
    *
-   * @param array $uids
-   *   Message Subscribe delivery candidates, keyed by recipient UID.
-   * @param array $values
-   *   Context from Message Subscribe, including the target entity.
+   * @param array<mixed> $uids
+   *   Dados de entrada (uids).
+   * @param array<mixed> $values
+   *   Dados de entrada (values).
    */
   #[Hook('message_subscribe_get_subscribers_alter')]
   public function suppressForumDelivery(array &$uids, array $values): void {

@@ -47,6 +47,9 @@ final class SupportController extends ControllerBase {
 
   /**
    * Performs the operation.
+   *
+   * @return array<mixed>
+   *   Dados retornados.
    */
   public function mySupport(): array {
     // Orders are owner-scoped by the authenticated account; uid 0 would match

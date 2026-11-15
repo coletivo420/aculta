@@ -13,6 +13,9 @@ final class PortalButtonThemeHooks {
 
   /**
    * Implements hook_theme().
+   *
+   * @return array<mixed>
+   *   Dados retornados.
    */
   #[Hook('theme')]
   public function theme(): array {

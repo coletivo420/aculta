@@ -46,6 +46,9 @@ final class SearchPageController implements ContainerInjectionInterface {
 
   /**
    * {@inheritdoc}
+   *
+   * @param ContainerInterface $container
+   *   Parâmetro $container.
    */
   public static function create(ContainerInterface $container): static {
     return new static(
@@ -62,8 +65,8 @@ final class SearchPageController implements ContainerInjectionInterface {
    * @param \Symfony\Component\HttpFoundation\Request $request
    *   Requisição com o termo de busca no parâmetro query `q`.
    *
-   * @return array
-   *   Array de renderização da busca e dos resultados.
+   * @return array<mixed>
+   *   Dados retornados.
    */
   public function page(Request $request): array {
     $term = mb_substr(trim((string) $request->query->get('q', '')), 0, self::MAX_CHARS);
@@ -129,6 +132,9 @@ final class SearchPageController implements ContainerInjectionInterface {
 
   /**
    * Sugestões do campo de busca (Core autocomplete), com o mesmo índice e o mesmo controle de acesso.
+   *
+   * @param Request $request
+   *   Parâmetro $request.
    */
   public function suggestions(Request $request): JsonResponse {
     $term = mb_substr(trim((string) $request->query->get('q', '')), 0, self::MAX_CHARS);
@@ -159,6 +165,9 @@ final class SearchPageController implements ContainerInjectionInterface {
    * A busca é centralizada no MAIN, mas cada item abre no purpose ao qual
    * pertence (field_domain_source). Sem purpose conhecido, usa o caminho do
    * próprio host.
+   *
+   * @param NodeInterface $node
+   *   Parâmetro $node.
    */
   private function resultUrl(NodeInterface $node): Url {
     $relative = $node->toUrl();

@@ -15,6 +15,9 @@ interface WikiSearchFormBuilderInterface {
 
   /**
    * Returns a render array for the canonical Wiki search route.
+   *
+   * @return array<mixed>
+   *   Dados retornados.
    */
   public function build(): array;
 

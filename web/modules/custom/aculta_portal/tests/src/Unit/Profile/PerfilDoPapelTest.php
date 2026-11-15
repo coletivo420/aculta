@@ -18,8 +18,8 @@ final class PerfilDoPapelTest extends UnitTestCase {
   /**
    * Cria um mock de conta com os papéis informados.
    *
-   * @param array $papeis
-   *   Lista de papéis atribuídos à conta.
+   * @param array<mixed> $papeis
+   *   Dados de entrada (papeis).
    *
    * @return \Drupal\Core\Session\AccountInterface
    *   Conta simulada.

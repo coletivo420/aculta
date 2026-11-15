@@ -318,7 +318,11 @@ final class PortalHelperRegistry {
   }
 
   /**
-   * Exposes curated definitions to the static gate and unit tests. */
+   * Exposes curated definitions to the static gate and unit tests.
+   *
+   * @return array<mixed>
+   *   Dados retornados.
+   */
   public static function definitions(): array {
     return self::DEFINITIONS;
   }

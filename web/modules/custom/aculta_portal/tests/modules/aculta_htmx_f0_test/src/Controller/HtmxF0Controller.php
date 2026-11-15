@@ -15,6 +15,9 @@ final class HtmxF0Controller extends ControllerBase {
 
   /**
    * Builds the dialog test page.
+   *
+   * @return array<mixed>
+   *   Dados retornados.
    */
   public function page(): array {
     $link = [

@@ -27,8 +27,8 @@ final class TransportFailover {
   /**
    * Nomes do transporte padrão e do de contingência (para o diagnóstico).
    *
-   * @return array
-   *   Chaves `primary` e `fallback`.
+   * @return array<mixed>
+   *   Dados retornados.
    */
   public function names(): array {
     return ['primary' => $this->primary, 'fallback' => $this->fallback];

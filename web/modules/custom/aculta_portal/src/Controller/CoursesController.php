@@ -24,7 +24,11 @@ final class CoursesController extends ControllerBase {
   ) {}
 
   /**
-   * Builds the public course landing page from the configured catalog View. */
+   * Builds the public course landing page from the configured catalog View.
+   *
+   * @return array<mixed>
+   *   Dados retornados.
+   */
   public function home(): array {
     return [
       '#type' => 'component',
@@ -59,6 +63,9 @@ final class CoursesController extends ControllerBase {
    * same contract: the display access check runs before choosing between the
    * '#type' => 'view' element and the fallback. The View keeps its own empty area, pager and
    * cache plugin.
+   *
+   * @return array<mixed>
+   *   Dados retornados.
    */
   private function catalog(): array {
     $config = $this->entities->getStorage('view')->load(self::CATALOG_VIEW);

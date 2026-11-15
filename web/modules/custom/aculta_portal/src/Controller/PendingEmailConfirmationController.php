@@ -39,6 +39,9 @@ final class PendingEmailConfirmationController extends ControllerBase {
 
   /**
    * Renderiza a lista.
+   *
+   * @return array<mixed>
+   *   Dados retornados.
    */
   public function list(): array {
     $storage = $this->entityTypeManagerService->getStorage('user');

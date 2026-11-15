@@ -22,8 +22,8 @@ final class PasswordResetRequestTest extends UnitTestCase {
    *
    * @param string $token
    *   Token pass-reset-token da requisição.
-   * @param array $session
-   *   Dados a gravar na sessão.
+   * @param array<mixed> $session
+   *   Dados de entrada (session).
    *
    * @return \Symfony\Component\HttpFoundation\Request
    *   Requisição pronta para o teste.

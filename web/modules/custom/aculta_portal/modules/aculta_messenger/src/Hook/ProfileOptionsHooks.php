@@ -41,8 +41,8 @@ final class ProfileOptionsHooks {
   /**
    * Troca o botão de amizade pela caixa de opções de mensagem.
    *
-   * @param array $actions
-   *   Ações do perfil público.
+   * @param array<mixed> $actions
+   *   Dados de entrada (actions).
    * @param \Drupal\profile\Entity\ProfileInterface $profile
    *   Perfil público exibido.
    */
@@ -67,8 +67,8 @@ final class ProfileOptionsHooks {
    * @param \Drupal\user\UserInterface $target
    *   Conta de destino.
    *
-   * @return array
-   *   Estrutura renderizável da caixa de opções.
+   * @return array<mixed>
+   *   Dados retornados.
    */
   private function optionsBox(UserInterface $target): array {
     $returnPath = (string) $this->requestStack->getCurrentRequest()?->getPathInfo();

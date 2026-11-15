@@ -26,8 +26,8 @@ final class PortalLinkElement {
    * @param array<string, string> $attributes
    *   Atributos do link (data-portal-ui e outros). O href é gerado a partir de $url.
    *
-   * @return array
-   *   Elemento de renderização do link com metadados de cache.
+   * @return array<mixed>
+   *   Dados retornados.
    */
   public static function build(mixed $title, Url $url, array $attributes): array {
     $generated = $url->toString(TRUE);

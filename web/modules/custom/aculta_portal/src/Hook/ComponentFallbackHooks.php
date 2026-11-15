@@ -19,6 +19,9 @@ final class ComponentFallbackHooks {
 
   /**
    * Builds a plain, semantic component when the active theme did not.
+   *
+   * @param array<mixed> $variables
+   *   Dados de entrada (variables).
    */
   #[Hook('preprocess_aculta_portal_component')]
   public function preprocessPortalComponent(array &$variables): void {

@@ -163,7 +163,11 @@ final class PortalImplementationRegistry {
   }
 
   /**
-   * Exposes curated definitions to validation gates and unit tests. */
+   * Exposes curated definitions to validation gates and unit tests.
+   *
+   * @return array<mixed>
+   *   Dados retornados.
+   */
   public static function definitions(): array {
     return self::DEFINITIONS;
   }

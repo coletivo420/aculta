@@ -36,6 +36,9 @@ final class RestrictedForumAccessTestHooks {
 
   /**
    * Implements hook_node_grants().
+   *
+   * @return array<mixed>
+   *   Dados retornados.
    */
   #[Hook('node_grants')]
   public function nodeGrants(AccountInterface $account, string $operation): array {
@@ -44,6 +47,9 @@ final class RestrictedForumAccessTestHooks {
 
   /**
    * Implements hook_node_access_records().
+   *
+   * @return array<mixed>
+   *   Dados retornados.
    */
   #[Hook('node_access_records')]
   public function nodeAccessRecords(NodeInterface $node): array {

@@ -17,8 +17,8 @@ final class CheckoutSettingsTest extends UnitTestCase {
   /**
    * Cria o objeto de configurações com os valores informados.
    *
-   * @param array $values
-   *   Valores da configuração de checkout.
+   * @param array<mixed> $values
+   *   Dados de entrada (values).
    *
    * @return \Drupal\aculta_portal\Checkout\CheckoutSettings
    *   Configurações de checkout.

@@ -17,6 +17,9 @@ class EmailConfirmedRoleGuardTest extends UnitTestCase {
 
   /**
    * Conta com os papéis informados.
+   *
+   * @param array<mixed> $roles
+   *   Dados de entrada (roles).
    */
   private function account(array $roles): UserInterface {
     $account = $this->createMock(UserInterface::class);

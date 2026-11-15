@@ -34,8 +34,8 @@ final class AccountCoursesController implements ContainerInjectionInterface {
   /**
    * Monta a página de cursos do usuário atual.
    *
-   * @return array
-   *   Array de renderização da lista de cursos.
+   * @return array<mixed>
+   *   Dados retornados.
    */
   public function page(): array {
     $view = $this->presenter->present($this->currentAccount);

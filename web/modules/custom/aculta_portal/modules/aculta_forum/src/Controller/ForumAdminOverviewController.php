@@ -47,6 +47,9 @@ final class ForumAdminOverviewController extends ControllerBase implements Conta
    * or through its category, never enters the public indicator even when the
    * account viewing this page is an administrator. Other discussion hosts,
    * including Magazine, LMS, and Wiki, are not queried.
+   *
+   * @return array<mixed>
+   *   Dados retornados.
    */
   public function overview(): array {
     $forumDomain = $this->siteManager->getDomain(SiteKey::Forum);
@@ -149,6 +152,9 @@ final class ForumAdminOverviewController extends ControllerBase implements Conta
 
   /**
    * Builds the seven most recent daily activity totals from Statistics.
+   *
+   * @return array<mixed>
+   *   Dados retornados.
    */
   private function activitySeries(): array {
     if ($this->statisticsStorage === NULL) {
@@ -188,6 +194,9 @@ final class ForumAdminOverviewController extends ControllerBase implements Conta
 
   /**
    * Builds safe metric rows, omitting counts when they cannot be proven.
+   *
+   * @return array<mixed>
+   *   Dados retornados.
    */
   private function statisticsRows(?int $categoryCount, ?int $topicCount): array {
     if ($categoryCount === NULL || $topicCount === NULL) {

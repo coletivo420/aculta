@@ -32,6 +32,9 @@ final class EditorialAdminController extends ControllerBase {
 
   /**
    * Presents the administrative entry points for the Magazine.
+   *
+   * @return array<mixed>
+   *   Dados retornados.
    */
   public function overview(): array {
     return [
@@ -66,6 +69,9 @@ final class EditorialAdminController extends ControllerBase {
 
   /**
    * Explains that the configured Comment View block supplies the queue.
+   *
+   * @return array<mixed>
+   *   Dados retornados.
    */
   public function comments(): array {
     return [

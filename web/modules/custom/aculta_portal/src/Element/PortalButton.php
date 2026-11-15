@@ -18,6 +18,9 @@ final class PortalButton extends RenderElementBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @return array<mixed>
+   *   Dados retornados.
    */
   public function getInfo(): array {
     return [

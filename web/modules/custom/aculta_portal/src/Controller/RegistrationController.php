@@ -12,7 +12,11 @@ use Drupal\Core\Url;
 final class RegistrationController extends ControllerBase {
 
   /**
-   * Returns an informational page without exposing account creation. */
+   * Returns an informational page without exposing account creation.
+   *
+   * @return array<mixed>
+   *   Dados retornados.
+   */
   public function closed(): array {
     return [
       '#type' => 'container',

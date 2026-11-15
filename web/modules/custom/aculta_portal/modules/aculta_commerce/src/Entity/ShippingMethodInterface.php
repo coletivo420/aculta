@@ -26,6 +26,9 @@ interface ShippingMethodInterface extends ContentEntityInterface, EntityChangedI
 
   /**
    * Sets the shipping method stores.
+   *
+   * @param array<mixed> $stores
+   *   Dados de entrada (stores).
    */
   public function setStores(array $stores): static;
 
@@ -39,6 +42,9 @@ interface ShippingMethodInterface extends ContentEntityInterface, EntityChangedI
 
   /**
    * Sets the shipping method store IDs.
+   *
+   * @param array<mixed> $store_ids
+   *   Dados de entrada (store_ids).
    */
   public function setStoreIds(array $store_ids): static;
 
@@ -67,6 +73,9 @@ interface ShippingMethodInterface extends ContentEntityInterface, EntityChangedI
 
   /**
    * Sets the shipping method conditions.
+   *
+   * @param array<mixed> $conditions
+   *   Dados de entrada (conditions).
    */
   public function setConditions(array $conditions): static;
 

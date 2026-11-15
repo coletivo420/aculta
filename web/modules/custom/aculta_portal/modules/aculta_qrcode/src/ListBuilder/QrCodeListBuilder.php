@@ -22,6 +22,9 @@ final class QrCodeListBuilder extends EntityListBuilder {
 
   /**
    * {@inheritdoc}
+   *
+   * @return array<mixed>
+   *   Dados retornados.
    */
   public function buildHeader(): array {
     return [
@@ -35,6 +38,9 @@ final class QrCodeListBuilder extends EntityListBuilder {
 
   /**
    * {@inheritdoc}
+   *
+   * @return array<mixed>
+   *   Dados retornados.
    */
   public function buildRow(EntityInterface $entity): array {
     assert($entity instanceof QrCode);

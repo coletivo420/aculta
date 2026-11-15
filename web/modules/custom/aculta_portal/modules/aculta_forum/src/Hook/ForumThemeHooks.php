@@ -32,6 +32,9 @@ class ForumThemeHooks {
    *
    * Um render array novo a cada preprocess evita a reutilização de um array
    * já impresso, que o Drupal renderiza vazio.
+   *
+   * @param array<mixed> $variables
+   *   Dados de entrada (variables).
    */
   #[Hook('preprocess_node')]
   public function preprocessNode(array &$variables): void {
@@ -49,6 +52,9 @@ class ForumThemeHooks {
 
   /**
    * Builds the opening author card, tolerating a node without a live owner.
+   *
+   * @return array<mixed>
+   *   Dados retornados.
    */
   private function buildOpeningAuthorCard(?UserInterface $owner): ?array {
     if ($owner === NULL) {
@@ -62,6 +68,9 @@ class ForumThemeHooks {
    *
    * Usa o sistema de avatar do ACULTA: a foto da conta quando existe, ou o
    * avatar do acervo, que sempre está disponível no código.
+   *
+   * @param array<mixed> $variables
+   *   Dados de entrada (variables).
    */
   #[Hook('preprocess_discussion_reply_composer')]
   public function preprocessDiscussionReplyComposer(array &$variables): void {

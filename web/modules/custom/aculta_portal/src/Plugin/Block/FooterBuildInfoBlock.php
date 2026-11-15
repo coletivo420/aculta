@@ -24,6 +24,9 @@ final class FooterBuildInfoBlock extends BlockBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @return array<mixed>
+   *   Dados retornados.
    */
   public function build(): array {
     $year = (new \DateTimeImmutable('now', new \DateTimeZone('America/Sao_Paulo')))->format('Y');

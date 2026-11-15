@@ -35,8 +35,8 @@ final class ShopController extends ControllerBase {
   /**
    * Monta a página inicial da loja com o texto editorial e a lista de produtos.
    *
-   * @return array
-   *   Estrutura renderizável da página.
+   * @return array<mixed>
+   *   Dados retornados.
    */
   public function home(): array {
     $cache = (new CacheableMetadata())->addCacheTags(['commerce_product_list']);
