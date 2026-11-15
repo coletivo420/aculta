@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_messenger\Entity;
 
+use Drupal\Core\Entity\Attribute\ContentEntityType;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
@@ -11,34 +13,32 @@ use Drupal\user\EntityOwnerTrait;
 
 /**
  * The Private Message entity definition.
- *
- * @ContentEntityType(
- *   id = "private_message",
- *   label = @Translation("Private Message"),
- *   handlers = {
- *     "view_builder" = "Drupal\aculta_messenger\Entity\Builder\PrivateMessageViewBuilder",
- *     "views_data" = "Drupal\views\EntityViewsData",
- *     "form" = {
- *       "add" = "Drupal\aculta_messenger\Form\PrivateMessageForm",
- *       "delete" = "Drupal\aculta_messenger\Form\PrivateMessageDeleteForm",
- *     },
- *     "access" = "Drupal\aculta_messenger\Entity\Access\PrivateMessageAccessControlHandler",
- *   },
- *   base_table = "private_messages",
- *   admin_permission = "administer private messages",
- *   fieldable = TRUE,
- *   entity_keys = {
- *     "id" = "id",
- *     "uuid" = "uuid",
- *     "owner" = "owner",
- *   },
- *   links = {
- *     "canonical" = "/private-message/{private_message}",
- *     "delete-form" = "/private-message/{private_message}/delete",
- *   },
- *   field_ui_base_route = "aculta_messenger.pm_settings_page",
- * )
  */
+#[ContentEntityType(
+  id: 'private_message',
+  label: new TranslatableMarkup('Private Message'),
+  handlers: [
+  'view_builder' => 'Drupal\aculta_messenger\Entity\Builder\PrivateMessageViewBuilder',
+  'views_data' => 'Drupal\views\EntityViewsData',
+  'form' => [
+  'add' => 'Drupal\aculta_messenger\Form\PrivateMessageForm',
+  'delete' => 'Drupal\aculta_messenger\Form\PrivateMessageDeleteForm',
+  ],
+  'access' => 'Drupal\aculta_messenger\Entity\Access\PrivateMessageAccessControlHandler',
+  ],
+  base_table: 'private_messages',
+  admin_permission: 'administer private messages',
+  entity_keys: [
+  'id' => 'id',
+  'uuid' => 'uuid',
+  'owner' => 'owner',
+  ],
+  links: [
+  'canonical' => '/private-message/{private_message}',
+  'delete-form' => '/private-message/{private_message}/delete',
+  ],
+  field_ui_base_route: 'aculta_messenger.pm_settings_page',
+)]
 class PrivateMessage extends ContentEntityBase implements PrivateMessageInterface {
 
   use EntityOwnerTrait;

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_messenger\Entity;
 
+use Drupal\Core\Entity\Attribute\ContentEntityType;
 use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
@@ -15,43 +16,42 @@ use Drupal\user\UserInterface;
  * Defines the Private Message Ban entity type.
  *
  * This is a lightweight entity type used to store banned users.
- *
- * @ContentEntityType(
- *   id = "private_message_ban",
- *   label = @Translation("Private Message Ban"),
- *   handlers = {
- *     "view_builder" = "Drupal\Core\Entity\EntityViewBuilder",
- *     "list_builder" = "Drupal\aculta_messenger\Entity\Builder\PrivateMessageBanListBuilder",
- *     "views_data" = "Drupal\views\EntityViewsData",
- *     "form" = {
- *       "default" = "Drupal\aculta_messenger\Form\PrivateMessageBanForm",
- *       "add" = "Drupal\aculta_messenger\Form\PrivateMessageBanForm",
- *       "edit" = "Drupal\aculta_messenger\Form\PrivateMessageBanForm",
- *       "delete" = "Drupal\Core\Entity\ContentEntityDeleteForm",
- *     },
- *     "route_provider" = {
- *       "html" = "Drupal\Core\Entity\Routing\AdminHtmlRouteProvider",
- *     },
- *     "access" = "Drupal\aculta_messenger\Entity\Access\PrivateMessageBanAccessControlHandler",
- *   },
- *   base_table = "private_message_ban",
- *   admin_permission = "administer private message ban entities",
- *   entity_keys = {
- *     "id" = "id",
- *     "uuid" = "uuid",
- *     "owner" = "owner",
- *   },
- *   links = {
- *     "add-form" = "/admin/structure/private_message_ban/add",
- *     "edit-form" = "/admin/structure/private_message_ban/{private_message_ban}/edit",
- *     "delete-form" = "/admin/structure/private_message_ban/{private_message_ban}/delete",
- *     "collection" = "/admin/structure/private_message_ban",
- *   },
- *   constraints = {
- *     "UniquePrivateMessageBan" = {}
- *   },
- * )
  */
+#[ContentEntityType(
+  id: 'private_message_ban',
+  label: new TranslatableMarkup('Private Message Ban'),
+  handlers: [
+  'view_builder' => 'Drupal\Core\Entity\EntityViewBuilder',
+  'list_builder' => 'Drupal\aculta_messenger\Entity\Builder\PrivateMessageBanListBuilder',
+  'views_data' => 'Drupal\views\EntityViewsData',
+  'form' => [
+  'default' => 'Drupal\aculta_messenger\Form\PrivateMessageBanForm',
+  'add' => 'Drupal\aculta_messenger\Form\PrivateMessageBanForm',
+  'edit' => 'Drupal\aculta_messenger\Form\PrivateMessageBanForm',
+  'delete' => 'Drupal\Core\Entity\ContentEntityDeleteForm',
+  ],
+  'route_provider' => [
+  'html' => 'Drupal\Core\Entity\Routing\AdminHtmlRouteProvider',
+  ],
+  'access' => 'Drupal\aculta_messenger\Entity\Access\PrivateMessageBanAccessControlHandler',
+  ],
+  base_table: 'private_message_ban',
+  admin_permission: 'administer private message ban entities',
+  entity_keys: [
+  'id' => 'id',
+  'uuid' => 'uuid',
+  'owner' => 'owner',
+  ],
+  links: [
+  'add-form' => '/admin/structure/private_message_ban/add',
+  'edit-form' => '/admin/structure/private_message_ban/{private_message_ban}/edit',
+  'delete-form' => '/admin/structure/private_message_ban/{private_message_ban}/delete',
+  'collection' => '/admin/structure/private_message_ban',
+  ],
+  constraints: [
+  'UniquePrivateMessageBan' => [],
+  ],
+)]
 class PrivateMessageBan extends ContentEntityBase implements PrivateMessageBanInterface {
 
   use EntityOwnerTrait;
