@@ -50859,11 +50859,6 @@ parameters:
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_lms_h5p/tests/src/Unit/Lmsaculta_H5PDiscussionResolverTest.php
 
-		-
-			rawMessage: 'Method JsonSerializable@anonymous/web/modules/custom/aculta_portal/modules/aculta_lms_h5p/tests/src/Unit/aculta_H5PContentHubMetadataTest.php:35::jsonSerialize() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms_h5p/tests/src/Unit/aculta_H5PContentHubMetadataTest.php
 
 		-
 			rawMessage: 'Offset string on array{} on left side of ?? does not exist.'
@@ -60476,17 +60471,7 @@ parameters:
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Integration/Lms/Unit/LearningNoticeDigestIntegrationTest.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Aviso\AvisoDigestProviderIdentityInterface@anonymous/web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Integration/Lms/Unit/LearningNoticeDigestIntegrationTest.php:90::__construct() has parameter $rows with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Integration/Lms/Unit/LearningNoticeDigestIntegrationTest.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Aviso\AvisoDigestProviderIdentityInterface@anonymous/web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Integration/Lms/Unit/LearningNoticeDigestIntegrationTest.php:90::digestRowsFor() should return array<int, array{tipo: string, titulo: string, quantidade: int, delivery_id: int, delivery_ids?: list<int>}> but returns array.'
-			identifier: return.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Integration/Lms/Unit/LearningNoticeDigestIntegrationTest.php
 
 		-
 			rawMessage: 'Offset string does not exist on array{}.'
@@ -60554,11 +60539,6 @@ parameters:
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Integration/Lms/Unit/LearningNoticeEventSubscriberTest.php
 
-		-
-			rawMessage: 'Method Drupal\Core\Field\FieldItemList@anonymous/web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Integration/Lms/Unit/LearningNoticeStaleAnswerTest.php:99::__get() has parameter $property_name with no type specified.'
-			identifier: missingType.parameter
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Integration/Lms/Unit/LearningNoticeStaleAnswerTest.php
 
 		-
 			rawMessage: 'Method Drupal\Tests\aculta_messenger\Integration\Lms\Unit\LearningNoticeStaleAnswerTest::field() return type with generic interface Drupal\Core\Field\FieldItemListInterface does not specify its types: T'
