@@ -100,6 +100,8 @@ final class PrivateMessageRouteAccessKernelTest extends KernelTestBase {
     'migrate',
     'entity_usage',
     'comment',
+    'social_api',
+    'workflows',
   ];
 
   /**

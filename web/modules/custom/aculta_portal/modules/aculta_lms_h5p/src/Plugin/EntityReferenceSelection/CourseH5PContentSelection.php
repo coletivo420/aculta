@@ -53,6 +53,8 @@ final class CourseH5PContentSelection extends DefaultSelection {
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): static {
+    /** @var aculta_H5PCourseAccessManager $h5pAccess */
+    $h5pAccess = $container->get('aculta_lms_h5p.course_access');
     return new static(
       $configuration,
       $plugin_id,
@@ -64,7 +66,7 @@ final class CourseH5PContentSelection extends DefaultSelection {
       $container->get('entity_type.bundle.info'),
       $container->get('entity.repository'),
       $container->get('request_stack'),
-      $container->get('aculta_lms_h5p.course_access'),
+      $h5pAccess,
     );
   }
 

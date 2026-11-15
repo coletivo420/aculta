@@ -91,6 +91,8 @@ final class EntityDeleteTest extends KernelTestBase {
     'file',
     'entity_usage',
     'comment',
+    'social_api',
+    'workflows',
   ];
 
   /**
