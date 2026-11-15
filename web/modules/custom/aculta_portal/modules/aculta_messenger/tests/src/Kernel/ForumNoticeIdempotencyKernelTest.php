@@ -858,7 +858,10 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
     );
 
     self::assertSame(1, $summary->enviarResumos());
-    $userData->set('aculta_messenger', $uid, 'avisos_resumo_ultimo', 0);
+    $userData->set('aculta_messenger',
+    'flag',
+    'content_moderation',
+    'pathauto', $uid, 'avisos_resumo_ultimo', 0);
     self::assertSame(1, $avisos->registrarResposta($olderComment));
     self::assertSame(1, $summary->enviarResumos());
     self::assertNotSame($correlations[0], $correlations[1], 'A later event with the same pending quantity is a distinct logical digest.');
