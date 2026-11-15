@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_lms_h5p\Kernel;
 
+use Drupal\group\Entity\GroupTypeInterface;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -24,6 +25,7 @@ trait LmsGroupTypesSyncTrait {
       $path = dirname(__DIR__, 9) . '/config/sync/' . $config_name . '.yml';
       self::assertFileExists($path);
       $data = Yaml::parseFile($path);
+      self::assertIsArray($data);
       // creator_wizard belonged to the removed contrib LMS schema; false is the
       // Group default, so dropping it keeps the same behavior.
       unset($data['creator_wizard']);
@@ -39,7 +41,9 @@ trait LmsGroupTypesSyncTrait {
     $storage = $this->container->get('entity_type.manager')->getStorage('group_type');
     $storage->resetCache();
     foreach (['lms_course', 'lms_class'] as $id) {
-      $relation_manager->installEnforced($storage->load($id));
+      $groupType = $storage->load($id);
+      self::assertInstanceOf(GroupTypeInterface::class, $groupType);
+      $relation_manager->installEnforced($groupType);
     }
     $relation_manager->clearCachedPluginMaps();
   }

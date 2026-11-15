@@ -11,6 +11,7 @@ use Drupal\Core\Form\FormState;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\group\Entity\Group;
+use Drupal\group\Entity\GroupTypeInterface;
 use Drupal\group\Entity\Storage\GroupRelationshipTypeStorageInterface;
 use Drupal\aculta_lms_h5p\Entity\aculta_H5PContent;
 use Drupal\KernelTests\KernelTestBase;
@@ -103,37 +104,43 @@ final class LmsH5PDiscussionResolverKernelTest extends KernelTestBase {
     $this->installLmsGroupTypesFromSync();
 
     NodeType::create(['type' => 'aculta_lms_topic', 'name' => 'LMS discussion topic'])->save();
-    FieldStorageConfig::create([
+    $contentStorage = FieldStorageConfig::load('node.field_h5p_content') ?? FieldStorageConfig::create([
       'field_name' => 'field_h5p_content',
       'entity_type' => 'node',
       'type' => 'entity_reference',
       'settings' => ['target_type' => 'aculta_h5p_content'],
       'cardinality' => 1,
-    ])->save();
-    FieldConfig::create([
+    ]);
+    $contentStorage->save();
+    $contentField = FieldConfig::load('node.aculta_lms_topic.field_h5p_content') ?? FieldConfig::create([
       'field_name' => 'field_h5p_content',
       'entity_type' => 'node',
       'bundle' => 'aculta_lms_topic',
       'label' => 'Conteúdo H5P',
-    ])->save();
-    FieldStorageConfig::create([
+    ]);
+    $contentField->save();
+    $activitiesStorage = FieldStorageConfig::load('group.field_h5p_activities') ?? FieldStorageConfig::create([
       'field_name' => 'field_h5p_activities',
       'entity_type' => 'group',
       'type' => 'h5p',
       'cardinality' => -1,
-    ])->save();
-    FieldConfig::create([
+    ]);
+    $activitiesStorage->save();
+    $activitiesField = FieldConfig::load('group.lms_course.field_h5p_activities') ?? FieldConfig::create([
       'field_name' => 'field_h5p_activities',
       'entity_type' => 'group',
       'bundle' => 'lms_course',
       'label' => 'Atividades interativas',
-    ])->save();
+    ]);
+    $activitiesField->save();
 
     $groupTypeStorage = $this->container->get('entity_type.manager')->getStorage('group_type');
     $relationshipTypeStorage = $this->container->get('entity_type.manager')->getStorage('group_relationship_type');
     self::assertInstanceOf(GroupRelationshipTypeStorageInterface::class, $relationshipTypeStorage);
     $courseType = $groupTypeStorage->load('lms_course');
     $classType = $groupTypeStorage->load('lms_class');
+    self::assertInstanceOf(GroupTypeInterface::class, $courseType);
+    self::assertInstanceOf(GroupTypeInterface::class, $classType);
     $relationshipDefinitions = [
       [$courseType, 'group_node:aculta_lms_topic'],
       [$classType, 'group_node:aculta_lms_topic'],
@@ -141,7 +148,8 @@ final class LmsH5PDiscussionResolverKernelTest extends KernelTestBase {
     ];
     foreach ($relationshipDefinitions as [$groupType, $pluginId]) {
       $relationshipType = $relationshipTypeStorage->createFromPlugin($groupType, $pluginId);
-      if (!$relationshipTypeStorage->load($relationshipType->id())) {
+      $relationshipTypeId = $relationshipType->id();
+      if ($relationshipTypeId === NULL || !$relationshipTypeStorage->load($relationshipTypeId)) {
         $relationshipTypeStorage->save($relationshipType);
       }
     }
@@ -160,7 +168,9 @@ final class LmsH5PDiscussionResolverKernelTest extends KernelTestBase {
       'scope' => 'individual',
       'permissions' => ['view group', 'view group_node:aculta_lms_topic entity'],
     ])->save();
-    Role::load('authenticated')->grantPermission('access content')->save();
+    $authenticatedRole = Role::load('authenticated');
+    self::assertInstanceOf(Role::class, $authenticatedRole);
+    $authenticatedRole->grantPermission('access content')->save();
   }
 
   /**
@@ -203,15 +213,22 @@ final class LmsH5PDiscussionResolverKernelTest extends KernelTestBase {
     );
     $build = $resolver->build((int) $content->id(), $course, $student);
 
-    self::assertCount(1, $build['links']['#items']);
-    self::assertSame('Discussão desta atividade', $build['links']['#items'][0]['#title']);
-    self::assertContains('user.group_permissions', $build['#cache']['contexts']);
-    self::assertContains('group_relationship_list:plugin:group_node:aculta_lms_topic', $build['#cache']['tags']);
-    self::assertArrayNotHasKey('links', $resolver->build((int) $content->id(), $course, $outsider));
-    self::assertArrayNotHasKey('links', $resolver->build((int) $otherContent->id(), $course, $student));
-    self::assertNotContains($unattachedTopic->label(), array_column($build['links']['#items'], '#title'));
+    $items = $this->renderArrayOffset($this->renderArrayOffset($this->renderArrayOffset($build, '#slots'), 'content'), '#items');
+    self::assertCount(1, $items);
+    self::assertSame('Discussão desta atividade', $this->renderStringOffset($this->renderArrayOffset($items, 0), '#title'));
+    $cache = $this->renderArrayOffset($build, '#cache');
+    self::assertContains('user.group_permissions', $this->renderArrayOffset($cache, 'contexts'));
+    self::assertContains('group_relationship_list:plugin:group_node:aculta_lms_topic', $this->renderArrayOffset($cache, 'tags'));
+    $outsiderBuild = $resolver->build((int) $content->id(), $course, $outsider);
+    self::assertSame('', $this->renderStringOffset($outsiderBuild, '#markup'));
+    self::assertArrayNotHasKey('#slots', $outsiderBuild);
+    $otherContentBuild = $resolver->build((int) $otherContent->id(), $course, $student);
+    self::assertSame('', $this->renderStringOffset($otherContentBuild, '#markup'));
+    self::assertArrayNotHasKey('#slots', $otherContentBuild);
+    self::assertNotContains($unattachedTopic->label(), array_column($items, '#title'));
     $classBuild = $resolver->build((int) $content->id(), $course, $classMember);
-    self::assertSame(['Discussão da turma'], array_column($classBuild['links']['#items'], '#title'));
+    $classItems = $this->renderArrayOffset($this->renderArrayOffset($this->renderArrayOffset($classBuild, '#slots'), 'content'), '#items');
+    self::assertSame(['Discussão da turma'], array_column($classItems, '#title'));
 
     $this->container->get('current_user')->setAccount($student);
     $request = Request::create('/group/' . $course->id() . '/content/create/group_node:aculta_lms_topic');
@@ -231,18 +248,27 @@ final class LmsH5PDiscussionResolverKernelTest extends KernelTestBase {
       ],
     ];
     $hook->topicFormAlter($topicForm, new FormState());
-    self::assertSame(
-      (string) $course->id(),
-      $topicForm['field_h5p_content']['widget'][0]['target_id']['#autocomplete_query_parameters']['group_id'],
-    );
+    $topicWidget = $this->renderArrayOffset($topicForm, 'field_h5p_content');
+    $topicWidget = $this->renderArrayOffset($topicWidget, 'widget');
+    $topicWidget = $this->renderArrayOffset($topicWidget, 0);
+    $targetIdElement = $this->renderArrayOffset($topicWidget, 'target_id');
+    $queryParameters = $this->renderArrayOffset($targetIdElement, '#autocomplete_query_parameters');
+    self::assertSame((string) $course->id(), $this->renderStringOffset($queryParameters, 'group_id'));
 
     $elements = [0 => ['#markup' => '<div class="h5p-content">Atividade</div>']];
     $hook->formatterAlter($elements, $course->get('field_h5p_activities'));
-    self::assertSame('component', $elements[0]['#type']);
-    self::assertSame('aculta420_v2:layout-section', $elements[0]['#component']);
-    self::assertArrayHasKey('player', $elements[0]['#slots']['content']);
-    self::assertSame('aculta420_v2:layout-section', $elements[0]['#slots']['content']['discussions']['#component']);
-    self::assertSame('Discussão desta atividade', $elements[0]['#slots']['content']['discussions']['#slots']['content']['#items'][0]['#title']);
+    $element = $this->renderArrayOffset($elements, 0);
+    self::assertSame('component', $this->renderStringOffset($element, '#type'));
+    self::assertSame('aculta420_v2:layout-section', $this->renderStringOffset($element, '#component'));
+    $outerSlots = $this->renderArrayOffset($element, '#slots');
+    $outerContent = $this->renderArrayOffset($outerSlots, 'content');
+    self::assertArrayHasKey('player', $outerContent);
+    $discussionComponent = $this->renderArrayOffset($outerContent, 'discussions');
+    self::assertSame('aculta420_v2:layout-section', $this->renderStringOffset($discussionComponent, '#component'));
+    $discussionSlots = $this->renderArrayOffset($discussionComponent, '#slots');
+    $discussionContent = $this->renderArrayOffset($discussionSlots, 'content');
+    $discussionItems = $this->renderArrayOffset($discussionContent, '#items');
+    self::assertSame('Discussão desta atividade', $this->renderStringOffset($this->renderArrayOffset($discussionItems, 0), '#title'));
   }
 
   /**
@@ -253,8 +279,40 @@ final class LmsH5PDiscussionResolverKernelTest extends KernelTestBase {
       'parameters' => '{}',
       'title' => $title,
     ]);
+    self::assertInstanceOf(aculta_H5PContent::class, $content);
     $content->save();
     return $content;
+  }
+
+  /**
+   * Reads an array value and fails with context when a render structure is malformed.
+   *
+   * @param array<mixed> $array
+   *   Render array or nested render value.
+   * @param int|string $key
+   *   Offset to read.
+   *
+   * @return array<mixed>
+   *   The nested array value.
+   */
+  private function renderArrayOffset(array $array, int|string $key): array {
+    $value = $array[$key] ?? NULL;
+    self::assertIsArray($value);
+    return $value;
+  }
+
+  /**
+   * Reads a string value and fails when the render value is not a string.
+   *
+   * @param array<mixed> $array
+   *   Render array or nested render value.
+   * @param int|string $key
+   *   Offset to read.
+   */
+  private function renderStringOffset(array $array, int|string $key): string {
+    $value = $array[$key] ?? NULL;
+    self::assertIsString($value);
+    return $value;
   }
 
   /**
