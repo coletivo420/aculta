@@ -310,7 +310,10 @@ class PrivateMessageService implements PrivateMessageServiceInterface {
         $author = $entity;
       }
       else {
-        $author = $entity->getOwner();
+        /** @var \Drupal\user\EntityOwnerInterface $owned_entity */
+        $owned_entity = $entity;
+        /** @var \Drupal\user\UserInterface $author */
+        $author = $owned_entity->getOwner();
       }
       $current_user = $this->currentUser;
       if ($current_user->isAuthenticated()) {
@@ -654,8 +657,8 @@ class PrivateMessageService implements PrivateMessageServiceInterface {
     $query->innerJoin('private_message_threads', 'thread', 'thread_message.entity_id = thread.id');
     $query->innerJoin('aculta_pm_thread_history', 'thread_history', 'thread_history.thread_id = thread.id AND thread_history.access_timestamp < thread.updated AND thread_history.uid = :uid', [':uid' => $uid]);
     $query->innerJoin('private_message_thread__members', 'thread_member', 'thread_member.entity_id = thread.id AND thread_member.members_target_id = :uid', [':uid' => $uid]);
-    $query->condition('thread.updated', $lastCheckTimestamp, '>');
-    $query->condition('message.created', $lastCheckTimestamp, '>');
+    $query->condition('thread.updated', (int) $lastCheckTimestamp, '>');
+    $query->condition('message.created', (int) $lastCheckTimestamp, '>');
     $query->condition('message.owner', $uid, '<>');
     $query->condition('thread.id', $bannedThreadsQuery, 'NOT IN');
     $query->groupBy('thread.id');
@@ -708,8 +711,8 @@ class PrivateMessageService implements PrivateMessageServiceInterface {
       [':uid' => $uid]
     );
     $query
-      ->condition('thread.updated ', $lastCheckTimestamp, '>')
-      ->condition('message.created', $lastCheckTimestamp, '>')
+      ->condition('thread.updated ', (int) $lastCheckTimestamp, '>')
+      ->condition('message.created', (int) $lastCheckTimestamp, '>')
       ->condition('message.owner', $uid, '<>')
       ->condition('thread.id', $bannedThreadsQuery, 'NOT IN')
       ->where('thread_history.access_timestamp < thread.updated');

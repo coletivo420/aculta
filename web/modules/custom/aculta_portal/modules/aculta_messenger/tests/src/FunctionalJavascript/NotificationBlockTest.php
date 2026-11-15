@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_messenger\FunctionalJavascript;
 
+use Behat\Mink\Driver\Selenium2Driver;
 use Drupal\FunctionalJavascriptTests\WebDriverTestBase;
 use Drupal\aculta_messenger\Entity\PrivateMessageBan;
 use Drupal\Tests\aculta_messenger\Traits\NotificationBlockTrait;
@@ -77,7 +78,7 @@ class NotificationBlockTest extends WebDriverTestBase {
     $this->assertUnreadNotifications($ajaxCount);
     $this->assertStringContainsString(
       '(' . $ajaxCount . ')',
-      $this->getSession()->getDriver()->getWebDriverSession()->title(),
+      $this->getPageTitle(),
     );
 
     // Reset count.
@@ -85,7 +86,7 @@ class NotificationBlockTest extends WebDriverTestBase {
     $this->assertUnreadNotifications('0');
     $this->assertEquals(
       'Private Messages | Drupal',
-      $this->getSession()->getDriver()->getWebDriverSession()->title(),
+      $this->getPageTitle(),
     );
 
     // When going to a different page, I should still not see a notification for
@@ -130,6 +131,17 @@ class NotificationBlockTest extends WebDriverTestBase {
       'Count threads' => ['threads', '1', '2'],
       'Count messages' => ['messages', '2', '4'],
     ];
+  }
+
+  /**
+   * Returns the title of the current page from the WebDriver session.
+   */
+  private function getPageTitle(): string {
+    $driver = $this->getSession()->getDriver();
+    if (!$driver instanceof Selenium2Driver) {
+      $this->fail('This test requires the Selenium2 (WebDriver) Mink driver.');
+    }
+    return (string) $driver->getWebDriverSession()->title();
   }
 
 }

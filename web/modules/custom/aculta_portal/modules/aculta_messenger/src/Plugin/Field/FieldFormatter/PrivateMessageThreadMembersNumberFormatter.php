@@ -81,9 +81,11 @@ class PrivateMessageThreadMembersNumberFormatter extends FormatterBase implement
     $suffix = $this->getSetting('members_number_suffix');
 
     return [
-      '#prefix' => '<div class="private-message-recipients-number">',
-      '#suffix' => '</div>',
-      '#markup' => "$users_num $suffix",
+      0 => [
+        '#prefix' => '<div class="private-message-recipients-number">',
+        '#suffix' => '</div>',
+        '#markup' => "$users_num $suffix",
+      ],
     ];
   }
 

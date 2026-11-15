@@ -282,7 +282,7 @@ class PrivateMessageThreadMessageFormatter extends FormatterBase implements Cont
       $element['#attached']['library'][] = 'private_message/private_message_thread_style';
     }
 
-    return $element;
+    return [0 => $element];
   }
 
   /**

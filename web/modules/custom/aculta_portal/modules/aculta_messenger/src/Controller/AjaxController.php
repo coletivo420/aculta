@@ -41,6 +41,7 @@ class AjaxController extends ControllerBase implements AjaxControllerInterface {
       'get_new_unread_thread_count' => $this->getNewUnreadThreadCount(),
       'get_new_unread_message_count' => $this->getNewUnreadMessageCount(),
       'load_thread' => $this->loadThread(),
+      default => throw new \UnhandledMatchError('Unhandled match case "' . $op . '"'),
     };
   }
 
@@ -57,7 +58,9 @@ class AjaxController extends ControllerBase implements AjaxControllerInterface {
     $thread_id = $this->requestParameter($request, 'threadid');
     $message_id = $this->requestParameter($request, 'messageid');
 
-    if (is_numeric($thread_id) && is_numeric($message_id)) {
+    if (ctype_digit((string) $thread_id) && ctype_digit((string) $message_id)) {
+      $thread_id = (int) $thread_id;
+      $message_id = (int) $message_id;
       $thread = $this->entityTypeManager()->getStorage('private_message_thread')
         ->load($thread_id);
       if ($thread instanceof PrivateMessageThreadInterface) {
@@ -102,7 +105,9 @@ class AjaxController extends ControllerBase implements AjaxControllerInterface {
     $current_request = $this->requestStack->getCurrentRequest();
     $thread_id = $this->requestParameter($current_request, 'threadid');
     $message_id = $this->requestParameter($current_request, 'messageid');
-    if (is_numeric($thread_id) && is_numeric($message_id)) {
+    if (ctype_digit((string) $thread_id) && ctype_digit((string) $message_id)) {
+      $thread_id = (int) $thread_id;
+      $message_id = (int) $message_id;
       /** @var array{messages: list<\Drupal\aculta_messenger\Entity\PrivateMessageInterface>, next_exists: bool} $message_info */
       $message_info = $this->privateMessageService->getPreviousMessages($thread_id, $message_id);
 
@@ -141,9 +146,10 @@ class AjaxController extends ControllerBase implements AjaxControllerInterface {
     /** @var \Symfony\Component\HttpFoundation\Request $request */
     $request = $this->requestStack->getCurrentRequest();
     $timestamp = $this->requestParameter($request, 'timestamp');
-    $thread_count = (int) $this->requestParameter($request, 'count');
-    if (is_numeric($timestamp)) {
-      $thread_info = $this->privateMessageService->getThreadsForUser($thread_count, intval($timestamp));
+    $raw_count = $this->requestParameter($request, 'count');
+    $thread_count = is_scalar($raw_count) ? (int) $raw_count : 0;
+    if (ctype_digit((string) $timestamp)) {
+      $thread_info = $this->privateMessageService->getThreadsForUser($thread_count, (int) $timestamp);
       $has_next = FALSE;
       if (count($thread_info['threads'])) {
         $view_builder = $this->entityTypeManager()->getViewBuilder('private_message_thread');
@@ -179,6 +185,7 @@ class AjaxController extends ControllerBase implements AjaxControllerInterface {
 
     // Check to see if any thread IDs were POSTed.
     if (is_array($info) && count($info)) {
+      /** @var array<string, mixed> $info */
       // Get new inbox information based on the posted IDs.
       $inbox_threads = $this->privateMessageService->getUpdatedInboxThreads($info);
     }
@@ -256,18 +263,20 @@ class AjaxController extends ControllerBase implements AjaxControllerInterface {
     /** @var \Symfony\Component\HttpFoundation\Request $request */
     $request = $this->requestStack->getCurrentRequest();
     $thread_id = $this->requestParameter($request, 'id');
-    if ($thread_id) {
+    if (ctype_digit((string) $thread_id)) {
+      $thread_id = (int) $thread_id;
       $thread = $this->entityTypeManager()->getStorage('private_message_thread')->load($thread_id);
 
       if ($thread && $thread->access('view', $this->currentUser())) {
         $this->privateMessageService->updateLastCheckTime();
 
         $view_builder = $this->entityTypeManager()->getViewBuilder('private_message_thread');
-        /** @var array{'#attached': array{drupalSettings: array<string, mixed>}} $renderable */
         $renderable = $view_builder->view($thread);
         $rendered_thread = (string) $this->renderer->renderRoot($renderable);
 
-        $response->addCommand(new SettingsCommand($renderable['#attached']['drupalSettings'], TRUE));
+        $attached = $renderable['#attached'] ?? [];
+        $drupal_settings = is_array($attached) ? ($attached['drupalSettings'] ?? []) : [];
+        $response->addCommand(new SettingsCommand(is_array($drupal_settings) ? $drupal_settings : [], TRUE));
         $response->addCommand(new PrivateMessageInsertThreadCommand($rendered_thread));
         $unread_thread_count = $this->privateMessageService->getUnreadThreadCount();
         $response->addCommand(new PrivateMessageUpdateUnreadItemsCountCommand($unread_thread_count));

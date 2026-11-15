@@ -51,7 +51,7 @@ class ConfigForm extends ConfigFormBase {
    * @return array<string, mixed>
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
-    $config = $this->config('private_message.settings');
+    $this->config('private_message.settings');
 
     $form['pm_core'] = [
       '#type' => 'details',

@@ -55,7 +55,7 @@ class PrivateMessageThreadCleanHistory extends FilterPluginBase {
    * No filtering takes place if the user doesn't select any options.
    */
   public function query(): void {
-    $current_user_id = $this->currentUser->id();
+    $current_user_id = (string) $this->currentUser->id();
 
     $definition = [
       'table' => 'aculta_pm_thread_history',
@@ -71,7 +71,7 @@ class PrivateMessageThreadCleanHistory extends FilterPluginBase {
     /** @var \Drupal\views\Plugin\views\query\Sql $sqlQuery */
     $sqlQuery = $this->query;
     $sqlQuery->addRelationship('aculta_pm_thread_history', $join, 'delete_timestamp');
-    $sqlQuery->addWhere(NULL, 'aculta_pm_thread_history.uid', $current_user_id);
+    $sqlQuery->addWhere('0', 'aculta_pm_thread_history.uid', $current_user_id);
 
     if (!empty($this->value)) {
       parent::query();

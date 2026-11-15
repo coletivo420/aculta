@@ -285,6 +285,7 @@ class PrivateMessageForm extends ContentEntityForm {
     /** @var \Drupal\Core\Entity\Display\EntityFormDisplayInterface $form_display */
     $form_display = $formState->get('pmt_form_display');
 
+    /** @var array<string, mixed> $form */
     $form_display->extractFormValues($entity, $form, $formState);
     // Get the member's field, as this is the field to be validated.
     $members_field = $field_definitions['members'];
@@ -349,7 +350,8 @@ class PrivateMessageForm extends ContentEntityForm {
 
     foreach ($bannedUsers as $bannedUser) {
       if (in_array($bannedUser, $threadMembers)) {
-        $formState->setError($form, $this->t('You cannot send a message to a blocked user.'));
+        /** @var array<string, mixed> $form */
+        $formState->setError($form,$this->t('You cannot send a message to a blocked user.'));
         break;
       }
     }
@@ -455,13 +457,18 @@ class PrivateMessageForm extends ContentEntityForm {
         ->getStorage('user')
         ->load($this->currentUser()->id());
 
-      $members = [$current_user];
+      $members = [];
+      if ($current_user instanceof UserInterface) {
+        $members[] = $current_user;
+      }
 
       foreach ($entity->get('members') as $user) {
         if ($user instanceof EntityReferenceItem) {
           $user = $user->entity;
         }
-        $members[] = $user;
+        if ($user instanceof UserInterface) {
+          $members[] = $user;
+        }
       }
       // Get a private message thread containing the given users.
       $private_message_thread = $this->privateMessageService->getThreadForMembers($members);

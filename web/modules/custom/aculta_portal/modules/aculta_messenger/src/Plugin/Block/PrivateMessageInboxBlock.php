@@ -106,7 +106,7 @@ class PrivateMessageInboxBlock extends BlockBase implements BlockPluginInterface
       if (!$style_disabled) {
         $block['#attached']['library'][] = 'private_message/inbox_block_style';
       }
-      if (count($threads) && $thread_info['next_exists']) {
+      if ($thread_info['next_exists']) {
         $prev_url = Url::fromRoute('private_message.ajax_callback', ['op' => 'get_old_inbox_threads']);
         $prev_token = $this->csrfToken->get($prev_url->getInternalPath());
         $prev_url->setOptions(['query' => ['token' => $prev_token]]);

@@ -177,6 +177,7 @@ function aculta_messenger_entity_extra_field_info(): array {
  * @param array<string, mixed> $build
  */
 function aculta_messenger_private_message_thread_view(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, string $view_mode): void {
+  unset($view_mode);
   /** @var PrivateMessageThreadInterface $entity */
   if ($display->getComponent('last_message')) {
     $messages = $entity->getMessages();
@@ -297,8 +298,8 @@ function aculta_messenger_preprocess_private_message_thread(array &$variables): 
   ]);
 
   // Helpful $content variable for templates.
-  $variables += ['content' => []];
   /** @var array{content: array<string, mixed>} $variables */
+  $variables += ['content' => []];
   /** @var string $key */
   foreach (Element::children($elements) as $key) {
     $variables['content'][$key] = $elements[$key];
@@ -330,8 +331,8 @@ function aculta_messenger_preprocess_private_message(array &$variables): void {
   ]);
 
   // Helpful $content variable for templates.
-  $variables += ['content' => []];
   /** @var array{content: array<string, mixed>} $variables */
+  $variables += ['content' => []];
   /** @var string $key */
   foreach (Element::children($elements) as $key) {
     $variables['content'][$key] = $elements[$key];
@@ -374,11 +375,11 @@ function aculta_messenger_preprocess_container(array &$vars): void {
     $attributes = &$vars['attributes'];
     if (str_starts_with($id, 'edit-members-wrapper')) {
       // Add a custom class to the private message members widget container.
-      $attributes['class'][] = 'private_message_members_widget_default_wrapper';
+      $attributes->addClass('private_message_members_widget_default_wrapper');
     }
     elseif (str_starts_with($id, 'edit-message-wrapper')) {
       // Add a custom class to the private message members widget container.
-      $attributes['class'][] = 'private_message_message_widget_default_wrapper';
+      $attributes->addClass('private_message_message_widget_default_wrapper');
     }
   }
 }

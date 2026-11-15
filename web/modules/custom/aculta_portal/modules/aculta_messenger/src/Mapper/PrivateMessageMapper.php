@@ -66,7 +66,11 @@ class PrivateMessageMapper implements PrivateMessageMapperInterface {
    */
   public function getFirstThreadIdForUser(UserInterface $user) {
 
-    $bannedThreadsQuery = $this->getBannedThreads($user->id());
+    $uid = $user->id();
+    if (!ctype_digit((string) $uid)) {
+      return FALSE;
+    }
+    $bannedThreadsQuery = $this->getBannedThreads((int) $uid);
 
     $query = $this->database->select('private_message_threads', 'thread');
     $query->addField('thread', 'id');
@@ -91,7 +95,11 @@ class PrivateMessageMapper implements PrivateMessageMapperInterface {
    */
   public function getThreadIdsForUser(UserInterface $user, $count = FALSE, $timestamp = FALSE): array {
 
-    $bannedThreadsQuery = $this->getBannedThreads($user->id());
+    $uid = $user->id();
+    if (!ctype_digit((string) $uid)) {
+      return [];
+    }
+    $bannedThreadsQuery = $this->getBannedThreads((int) $uid);
 
     $query = $this->database->select('private_message_threads', 'thread');
     $query->addField('thread', 'id');

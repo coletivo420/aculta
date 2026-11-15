@@ -63292,18 +63292,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Unit/PrivateMessageUnreadIndicatorHooksTest.php
 
 		-
-			rawMessage: 'Cannot call method method() on mixed.'
-			identifier: method.nonObject
-			count: 8
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Unit/UnreadThreadCounterTest.php
-
-		-
-			rawMessage: 'Cannot call method willReturn() on mixed.'
-			identifier: method.nonObject
-			count: 5
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Unit/UnreadThreadCounterTest.php
-
-		-
 			rawMessage: 'Parameter $checkAccess of method Drupal\Tests\aculta_messenger\Unit\UnreadThreadCounterTest::thread() has typehint with internal class PHPUnit\Framework\MockObject\Rule\InvocationOrder.'
 			identifier: parameter.internalClass
 			count: 1

@@ -45,7 +45,9 @@ class ConfirmUnbanUserForm extends ConfirmFormBase {
    * @return array<string, mixed>
    */
   public function buildForm(array $form, FormStateInterface $form_state, ?UserInterface $user = NULL): array {
-    $this->user = $user;
+    if ($user instanceof UserInterface) {
+      $this->user = $user;
+    }
     /** @var array<string, mixed> $built */
     $built = parent::buildForm($form, $form_state);
     return $built;
@@ -56,6 +58,7 @@ class ConfirmUnbanUserForm extends ConfirmFormBase {
    * @param array<string, mixed> &$form
    */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
+    /** @var array<string, mixed> $form */
     // Add a security if the user id is unknown.
     if (empty($this->user)) {
       $form_state->setError($form, $this->t('The user id is unknown.'));
@@ -74,12 +77,14 @@ class ConfirmUnbanUserForm extends ConfirmFormBase {
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $form_state->setRedirect('private_message.private_message_page');
 
+    $user_id = $this->user->id();
+
     // If user not banned, do nothing.
-    if (!$this->privateMessageBanManager->isBanned($this->user->id())) {
+    if ($user_id === NULL || !$this->privateMessageBanManager->isBanned($user_id)) {
       return;
     }
 
-    $this->privateMessageBanManager->unbanUser($this->user->id());
+    $this->privateMessageBanManager->unbanUser($user_id);
     $this->messenger()->addStatus($this->t('The user %name has been unbanned.', [
       '%name' => $this->user->getDisplayName(),
     ]));

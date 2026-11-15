@@ -54,7 +54,7 @@ class PrivateMessageThreadIsUnread extends FilterPluginBase {
    * Override the views query.
    */
   public function query(): void {
-    $current_user_id = $this->currentUser->id();
+    $current_user_id = (string) $this->currentUser->id();
 
     $definition = [
       'table' => 'aculta_pm_thread_history',
@@ -70,7 +70,7 @@ class PrivateMessageThreadIsUnread extends FilterPluginBase {
     /** @var \Drupal\views\Plugin\views\query\Sql $sqlQuery */
     $sqlQuery = $this->query;
     $sqlQuery->addRelationship('aculta_pm_thread_history', $join, 'access_timestamp');
-    $sqlQuery->addWhere(NULL, 'aculta_pm_thread_history.uid', $current_user_id);
+    $sqlQuery->addWhere('0', 'aculta_pm_thread_history.uid', $current_user_id);
 
     if (!empty($this->value)) {
       parent::query();

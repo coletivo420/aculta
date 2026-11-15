@@ -261,7 +261,6 @@ class PrivateMessageThreadMemberFormatter extends FormatterBase implements Conta
     $display_current_user = $this->getSetting('display_current_user');
 
     $view_builder = $this->entityTypeManager->getViewBuilder('user');
-    /** @var \Drupal\Core\Field\Plugin\Field\FieldType\EntityReferenceItem $item */
     foreach ($items as $delta => $item) {
       /** @var \Drupal\user\UserInterface|null $user */
       $user = $item->entity;
@@ -312,7 +311,7 @@ class PrivateMessageThreadMemberFormatter extends FormatterBase implements Conta
 
     $element['#markup'] .= implode($separator, $users);
 
-    return $element;
+    return [0 => $element];
   }
 
   /**
