@@ -88,7 +88,13 @@ final class PrivateMessageFormValidator {
   }
 
   /**
-   * Restricts new threads according to the target member's preference. */
+   * Restricts new threads according to the target member's preference.
+   *
+   * @param array<array-key, mixed> $form
+   *   O valor informado para $form.
+   * @param FormStateInterface $formState
+   *   O valor informado para $formState.
+   */
   public function validateNewConversationPrivacy(array &$form, FormStateInterface $formState): void {
     if ($formState->hasAnyErrors()
       || $formState->get('thread') !== NULL
@@ -130,13 +136,28 @@ final class PrivateMessageFormValidator {
   }
 
   /**
-   * Forces the native long-text field to persist using Drupal's plain format. */
+   * Forces the native long-text field to persist using Drupal's plain format.
+   *
+   * @param array<array-key, mixed> $form
+   *   O valor informado para $form.
+   * @param FormStateInterface $formState
+   *   O valor informado para $formState.
+   */
   public function enforcePlainTextFormat(array &$form, FormStateInterface $formState): void {
     $formState->setValue(['message', 0, 'format'], 'plain_text');
   }
 
   /**
-   * Hides text-format controls and generic guidelines from the chat composer. */
+   * Hides text-format controls and generic guidelines from the chat composer.
+   *
+   * @param array<array-key, mixed> $form
+   *   O valor informado para $form.
+   * @param FormStateInterface $formState
+   *   O valor informado para $formState.
+   *
+   * @return array<array-key, mixed>
+   *   O resultado da operação.
+   */
   public function hidePlainTextGuidelines(array $form, FormStateInterface $formState): array {
     if (isset($form['message']['widget'][0]['format'])) {
       $form['message']['widget'][0]['format']['#access'] = FALSE;
@@ -150,6 +171,11 @@ final class PrivateMessageFormValidator {
    * Ten valid submissions are allowed per account in a rolling one-hour
    * window; the next submission is rejected. Registration happens only after
    * the message is persisted.
+   *
+   * @param array<array-key, mixed> $form
+   *   O valor informado para $form.
+   * @param FormStateInterface $formState
+   *   O valor informado para $formState.
    */
   public function validateRateLimit(array &$form, FormStateInterface $formState): void {
     if ($formState->hasAnyErrors()) {
@@ -293,6 +319,11 @@ final class PrivateMessageFormValidator {
 
   /**
    * Registers a successfully persisted message in the Core flood backend.
+   *
+   * @param array<array-key, mixed> $form
+   *   O valor informado para $form.
+   * @param FormStateInterface $formState
+   *   O valor informado para $formState.
    */
   public function registerRateLimit(array &$form, FormStateInterface $formState): void {
     $identifier = 'uid:' . $this->currentUser->id();

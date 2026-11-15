@@ -171,6 +171,14 @@ final class ConversationRelationshipForm extends FormBase {
 
   /**
    * The group menu contains only "Limpar histórico" for the current member.
+   *
+   * @param FormStateInterface $formState
+   *   O valor informado para $formState.
+   * @param ?string $postUrl
+   *   O valor informado para $postUrl.
+   *
+   * @return array<array-key, mixed>
+   *   O resultado da operação.
    */
   private function groupForm(FormStateInterface $formState, ?string $postUrl): array {
     $form['#attributes'] = ['data-aculta-drawer-action' => ''];
@@ -188,6 +196,11 @@ final class ConversationRelationshipForm extends FormBase {
 
   /**
    * Renders the two-step clear-history action for the current member.
+   *
+   * @param array<array-key, mixed> $form
+   *   O valor informado para $form.
+   * @param FormStateInterface $formState
+   *   O valor informado para $formState.
    */
   private function clearItems(array &$form, FormStateInterface $formState): void {
     if ($formState->get('clear_step') === 'confirm') {
@@ -211,6 +224,12 @@ final class ConversationRelationshipForm extends FormBase {
 
   /**
    * Builds a status line as a neutral paragraph styled by the theme.
+   *
+   * @param string $text
+   *   O valor informado para $text.
+   *
+   * @return array<array-key, mixed>
+   *   O resultado da operação.
    */
   private function statusLine(string $text): array {
     return [
@@ -242,6 +261,11 @@ final class ConversationRelationshipForm extends FormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<array-key, mixed> $form
+   *   O valor informado para $form.
+   * @param FormStateInterface $formState
+   *   O valor informado para $formState.
    */
   public function submitForm(array &$form, FormStateInterface $formState): void {
     if ($formState->get('group') === TRUE) {
@@ -436,6 +460,16 @@ final class ConversationRelationshipForm extends FormBase {
 
   /**
    * Builds a submit action button.
+   *
+   * @param string $name
+   *   O valor informado para $name.
+   * @param mixed $label
+   *   O valor informado para $label.
+   * @param string $token
+   *   O valor informado para $token.
+   *
+   * @return array<array-key, mixed>
+   *   O resultado da operação.
    */
   private function button(string $name, $label, string $token = 'conversation-action'): array {
     return [

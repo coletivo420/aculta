@@ -120,6 +120,9 @@ final class MessengerBarHooks {
 
   /**
    * Attaches the new-conversation search script to authenticated pages.
+   *
+   * @param array<array-key, mixed> $attachments
+   *   O valor informado para $attachments.
    */
   #[Hook('page_attachments')]
   public function pageAttachments(array &$attachments): void {
@@ -134,6 +137,9 @@ final class MessengerBarHooks {
 
   /**
    * Supplies the current member's native thread state as a neutral value.
+   *
+   * @param array<array-key, mixed> $variables
+   *   O valor informado para $variables.
    */
   #[Hook('preprocess_private_message_thread')]
   public function preprocessPrivateMessageThread(array &$variables): void {

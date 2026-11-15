@@ -507,7 +507,15 @@ final class MagazineNoticePersistenceKernelTest extends KernelTestBase {
   }
 
   /**
-   * Installs one field and its instance on the notice Message bundle. */
+   * Installs one field and its instance on the notice Message bundle.
+   *
+   * @param string $name
+   *   O valor informado para $name.
+   * @param string $type
+   *   O valor informado para $type.
+   * @param array<array-key, mixed> $settings
+   *   O valor informado para $settings.
+   */
   private function installMessageField(string $name, string $type, array $settings = []): void {
     FieldStorageConfig::create([
       'entity_type' => 'message',

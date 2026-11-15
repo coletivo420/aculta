@@ -189,6 +189,14 @@ final class NewConversationForm extends FormBase {
    *
    * The drawer removes the chip in place; the link also works without
    * JavaScript.
+   *
+   * @param UserInterface $user
+   *   O valor informado para $user.
+   * @param array<int, int|string> $selectedIds
+   *   O valor informado para $selectedIds.
+   *
+   * @return array<array-key, mixed>
+   *   O resultado da operação.
    */
   private function chip(UserInterface $user, array $selectedIds): array {
     $name = $this->memberIdentity->publicDisplayName($user) ?? (string) $this->t('Membro');
@@ -217,6 +225,11 @@ final class NewConversationForm extends FormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<array-key, mixed> $form
+   *   O valor informado para $form.
+   * @param FormStateInterface $formState
+   *   O valor informado para $formState.
    */
   public function validateForm(array &$form, FormStateInterface $formState): void {
     $message = $formState->getValue('message');
@@ -258,6 +271,11 @@ final class NewConversationForm extends FormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<array-key, mixed> $form
+   *   O valor informado para $form.
+   * @param FormStateInterface $formState
+   *   O valor informado para $formState.
    */
   public function submitForm(array &$form, FormStateInterface $formState): void {
     if ($formState->hasAnyErrors()) {
@@ -367,6 +385,12 @@ final class NewConversationForm extends FormBase {
 
   /**
    * Returns target IDs from the profile route or submitted recipient chips.
+   *
+   * @param FormStateInterface $formState
+   *   O valor informado para $formState.
+   *
+   * @return array<array-key, mixed>
+   *   O resultado da operação.
    */
   private function recipientIds(FormStateInterface $formState): array {
     $single = $formState->get('recipient');

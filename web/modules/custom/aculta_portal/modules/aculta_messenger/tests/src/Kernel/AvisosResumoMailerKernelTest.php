@@ -925,6 +925,9 @@ final class AvisosResumoMailerKernelTest extends KernelTestBase {
 
   /**
    * Returns messages captured by Drupal's test mail collector.
+   *
+   * @return array<array-key, mixed>
+   *   O resultado da operação.
    */
   private function collectedMails(): array {
     return $this->container->get('state')->get('system.test_mail_collector', []);

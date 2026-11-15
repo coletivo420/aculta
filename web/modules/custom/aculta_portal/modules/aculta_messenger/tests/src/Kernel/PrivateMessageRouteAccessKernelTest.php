@@ -211,7 +211,10 @@ final class PrivateMessageRouteAccessKernelTest extends KernelTestBase {
   /**
    * Loads the production route and runs Drupal's tagged access checks.
    *
-   * @return array
+   * @param int $threadId
+   *   O valor informado para $threadId.
+   *
+   * @return array<array-key, mixed>
    *   Route name, route object, and path with its thread parameter replaced.
    */
   private function productionReplyRoute(int $threadId): array {

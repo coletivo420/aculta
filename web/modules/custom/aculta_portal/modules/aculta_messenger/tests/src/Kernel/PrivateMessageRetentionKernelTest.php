@@ -371,6 +371,15 @@ final class PrivateMessageRetentionKernelTest extends KernelTestBase {
 
   /**
    * Creates and persists one thread with one private message.
+   *
+   * @param array<int, \Drupal\user\UserInterface> $members
+   *   O valor informado para $members.
+   * @param int $senderUid
+   *   O valor informado para $senderUid.
+   * @param int $timestamp
+   *   O valor informado para $timestamp.
+   * @param string $subject
+   *   O valor informado para $subject.
    */
   private function createThread(array $members, int $senderUid, int $timestamp, string $subject): PrivateMessageThread {
     $message = PrivateMessage::create([

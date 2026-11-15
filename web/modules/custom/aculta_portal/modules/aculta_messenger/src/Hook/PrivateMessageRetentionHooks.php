@@ -122,7 +122,11 @@ final class PrivateMessageRetentionHooks {
   }
 
   /**
-   * Deletes the Messenger notification records that reference this thread's private messages. */
+   * Deletes the Messenger notification records that reference this thread's private messages.
+   *
+   * @param array<int, int|string> $messageIds
+   *   O valor informado para $messageIds.
+   */
   private function deleteNotificationsFor(array $messageIds): void {
     if ($messageIds === []) {
       return;

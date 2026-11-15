@@ -70,7 +70,17 @@ final class PrivateMessageNotificationWorker extends QueueWorkerBase implements 
   }
 
   /**
-   * {@inheritdoc} */
+   * {@inheritdoc}
+   *
+   * @param ContainerInterface $container
+   *   O valor informado para $container.
+   * @param array<string, mixed> $configuration
+   *   O valor informado para $configuration.
+   * @param mixed $plugin_id
+   *   O valor informado para $plugin_id.
+   * @param mixed $plugin_definition
+   *   O valor informado para $plugin_definition.
+   */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): static {
     return new static(
       $configuration,

@@ -180,7 +180,11 @@ final class MessagesController extends ControllerBase {
   }
 
   /**
-   * A menu rendered alone, for the drawer to load: never cached, never sniffed as another type. */
+   * A menu rendered alone, for the drawer to load: never cached, never sniffed as another type.
+   *
+   * @param array<array-key, mixed> $build
+   *   O valor informado para $build.
+   */
   private function menuFragment(array $build): Response {
     $content = $this->renderer->renderInIsolation($build);
     return new Response((string) $content, Response::HTTP_OK, [
@@ -299,6 +303,12 @@ final class MessagesController extends ControllerBase {
    *
    * Retorna o que o painel deve mostrar: a mensagem da ação e a etapa do
    * "Limpar histórico" em duas etapas.
+   *
+   * @param PrivateMessageThreadInterface $thread
+   *   O valor informado para $thread.
+   *
+   * @return array<array-key, mixed>
+   *   O resultado da operação.
    */
   private function runRelationshipAction(PrivateMessageThreadInterface $thread): array {
     $input = $this->requestStack->getCurrentRequest()?->request->all() ?? [];
@@ -354,7 +364,18 @@ final class MessagesController extends ControllerBase {
   }
 
   /**
-   * The menu of one member's box, built with the result of the action just run. The box stays open to show it. */
+   * The menu of one member's box, built with the result of the action just run. The box stays open to show it.
+   *
+   * @param PrivateMessageThreadInterface $thread
+   *   O valor informado para $thread.
+   * @param UserInterface $user
+   *   O valor informado para $user.
+   * @param array<array-key, mixed> $result
+   *   O valor informado para $result.
+   *
+   * @return array<array-key, mixed>
+   *   O resultado da operação.
+   */
   private function memberPanel(PrivateMessageThreadInterface $thread, UserInterface $user, array $result): array {
     $state = $this->memberFormState($thread, $user);
     // Built, not submitted: the same rule as the conversation's menu in a response.
@@ -394,7 +415,16 @@ final class MessagesController extends ControllerBase {
   }
 
   /**
-   * Runs the posted action of one member's box with the request's input. Returns the message the box shows. */
+   * Runs the posted action of one member's box with the request's input. Returns the message the box shows.
+   *
+   * @param PrivateMessageThreadInterface $thread
+   *   O valor informado para $thread.
+   * @param UserInterface $user
+   *   O valor informado para $user.
+   *
+   * @return array<array-key, mixed>
+   *   O resultado da operação.
+   */
   private function runMemberAction(PrivateMessageThreadInterface $thread, UserInterface $user): array {
     $state = $this->memberFormState($thread, $user);
     $this->submitRelationshipForm($state, $this->requestStack->getCurrentRequest()?->request->all() ?? []);
@@ -408,6 +438,11 @@ final class MessagesController extends ControllerBase {
    * uma cópia em cache perde os serviços do construtor e o envio leria
    * propriedades não inicializadas. O alvo do estado (a caixa de um membro) ou
    * a conversa (o menu da conversa) decidem sobre o que o envio atua.
+   *
+   * @param FormState $state
+   *   O valor informado para $state.
+   * @param array<array-key, mixed> $input
+   *   O valor informado para $input.
    */
   private function submitRelationshipForm(FormState $state, array $input): void {
     $state->setRequestMethod('POST');
@@ -427,6 +462,16 @@ final class MessagesController extends ControllerBase {
    *
    * Um grupo tem uma caixa para cada membro, então as ações de amizade e
    * bloqueio sempre nomeiam o membro sobre o qual atuam.
+   *
+   * @param PrivateMessageThreadInterface $thread
+   *   O valor informado para $thread.
+   * @param ?int $actedUid
+   *   O valor informado para $actedUid.
+   * @param array<array-key, mixed> $actedPanel
+   *   O valor informado para $actedPanel.
+   *
+   * @return array<array-key, mixed>
+   *   O resultado da operação.
    */
   private function memberBoxes(PrivateMessageThreadInterface $thread, ?int $actedUid = NULL, array $actedPanel = []): array {
     $boxes = ['#type' => 'container', '#weight' => -5];
@@ -473,6 +518,12 @@ final class MessagesController extends ControllerBase {
    * O menu não é montado para cada linha de cada lista: a linha carrega o
    * endereço do menu e a gaveta o carrega na primeira vez que o membro o abre
    * (drawerOptions).
+   *
+   * @param PrivateMessageThreadInterface $thread
+   *   O valor informado para $thread.
+   *
+   * @return array<array-key, mixed>
+   *   O resultado da operação.
    */
   private function lazyOptionsDisclosure(PrivateMessageThreadInterface $thread): array {
     $box = OptionsDisclosure::build((string) $this->translation->translate('Opções'), []);
@@ -484,6 +535,17 @@ final class MessagesController extends ControllerBase {
    * Monta o contêiner da conversa com barra de ferramentas e mensagens.
    *
    * A barra traz o voltar à esquerda e "Opções" à direita, seguida da conversa.
+   *
+   * @param PrivateMessageThreadInterface $thread
+   *   O valor informado para $thread.
+   * @param mixed $access
+   *   O valor informado para $access.
+   * @param array<array-key, mixed> $panel
+   *   O valor informado para $panel.
+   * @param ?int $actedUid
+   *   O valor informado para $actedUid.
+   * @param array<array-key, mixed> $actedPanel
+   *   O valor informado para $actedPanel.
    */
   private function conversationResponse(PrivateMessageThreadInterface $thread, $access, array $panel = [], ?int $actedUid = NULL, array $actedPanel = []): Response {
     $threadBuild = $this->entityTypes->getViewBuilder('private_message_thread')->view($thread, 'full');
@@ -518,6 +580,14 @@ final class MessagesController extends ControllerBase {
    * individual), ou só "Limpar histórico" (grupo). É construído a partir de um
    * novo estado a cada vez: um formulário reconstruído volta do cache sem suas
    * dependências de construtor.
+   *
+   * @param PrivateMessageThreadInterface $thread
+   *   O valor informado para $thread.
+   * @param array<array-key, mixed> $panel
+   *   O valor informado para $panel.
+   *
+   * @return array<array-key, mixed>
+   *   O resultado da operação.
    */
   private function relationshipForm(PrivateMessageThreadInterface $thread, array $panel = []): array {
     $state = $this->threadFormState($thread);
@@ -565,6 +635,14 @@ final class MessagesController extends ControllerBase {
    * Em tela estreita o rótulo é ocultado e resta apenas o ícone de hambúrguer,
    * que é como o CSS decide se cabe. Seus itens são o formulário de relação, com
    * as ações de amizade, "Limpar histórico" e o bloqueio, nessa ordem.
+   *
+   * @param PrivateMessageThreadInterface $thread
+   *   O valor informado para $thread.
+   * @param array<array-key, mixed> $panel
+   *   O valor informado para $panel.
+   *
+   * @return array<array-key, mixed>
+   *   O resultado da operação.
    */
   private function optionsDisclosure(PrivateMessageThreadInterface $thread, array $panel = []): array {
     // After an action the menu stays open, so its result (a message, the clear confirmation) is what the member sees.
@@ -580,6 +658,9 @@ final class MessagesController extends ControllerBase {
    *
    * É usado por toda subvisão da gaveta, então fica no mesmo lugar (topo,
    * alinhado à direita, sob o X) em cada uma.
+   *
+   * @return array<array-key, mixed>
+   *   O resultado da operação.
    */
   private function backToConversationsLink(): array {
     return PortalLinkElement::build(
@@ -591,6 +672,9 @@ final class MessagesController extends ControllerBase {
 
   /**
    * Inicia o fluxo compartilhado de nova conversa a partir da caixa de entrada.
+   *
+   * @return array<array-key, mixed>
+   *   O resultado da operação.
    */
   private function newConversationAction(): array {
     return [
@@ -615,13 +699,20 @@ final class MessagesController extends ControllerBase {
    *
    * É usada pela gaveta da barra e pela aba Mensagens da conta, para que as
    * duas mostrem a mesma coisa com o mesmo comportamento.
+   *
+   * @return array<array-key, mixed>
+   *   O resultado da operação.
    */
   public function conversasBuild(): array {
     return $this->newConversationAction() + $this->buildConversationList();
   }
 
   /**
-   * Builds the authorized conversation list for drawer AJAX navigation. */
+   * Builds the authorized conversation list for drawer AJAX navigation.
+   *
+   * @return array<array-key, mixed>
+   *   O resultado da operação.
+   */
   private function buildConversationList(): array {
     $threads = $this->privateMessageService->getThreadsForUser(50)['threads'];
     $items = [];
@@ -803,17 +894,17 @@ final class MessagesController extends ControllerBase {
   /**
    * Builds the shared notice list for the toolbar drawer and account page.
    *
-   * @param array $filters
+   * @param array<array-key, mixed> $filters
    *   Optional origin and read-state filters from the account page or drawer.
    * @param bool $includeReadActions
    *   Whether to attach native per-member read-state actions.
    * @param bool $includeFilters
    *   Whether to include drawer filter links with working account-page
    *   fallbacks.
-   * @param array $pagination
+   * @param array<array-key, mixed> $pagination
    *   Optional page offsets for the account notice list.
    *
-   * @return array{build: array, contador: int}
+   * @return array<array-key, mixed>
    *   Rendered list and current unread notice count.
    */
   public function alertsBuild(array $filters = [], bool $includeReadActions = FALSE, bool $includeFilters = FALSE, array $pagination = []): array {
@@ -1189,6 +1280,12 @@ final class MessagesController extends ControllerBase {
    *
    * Each link has an account-page href as its no-JavaScript fallback and a
    * same-origin fragment URL for navigation inside the drawer.
+   *
+   * @param array<array-key, mixed> $filters
+   *   O valor informado para $filters.
+   *
+   * @return array<array-key, mixed>
+   *   O resultado da operação.
    */
   private function alertsFilterControlsBuild(array $filters): array {
     $fallbackUrl = $this->siteManager->routeUrl(SiteKey::Account,
@@ -1228,6 +1325,20 @@ final class MessagesController extends ControllerBase {
 
   /**
    * Builds one compact details group and its filter links.
+   *
+   * @param array<array-key, mixed> $options
+   *   O valor informado para $options.
+   * @param string $parameter
+   *   O valor informado para $parameter.
+   * @param array<array-key, mixed> $filters
+   *   O valor informado para $filters.
+   * @param string $label
+   *   O valor informado para $label.
+   * @param ?Url $fallbackUrl
+   *   O valor informado para $fallbackUrl.
+   *
+   * @return array<array-key, mixed>
+   *   O resultado da operação.
    */
   private function alertsFilterDetailsBuild(
     array $options,
@@ -1274,7 +1385,13 @@ final class MessagesController extends ControllerBase {
   }
 
   /**
-   * Renders a same-origin, uncached HTML fragment for the Bootstrap drawers. */
+   * Renders a same-origin, uncached HTML fragment for the Bootstrap drawers.
+   *
+   * @param array<array-key, mixed> $build
+   *   O valor informado para $build.
+   * @param array<array-key, mixed> $headers
+   *   O valor informado para $headers.
+   */
   private function buildDrawerResponse(array $build, array $headers = []): Response {
     $content = $this->renderer->renderInIsolation($build);
     return new Response((string) $content, Response::HTTP_OK, $headers + [
@@ -1292,7 +1409,20 @@ final class MessagesController extends ControllerBase {
   }
 
   /**
-   * Builds authorized notice render arrays and native per-member Flag actions. */
+   * Builds authorized notice render arrays and native per-member Flag actions.
+   *
+   * @param int $limit
+   *   O valor informado para $limit.
+   * @param CacheableMetadata $cacheability
+   *   O valor informado para $cacheability.
+   * @param array<array-key, mixed> $filters
+   *   O valor informado para $filters.
+   * @param ?PersonalNoticePageState $pageState
+   *   O valor informado para $pageState.
+   *
+   * @return array<array-key, mixed>
+   *   O resultado da operação.
+   */
   private function buildPersistentNoticeItems(
     int $limit,
     CacheableMetadata $cacheability,
@@ -1392,10 +1522,10 @@ final class MessagesController extends ControllerBase {
    *   Indica se o aviso é persistente.
    * @param string|null $type
    *   Tipo do aviso, ou NULL.
-   * @param array|null $rotulo
+   * @param array<array-key, mixed> $rotulo
    *   Elemento do rótulo lateral, ou NULL.
    *
-   * @return array
+   * @return array<array-key, mixed>
    *   Array de renderização do resumo do aviso.
    */
   private function noticeSummary(string $title, string $excerpt, Url $url, array $dismiss, ?string $state, bool $persistent = FALSE, ?string $type = NULL, ?array $rotulo = NULL): array {
@@ -1448,6 +1578,18 @@ final class MessagesController extends ControllerBase {
 
   /**
    * Adds neutral metadata consumed only by the central notice filters.
+   *
+   * @param array<array-key, mixed> $item
+   *   O valor informado para $item.
+   * @param string $origin
+   *   O valor informado para $origin.
+   * @param ?bool $unread
+   *   O valor informado para $unread.
+   * @param int $recency
+   *   O valor informado para $recency.
+   *
+   * @return array<array-key, mixed>
+   *   O resultado da operação.
    */
   private function withNoticeFilterMetadata(array $item, string $origin, ?bool $unread, int $recency = 0): array {
     $item['#attributes']['data-aculta-notice-origin'] = $origin;
@@ -1465,6 +1607,12 @@ final class MessagesController extends ControllerBase {
    *
    * Substitui a marcação por cor: o texto é a única indicação de estado. Os
    * avisos persistentes não usam este rótulo.
+   *
+   * @param bool $naoLido
+   *   O valor informado para $naoLido.
+   *
+   * @return array<array-key, mixed>
+   *   O resultado da operação.
    */
   private function readLabel(bool $naoLido): array {
     return [
@@ -1495,6 +1643,9 @@ final class MessagesController extends ControllerBase {
 
   /**
    * Monta o link "← Todos os avisos", que volta à lista na mesma gaveta.
+   *
+   * @return array<array-key, mixed>
+   *   O resultado da operação.
    */
   private function backToNoticesLink(): array {
     $filters = $this->noticeListFilter->normalize($this->requestStack->getCurrentRequest()?->query->all() ?? []);
@@ -1561,6 +1712,14 @@ final class MessagesController extends ControllerBase {
    * Monta "Marcar como lido" na visão completa de um aviso persistente.
    *
    * Mostra o estado de leitura como texto, nunca um "×".
+   *
+   * @param FlagInterface $flag
+   *   O valor informado para $flag.
+   * @param EntityInterface $entity
+   *   O valor informado para $entity.
+   *
+   * @return array<array-key, mixed>
+   *   O resultado da operação.
    */
   private function buildReadLink(FlagInterface $flag, EntityInterface $entity): array {
     if (!$this->account->isAuthenticated()) {
@@ -1572,7 +1731,16 @@ final class MessagesController extends ControllerBase {
   }
 
   /**
-   * Builds the native per-user flag link used to dismiss a notice. */
+   * Builds the native per-user flag link used to dismiss a notice.
+   *
+   * @param ?FlagInterface $flag
+   *   O valor informado para $flag.
+   * @param EntityInterface $entity
+   *   O valor informado para $entity.
+   *
+   * @return array<array-key, mixed>
+   *   O resultado da operação.
+   */
   private function buildDismissalLink(?FlagInterface $flag, EntityInterface $entity): array {
     if (!$flag instanceof FlagInterface || !$this->account->isAuthenticated()) {
       return [];

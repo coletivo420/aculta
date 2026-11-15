@@ -91,7 +91,15 @@ final class PrivateMessageUnreadIndicatorHooksTest extends UnitTestCase {
   }
 
   /**
-   * Creates a thread fixture for the counter. */
+   * Creates a thread fixture for the counter.
+   *
+   * @param int $updated
+   *   O valor informado para $updated.
+   * @param int $lastAccess
+   *   O valor informado para $lastAccess.
+   * @param array<array-key, mixed> $messages
+   *   O valor informado para $messages.
+   */
   private function thread(int $updated, int $lastAccess, array $messages): PrivateMessageThreadInterface {
     $thread = $this->createMock(PrivateMessageThreadInterface::class);
     $field = new \stdClass();

@@ -216,6 +216,9 @@ final class NewConversationController extends ControllerBase {
    *   Current search term.
    * @param int[] $selectedIds
    *   Selected recipients carried across search requests.
+   *
+   * @return array<array-key, mixed>
+   *   O resultado da operação.
    */
   private function nativeSearchForm(string $term, array $selectedIds): array {
     $form = [
@@ -294,7 +297,14 @@ final class NewConversationController extends ControllerBase {
   }
 
   /**
-   * Members searchable by public nickname and eligible to receive messages. */
+   * Members searchable by public nickname and eligible to receive messages.
+   *
+   * @param string $term
+   *   O valor informado para $term.
+   *
+   * @return array<array-key, mixed>
+   *   O resultado da operação.
+   */
   private function candidates(string $term): array {
     $profileStorage = $this->entityTypes->getStorage('profile');
     $profileIds = $profileStorage->getQuery()
@@ -373,6 +383,9 @@ final class NewConversationController extends ControllerBase {
 
   /**
    * Returns the back link shown beneath the drawer's close button.
+   *
+   * @return array<array-key, mixed>
+   *   O resultado da operação.
    */
   private function backLink(): array {
     return PortalLinkElement::build($this->t('← Todas as conversas'), Url::fromRoute('aculta_messenger.drawer_conversations'), [
@@ -383,6 +396,9 @@ final class NewConversationController extends ControllerBase {
 
   /**
    * Renders a private, uncached HTML fragment.
+   *
+   * @param array<array-key, mixed> $build
+   *   O valor informado para $build.
    */
   private function fragment(array $build): Response {
     $content = $this->renderer->renderInIsolation($build);

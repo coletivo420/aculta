@@ -371,7 +371,7 @@ final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
    *
    * @param bool $threadAccessible
    *   Whether the recipient can still view the thread.
-   * @param array|null $blockedPair
+   * @param array<int, mixed> $blockedPair
    *   Owner and target IDs for the block that applies, or NULL for no block.
    * @param int|null $lastDeleteTimestamp
    *   The recipient's history cutoff, or NULL when history was not cleared.
