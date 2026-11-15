@@ -141,9 +141,9 @@ class PrivateMessageService implements PrivateMessageServiceInterface {
    * {@inheritdoc}
    *
    * @param int $threadId
-   *   O valor informado para $threadId.
+   *   O identificador da conversa.
    * @param int $messageId
-   *   O valor informado para $messageId.
+   *   O identificador da mensagem.
    *
    * @return list<\Drupal\aculta_messenger\Entity\PrivateMessageInterface>
    *   O valor resultante.
@@ -172,9 +172,9 @@ class PrivateMessageService implements PrivateMessageServiceInterface {
    * {@inheritdoc}
    *
    * @param int $threadId
-   *   O valor informado para $threadId.
+   *   O identificador da conversa.
    * @param int $messageId
-   *   O valor informado para $messageId.
+   *   O identificador da mensagem.
    *
    * @return array<string, mixed>
    *   O valor resultante.
@@ -235,7 +235,7 @@ class PrivateMessageService implements PrivateMessageServiceInterface {
    * {@inheritdoc}
    *
    * @param array<string, mixed> $existingThreadInfo
-   *   O valor informado para $existingThreadInfo.
+   *   As informações das conversas já exibidas.
    * @param int|false $count
    *   A quantidade.
    *

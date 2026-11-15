@@ -264,7 +264,7 @@ final class UnreadThreadCounterTest extends UnitTestCase {
    * @param int $owner
    *   O dono do registro.
    * @param int $created
-   *   O valor informado para $created.
+   *   O instante de criação da mensagem.
    *
    * @return \PHPUnit\Framework\MockObject\MockObject&\Drupal\aculta_messenger\Entity\PrivateMessageInterface
    *   A instância resultante.

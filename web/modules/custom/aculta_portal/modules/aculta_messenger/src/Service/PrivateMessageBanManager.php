@@ -62,7 +62,7 @@ class PrivateMessageBanManager implements PrivateMessageBanManagerInterface {
    * {@inheritdoc}
    *
    * @param int|string $user_id
-   *   O valor informado para $user_id.
+   *   O identificador do usuário.
    *
    * @return array<mixed, mixed>
    *   A lista com os valores resultantes.

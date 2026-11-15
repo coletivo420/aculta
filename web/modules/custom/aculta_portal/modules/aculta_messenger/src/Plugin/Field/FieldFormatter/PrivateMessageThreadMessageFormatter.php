@@ -60,11 +60,11 @@ class PrivateMessageThreadMessageFormatter extends FormatterBase implements Cont
    * @param AccountProxyInterface $currentUser
    *   A conta do usuário atual.
    * @param CsrfTokenGenerator $csrfTokenGenerator
-   *   O valor informado para $csrfTokenGenerator.
+   *   O gerador de tokens CSRF.
    * @param ConfigFactoryInterface $configFactory
    *   O serviço de configuração do Drupal.
    * @param EntityDisplayRepositoryInterface $entityDisplayRepository
-   *   O valor informado para $entityDisplayRepository.
+   *   O repositório de displays de entidades.
    */
   public function __construct(
     $plugin_id,

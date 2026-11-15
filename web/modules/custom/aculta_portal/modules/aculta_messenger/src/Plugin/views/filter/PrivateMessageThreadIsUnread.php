@@ -33,7 +33,7 @@ class PrivateMessageThreadIsUnread extends FilterPluginBase {
    * @param AccountInterface $currentUser
    *   A conta do usuário atual.
    * @param ViewsHandlerManager $joinHandler
-   *   O valor informado para $joinHandler.
+   *   O handler de junção da view.
    */
   public function __construct(
     array $configuration,

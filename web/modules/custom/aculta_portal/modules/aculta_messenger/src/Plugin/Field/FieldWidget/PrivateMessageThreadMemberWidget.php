@@ -50,7 +50,7 @@ class PrivateMessageThreadMemberWidget extends EntityReferenceAutocompleteWidget
    * @param array<string, mixed> $third_party_settings
    *   As configurações de terceiros do componente.
    * @param RequestStack $requestStack
-   *   O valor informado para $requestStack.
+   *   A pilha de requisições HTTP.
    * @param EntityTypeManagerInterface $entityTypeManager
    *   O gerenciador de tipos de entidade.
    * @param ConfigFactoryInterface $configFactory

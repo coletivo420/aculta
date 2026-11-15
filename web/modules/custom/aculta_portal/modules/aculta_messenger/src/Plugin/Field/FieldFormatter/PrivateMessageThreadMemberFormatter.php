@@ -57,9 +57,9 @@ class PrivateMessageThreadMemberFormatter extends FormatterBase implements Conta
    * @param AccountProxyInterface $currentUser
    *   A conta do usuário atual.
    * @param EntityDisplayRepositoryInterface $entityDisplayRepository
-   *   O valor informado para $entityDisplayRepository.
+   *   O repositório de displays de entidades.
    * @param RendererInterface $renderer
-   *   O valor informado para $renderer.
+   *   O serviço de renderização.
    */
   public function __construct(
     $plugin_id,
