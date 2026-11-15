@@ -60,6 +60,7 @@ final class PrivateMessageRetentionKernelTest extends KernelTestBase {
     'options',
     'aculta_user',
     'aculta_mailer',
+    'aculta_mail_confirmer',
     'aculta_forum',
     'site_alert',
     'aculta_messenger_retention_test',

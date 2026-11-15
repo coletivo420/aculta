@@ -43,6 +43,7 @@ final class AvisosResumoMailerKernelTest extends KernelTestBase {
     'aculta_forum_post_test',
     'aculta_messenger_aviso_test',
     'aculta_mailer',
+    'aculta_mail_confirmer',
     'aculta_file_uploader',
     'file',
     'token',
@@ -211,10 +212,7 @@ final class AvisosResumoMailerKernelTest extends KernelTestBase {
       ->fetchField());
     self::assertCount(1, $this->collectedMails());
     self::assertSame([], $mailLogStorage->loadByProperties(['type' => AvisosResumo::CHAVE_MAIL]));
-    self::assertNull($userData->get('aculta_messenger',
-    'flag',
-    'content_moderation',
-    'pathauto', $uid, 'avisos_resumo_em_andamento'));
+    self::assertNull($userData->get('aculta_messenger', $uid, 'avisos_resumo_em_andamento'));
   }
 
   /**

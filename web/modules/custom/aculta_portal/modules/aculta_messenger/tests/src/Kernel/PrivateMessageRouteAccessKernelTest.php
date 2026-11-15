@@ -48,6 +48,7 @@ final class PrivateMessageRouteAccessKernelTest extends KernelTestBase {
     'menu_ui',
     'aculta_user',
     'aculta_mailer',
+    'aculta_mail_confirmer',
     'aculta_forum',
     'site_alert',
     'aculta_file_uploader',
