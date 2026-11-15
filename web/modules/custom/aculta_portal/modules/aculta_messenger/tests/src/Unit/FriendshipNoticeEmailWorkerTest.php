@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_messenger\Unit;
 
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\aculta_messenger\Friendship\FriendshipNoticeSubscriber;
 use Drupal\aculta_messenger\Aviso\AvisoPreferencias;
