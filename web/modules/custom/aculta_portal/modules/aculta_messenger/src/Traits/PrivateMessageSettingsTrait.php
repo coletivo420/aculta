@@ -23,7 +23,6 @@ trait PrivateMessageSettingsTrait {
    *   The private message module settings.
    */
   protected function getPrivateMessageSettings(): ImmutableConfig {
-    assert(property_exists($this, 'configFactory'));
     if (!isset($this->privateMessageSettings)) {
       $this->privateMessageSettings = $this->configFactory->get('private_message.settings');
     }

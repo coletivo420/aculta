@@ -55,7 +55,7 @@ class ConfirmUnbanUserForm extends ConfirmFormBase {
 
   /**
    * {@inheritdoc}
-   * @param array<string, mixed> &$form
+   * @param array<array-key, mixed> &$form
    */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
     /** @var array<string, mixed> $form */
@@ -72,7 +72,7 @@ class ConfirmUnbanUserForm extends ConfirmFormBase {
 
   /**
    * {@inheritdoc}
-   * @param array<string, mixed> &$form
+   * @param array<array-key, mixed> &$form
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $form_state->setRedirect('private_message.private_message_page');

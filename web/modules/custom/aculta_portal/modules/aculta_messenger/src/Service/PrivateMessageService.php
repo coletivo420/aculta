@@ -310,7 +310,7 @@ class PrivateMessageService implements PrivateMessageServiceInterface {
         $author = $entity;
       }
       else {
-        /** @var \Drupal\user\EntityOwnerInterface $owned_entity */
+        /** @var \Drupal\user\EntityOwnerInterface&\Drupal\Core\Entity\EntityInterface $owned_entity */
         $owned_entity = $entity;
         /** @var \Drupal\user\UserInterface $author */
         $author = $owned_entity->getOwner();

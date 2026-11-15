@@ -267,7 +267,7 @@ class PrivateMessageForm extends ContentEntityForm {
    * form.
    *
    * @see \Drupal\aculta_messenger\Entity\PrivateMessageThead::baseFieldDefinitions
-   * @param array<string, mixed> &$form
+   * @param array<array-key, mixed> &$form
    */
   public function validateMembers(array &$form, FormStateInterface $formState): void {
     // The members form element was loaded from the PrivateMessageThread entity
@@ -340,7 +340,7 @@ class PrivateMessageForm extends ContentEntityForm {
 
   /**
    * Validates that the current user isn't replying to a banned member.
-   * @param array<string, mixed> &$form
+   * @param array<array-key, mixed> &$form
    */
   public function validateBannedMembers(array &$form, FormStateInterface $formState): void {
     /** @var \Drupal\aculta_messenger\Entity\PrivateMessageThread|null $privateMessageThread */
@@ -484,7 +484,13 @@ class PrivateMessageForm extends ContentEntityForm {
     // Save the thread.
     /** @var \Drupal\aculta_messenger\Entity\PrivateMessageInterface $private_message */
     $private_message = $this->entity;
-    $this->privateMessageThreadManager->saveThread($private_message, $private_message_thread->getMembers(), $private_message_thread);
+    $thread_members = [];
+    foreach ($private_message_thread->getMembers() as $thread_member) {
+      if ($thread_member instanceof UserInterface) {
+        $thread_members[] = $thread_member;
+      }
+    }
+    $this->privateMessageThreadManager->saveThread($private_message, $thread_members, $private_message_thread);
 
     // Save the thread to the form state.
     $form_state->set('private_message_thread', $private_message_thread);

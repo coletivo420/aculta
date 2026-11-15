@@ -19,7 +19,7 @@ interface PrivateMessageThreadManagerInterface {
    *
    * @param \Drupal\aculta_messenger\Entity\PrivateMessageInterface $message
    *   The new message object.
-   * @param array<string, mixed> $members
+   * @param array<int, \Drupal\user\UserInterface> $members
    *   (optional) An array of thread members. Defaults to an empty array.
    * @param \Drupal\aculta_messenger\Entity\PrivateMessageThreadInterface|null $thread
    *   (optional) The private message thread. If NULL, one will be loaded

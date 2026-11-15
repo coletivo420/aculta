@@ -76,7 +76,7 @@ interface PrivateMessageServiceInterface {
    * @param int $messageId
    *   The ID after which messages should be retrieved.
    *
-   * @return array<string, mixed>
+   * @return list<\Drupal\aculta_messenger\Entity\PrivateMessageInterface>
    *   An array containing any new messages that the user has permission to view
    */
   public function getNewMessages($threadId, $messageId);
@@ -164,8 +164,9 @@ interface PrivateMessageServiceInterface {
    *   The private message for which the thread it belongs to should be
    *   returned.
    *
-   * @return \Drupal\aculta_messenger\Entity\PrivateMessageThread
-   *   The private message thread to which the private message belongs
+   * @return \Drupal\aculta_messenger\Entity\PrivateMessageThread|false
+   *   The private message thread to which the private message belongs, or FALSE
+   *   when the thread cannot be loaded.
    */
   public function getThreadFromMessage(PrivateMessageInterface $privateMessage);
 
@@ -189,7 +190,7 @@ interface PrivateMessageServiceInterface {
   /**
    * Retrieve the IDs of all threads in the system.
    *
-   * @return array<string, mixed>
+   * @return list<mixed>
    *   An array of thread IDs for threads in the system.
    */
   public function getThreadIds();

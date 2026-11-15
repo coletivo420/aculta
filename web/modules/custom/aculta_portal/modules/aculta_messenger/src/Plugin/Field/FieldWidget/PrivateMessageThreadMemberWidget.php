@@ -140,7 +140,7 @@ class PrivateMessageThreadMemberWidget extends EntityReferenceAutocompleteWidget
    * {@inheritdoc}
    * @param \Drupal\Core\Field\FieldItemListInterface<\Drupal\Core\Field\FieldItemInterface> $items
    * @param array<string, mixed> $element
-   * @param array<string, mixed> &$form
+   * @param array<array-key, mixed> &$form
    * @return array<string, mixed>
    */
   public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state): array {

@@ -274,7 +274,7 @@ class ConfigForm extends ConfigFormBase {
 
   /**
    * {@inheritdoc}
-   * @param array<string, mixed> &$form
+   * @param array<array-key, mixed> &$form
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $definitions = $this->privateMessageConfigFormManager->getDefinitions();
