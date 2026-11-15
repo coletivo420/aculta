@@ -31,6 +31,10 @@ final class DiscussionCommentAuthorHooks {
   /**
    * Implements hook_entity_view() for shared discussion comments.
    */
+  /**
+   * @param array<array-key, mixed> $build
+   *   Dados recebidos.
+   */
   #[Hook('entity_view')]
   public function entityView(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, string $view_mode): void {
     if (!$entity instanceof ContentEntityInterface) {

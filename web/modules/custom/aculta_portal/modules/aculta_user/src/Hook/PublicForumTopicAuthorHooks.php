@@ -25,6 +25,10 @@ final class PublicForumTopicAuthorHooks {
   /**
    * Adds either the public User card or the immutable historical attribution.
    */
+  /**
+   * @param array<array-key, mixed> $build
+   *   Dados recebidos.
+   */
   #[Hook('entity_view')]
   public function entityView(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, string $view_mode): void {
     if (!$entity instanceof NodeInterface || $entity->bundle() !== 'aculta_forum_topic'

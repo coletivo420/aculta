@@ -61,7 +61,8 @@ final class EnrollmentRoleHooks {
     ], TRUE)) {
       return;
     }
-    $papeisDeGrupo = array_column($relationship->get('group_roles')->getValue(), 'target_id');
+    $groupRoles = $relationship->get('group_roles')->getValue();
+    $papeisDeGrupo = $this->stringsOf(array_column(is_array($groupRoles) ? $groupRoles : [], 'target_id'));
     if (array_intersect($papeisDeGrupo, self::PAPEIS_NAO_ALUNO) !== []) {
       return;
     }
@@ -75,6 +76,25 @@ final class EnrollmentRoleHooks {
     if ($existing === []) {
       $storage->create(['type' => 'estudante', 'uid' => $conta->id()])->save();
     }
+  }
+
+  /**
+   * Só os itens textuais de uma lista (papéis são strings).
+   *
+   * @param array<array-key, mixed> $values
+   *   Lista de valores não tipados.
+   *
+   * @return list<string>
+   *   Itens que são strings, na mesma ordem.
+   */
+  private function stringsOf(array $values): array {
+    $strings = [];
+    foreach ($values as $value) {
+      if (is_string($value)) {
+        $strings[] = $value;
+      }
+    }
+    return $strings;
   }
 
 }

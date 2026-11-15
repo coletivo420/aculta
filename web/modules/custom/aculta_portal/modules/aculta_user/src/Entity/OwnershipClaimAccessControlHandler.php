@@ -38,6 +38,8 @@ final class OwnershipClaimAccessControlHandler extends EntityAccessControlHandle
 
   /**
    * {@inheritdoc}
+   * @param array<array-key, mixed> $context
+   *   Dados recebidos.
    */
   protected function checkCreateAccess(AccountInterface $account, array $context, $entity_bundle = NULL): AccessResult {
     return AccessResult::allowedIf($account->isAuthenticated())->cachePerPermissions();

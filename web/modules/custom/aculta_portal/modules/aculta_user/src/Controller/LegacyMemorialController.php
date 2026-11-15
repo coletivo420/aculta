@@ -55,6 +55,8 @@ final class LegacyMemorialController extends ControllerBase {
 
   /**
    * Renderiza o memorial com busca, lista paginada e estado vazio.
+   * @return array<array-key, mixed>
+   *   Render array do memorial.
    */
   public function view(Request $request): array {
     $termo = mb_substr(trim((string) $request->query->get('q', '')), 0, self::QUERY_MAX);
@@ -74,7 +76,7 @@ final class LegacyMemorialController extends ControllerBase {
       if (!$autoria instanceof ContentEntityInterface) {
         continue;
       }
-      $nomes[] = Html::escape((string) $autoria->get('nome')->value);
+      $nomes[] = Html::escape($this->textValue($autoria->get('nome')->value));
     }
 
     $build = [
@@ -111,6 +113,8 @@ final class LegacyMemorialController extends ControllerBase {
    *
    * Usa a estrutura pública e o avatar do acervo fornecido pelo resolver
    * central. A aparência vem do tema; o módulo só entrega marcação semântica.
+   * @return array<array-key, mixed>
+   *   Render array da caixa de perfil.
    */
   private function profileBox(): array {
     $bio = [
@@ -155,6 +159,8 @@ final class LegacyMemorialController extends ControllerBase {
 
   /**
    * Uses the same institutional avatar source as the rest of the Portal.
+   * @return array<array-key, mixed>
+   *   Render array do avatar.
    */
   private function avatar(): array {
     $wrap = [
@@ -172,6 +178,13 @@ final class LegacyMemorialController extends ControllerBase {
       $wrap['image'] = $image;
     }
     return $wrap;
+  }
+
+  /**
+   * Texto de um valor; vazio quando o valor não é escalar.
+   */
+  private function textValue(mixed $value): string {
+    return is_scalar($value) || $value instanceof \Stringable ? (string) $value : '';
   }
 
 }

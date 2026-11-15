@@ -26,6 +26,10 @@ final class AccountMenuPresentationHooks {
 
   /**
  * Supplies only Portal-owned, policy-approved display data to the theme. */
+  /**
+   * @param array<array-key, mixed> $variables
+   *   Dados recebidos.
+   */
   #[Hook('preprocess_page')]
   public function preprocessPage(array &$variables): void {
     $variables['aculta_account_avatar'] = NULL;

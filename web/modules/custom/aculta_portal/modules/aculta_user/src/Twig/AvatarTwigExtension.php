@@ -31,6 +31,8 @@ class AvatarTwigExtension extends AbstractExtension {
    * Avatar do Avatar Pool para uma conta sem foto (sem usuário real).
    *
    * Usa o mesmo sorteio estável do AvatarResolver; devolve render array ou NULL.
+   * @return array<array-key, mixed>
+   *   Dados retornados.
    */
   public function avatarSample(string $name = 'Avatar de exemplo'): ?array {
     return $this->avatarResolver->build(NULL, $name, FALSE, new CacheableMetadata());

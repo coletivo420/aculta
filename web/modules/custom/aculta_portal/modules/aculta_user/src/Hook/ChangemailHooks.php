@@ -39,6 +39,10 @@ final class ChangemailHooks {
    * @param bool $emailReady
    *   Se o envio de e-mail está pronto.
    */
+  /**
+   * @param array<array-key, mixed> $section
+   *   Dados recebidos.
+   */
   #[Hook('aculta_portal_changemail_alter')]
   public function changemailAlter(array &$section, UserInterface $account, bool $emailReady): void {
     if (!$emailReady

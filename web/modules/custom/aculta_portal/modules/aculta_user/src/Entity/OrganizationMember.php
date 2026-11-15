@@ -70,7 +70,7 @@ final class OrganizationMember extends ContentEntityBase {
    * Retorna o papel interno do membro na organização.
    */
   public function getRoleInOrg(): string {
-    return (string) $this->get('role_in_org')->value;
+    return $this->textValue($this->get('role_in_org')->value);
   }
 
   /**
@@ -85,7 +85,7 @@ final class OrganizationMember extends ContentEntityBase {
    * Retorna a situação do vínculo.
    */
   public function getStatus(): string {
-    return (string) $this->get('status')->value;
+    return $this->textValue($this->get('status')->value);
   }
 
   /**
@@ -148,6 +148,13 @@ final class OrganizationMember extends ContentEntityBase {
       ->setLabel(new TranslatableMarkup('Alterado em'));
 
     return $fields;
+  }
+
+  /**
+   * Texto de um valor; vazio quando o valor não é escalar.
+   */
+  private function textValue(mixed $value): string {
+    return is_scalar($value) || $value instanceof \Stringable ? (string) $value : '';
   }
 
 }

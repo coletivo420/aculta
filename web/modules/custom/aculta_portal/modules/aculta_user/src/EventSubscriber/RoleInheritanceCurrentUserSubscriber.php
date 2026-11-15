@@ -32,6 +32,8 @@ final class RoleInheritanceCurrentUserSubscriber implements EventSubscriberInter
    *
    * @return array
    *   Mapa de eventos para os métodos tratadores.
+   * @return array<array-key, mixed>
+   *   Dados retornados.
    */
   public static function getSubscribedEvents(): array {
     return [KernelEvents::REQUEST => [['estenderUsuario', 299]]];

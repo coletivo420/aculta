@@ -26,10 +26,12 @@ final class AccountBioCard {
 
   /**
    * Monta a caixa da conta informada.
+   * @return array<array-key, mixed>
+   *   Render array do cartão.
    */
   public function build(AccountInterface $account): array {
     $profile = PerfilDoPapel::principal($this->entityTypeManager->getStorage('profile'), $account);
-    $bio = $profile && $profile->hasField('field_bio') ? trim((string) $profile->get('field_bio')->value) : '';
+    $bio = $profile && $profile->hasField('field_bio') ? trim($this->textValue($profile->get('field_bio')->value)) : '';
 
     $editUrl = Url::fromRoute('aculta_user.bio_form');
     $dialog = [
@@ -98,6 +100,13 @@ final class AccountBioCard {
         'tags' => $profile ? $profile->getCacheTags() : [],
       ],
     ];
+  }
+
+  /**
+   * Texto de um valor; vazio quando o valor não é escalar.
+   */
+  private function textValue(mixed $value): string {
+    return is_scalar($value) || $value instanceof \Stringable ? (string) $value : '';
   }
 
 }

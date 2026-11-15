@@ -32,6 +32,8 @@ final class BadgeAward extends ContentEntityBase {
    *
    * @return array
    *   Campos base indexados pelo nome.
+   * @return array<array-key, mixed>
+   *   Dados retornados.
    */
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type): array {
     $fields = parent::baseFieldDefinitions($entity_type);

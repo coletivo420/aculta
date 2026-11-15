@@ -21,6 +21,10 @@ final class AuthorCardThemeHooks {
   /**
    * Declares the shared author card template variables.
    */
+  /**
+   * @return array<array-key, mixed>
+   *   Dados retornados.
+   */
   #[Hook('theme')]
   public function theme(): array {
     return [

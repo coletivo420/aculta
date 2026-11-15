@@ -73745,160 +73745,10 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Avatar/AvatarResolver.php
 
 		-
-			rawMessage: Cannot cast mixed to string.
-			identifier: cast.string
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Bio/AccountBioCard.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_user\Bio\AccountBioCard::build() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Bio/AccountBioCard.php
-
-		-
-			rawMessage: Cannot cast mixed to string.
-			identifier: cast.string
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Controller/LegacyMemorialController.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_user\Controller\LegacyMemorialController::avatar() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Controller/LegacyMemorialController.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_user\Controller\LegacyMemorialController::profileBox() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Controller/LegacyMemorialController.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_user\Controller\LegacyMemorialController::view() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Controller/LegacyMemorialController.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_user\Entity\AcultaFriendshipAccessControlHandler::checkCreateAccess() has parameter $context with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Entity/AcultaFriendshipAccessControlHandler.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_user\Entity\AssociadoMarcadorAccessControlHandler::checkCreateAccess() has parameter $context with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Entity/AssociadoMarcadorAccessControlHandler.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_user\Entity\BadgeAward::baseFieldDefinitions() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Entity/BadgeAward.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_user\Entity\LegacyAuthorAccessControlHandler::checkCreateAccess() has parameter $context with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Entity/LegacyAuthorAccessControlHandler.php
-
-		-
-			rawMessage: Cannot cast mixed to string.
-			identifier: cast.string
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Entity/OrganizationMember.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_user\Entity\OrganizationMemberAccessControlHandler::checkCreateAccess() has parameter $context with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Entity/OrganizationMemberAccessControlHandler.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_user\Entity\OwnershipClaimAccessControlHandler::checkCreateAccess() has parameter $context with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Entity/OwnershipClaimAccessControlHandler.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_user\EventSubscriber\RoleInheritanceCurrentUserSubscriber::getSubscribedEvents() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/EventSubscriber/RoleInheritanceCurrentUserSubscriber.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_user\Hook\AccountMenuPresentationHooks::preprocessPage() has parameter $variables with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Hook/AccountMenuPresentationHooks.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_user\Hook\AuthorCardThemeHooks::theme() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Hook/AuthorCardThemeHooks.php
-
-		-
 			rawMessage: Cannot access offset 'aculta_user_author_card' on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Hook/AuthorCardViewsDataHooks.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_user\Hook\ChangemailHooks::changemailAlter() has parameter $section with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Hook/ChangemailHooks.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_user\Hook\DiscussionCommentAuthorHooks::entityView() has parameter $build with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Hook/DiscussionCommentAuthorHooks.php
-
-		-
-			rawMessage: 'Parameter #1 $array of function array_column expects array, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Hook/EnrollmentRoleHooks.php
-
-		-
-			rawMessage: 'Parameter #1 $array of function array_intersect expects an array of values castable to string, list given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Hook/EnrollmentRoleHooks.php
-
-		-
-			rawMessage: Cannot cast mixed to int.
-			identifier: cast.int
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Hook/ParticipationHooks.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_user\Hook\ParticipationHooks::entityCreateAccess() has parameter $context with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Hook/ParticipationHooks.php
-
-		-
-			rawMessage: 'Parameter #1 $haystack of function str_starts_with expects string, string|null given.'
-			identifier: argument.type
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Hook/PictureReplacementHooks.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_user\Hook\PublicForumTopicAuthorHooks::entityView() has parameter $build with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Hook/PublicForumTopicAuthorHooks.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_user\Hook\SettingsTabsHooks::settingsTabsAlter() has parameter $tabs with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Hook/SettingsTabsHooks.php
 
 		-
 			rawMessage: 'Method Drupal\aculta_user\Identity\AccountMenuPresentationBuilder::build() return type has no value type specified in iterable type array.'
@@ -73911,12 +73761,6 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Identity/AuthorCardBuilder.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_user\Organization\OrganizationMembershipManager::getMemberships() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Organization/OrganizationMembershipManager.php
 
 		-
 			rawMessage: Cannot access offset 'size' on mixed.
@@ -73965,18 +73809,6 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Plugin/views/field/AuthorCard.php
-
-		-
-			rawMessage: Cannot cast mixed to string.
-			identifier: cast.string
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/PublicProfileLink.php
-
-		-
-			rawMessage: 'Parameter #1 $roles of static method Drupal\aculta_user\PublicProfilePolicy::isObrigatorioPublico() expects array<string>, array given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/PublicProfileLink.php
 
 		-
 			rawMessage: 'Cannot call method fetchCol() on Drupal\Core\Database\StatementInterface|null.'
@@ -74041,12 +73873,6 @@ parameters:
 			identifier: cast.int
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Social/FriendshipManager.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_user\Twig\AvatarTwigExtension::avatarSample() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Twig/AvatarTwigExtension.php
 
 		-
 			rawMessage: 'Method Drupal\aculta_user_activity_test\Controller\ActivityRouteController::placeholder() return type has no value type specified in iterable type array.'

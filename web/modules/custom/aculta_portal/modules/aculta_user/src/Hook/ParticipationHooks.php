@@ -50,6 +50,8 @@ final class ParticipationHooks {
    * Tópico de Fórum exige comentários publicados (limite configurável).
    * Também bloqueia a criação enquanto há comentário não LMS pendente, se
    * essa regra estiver ligada.
+   * @param array<array-key, mixed> $context
+   *   Contexto da verificação de acesso.
    */
   #[Hook('entity_create_access')]
   public function entityCreateAccess(AccountInterface $account, array $context, ?string $entity_bundle): ?AccessResult {
@@ -77,7 +79,7 @@ final class ParticipationHooks {
     }
     if ($settings['topico_limite_ativo']) {
       $published = $this->rules->publishedPublicForumCommentCount($uid);
-      $minimum = (int) $settings['topico_comentarios_minimos'];
+      $minimum = $this->intValue($settings['topico_comentarios_minimos']);
       if ($published < $minimum) {
         return $this->forbidden(
           'Você pode criar tópicos a partir de ' . $minimum . ' comentários publicados. Você tem ' . $published . '.',
@@ -94,6 +96,13 @@ final class ParticipationHooks {
     return AccessResult::forbidden($reason)
       ->addCacheContexts(['user', 'user.roles'])
       ->addCacheTags(['comment_list', ...$this->rules->settingsCacheTags()]);
+  }
+
+  /**
+   * Inteiro de um valor; zero quando não é numérico.
+   */
+  private function intValue(mixed $value): int {
+    return is_numeric($value) ? (int) $value : 0;
   }
 
 }

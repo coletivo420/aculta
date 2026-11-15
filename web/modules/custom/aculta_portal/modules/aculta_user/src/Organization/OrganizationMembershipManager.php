@@ -100,6 +100,8 @@ final class OrganizationMembershipManager {
 
   /**
    * Retorna os vínculos de um usuário com organizações.
+   * @return array<array-key, mixed>
+   *   Dados retornados.
    */
   public function getMemberships(AccountInterface|int $user, ?string $status = NULL): array {
     $uid = $user instanceof AccountInterface ? (int) $user->id() : $user;

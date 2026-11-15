@@ -26,6 +26,8 @@ final class LegacyAuthorAccessControlHandler extends EntityAccessControlHandler 
 
   /**
    * {@inheritdoc}
+   * @param array<array-key, mixed> $context
+   *   Dados recebidos.
    */
   protected function checkCreateAccess(AccountInterface $account, array $context, $entity_bundle = NULL) {
     return AccessResult::allowedIfHasPermission($account, 'administer aculta legado');

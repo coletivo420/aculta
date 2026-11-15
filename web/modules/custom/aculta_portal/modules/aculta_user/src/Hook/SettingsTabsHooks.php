@@ -15,6 +15,9 @@ final class SettingsTabsHooks {
 
   /**
    * Acrescenta a aba Privacidade depois de "Modo de cor".
+   *
+   * @param array<array-key, mixed> $tabs
+   *   Dados recebidos.
    */
   #[Hook('aculta_portal_settings_tabs_alter')]
   public function settingsTabsAlter(array &$tabs): void {
