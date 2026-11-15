@@ -492,10 +492,10 @@ class PrivateMessageForm extends ContentEntityForm {
     /** @var \Drupal\aculta_messenger\Entity\PrivateMessageInterface $private_message */
     $private_message = $this->entity;
     $thread_members = [];
-    foreach ($private_message_thread->getMembers() as $thread_member) {
-      if ($thread_member instanceof UserInterface) {
-        $thread_members[] = $thread_member;
-      }
+    $members_field = $private_message_thread->get('members');
+    if ($members_field->getFieldDefinition()->getSetting('target_type') === 'user') {
+      /** @var array<int, \Drupal\user\UserInterface> $thread_members */
+      $thread_members = $members_field->referencedEntities();
     }
     $this->privateMessageThreadManager->saveThread($private_message, $thread_members, $private_message_thread);
 
