@@ -104,9 +104,9 @@ final class PrivateMessageNotificationWorker extends QueueWorkerBase implements 
    *   O contêiner de serviços.
    * @param array<string, mixed> $configuration
    *   A configuração do plugin.
-   * @param array<array-key, mixed> $plugin_id
+   * @param string $plugin_id
    *   O identificador do plugin.
-   * @param array<array-key, mixed> $plugin_definition
+   * @param mixed $plugin_definition
    *   A definição do plugin.
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): static {

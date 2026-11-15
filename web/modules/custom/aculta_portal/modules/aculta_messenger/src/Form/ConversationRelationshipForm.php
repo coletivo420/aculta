@@ -68,7 +68,7 @@ final class ConversationRelationshipForm extends FormBase {
   /**
    * {@inheritdoc}
    *
-   * @param array<array-key, mixed> $form
+   * @param array<string, mixed> $form
    *   O valor informado para $form.
    * @param FormStateInterface $formState
    *   O valor informado para $formState.
@@ -197,7 +197,7 @@ final class ConversationRelationshipForm extends FormBase {
   /**
    * Renders the two-step clear-history action for the current member.
    *
-   * @param array<array-key, mixed> $form
+   * @param array<string, mixed> $form
    *   O valor informado para $form.
    * @param FormStateInterface $formState
    *   O valor informado para $formState.
@@ -262,7 +262,7 @@ final class ConversationRelationshipForm extends FormBase {
   /**
    * {@inheritdoc}
    *
-   * @param array<array-key, mixed> $form
+   * @param array<string, mixed> $form
    *   O valor informado para $form.
    * @param FormStateInterface $formState
    *   O valor informado para $formState.

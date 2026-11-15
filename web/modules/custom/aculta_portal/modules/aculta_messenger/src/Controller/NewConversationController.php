@@ -302,7 +302,7 @@ final class NewConversationController extends ControllerBase {
    * @param string $term
    *   O valor informado para $term.
    *
-   * @return array<array-key, mixed>
+   * @return array<int, array{user: \Drupal\user\UserInterface, name: string}>
    *   O resultado da operação.
    */
   private function candidates(string $term): array {

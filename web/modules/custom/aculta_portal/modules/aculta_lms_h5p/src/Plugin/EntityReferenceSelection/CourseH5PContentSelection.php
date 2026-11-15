@@ -38,7 +38,7 @@ final class CourseH5PContentSelection extends DefaultSelection {
    *
    * @param array<string, mixed> $configuration
    *   A configuração do plugin.
-   * @param mixed $plugin_id
+   * @param string $plugin_id
    *   O identificador do plugin.
    * @param mixed $plugin_definition
    *   A definição do plugin.
@@ -82,7 +82,7 @@ final class CourseH5PContentSelection extends DefaultSelection {
    *   O valor informado para $container.
    * @param array<string, mixed> $configuration
    *   O valor informado para $configuration.
-   * @param mixed $plugin_id
+   * @param string $plugin_id
    *   O valor informado para $plugin_id.
    * @param mixed $plugin_definition
    *   O valor informado para $plugin_definition.
@@ -134,13 +134,14 @@ final class CourseH5PContentSelection extends DefaultSelection {
     $options = [];
     foreach ($entities as $id => $entity) {
       $label = (string) $entity->get('title')->value;
-      if ($match !== NULL && $match !== '' && !$this->matches($label, (string) $match, $match_operator)) {
+      if ($match !== NULL && $match !== '' && !$this->matches($label, is_scalar($match) ? (string) $match : '', is_string($match_operator) ? $match_operator : 'CONTAINS')) {
         continue;
       }
       $options[$id] = $label;
     }
-    if ($limit > 0) {
-      $options = array_slice($options, 0, $limit, TRUE);
+    $limitValue = is_numeric($limit) ? (int) $limit : 0;
+    if ($limitValue > 0) {
+      $options = array_slice($options, 0, $limitValue, TRUE);
     }
     return $options === [] ? [] : ['aculta_h5p_content' => $options];
   }

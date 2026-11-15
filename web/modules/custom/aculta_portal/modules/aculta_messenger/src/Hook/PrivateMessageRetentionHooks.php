@@ -91,7 +91,7 @@ final class PrivateMessageRetentionHooks {
           // fails.
           $messageIds = $this->privateMessageIds($thread);
           $thread->delete();
-          $this->deleteNotificationsFor($messageIds);
+          $this->deleteNotificationsFor(array_values($messageIds));
           $transaction->commitOrRelease();
           $deleted++;
         }
@@ -125,7 +125,7 @@ final class PrivateMessageRetentionHooks {
   /**
    * Deletes the Messenger notification records that reference this thread's private messages.
    *
-   * @param array<int, mixed> $messageIds
+   * @param list<int> $messageIds
    *   O valor informado para $messageIds.
    */
   private function deleteNotificationsFor(array $messageIds): void {

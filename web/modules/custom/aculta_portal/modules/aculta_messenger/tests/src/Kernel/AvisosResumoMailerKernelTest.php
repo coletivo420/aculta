@@ -930,7 +930,8 @@ final class AvisosResumoMailerKernelTest extends KernelTestBase {
    *   O resultado da operação.
    */
   private function collectedMails(): array {
-    return $this->container->get('state')->get('system.test_mail_collector', []);
+    $mails = $this->container->get('state')->get('system.test_mail_collector', []);
+    return is_array($mails) ? $mails : [];
   }
 
   /**

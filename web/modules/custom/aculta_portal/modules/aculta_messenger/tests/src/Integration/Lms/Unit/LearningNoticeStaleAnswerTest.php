@@ -104,6 +104,12 @@ final class LearningNoticeStaleAnswerTest extends UnitTestCase {
 
       /**
        * {@inheritdoc}
+       *
+       * @param string $property_name
+       *   O nome da propriedade.
+       *
+       * @return mixed
+       *   O valor da propriedade.
        */
       public function __get($property_name): mixed {
         return $property_name === 'value' ? $this->scalar : parent::__get($property_name);

@@ -19,7 +19,7 @@ final class OptionsDisclosure {
    *
    * @param string $label
    *   The visible and accessible label ("Opções").
-   * @param array<string, mixed> $panel
+   * @param array<array-key, mixed> $panel
    *   The menu items (render arrays).
    * @param bool $open
    *   Open at first render (after an action the menu stays open, so its result is what the member sees).

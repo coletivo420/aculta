@@ -89,6 +89,12 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
     $provider = static function (string $id, array $rows): AvisoDigestProviderIdentityInterface {
       return new class($id, $rows) implements AvisoDigestProviderIdentityInterface {
 
+        /**
+         * @param string $id
+         *   O identificador do provedor.
+         * @param array<int, array{tipo: string, titulo: string, quantidade: int, delivery_id: int, delivery_ids?: list<int>}> $rows
+         *   As linhas do resumo.
+         */
         public function __construct(
           private readonly string $id,
           private readonly array $rows,
@@ -104,7 +110,12 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
           return [27];
         }
 
-        /** {@inheritdoc} */
+        /**
+         * {@inheritdoc}
+         *
+         * @return array<int, array{tipo: string, titulo: string, quantidade: int, delivery_id: int, delivery_ids?: list<int>}>
+         *   As linhas do resumo.
+         */
         public function digestRowsFor(int $uid): array {
           return $this->rows;
         }

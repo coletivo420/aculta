@@ -192,7 +192,7 @@ final class NewConversationForm extends FormBase {
    *
    * @param UserInterface $user
    *   O valor informado para $user.
-   * @param array<int, int|string> $selectedIds
+   * @param array<array-key, mixed> $selectedIds
    *   O valor informado para $selectedIds.
    *
    * @return array<array-key, mixed>
@@ -200,7 +200,8 @@ final class NewConversationForm extends FormBase {
    */
   private function chip(UserInterface $user, array $selectedIds): array {
     $name = $this->memberIdentity->publicDisplayName($user) ?? (string) $this->t('Membro');
-    $remaining = array_values(array_diff($selectedIds, [(int) $user->id()]));
+    $selectedKeys = array_map(static fn(mixed $id): string => is_scalar($id) ? (string) $id : '', $selectedIds);
+    $remaining = array_values(array_diff($selectedKeys, [(string) $user->id()]));
     return [
       '#type' => 'container',
       '#attributes' => ['data-aculta-chip' => '', 'data-portal-ui' => 'new-conversation-chip'],

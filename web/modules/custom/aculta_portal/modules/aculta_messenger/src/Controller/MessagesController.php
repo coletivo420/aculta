@@ -373,7 +373,7 @@ final class MessagesController extends ControllerBase {
    * @param array<array-key, mixed> $result
    *   O valor informado para $result.
    *
-   * @return array<array-key, mixed>
+   * @return array<string, mixed>
    *   O resultado da operação.
    */
   private function memberPanel(PrivateMessageThreadInterface $thread, UserInterface $user, array $result): array {
@@ -886,7 +886,8 @@ final class MessagesController extends ControllerBase {
   public function alertsPreview(): Response {
     $filters = $this->noticeListFilter->normalize($this->requestStack->getCurrentRequest()?->query->all() ?? []);
     $resultado = $this->alertsBuild($filters, FALSE, TRUE);
-    return $this->buildDrawerResponse($resultado['build'], [
+    $resultadoBuild = is_array($resultado['build']) ? $resultado['build'] : [];
+    return $this->buildDrawerResponse($resultadoBuild, [
       'X-Aculta-Alerts-Count' => (string) $resultado['contador'],
     ]);
   }
@@ -1514,7 +1515,7 @@ final class MessagesController extends ControllerBase {
    *   Trecho do texto do aviso.
    * @param \Drupal\Core\Url $url
    *   Endereço do aviso completo.
-   * @param array<string, mixed> $dismiss
+   * @param array<array-key, mixed> $dismiss
    *   Elemento de descarte do aviso.
    * @param string|null $state
    *   Rótulo de estado (lido ou não lido), ou NULL.
@@ -1630,7 +1631,8 @@ final class MessagesController extends ControllerBase {
       return '';
     }
     $body = $node->get('body');
-    return (string) ($body->summary ?: $body->value);
+    $text = $body->summary ?: $body->value;
+    return is_scalar($text) ? (string) $text : '';
   }
 
   /**

@@ -19,6 +19,7 @@ use Drupal\message\Entity\MessageTemplate;
 use Drupal\message\MessageInterface;
 use Drupal\aculta_messenger\Entity\PrivateMessage;
 use Drupal\aculta_messenger\Entity\PrivateMessageThread;
+use Drupal\user\UserInterface;
 use Drupal\user\Entity\User;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
@@ -389,7 +390,7 @@ final class PrivateMessageRetentionKernelTest extends KernelTestBase {
     ]);
     $message->save();
     $thread = PrivateMessageThread::create([
-      'members' => array_map(static fn(User $account): int => (int) $account->id(), $members),
+      'members' => array_map(static fn(UserInterface $account): int => (int) $account->id(), $members),
       'subject' => $subject,
       'updated' => $timestamp,
     ]);
