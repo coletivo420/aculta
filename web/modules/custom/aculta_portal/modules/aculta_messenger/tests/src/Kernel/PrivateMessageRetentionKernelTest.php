@@ -45,8 +45,8 @@ final class PrivateMessageRetentionKernelTest extends KernelTestBase {
     'filter',
     'message',
     'message_notify',
-    'private_message',
-    'private_message_notify',
+    'aculta_messenger',
+    'site_alert',
     'aculta_messenger_retention_test',
     'aculta_file_uploader',
     'file',
@@ -66,14 +66,13 @@ final class PrivateMessageRetentionKernelTest extends KernelTestBase {
     $this->installEntitySchema('private_message_ban');
     $this->installEntitySchema('private_message_thread');
     $this->installEntitySchema('private_message');
-    $this->installSchema('private_message', ['aculta_pm_thread_history']);
+    $this->installSchema('aculta_messenger', ['aculta_pm_thread_history']);
     $this->installConfig([
       'system',
       'user',
       'filter',
       'message',
       'message_notify',
-      'private_message_notify',
     ]);
 
     MessageTemplate::create([

@@ -27,7 +27,7 @@ class PrivateMessageUninstallTest extends BrowserTestBase {
    *
    * @var array<string>
    */
-  protected static $modules = ['private_message'];
+  protected static $modules = ['aculta_messenger'];
 
   /**
    * Tests the access to uninstall routes.

@@ -34,7 +34,8 @@ final class PrivateMessageRouteAccessKernelTest extends KernelTestBase {
     'field',
     'text',
     'filter',
-    'private_message',
+    'aculta_messenger',
+    'site_alert',
     'aculta_file_uploader',
     'file',
     'token',
@@ -51,7 +52,7 @@ final class PrivateMessageRouteAccessKernelTest extends KernelTestBase {
     $this->installEntitySchema('user');
     $this->installEntitySchema('private_message_thread');
     $this->installEntitySchema('private_message');
-    $this->installSchema('private_message', ['aculta_pm_thread_history']);
+    $this->installSchema('aculta_messenger', ['aculta_pm_thread_history']);
     $this->installConfig(['system', 'user', 'filter']);
     $this->grantMessagingPermissions();
   }

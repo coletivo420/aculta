@@ -23,7 +23,7 @@ class PrivateMessageSettingsFormTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['private_message'];
+  protected static $modules = ['aculta_messenger'];
 
   /**
    * The admin user used for the test.

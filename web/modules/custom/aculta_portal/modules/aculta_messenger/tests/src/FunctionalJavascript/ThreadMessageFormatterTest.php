@@ -27,7 +27,7 @@ class ThreadMessageFormatterTest extends WebDriverTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['private_message'];
+  protected static $modules = ['aculta_messenger'];
 
   /**
    * {@inheritdoc}

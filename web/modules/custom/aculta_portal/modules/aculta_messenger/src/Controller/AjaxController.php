@@ -58,7 +58,7 @@ class AjaxController extends ControllerBase implements AjaxControllerInterface {
     $thread_id = $this->requestParameter($request, 'threadid');
     $message_id = $this->requestParameter($request, 'messageid');
 
-    if (ctype_digit((string) $thread_id) && ctype_digit((string) $message_id)) {
+    if ($this->isDigitsId($thread_id) && $this->isDigitsId($message_id)) {
       $thread_id = (int) $thread_id;
       $message_id = (int) $message_id;
       $thread = $this->entityTypeManager()->getStorage('private_message_thread')
@@ -105,7 +105,7 @@ class AjaxController extends ControllerBase implements AjaxControllerInterface {
     $current_request = $this->requestStack->getCurrentRequest();
     $thread_id = $this->requestParameter($current_request, 'threadid');
     $message_id = $this->requestParameter($current_request, 'messageid');
-    if (ctype_digit((string) $thread_id) && ctype_digit((string) $message_id)) {
+    if ($this->isDigitsId($thread_id) && $this->isDigitsId($message_id)) {
       $thread_id = (int) $thread_id;
       $message_id = (int) $message_id;
       /** @var array{messages: list<\Drupal\aculta_messenger\Entity\PrivateMessageInterface>, next_exists: bool} $message_info */
@@ -148,7 +148,7 @@ class AjaxController extends ControllerBase implements AjaxControllerInterface {
     $timestamp = $this->requestParameter($request, 'timestamp');
     $raw_count = $this->requestParameter($request, 'count');
     $thread_count = is_scalar($raw_count) ? (int) $raw_count : 0;
-    if (ctype_digit((string) $timestamp)) {
+    if ($this->isDigitsId($timestamp)) {
       $thread_info = $this->privateMessageService->getThreadsForUser($thread_count, (int) $timestamp);
       $has_next = FALSE;
       if (count($thread_info['threads'])) {
@@ -263,7 +263,7 @@ class AjaxController extends ControllerBase implements AjaxControllerInterface {
     /** @var \Symfony\Component\HttpFoundation\Request $request */
     $request = $this->requestStack->getCurrentRequest();
     $thread_id = $this->requestParameter($request, 'id');
-    if (ctype_digit((string) $thread_id)) {
+    if ($this->isDigitsId($thread_id)) {
       $thread_id = (int) $thread_id;
       $thread = $this->entityTypeManager()->getStorage('private_message_thread')->load($thread_id);
 
@@ -284,6 +284,13 @@ class AjaxController extends ControllerBase implements AjaxControllerInterface {
     }
 
     return $response;
+  }
+
+  /**
+   * Indica se o valor é um id composto só de dígitos (string ou int).
+   */
+  private function isDigitsId(mixed $value): bool {
+    return (is_string($value) || is_int($value)) && ctype_digit((string) $value);
   }
 
   /**
