@@ -60,6 +60,9 @@ final class CguModerationDashboardController extends ControllerBase {
 
   /**
    * Renderiza a listagem unificada com filtros por purpose e status.
+   *
+   * @return array<string, mixed>
+   *   Render array da listagem.
    */
   public function overview(Request $request): array {
     $account = $this->currentUser();

@@ -26,6 +26,15 @@ final class DiscussionModerationHooks {
 
   /**
    * Implements hook_entity_field_access().
+   *
+   * @param string $operation
+   *   Operação solicitada.
+   * @param \Drupal\Core\Field\FieldDefinitionInterface $field_definition
+   *   Definição do campo.
+   * @param \Drupal\Core\Session\AccountInterface $account
+   *   Conta avaliada.
+   * @param \Drupal\Core\Field\FieldItemListInterface<\Drupal\Core\Field\FieldItemInterface>|null $items
+   *   Itens do campo, quando disponíveis.
    */
   #[Hook('entity_field_access')]
   public function entityFieldAccess(string $operation, FieldDefinitionInterface $field_definition, AccountInterface $account, ?FieldItemListInterface $items = NULL): AccessResultInterface {

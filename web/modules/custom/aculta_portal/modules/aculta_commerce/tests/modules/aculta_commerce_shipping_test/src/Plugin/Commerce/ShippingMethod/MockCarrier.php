@@ -29,6 +29,9 @@ final class MockCarrier extends ShippingMethodBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @return array<string, mixed>
+   *   Configuração padrão.
    */
   public function defaultConfiguration(): array {
     return [

@@ -68,7 +68,12 @@ final class DomainConfigEditingSubscriber implements EventSubscriberInterface {
     if (!$this->isBlockAdminPath($request->getPathInfo())) {
       return;
     }
-    $configNames = $this->configStorage->listAll('block.block.');
+    $configNames = [];
+    foreach ($this->configStorage->listAll('block.block.') as $nome) {
+      if (is_string($nome)) {
+        $configNames[] = $nome;
+      }
+    }
     if ($configNames === []) {
       return;
     }

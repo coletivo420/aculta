@@ -22,6 +22,9 @@ final class ForumPostModerationFormController extends ControllerBase {
 
   /**
    * Returns the moderation form for the route's revision identifier.
+   *
+   * @return array<mixed>
+   *   Render array do formulário.
    */
   public function form(string $revision_id): array {
     $storage = $this->forumEntityTypeManager->getStorage('aculta_forum_post');

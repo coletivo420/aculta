@@ -88,6 +88,11 @@ final class EventLocation extends ContentEntityBase implements EntityOwnerInterf
 
   /**
    * {@inheritdoc}
+   *
+   * @param string $rel
+   *   Relação do link.
+   * @param array<string, mixed> $options
+   *   Opções do link.
    */
   public function toUrl($rel = 'canonical', array $options = []): Url {
     if ($rel === 'canonical') {

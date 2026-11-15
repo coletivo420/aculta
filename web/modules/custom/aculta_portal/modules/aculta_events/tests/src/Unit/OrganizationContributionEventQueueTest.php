@@ -28,7 +28,7 @@ final class OrganizationContributionEventQueueTest extends UnitTestCase {
       return array_keys($values);
     });
     $store->method('getMultiple')->willReturnCallback(static function (array $keys) use (&$values): array {
-      return array_intersect_key($values, array_flip($keys));
+      return array_intersect_key($values, array_flip(array_map(static fn(mixed $k): string => is_scalar($k) ? (string) $k : '', $keys)));
     });
     $store->expects(self::once())->method('delete')->with(hash('sha256', implode(':', [
       'events_location',

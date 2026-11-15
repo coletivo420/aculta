@@ -9,7 +9,6 @@ use Drupal\aculta_messenger\Service\MessengerNoticePublisherInterface;
 use Drupal\commerce_order\Entity\OrderInterface;
 use Drupal\commerce_payment\Entity\PaymentInterface;
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\Core\Entity\SynchronizableInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Logger\LoggerChannelInterface;
@@ -107,7 +106,7 @@ final class DonationNoticeEventPublisher implements EventSubscriberInterface {
   private function publishApprovedPayment(PaymentInterface $payment): void {
     if ($payment->getState()->getId() !== 'completed'
       || $payment->getRemoteState() !== 'approved'
-      || ($payment instanceof SynchronizableInterface && $payment->isSyncing())) {
+      || $payment->isSyncing()) {
       return;
     }
     $order = $payment->getOrder();

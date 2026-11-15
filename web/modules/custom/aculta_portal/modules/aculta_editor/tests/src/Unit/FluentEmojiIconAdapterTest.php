@@ -55,7 +55,11 @@ class FluentEmojiIconAdapterTest extends UnitTestCase {
     $categories = $this->adapter->getCategories();
     $this->assertArrayHasKey('cultivo', $categories);
     $this->assertArrayHasKey('herb', $categories['cultivo']);
-    $this->assertSame('aculta_fluent_emoji:herb', $categories['cultivo']['herb']['icon_full_id']);
+    $herb = $categories['cultivo']['herb'];
+    if (!is_array($herb)) {
+      self::fail('Ícone herb ausente.');
+    }
+    self::assertSame('aculta_fluent_emoji:herb', $herb['icon_full_id']);
 
     $searchResults = $this->adapter->search('maconha');
     $this->assertArrayHasKey('herb', $searchResults);

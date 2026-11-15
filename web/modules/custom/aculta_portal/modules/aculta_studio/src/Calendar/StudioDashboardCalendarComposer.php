@@ -134,7 +134,7 @@ final class StudioDashboardCalendarComposer {
         $diaKey = $diaDt?->format('Y-m-d');
         $isCurrentMonth = $diaDt !== NULL;
         $isSelected = $diaKey !== NULL && $diaKey === $diaSelecionado;
-        $itensDia = $celula['itens'] ?? [];
+        $itensDia = $celula['itens'];
         $count = count($itensDia);
 
         $urlDia = NULL;
@@ -146,7 +146,7 @@ final class StudioDashboardCalendarComposer {
           'day_number' => $diaDt ? (int) $diaDt->format('j') : NULL,
           'date_string' => $diaKey,
           'is_current_month' => $isCurrentMonth,
-          'is_today' => (bool) ($celula['hoje'] ?? FALSE),
+          'is_today' => (bool) $celula['hoje'],
           'is_selected' => $isSelected,
           'count' => $count,
           'url' => $urlDia,

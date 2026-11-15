@@ -7,6 +7,7 @@ namespace Drupal\aculta_commerce\Shipping;
 use Drupal\commerce_order\Entity\OrderInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\profile\Entity\ProfileInterface;
+use Drupal\aculta_commerce\Entity\ShipmentInterface;
 
 /**
  * Manages shipment packers and converts proposed shipments to entities.
@@ -76,6 +77,9 @@ class PackerManager implements PackerManagerInterface {
         $shipment = $shipment_storage->create([
           'type' => $proposed_shipment->getType(),
         ]);
+      }
+      if (!$shipment instanceof ShipmentInterface) {
+        throw new \UnexpectedValueException('Shipment de pacote inválido.');
       }
       $shipment->populateFromProposedShipment($proposed_shipment);
       $shipment->setData('owned_by_packer', TRUE);

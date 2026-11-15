@@ -69,7 +69,7 @@ final class CalendarItemSource {
             $filtros[$chave] = $definicao;
             continue;
           }
-          $filtros[$chave]['opcoes'] = array_replace($filtros[$chave]['opcoes'], $definicao['opcoes'] ?? []);
+          $filtros[$chave]['opcoes'] = array_replace($filtros[$chave]['opcoes'], self::opcoesDe($definicao));
         }
       }
       catch (\Throwable $e) {
@@ -144,6 +144,28 @@ final class CalendarItemSource {
       '@id' => $provedor->id(),
       '@mensagem' => $e->getMessage(),
     ]);
+  }
+
+  /**
+   * Lê as opções de um filtro, tolerando a ausência da chave.
+   *
+   * @param array<string, mixed> $definicao
+   *   Definição do filtro.
+   *
+   * @return array<int, string>
+   *   Opções do filtro, ou lista vazia.
+   */
+  private static function opcoesDe(array $definicao): array {
+    $opcoes = $definicao['opcoes'] ?? [];
+    $lista = [];
+    if (is_array($opcoes)) {
+      foreach ($opcoes as $opcao) {
+        if (is_string($opcao)) {
+          $lista[] = $opcao;
+        }
+      }
+    }
+    return $lista;
   }
 
 }

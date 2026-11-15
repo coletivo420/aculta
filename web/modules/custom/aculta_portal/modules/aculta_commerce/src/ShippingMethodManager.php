@@ -21,6 +21,13 @@ class ShippingMethodManager extends DefaultPluginManager {
 
   /**
    * Constructs a new ShippingMethodManager object.
+   *
+   * @param \Traversable<string, string> $namespaces
+   *   Plugin namespaces.
+   * @param \Drupal\Core\Cache\CacheBackendInterface $cache_backend
+   *   The cache backend.
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
+   *   The module handler.
    */
   public function __construct(\Traversable $namespaces, CacheBackendInterface $cache_backend, ModuleHandlerInterface $module_handler) {
     parent::__construct(

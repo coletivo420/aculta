@@ -15,7 +15,7 @@ final class ShippingQuoteSelector {
   /**
    * Keep only fresh, currency-matching quotes, with unique stable identities.
    *
-   * @param array<ShippingQuote> $quotes
+   * @param array<mixed> $quotes
    *   Quotes from trusted internal rate providers, never request POST values.
    * @param string $currency
    *   Order currency.

@@ -1225,7 +1225,7 @@ final class Cli {
     }
     $found = NULL;
     foreach ($list['body']['webhooks'] ?? [] as $hookRow) {
-      if (($hookRow['url'] ?? NULL) === $url) {
+      if (is_array($hookRow) && ($hookRow['url'] ?? NULL) === $url) {
         $found = $hookRow;
       }
     }

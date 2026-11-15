@@ -25,7 +25,7 @@ final class ShopCheckoutProviderTest extends UnitTestCase {
    *
    * @param string|null $flow
    *   Checkout flow do tipo de pedido, ou NULL.
-   * @param array $settings
+   * @param array<string, mixed> $settings
    *   Configurações de checkout.
    *
    * @return \Drupal\aculta_commerce\Checkout\ShopCheckoutProvider

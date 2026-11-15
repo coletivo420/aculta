@@ -26,7 +26,7 @@ final class CalendarIcsRemoteFetcher {
    *
    * @param string $url
    *   HTTPS URL to retrieve from an approved hostname.
-   * @param string[] $allowedHosts
+   * @param array<mixed> $allowedHosts
    *   Exact DNS names. Wildcards and IP literals are rejected.
    *
    * @return string

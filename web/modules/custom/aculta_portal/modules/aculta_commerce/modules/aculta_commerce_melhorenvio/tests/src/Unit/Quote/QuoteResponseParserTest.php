@@ -21,7 +21,11 @@ final class QuoteResponseParserTest extends UnitTestCase {
    *   JSON decodificado.
    */
   private static function fixture(): array {
-    return json_decode((string) file_get_contents(dirname(__DIR__, 3) . '/fixtures/quote-sandbox.json'), TRUE);
+    $dados = json_decode((string) file_get_contents(dirname(__DIR__, 3) . '/fixtures/quote-sandbox.json'), TRUE);
+    if (!is_array($dados)) {
+      throw new \RuntimeException('Fixture de cotação inválida.');
+    }
+    return $dados;
   }
 
   /**

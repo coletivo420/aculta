@@ -34,7 +34,7 @@ final class ForumPopupOnlyAccess {
 
     if ($name === 'node.add') {
       $type = $routeMatch->getParameter('node_type');
-      $bundle = is_object($type) && method_exists($type, 'id') ? $type->id() : (string) $type;
+      $bundle = is_object($type) && method_exists($type, 'id') ? $type->id() : (is_scalar($type) ? (string) $type : '');
       return AccessResult::forbiddenIf($bundle === self::TOPIC_BUNDLE)
         ->addCacheContexts(['route']);
     }

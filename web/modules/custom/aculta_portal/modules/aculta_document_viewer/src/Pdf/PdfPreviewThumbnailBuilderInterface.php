@@ -15,6 +15,9 @@ interface PdfPreviewThumbnailBuilderInterface {
    * Builds an image render array when generation is available and succeeds.
    *
    * Private, temporary, oversized, and unsupported files return NULL.
+   *
+   * @return array<mixed>|null
+   *   Render array da miniatura, ou NULL.
    */
   public function build(FileInterface $file, string $alt): ?array;
 

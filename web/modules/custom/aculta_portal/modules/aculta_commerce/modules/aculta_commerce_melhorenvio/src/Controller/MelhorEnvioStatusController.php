@@ -42,7 +42,7 @@ final class MelhorEnvioStatusController {
     $environment = $this->config->environment();
     $tokens = $this->tokens->load($environment);
     $expiresAt = (int) ($tokens['expires_at'] ?? 0);
-    $hasToken = is_array($tokens) && ($tokens['access_token'] ?? '') !== '';
+    $hasToken = is_array($tokens) && $tokens['access_token'] !== '';
 
     if (!$hasToken) {
       $connection = $this->t('Não conectada');

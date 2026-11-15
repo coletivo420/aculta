@@ -75,7 +75,10 @@ final class ForumPost extends EditorialContentEntityBase implements EntityOwnerI
    */
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type): array {
     $fields = parent::baseFieldDefinitions($entity_type);
-    $fields += static::ownerBaseFieldDefinitions($entity_type);
+    // Core tipa como lista, mas as chaves são nomes de campo (uid).
+    /** @var array<string, BaseFieldDefinition> $ownerFields */
+    $ownerFields = static::ownerBaseFieldDefinitions($entity_type);
+    $fields += $ownerFields;
 
     if (!$fields['uid'] instanceof BaseFieldDefinition) {
       throw new \LogicException('The Forum post owner field must be a base field definition.');

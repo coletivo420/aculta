@@ -48,7 +48,9 @@ final class EventSlugKernelTest extends KernelTestBase {
 
     $a->set('title', 'Outro título completamente diferente');
     $a->save();
-    $this->assertSame('oficina-de-ceramica', Event::load($a->id())->get('field_slug')->value);
+    $carregado = Event::load($a->id());
+    self::assertInstanceOf(Event::class, $carregado);
+    self::assertSame('oficina-de-ceramica', $carregado->get('field_slug')->value);
   }
 
 }

@@ -178,7 +178,7 @@ final class FakeCepLookup implements CepLookupInterface {
    * @param string $cep
    *   CEP consultado.
    *
-   * @return array|null
+   * @return array<string, mixed>|null
    *   Resultado configurado.
    *
    * @throws \RuntimeException

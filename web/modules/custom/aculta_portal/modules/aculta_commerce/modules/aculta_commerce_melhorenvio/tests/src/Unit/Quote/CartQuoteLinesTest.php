@@ -47,7 +47,7 @@ final class CartQuoteLinesTest extends UnitTestCase {
   /**
    * Cria um carrinho simulado com os itens e o tipo de pedido informados.
    *
-   * @param array $items
+   * @param array<int, \Drupal\commerce_order\Entity\OrderItemInterface> $items
    *   Itens de pedido do carrinho.
    * @param string $orderType
    *   Bundle do pedido.

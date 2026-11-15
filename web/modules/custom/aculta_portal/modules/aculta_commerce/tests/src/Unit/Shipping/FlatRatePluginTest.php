@@ -22,6 +22,9 @@ final class FlatRatePluginTest extends UnitTestCase {
 
   /**
    * Builds a flat rate plugin with the given configuration.
+   *
+   * @param array<string, mixed> $configuration
+   *   Plugin configuration.
    */
   private function plugin(array $configuration): FlatRate {
     $definition = [

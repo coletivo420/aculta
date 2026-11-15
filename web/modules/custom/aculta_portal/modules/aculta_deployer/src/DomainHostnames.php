@@ -29,7 +29,7 @@ final class DomainHostnames {
     $key = $env === 'production' ? 'production_host' : 'test_host';
     $plan = [];
     foreach ($entries as $entry) {
-      $id = (string) ($entry['domain_id'] ?? '');
+      $id = self::domainId($entry);
       $target = (string) ($entry[$key] ?? '');
       if ($id === '' || $target === '') {
         continue;
@@ -43,6 +43,20 @@ final class DomainHostnames {
       $plan[] = ['domain_id' => $id, 'target' => $target, 'current' => $now, 'action' => $action];
     }
     return $plan;
+  }
+
+  /**
+   * Lê o domain_id de uma entrada, tolerando a ausência da chave.
+   *
+   * @param array<string, mixed> $entry
+   *   Entrada de domínio.
+   *
+   * @return string
+   *   Identificador, ou string vazia.
+   */
+  private static function domainId(array $entry): string {
+    $valor = $entry['domain_id'] ?? NULL;
+    return is_scalar($valor) ? (string) $valor : '';
   }
 
 }

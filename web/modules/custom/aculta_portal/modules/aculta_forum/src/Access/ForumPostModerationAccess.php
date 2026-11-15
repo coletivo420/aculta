@@ -48,8 +48,9 @@ final class ForumPostModerationAccess {
       ? AccessResult::allowed()
       : AccessResult::forbidden();
     $state = $post->hasField('moderation_state') && !$post->get('moderation_state')->isEmpty()
-      ? (string) $post->get('moderation_state')->value
+      ? $post->get('moderation_state')->value
       : '';
+    $state = is_string($state) ? $state : '';
     $isReviewRevision = $state === 'review';
     $transitionAccess = $post->access('update', $account, TRUE);
     $topic = $post->hasField('topic') ? $post->get('topic')->entity : NULL;

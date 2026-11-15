@@ -23,7 +23,7 @@ final class DonationCheckoutProviderTest extends UnitTestCase {
   /**
    * Cria o provider de doação com as dependências simuladas.
    *
-   * @param array $settings
+   * @param array<string, mixed> $settings
    *   Configurações do módulo de doação.
    * @param string|null $subscriptionFlow
    *   Flow de checkout da assinatura, ou NULL se não houver.

@@ -45,7 +45,7 @@ interface PackerManagerInterface {
    * @param \Drupal\aculta_commerce\Entity\ShipmentInterface[] $shipments
    *   The existing shipments.
    *
-   * @return array
+   * @return array{array<\Drupal\aculta_commerce\Entity\ShipmentInterface>, list<\Drupal\aculta_commerce\Entity\ShipmentInterface>}
    *   A two-element array: populated shipments, removed shipments.
    */
   public function packToShipments(OrderInterface $order, ProfileInterface $shipping_profile, array $shipments): array;

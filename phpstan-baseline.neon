@@ -9580,12 +9580,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_activity/tests/src/Kernel/ActivityContentIndexProviderKernelTest.php
 
 		-
-			rawMessage: 'Call to static method PHPUnit\Framework\Assert::assertInstanceOf() with ''Drupal\\aculta_activity\\ContentIndex\\ActivityContentIndexProvider'' and Drupal\aculta_activity\ContentIndex\ActivityContentIndexProvider will always evaluate to true.'
-			identifier: staticMethod.alreadyNarrowedType
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_activity/tests/src/Kernel/ActivityWithoutIndexKernelTest.php
-
-		-
 			rawMessage: Cannot access offset 'aculta_activity.content_index_provider' on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 2
@@ -9628,12 +9622,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_activity/tests/src/Unit/Hook/ActivityHooksTest.php
 
 		-
-			rawMessage: 'Parameter #4 $storage_definition of method Drupal\Core\Entity\EntityDefinitionUpdateManagerInterface::installFieldStorageDefinition() expects Drupal\Core\Field\FieldStorageDefinitionInterface, Drupal\Core\Field\FieldDefinitionInterface given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/aculta_calendar.install
-
-		-
 			rawMessage: 'Function aculta_calendar_metatags_alter() has an unused parameter $context.'
 			identifier: function.unusedParameter
 			count: 1
@@ -9650,12 +9638,6 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_calendar/aculta_calendar.module
-
-		-
-			rawMessage: 'Method Drupal\aculta_calendar\Agenda\MonthGrid::build() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Agenda/MonthGrid.php
 
 		-
 			rawMessage: 'Argument of an invalid type mixed supplied for foreach, only iterables are supported.'
@@ -10030,12 +10012,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Ics/IcsEventBuilder.php
 
 		-
-			rawMessage: 'Call to function is_string() with string will always evaluate to true.'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Import/CalendarIcsRemoteFetcher.php
-
-		-
 			rawMessage: Cannot access property $value on mixed.
 			identifier: property.nonObject
 			count: 2
@@ -10130,12 +10106,6 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Import/NativeCalendarHostResolver.php
-
-		-
-			rawMessage: 'Offset ''opcoes'' on array{label: string, opcoes: array<int, string>} on left side of ?? always exists and is not nullable.'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Item/CalendarItemSource.php
 
 		-
 			rawMessage: 'Binary operation "." between ''BYDAY=''|''BYMONTHDAY=''|''COUNT=''|''FREQ=''|''INTERVAL='' and mixed results in an error.'
@@ -10714,12 +10684,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_calendar/tests/src/Unit/IsolamentoTest.php
 
 		-
-			rawMessage: Cannot access offset 'titulo' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/tests/src/Unit/MonthGridTest.php
-
-		-
 			rawMessage: 'Cannot call method format() on DateTimeImmutable|null.'
 			identifier: method.nonObject
 			count: 6
@@ -10748,12 +10712,6 @@ parameters:
 			identifier: argument.type
 			count: 6
 			path: web/modules/custom/aculta_portal/modules/aculta_calendar/tests/src/Unit/RecurrenceExpanderTest.php
-
-		-
-			rawMessage: 'Call to method PHPUnit\Framework\Assert::assertSame() with 366 and 366 will always evaluate to true.'
-			identifier: method.alreadyNarrowedType
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/tests/src/Unit/RecurrenceRuleParserTest.php
 
 		-
 			rawMessage: 'Cannot call method getOption() on Symfony\Component\Routing\Route|null.'
@@ -10826,12 +10784,6 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_cgu/src/Contract/ContributionAdapterInterface.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_cgu\Controller\CguModerationDashboardController::overview() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_cgu/src/Controller/CguModerationDashboardController.php
 
 		-
 			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::get().'
@@ -11746,12 +11698,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_commerce/modules/aculta_commerce_melhorenvio/aculta_commerce_melhorenvio.install
 
 		-
-			rawMessage: 'Method Drupal\aculta_commerce_melhorenvio\Address\LogisticsAddress::toQuoteArray() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_commerce/modules/aculta_commerce_melhorenvio/src/Address/LogisticsAddress.php
-
-		-
 			rawMessage: Cannot cast mixed to string.
 			identifier: cast.string
 			count: 7
@@ -11776,12 +11722,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_commerce/modules/aculta_commerce_melhorenvio/src/Address/MelhorEnvioAddressMapper.php
 
 		-
-			rawMessage: 'Parameter #1 $address of method Drupal\aculta_commerce_melhorenvio\Address\MelhorEnvioAddressMapper::map() expects array<string, mixed>|null, array<mixed, mixed>|null given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_commerce/modules/aculta_commerce_melhorenvio/src/Address/ShipmentAddressBinder.php
-
-		-
 			rawMessage: Cannot access an offset on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
@@ -11790,12 +11730,6 @@ parameters:
 		-
 			rawMessage: Cannot access offset 'library' on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_commerce/modules/aculta_commerce_melhorenvio/src/Controller/MelhorEnvioStatusController.php
-
-		-
-			rawMessage: Cannot cast mixed to int.
-			identifier: cast.int
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_commerce/modules/aculta_commerce_melhorenvio/src/Controller/MelhorEnvioStatusController.php
 
@@ -11956,12 +11890,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_commerce/modules/aculta_commerce_melhorenvio/src/Http/MelhorEnvioClient.php
 
 		-
-			rawMessage: Binary operation "-" between mixed and 60 results in an error.
-			identifier: binaryOp.invalid
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_commerce/modules/aculta_commerce_melhorenvio/src/Http/MelhorEnvioClient.php
-
-		-
 			rawMessage: Cannot cast mixed to int.
 			identifier: cast.int
 			count: 1
@@ -12046,12 +11974,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_commerce/modules/aculta_commerce_melhorenvio/src/Http/MelhorEnvioClient.php
 
 		-
-			rawMessage: 'Parameter #3 $fallbackRefresh of method Drupal\aculta_commerce_melhorenvio\Http\MelhorEnvioClient::storeTokens() expects string|null, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_commerce/modules/aculta_commerce_melhorenvio/src/Http/MelhorEnvioClient.php
-
-		-
 			rawMessage: Cannot access offset 'production'|'sandbox' on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
@@ -12077,45 +11999,6 @@ parameters:
 			identifier: phpDoc.parseError
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_commerce/modules/aculta_commerce_melhorenvio/src/Http/MelhorEnvioConfig.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_commerce_melhorenvio\Http\MelhorEnvioTokenStoreInterface::load() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_commerce/modules/aculta_commerce_melhorenvio/src/Http/MelhorEnvioTokenStoreInterface.php
-
-		-
-			rawMessage: '''
-				PHPDoc tag @return has invalid value (array{access_token:
-				  string, refresh_token: string, expires_at: int}|null): Unexpected token ":", expected '}' at offset 170 on line 7
-			'''
-			identifier: phpDoc.parseError
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_commerce/modules/aculta_commerce_melhorenvio/src/Http/MelhorEnvioTokenStoreInterface.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_commerce_melhorenvio\Http\StateMelhorEnvioTokenStore::decode() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_commerce/modules/aculta_commerce_melhorenvio/src/Http/StateMelhorEnvioTokenStore.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_commerce_melhorenvio\Http\StateMelhorEnvioTokenStore::load() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_commerce/modules/aculta_commerce_melhorenvio/src/Http/StateMelhorEnvioTokenStore.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_commerce_melhorenvio\Http\StateMelhorEnvioTokenStore::normalize() has parameter $tokens with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_commerce/modules/aculta_commerce_melhorenvio/src/Http/StateMelhorEnvioTokenStore.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_commerce_melhorenvio\Http\StateMelhorEnvioTokenStore::normalize() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_commerce/modules/aculta_commerce_melhorenvio/src/Http/StateMelhorEnvioTokenStore.php
 
 		-
 			rawMessage: '''
@@ -12583,12 +12466,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_commerce/modules/aculta_commerce_melhorenvio/tests/src/Unit/MelhorEnvioClientTest.php
 
 		-
-			rawMessage: 'Method Drupal\aculta_commerce_melhorenvio\Http\MelhorEnvioTokenStoreInterface@anonymous/web/modules/custom/aculta_portal/modules/aculta_commerce/modules/aculta_commerce_melhorenvio/tests/src/Unit/MelhorEnvioClientTest.php:104::load() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_commerce/modules/aculta_commerce_melhorenvio/tests/src/Unit/MelhorEnvioClientTest.php
-
-		-
 			rawMessage: '''
 				PHPDoc tag @return has invalid value (array{access_token:
 				  string, refresh_token: string, expires_at: int}): Unexpected token ":", expected '}' at offset 170 on line 7
@@ -12629,12 +12506,6 @@ parameters:
 			identifier: assign.propertyType
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_commerce/modules/aculta_commerce_melhorenvio/tests/src/Unit/MelhorEnvioClientTest.php
-
-		-
-			rawMessage: 'Method Drupal\Tests\aculta_commerce_melhorenvio\Unit\Quote\CartQuoteLinesTest::cart() has parameter $items with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_commerce/modules/aculta_commerce_melhorenvio/tests/src/Unit/Quote/CartQuoteLinesTest.php
 
 		-
 			rawMessage: Cannot access offset 'height' on mixed.
@@ -12713,12 +12584,6 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_commerce/modules/aculta_commerce_melhorenvio/tests/src/Unit/Quote/QuoteRequestItemsTest.php
-
-		-
-			rawMessage: 'Method Drupal\Tests\aculta_commerce_melhorenvio\Unit\Quote\QuoteResponseParserTest::fixture() should return array<mixed> but returns mixed.'
-			identifier: return.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_commerce/modules/aculta_commerce_melhorenvio/tests/src/Unit/Quote/QuoteResponseParserTest.php
 
 		-
 			rawMessage: 'Call to an undefined method Drupal\aculta_commerce_melhorenvio\Quote\MelhorEnvioQuoter::expects().'
@@ -12833,24 +12698,6 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_commerce/modules/aculta_commerce_melhorenvio/tests/src/Unit/ShipmentAddressBinderServiceDefinitionTest.php
-
-		-
-			rawMessage: 'Method Drupal\Tests\aculta_commerce_melhorenvio\Unit\ShipmentAddressBinderTest::binder() has parameter $origin with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_commerce/modules/aculta_commerce_melhorenvio/tests/src/Unit/ShipmentAddressBinderTest.php
-
-		-
-			rawMessage: 'Method Drupal\Tests\aculta_commerce_melhorenvio\Unit\FakeCepLookup::lookup() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_commerce/modules/aculta_commerce_melhorenvio/tests/src/Unit/ShippingAddressAdapterTest.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_commerce\Attribute\AcultaShippingMethod::__construct() has parameter $services with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_commerce/src/Attribute/AcultaShippingMethod.php
 
 		-
 			rawMessage: 'Argument of an invalid type mixed supplied for foreach, only iterables are supported.'
@@ -14017,12 +13864,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_commerce/src/Plugin/Field/FieldType/ShipmentItem.php
 
 		-
-			rawMessage: 'Method Drupal\aculta_commerce\ShipmentAccessControlHandler::checkCreateAccess() has parameter $context with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_commerce/src/ShipmentAccessControlHandler.php
-
-		-
 			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::calculateDependencies().'
 			identifier: method.notFound
 			count: 1
@@ -14353,30 +14194,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_commerce/src/Shipping/PackageType.php
 
 		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::populateFromProposedShipment().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_commerce/src/Shipping/PackerManager.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::setData().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_commerce/src/Shipping/PackerManager.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_commerce\Shipping\PackerManager::packToShipments() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_commerce/src/Shipping/PackerManager.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_commerce\Shipping\PackerManagerInterface::packToShipments() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_commerce/src/Shipping/PackerManagerInterface.php
-
-		-
 			rawMessage: 'Argument of an invalid type mixed supplied for foreach, only iterables are supported.'
 			identifier: foreach.nonIterable
 			count: 1
@@ -14449,26 +14266,8 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_commerce/src/Shipping/ShippingOrderManager.php
 
 		-
-			rawMessage: 'Method Drupal\aculta_commerce\Shipping\ShippingOrderManager::createProfile() has parameter $values with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_commerce/src/Shipping/ShippingOrderManager.php
-
-		-
 			rawMessage: 'Method Drupal\aculta_commerce\Shipping\ShippingOrderManager::createProfile() should return Drupal\profile\Entity\ProfileInterface but returns Drupal\Core\Entity\EntityInterface.'
 			identifier: return.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_commerce/src/Shipping/ShippingOrderManager.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_commerce\Shipping\ShippingOrderManager::pack() should return array<Drupal\aculta_commerce\Entity\ShipmentInterface> but returns mixed.'
-			identifier: return.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_commerce/src/Shipping/ShippingOrderManager.php
-
-		-
-			rawMessage: 'Parameter #1 $entities of method Drupal\Core\Entity\EntityStorageInterface::delete() expects array, mixed given.'
-			identifier: argument.type
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_commerce/src/Shipping/ShippingOrderManager.php
 
@@ -14477,18 +14276,6 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_commerce/src/Shipping/ShippingOrderManager.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_commerce\Shipping\ShippingOrderManagerInterface::createProfile() has parameter $values with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_commerce/src/Shipping/ShippingOrderManagerInterface.php
-
-		-
-			rawMessage: Instanceof between Drupal\aculta_commerce\Shipping\ShippingQuote and Drupal\aculta_commerce\Shipping\ShippingQuote will always evaluate to true.
-			identifier: instanceof.alwaysTrue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_commerce/src/Shipping/ShippingQuoteSelector.php
 
 		-
 			rawMessage: Binary operation "." between mixed and '--' results in an error.
@@ -14527,18 +14314,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_commerce/src/Shipping/ShippingRate.php
 
 		-
-			rawMessage: 'Method Drupal\aculta_commerce\ShippingMethodAccessControlHandler::checkCreateAccess() has parameter $context with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_commerce/src/ShippingMethodAccessControlHandler.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_commerce\ShippingMethodManager::__construct() has parameter $namespaces with no value type specified in iterable type Traversable.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_commerce/src/ShippingMethodManager.php
-
-		-
 			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::applies().'
 			identifier: method.notFound
 			count: 1
@@ -14555,12 +14330,6 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_commerce/src/ShippingMethodStorage.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_commerce_shipping_test\Plugin\Commerce\ShippingMethod\MockCarrier::defaultConfiguration() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_commerce/tests/modules/aculta_commerce_shipping_test/src/Plugin/Commerce/ShippingMethod/MockCarrier.php
 
 		-
 			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::isEnabled().'
@@ -14883,17 +14652,11 @@ parameters:
 		-
 			rawMessage: 'Parameter #1 $array of function reset expects array|object, mixed given.'
 			identifier: argument.type
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_commerce/tests/src/Kernel/ShippingEngineKernelTest.php
-
-		-
-			rawMessage: 'Parameter #1 $id of method Drupal\Core\Entity\EntityStorageInterface::load() expects int|string, int|string|null given.'
-			identifier: argument.type
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_commerce/tests/src/Kernel/ShippingEngineKernelTest.php
 
 		-
-			rawMessage: 'Parameter #1 $shipment of method Drupal\aculta_commerce\Shipping\ShipmentManagerInterface::calculateRates() expects Drupal\aculta_commerce\Entity\ShipmentInterface, mixed given.'
+			rawMessage: 'Parameter #1 $id of method Drupal\Core\Entity\EntityStorageInterface::load() expects int|string, int|string|null given.'
 			identifier: argument.type
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_commerce/tests/src/Kernel/ShippingEngineKernelTest.php
@@ -15211,12 +14974,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_commerce/tests/src/Unit/HookServiceRegistrationTest.php
 
 		-
-			rawMessage: 'Method Drupal\Tests\aculta_commerce\Unit\Shipping\FlatRatePluginTest::plugin() has parameter $configuration with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_commerce/tests/src/Unit/Shipping/FlatRatePluginTest.php
-
-		-
 			rawMessage: Cannot access offset 'aculta_commerce' on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
@@ -15293,18 +15050,6 @@ parameters:
 			identifier: argument.type
 			count: 4
 			path: web/modules/custom/aculta_portal/modules/aculta_commerce/tests/src/Unit/Shipping/ShippingConfigSyncTest.php
-
-		-
-			rawMessage: 'Method Drupal\Tests\aculta_commerce\Unit\ShopCheckoutProviderTest::provider() has parameter $settings with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_commerce/tests/src/Unit/ShopCheckoutProviderTest.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_content_admin\Controller\ContentModerationOverviewController::overview() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_content_admin/src/Controller/ContentModerationOverviewController.php
 
 		-
 			rawMessage: 'Argument of an invalid type mixed supplied for foreach, only iterables are supported.'
@@ -15577,12 +15322,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_deployer/src/Cli.php
 
 		-
-			rawMessage: Cannot access offset 'id' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_deployer/src/Cli.php
-
-		-
 			rawMessage: Cannot access offset 'index_base' on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
@@ -15662,12 +15401,6 @@ parameters:
 
 		-
 			rawMessage: Cannot access offset 'test_host' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_deployer/src/Cli.php
-
-		-
-			rawMessage: Cannot access offset 'url' on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_deployer/src/Cli.php
@@ -15889,12 +15622,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_deployer/src/Cli.php
 
 		-
-			rawMessage: 'Parameter #2 $webhook of static method AcultaDeployer\Provision::plan() expects array|null, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_deployer/src/Cli.php
-
-		-
 			rawMessage: 'Parameter #2 ...$values of function sprintf expects bool|float|int|string|null, mixed given.'
 			identifier: argument.type
 			count: 1
@@ -16003,12 +15730,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_deployer/src/Cli.php
 
 		-
-			rawMessage: 'Offset ''domain_id'' on array{domain_id: string, test_host?: string, production_host?: string} on left side of ?? always exists and is not nullable.'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_deployer/src/DomainHostnames.php
-
-		-
 			rawMessage: 'Cannot call method getPathname() on mixed.'
 			identifier: method.nonObject
 			count: 1
@@ -16043,12 +15764,6 @@ parameters:
 			identifier: cast.string
 			count: 3
 			path: web/modules/custom/aculta_portal/modules/aculta_deployer/src/Indexing.php
-
-		-
-			rawMessage: 'Method AcultaDeployer\Provision::plan() has parameter $webhook with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_deployer/src/Provision.php
 
 		-
 			rawMessage: Binary operation "." between non-falsy-string and mixed results in an error.
@@ -16459,12 +16174,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_deployer/tests/run.php
 
 		-
-			rawMessage: 'Offset int<min, -1>|int<1, 4> might not exist on array{''B'', ''KB'', ''MB'', ''GB'', ''TB''}.'
-			identifier: offsetAccess.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_document_viewer/src/Document/ReadableMime.php
-
-		-
 			rawMessage: 'Parameter #1 $uri of method Drupal\Core\File\FileSystemInterface::realpath() expects string, string|null given.'
 			identifier: argument.type
 			count: 1
@@ -16537,12 +16246,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_document_viewer/src/Form/DocumentViewerSettingsForm.php
 
 		-
-			rawMessage: 'Method Drupal\aculta_document_viewer\Pdf\PdfPreviewThumbnailBuilder::build() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_document_viewer/src/Pdf/PdfPreviewThumbnailBuilder.php
-
-		-
 			rawMessage: 'Parameter #1 $haystack of function str_starts_with expects string, string|null given.'
 			identifier: argument.type
 			count: 1
@@ -16559,12 +16262,6 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_document_viewer/src/Pdf/PdfPreviewThumbnailBuilder.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_document_viewer\Pdf\PdfPreviewThumbnailBuilderInterface::build() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_document_viewer/src/Pdf/PdfPreviewThumbnailBuilderInterface.php
 
 		-
 			rawMessage: Cannot access offset '#access' on mixed.
@@ -17743,12 +17440,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_document_viewer/tests/src/Unit/Document/DocumentViewerChromeTest.php
 
 		-
-			rawMessage: 'Call to method PHPUnit\Framework\Assert::assertTrue() with true will always evaluate to true.'
-			identifier: method.alreadyNarrowedType
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_document_viewer/tests/src/Unit/Docx/DocxPackageValidatorTest.php
-
-		-
 			rawMessage: Cannot access offset 'data-aculta-docx-render-options' on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
@@ -17869,12 +17560,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_document_viewer/tests/src/Unit/Pdf/PdfViewerBuilderTest.php
 
 		-
-			rawMessage: Cannot access offset '#theme' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_document_viewer/tests/src/Unit/Plugin/Field/FieldFormatter/AcultaDocumentMediaFormatterTest.php
-
-		-
 			rawMessage: Cannot access offset 'contexts' on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 2
@@ -17929,12 +17614,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_document_viewer/tests/src/Unit/Spreadsheet/SpreadsheetFileValidatorTest.php
 
 		-
-			rawMessage: 'Call to method PHPUnit\Framework\Assert::assertTrue() with true will always evaluate to true.'
-			identifier: method.alreadyNarrowedType
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_document_viewer/tests/src/Unit/Spreadsheet/SpreadsheetPackageValidatorTest.php
-
-		-
 			rawMessage: Cannot access offset 'data-aculta-sheet-default-mode' on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 2
@@ -17951,12 +17630,6 @@ parameters:
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_document_viewer/tests/src/Unit/Spreadsheet/SpreadsheetViewerBuilderTest.php
-
-		-
-			rawMessage: 'Parameter #2 $config_names of method Drupal\domain_config_ui\DomainConfigEditContextInterface::setEditingDomain() expects array<string>, array given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_domain_config/src/EventSubscriber/DomainConfigEditingSubscriber.php
 
 		-
 			rawMessage: Instanceof between Drupal\domain\DomainInterface and Drupal\domain\DomainInterface will always evaluate to true.
@@ -18065,12 +17738,6 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_domain_config/tests/src/Unit/BlockDomainConfigFormHooksTest.php
-
-		-
-			rawMessage: 'Parameter #1 $timezone of class DateTimeZone constructor expects string, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_donation/src/Campaign/DonationCampaignSelector.php
 
 		-
 			rawMessage: Access to an undefined property Drupal\state_machine\Plugin\Field\FieldType\StateItemInterface::$value.
@@ -18347,12 +18014,6 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_donation/src/Form/DonationSettingsForm.php
-
-		-
-			rawMessage: Instanceof between Drupal\commerce_payment\Entity\PaymentInterface and Drupal\Core\Entity\SynchronizableInterface will always evaluate to true.
-			identifier: instanceof.alwaysTrue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_donation/src/Hook/DonationNoticeEventPublisher.php
 
 		-
 			rawMessage: Cannot access property $query on Symfony\Component\HttpFoundation\Request|null.
@@ -18827,18 +18488,6 @@ parameters:
 			identifier: encapsedStringPart.nonString
 			count: 2
 			path: web/modules/custom/aculta_portal/modules/aculta_donation/src/Plugin/Commerce/CheckoutFlow/DonationCheckoutFlow.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_donation\Plugin\Commerce\CheckoutFlow\MultistepWithDonation::getSteps() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_donation/src/Plugin/Commerce/CheckoutFlow/MultistepWithDonation.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_donation\Plugin\Commerce\CheckoutFlow\PaneSummaryData::__construct() has parameter $panes with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_donation/src/Plugin/Commerce/CheckoutFlow/PaneSummaryData.php
 
 		-
 			rawMessage: Binary operation "&" between mixed and bool results in an error.
@@ -20017,12 +19666,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_donation/tests/src/Unit/CartCheckoutRoutesCharacterizationTest.php
 
 		-
-			rawMessage: 'Method Drupal\Tests\aculta_donation\Unit\DonationCheckoutProviderTest::provider() has parameter $settings with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_donation/tests/src/Unit/DonationCheckoutProviderTest.php
-
-		-
 			rawMessage: 'Call to an undefined method Drupal\commerce_order\Entity\OrderInterface::expects().'
 			identifier: method.notFound
 			count: 1
@@ -20189,12 +19832,6 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_editor/src/Plugin/Filter/FluentEmojiFilter.php
-
-		-
-			rawMessage: Binary operation "." between mixed and string results in an error.
-			identifier: binaryOp.invalid
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_editor/src/Service/FluentEmojiAssetResolver.php
 
 		-
 			rawMessage: 'Method Drupal\aculta_editor\Service\FluentEmojiIconAdapter::fromIconId() should return string|null but returns mixed.'
@@ -20443,18 +20080,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_editor/tests/src/Kernel/AcultaEditorFormatsKernelTest.php
 
 		-
-			rawMessage: 'Call to method PHPUnit\Framework\Assert::assertInstanceOf() with ''Drupal\\aculta_editor\\Service\\FluentEmojiAssetResolverInterface'' and Drupal\aculta_editor\Service\FluentEmojiAssetResolver will always evaluate to true.'
-			identifier: method.alreadyNarrowedType
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_editor/tests/src/Kernel/FluentEmojiFilterContainerKernelTest.php
-
-		-
-			rawMessage: Cannot access offset 'icon_full_id' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_editor/tests/src/Unit/FluentEmojiIconAdapterTest.php
-
-		-
 			rawMessage: 'Call to internal method PHPUnit\Framework\TestCase::addToAssertionCount() from outside its root namespace PHPUnit.'
 			identifier: method.internal
 			count: 2
@@ -20551,12 +20176,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_events/src/Access/EventLocationAccessControlHandler.php
 
 		-
-			rawMessage: 'Method Drupal\aculta_events\Access\EventOfferAccessControlHandler::checkCreateAccess() has parameter $context with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/src/Access/EventOfferAccessControlHandler.php
-
-		-
 			rawMessage: Cannot cast mixed to string.
 			identifier: cast.string
 			count: 1
@@ -20567,12 +20186,6 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_events/src/Access/EventOrganizationAccessControlHandler.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_events\Access\EventOrganizationSuggestionAccessControlHandler::checkCreateAccess() has parameter $context with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/src/Access/EventOrganizationSuggestionAccessControlHandler.php
 
 		-
 			rawMessage: 'Method Drupal\aculta_events\Access\EventPermissionPolicy::getAssignableRoles() should return array<string, string> but returns array<int|string, string>.'
@@ -21829,12 +21442,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_events/src/Entity/Event.php
 
 		-
-			rawMessage: 'Method Drupal\aculta_events\Entity\EventLocation::toUrl() has parameter $options with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/src/Entity/EventLocation.php
-
-		-
 			rawMessage: Cannot cast mixed to string.
 			identifier: cast.string
 			count: 2
@@ -21887,12 +21494,6 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_events/src/Event/EventDateListBuilder.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_events\Event\OrganizationContributionOutcomeRecordedEvent::toQueuePayload() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/src/Event/OrganizationContributionOutcomeRecordedEvent.php
 
 		-
 			rawMessage: Cannot access offset 'field_endereco' on mixed.
@@ -23377,12 +22978,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_events/src/Hook/EventCatalogueViewsDataHooks.php
 
 		-
-			rawMessage: Cannot access offset 'max-age' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/src/Hook/EventDateHooks.php
-
-		-
 			rawMessage: 'Binary operation "+" between array{country_code: ''BR''} and mixed results in an error.'
 			identifier: binaryOp.invalid
 			count: 1
@@ -24475,12 +24070,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_events/tests/src/Kernel/EventDateManagementKernelTest.php
 
 		-
-			rawMessage: 'Parameter #1 $data of method Drupal\aculta_events\Occurrence\EventDateOccurrences::expandir() expects Drupal\aculta_events\Entity\EventDate, Drupal\aculta_events\Entity\EventDate|null given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/tests/src/Kernel/EventDateOccurrencesKernelTest.php
-
-		-
 			rawMessage: 'Cannot call method get() on Drupal\aculta_events\Entity\EventDate|null.'
 			identifier: method.nonObject
 			count: 4
@@ -25543,12 +25132,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_events/tests/src/Kernel/EventRsvpSettingsKernelTest.php
 
 		-
-			rawMessage: 'Cannot call method get() on Drupal\aculta_events\Entity\Event|null.'
-			identifier: method.nonObject
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/tests/src/Kernel/EventSlugKernelTest.php
-
-		-
 			rawMessage: 'Argument of an invalid type mixed supplied for foreach, only iterables are supported.'
 			identifier: foreach.nonIterable
 			count: 2
@@ -26131,12 +25714,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_events/tests/src/Unit/AdministrativeEventExportControllerTest.php
 
 		-
-			rawMessage: 'Parameter #1 $array of function array_flip expects array<int|string>, array given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/tests/src/Unit/OrganizationContributionEventQueueTest.php
-
-		-
 			rawMessage: 'Cannot access offset 0 on callable(): mixed.'
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
@@ -26165,12 +25742,6 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_events_openstreetmap/aculta_events_openstreetmap.install
-
-		-
-			rawMessage: 'Method Drupal\aculta_events_openstreetmap\Controller\OpenStreetMapStatusController::page() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events_openstreetmap/src/Controller/OpenStreetMapStatusController.php
 
 		-
 			rawMessage: Binary operation "." between 'Local OpenStreetMap ' and mixed results in an error.
@@ -26869,12 +26440,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_file_uploader/src/ConsumerUploadPolicy.php
 
 		-
-			rawMessage: 'Method Drupal\aculta_file_uploader\ConsumerUploadPolicy::documentValidators() should return array<string, array<string, int|string>> but returns array.'
-			identifier: return.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_file_uploader/src/ConsumerUploadPolicy.php
-
-		-
 			rawMessage: 'Parameter #1 $path of function pathinfo expects string, string|null given.'
 			identifier: argument.type
 			count: 1
@@ -27085,12 +26650,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_file_uploader/src/Form/UploadSettingsForm.php
 
 		-
-			rawMessage: 'Parameter #1 $stored of static method Drupal\aculta_file_uploader\IngestionLimits::fromArray() expects array<string, mixed>, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_file_uploader/src/IngestionLimitsReader.php
-
-		-
 			rawMessage: Cannot access offset 'fid' on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
@@ -27185,18 +26744,6 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_file_uploader/src/RecentUploads.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_file_uploader\UploadPolicy::documentValidators() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_file_uploader/src/UploadPolicy.php
-
-		-
-			rawMessage: Cannot access offset 'fileLimit' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_file_uploader/tests/src/Unit/ConsumerUploadPolicyTest.php
 
 		-
 			rawMessage: 'Parameter #1 $width of function imagecreatetruecolor expects int<1, max>, int given.'
@@ -27371,18 +26918,6 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_forum/aculta_forum.install
-
-		-
-			rawMessage: Cannot cast mixed to string.
-			identifier: cast.string
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Access/ForumPopupOnlyAccess.php
-
-		-
-			rawMessage: Cannot cast mixed to string.
-			identifier: cast.string
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Access/ForumPostModerationAccess.php
 
 		-
 			rawMessage: Cannot access offset 'target_id' on mixed.
@@ -27721,12 +27256,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Context/Provider/WikiDiscussionContextProvider.php
 
 		-
-			rawMessage: 'Method Drupal\aculta_forum\Controller\DiscussionReactionController::react() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Controller/DiscussionReactionController.php
-
-		-
 			rawMessage: 'Cannot call method get() on Drupal\Core\Field\FieldItemInterface|null.'
 			identifier: method.nonObject
 			count: 1
@@ -27767,12 +27296,6 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Controller/ForumAdminOverviewController.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_forum\Controller\ForumPostModerationFormController::form() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Controller/ForumPostModerationFormController.php
 
 		-
 			rawMessage: Cannot cast mixed to int.
@@ -28037,12 +27560,6 @@ parameters:
 			identifier: cast.int
 			count: 2
 			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Drush/Commands/ForumReactionReconciliationCommand.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_forum\Entity\ForumPost::baseFieldDefinitions() should return array<string, Drupal\Core\Field\FieldDefinitionInterface> but returns array<Drupal\Core\Field\FieldDefinitionInterface>.'
-			identifier: return.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Entity/ForumPost.php
 
 		-
 			rawMessage: Cannot access an offset on mixed.
@@ -28343,12 +27860,6 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Form/ForumGalleryUploadDialogForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_forum\Form\ForumMarkAllReadForm::submitForm() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Form/ForumMarkAllReadForm.php
 
 		-
 			rawMessage: Cannot access offset 'compare' on mixed.
@@ -28907,12 +28418,6 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Hook/DiscussionCommentPermalinkHooks.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_forum\Hook\DiscussionModerationHooks::entityFieldAccess() has parameter $items with generic interface Drupal\Core\Field\FieldItemListInterface but does not specify its types: T'
-			identifier: missingType.generics
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Hook/DiscussionModerationHooks.php
 
 		-
 			rawMessage: Cannot access an offset on mixed.
@@ -69888,18 +69393,6 @@ parameters:
 
 		-
 			rawMessage: 'Offset ''diaInteiro'' on array{id: string, titulo: string, inicio: DateTimeImmutable, fim: DateTimeImmutable, local: string, link: string|null, diaInteiro: bool, cancelada: bool} on left side of ?? always exists and is not nullable.'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_studio/src/Calendar/StudioDashboardCalendarComposer.php
-
-		-
-			rawMessage: 'Offset ''hoje'' on array{dia: DateTimeImmutable|null, itens: array, hoje: bool} on left side of ?? always exists and is not nullable.'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_studio/src/Calendar/StudioDashboardCalendarComposer.php
-
-		-
-			rawMessage: 'Offset ''itens'' on array{dia: DateTimeImmutable|null, itens: array, hoje: bool} on left side of ?? always exists and is not nullable.'
 			identifier: nullCoalesce.offset
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_studio/src/Calendar/StudioDashboardCalendarComposer.php

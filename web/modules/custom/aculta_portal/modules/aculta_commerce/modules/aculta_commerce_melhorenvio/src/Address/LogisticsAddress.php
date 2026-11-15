@@ -59,6 +59,9 @@ final class LogisticsAddress {
    * Payload mínimo da cotação: só CEP.
    *
    * Número e demais campos não são exigidos pelo endpoint.
+   *
+   * @return array{postal_code: string}
+   *   Campos enviados à cotação.
    */
   public function toQuoteArray(): array {
     return ['postal_code' => $this->postalCode];

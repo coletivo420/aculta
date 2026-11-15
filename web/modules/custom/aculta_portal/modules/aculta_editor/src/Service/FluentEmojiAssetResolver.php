@@ -21,7 +21,11 @@ final class FluentEmojiAssetResolver implements FluentEmojiAssetResolverInterfac
   public function getAssetsUrl(): string {
     $activeTheme = $this->themeManager->getActiveTheme();
     $themePath = $activeTheme->getPath();
-    return base_path() . $themePath . '/assets/icons/fluent-emoji/color';
+    $basePath = base_path();
+    if (!is_string($basePath)) {
+      throw new \UnexpectedValueException('Caminho base inválido.');
+    }
+    return \sprintf('%s%s/assets/icons/fluent-emoji/color', $basePath, $themePath);
   }
 
 }

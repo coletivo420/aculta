@@ -8,6 +8,8 @@
 
 declare(strict_types=1);
 
+use Drupal\Core\Field\FieldStorageDefinitionInterface;
+
 /**
  * @file
  * Install and update hooks for ACULTA Calendar.
@@ -41,11 +43,15 @@ function aculta_calendar_update_10002(): string {
   }
 
   $definitions = \Drupal::service('entity_field.manager')->getBaseFieldDefinitions($entity_type_id);
+  $storage_definition = $definitions[$field_name] ?? NULL;
+  if (!$storage_definition instanceof FieldStorageDefinitionInterface) {
+    throw new \RuntimeException('Definição de campo inválida para a atualização.');
+  }
   $definition_update_manager->installFieldStorageDefinition(
     $field_name,
     $entity_type_id,
     'aculta_calendar',
-    $definitions[$field_name],
+    $storage_definition,
   );
   return 'Installed calendar import source presence field.';
 }

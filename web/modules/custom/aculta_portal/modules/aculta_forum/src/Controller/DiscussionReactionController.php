@@ -35,6 +35,9 @@ class DiscussionReactionController extends ControllerBase {
 
   /**
    * Processes a reaction to an entity.
+   *
+   * @return Response|array<mixed>
+   *   Resposta HTTP ou render array.
    */
   public function react(string $entity_type, string $entity_id, Request $request): Response|array {
     if (!in_array($entity_type, ['comment', 'aculta_forum_post', 'node'], TRUE)) {

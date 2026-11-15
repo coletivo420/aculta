@@ -35,7 +35,11 @@ final readonly class OrganizationContributionOutcomeRecordedEvent {
   }
 
   /**
-   * Returns the minimal queue payload without proposal content or notes. */
+   * Returns the minimal queue payload without proposal content or notes.
+   *
+   * @return array<string, mixed>
+   *   Payload mínimo da fila.
+   */
   public function toQueuePayload(): array {
     return [
       'schema_version' => self::SCHEMA_VERSION,

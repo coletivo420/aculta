@@ -26,7 +26,7 @@ class PaneSummaryData {
    *   The step label.
    * @param \Drupal\Core\Url $url
    *   The step url.
-   * @param array $panes
+   * @param array<mixed> $panes
    *   Panes with summaries.
    */
   public function __construct(

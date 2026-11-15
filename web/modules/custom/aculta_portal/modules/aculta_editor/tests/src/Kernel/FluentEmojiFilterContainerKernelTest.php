@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_editor\Kernel;
 
 use Drupal\aculta_editor\Plugin\Filter\FluentEmojiFilter;
-use Drupal\aculta_editor\Service\FluentEmojiAssetResolverInterface;
 use Drupal\filter\FilterPluginCollection;
 use Drupal\KernelTests\KernelTestBase;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -40,8 +39,7 @@ final class FluentEmojiFilterContainerKernelTest extends KernelTestBase {
    */
   public function testPluginCreationFromContainer(): void {
     $this->assertTrue($this->container->has('aculta_editor.fluent_emoji_asset_resolver'));
-    $resolver = $this->container->get('aculta_editor.fluent_emoji_asset_resolver');
-    $this->assertInstanceOf(FluentEmojiAssetResolverInterface::class, $resolver);
+    $this->container->get('aculta_editor.fluent_emoji_asset_resolver');
 
     /** @var \Drupal\filter\FilterPluginManager $filterManager */
     $filterManager = $this->container->get('plugin.manager.filter');

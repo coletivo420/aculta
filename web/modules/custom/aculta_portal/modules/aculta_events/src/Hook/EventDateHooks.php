@@ -84,7 +84,8 @@ final class EventDateHooks {
     // O conjunto muda quando a próxima data terminar, não a cada requisição.
     $validade = $this->proximas->validade($ocorrencias, $agora);
     if ($validade !== NULL) {
-      $view->element['#cache']['max-age'] = $validade;
+      $cache = $view->element['#cache'] ?? [];
+      $view->element['#cache'] = is_array($cache) ? array_merge($cache, ['max-age' => $validade]) : ['max-age' => $validade];
     }
   }
 

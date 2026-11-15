@@ -43,7 +43,7 @@ class ShipmentAddressBinderTest extends UnitTestCase {
   /**
    * Cria o binder com a origem configurada e um dublê de CEP.
    *
-   * @param array|null $origin
+   * @param array<string, mixed>|null $origin
    *   Endereço de origem da configuração, ou NULL.
    *
    * @return \Drupal\aculta_commerce_melhorenvio\Address\ShipmentAddressBinder

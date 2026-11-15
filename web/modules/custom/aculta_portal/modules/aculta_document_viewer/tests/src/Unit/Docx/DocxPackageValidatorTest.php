@@ -90,7 +90,7 @@ final class DocxPackageValidatorTest extends UnitTestCase {
    */
   public function testValidPackageIsAccepted(): void {
     (new DocxPackageValidator())->validate($this->package($this->validEntries()));
-    $this->assertTrue(TRUE);
+    $this->expectNotToPerformAssertions();
   }
 
   /**
