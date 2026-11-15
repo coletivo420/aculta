@@ -58,9 +58,7 @@ foreach ($ids as $id) {
     ];
     if ($previous !== NULL) {
       foreach ($installed->getLastInstalledFieldStorageDefinitions($id) as $name => $definition) {
-        $record['field_providers'][$name] = method_exists($definition, 'getProvider')
-          ? $definition->getProvider()
-          : NULL;
+        $record['field_providers'][$name] = $definition->getProvider();
       }
       ksort($record['field_providers']);
     }
@@ -76,11 +74,21 @@ foreach ($tables as $table) {
     $exists = $schema->tableExists($table);
     $record = ['exists' => $exists, 'rows' => NULL, 'distinct_uuids' => NULL];
     if ($exists) {
-      $record['rows'] = (int) $database->select($table, 't')->countQuery()->execute()->fetchField();
+      $statementRows = $database->select($table, 't')->countQuery()->execute();
+      if ($statementRows === NULL) {
+        throw new \RuntimeException('consulta de contagem sem resultado');
+      }
+      $rowsValue = $statementRows->fetchField();
+      $record['rows'] = is_numeric($rowsValue) ? (int) $rowsValue : 0;
       if ($schema->fieldExists($table, 'uuid')) {
         $query = $database->select($table, 't');
         $query->addExpression('COUNT(DISTINCT t.uuid)', 'distinct_uuids');
-        $record['distinct_uuids'] = (int) $query->execute()->fetchField();
+        $statementUuids = $query->execute();
+        if ($statementUuids === NULL) {
+          throw new \RuntimeException('consulta de uuids sem resultado');
+        }
+        $uuidsValue = $statementUuids->fetchField();
+        $record['distinct_uuids'] = is_numeric($uuidsValue) ? (int) $uuidsValue : 0;
       }
     }
     $report['tables'][$table] = $record;
@@ -92,11 +100,16 @@ foreach ($tables as $table) {
 
 try {
   foreach ($configStorage->listAll() as $name) {
+    if (!is_string($name)) {
+      continue;
+    }
     $config = $configStorage->read($name);
     if (!is_array($config)) {
       continue;
     }
-    if (in_array('private_message', (array) ($config['dependencies']['module'] ?? []), TRUE)) {
+    $dependencias = $config['dependencies'] ?? [];
+    $modulos = is_array($dependencias) ? ($dependencias['module'] ?? []) : [];
+    if (in_array('private_message', (array) $modulos, TRUE)) {
       $report['config_dependencies'][] = $name;
     }
   }
