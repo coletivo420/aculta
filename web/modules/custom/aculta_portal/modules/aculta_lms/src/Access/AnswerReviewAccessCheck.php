@@ -48,7 +48,8 @@ final class AnswerReviewAccessCheck {
         && ($answerCourse = $this->eligibility->courseForAnswer($answer)) instanceof GroupInterface
         && (string) $answerCourse->id() === (string) $course->id();
       if ($allowed) {
-        $studentId = (int) $answer->get('uid')->value;
+        $uidBruto = $answer->get('uid')->value;
+        $studentId = is_scalar($uidBruto) ? (int) $uidBruto : 0;
         $allowed = FALSE;
         foreach ($this->memberships->loadByGroup($group) as $membership) {
           if ($membership->getPluginId() !== 'group_membership') {

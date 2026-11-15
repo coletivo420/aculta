@@ -43,6 +43,9 @@ function aculta_lms_update_10003(): void {
  * Implements hook_requirements().
  *
  * Uploads of file answers need the private file system (ported from lms_file_upload).
+ *
+ * @return array<mixed>
+ *   Requisitos reportados.
  */
 #[\Drupal\Core\Hook\Attribute\LegacyRequirementsHook]
 function aculta_lms_requirements(string $phase): array {

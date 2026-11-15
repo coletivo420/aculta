@@ -143,6 +143,9 @@ final class RestrictedForumRelationshipHooksTest extends TestCase {
 
   /**
    * Returns a query fixture resolving to the given ids.
+   *
+   * @param array<mixed> $ids
+   *   Identificadores.
    */
   private function query(array $ids): QueryInterface {
     $query = $this->createMock(QueryInterface::class);

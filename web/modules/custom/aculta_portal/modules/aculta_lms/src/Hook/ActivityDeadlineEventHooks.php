@@ -50,11 +50,12 @@ final class ActivityDeadlineEventHooks {
   /**
    * Dispatches only the deadline relation UUID and a dedupe version. */
   private function publish(GroupRelationshipInterface $relationship): void {
+    $prazoBruto = $relationship->get('field_activity_due_at')->value;
     $this->eventDispatcher->dispatch(new ActivityDeadlineAssignedEvent(
       (string) $relationship->uuid(),
       ActivityDeadlineAssignedEvent::versionFor(
         (string) $relationship->uuid(),
-        (string) $relationship->get('field_activity_due_at')->value,
+        is_scalar($prazoBruto) ? (string) $prazoBruto : '',
         (int) $relationship->getChangedTime(),
       ),
     ));

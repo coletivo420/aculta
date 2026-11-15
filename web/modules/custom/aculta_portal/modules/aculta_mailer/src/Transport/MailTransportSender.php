@@ -32,7 +32,8 @@ final class MailTransportSender {
    * aplica (outro tipo de transporte, endereço de retorno vazio ou inválido), e o Symfony usa o remetente.
    */
   public function envelopeFor(MailTransport $transport, Email $email): ?Envelope {
-    $bounce = trim((string) $this->configFactory->get(DeliverySettings::CONFIG)->get('bounce_address'));
+    $bounceBruto = $this->configFactory->get(DeliverySettings::CONFIG)->get('bounce_address');
+    $bounce = trim(is_scalar($bounceBruto) ? (string) $bounceBruto : '');
     if ($transport->plugin() !== 'smtp' || $bounce === '' || filter_var($bounce, FILTER_VALIDATE_EMAIL) === FALSE) {
       return NULL;
     }

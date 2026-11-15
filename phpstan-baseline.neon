@@ -28720,12 +28720,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Hook/DiscussionReplyFormHooks.php
 
 		-
-			rawMessage: 'Method Drupal\aculta_forum\Hook\ForumCommentMoveHooks::entityOperation() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Hook/ForumCommentMoveHooks.php
-
-		-
 			rawMessage: Cannot access offset 'alias' on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 2
@@ -28736,18 +28730,6 @@ parameters:
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 2
 			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Hook/ForumHistoricModerationQueueHooks.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_forum\Hook\ForumPostAccessHooks::entityCreateAccess() has parameter $context with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Hook/ForumPostAccessHooks.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_forum\Hook\ForumProfileReactionHooks::publicProfile() has parameter $build with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Hook/ForumProfileReactionHooks.php
 
 		-
 			rawMessage: Cannot access offset '#default_value' on mixed.
@@ -28862,12 +28844,6 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Hook/ForumThemeHooks.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_forum\Hook\ForumTopicMoveHooks::entityOperation() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Hook/ForumTopicMoveHooks.php
 
 		-
 			rawMessage: Binary operation "." between literal-string and mixed results in an error.
@@ -29114,12 +29090,6 @@ parameters:
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Hook/PublicForumTopicCreateActionHooks.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_forum\Hook\PublicForumTopicHooks::entityCreateAccess() has parameter $context with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Hook/PublicForumTopicHooks.php
 
 		-
 			rawMessage: Cannot access offset 'aculta_forum_category_topic_count' on mixed.
@@ -30154,12 +30124,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Plugin/search_api/processor/ForumPostSearchAccess.php
 
 		-
-			rawMessage: 'Parameter #1 ...$cache_tags of static method Drupal\Core\Cache\Cache::mergeTags() expects list<string>, array<string> given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Plugin/views/cache/ForumPostTag.php
-
-		-
 			rawMessage: 'Argument of an invalid type Drupal\Core\Database\StatementInterface|null supplied for foreach, only iterables are supported.'
 			identifier: foreach.nonIterable
 			count: 1
@@ -30280,18 +30244,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Plugin/views/filter/PublicForumNoReplies.php
 
 		-
-			rawMessage: 'Parameter #3 $order of method Drupal\views\Plugin\views\query\Sql::addOrderBy() expects string, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Plugin/views/sort/PublicForumLastActivity.php
-
-		-
-			rawMessage: 'Parameter #3 $order of method Drupal\views\Plugin\views\query\Sql::addOrderBy() expects string, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Plugin/views/sort/PublicForumReplyCount.php
-
-		-
 			rawMessage: 'Argument of an invalid type mixed supplied for foreach, only iterables are supported.'
 			identifier: foreach.nonIterable
 			count: 1
@@ -30356,18 +30308,6 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Service/DiscussionCommentPermalinkBuilder.php
-
-		-
-			rawMessage: Cannot cast mixed to int.
-			identifier: cast.int
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Service/DiscussionReactionAccess.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_forum\Service\DiscussionReactionBuilder::build() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Service/DiscussionReactionBuilder.php
 
 		-
 			rawMessage: 'Argument of an invalid type mixed supplied for foreach, only iterables are supported.'
@@ -30442,12 +30382,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Service/DiscussionReactionManager.php
 
 		-
-			rawMessage: Cannot cast mixed to int.
-			identifier: cast.int
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Service/DiscussionReplyAccess.php
-
-		-
 			rawMessage: Cannot access offset 'data-hx-select' on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 2
@@ -30518,24 +30452,6 @@ parameters:
 			identifier: cast.int
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Service/DiscussionReplyIdempotencyManager.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_forum\Service\DiscussionReplyLazyBuilder::renderReplyComposer() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Service/DiscussionReplyLazyBuilder.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_forum\Service\DiscussionReplyUrlBuilder::buildHostReplyUrl() has parameter $extraQuery with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Service/DiscussionReplyUrlBuilder.php
-
-		-
-			rawMessage: Cannot cast mixed to int.
-			identifier: cast.int
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Service/DiscussionThreadDepthResolver.php
 
 		-
 			rawMessage: 'Cannot call method access() on mixed.'
@@ -31028,12 +30944,6 @@ parameters:
 			identifier: globalDrupalDependencyInjection.useDependencyInjection
 			count: 5
 			path: web/modules/custom/aculta_portal/modules/aculta_forum/tests/modules/aculta_forum_post_test/src/Hook/ForumPostEntityTestHooks.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_forum_restricted_test\Hook\AssociadoEntityTestHooks::entityTypeAlter() has parameter $entity_types with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/tests/modules/aculta_forum_restricted_test/src/Hook/AssociadoEntityTestHooks.php
 
 		-
 			rawMessage: 'Method Drupal\aculta_forum_restricted_test\Hook\RestrictedForumAccessTestHooks::nodeAccessRecords() return type has no value type specified in iterable type array.'
@@ -33178,12 +33088,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_forum/tests/src/Unit/ContentIndex/ForumContentIndexProviderServiceTest.php
 
 		-
-			rawMessage: 'Call to static method PHPUnit\Framework\Assert::assertInstanceOf() with ''Drupal\\aculta_portal\\ContentIndex\\ContentIndexAccessContextProviderInterface'' and Drupal\aculta_forum\ContentIndex\ForumContentIndexProvider will always evaluate to true.'
-			identifier: staticMethod.alreadyNarrowedType
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/tests/src/Unit/ContentIndex/ForumContentIndexProviderTest.php
-
-		-
 			rawMessage: Binary operation "." between non-falsy-string and mixed results in an error.
 			identifier: binaryOp.invalid
 			count: 1
@@ -35110,12 +35014,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_forum/tests/src/Unit/Hook/ForumPostAccessHooksTest.php
 
 		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Field\FieldDefinitionInterface::isRevisionable().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/tests/src/Unit/Hook/ForumPostMigrationFieldHooksTest.php
-
-		-
 			rawMessage: 'Argument of an invalid type mixed supplied for foreach, only iterables are supported.'
 			identifier: foreach.nonIterable
 			count: 1
@@ -35566,12 +35464,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_forum/tests/src/Unit/RestrictedForum/RestrictedForumAccessPolicyTest.php
 
 		-
-			rawMessage: 'Method Drupal\Tests\aculta_forum\Unit\RestrictedForum\RestrictedForumGroupResolverTest::query() has parameter $ids with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/tests/src/Unit/RestrictedForum/RestrictedForumGroupResolverTest.php
-
-		-
 			rawMessage: 'Call to an undefined method Drupal\group\Entity\GroupInterface::expects().'
 			identifier: method.notFound
 			count: 6
@@ -35606,12 +35498,6 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_forum/tests/src/Unit/RestrictedForum/RestrictedForumMembershipSyncTest.php
-
-		-
-			rawMessage: 'Method Drupal\Tests\aculta_forum\Unit\RestrictedForum\RestrictedForumRelationshipHooksTest::query() has parameter $ids with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/tests/src/Unit/RestrictedForum/RestrictedForumRelationshipHooksTest.php
 
 		-
 			rawMessage: 'Call to an undefined method Drupal\Core\Access\AccessResultInterface::getCacheContexts().'
@@ -36046,12 +35932,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_gallery/src/Hook/GalleryViewHooks.php
 
 		-
-			rawMessage: 'Method Drupal\aculta_gallery\ListBuilder\AcultaGalleryListBuilder::buildRow() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_gallery/src/ListBuilder/AcultaGalleryListBuilder.php
-
-		-
 			rawMessage: 'Cannot call method id() on Drupal\filter\FilterFormatInterface|null.'
 			identifier: method.nonObject
 			count: 1
@@ -36074,12 +35954,6 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_gallery/src/Plugin/CKEditor5Plugin/CreateGallery.php
-
-		-
-			rawMessage: 'Call to static method PHPUnit\Framework\Assert::assertInstanceOf() with ''Drupal\\aculta_gallery\\ListBuilder\\AcultaGalleryListBuilder'' and Drupal\aculta_gallery\ListBuilder\AcultaGalleryListBuilder will always evaluate to true.'
-			identifier: staticMethod.alreadyNarrowedType
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_gallery/tests/src/Unit/ListBuilder/AcultaGalleryListBuilderTest.php
 
 		-
 			rawMessage: Cannot access an offset on mixed.
@@ -37046,12 +36920,6 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_id_cpf/src/Service/CpfLoginFormCallbacks.php
-
-		-
-			rawMessage: 'Parameter #1 $id of method Drupal\Core\Entity\EntityStorageBase::load() expects int|string, int|null given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_id_cpf/src/Service/CpfLoginIdentifierResolver.php
 
 		-
 			rawMessage: 'Method Drupal\aculta_id_cpf\Service\DocumentCipher::key() should return string|null but returns string|false.'
@@ -38200,12 +38068,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_image/tests/src/Unit/ImageCompressorTest.php
 
 		-
-			rawMessage: Variable $image is never read.
-			identifier: variable.unused
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_image/tests/src/Unit/ImageQuarantineOwnershipTest.php
-
-		-
 			rawMessage: 'Call to static method PHPUnit\Framework\Assert::assertTrue() with true will always evaluate to true.'
 			identifier: staticMethod.alreadyNarrowedType
 			count: 1
@@ -38324,18 +38186,6 @@ parameters:
 			identifier: array.unusedOffset
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_index/src/Controller/ContentIndexStatusController.php
-
-		-
-			rawMessage: Cannot cast mixed to string.
-			identifier: cast.string
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_index/src/Drush/Commands/ContentIndexAuditCommand.php
-
-		-
-			rawMessage: Cannot cast mixed to string.
-			identifier: cast.string
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_index/src/Drush/Commands/ContentIndexQueueCommand.php
 
 		-
 			rawMessage: Cannot cast mixed to string.
@@ -39394,12 +39244,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_index/src/Storage/ContentIndexWriter.php
 
 		-
-			rawMessage: 'Method Drupal\aculta_index_forum_access_test\Hook\AssociadoEntityTestHooks::entityTypeAlter() has parameter $entity_types with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_index/tests/modules/aculta_index_forum_access_test/src/Hook/AssociadoEntityTestHooks.php
-
-		-
 			rawMessage: 'Method Drupal\aculta_index_forum_access_test\Hook\ForumAccessTestHooks::nodeAccessRecords() return type has no value type specified in iterable type array.'
 			identifier: missingType.iterableValue
 			count: 1
@@ -39494,12 +39338,6 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_index/tests/modules/aculta_index_test/src/ContentIndex/SampleContentProvider.php
-
-		-
-			rawMessage: 'Function aculta_index_wiki_access_test_entity_access() never returns null so it can be removed from the return type.'
-			identifier: return.unusedType
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_index/tests/modules/aculta_index_wiki_access_test/aculta_index_wiki_access_test.module
 
 		-
 			rawMessage: 'Call to function is_int() with null will always evaluate to false.'
@@ -41542,12 +41380,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_linkweed/aculta_linkweed.install
 
 		-
-			rawMessage: 'Method Drupal\aculta_linkweed\Access\LinkAccessControlHandler::checkCreateAccess() has parameter $context with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_linkweed/src/Access/LinkAccessControlHandler.php
-
-		-
 			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::getOwnerId().'
 			identifier: method.notFound
 			count: 4
@@ -41840,12 +41672,6 @@ parameters:
 			identifier: argument.templateType
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_linkweed/src/Controller/LinksDashboardController.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_linkweed\Controller\LinksLandingController::view() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_linkweed/src/Controller/LinksLandingController.php
 
 		-
 			rawMessage: 'Call to an undefined method Drupal\Core\Field\FieldDefinitionInterface::setDisplayOptions().'
@@ -42236,12 +42062,6 @@ parameters:
 			identifier: offsetAccess.invalidOffset
 			count: 2
 			path: web/modules/custom/aculta_portal/modules/aculta_linkweed/src/Form/SocialLinksSettingsForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_linkweed\Hook\AcultaLinksThemeHooks::theme() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_linkweed/src/Hook/AcultaLinksThemeHooks.php
 
 		-
 			rawMessage: Cannot access offset '#date_timezone' on mixed.
@@ -42934,12 +42754,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_linkweed/tests/src/Unit/LinksThemeHooksTest.php
 
 		-
-			rawMessage: 'Function aculta_lms_requirements() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/aculta_lms.install
-
-		-
 			rawMessage: Cannot access offset 'meta' on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
@@ -42992,24 +42806,6 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Access/AnswerAttachmentAccessCheck.php
-
-		-
-			rawMessage: Cannot cast mixed to int.
-			identifier: cast.int
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Access/AnswerReviewAccessCheck.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_lms\Access\CertificateAccessControlHandler::checkCreateAccess() has parameter $context with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Access/CertificateAccessControlHandler.php
-
-		-
-			rawMessage: Cannot cast mixed to int.
-			identifier: cast.int
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Access/CertificateIssueAccessCheck.php
 
 		-
 			rawMessage: Cannot access offset 'value' on mixed.
@@ -43076,12 +42872,6 @@ parameters:
 			identifier: return.type
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Agenda/Calendar/PersonalCalendarTokens.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_lms\Agenda\Controller\PersonalCalendarController::pagina() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Agenda/Controller/PersonalCalendarController.php
 
 		-
 			rawMessage: Cannot cast mixed to int.
@@ -43264,12 +43054,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Controller/LmsForumModerationController.php
 
 		-
-			rawMessage: 'Method Drupal\aculta_lms\Controller\XapiAttemptTokenController::json() has parameter $data with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Controller/XapiAttemptTokenController.php
-
-		-
 			rawMessage: Cannot access offset 'id' on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 2
@@ -43324,12 +43108,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Deadline/ClassActivityDeadlineManager.php
 
 		-
-			rawMessage: Cannot cast mixed to string.
-			identifier: cast.string
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/EducatorFeedbackPolicy.php
-
-		-
 			rawMessage: Cannot cast mixed to int.
 			identifier: cast.int
 			count: 2
@@ -43352,12 +43130,6 @@ parameters:
 			identifier: cast.string
 			count: 5
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Entity/AnswerEntity.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_lms\Entity\CourseCertificate::baseFieldDefinitions() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Entity/CourseCertificate.php
 
 		-
 			rawMessage: Cannot access offset 'activity_id'|'answer_config'|'changed'|'course_id'|'created'|'finished'|'graded'|'lesson_id'|'published'|'state'|'status'|'title'|'type'|'uid'|'weight' on mixed.
@@ -43885,12 +43657,6 @@ parameters:
 			rawMessage: Cannot cast mixed to string.
 			identifier: cast.string
 			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Hook/ActivityDeadlineEventHooks.php
-
-		-
-			rawMessage: Cannot cast mixed to string.
-			identifier: cast.string
-			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Hook/ActivityDeadlineFormHooks.php
 
 		-
@@ -44020,12 +43786,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Hook/CoreEditorAssetOrderingHooks.php
 
 		-
-			rawMessage: Cannot cast mixed to int.
-			identifier: cast.int
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Hook/CourseContentEventHooks.php
-
-		-
 			rawMessage: Cannot access an offset on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
@@ -44080,12 +43840,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Hook/CourseResourcesHooks.php
 
 		-
-			rawMessage: 'Method Drupal\aculta_lms\Hook\CourseRoomHooks::entityView() has parameter $build with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Hook/CourseRoomHooks.php
-
-		-
 			rawMessage: Cannot access offset 'value' on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
@@ -44102,12 +43856,6 @@ parameters:
 			identifier: cast.string
 			count: 2
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Hook/CourseStatusEventHooks.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_lms\Hook\EducatorFeedbackAuthorCardHooks::entityView() has parameter $build with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Hook/EducatorFeedbackAuthorCardHooks.php
 
 		-
 			rawMessage: Cannot access an offset on mixed.
@@ -44152,12 +43900,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Hook/EnrollmentFormHooks.php
 
 		-
-			rawMessage: 'Method Drupal\aculta_lms\Hook\LearningDashboardHooks::addStudentDashboard() has parameter $sections with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Hook/LearningDashboardHooks.php
-
-		-
 			rawMessage: Cannot access offset '#items' on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
@@ -44168,12 +43910,6 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Hook/LmsActivityDiscussionHooks.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_lms\Hook\LmsCommentModerationOperationsHooks::entityOperation() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Hook/LmsCommentModerationOperationsHooks.php
 
 		-
 			rawMessage: Cannot access offset '#description' on mixed.
@@ -44650,12 +44386,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Plugin/QueueWorker/EventoTurmaNotificationWorker.php
 
 		-
-			rawMessage: 'Parameter #1 $path of function pathinfo expects string, string|null given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Plugin/Validation/Constraint/LmsSubmissionImageValidator.php
-
-		-
 			rawMessage: 'Parameter #1 $other of method Drupal\Core\Access\AccessResult::andIf() expects Drupal\Core\Access\AccessResultInterface, bool|Drupal\Core\Access\AccessResultInterface given.'
 			identifier: argument.type
 			count: 1
@@ -44926,12 +44656,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Wizard/Step/CourseStructureStepForm.php
 
 		-
-			rawMessage: 'Method Drupal\aculta_lms\Xapi\XapiAttemptToken::verify() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Xapi/XapiAttemptToken.php
-
-		-
 			rawMessage: Cannot access offset 'completion' on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
@@ -44972,12 +44696,6 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Xapi/XapiProgressDeriver.php
-
-		-
-			rawMessage: Cannot cast mixed to string.
-			identifier: cast.string
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Xapi/XapiStatementRetentionPurger.php
 
 		-
 			rawMessage: 'Method Drupal\aculta_lms_resources_gallery_access_test\Plugin\Group\Relation\CourseDocument::defaultConfiguration() return type has no value type specified in iterable type array.'
@@ -53944,12 +53662,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_mail_confirmer/tests/src/Kernel/UserEmailChangeKernelTest.php
 
 		-
-			rawMessage: 'Method Drupal\aculta_mailer\Access\MailLogAccessControlHandler::checkCreateAccess() has parameter $context with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_mailer/src/Access/MailLogAccessControlHandler.php
-
-		-
 			rawMessage: Cannot cast mixed to int.
 			identifier: cast.int
 			count: 2
@@ -54750,12 +54462,6 @@ parameters:
 		-
 			rawMessage: Cannot cast mixed to string.
 			identifier: cast.string
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_mailer/src/EventSubscriber/ReturnPathSubscriber.php
-
-		-
-			rawMessage: Cannot cast mixed to string.
-			identifier: cast.string
 			count: 9
 			path: web/modules/custom/aculta_portal/modules/aculta_mailer/src/Form/MailAlertSettingsForm.php
 
@@ -55360,22 +55066,10 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_mailer/src/Hook/MailHooks.php
 
 		-
-			rawMessage: 'Method Drupal\aculta_mailer\Hook\MailThemeHooks::theme() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_mailer/src/Hook/MailThemeHooks.php
-
-		-
 			rawMessage: Cannot cast mixed to string.
 			identifier: cast.string
 			count: 2
 			path: web/modules/custom/aculta_portal/modules/aculta_mailer/src/Log/MailLogRecorder.php
-
-		-
-			rawMessage: Cannot cast mixed to int.
-			identifier: cast.int
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_mailer/src/Log/MailLogSettings.php
 
 		-
 			rawMessage: 'Method Drupal\aculta_mailer\Log\MailPayloadCipher::decrypt() return type has no value type specified in iterable type array.'
@@ -55770,18 +55464,6 @@ parameters:
 		-
 			rawMessage: Cannot cast mixed to string.
 			identifier: cast.string
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_mailer/src/Policy/QuotaSignal.php
-
-		-
-			rawMessage: Cannot cast mixed to int.
-			identifier: cast.int
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_mailer/src/Policy/TransportQuota.php
-
-		-
-			rawMessage: Cannot cast mixed to string.
-			identifier: cast.string
 			count: 2
 			path: web/modules/custom/aculta_portal/modules/aculta_mailer/src/Provider/BrevoEventStatus.php
 
@@ -55934,12 +55616,6 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_mailer/src/Transport/BrevoSecretTransportFactory.php
-
-		-
-			rawMessage: Cannot cast mixed to string.
-			identifier: cast.string
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_mailer/src/Transport/MailTransportSender.php
 
 		-
 			rawMessage: 'Call to an undefined method object::get().'
@@ -59898,12 +59574,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Integration/Donation/DonationNoticeManager.php
 
 		-
-			rawMessage: 'Method Drupal\aculta_messenger\Integration\Donation\DonationNoticeManager::resolve() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Integration/Donation/DonationNoticeManager.php
-
-		-
 			rawMessage: 'Method Drupal\aculta_messenger\Integration\Donation\DonationNoticeManager::setDigestDone() has parameter $deliveryIds with no value type specified in iterable type array.'
 			identifier: missingType.iterableValue
 			count: 1
@@ -59920,12 +59590,6 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Integration/Donation/DonationNoticeManager.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Integration\Donation\DonationNoticeManagerInterface::resolve() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Integration/Donation/DonationNoticeManagerInterface.php
 
 		-
 			rawMessage: 'Cannot call method toString() on mixed.'
@@ -60072,12 +59736,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Integration/Events/EventsContributionNoticeManager.php
 
 		-
-			rawMessage: 'Method Drupal\aculta_messenger\Integration\Events\EventsContributionNoticeManager::resolve() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Integration/Events/EventsContributionNoticeManager.php
-
-		-
 			rawMessage: 'Method Drupal\aculta_messenger\Integration\Events\EventsContributionNoticeManager::setDigestSent() has parameter $deliveryIds with no value type specified in iterable type array.'
 			identifier: missingType.iterableValue
 			count: 1
@@ -60094,12 +59752,6 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Integration/Events/EventsContributionNoticeManager.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Integration\Events\EventsContributionNoticeManagerInterface::resolve() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Integration/Events/EventsContributionNoticeManagerInterface.php
 
 		-
 			rawMessage: 'Cannot call method toString() on mixed.'
@@ -60384,12 +60036,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Integration/Lms/LearningNoticeManager.php
 
 		-
-			rawMessage: 'Method Drupal\aculta_messenger\Integration\Lms\LearningNoticeManager::resolve() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Integration/Lms/LearningNoticeManager.php
-
-		-
 			rawMessage: 'Method Drupal\aculta_messenger\Integration\Lms\LearningNoticeManager::resolveActivityDeadline() return type has no value type specified in iterable type array.'
 			identifier: missingType.iterableValue
 			count: 1
@@ -60466,12 +60112,6 @@ parameters:
 			identifier: argument.type
 			count: 2
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Integration/Lms/LearningNoticeManager.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Integration\Lms\LearningNoticeManagerInterface::resolve() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Integration/Lms/LearningNoticeManagerInterface.php
 
 		-
 			rawMessage: 'Method Drupal\aculta_messenger\Integration\Lms\Plugin\QueueWorker\ActivityDeadlineReminderWorker::__construct() has parameter $configuration with no value type specified in iterable type array.'
@@ -61156,12 +60796,6 @@ parameters:
 			identifier: offsetAccess.invalidOffset
 			count: 2
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Service/MessengerCounts.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Service\MessengerMailDelivery::deliver() has parameter $context with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Service/MessengerMailDelivery.php
 
 		-
 			rawMessage: 'Method Drupal\aculta_messenger\Service\NoticeFlagStateLoader::loadForAccount() should return array<int|string, array<string, string>> but returns array<array<string>>.'

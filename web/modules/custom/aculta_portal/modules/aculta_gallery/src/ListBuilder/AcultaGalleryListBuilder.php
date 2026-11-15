@@ -42,6 +42,9 @@ final class AcultaGalleryListBuilder extends MediaGalleryListBuilder {
 
   /**
    * {@inheritdoc}
+   *
+   * @return array<mixed>
+   *   Linha da listagem.
    */
   public function buildRow(EntityInterface $entity) {
     $row = parent::buildRow($entity);

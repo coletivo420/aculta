@@ -25,6 +25,13 @@ final class PublicForumTopicHooks {
 
   /**
    * Prevents topic creation when the public Forum domain is not configured.
+   *
+   * @param \Drupal\Core\Session\AccountInterface $account
+   *   Conta avaliada.
+   * @param array<mixed> $context
+   *   Contexto da criação.
+   * @param string|null $entity_bundle
+   *   Bundle da entidade, quando informado.
    */
   #[Hook('entity_create_access')]
   public function entityCreateAccess(AccountInterface $account, array $context, ?string $entity_bundle): ?AccessResult {

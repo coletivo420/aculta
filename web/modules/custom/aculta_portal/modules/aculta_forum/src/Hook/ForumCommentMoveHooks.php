@@ -26,7 +26,11 @@ final class ForumCommentMoveHooks {
   ) {}
 
   /**
- * Adds an operation to Core comment administration listings. */
+   * Adds an operation to Core comment administration listings.
+   *
+   * @return array<mixed>
+   *   Operações adicionadas.
+   */
   #[Hook('entity_operation')]
   public function entityOperation(EntityInterface $entity, CacheableMetadata $cacheability): array {
     if (!$entity instanceof CommentInterface) {

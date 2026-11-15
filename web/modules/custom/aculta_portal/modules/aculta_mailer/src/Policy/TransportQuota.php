@@ -94,7 +94,8 @@ final class TransportQuota {
    * Sinal do provedor ainda válido.
    */
   private function signalled(string $transport): bool {
-    return (int) $this->state->get(self::STATE_SIGNAL . $transport, 0) > $this->time->getRequestTime();
+    $sinal = $this->state->get(self::STATE_SIGNAL . $transport, 0);
+    return (is_scalar($sinal) ? (int) $sinal : 0) > $this->time->getRequestTime();
   }
 
   /**

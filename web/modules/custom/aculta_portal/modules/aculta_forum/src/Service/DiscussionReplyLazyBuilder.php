@@ -38,8 +38,8 @@ class DiscussionReplyLazyBuilder implements TrustedCallbackInterface {
    * @param string|null $quote
    *   Optional quote string.
    *
-   * @return array
-   *   A renderable array containing the composer.
+   * @return array<mixed>
+   *   Render array do compositor.
    */
   public function renderReplyComposer(string $entityTypeId, string $entityId, ?string $parentId = NULL, ?string $quote = NULL): array {
     $host = $this->entityTypeManager->getStorage($entityTypeId)->load($entityId);

@@ -13,7 +13,11 @@ use Drupal\Core\Hook\Attribute\Hook;
 final class AssociadoEntityTestHooks {
 
   /**
- * Adds the production marker entity definition without enabling aculta_user. */
+   * Adds the production marker entity definition without enabling aculta_user.
+   *
+   * @param array<mixed> $entity_types
+   *   Definições de tipo de entidade.
+   */
   #[Hook('entity_type_alter')]
   public function entityTypeAlter(array &$entity_types): void {
     $attributes = (new \ReflectionClass(AssociadoMarcador::class))->getAttributes(ContentEntityType::class);

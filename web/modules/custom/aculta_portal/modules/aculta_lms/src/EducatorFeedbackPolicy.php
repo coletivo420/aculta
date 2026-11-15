@@ -37,7 +37,9 @@ final class EducatorFeedbackPolicy {
     if (!$answer instanceof EntityInterface || $answer->getEntityTypeId() !== 'aculta_lms_answer') {
       return FALSE;
     }
-    if ((string) $answer->get('uid')->value === (string) $author->id()) {
+    $uidResposta = $answer->get('uid')->value;
+    $uidAutor = $author->id();
+    if ((is_scalar($uidResposta) ? (string) $uidResposta : '') === (is_scalar($uidAutor) ? (string) $uidAutor : '')) {
       return FALSE;
     }
     $course = $this->courseForAnswer($answer);

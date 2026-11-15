@@ -28,7 +28,8 @@ final class XapiStatementRetentionPurger {
   public function purge(int $retentionMonths): int {
     $now = $this->time->getRequestTime();
     $month = gmdate('Y-m', $now);
-    if ((string) $this->state->get(self::LAST_MONTH_STATE, '') === $month) {
+    $ultimoMes = $this->state->get(self::LAST_MONTH_STATE, '');
+    if ((is_string($ultimoMes) ? $ultimoMes : '') === $month) {
       return 0;
     }
 

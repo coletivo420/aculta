@@ -125,6 +125,13 @@ final class ForumPostAccessHooks {
 
   /**
    * Allows post creation only on the public Forum purpose.
+   *
+   * @param \Drupal\Core\Session\AccountInterface $account
+   *   Conta avaliada.
+   * @param array<mixed> $context
+   *   Contexto da criação.
+   * @param string|null $entity_bundle
+   *   Bundle da entidade, quando informado.
    */
   #[Hook('entity_create_access')]
   public function entityCreateAccess(AccountInterface $account, array $context, ?string $entity_bundle): ?AccessResultInterface {

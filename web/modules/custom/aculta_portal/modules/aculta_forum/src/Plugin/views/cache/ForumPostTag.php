@@ -23,7 +23,7 @@ final class ForumPostTag extends Tag {
    * {@inheritdoc}
    */
   public function getCacheTags(): array {
-    return Cache::mergeTags(parent::getCacheTags(), ['aculta_forum_post_list']);
+    return Cache::mergeTags(array_values(parent::getCacheTags()), ['aculta_forum_post_list']);
   }
 
 }

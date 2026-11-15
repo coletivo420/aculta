@@ -92,7 +92,13 @@ final class XapiAttemptTokenController {
   }
 
   /**
-   * Creates a no-store xAPI JSON response. */
+   * Creates a no-store xAPI JSON response.
+   *
+   * @param array<mixed> $data
+   *   Corpo da resposta.
+   * @param int $status
+   *   Código HTTP da resposta.
+   */
   private function json(array $data, int $status): JsonResponse {
     return new JsonResponse($data, $status, ['X-Experience-API-Version' => '2.0']);
   }

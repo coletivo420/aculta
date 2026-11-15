@@ -60,6 +60,9 @@ final class PersonalCalendarController extends ControllerBase {
 
   /**
    * Página do usuário: gerar ou revogar o link.
+   *
+   * @return array<mixed>
+   *   Render array da página.
    */
   public function pagina(): array {
     $gerar = $this->urlComCsrf('aculta_lms_agenda.gerar');

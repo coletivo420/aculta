@@ -24,7 +24,7 @@ class DiscussionThreadDepthResolver {
     if ($value === NULL) {
       return 2;
     }
-    $intVal = (int) $value;
+    $intVal = is_scalar($value) ? (int) $value : 0;
     return in_array($intVal, [0, 2, 3], TRUE) ? $intVal : 2;
   }
 

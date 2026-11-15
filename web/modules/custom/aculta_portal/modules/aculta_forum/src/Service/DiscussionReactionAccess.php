@@ -96,7 +96,8 @@ class DiscussionReactionAccess {
 
     // Check if discussion is open if host has discussion field.
     if ($host->hasField('field_aculta_discussion') && !$host->get('field_aculta_discussion')->isEmpty()) {
-      $status = (int) $host->get('field_aculta_discussion')->status;
+      $statusBruto = $host->get('field_aculta_discussion')->status;
+      $status = is_scalar($statusBruto) ? (int) $statusBruto : 0;
       if ($status !== CommentingStatus::Open->value) {
         return AccessResult::forbidden('Discussion is closed.')->addCacheableDependency($host);
       }

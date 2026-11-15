@@ -24,6 +24,11 @@ final class ForumProfileReactionHooks {
 
   /**
    * Implements hook_aculta_user_public_profile_alter().
+   *
+   * @param array<mixed> $build
+   *   Render array do perfil.
+   * @param \Drupal\profile\Entity\ProfileInterface $profile
+   *   Perfil público.
    */
   #[Hook('aculta_user_public_profile_alter')]
   public function publicProfile(array &$build, ProfileInterface $profile): void {

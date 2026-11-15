@@ -38,8 +38,8 @@ final class CourseCertificate extends ContentEntityBase {
    * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
    *   Definição do tipo de entidade.
    *
-   * @return array
-   *   Campos base indexados pelo nome.
+   * @return array<string, \Drupal\Core\Field\FieldDefinitionInterface>
+   *   Definições dos campos.
    */
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type): array {
     $fields = parent::baseFieldDefinitions($entity_type);

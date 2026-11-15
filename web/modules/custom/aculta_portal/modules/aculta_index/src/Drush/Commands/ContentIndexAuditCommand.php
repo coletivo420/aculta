@@ -41,7 +41,8 @@ final class ContentIndexAuditCommand extends Command {
    * {@inheritdoc}
    */
   protected function execute(InputInterface $input, OutputInterface $output): int {
-    $action = (string) $input->getArgument('action');
+    $argumento = $input->getArgument('action');
+    $action = is_string($argumento) ? $argumento : '';
     try {
       if ($action === 'status') {
         $result = $this->integrity->getAuditState();

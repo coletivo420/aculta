@@ -20,6 +20,9 @@ interface LearningNoticeManagerInterface extends PaginatedPersonalNoticeAdapterI
 
   /**
    * Resolves the current target only when access is still valid.
+   *
+   * @return array<mixed>
+   *   Avisos resolvidos.
    */
   public function resolve(MessageInterface $message, AccountInterface $account): ?array;
 

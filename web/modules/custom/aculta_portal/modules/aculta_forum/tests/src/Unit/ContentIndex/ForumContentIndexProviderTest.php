@@ -30,7 +30,7 @@ final class ForumContentIndexProviderTest extends UnitTestCase {
     $otherNode = $this->createMock(NodeInterface::class);
     $otherNode->method('bundle')->willReturn('article');
 
-    self::assertInstanceOf(ContentIndexAccessContextProviderInterface::class, $provider);
+    self::assertContains(ContentIndexAccessContextProviderInterface::class, class_implements($provider) ?: []);
     self::assertSame('forum', $provider->getProviderId());
     self::assertSame([
       'node' => ['aculta_forum_topic'],

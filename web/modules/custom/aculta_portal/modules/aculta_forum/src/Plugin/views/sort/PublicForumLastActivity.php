@@ -38,7 +38,7 @@ final class PublicForumLastActivity extends Date {
     $this->query->addOrderBy(
       NULL,
       $formula,
-      $this->options['order'],
+      (is_string($this->options['order']) ? $this->options['order'] : ''),
       $this->tableAlias . '_aculta_last_activity',
     );
   }

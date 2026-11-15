@@ -46,6 +46,15 @@ final class CourseRoomHooks {
 
   /**
    * Adds the overview only when its extra field is enabled in the display.
+   *
+   * @param array<mixed> $build
+   *   Render array da entidade.
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   Entidade renderizada.
+   * @param \Drupal\Core\Entity\Display\EntityViewDisplayInterface $display
+   *   Display da visualização.
+   * @param string $viewMode
+   *   Modo de visualização.
    */
   #[Hook('entity_view')]
   public function entityView(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, string $viewMode): void {

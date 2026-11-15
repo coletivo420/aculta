@@ -35,7 +35,7 @@ final class PublicForumReplyCount extends SortPluginBase {
     $this->query->addOrderBy(
       NULL,
       '(' . $commentCount . ' + ' . $postCount . ')',
-      $this->options['order'],
+      (is_string($this->options['order']) ? $this->options['order'] : ''),
       $this->tableAlias . '_aculta_reply_count',
     );
   }

@@ -21,8 +21,8 @@ class DiscussionReplyUrlBuilder {
    *   Optional parent comment or post ID.
    * @param string|null $mode
    *   Optional mode ('responder', 'citar').
-   * @param array $extraQuery
-   *   Additional query parameters to preserve (e.g. pager).
+   * @param array<string, mixed> $extraQuery
+   *   Parâmetros extras da query.
    *
    * @return \Drupal\Core\Url
    *   The destination URL on the host.

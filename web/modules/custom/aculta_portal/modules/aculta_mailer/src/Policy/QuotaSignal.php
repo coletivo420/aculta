@@ -46,7 +46,8 @@ class QuotaSignal {
     }
     $log = reset($found);
     assert($log instanceof ContentEntityInterface);
-    $this->failure((string) $log->get('transport')->value, $diagnostic);
+    $transporte = $log->get('transport')->value;
+    $this->failure(is_scalar($transporte) ? (string) $transporte : '', $diagnostic);
   }
 
 }

@@ -11,7 +11,11 @@ use Drupal\Core\Hook\Attribute\Hook;
 final class AcultaLinksThemeHooks {
 
   /**
- * Declares the template used by public micropages. */
+   * Declares the template used by public micropages.
+   *
+   * @return array<mixed>
+   *   Declaração de temas.
+   */
   #[Hook('theme')]
   public function theme(): array {
     return [

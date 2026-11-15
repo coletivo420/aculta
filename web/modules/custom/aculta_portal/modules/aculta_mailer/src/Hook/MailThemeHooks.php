@@ -16,6 +16,9 @@ final class MailThemeHooks {
 
   /**
    * Implements hook_theme().
+   *
+   * @return array<mixed>
+   *   Declaração de temas.
    */
   #[Hook('theme')]
   public function theme(): array {

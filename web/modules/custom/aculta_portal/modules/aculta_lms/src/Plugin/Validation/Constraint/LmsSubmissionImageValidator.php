@@ -36,7 +36,7 @@ final class LmsSubmissionImageValidator extends ConstraintValidator {
       throw new UnexpectedTypeException($value, FileInterface::class);
     }
 
-    $extension = strtolower(pathinfo($value->getFilename(), PATHINFO_EXTENSION));
+    $extension = strtolower(pathinfo($value->getFilename() ?? '', PATHINFO_EXTENSION));
     if (!in_array($extension, explode(' ', UploadPolicy::EXTENSIONS), TRUE)) {
       return;
     }

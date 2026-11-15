@@ -37,7 +37,8 @@ final class ReturnPathSubscriber implements EventSubscriberInterface {
     if ($event->isQueued() || $this->isApiTransport($event->getTransport())) {
       return;
     }
-    $address = trim((string) $this->configFactory->get(DeliverySettings::CONFIG)->get('bounce_address'));
+    $bounceBruto = $this->configFactory->get(DeliverySettings::CONFIG)->get('bounce_address');
+    $address = trim(is_scalar($bounceBruto) ? (string) $bounceBruto : '');
     if ($address === '' || filter_var($address, FILTER_VALIDATE_EMAIL) === FALSE) {
       return;
     }

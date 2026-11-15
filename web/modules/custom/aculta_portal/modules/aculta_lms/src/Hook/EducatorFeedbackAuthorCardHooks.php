@@ -34,6 +34,15 @@ final class EducatorFeedbackAuthorCardHooks {
 
   /**
    * Implements hook_entity_view() for LMS answer feedback comments.
+   *
+   * @param array<mixed> $build
+   *   Render array da entidade.
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   Entidade renderizada.
+   * @param \Drupal\Core\Entity\Display\EntityViewDisplayInterface $display
+   *   Display da visualização.
+   * @param string $view_mode
+   *   Modo de visualização.
    */
   #[Hook('entity_view')]
   public function entityView(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, string $view_mode): void {

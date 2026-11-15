@@ -68,7 +68,8 @@ final class CourseContentEventHooks {
       return (bool) $entity->get('published')->value;
     }
     if ($entity->getEntityTypeId() === 'aculta_lms_activity') {
-      $lesson = $this->entityTypeManager->getStorage('aculta_lms_lesson')->load((int) $entity->get('lesson_id')->value);
+      $aulaBruta = $entity->get('lesson_id')->value;
+      $lesson = $this->entityTypeManager->getStorage('aculta_lms_lesson')->load(is_scalar($aulaBruta) ? (int) $aulaBruta : 0);
       return $lesson instanceof ContentEntityInterface && (bool) $lesson->get('published')->value;
     }
     return FALSE;

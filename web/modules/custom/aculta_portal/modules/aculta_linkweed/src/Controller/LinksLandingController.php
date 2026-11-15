@@ -32,6 +32,9 @@ final class LinksLandingController {
 
   /**
    * Builds the editorial page when available, or a safe configured fallback.
+   *
+   * @return array<mixed>
+   *   Render array da página.
    */
   public function view(): array {
     $domain = $this->siteManager->getDomain(SiteKey::Links);

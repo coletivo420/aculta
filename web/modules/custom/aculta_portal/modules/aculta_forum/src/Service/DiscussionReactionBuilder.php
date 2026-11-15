@@ -24,6 +24,9 @@ class DiscussionReactionBuilder {
 
   /**
    * Builds the render array for the reaction bar of a comment or forum post.
+   *
+   * @return array<mixed>
+   *   Render array.
    */
   public function build(EntityInterface $entity, AccountInterface $account): array {
     $entityType = $entity->getEntityTypeId();
