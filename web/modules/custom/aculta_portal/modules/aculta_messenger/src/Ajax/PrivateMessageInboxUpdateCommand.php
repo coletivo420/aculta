@@ -14,10 +14,10 @@ class PrivateMessageInboxUpdateCommand implements CommandInterface {
   /**
    * Constructs a new command instance.
    *
-   * @param array<string, mixed> $threadIds
+   * @param list<int|string> $threadIds
    *   The thread IDs, in the order that they should appear when the inbox is
    *   updated.
-   * @param array<string, mixed> $newThreads
+   * @param array<int|string, mixed> $newThreads
    *   The HTML for the messages to be inserted in the page.
    */
   public function __construct(
