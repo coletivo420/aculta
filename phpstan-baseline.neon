@@ -47913,35 +47913,10 @@ parameters:
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_lms_h5p/src/Plugin/EntityReferenceSelection/CourseH5PContentSelection.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_lms_h5p\Plugin\EntityReferenceSelection\CourseH5PContentSelection::__construct() has parameter $configuration with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms_h5p/src/Plugin/EntityReferenceSelection/CourseH5PContentSelection.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_lms_h5p\Plugin\EntityReferenceSelection\CourseH5PContentSelection::create() has parameter $configuration with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms_h5p/src/Plugin/EntityReferenceSelection/CourseH5PContentSelection.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_lms_h5p\Plugin\EntityReferenceSelection\CourseH5PContentSelection::getReferenceableEntities() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms_h5p/src/Plugin/EntityReferenceSelection/CourseH5PContentSelection.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_lms_h5p\Plugin\EntityReferenceSelection\CourseH5PContentSelection::validateReferenceableEntities() has parameter $ids with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms_h5p/src/Plugin/EntityReferenceSelection/CourseH5PContentSelection.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_lms_h5p\Plugin\EntityReferenceSelection\CourseH5PContentSelection::validateReferenceableEntities() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms_h5p/src/Plugin/EntityReferenceSelection/CourseH5PContentSelection.php
 
 		-
 			rawMessage: 'Parameter #1 $array of function array_keys expects array, mixed given.'
@@ -47949,11 +47924,6 @@ parameters:
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_lms_h5p/src/Plugin/EntityReferenceSelection/CourseH5PContentSelection.php
 
-		-
-			rawMessage: 'Parameter #1 $callback of function array_map expects (callable(mixed): mixed)|null, ''intval'' given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms_h5p/src/Plugin/EntityReferenceSelection/CourseH5PContentSelection.php
 
 		-
 			rawMessage: 'Parameter #1 $value of function count expects array|Countable, mixed given.'
@@ -57123,11 +57093,6 @@ parameters:
 			count: 2
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Aviso/PrivateMessageDigestProvider.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Aviso\PrivateMessageDigestProvider::markRecordsDone() has parameter $notices with no value type specified in iterable type iterable.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Aviso/PrivateMessageDigestProvider.php
 
 		-
 			rawMessage: 'Parameter #1 $ids of method Drupal\Core\Entity\EntityStorageInterface::loadMultiple() expects array<int|string>|null, array|int given.'
@@ -57375,53 +57340,13 @@ parameters:
 			count: 10
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Controller\MessagesController::alertsBuild() has parameter $filters with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Controller\MessagesController::alertsBuild() has parameter $pagination with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Controller\MessagesController::alertsBuild() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Controller\MessagesController::alertsFilterControlsBuild() has parameter $filters with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Controller\MessagesController::alertsFilterControlsBuild() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Controller\MessagesController::alertsFilterDetailsBuild() has parameter $filters with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Controller\MessagesController::alertsFilterDetailsBuild() has parameter $options with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Controller\MessagesController::alertsFilterDetailsBuild() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php
 
 		-
 			rawMessage: 'Method Drupal\aculta_messenger\Controller\MessagesController::assertOtherMember() has parameter $access with no type specified.'
@@ -57429,197 +57354,37 @@ parameters:
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Controller\MessagesController::backToConversationsLink() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Controller\MessagesController::backToNoticesLink() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Controller\MessagesController::buildConversationList() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Controller\MessagesController::buildDismissalLink() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Controller\MessagesController::buildDrawerResponse() has parameter $build with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Controller\MessagesController::buildDrawerResponse() has parameter $headers with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Controller\MessagesController::buildPersistentNoticeItems() has parameter $filters with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Controller\MessagesController::buildPersistentNoticeItems() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Controller\MessagesController::buildReadLink() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Controller\MessagesController::conversasBuild() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Controller\MessagesController::conversationResponse() has parameter $access with no type specified.'
-			identifier: missingType.parameter
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Controller\MessagesController::conversationResponse() has parameter $actedPanel with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Controller\MessagesController::conversationResponse() has parameter $panel with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Controller\MessagesController::lazyOptionsDisclosure() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Controller\MessagesController::memberBoxes() has parameter $actedPanel with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Controller\MessagesController::memberBoxes() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Controller\MessagesController::memberPanel() has parameter $result with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Controller\MessagesController::memberPanel() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Controller\MessagesController::menuFragment() has parameter $build with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Controller\MessagesController::newConversationAction() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Controller\MessagesController::noticeSummary() has parameter $rotulo with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Controller\MessagesController::noticeSummary() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Controller\MessagesController::optionsDisclosure() has parameter $panel with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Controller\MessagesController::optionsDisclosure() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Controller\MessagesController::readLabel() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Controller\MessagesController::relationshipForm() has parameter $panel with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Controller\MessagesController::relationshipForm() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Controller\MessagesController::runMemberAction() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Controller\MessagesController::runRelationshipAction() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Controller\MessagesController::submitRelationshipForm() has parameter $input with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Controller\MessagesController::withNoticeFilterMetadata() has parameter $item with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Controller\MessagesController::withNoticeFilterMetadata() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php
 
 		-
 			rawMessage: 'Offset ''alerta''|''amizade''|''aprendizagem''|''comunicado''|''conquistas''|''doacao''|''forum''|''loja''|''wiki'' might not exist on array{comunicado?: Drupal\aculta_messenger\Aviso\PersonalNoticePageState, forum: Drupal\aculta_messenger\Aviso\PersonalNoticePageState, alerta?: Drupal\aculta_messenger\Aviso\PersonalNoticePageState, amizade?: Drupal\aculta_messenger\Aviso\PersonalNoticePageState, aprendizagem?: Drupal\aculta_messenger\Aviso\PersonalNoticePageState, wiki?: Drupal\aculta_messenger\Aviso\PersonalNoticePageState, revista?: Drupal\aculta_messenger\Aviso\PersonalNoticePageState, loja?: Drupal\aculta_messenger\Aviso\PersonalNoticePageState, ...}.'
@@ -57693,11 +57458,6 @@ parameters:
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php
 
-		-
-			rawMessage: 'Parameter #2 $panel of static method Drupal\aculta_messenger\Support\OptionsDisclosure::build() expects array<string, mixed>, array given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php
 
 		-
 			rawMessage: 'Parameter #3 $filters of static method Drupal\aculta_messenger\Service\NoticePaginationUrlBuilder::filteredPage() expects array<string, string>, array<mixed> given.'
@@ -57711,11 +57471,6 @@ parameters:
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php
 
-		-
-			rawMessage: 'Parameter #4 $dismiss of method Drupal\aculta_messenger\Controller\MessagesController::noticeSummary() expects array<string, mixed>, array given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php
 
 		-
 			rawMessage: 'Parameter #4 $filters of static method Drupal\aculta_messenger\Service\NoticePaginationUrlBuilder::globalPage() expects array<string, string>, array<mixed> given.'
@@ -57741,41 +57496,11 @@ parameters:
 			count: 2
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/NewConversationController.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Controller\NewConversationController::backLink() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/NewConversationController.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Controller\NewConversationController::candidates() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/NewConversationController.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Controller\NewConversationController::fragment() has parameter $build with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/NewConversationController.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Controller\NewConversationController::memberResults() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/NewConversationController.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Controller\NewConversationController::nativeSearchForm() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/NewConversationController.php
 
-		-
-			rawMessage: 'Parameter #1 $candidates of method Drupal\aculta_messenger\Controller\NewConversationController::memberResults() expects array<int, array{user: Drupal\user\UserInterface, name: string}>, non-empty-array given.'
-			identifier: argument.type
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/NewConversationController.php
 
 		-
 			rawMessage: 'Argument of an invalid type mixed supplied for foreach, only iterables are supported.'
@@ -57999,59 +57724,14 @@ parameters:
 			count: 5
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/ConversationRelationshipForm.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Form\ConversationRelationshipForm::buildForm() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/ConversationRelationshipForm.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Form\ConversationRelationshipForm::buildForm() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/ConversationRelationshipForm.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Form\ConversationRelationshipForm::button() has parameter $label with no type specified.'
-			identifier: missingType.parameter
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/ConversationRelationshipForm.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Form\ConversationRelationshipForm::button() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/ConversationRelationshipForm.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Form\ConversationRelationshipForm::clearItems() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/ConversationRelationshipForm.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Form\ConversationRelationshipForm::groupForm() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/ConversationRelationshipForm.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Form\ConversationRelationshipForm::statusLine() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/ConversationRelationshipForm.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Form\ConversationRelationshipForm::submitForm() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/ConversationRelationshipForm.php
 
-		-
-			rawMessage: 'Parameter #1 $form of static method Drupal\aculta_messenger\Support\ConfirmDialog::add() expects array<string, mixed>, array given.'
-			identifier: argument.type
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/ConversationRelationshipForm.php
 
 		-
 			rawMessage: 'Parameter #1 $postUrl of method Drupal\aculta_messenger\Form\ConversationRelationshipForm::actionWithSessionToken() expects string, mixed given.'
@@ -58197,53 +57877,13 @@ parameters:
 			count: 2
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/NewConversationForm.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Form\NewConversationForm::buildForm() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/NewConversationForm.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Form\NewConversationForm::buildForm() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/NewConversationForm.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Form\NewConversationForm::chip() has parameter $selectedIds with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/NewConversationForm.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Form\NewConversationForm::chip() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/NewConversationForm.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Form\NewConversationForm::recipientIds() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/NewConversationForm.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Form\NewConversationForm::submitForm() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/NewConversationForm.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Form\NewConversationForm::validateForm() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/NewConversationForm.php
 
-		-
-			rawMessage: 'Parameter #1 $array of function array_diff expects an array of values castable to string, array given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/NewConversationForm.php
 
 		-
 			rawMessage: 'Parameter #1 $id of method Drupal\Core\Entity\ContentEntityStorageBase::loadUnchanged() expects int|string, mixed given.'
@@ -58317,47 +57957,12 @@ parameters:
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/PrivateMessageFormValidator.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Form\PrivateMessageFormValidator::enforcePlainTextFormat() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/PrivateMessageFormValidator.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Form\PrivateMessageFormValidator::hidePlainTextGuidelines() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/PrivateMessageFormValidator.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Form\PrivateMessageFormValidator::hidePlainTextGuidelines() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/PrivateMessageFormValidator.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Form\PrivateMessageFormValidator::registerRateLimit() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/PrivateMessageFormValidator.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Form\PrivateMessageFormValidator::validateBlockedRecipients() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/PrivateMessageFormValidator.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Form\PrivateMessageFormValidator::validateNewConversationPrivacy() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/PrivateMessageFormValidator.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Form\PrivateMessageFormValidator::validateRateLimit() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/PrivateMessageFormValidator.php
 
 		-
 			rawMessage: 'Parameter #2 $sender of method Drupal\aculta_messenger\Form\PrivateMessageFormValidator::validateFreshThreadAccess() expects Drupal\user\UserInterface, Drupal\user\Entity\User|null given.'
@@ -58539,23 +58144,8 @@ parameters:
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Hook/MessengerBarHooks.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Hook\MessengerBarHooks::pageAttachments() has parameter $attachments with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Hook/MessengerBarHooks.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Hook\MessengerBarHooks::preprocessPage() has parameter $variables with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Hook/MessengerBarHooks.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Hook\MessengerBarHooks::preprocessPrivateMessageThread() has parameter $variables with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Hook/MessengerBarHooks.php
 
 		-
 			rawMessage: 'Parameter #1 $array of function array_column expects array, mixed given.'
@@ -58683,11 +58273,6 @@ parameters:
 			count: 3
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Hook/PrivateMessageFormHooks.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Hook\PrivateMessageFormHooks::formAlter() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Hook/PrivateMessageFormHooks.php
 
 		-
 			rawMessage: Cannot access offset '#private_message' on mixed.
@@ -58695,11 +58280,6 @@ parameters:
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Hook/PrivateMessagePresentationHooks.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Hook\PrivateMessagePresentationHooks::preprocessPrivateMessage() has parameter $variables with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Hook/PrivateMessagePresentationHooks.php
 
 		-
 			rawMessage: Cannot access an offset on mixed.
@@ -58737,53 +58317,13 @@ parameters:
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Hook/PrivateMessageReplyHooks.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Hook\PrivateMessageReplyHooks::configureReplyForm() has parameter $replyForm with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Hook/PrivateMessageReplyHooks.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Hook\PrivateMessageReplyHooks::entityBaseFieldInfoAlter() has parameter $fields with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Hook/PrivateMessageReplyHooks.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Hook\PrivateMessageReplyHooks::entityView() has parameter $build with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Hook/PrivateMessageReplyHooks.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Hook\PrivateMessageReplyHooks::entityViewAlter() has parameter $build with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Hook/PrivateMessageReplyHooks.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Hook\PrivateMessageReplyHooks::notice() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Hook/PrivateMessageReplyHooks.php
 
-		-
-			rawMessage: Cannot cast mixed to int.
-			identifier: cast.int
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Hook/PrivateMessageRetentionHooks.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Hook\PrivateMessageRetentionHooks::deleteNotificationsFor() has parameter $messageIds with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Hook/PrivateMessageRetentionHooks.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Hook\PrivateMessageUnreadIndicatorHooks::entityViewAlter() has parameter $build with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Hook/PrivateMessageUnreadIndicatorHooks.php
 
 		-
 			rawMessage: Cannot access offset 'email_summary' on mixed.
@@ -60207,23 +59747,8 @@ parameters:
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Plugin/QueueWorker/PrivateMessageNotificationWorker.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Plugin\QueueWorker\PrivateMessageNotificationWorker::__construct() has parameter $configuration with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Plugin/QueueWorker/PrivateMessageNotificationWorker.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Plugin\QueueWorker\PrivateMessageNotificationWorker::create() has parameter $configuration with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Plugin/QueueWorker/PrivateMessageNotificationWorker.php
 
-		-
-			rawMessage: Cannot cast mixed to int.
-			identifier: cast.int
-			count: 4
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Service/ConversationPolicy.php
 
 		-
 			rawMessage: Cannot access offset int|string|null on mixed.
@@ -61077,11 +60602,6 @@ parameters:
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Integration/Magazine/Kernel/MagazineNoticePersistenceKernelTest.php
 
-		-
-			rawMessage: 'Method Drupal\Tests\aculta_messenger\Integration\Magazine\Kernel\MagazineNoticePersistenceKernelTest::installMessageField() has parameter $settings with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Integration/Magazine/Kernel/MagazineNoticePersistenceKernelTest.php
 
 		-
 			rawMessage: 'Parameter #2 $haystack of static method PHPUnit\Framework\Assert::assertStringContainsString() expects string, mixed given.'
@@ -61365,17 +60885,7 @@ parameters:
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Kernel/AvisosResumoMailerKernelTest.php
 
-		-
-			rawMessage: 'Method Drupal\Tests\aculta_messenger\Kernel\AvisosResumoMailerKernelTest::collectedMails() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Kernel/AvisosResumoMailerKernelTest.php
 
-		-
-			rawMessage: 'Method Drupal\Tests\aculta_messenger\Kernel\AvisosResumoMailerKernelTest::collectedMails() should return array but returns mixed.'
-			identifier: return.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Kernel/AvisosResumoMailerKernelTest.php
 
 		-
 			rawMessage: 'Parameter #2 $haystack of static method PHPUnit\Framework\Assert::assertCount() expects Countable|iterable, mixed given.'
@@ -61563,35 +61073,10 @@ parameters:
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Kernel/FriendshipNoticePipelineKernelTest.php
 
-		-
-			rawMessage: 'Cannot call method fetchField() on Drupal\Core\Database\StatementInterface|null.'
-			identifier: method.nonObject
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Kernel/PrivateMessageFloodKernelTest.php
 
-		-
-			rawMessage: Cannot cast mixed to int.
-			identifier: cast.int
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Kernel/PrivateMessageFloodKernelTest.php
 
-		-
-			rawMessage: Cannot cast mixed to string.
-			identifier: cast.string
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Kernel/PrivateMessageFloodKernelTest.php
 
-		-
-			rawMessage: 'Method Drupal\Tests\aculta_messenger\Kernel\PrivateMessageRetentionKernelTest::createThread() has parameter $members with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Kernel/PrivateMessageRetentionKernelTest.php
 
-		-
-			rawMessage: 'Parameter #1 $callback of function array_map expects (callable(mixed): mixed)|null, Closure(Drupal\user\Entity\User): int given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Kernel/PrivateMessageRetentionKernelTest.php
 
 		-
 			rawMessage: 'Parameter #1 $id of method Drupal\Core\Entity\EntityStorageInterface::load() expects int|string, int|string|null given.'
@@ -61677,11 +61162,6 @@ parameters:
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Kernel/PrivateMessageRouteAccessKernelTest.php
 
-		-
-			rawMessage: 'Method Drupal\Tests\aculta_messenger\Kernel\PrivateMessageRouteAccessKernelTest::productionReplyRoute() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Kernel/PrivateMessageRouteAccessKernelTest.php
 
 		-
 			rawMessage: 'Parameter #1 $path of class Symfony\Component\Routing\Route constructor expects string, mixed given.'
@@ -62013,17 +61493,7 @@ parameters:
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Unit/CommunicationSettingsFormTest.php
 
-		-
-			rawMessage: 'Parameter #2 $array of static method PHPUnit\Framework\Assert::assertArrayHasKey() expects array<mixed>|ArrayAccess<(int|string), mixed>, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Unit/ConversationRelationshipFormTest.php
 
-		-
-			rawMessage: 'Parameter #2 $array of static method PHPUnit\Framework\Assert::assertArrayNotHasKey() expects array<mixed>|ArrayAccess<(int|string), mixed>, mixed given.'
-			identifier: argument.type
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Unit/ConversationRelationshipFormTest.php
 
 		-
 			rawMessage: 'Parameter #3 $resolve of static method Drupal\aculta_messenger\Aviso\EligibleNoticePage::collect() expects callable(mixed): mixed, Closure(int): (array{title: non-falsy-string}|null) given.'
@@ -62043,23 +61513,8 @@ parameters:
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Unit/EventsContributionNoticeConsumerTest.php
 
-		-
-			rawMessage: 'Call to an undefined method PHPUnit\Framework\MockObject\Builder\InvocationStubber::with().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Unit/EventsContributionNoticeUpdateTest.php
 
-		-
-			rawMessage: 'Call to internal method PHPUnit\Framework\TestCase::addToAssertionCount() from outside its root namespace PHPUnit.'
-			identifier: method.internal
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Unit/EventsContributionNoticeUpdateTest.php
 
-		-
-			rawMessage: 'Cannot call method willReturn() on mixed.'
-			identifier: method.nonObject
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Unit/EventsContributionNoticeUpdateTest.php
 
 		-
 			rawMessage: 'Cannot call method canViewTopic() on mixed.'
@@ -62145,11 +61600,6 @@ parameters:
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Unit/FriendRequestsFormTest.php
 
-		-
-			rawMessage: 'Method Drupal\Tests\aculta_messenger\Unit\FriendshipNoticeEmailWorkerTest::fieldValue() return type with generic interface Drupal\Core\Field\FieldItemListInterface does not specify its types: T'
-			identifier: missingType.generics
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Unit/FriendshipNoticeEmailWorkerTest.php
 
 		-
 			rawMessage: 'Call to an undefined method Drupal\message\MessageInterface::expects().'
@@ -62331,11 +61781,6 @@ parameters:
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Unit/MessageSubscribeEventHooksTest.php
 
-		-
-			rawMessage: 'Call to static method PHPUnit\Framework\Assert::assertTrue() with true will always evaluate to true.'
-			identifier: staticMethod.alreadyNarrowedType
-			count: 4
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Unit/MessagesControllerMemberAccessTest.php
 
 		-
 			rawMessage: Anonymous function should return Drupal\field\FieldStorageConfigInterface but returns mixed.
@@ -62679,11 +62124,6 @@ parameters:
 			count: 2
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Unit/NewConversationControllerTest.php
 
-		-
-			rawMessage: Cannot access offset 0 on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Unit/NewConversationControllerTest.php
 
 		-
 			rawMessage: 'Cannot call method offsetGet() on mixed.'
@@ -62697,17 +62137,7 @@ parameters:
 			count: 2
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Unit/NewConversationControllerTest.php
 
-		-
-			rawMessage: 'Parameter #1 $data of function http_build_query expects array|object, mixed given.'
-			identifier: argument.type
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Unit/NewConversationControllerTest.php
 
-		-
-			rawMessage: Cannot cast mixed to string.
-			identifier: cast.string
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Unit/NewConversationRecipientIdsTest.php
 
 		-
 			rawMessage: 'Call to an undefined method Drupal\message\MessageInterface::expects().'
@@ -63147,11 +62577,6 @@ parameters:
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Unit/PrivateMessageFormHooksTest.php
 
-		-
-			rawMessage: 'Call to static method PHPUnit\Framework\Assert::assertSame() with array{array{''acquire'', ''aculta_messenger…'', 180.0}, array{''acquire'', ''aculta_messenger…'', 180.0}, array{''release'', ''aculta_messenger…''}, array{''release'', ''aculta_messenger…''}} and array{array{''acquire'', ''aculta_messenger…'', 180.0}, array{''acquire'', ''aculta_messenger…'', 180.0}} will always evaluate to false.'
-			identifier: staticMethod.impossibleType
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Unit/PrivateMessageFormValidatorTest.php
 
 		-
 			rawMessage: Cannot access property $context on Drupal\aculta_mailer\Message\MailMessage|null.
@@ -63183,11 +62608,6 @@ parameters:
 			count: 2
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Unit/PrivateMessageNotificationWorkerTest.php
 
-		-
-			rawMessage: 'Method Drupal\Tests\aculta_messenger\Unit\PrivateMessageNotificationWorkerTest::assertNotificationSuppressed() has parameter $blockedPair with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Unit/PrivateMessageNotificationWorkerTest.php
 
 		-
 			rawMessage: 'Method Drupal\Tests\aculta_messenger\Unit\PrivateMessageNotificationWorkerTest::field() return type with generic interface Drupal\Core\Field\FieldItemListInterface does not specify its types: T'
@@ -63198,19 +62618,19 @@ parameters:
 		-
 			rawMessage: Cannot access offset '#plain_text' on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 2
+			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Unit/PrivateMessageReplyHooksTest.php
 
 		-
 			rawMessage: Cannot access offset 'text' on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 2
+			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Unit/PrivateMessageReplyHooksTest.php
 
 		-
 			rawMessage: 'Parameter #2 $array of static method PHPUnit\Framework\Assert::assertArrayNotHasKey() expects array<mixed>|ArrayAccess<(int|string), mixed>, mixed given.'
 			identifier: argument.type
-			count: 2
+			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Unit/PrivateMessageReplyHooksTest.php
 
 		-
@@ -63240,7 +62660,7 @@ parameters:
 		-
 			rawMessage: 'Call to static method PHPUnit\Framework\Assert::assertFalse() with false will always evaluate to true.'
 			identifier: staticMethod.alreadyNarrowedType
-			count: 3
+			count: 2
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Unit/PrivateMessageRetentionHooksTest.php
 
 		-
@@ -63264,14 +62684,9 @@ parameters:
 		-
 			rawMessage: 'Call to static method PHPUnit\Framework\Assert::assertTrue() with false will always evaluate to false.'
 			identifier: staticMethod.impossibleType
-			count: 4
+			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Unit/PrivateMessageRetentionHooksTest.php
 
-		-
-			rawMessage: 'Method Drupal\Tests\aculta_messenger\Unit\PrivateMessageUnreadIndicatorHooksTest::thread() has parameter $messages with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Unit/PrivateMessageUnreadIndicatorHooksTest.php
 
 		-
 			rawMessage: 'Parameter #2 $haystack of static method PHPUnit\Framework\Assert::assertStringContainsString() expects string, mixed given.'
@@ -63279,17 +62694,7 @@ parameters:
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Unit/PrivateMessageUnreadIndicatorHooksTest.php
 
-		-
-			rawMessage: 'Parameter $checkAccess of method Drupal\Tests\aculta_messenger\Unit\UnreadThreadCounterTest::thread() has typehint with internal class PHPUnit\Framework\MockObject\Rule\InvocationOrder.'
-			identifier: parameter.internalClass
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Unit/UnreadThreadCounterTest.php
 
-		-
-			rawMessage: 'Parameter $loadMessages of method Drupal\Tests\aculta_messenger\Unit\UnreadThreadCounterTest::thread() has typehint with internal class PHPUnit\Framework\MockObject\Rule\InvocationOrder.'
-			identifier: parameter.internalClass
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Unit/UnreadThreadCounterTest.php
 
 		-
 			rawMessage: 'Call to an undefined method object::getFieldDefinitions().'
