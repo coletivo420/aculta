@@ -2051,12 +2051,6 @@ parameters:
 			path: scripts/finalize-institution-local.php
 
 		-
-			rawMessage: 'Binary operation "." between ''Front: '' and mixed results in an error.'
-			identifier: binaryOp.invalid
-			count: 1
-			path: scripts/inspect-institution.php
-
-		-
 			rawMessage: 'Argument of an invalid type mixed supplied for foreach, only iterables are supported.'
 			identifier: foreach.nonIterable
 			count: 2

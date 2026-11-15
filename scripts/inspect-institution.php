@@ -15,7 +15,8 @@ foreach (['node_type', 'block_content_type', 'filter_format', 'contact_form'] as
 }
 echo 'Nodes: ' . \Drupal::entityTypeManager()->getStorage('node')->getQuery()->accessCheck(FALSE)->count()->execute() . PHP_EOL;
 echo 'Custom blocks: ' . \Drupal::entityTypeManager()->getStorage('block_content')->getQuery()->accessCheck(FALSE)->count()->execute() . PHP_EOL;
-echo 'Front: ' . \Drupal::config('system.site')->get('page.front') . PHP_EOL;
+$front = \Drupal::config('system.site')->get('page.front');
+echo 'Front: ' . (is_scalar($front) ? (string) $front : '') . PHP_EOL;
 echo 'Full HTML filters: ' . json_encode(\Drupal::config('filter.format.full_html')->get('filters')) . PHP_EOL;
 foreach (\Drupal::entityTypeManager()->getStorage('block')->loadByProperties(['theme' => 'aculta420']) as $block) {
   echo 'Block: ' . $block->id() . ' / ' . $block->getPluginId() . ' / ' . $block->getRegion() . PHP_EOL;
