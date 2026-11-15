@@ -61654,12 +61654,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Kernel/PrivateMessageRouteAccessKernelTest.php
 
 		-
-			rawMessage: 'Cannot call method getMethods() on mixed.'
-			identifier: method.nonObject
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Kernel/PrivateMessageRouteAccessKernelTest.php
-
-		-
 			rawMessage: 'Cannot call method grantPermission() on Drupal\user\Entity\Role|null.'
 			identifier: method.nonObject
 			count: 2
@@ -61723,12 +61717,6 @@ parameters:
 			rawMessage: 'Parameter #2 $defaults of class Symfony\Component\Routing\Route constructor expects array, mixed given.'
 			identifier: argument.type
 			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Kernel/PrivateMessageRouteAccessKernelTest.php
-
-		-
-			rawMessage: 'Parameter #2 $route of class Drupal\Core\Routing\RouteMatch constructor expects Symfony\Component\Routing\Route, mixed given.'
-			identifier: argument.type
-			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Kernel/PrivateMessageRouteAccessKernelTest.php
 
 		-
