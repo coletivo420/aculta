@@ -6,7 +6,7 @@ namespace Drupal\aculta_lms_h5p\Hook;
 
 use Drupal\aculta_lms_h5p\aculta_H5PDrupal\aculta_H5PDrupal;
 use Drupal\aculta_lms_h5p\aculta_H5PDrupal\aculta_H5PLibraryIdentifier;
-use Drupal\Core\Database\Connection;
+use Drupal\Core\Database\StatementInterface;
 use Drupal\Core\File\FileUrlGeneratorInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -19,8 +19,6 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 final class aculta_H5PLibraryHooks {
 
   public function __construct(
-    #[Autowire(service: 'database')]
-    private readonly Connection $database,
     #[Autowire(service: 'aculta_lms_h5p.framework')]
     private readonly aculta_H5PDrupal $framework,
     #[Autowire(service: 'file_url_generator')]
@@ -28,10 +26,14 @@ final class aculta_H5PLibraryHooks {
   ) {}
 
   /**
- * Builds asset libraries from installed H5P core and content libraries. */
+   * Builds asset libraries from installed H5P core and content libraries.
+   *
+   * @return array<string, array<string, mixed>>
+   *   Dynamic library definitions keyed by their Drupal library IDs.
+   */
   #[Hook('library_info_build')]
   public function libraryInfoBuild(): array {
-    $database = $this->database;
+    $database = $this->framework->getDatabaseConnection();
     $libraries = [];
 
     // Register jQuery version that H5P depends on.
@@ -42,11 +44,9 @@ final class aculta_H5PLibraryHooks {
         'url' => 'https://jquery.org/license/',
         'gpl-compatible' => TRUE,
       ],
+      'js' => [],
     ];
-    $h5p_jquery_js_key = $this->fileUrlGenerator->generate('assets://h5p/h5p-core/js/jquery.js', [
-      'absolute' => TRUE,
-      'language' => FALSE,
-    ])->toString(TRUE)->getGeneratedUrl();
+    $h5p_jquery_js_key = self::absoluteFileUrl($this->fileUrlGenerator, 'assets://h5p/h5p-core/js/jquery.js');
     $libraries['h5p.jquery']['js'][$h5p_jquery_js_key] = [
       'minified' => TRUE,
       'preprocess' => FALSE,
@@ -81,26 +81,22 @@ final class aculta_H5PLibraryHooks {
         'aculta_lms_h5p/h5p.integration',
         'aculta_lms_h5p/h5p.jquery',
       ],
+      'js' => [],
+      'css' => ['base' => []],
     ];
 
     // Register core JS needed when viewing H5P content.
-    foreach (\H5PCore::$scripts as $script) {
+    foreach (self::stringList(\H5PCore::$scripts) as $script) {
       if ($script === 'js/jquery.js') {
         continue;
       }
-      $js = $this->fileUrlGenerator->generate("assets://h5p/h5p-core/{$script}", [
-        'absolute' => TRUE,
-        'language' => FALSE,
-      ])->toString(TRUE)->getGeneratedUrl();
+      $js = self::absoluteFileUrl($this->fileUrlGenerator, "assets://h5p/h5p-core/{$script}");
       $libraries['h5p.content']['js'][$js] = [];
     }
 
     // Register core CSS needed when viewing H5P content.
-    foreach (\H5PCore::$styles as $style) {
-      $css = $this->fileUrlGenerator->generate("assets://h5p/h5p-core/{$style}", [
-        'absolute' => TRUE,
-        'language' => FALSE,
-      ])->toString(TRUE)->getGeneratedUrl();
+    foreach (self::stringList(\H5PCore::$styles) as $style) {
+      $css = self::absoluteFileUrl($this->fileUrlGenerator, "assets://h5p/h5p-core/{$style}");
       $libraries['h5p.content']['css']['base'][$css] = [];
     }
 
@@ -116,23 +112,16 @@ final class aculta_H5PLibraryHooks {
         'aculta_lms_h5p/h5p.integration',
         'aculta_lms_h5p/h5p.jquery',
       ],
+      'js' => [],
+      'css' => ['base' => []],
     ];
     // Admin css.
-    $h5p_admin_css_base = $this->fileUrlGenerator->generate('assets://h5p/h5p-core/styles/h5p.css', [
-      'absolute' => TRUE,
-      'language' => FALSE,
-    ])->toString(TRUE)->getGeneratedUrl();
-    $h5p_admin_css_admin_base = $this->fileUrlGenerator->generate('assets://h5p/h5p-core/styles/h5p-admin.css', [
-      'absolute' => TRUE,
-      'language' => FALSE,
-    ])->toString(TRUE)->getGeneratedUrl();
+    $h5p_admin_css_base = self::absoluteFileUrl($this->fileUrlGenerator, 'assets://h5p/h5p-core/styles/h5p.css');
+    $h5p_admin_css_admin_base = self::absoluteFileUrl($this->fileUrlGenerator, 'assets://h5p/h5p-core/styles/h5p-admin.css');
     $libraries['h5p.admin']['css']['base'][$h5p_admin_css_base] = [];
     $libraries['h5p.admin']['css']['base'][$h5p_admin_css_admin_base] = [];
     // Admin js.
-    $h5p_admin_js_utils_base = $this->fileUrlGenerator->generate('assets://h5p/h5p-core/js/h5p-utils.js', [
-      'absolute' => TRUE,
-      'language' => FALSE,
-    ])->toString(TRUE)->getGeneratedUrl();
+    $h5p_admin_js_utils_base = self::absoluteFileUrl($this->fileUrlGenerator, 'assets://h5p/h5p-core/js/h5p-utils.js');
     $libraries['h5p.admin']['js']['js/h5p-admin-integration.js'] = [];
     $libraries['h5p.admin']['js'][$h5p_admin_js_utils_base] = [];
 
@@ -147,11 +136,9 @@ final class aculta_H5PLibraryHooks {
       'dependencies' => [
         'aculta_lms_h5p/h5p.admin',
       ],
+      'js' => [],
     ];
-    $h5p_admin_library_list_js_key = $this->fileUrlGenerator->generate('assets://h5p/h5p-core/js/h5p-library-list.js', [
-      'absolute' => TRUE,
-      'language' => FALSE,
-    ])->toString(TRUE)->getGeneratedUrl();
+    $h5p_admin_library_list_js_key = self::absoluteFileUrl($this->fileUrlGenerator, 'assets://h5p/h5p-core/js/h5p-library-list.js');
     $libraries['h5p.admin.library.list']['js'][$h5p_admin_library_list_js_key] = [];
 
     $libraries['h5p.admin.library.upgrade'] = [
@@ -164,15 +151,10 @@ final class aculta_H5PLibraryHooks {
       'dependencies' => [
         'aculta_lms_h5p/h5p.admin',
       ],
+      'js' => [],
     ];
-    $h5p_admin_library_upgrade_version_js_key = $this->fileUrlGenerator->generate('assets://h5p/h5p-core/js/h5p-version.js', [
-      'absolute' => TRUE,
-      'language' => FALSE,
-    ])->toString(TRUE)->getGeneratedUrl();
-    $h5p_admin_library_upgrade_content_upgrade_js_key = $this->fileUrlGenerator->generate('assets://h5p/h5p-core/js/h5p-content-upgrade.js', [
-      'absolute' => TRUE,
-      'language' => FALSE,
-    ])->toString(TRUE)->getGeneratedUrl();
+    $h5p_admin_library_upgrade_version_js_key = self::absoluteFileUrl($this->fileUrlGenerator, 'assets://h5p/h5p-core/js/h5p-version.js');
+    $h5p_admin_library_upgrade_content_upgrade_js_key = self::absoluteFileUrl($this->fileUrlGenerator, 'assets://h5p/h5p-core/js/h5p-content-upgrade.js');
     $libraries['h5p.admin.library.upgrade']['js'][$h5p_admin_library_upgrade_version_js_key] = [];
     $libraries['h5p.admin.library.upgrade']['js'][$h5p_admin_library_upgrade_content_upgrade_js_key] = [];
 
@@ -180,11 +162,9 @@ final class aculta_H5PLibraryHooks {
       'dependencies' => [
         'aculta_lms_h5p/h5p.admin',
       ],
+      'js' => [],
     ];
-    $h5p_admin_library_details_js_key = $this->fileUrlGenerator->generate('assets://h5p/h5p-core/js/h5p-library-details.js', [
-      'absolute' => TRUE,
-      'language' => FALSE,
-    ])->toString(TRUE)->getGeneratedUrl();
+    $h5p_admin_library_details_js_key = self::absoluteFileUrl($this->fileUrlGenerator, 'assets://h5p/h5p-core/js/h5p-library-details.js');
     $libraries['h5p.admin.library.details']['js'][$h5p_admin_library_details_js_key] = [];
 
     // The PHP H5P Editor library supplies editor behavior; this Drupal library
@@ -208,22 +188,16 @@ final class aculta_H5PLibraryHooks {
       'js' => [],
       'css' => ['base' => ['css/h5p-editor-validation.css' => []]],
     ];
-    foreach (\H5peditor::$scripts as $script) {
-      $url = $this->fileUrlGenerator->generate("assets://h5p/h5p-editor/{$script}", [
-        'absolute' => TRUE,
-        'language' => FALSE,
-      ])->toString(TRUE)->getGeneratedUrl();
+    foreach (self::stringList(\H5peditor::$scripts) as $script) {
+      $url = self::absoluteFileUrl($this->fileUrlGenerator, "assets://h5p/h5p-editor/{$script}");
       $libraries['h5p.editor']['js'][$url] = ['preprocess' => FALSE];
     }
     // Dynamic library paths are relative to this module; including the module
     // path here makes Drupal prepend it twice and prevents editor startup.
     $application_script = 'js/h5peditor-application.js';
     $libraries['h5p.editor']['js'][$application_script] = ['preprocess' => FALSE];
-    foreach (\H5peditor::$styles as $style) {
-      $url = $this->fileUrlGenerator->generate("assets://h5p/h5p-editor/{$style}", [
-        'absolute' => TRUE,
-        'language' => FALSE,
-      ])->toString(TRUE)->getGeneratedUrl();
+    foreach (self::stringList(\H5peditor::$styles) as $style) {
+      $url = self::absoluteFileUrl($this->fileUrlGenerator, "assets://h5p/h5p-editor/{$style}");
       $libraries['h5p.editor']['css']['base'][$url] = [];
     }
 
@@ -238,29 +212,41 @@ final class aculta_H5PLibraryHooks {
         preloaded_css AS css_csv,
         drop_library_css
       FROM {h5p_libraries}");
+    if (!$h5p_libraries instanceof StatementInterface) {
+      throw new \RuntimeException('Could not load installed H5P libraries.');
+    }
 
     $libraries_prefix = '/' . aculta_H5PDrupal::getRelativeaculta_H5PPath() . '/libraries';
     foreach ($h5p_libraries as $h5p_library) {
+      if (!is_object($h5p_library)) {
+        throw new \UnexpectedValueException('The H5P library query returned an invalid row.');
+      }
+      $libraryName = self::databaseString($h5p_library->name ?? NULL);
+      $majorVersion = self::databaseInteger($h5p_library->major ?? NULL);
+      $minorVersion = self::databaseInteger($h5p_library->minor ?? NULL);
+      $libraryId = self::databaseId($h5p_library->id ?? NULL);
+      $jsCsv = self::nullableCsv($h5p_library->js_csv ?? NULL);
+      $cssCsv = self::nullableCsv($h5p_library->css_csv ?? NULL);
 
       $js = [];
-      $scripts = explode(',', $h5p_library->js_csv);
+      $scripts = explode(',', $jsCsv);
       foreach ($scripts as &$script) {
         $script = trim($script);
         if ($script) {
           // These files are private Drupal-managed assets served by the
           // library route, not files beneath DRUPAL_ROOT for aggregation.
-          $js["$libraries_prefix/{$h5p_library->name}-{$h5p_library->major}.{$h5p_library->minor}/$script"] = [
+          $js["$libraries_prefix/{$libraryName}-{$majorVersion}.{$minorVersion}/$script"] = [
             'preprocess' => FALSE,
           ];
         }
       }
 
       $css = [];
-      $styles = explode(',', $h5p_library->css_csv);
+      $styles = explode(',', $cssCsv);
       foreach ($styles as &$style) {
         $style = trim($style);
         if ($style) {
-          $css["$libraries_prefix/{$h5p_library->name}-{$h5p_library->major}.{$h5p_library->minor}/$style"] = [
+          $css["$libraries_prefix/{$libraryName}-{$majorVersion}.{$minorVersion}/$style"] = [
             'preprocess' => FALSE,
           ];
         }
@@ -275,14 +261,28 @@ final class aculta_H5PLibraryHooks {
              JOIN {h5p_libraries} hl ON hll.required_library_id = hl.library_id
             WHERE hll.library_id = :library_id
               AND dependency_type = 'preloaded'",
-        [':library_id' => $h5p_library->id]);
+        [':library_id' => $libraryId]);
+      if (!$h5p_dependencies instanceof StatementInterface) {
+        throw new \RuntimeException(sprintf('Could not load preloaded dependencies for H5P library %s.', $libraryName));
+      }
 
       $dependencies = ['aculta_lms_h5p/h5p.content'];
       foreach ($h5p_dependencies as $h5p_dependency) {
-        $dependencies[] = 'aculta_lms_h5p/' . aculta_H5PLibraryIdentifier::toDrupalLibraryId($h5p_dependency);
+        if (!is_object($h5p_dependency)) {
+          throw new \UnexpectedValueException('The H5P dependency query returned an invalid row.');
+        }
+        $dependencies[] = 'aculta_lms_h5p/' . aculta_H5PLibraryIdentifier::toDrupalLibraryId([
+          'machineName' => self::databaseString($h5p_dependency->name ?? NULL),
+          'majorVersion' => self::databaseInteger($h5p_dependency->major ?? NULL),
+          'minorVersion' => self::databaseInteger($h5p_dependency->minor ?? NULL),
+        ]);
       }
 
-      $libraries[aculta_H5PLibraryIdentifier::toDrupalLibraryId($h5p_library)] = [
+      $libraries[aculta_H5PLibraryIdentifier::toDrupalLibraryId([
+        'machineName' => $libraryName,
+        'majorVersion' => $majorVersion,
+        'minorVersion' => $minorVersion,
+      ])] = [
         'js' => $js,
         'css' => [
           'base' => $css,
@@ -292,6 +292,82 @@ final class aculta_H5PLibraryHooks {
     }
 
     return $libraries;
+  }
+
+  /**
+   * Returns an absolute URL for an H5P asset managed by a stream wrapper.
+   */
+  private static function absoluteFileUrl(FileUrlGeneratorInterface $generator, string $uri): string {
+    return $generator->generateAbsoluteString($uri);
+  }
+
+  /**
+   * Narrows an untyped H5P asset list to strings.
+   *
+   * @return list<string>
+   *   Asset paths.
+   */
+  private static function stringList(mixed $values): array {
+    if (!is_array($values)) {
+      throw new \UnexpectedValueException('H5P asset metadata must be an array.');
+    }
+    $paths = [];
+    foreach ($values as $value) {
+      if (!is_string($value)) {
+        throw new \UnexpectedValueException('H5P asset paths must be strings.');
+      }
+      $paths[] = $value;
+    }
+    return $paths;
+  }
+
+  /**
+   * Converts a required scalar database value to a string.
+   */
+  private static function databaseString(mixed $value): string {
+    if (is_string($value)) {
+      return $value;
+    }
+    if (is_int($value)) {
+      return (string) $value;
+    }
+    throw new \UnexpectedValueException('H5P library metadata contains an invalid string value.');
+  }
+
+  /**
+   * Converts a required non-negative database version to an integer.
+   */
+  private static function databaseInteger(mixed $value): int {
+    if (is_int($value) && $value >= 0) {
+      return $value;
+    }
+    if (is_string($value) && preg_match('/^(0|[1-9][0-9]*)$/D', $value) === 1) {
+      $integer = filter_var($value, FILTER_VALIDATE_INT);
+      if ($integer !== FALSE) {
+        return $integer;
+      }
+    }
+    throw new \UnexpectedValueException('H5P library metadata contains an invalid version.');
+  }
+
+  /**
+   * Converts a required database identifier to a queryable scalar.
+   */
+  private static function databaseId(mixed $value): int|string {
+    if (is_int($value) || is_string($value)) {
+      return $value;
+    }
+    throw new \UnexpectedValueException('H5P library metadata contains an invalid identifier.');
+  }
+
+  /**
+   * Normalizes a nullable comma-separated list from H5P's library schema.
+   */
+  private static function nullableCsv(mixed $value): string {
+    if ($value === NULL || $value === '') {
+      return '';
+    }
+    return self::databaseString($value);
   }
 
 }
