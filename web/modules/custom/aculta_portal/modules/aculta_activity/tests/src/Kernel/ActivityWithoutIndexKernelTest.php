@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_activity\Kernel;
 
+use Drupal\aculta_activity\ContentIndex\ActivityContentIndexProvider;
 use Drupal\KernelTests\KernelTestBase;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
@@ -37,6 +38,7 @@ final class ActivityWithoutIndexKernelTest extends KernelTestBase {
     self::assertFalse($this->container->has('aculta_index.provider_registry'));
 
     $provider = $this->container->get('aculta_activity.content_index_provider');
+    self::assertSame(ActivityContentIndexProvider::class, (new \ReflectionObject($provider))->getName());
     self::assertSame('activity', $provider->getProviderId());
   }
 
