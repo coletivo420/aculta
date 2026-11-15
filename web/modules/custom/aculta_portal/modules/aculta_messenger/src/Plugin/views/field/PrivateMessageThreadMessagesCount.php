@@ -15,6 +15,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * @ingroup views_field_handlers
  */
+/**
+ * @phpstan-consistent-constructor
+ */
 #[ViewsField("private_message_thread_all_messages_number")]
 class PrivateMessageThreadMessagesCount extends FieldPluginBase {
 
@@ -35,7 +38,7 @@ class PrivateMessageThreadMessagesCount extends FieldPluginBase {
    * {@inheritdoc}
    * @param array<string, mixed> $configuration
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): static {
     return new static(
       $configuration,
       $plugin_id,

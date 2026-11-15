@@ -17,6 +17,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Access control handler for private message entities.
+ * @phpstan-consistent-constructor
  */
 class PrivateMessageAccessControlHandler extends EntityAccessControlHandler implements EntityHandlerInterface {
 
@@ -30,7 +31,7 @@ class PrivateMessageAccessControlHandler extends EntityAccessControlHandler impl
   /**
    * {@inheritdoc}
    */
-  public static function createInstance(ContainerInterface $container, EntityTypeInterface $entity_type): self {
+  public static function createInstance(ContainerInterface $container, EntityTypeInterface $entity_type): static {
     return new static(
       $entity_type,
       $container->get('aculta_messenger.pm.service')

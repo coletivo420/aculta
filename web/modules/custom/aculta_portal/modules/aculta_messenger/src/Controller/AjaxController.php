@@ -54,8 +54,8 @@ class AjaxController extends ControllerBase implements AjaxControllerInterface {
     $response = new AjaxResponse();
     /** @var \Symfony\Component\HttpFoundation\Request $request */
     $request = $this->requestStack->getCurrentRequest();
-    $thread_id = $request->get('threadid');
-    $message_id = $request->get('messageid');
+    $thread_id = $this->requestParameter($request, 'threadid');
+    $message_id = $this->requestParameter($request, 'messageid');
 
     if (is_numeric($thread_id) && is_numeric($message_id)) {
       $thread = $this->entityTypeManager()->getStorage('private_message_thread')
@@ -99,8 +99,8 @@ class AjaxController extends ControllerBase implements AjaxControllerInterface {
 
     /** @var \Symfony\Component\HttpFoundation\Request $current_request */
     $current_request = $this->requestStack->getCurrentRequest();
-    $thread_id = $current_request->get('threadid');
-    $message_id = $current_request->get('messageid');
+    $thread_id = $this->requestParameter($current_request, 'threadid');
+    $message_id = $this->requestParameter($current_request, 'messageid');
     if (is_numeric($thread_id) && is_numeric($message_id)) {
       /** @var array{messages: list<\Drupal\aculta_messenger\Entity\PrivateMessageInterface>, next_exists: bool} $message_info */
       $message_info = $this->privateMessageService->getPreviousMessages($thread_id, $message_id);
@@ -139,8 +139,8 @@ class AjaxController extends ControllerBase implements AjaxControllerInterface {
 
     /** @var \Symfony\Component\HttpFoundation\Request $request */
     $request = $this->requestStack->getCurrentRequest();
-    $timestamp = $request->get('timestamp');
-    $thread_count = (int) $request->get('count');
+    $timestamp = $this->requestParameter($request, 'timestamp');
+    $thread_count = (int) $this->requestParameter($request, 'count');
     if (is_numeric($timestamp)) {
       $thread_info = $this->privateMessageService->getThreadsForUser($thread_count, intval($timestamp));
       $has_next = FALSE;
@@ -174,7 +174,7 @@ class AjaxController extends ControllerBase implements AjaxControllerInterface {
 
     /** @var \Symfony\Component\HttpFoundation\Request $request */
     $request = $this->requestStack->getCurrentRequest();
-    $info = $request->get('ids');
+    $info = $this->requestParameter($request, 'ids');
 
     // Check to see if any thread IDs were POSTed.
     if (is_array($info) && count($info)) {
@@ -254,7 +254,7 @@ class AjaxController extends ControllerBase implements AjaxControllerInterface {
 
     /** @var \Symfony\Component\HttpFoundation\Request $request */
     $request = $this->requestStack->getCurrentRequest();
-    $thread_id = $request->get('id');
+    $thread_id = $this->requestParameter($request, 'id');
     if ($thread_id) {
       $thread = $this->entityTypeManager()->getStorage('private_message_thread')->load($thread_id);
 
@@ -273,6 +273,22 @@ class AjaxController extends ControllerBase implements AjaxControllerInterface {
     }
 
     return $response;
+  }
+
+  /**
+   * Lê um parâmetro da requisição na mesma ordem de Request::get(): rota, query e corpo.
+   */
+  private function requestParameter(\Symfony\Component\HttpFoundation\Request $request, string $key): mixed {
+    if ($request->attributes->has($key)) {
+      return $request->attributes->get($key);
+    }
+    if ($request->query->has($key)) {
+      return $request->query->get($key);
+    }
+    if ($request->request->has($key)) {
+      return $request->request->get($key);
+    }
+    return NULL;
   }
 
 }

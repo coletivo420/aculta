@@ -12,6 +12,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Base class for PrivateMessageConfigForm plugins.
+ * @phpstan-consistent-constructor
  */
 abstract class PrivateMessageConfigFormBase extends PluginBase implements PrivateMessageConfigFormPluginInterface {
 

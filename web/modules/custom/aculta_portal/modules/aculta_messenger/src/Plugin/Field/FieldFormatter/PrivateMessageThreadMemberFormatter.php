@@ -24,6 +24,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * @extends FormatterBase<\Drupal\Core\Field\FieldItemListInterface>
  */
+/**
+ * @phpstan-consistent-constructor
+ */
 #[FieldFormatter(
   id: 'private_message_thread_member_formatter',
   label: new TranslatableMarkup('Private Message Thread Members'),
@@ -58,7 +61,7 @@ class PrivateMessageThreadMemberFormatter extends FormatterBase implements Conta
    * {@inheritdoc}
    * @param array<string, mixed> $configuration
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): static {
     return new static(
       $plugin_id,
       $plugin_definition,

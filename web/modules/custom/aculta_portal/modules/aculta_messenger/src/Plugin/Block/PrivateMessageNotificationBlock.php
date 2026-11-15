@@ -25,6 +25,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Provides the private message notification block.
  */
+/**
+ * @phpstan-consistent-constructor
+ */
 #[Block(
    id: "private_message_notification_block",
    admin_label: new TranslatableMarkup('Private Message Notification'),
@@ -54,7 +57,7 @@ class PrivateMessageNotificationBlock extends BlockBase implements BlockPluginIn
    * {@inheritdoc}
    * @param array<string, mixed> $configuration
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): static {
     return new static(
       $configuration,
       $plugin_id,

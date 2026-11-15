@@ -26,6 +26,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Provides the private message inbox block.
  */
+/**
+ * @phpstan-consistent-constructor
+ */
 #[Block(
   id: 'private_message_inbox_block',
   admin_label: new TranslatableMarkup('Private Message Inbox'),
@@ -56,7 +59,7 @@ class PrivateMessageInboxBlock extends BlockBase implements BlockPluginInterface
    * {@inheritdoc}
    * @param array<string, mixed> $configuration
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): static {
     return new static(
       $configuration,
       $plugin_id,

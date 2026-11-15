@@ -21,6 +21,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * This block holds links to perform actions on a private message thread.
  */
+/**
+ * @phpstan-consistent-constructor
+ */
 #[Block(
   id: 'private_message_actions_block',
   admin_label: new TranslatableMarkup('Private Message Actions'),
@@ -46,7 +49,7 @@ class PrivateMessageActionsBlock extends BlockBase implements ContainerFactoryPl
    * {@inheritdoc}
    * @param array<string, mixed> $configuration
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): static {
     return new static(
       $configuration,
       $plugin_id,

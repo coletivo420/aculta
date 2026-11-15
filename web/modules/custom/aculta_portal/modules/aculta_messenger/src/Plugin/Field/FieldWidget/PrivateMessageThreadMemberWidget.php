@@ -22,6 +22,9 @@ use Symfony\Component\HttpFoundation\RequestStack;
 /**
  * Defines the private message thread member widget.
  */
+/**
+ * @phpstan-consistent-constructor
+ */
 #[FieldWidget(
   id: 'private_message_thread_member_widget',
   label: new TranslatableMarkup('Private message members autocomplete'),
@@ -55,7 +58,7 @@ class PrivateMessageThreadMemberWidget extends EntityReferenceAutocompleteWidget
    * {@inheritdoc}
    * @param array<string, mixed> $configuration
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): static {
     return new static(
       $plugin_id,
       $plugin_definition,
@@ -181,7 +184,7 @@ class PrivateMessageThreadMemberWidget extends EntityReferenceAutocompleteWidget
     /** @var \Symfony\Component\HttpFoundation\Request $currentRequest */
     $currentRequest = $this->requestStack->getCurrentRequest();
     /** @var int|string|null $recipientId */
-    $recipientId = $currentRequest->get('recipient');
+    $recipientId = $this->requestParameter($currentRequest, 'recipient');
     if (!$recipientId) {
       return NULL;
     }
@@ -221,6 +224,22 @@ class PrivateMessageThreadMemberWidget extends EntityReferenceAutocompleteWidget
     /** @var array<string, mixed> $targetValues */
     $targetValues = $values['target_id'] ?? [];
     return $targetValues;
+  }
+
+  /**
+   * Lê um parâmetro da requisição na mesma ordem de Request::get(): rota, query e corpo.
+   */
+  private function requestParameter(\Symfony\Component\HttpFoundation\Request $request, string $key): mixed {
+    if ($request->attributes->has($key)) {
+      return $request->attributes->get($key);
+    }
+    if ($request->query->has($key)) {
+      return $request->query->get($key);
+    }
+    if ($request->request->has($key)) {
+      return $request->request->get($key);
+    }
+    return NULL;
   }
 
 }
