@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_messenger\Unit;
 
-use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\aculta_messenger\Friendship\FriendshipNoticeSubscriber;
 use Drupal\aculta_messenger\Aviso\AvisoPreferencias;
@@ -434,7 +433,7 @@ final class FriendshipNoticeEmailWorkerTest extends UnitTestCase {
    * @param string $friendshipEvent
    *   Persisted transition used by the Mailer message.
    *
-   * @return array{0: FriendshipNoticeEmailWorker, 1: MessageInterface&MockObject}
+   * @return array{0: FriendshipNoticeEmailWorker, 1: MessageInterface&\PHPUnit\Framework\MockObject\MockObject}
    *   The worker and persisted message mock.
    */
   private function deliveryWorker(array &$state, ?MessageNotifyInterface $notifier = NULL, ?AcultaMailerInterface $mailer = NULL, string|array $emailMode = AvisoPreferencias::EMAIL_IMMEDIATE, bool $emailConfirmed = TRUE, string $friendshipEvent = 'requested'): array {

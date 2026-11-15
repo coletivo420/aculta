@@ -24,8 +24,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Provides the private message notification block.
- */
-/**
+ *
  * @phpstan-consistent-constructor
  */
 #[Block(
@@ -41,6 +40,19 @@ class PrivateMessageNotificationBlock extends BlockBase implements BlockPluginIn
    * Tipagem do porte Private Message.
    *
    * @param array<string, mixed> $configuration
+   *   A configuração do plugin.
+   * @param string $plugin_id
+   *   O identificador do plugin.
+   * @param mixed $plugin_definition
+   *   A definição do plugin.
+   * @param AccountProxyInterface $currentUser
+   *   A conta do usuário atual.
+   * @param CsrfTokenGenerator $csrfToken
+   *   O serviço de token CSRF.
+   * @param PrivateMessageServiceInterface $privateMessageService
+   *   O serviço de mensagens privadas.
+   * @param ConfigFactoryInterface $configFactory
+   *   O serviço de configuração do Drupal.
    */
   public function __construct(
     array $configuration,
@@ -57,7 +69,14 @@ class PrivateMessageNotificationBlock extends BlockBase implements BlockPluginIn
   /**
    * {@inheritdoc}
    *
+   * @param ContainerInterface $container
+   *   O contêiner de serviços.
    * @param array<string, mixed> $configuration
+   *   A configuração do plugin.
+   * @param string $plugin_id
+   *   O identificador do plugin.
+   * @param mixed $plugin_definition
+   *   A definição do plugin.
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): static {
     return new static(
@@ -85,6 +104,7 @@ class PrivateMessageNotificationBlock extends BlockBase implements BlockPluginIn
    * {@inheritdoc}
    *
    * @return array<string, mixed>
+   *   A lista com os valores resultantes.
    */
   public function build(): array {
     /** @var array{'#theme': string, '#new_items_count'?: mixed, '#count_method'?: mixed, '#attached'?: array{drupalSettings?: array<string, array<string, mixed>>, library?: list<string>}, '#attributes'?: array{class?: list<string>}} $block */
@@ -154,6 +174,7 @@ class PrivateMessageNotificationBlock extends BlockBase implements BlockPluginIn
    * {@inheritdoc}
    *
    * @return array<string, mixed>
+   *   A lista com os valores resultantes.
    */
   public function defaultConfiguration(): array {
     return [
@@ -166,8 +187,12 @@ class PrivateMessageNotificationBlock extends BlockBase implements BlockPluginIn
    * {@inheritdoc}
    *
    * @param array<string, mixed> $form
+   *   O array do formulário.
+   * @param FormStateInterface $form_state
+   *   O estado atual do formulário.
    *
    * @return array<string, mixed>
+   *   A lista com os valores resultantes.
    */
   public function blockForm($form, FormStateInterface $form_state): array {
     /** @var array<string, mixed> $form */
@@ -200,6 +225,9 @@ class PrivateMessageNotificationBlock extends BlockBase implements BlockPluginIn
    * {@inheritdoc}
    *
    * @param array<string, mixed> $form
+   *   O array do formulário.
+   * @param FormStateInterface $form_state
+   *   O estado atual do formulário.
    */
   public function blockSubmit($form, FormStateInterface $form_state): void {
     $this->configuration['ajax_refresh_rate'] = $form_state->getValue('ajax_refresh_rate');

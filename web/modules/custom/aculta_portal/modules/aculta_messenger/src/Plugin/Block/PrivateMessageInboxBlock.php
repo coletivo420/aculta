@@ -25,8 +25,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Provides the private message inbox block.
- */
-/**
+ *
  * @phpstan-consistent-constructor
  */
 #[Block(
@@ -42,6 +41,21 @@ class PrivateMessageInboxBlock extends BlockBase implements BlockPluginInterface
    * Tipagem do porte Private Message.
    *
    * @param array<string, mixed> $configuration
+   *   A configuração do plugin.
+   * @param string $plugin_id
+   *   O identificador do plugin.
+   * @param mixed $plugin_definition
+   *   A definição do plugin.
+   * @param AccountProxyInterface $currentUser
+   *   A conta do usuário atual.
+   * @param PrivateMessageServiceInterface $privateMessageService
+   *   O serviço de mensagens privadas.
+   * @param EntityTypeManagerInterface $entityTypeManager
+   *   O gerenciador de tipos de entidade.
+   * @param CsrfTokenGenerator $csrfToken
+   *   O serviço de token CSRF.
+   * @param ConfigFactoryInterface $configFactory
+   *   O serviço de configuração do Drupal.
    */
   public function __construct(
     array $configuration,
@@ -59,7 +73,14 @@ class PrivateMessageInboxBlock extends BlockBase implements BlockPluginInterface
   /**
    * {@inheritdoc}
    *
+   * @param ContainerInterface $container
+   *   O contêiner de serviços.
    * @param array<string, mixed> $configuration
+   *   A configuração do plugin.
+   * @param string $plugin_id
+   *   O identificador do plugin.
+   * @param mixed $plugin_definition
+   *   A definição do plugin.
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): static {
     return new static(
@@ -88,6 +109,7 @@ class PrivateMessageInboxBlock extends BlockBase implements BlockPluginInterface
    * {@inheritdoc}
    *
    * @return array<string, mixed>
+   *   A lista com os valores resultantes.
    */
   public function build(): array {
     /** @var array{thread_count: int, ajax_load_count: int, ajax_refresh_rate: int} $config */
@@ -183,6 +205,7 @@ class PrivateMessageInboxBlock extends BlockBase implements BlockPluginInterface
    * {@inheritdoc}
    *
    * @return array<string, mixed>
+   *   A lista com os valores resultantes.
    */
   public function defaultConfiguration(): array {
     return [
@@ -196,8 +219,12 @@ class PrivateMessageInboxBlock extends BlockBase implements BlockPluginInterface
    * {@inheritdoc}
    *
    * @param array<string, mixed> $form
+   *   O array do formulário.
+   * @param FormStateInterface $form_state
+   *   O estado atual do formulário.
    *
    * @return array<string, mixed>
+   *   A lista com os valores resultantes.
    */
   public function blockForm($form, FormStateInterface $form_state): array {
     $form = parent::blockForm($form, $form_state);
@@ -236,6 +263,9 @@ class PrivateMessageInboxBlock extends BlockBase implements BlockPluginInterface
    * {@inheritdoc}
    *
    * @param array<string, mixed> $form
+   *   O array do formulário.
+   * @param FormStateInterface $form_state
+   *   O estado atual do formulário.
    */
   public function blockSubmit($form, FormStateInterface $form_state): void {
     $this->configuration['thread_count'] = $form_state->getValue('thread_count');

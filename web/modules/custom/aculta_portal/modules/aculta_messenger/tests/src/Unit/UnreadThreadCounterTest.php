@@ -261,7 +261,13 @@ final class UnreadThreadCounterTest extends UnitTestCase {
   /**
    * Creates a message fixture.
    *
+   * @param int $owner
+   *   O dono do registro.
+   * @param int $created
+   *   O valor informado para $created.
+   *
    * @return \PHPUnit\Framework\MockObject\MockObject&\Drupal\aculta_messenger\Entity\PrivateMessageInterface
+   *   A instância resultante.
    */
   private function message(int $owner, int $created): PrivateMessageInterface {
     $message = $this->createMock(PrivateMessageInterface::class);

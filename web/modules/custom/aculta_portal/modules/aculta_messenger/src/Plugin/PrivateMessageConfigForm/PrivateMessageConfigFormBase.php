@@ -21,6 +21,13 @@ abstract class PrivateMessageConfigFormBase extends PluginBase implements Privat
    * Tipagem do porte Private Message.
    *
    * @param array<string, mixed> $configuration
+   *   A configuração do plugin.
+   * @param string $plugin_id
+   *   O identificador do plugin.
+   * @param mixed $plugin_definition
+   *   A definição do plugin.
+   * @param ConfigFactoryInterface $configFactory
+   *   O serviço de configuração do Drupal.
    */
   public function __construct(
     array $configuration,
@@ -34,7 +41,14 @@ abstract class PrivateMessageConfigFormBase extends PluginBase implements Privat
   /**
    * {@inheritdoc}
    *
+   * @param ContainerInterface $container
+   *   O contêiner de serviços.
    * @param array<string, mixed> $configuration
+   *   A configuração do plugin.
+   * @param string $plugin_id
+   *   O identificador do plugin.
+   * @param mixed $plugin_definition
+   *   A definição do plugin.
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
     return new static(
@@ -67,6 +81,9 @@ abstract class PrivateMessageConfigFormBase extends PluginBase implements Privat
    * {@inheritdoc}
    *
    * @param array<string, mixed> $form
+   *   O array do formulário.
+   * @param FormStateInterface $formState
+   *   O estado atual do formulário.
    */
   public function validateForm(array &$form, FormStateInterface $formState): void {
   }

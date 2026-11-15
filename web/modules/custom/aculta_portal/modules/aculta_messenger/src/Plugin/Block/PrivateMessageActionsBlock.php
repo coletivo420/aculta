@@ -20,8 +20,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * Provides the private message actions block.
  *
  * This block holds links to perform actions on a private message thread.
- */
-/**
+ *
  * @phpstan-consistent-constructor
  */
 #[Block(
@@ -35,6 +34,15 @@ class PrivateMessageActionsBlock extends BlockBase implements ContainerFactoryPl
    * Tipagem do porte Private Message.
    *
    * @param array<string, mixed> $configuration
+   *   A configuração do plugin.
+   * @param string $plugin_id
+   *   O identificador do plugin.
+   * @param mixed $plugin_definition
+   *   A definição do plugin.
+   * @param AccountProxyInterface $currentUser
+   *   A conta do usuário atual.
+   * @param ConfigFactoryInterface $configFactory
+   *   O serviço de configuração do Drupal.
    */
   public function __construct(
     array $configuration,
@@ -49,7 +57,14 @@ class PrivateMessageActionsBlock extends BlockBase implements ContainerFactoryPl
   /**
    * {@inheritdoc}
    *
+   * @param ContainerInterface $container
+   *   O contêiner de serviços.
    * @param array<string, mixed> $configuration
+   *   A configuração do plugin.
+   * @param string $plugin_id
+   *   O identificador do plugin.
+   * @param mixed $plugin_definition
+   *   A definição do plugin.
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): static {
     return new static(
@@ -73,6 +88,7 @@ class PrivateMessageActionsBlock extends BlockBase implements ContainerFactoryPl
    * {@inheritdoc}
    *
    * @return array<string, mixed>
+   *   A lista com os valores resultantes.
    */
   public function build(): array {
     if (!$this->currentUser->hasPermission('use private messaging system')) {

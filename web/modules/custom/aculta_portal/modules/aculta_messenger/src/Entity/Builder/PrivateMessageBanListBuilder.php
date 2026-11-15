@@ -17,6 +17,7 @@ class PrivateMessageBanListBuilder extends EntityListBuilder {
    * {@inheritdoc}
    *
    * @return array<string, mixed>
+   *   A lista com os valores resultantes.
    */
   public function buildHeader(): array {
     // @todo Make this useful by adding the ban owner and target fields.
@@ -28,7 +29,11 @@ class PrivateMessageBanListBuilder extends EntityListBuilder {
   /**
    * {@inheritdoc}
    *
+   * @param EntityInterface $entity
+   *   A entidade.
+   *
    * @return array<string, mixed>
+   *   A lista com os valores resultantes.
    */
   public function buildRow(EntityInterface $entity): array {
     /** @var \Drupal\aculta_messenger\Entity\PrivateMessageBanInterface $entity */

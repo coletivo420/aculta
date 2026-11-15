@@ -22,8 +22,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Defines the private message thread member widget.
- */
-/**
+ *
  * @phpstan-consistent-constructor
  */
 #[FieldWidget(
@@ -40,8 +39,22 @@ class PrivateMessageThreadMemberWidget extends EntityReferenceAutocompleteWidget
   /**
    * Tipagem do porte Private Message.
    *
+   * @param string $plugin_id
+   *   O identificador do plugin.
+   * @param mixed $plugin_definition
+   *   A definição do plugin.
+   * @param FieldDefinitionInterface $field_definition
+   *   A definição do campo.
    * @param array<string, mixed> $settings
+   *   As configurações do componente.
    * @param array<string, mixed> $third_party_settings
+   *   As configurações de terceiros do componente.
+   * @param RequestStack $requestStack
+   *   O valor informado para $requestStack.
+   * @param EntityTypeManagerInterface $entityTypeManager
+   *   O gerenciador de tipos de entidade.
+   * @param ConfigFactoryInterface $configFactory
+   *   O serviço de configuração do Drupal.
    */
   public function __construct(
     string $plugin_id,
@@ -59,7 +72,14 @@ class PrivateMessageThreadMemberWidget extends EntityReferenceAutocompleteWidget
   /**
    * {@inheritdoc}
    *
+   * @param ContainerInterface $container
+   *   O contêiner de serviços.
    * @param array<string, mixed> $configuration
+   *   A configuração do plugin.
+   * @param string $plugin_id
+   *   O identificador do plugin.
+   * @param mixed $plugin_definition
+   *   A definição do plugin.
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): static {
     /** @var \Drupal\Core\Field\FieldDefinitionInterface $field_definition */
@@ -94,6 +114,7 @@ class PrivateMessageThreadMemberWidget extends EntityReferenceAutocompleteWidget
    * {@inheritdoc}
    *
    * @return array<string, mixed>
+   *   A lista com os valores resultantes.
    */
   public static function defaultSettings(): array {
     return [
@@ -108,6 +129,7 @@ class PrivateMessageThreadMemberWidget extends EntityReferenceAutocompleteWidget
    * effect on this form.
    *
    * @return array<int|string, mixed>
+   *   A lista com os valores resultantes.
    */
   public function settingsSummary(): array {
     /** @var array<int|string, mixed> $summary */
@@ -125,8 +147,12 @@ class PrivateMessageThreadMemberWidget extends EntityReferenceAutocompleteWidget
    * {@inheritdoc}
    *
    * @param array<string, mixed> $form
+   *   O array do formulário.
+   * @param FormStateInterface $form_state
+   *   O estado atual do formulário.
    *
    * @return array<string, mixed>
+   *   A lista com os valores resultantes.
    */
   public function settingsForm(array $form, FormStateInterface $form_state): array {
     /** @var array<string, mixed> $form */
@@ -147,10 +173,18 @@ class PrivateMessageThreadMemberWidget extends EntityReferenceAutocompleteWidget
    * {@inheritdoc}
    *
    * @param \Drupal\Core\Field\FieldItemListInterface<\Drupal\Core\Field\FieldItemInterface> $items
+   *   A lista de itens do campo.
+   * @param int $delta
+   *   A posição do item no campo.
    * @param array<string, mixed> $element
+   *   O elemento do formulário.
    * @param array<array-key, mixed> &$form
+   *   O array do formulário.
+   * @param FormStateInterface $form_state
+   *   O estado atual do formulário.
    *
    * @return array<string, mixed>
+   *   A lista com os valores resultantes.
    */
   public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state): array {
     /** @var array{target_id: array<string, mixed>, '#element_validate'?: array<mixed>, ...} $element */
@@ -218,7 +252,12 @@ class PrivateMessageThreadMemberWidget extends EntityReferenceAutocompleteWidget
    * created as an unlimited cardinality field, but the widget allows for
    * setting a maximum number of users.
    *
-   * @param array{'#parents': array<int|string>, '#max_members': int, ...} $element
+   * @param array<string, mixed> $element
+   *   O elemento do formulário.
+   * @param FormStateInterface $form_state
+   *   O estado atual do formulário.
+   *
+   * @phpstan-param array{'#parents': array<int|string>, '#max_members': int, ...} $element
    */
   public static function validateFormElement(array $element, FormStateInterface $form_state): void {
     $inputExists = FALSE;
@@ -234,10 +273,15 @@ class PrivateMessageThreadMemberWidget extends EntityReferenceAutocompleteWidget
   /**
    * {@inheritdoc}
    *
-   * @param array<string, mixed> $form
    * @param array<string, mixed> $values
+   *   Os valores enviados.
+   * @param array<string, mixed> $form
+   *   O array do formulário.
+   * @param FormStateInterface $form_state
+   *   O estado atual do formulário.
    *
    * @return array<string, mixed>
+   *   A lista com os valores resultantes.
    */
   public function massageFormValues(array $values, array $form, FormStateInterface $form_state): array {
     /** @var array<string, mixed> $targetValues */

@@ -31,6 +31,7 @@ abstract class PrivateMessageInsertMessagesCommandBase implements CommandInterfa
    * {@inheritdoc}
    *
    * @return array<string, mixed>
+   *   A lista com os valores resultantes.
    */
   public function render(): array {
     return [

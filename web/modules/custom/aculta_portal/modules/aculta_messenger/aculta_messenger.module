@@ -11,8 +11,6 @@ use Drupal\Core\Entity\Query\QueryInterface;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Url;
 use Drupal\aculta_messenger\Entity\PrivateMessage;
-use Drupal\aculta_messenger\Entity\PrivateMessageInterface;
-use Drupal\aculta_messenger\Entity\PrivateMessageThreadInterface;
 use Drupal\aculta_messenger\Hook\ViewsHooks;
 use Drupal\user\Entity\User;
 use Drupal\user\RoleInterface;
@@ -185,12 +183,17 @@ function aculta_messenger_entity_extra_field_info(): array {
  * Implements hook_ENTITY_TYPE_view().
  *
  * @param array<string, mixed> $build
+ *   O array de renderização da conversa.
+ * @param EntityInterface $entity
+ *   A entidade.
+ * @param EntityViewDisplayInterface $display
+ *   A configuração de exibição.
  *   Renderização da conversa, alterada antes da exibição.
  *
  * @see hook_entity_view()
  */
 function aculta_messenger_private_message_thread_view(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display): void {
-  /** @var PrivateMessageThreadInterface $entity */
+  /** @var \Drupal\aculta_messenger\Entity\PrivateMessageThreadInterface $entity */
   if ($display->getComponent('last_message')) {
     $messages = $entity->getMessages();
     if ($messages) {
@@ -297,7 +300,7 @@ function aculta_messenger_preprocess_private_message_thread(array &$variables): 
   $variables['view_mode'] = $elements['#view_mode'];
   // Provide a distinct $teaser boolean.
   $variables['private_message_thread'] = $elements['#private_message_thread'];
-  /** @var PrivateMessageThreadInterface $private_message_thread */
+  /** @var \Drupal\aculta_messenger\Entity\PrivateMessageThreadInterface $private_message_thread */
   $private_message_thread = $variables['private_message_thread'];
   $last_update = '';
   if (isset($elements['updated'])) {
@@ -337,7 +340,7 @@ function aculta_messenger_preprocess_private_message(array &$variables): void {
   $variables['view_mode'] = $elements['#view_mode'];
   // Provide a distinct $teaser boolean.
   $variables['private_message'] = $elements['#private_message'];
-  /** @var PrivateMessageInterface $private_message */
+  /** @var \Drupal\aculta_messenger\Entity\PrivateMessageInterface $private_message */
   $private_message = $variables['private_message'];
 
   $variables['url'] = $private_message->toUrl('canonical', [

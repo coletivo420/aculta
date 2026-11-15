@@ -16,6 +16,9 @@ class PrivateMessageBanForm extends ContentEntityForm {
    * {@inheritdoc}
    *
    * @param array<string, mixed> $form
+   *   O array do formulário.
+   * @param FormStateInterface $form_state
+   *   O estado atual do formulário.
    */
   public function save(array $form, FormStateInterface $form_state): int {
     $status = parent::save($form, $form_state);

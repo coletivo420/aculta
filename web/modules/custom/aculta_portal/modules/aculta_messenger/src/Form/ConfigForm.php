@@ -49,8 +49,12 @@ class ConfigForm extends ConfigFormBase {
    * {@inheritdoc}
    *
    * @param array<string, mixed> $form
+   *   O array do formulário.
+   * @param FormStateInterface $form_state
+   *   O estado atual do formulário.
    *
    * @return array<string, mixed>
+   *   A lista com os valores resultantes.
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $this->config('private_message.settings');
@@ -262,6 +266,9 @@ class ConfigForm extends ConfigFormBase {
    * {@inheritdoc}
    *
    * @param array<string, mixed> $form
+   *   O array do formulário.
+   * @param FormStateInterface $form_state
+   *   O estado atual do formulário.
    */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
     $definitions = $this->privateMessageConfigFormManager->getDefinitions();
@@ -277,6 +284,9 @@ class ConfigForm extends ConfigFormBase {
    * {@inheritdoc}
    *
    * @param array<array-key, mixed> &$form
+   *   O array do formulário.
+   * @param FormStateInterface $form_state
+   *   O estado atual do formulário.
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $definitions = $this->privateMessageConfigFormManager->getDefinitions();
@@ -299,6 +309,7 @@ class ConfigForm extends ConfigFormBase {
    * {@inheritdoc}
    *
    * @return array<int, string>
+   *   A lista com os valores resultantes.
    */
   protected function getEditableConfigNames(): array {
     return [

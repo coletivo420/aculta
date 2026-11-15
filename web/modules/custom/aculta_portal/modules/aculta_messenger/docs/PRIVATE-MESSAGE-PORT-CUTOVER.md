@@ -48,7 +48,7 @@ Preservar a licença upstream GPL-2.0-or-later, autorias, o `LICENSE.txt` origin
 
 **Concluído:** conferência do pacote, classificação e preparação automática do código, inventário direcionado do módulo em `dev`, script de staging e runbook. **Concluído após o corte (branch `pm-corte-direto`):** código portado para `src/` ativo; entidades `private_message`, `private_message_thread` e `private_message_ban` sob `aculta_messenger`; rota `entity.private_message_thread.canonical` (`/mensagens/conversa/{private_message_thread}`) apontando para `MessagesController::drawerConversation`; permissão `use private messaging system` definida em `aculta_messenger.permissions.yml` e concedida somente a `email_confirmed` (não a `authenticated`); `drupal/private_message` retirado de `composer.json` e `composer.lock`; ajustes de tipagem e docblocks para PHPStan, com baseline reduzida de 786 para 4 erros na última medição.
 
-**Pendente:** resolver os 3 erros de injeção do H5P (`aculta_lms_h5p`, controllers `aculta_H5PAJAX`, `aculta_H5PEditorAjaxController`, `aculta_H5PFileController`), cuja causa não foi localizada; decidir o tratamento de `new static` em `PrivateMessageConfigFormBase::create`; escrever as descrições de docblock do PHPCS (304 erros em 71 arquivos); rodar Functional; rebase sobre `origin/dev` e fast-forward só após Unit, PHPCS, PHPStan, Kernel e Functional verdes. Acesso GitHub não equivale a acesso ao banco do servidor.
+**Pendente:** resolver os 3 erros de injeção do H5P (`aculta_lms_h5p`, controllers `aculta_H5PAJAX`, `aculta_H5PEditorAjaxController`, `aculta_H5PFileController`), cuja causa não foi localizada; decidir o tratamento de `new static` em `PrivateMessageConfigFormBase::create`; manter o PHPCS sem erros (0 erros; restam 110 avisos, sobretudo de comprimento de linha); rodar Functional; rebase sobre `origin/dev` e fast-forward só após Unit, PHPCS, PHPStan, Kernel e Functional verdes. Acesso GitHub não equivale a acesso ao banco do servidor.
 
 
 ## Preflight automático somente leitura
@@ -83,7 +83,7 @@ Janela única autorizada. Aplicada em `aculta_runtime` e ensaiada antes em `acul
 
 **Pendente (não executado):**
 
-- Gates ainda não concluídos: PHPCS, Functional, Playwright e Semgrep. PHPStan está com 4 erros na última medição (3 de H5P, 1 de `new static`).
+- Gates ainda não concluídos: Functional, Playwright e Semgrep. PHPCS do módulo sem erros. PHPStan completo mede 5 erros na última medição (4 de injeção do H5P fora do módulo e 1 de `new static`).
 - Testes de navegador e smoke HTTP nos dez site keys (o Runtime não foi acessado via HTTP nesta janela).
 - Hooks de formulário de usuário e de perfil do PM não foram portados (UI paralela; plano P1.4).
 - Hooks `aculta_messenger_install` e `aculta_messenger_private_message_thread_view` tiveram a assinatura alterada por decisão do responsável (remoção de `$is_syncing` e `$view_mode`); conferir chamadores antes de fechar.

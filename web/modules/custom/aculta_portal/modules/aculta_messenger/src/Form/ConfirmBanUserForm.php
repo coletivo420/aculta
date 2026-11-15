@@ -44,8 +44,14 @@ class ConfirmBanUserForm extends ConfirmFormBase {
    * {@inheritdoc}
    *
    * @param array<string, mixed> $form
+   *   O array do formulário.
+   * @param FormStateInterface $form_state
+   *   O estado atual do formulário.
+   * @param UserInterface|null $user
+   *   O usuário.
    *
    * @return array<string, mixed>
+   *   A lista com os valores resultantes.
    */
   public function buildForm(array $form, FormStateInterface $form_state, ?UserInterface $user = NULL): array {
     /** @var UserInterface $user */
@@ -60,6 +66,8 @@ class ConfirmBanUserForm extends ConfirmFormBase {
    *
    * @param array<array-key, mixed> &$form
    *   The form structure, passed by reference.
+   * @param FormStateInterface $form_state
+   *   O estado atual do formulário.
    */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
     // Add a security if the user id is unknown.
@@ -78,6 +86,9 @@ class ConfirmBanUserForm extends ConfirmFormBase {
    * {@inheritdoc}
    *
    * @param array<array-key, mixed> &$form
+   *   O array do formulário.
+   * @param FormStateInterface $form_state
+   *   O estado atual do formulário.
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $form_state->setRedirect('private_message.private_message_page');

@@ -41,8 +41,30 @@ class PrivateMessageThreadMessageFormatter extends FormatterBase implements Cont
   /**
    * Tipagem do porte Private Message.
    *
+   * @param string $plugin_id
+   *   O identificador do plugin.
+   * @param mixed $plugin_definition
+   *   A definição do plugin.
+   * @param FieldDefinitionInterface $field_definition
+   *   A definição do campo.
    * @param array<string, mixed> $settings
+   *   As configurações do componente.
+   * @param string $label
+   *   O rótulo do componente.
+   * @param string $view_mode
+   *   O modo de visualização.
    * @param array<string, mixed> $third_party_settings
+   *   As configurações de terceiros do componente.
+   * @param EntityTypeManagerInterface $entityTypeManager
+   *   O gerenciador de tipos de entidade.
+   * @param AccountProxyInterface $currentUser
+   *   A conta do usuário atual.
+   * @param CsrfTokenGenerator $csrfTokenGenerator
+   *   O valor informado para $csrfTokenGenerator.
+   * @param ConfigFactoryInterface $configFactory
+   *   O serviço de configuração do Drupal.
+   * @param EntityDisplayRepositoryInterface $entityDisplayRepository
+   *   O valor informado para $entityDisplayRepository.
    */
   public function __construct(
     $plugin_id,
@@ -64,7 +86,14 @@ class PrivateMessageThreadMessageFormatter extends FormatterBase implements Cont
   /**
    * {@inheritdoc}
    *
+   * @param ContainerInterface $container
+   *   O contêiner de serviços.
    * @param array<string, mixed> $configuration
+   *   A configuração do plugin.
+   * @param string $plugin_id
+   *   O identificador do plugin.
+   * @param mixed $plugin_definition
+   *   A definição do plugin.
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): static {
     /** @var \Drupal\Core\Field\FieldDefinitionInterface $field_definition */
@@ -105,6 +134,7 @@ class PrivateMessageThreadMessageFormatter extends FormatterBase implements Cont
    * {@inheritdoc}
    *
    * @return array<string, mixed>
+   *   A lista com os valores resultantes.
    */
   public static function defaultSettings(): array {
     return [
@@ -145,8 +175,12 @@ class PrivateMessageThreadMessageFormatter extends FormatterBase implements Cont
    * {@inheritdoc}
    *
    * @param array<string, mixed> $form
+   *   O array do formulário.
+   * @param FormStateInterface $form_state
+   *   O estado atual do formulário.
    *
    * @return array<string, mixed>
+   *   A lista com os valores resultantes.
    */
   public function settingsForm(array $form, FormStateInterface $form_state): array {
     $element['message_count'] = [
@@ -213,6 +247,9 @@ class PrivateMessageThreadMessageFormatter extends FormatterBase implements Cont
    * {@inheritdoc}
    *
    * @param \Drupal\Core\Field\FieldItemListInterface<\Drupal\Core\Field\FieldItemInterface> $items
+   *   A lista de itens do campo.
+   * @param string|null $langcode
+   *   O código do idioma.
    */
   public function viewElements(FieldItemListInterface $items, $langcode): array {
     /** @var \Drupal\aculta_messenger\Entity\PrivateMessageThreadInterface $private_message_thread */

@@ -10,6 +10,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Field\Attribute\FieldFormatter;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
+use Drupal\Core\Field\Plugin\Field\FieldType\EntityReferenceItem;
 use Drupal\Core\Field\FormatterBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
@@ -37,8 +38,28 @@ class PrivateMessageThreadMemberFormatter extends FormatterBase implements Conta
   /**
    * Tipagem do porte Private Message.
    *
+   * @param string $plugin_id
+   *   O identificador do plugin.
+   * @param mixed $plugin_definition
+   *   A definição do plugin.
+   * @param FieldDefinitionInterface $field_definition
+   *   A definição do campo.
    * @param array<string, mixed> $settings
+   *   As configurações do componente.
+   * @param string $label
+   *   O rótulo do componente.
+   * @param string $view_mode
+   *   O modo de visualização.
    * @param array<string, mixed> $third_party_settings
+   *   As configurações de terceiros do componente.
+   * @param EntityTypeManagerInterface $entityTypeManager
+   *   O gerenciador de tipos de entidade.
+   * @param AccountProxyInterface $currentUser
+   *   A conta do usuário atual.
+   * @param EntityDisplayRepositoryInterface $entityDisplayRepository
+   *   O valor informado para $entityDisplayRepository.
+   * @param RendererInterface $renderer
+   *   O valor informado para $renderer.
    */
   public function __construct(
     $plugin_id,
@@ -59,7 +80,16 @@ class PrivateMessageThreadMemberFormatter extends FormatterBase implements Conta
   /**
    * {@inheritdoc}
    *
-   * @param array{field_definition: \Drupal\Core\Field\FieldDefinitionInterface, settings: array<string, mixed>, label: string, view_mode: string, third_party_settings: array<string, mixed>, ...} $configuration
+   * @param ContainerInterface $container
+   *   O contêiner de serviços.
+   * @param array<string, mixed> $configuration
+   *   A configuração do plugin.
+   * @param string $plugin_id
+   *   O identificador do plugin.
+   * @param mixed $plugin_definition
+   *   A definição do plugin.
+   *
+   * @phpstan-param array{field_definition: \Drupal\Core\Field\FieldDefinitionInterface, settings: array<string, mixed>, label: string, view_mode: string, third_party_settings: array<string, mixed>, ...} $configuration
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): static {
     return new static(
@@ -144,6 +174,7 @@ class PrivateMessageThreadMemberFormatter extends FormatterBase implements Conta
    * {@inheritdoc}
    *
    * @return array<string, mixed>
+   *   A lista com os valores resultantes.
    */
   public static function defaultSettings(): array {
     return [
@@ -160,8 +191,12 @@ class PrivateMessageThreadMemberFormatter extends FormatterBase implements Conta
    * {@inheritdoc}
    *
    * @param array<string, mixed> $form
+   *   O array do formulário.
+   * @param FormStateInterface $form_state
+   *   O estado atual do formulário.
    *
    * @return array<string, mixed>
+   *   A lista com os valores resultantes.
    */
   public function settingsForm(array $form, FormStateInterface $form_state): array {
     $element['display_type'] = [
@@ -248,8 +283,12 @@ class PrivateMessageThreadMemberFormatter extends FormatterBase implements Conta
    * Ajax callback for settings form.
    *
    * @param array<string, mixed> $form
+   *   O array do formulário.
+   * @param FormStateInterface $form_state
+   *   O estado atual do formulário.
    *
    * @return array<string, mixed>
+   *   A lista com os valores resultantes.
    */
   public function ajaxCallback(array $form, FormStateInterface $form_state): array {
     /** @var array<string, array<string, array<string, array<string, array<string, array<string, mixed>>>>>> $fields */
@@ -261,6 +300,9 @@ class PrivateMessageThreadMemberFormatter extends FormatterBase implements Conta
    * {@inheritdoc}
    *
    * @param \Drupal\Core\Field\FieldItemListInterface<\Drupal\Core\Field\FieldItemInterface> $items
+   *   A lista de itens do campo.
+   * @param string|null $langcode
+   *   O código do idioma.
    */
   public function viewElements(FieldItemListInterface $items, $langcode): array {
     $access_profiles = $this->currentUser->hasPermission('access user profiles');
@@ -270,7 +312,7 @@ class PrivateMessageThreadMemberFormatter extends FormatterBase implements Conta
     $view_builder = $this->entityTypeManager->getViewBuilder('user');
     foreach ($items as $delta => $item) {
       /** @var \Drupal\user\UserInterface|null $user */
-      $user = $item instanceof \Drupal\Core\Field\Plugin\Field\FieldType\EntityReferenceItem ? $item->entity : NULL;
+      $user = $item instanceof EntityReferenceItem ? $item->entity : NULL;
       if ($user) {
         if ($user->id() != $this->currentUser->id() || ($user->id() == $this->currentUser->id() && $display_current_user)) {
           if ($this->getSetting('display_type') == 'label') {

@@ -16,7 +16,11 @@ class PrivateMessageTab extends LocalTaskDefault {
   /**
    * {@inheritdoc}
    *
+   * @param RouteMatchInterface $route_match
+   *   A correspondência da rota atual.
+   *
    * @return array<string, mixed>
+   *   A lista com os valores resultantes.
    */
   public function getRouteParameters(RouteMatchInterface $route_match): array {
     $private_message = $route_match->getParameter('private_message');

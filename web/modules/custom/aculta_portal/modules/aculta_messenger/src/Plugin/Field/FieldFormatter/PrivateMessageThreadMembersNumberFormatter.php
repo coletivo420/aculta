@@ -48,6 +48,7 @@ class PrivateMessageThreadMembersNumberFormatter extends FormatterBase implement
    * {@inheritdoc}
    *
    * @return array<string, mixed>
+   *   A lista com os valores resultantes.
    */
   public static function defaultSettings(): array {
     return [
@@ -59,8 +60,12 @@ class PrivateMessageThreadMembersNumberFormatter extends FormatterBase implement
    * {@inheritdoc}
    *
    * @param array<string, mixed> $form
+   *   O array do formulário.
+   * @param FormStateInterface $form_state
+   *   O estado atual do formulário.
    *
    * @return array<string, mixed>
+   *   A lista com os valores resultantes.
    */
   public function settingsForm(array $form, FormStateInterface $form_state): array {
     $element = [];
@@ -78,6 +83,9 @@ class PrivateMessageThreadMembersNumberFormatter extends FormatterBase implement
    * {@inheritdoc}
    *
    * @param \Drupal\Core\Field\FieldItemListInterface<\Drupal\Core\Field\FieldItemInterface> $items
+   *   A lista de itens do campo.
+   * @param string|null $langcode
+   *   O código do idioma.
    */
   public function viewElements(FieldItemListInterface $items, $langcode): array {
     $users_num = count($items);

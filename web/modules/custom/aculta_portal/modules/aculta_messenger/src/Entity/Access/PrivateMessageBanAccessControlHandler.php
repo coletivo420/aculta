@@ -42,7 +42,12 @@ class PrivateMessageBanAccessControlHandler extends EntityAccessControlHandler {
   /**
    * {@inheritdoc}
    *
+   * @param AccountInterface $account
+   *   A conta do usuário.
    * @param array<string, mixed> $context
+   *   O contexto da operação.
+   * @param string|null $entity_bundle
+   *   O bundle da entidade, quando informado.
    */
   protected function checkCreateAccess(AccountInterface $account, array $context, $entity_bundle = NULL): AccessResultInterface {
     return AccessResult::allowedIfHasPermission($account, 'add private message ban entities');

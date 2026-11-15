@@ -362,8 +362,12 @@ final class PrivateMessageNotificationWorker extends QueueWorkerBase implements 
   /**
    * Creates a notice message of the private-message template.
    *
+   * @param int $recipientId
+   *   O identificador do destinatário.
+   * @param int $messageId
+   *   O identificador da mensagem.
    * @param array<string, mixed> $values
-   *   Template-specific values appended to the identity fields.
+   *   Valores específicos do template, anexados aos campos de identidade.
    */
   private function newNotification(int $recipientId, int $messageId, array $values): MessageInterface {
     $notification = $this->entityTypeManager->getStorage('message')->create($values + [

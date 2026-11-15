@@ -50,6 +50,8 @@ class PrivateMessageThreadDeleteForm extends ContentEntityConfirmFormBase {
    *
    * @param array<array-key, mixed> &$form
    *   The form structure, passed by reference.
+   * @param FormStateInterface $form_state
+   *   O estado atual do formulário.
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     parent::submitForm($form, $form_state);

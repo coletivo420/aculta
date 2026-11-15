@@ -91,8 +91,14 @@ class PrivateMessageForm extends ContentEntityForm {
    * {@inheritdoc}
    *
    * @param array<string, mixed> $form
+   *   O array do formulário.
+   * @param FormStateInterface $form_state
+   *   O estado atual do formulário.
+   * @param PrivateMessageThreadInterface|null $privateMessageThread
+   *   A conversa de mensagem privada.
    *
    * @return array<string, mixed>
+   *   A lista com os valores resultantes.
    */
   public function buildForm(array $form, FormStateInterface $form_state, ?PrivateMessageThreadInterface $privateMessageThread = NULL): array {
     /** @var array<string, mixed> $form */
@@ -268,8 +274,12 @@ class PrivateMessageForm extends ContentEntityForm {
    * better user experience, by creating a thread and a message in a single
    * form.
    *
-   * @see \Drupal\aculta_messenger\Entity\PrivateMessageThead::baseFieldDefinitions
    * @param array<array-key, mixed> &$form
+   *   O array do formulário.
+   * @param FormStateInterface $formState
+   *   O estado atual do formulário.
+   *
+   * @see \Drupal\aculta_messenger\Entity\PrivateMessageThead::baseFieldDefinitions
    */
   public function validateMembers(array &$form, FormStateInterface $formState): void {
     // The members form element was loaded from the PrivateMessageThread entity
@@ -344,6 +354,9 @@ class PrivateMessageForm extends ContentEntityForm {
    * Validates that the current user isn't replying to a banned member.
    *
    * @param array<array-key, mixed> &$form
+   *   O array do formulário.
+   * @param FormStateInterface $formState
+   *   O estado atual do formulário.
    */
   public function validateBannedMembers(array &$form, FormStateInterface $formState): void {
     /** @var \Drupal\aculta_messenger\Entity\PrivateMessageThread|null $privateMessageThread */
@@ -366,6 +379,9 @@ class PrivateMessageForm extends ContentEntityForm {
    * Re-render form after submission, so user could write new message.
    *
    * @param array<string, mixed> $form
+   *   O array do formulário.
+   * @param FormStateInterface $formState
+   *   O estado atual do formulário.
    */
   public function ajaxCallback(array $form, FormStateInterface $formState): AjaxResponse {
     $response = new AjaxResponse();
@@ -425,8 +441,12 @@ class PrivateMessageForm extends ContentEntityForm {
    * After build callback for the Private Message Form.
    *
    * @param array<string, mixed> $element
+   *   O elemento do formulário.
+   * @param FormStateInterface $form_state
+   *   O estado atual do formulário.
    *
    * @return array<string, mixed>
+   *   A lista com os valores resultantes.
    */
   public function afterBuild(array $element, FormStateInterface $form_state): array {
     /** @var array<string, mixed> $message_element */
@@ -449,6 +469,9 @@ class PrivateMessageForm extends ContentEntityForm {
    * {@inheritdoc}
    *
    * @param array<string, mixed> $form
+   *   O array do formulário.
+   * @param FormStateInterface $form_state
+   *   O estado atual do formulário.
    */
   public function save(array $form, FormStateInterface $form_state): int {
     $status = parent::save($form, $form_state);

@@ -15,8 +15,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * Outputs thread new messages count.
  *
  * @ingroup views_field_handlers
- */
-/**
+ *
  * @phpstan-consistent-constructor
  */
 #[ViewsField("private_message_thread_new_messages_count")]
@@ -26,6 +25,15 @@ class PrivateMessageThreadNewMessagesCount extends FieldPluginBase {
    * Tipagem do porte Private Message.
    *
    * @param array<string, mixed> $configuration
+   *   A configuração do plugin.
+   * @param string $plugin_id
+   *   O identificador do plugin.
+   * @param mixed $plugin_definition
+   *   A definição do plugin.
+   * @param AccountInterface $currentUser
+   *   A conta do usuário atual.
+   * @param PrivateMessageServiceInterface $privateMessageService
+   *   O serviço de mensagens privadas.
    */
   public function __construct(
     array $configuration,
@@ -40,7 +48,14 @@ class PrivateMessageThreadNewMessagesCount extends FieldPluginBase {
   /**
    * {@inheritdoc}
    *
+   * @param ContainerInterface $container
+   *   O contêiner de serviços.
    * @param array<string, mixed> $configuration
+   *   A configuração do plugin.
+   * @param string $plugin_id
+   *   O identificador do plugin.
+   * @param mixed $plugin_definition
+   *   A definição do plugin.
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): static {
     return new static(

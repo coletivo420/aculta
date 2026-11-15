@@ -26,6 +26,9 @@ class UniqueBanConstraintValidator extends ConstraintValidator implements Contai
    * {@inheritdoc}
    *
    * @param mixed $value
+   *   O valor.
+   * @param Constraint $constraint
+   *   A restrição de validação.
    */
   public function validate($value, Constraint $constraint): void {
     assert($value instanceof PrivateMessageBan);

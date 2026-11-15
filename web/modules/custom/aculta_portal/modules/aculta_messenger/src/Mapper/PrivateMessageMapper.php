@@ -22,6 +22,7 @@ class PrivateMessageMapper implements PrivateMessageMapperInterface {
    * {@inheritdoc}
    *
    * @param array<int, \Drupal\user\UserInterface> $members
+   *   Os membros da conversa.
    */
   public function getThreadIdForMembers(array $members) {
     $uids = [];
@@ -92,7 +93,15 @@ class PrivateMessageMapper implements PrivateMessageMapperInterface {
   /**
    * {@inheritdoc}
    *
+   * @param UserInterface $user
+   *   O usuário.
+   * @param int|false $count
+   *   A quantidade.
+   * @param int|false|null $timestamp
+   *   O instante de referência, quando informado.
+   *
    * @return array<mixed, mixed>
+   *   A lista com os valores resultantes.
    */
   public function getThreadIdsForUser(UserInterface $user, $count = FALSE, $timestamp = FALSE): array {
 
@@ -165,8 +174,12 @@ class PrivateMessageMapper implements PrivateMessageMapperInterface {
    * {@inheritdoc}
    *
    * @param array<string, mixed> $existingThreadIds
+   *   Os identificadores de conversas já existentes.
+   * @param int|false $count
+   *   A quantidade.
    *
    * @return array<mixed, mixed>
+   *   A lista com os valores resultantes.
    */
   public function getUpdatedInboxThreadIds(array $existingThreadIds, $count = FALSE): array {
 
@@ -318,6 +331,7 @@ class PrivateMessageMapper implements PrivateMessageMapperInterface {
    * {@inheritdoc}
    *
    * @return array<mixed, mixed>
+   *   A lista com os valores resultantes.
    */
   public function getThreadIds(): array {
     /** @var \Drupal\Core\Database\StatementInterface<int, mixed> $statement */

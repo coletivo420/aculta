@@ -86,7 +86,10 @@ class PrivateMessageService implements PrivateMessageServiceInterface {
   /**
    * {@inheritdoc}
    *
+   * @param int $count
+   *   A quantidade.
    * @param int|false|null $timestamp
+   *   O instante de referência, quando informado.
    */
   public function getThreadsForUser(int $count, /* ?int */$timestamp = NULL): array {
     if ($timestamp === FALSE) {
@@ -137,7 +140,13 @@ class PrivateMessageService implements PrivateMessageServiceInterface {
   /**
    * {@inheritdoc}
    *
+   * @param int $threadId
+   *   O valor informado para $threadId.
+   * @param int $messageId
+   *   O valor informado para $messageId.
+   *
    * @return list<\Drupal\aculta_messenger\Entity\PrivateMessageInterface>
+   *   O valor resultante.
    */
   public function getNewMessages($threadId, $messageId) {
     /** @var \Drupal\aculta_messenger\Entity\PrivateMessageThreadInterface|null $private_message_thread */
@@ -162,7 +171,13 @@ class PrivateMessageService implements PrivateMessageServiceInterface {
   /**
    * {@inheritdoc}
    *
+   * @param int $threadId
+   *   O valor informado para $threadId.
+   * @param int $messageId
+   *   O valor informado para $messageId.
+   *
    * @return array<string, mixed>
+   *   O valor resultante.
    */
   public function getPreviousMessages($threadId, $messageId) {
     $return = [
@@ -220,8 +235,12 @@ class PrivateMessageService implements PrivateMessageServiceInterface {
    * {@inheritdoc}
    *
    * @param array<string, mixed> $existingThreadInfo
+   *   O valor informado para $existingThreadInfo.
+   * @param int|false $count
+   *   A quantidade.
    *
    * @return array<string, mixed>
+   *   O valor resultante.
    */
   public function getUpdatedInboxThreads(array $existingThreadInfo, $count = FALSE) {
     $thread_info = $this->getUpdatedInboxThreadIds(array_keys($existingThreadInfo), $count);
@@ -309,6 +328,13 @@ class PrivateMessageService implements PrivateMessageServiceInterface {
    * {@inheritdoc}
    *
    * @param array<string, mixed> $build
+   *   O array de renderização.
+   * @param EntityInterface $entity
+   *   A entidade.
+   * @param EntityViewDisplayInterface $display
+   *   A configuração de exibição.
+   * @param string $view_mode
+   *   O modo de visualização.
    */
   public function createRenderablePrivateMessageThreadLink(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, $view_mode) {
     if ($display->getComponent('private_message_link')) {
@@ -367,6 +393,7 @@ class PrivateMessageService implements PrivateMessageServiceInterface {
    * {@inheritdoc}
    *
    * @return list<mixed>
+   *   O valor resultante.
    */
   public function getThreadIds() {
     $query = $this->database->select('private_message_threads', 'pmt')

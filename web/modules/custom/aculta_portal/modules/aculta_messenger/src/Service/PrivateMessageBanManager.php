@@ -61,7 +61,11 @@ class PrivateMessageBanManager implements PrivateMessageBanManagerInterface {
   /**
    * {@inheritdoc}
    *
+   * @param int|string $user_id
+   *   O valor informado para $user_id.
+   *
    * @return array<mixed, mixed>
+   *   A lista com os valores resultantes.
    */
   public function getBannedUsers(int|string $user_id): array {
     /** @var \Drupal\Core\Database\StatementInterface<int, mixed> $statement */

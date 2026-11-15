@@ -56,6 +56,7 @@ class PrivateMessage extends ContentEntityBase implements PrivateMessageInterfac
    * {@inheritdoc}
    *
    * @return mixed
+   *   O valor resultante.
    */
   public function getMessage() {
     return $this->get('message')->value;
@@ -64,7 +65,11 @@ class PrivateMessage extends ContentEntityBase implements PrivateMessageInterfac
   /**
    * {@inheritdoc}
    *
+   * @param EntityTypeInterface $entity_type
+   *   O tipo de entidade.
+   *
    * @return array<string, \Drupal\Core\Field\FieldDefinitionInterface>
+   *   A lista com os valores resultantes.
    */
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type): array {
     /** @var array<string, \Drupal\Core\Field\FieldDefinitionInterface> $fields */
