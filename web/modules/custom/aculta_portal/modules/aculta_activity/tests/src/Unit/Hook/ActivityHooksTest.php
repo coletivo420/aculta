@@ -57,11 +57,11 @@ final class ActivityHooksTest extends UnitTestCase {
     $hooks = new ActivityHooks($translation, $this->createMock(AccountProxyInterface::class));
     $hooks->formNodeFormAlter($form, $formState, 'node_activity_form');
 
-    self::assertSame('editorial_content', $form['title']['#group']);
-    self::assertSame('editorial_content', $form['field_event_location']['#group']);
-    self::assertSame('editorial_image', $form['field_media_image']['#group']);
-    self::assertSame('editorial_relations', $form['field_related_activity']['#group']);
-    self::assertSame('editorial_seo', $form['field_meta_tags']['#group']);
+    self::assertSame('editorial_content', self::grupoDoCampo($form, 'title'));
+    self::assertSame('editorial_content', self::grupoDoCampo($form, 'field_event_location'));
+    self::assertSame('editorial_image', self::grupoDoCampo($form, 'field_media_image'));
+    self::assertSame('editorial_relations', self::grupoDoCampo($form, 'field_related_activity'));
+    self::assertSame('editorial_seo', self::grupoDoCampo($form, 'field_meta_tags'));
     self::assertSame(['aculta_activity.form_callbacks:validateActivity'], $form['#validate']);
   }
 
@@ -91,6 +91,22 @@ final class ActivityHooksTest extends UnitTestCase {
     (new ActivityHooks($translation, $this->createMock(AccountProxyInterface::class)))->formNodeFormAlter($form, $formState, 'node_revisa_form');
 
     self::assertSame(['title' => []], $form);
+  }
+
+  /**
+   * Lê o grupo editorial de um campo do formulário.
+   *
+   * @param array<mixed> $form
+   *   Formulário montado pelo hook.
+   * @param string $campo
+   *   Nome do campo.
+   *
+   * @return mixed
+   *   Grupo do campo, ou NULL quando ausente.
+   */
+  private static function grupoDoCampo(array $form, string $campo): mixed {
+    $item = $form[$campo] ?? [];
+    return is_array($item) ? ($item['#group'] ?? NULL) : NULL;
   }
 
 }

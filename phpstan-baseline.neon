@@ -9592,12 +9592,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_activity/tests/src/Unit/ContentIndex/ActivityContentIndexDependencyTest.php
 
 		-
-			rawMessage: Cannot access offset '#group' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 5
-			path: web/modules/custom/aculta_portal/modules/aculta_activity/tests/src/Unit/Hook/ActivityHooksTest.php
-
-		-
 			rawMessage: 'Function aculta_calendar_metatags_alter() has an unused parameter $context.'
 			identifier: function.unusedParameter
 			count: 1
