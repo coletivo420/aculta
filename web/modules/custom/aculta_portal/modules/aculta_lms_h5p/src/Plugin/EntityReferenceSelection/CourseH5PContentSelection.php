@@ -38,9 +38,9 @@ final class CourseH5PContentSelection extends DefaultSelection {
    *
    * @param array<string, mixed> $configuration
    *   A configuração do plugin.
-   * @param array<array-key, mixed> $plugin_id
+   * @param mixed $plugin_id
    *   O identificador do plugin.
-   * @param array<array-key, mixed> $plugin_definition
+   * @param mixed $plugin_definition
    *   A definição do plugin.
    * @param EntityTypeManagerInterface $entity_type_manager
    *   O valor informado para $entity_type_manager.
