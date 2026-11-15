@@ -73527,42 +73527,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Social/ConnectionQueryService.php
 
 		-
-			rawMessage: 'Cannot call method id() on mixed.'
-			identifier: method.nonObject
-			count: 20
-			path: web/modules/custom/aculta_portal/modules/aculta_user/tests/src/Kernel/PublicDiscussionModerationKernelTest.php
-
-		-
-			rawMessage: Cannot cast mixed to int.
-			identifier: cast.int
-			count: 18
-			path: web/modules/custom/aculta_portal/modules/aculta_user/tests/src/Kernel/PublicDiscussionModerationKernelTest.php
-
-		-
-			rawMessage: 'Method Drupal\Tests\aculta_user\Kernel\PublicDiscussionModerationKernelTest::createAccount() has no return type specified.'
-			identifier: missingType.return
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_user/tests/src/Kernel/PublicDiscussionModerationKernelTest.php
-
-		-
-			rawMessage: 'Parameter #1 $account of method Drupal\aculta_user\Hook\ParticipationHooks::entityCreateAccess() expects Drupal\Core\Session\AccountInterface, mixed given.'
-			identifier: argument.type
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_user/tests/src/Kernel/PublicDiscussionModerationKernelTest.php
-
-		-
-			rawMessage: 'Parameter #1 $account of method Drupal\aculta_user\ParticipationRules::requiresFirstDiscussionModeration() expects Drupal\Core\Session\AccountInterface, mixed given.'
-			identifier: argument.type
-			count: 3
-			path: web/modules/custom/aculta_portal/modules/aculta_user/tests/src/Kernel/PublicDiscussionModerationKernelTest.php
-
-		-
-			rawMessage: 'Parameter #2 $value of method Drupal\Core\Entity\Query\QueryInterface::condition() expects array|bool|int|string|null, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_user/tests/src/Kernel/PublicDiscussionModerationKernelTest.php
-
-		-
 			rawMessage: Binary operation "." between mixed and '/core/lib/Drupal…' results in an error.
 			identifier: binaryOp.invalid
 			count: 2
