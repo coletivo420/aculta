@@ -153,6 +153,9 @@ final class ForumModerationHooksTest extends TestCase {
     $form = ['comments' => ['#options' => [30 => [], 31 => []]]];
     $form_state = $this->createMock(FormStateInterface::class);
     $hook->commentAdminOverviewAlter($form, $form_state, 'comment_admin_overview');
+    self::assertIsArray($form['comments']);
+    self::assertIsArray($form['comments']['#options']);
+    self::assertIsArray($form['#validate'] ?? NULL);
     self::assertArrayNotHasKey(30, $form['comments']['#options']);
     self::assertArrayHasKey(31, $form['comments']['#options']);
     self::assertContains([$hook, 'validateCommentAdminOverviewSelection'], $form['#validate']);
@@ -180,6 +183,9 @@ final class ForumModerationHooksTest extends TestCase {
     $form = ['comments' => ['#options' => [32 => [], 33 => []]]];
     $form_state = $this->createMock(FormStateInterface::class);
     $hook->commentAdminOverviewAlter($form, $form_state, 'comment_admin_overview');
+    self::assertIsArray($form['comments']);
+    self::assertIsArray($form['comments']['#options']);
+    self::assertIsArray($form['#validate'] ?? NULL);
     self::assertArrayNotHasKey(32, $form['comments']['#options']);
     self::assertArrayHasKey(33, $form['comments']['#options']);
 
@@ -204,6 +210,9 @@ final class ForumModerationHooksTest extends TestCase {
 
     $form = ['comments' => ['#options' => [40 => [], 41 => []]]];
     $hook->commentAdminOverviewAlter($form, $this->createMock(FormStateInterface::class), 'comment_admin_overview');
+    self::assertIsArray($form['comments']);
+    self::assertIsArray($form['comments']['#options']);
+    self::assertIsArray($form['#validate'] ?? NULL);
     self::assertArrayNotHasKey(40, $form['comments']['#options']);
     self::assertArrayHasKey(41, $form['comments']['#options']);
   }
@@ -295,6 +304,9 @@ final class ForumModerationHooksTest extends TestCase {
 
   /**
    * Creates an imported topic marked with a historic Growroom author.
+   */
+  /**
+   * @param \Drupal\Core\Field\FieldItemListInterface<\Drupal\Core\Field\FieldItemInterface>|null $discussion
    */
   private function historicTopic(?FieldItemListInterface $discussion = NULL): NodeInterface {
     $authorReference = $this->createMock(FieldItemListInterface::class);

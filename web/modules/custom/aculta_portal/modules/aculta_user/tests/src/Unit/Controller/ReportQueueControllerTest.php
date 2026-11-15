@@ -37,7 +37,10 @@ final class ReportQueueControllerTest extends UnitTestCase {
    */
   public function testReportQueueRoutePreservesAccessAndRedirectsPost(): void {
     $routing = Yaml::parseFile(dirname(__DIR__, 4) . '/aculta_user.routing.yml');
+    self::assertIsArray($routing);
     $route = $routing['aculta_user.denuncias_forum'];
+    self::assertIsArray($route);
+    self::assertIsArray($route['requirements'] ?? NULL);
 
     self::assertSame('moderar denuncias do forum', $route['requirements']['_permission']);
     self::assertSame(['GET', 'HEAD', 'POST'], $route['methods']);
@@ -71,6 +74,15 @@ final class ReportQueueControllerTest extends UnitTestCase {
 
     };
     $build = (new ReportQueueController($queue))->view(Request::create('/forum/reports'));
+    self::assertIsArray($build);
+    self::assertIsArray($build['#attributes'] ?? NULL);
+    self::assertIsArray($build['pager'] ?? NULL);
+    self::assertIsArray($build['pager']['#attributes'] ?? NULL);
+    self::assertIsArray($build['#cache']);
+    self::assertIsArray($build['#attached']);
+    self::assertIsArray($build['#attached']['library']);
+    self::assertIsArray($build['#cache']['contexts']);
+    self::assertIsArray($build['#cache']['tags']);
 
     self::assertSame('forum-report-queue', $build['#attributes']['data-portal-ui']);
     self::assertContains('aculta_user/report-queue', $build['#attached']['library']);
