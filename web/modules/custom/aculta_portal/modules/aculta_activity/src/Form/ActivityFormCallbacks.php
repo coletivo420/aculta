@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_activity\Form;
 
+use Drupal\Core\Entity\EntityFormInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -31,7 +32,7 @@ final class ActivityFormCallbacks {
    */
   public function validateActivity(array &$form, FormStateInterface $formState): void {
     $formObject = $formState->getFormObject();
-    $node = method_exists($formObject, 'getEntity') ? $formObject->getEntity() : NULL;
+    $node = $formObject instanceof EntityFormInterface ? $formObject->getEntity() : NULL;
     if (!$node instanceof NodeInterface || $node->bundle() !== 'activity') {
       return;
     }
