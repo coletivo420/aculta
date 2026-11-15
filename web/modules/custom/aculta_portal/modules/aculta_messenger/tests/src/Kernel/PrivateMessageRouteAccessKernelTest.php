@@ -177,6 +177,7 @@ final class PrivateMessageRouteAccessKernelTest extends KernelTestBase {
     $thread->save();
 
     [$routeName, $route, $path] = $this->productionReplyRoute((int) $thread->id());
+    /** @var \Symfony\Component\Routing\Route $route */
     self::assertSame(['POST'], $route->getMethods());
     $routeMatch = new RouteMatch(
       $routeName,
