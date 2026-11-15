@@ -6,6 +6,8 @@ namespace Drupal\aculta_activity\Hook;
 
 use Drupal\aculta_events\Entity\EventLocation;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
+use Drupal\Core\Entity\EntityFormInterface;
+use Drupal\Core\Field\FieldItemInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Session\AccountProxyInterface;
@@ -28,6 +30,11 @@ final class ActivityHooks {
 
   /**
    * Adds structured locations and removes empty image tags for activities.
+   *
+   * @param array<mixed> $tags
+   *   Tags de metatags.
+   * @param array<mixed> $context
+   *   Contexto da entidade.
    */
   #[Hook('metatags_alter')]
   public function metatagsAlter(array &$tags, array &$context): void {
@@ -38,7 +45,7 @@ final class ActivityHooks {
 
     if ($node->get('field_media_image')->isEmpty()) {
       foreach (['schema_article_image', 'schema_event_image', 'schema_web_page_image'] as $id) {
-        if (str_contains((string) ($tags[$id] ?? ''), '[node:image]')) {
+        if (str_contains(self::texto($tags[$id] ?? NULL), '[node:image]')) {
           unset($tags[$id]);
         }
       }
@@ -62,11 +69,11 @@ final class ActivityHooks {
           if ($addr) {
             $address = [
               '@type' => 'PostalAddress',
-              'streetAddress' => (string) $addr->address_line1,
-              'addressLocality' => (string) $addr->locality,
-              'addressRegion' => (string) $addr->administrative_area,
-              'postalCode' => (string) $addr->postal_code,
-              'addressCountry' => (string) ($addr->country_code ?: 'BR'),
+              'streetAddress' => self::campoEndereco($addr, 'address_line1'),
+              'addressLocality' => self::campoEndereco($addr, 'locality'),
+              'addressRegion' => self::campoEndereco($addr, 'administrative_area'),
+              'postalCode' => self::campoEndereco($addr, 'postal_code'),
+              'addressCountry' => (self::campoEndereco($addr, 'country_code') ?: 'BR'),
             ];
             $place['address'] = array_filter($address);
           }
@@ -132,19 +139,19 @@ final class ActivityHooks {
           $addr = $location->get('field_endereco')->first();
           if ($addr) {
             if ($node->hasField('field_event_street')) {
-              $node->set('field_event_street', (string) $addr->address_line1);
+              $node->set('field_event_street', self::campoEndereco($addr, 'address_line1'));
             }
             if ($node->hasField('field_event_city')) {
-              $node->set('field_event_city', (string) $addr->locality);
+              $node->set('field_event_city', self::campoEndereco($addr, 'locality'));
             }
             if ($node->hasField('field_event_region')) {
-              $node->set('field_event_region', (string) $addr->administrative_area);
+              $node->set('field_event_region', self::campoEndereco($addr, 'administrative_area'));
             }
             if ($node->hasField('field_event_postal')) {
-              $node->set('field_event_postal', (string) $addr->postal_code);
+              $node->set('field_event_postal', self::campoEndereco($addr, 'postal_code'));
             }
             if ($node->hasField('field_event_country')) {
-              $node->set('field_event_country', (string) ($addr->country_code ?: 'BR'));
+              $node->set('field_event_country', (self::campoEndereco($addr, 'country_code') ?: 'BR'));
             }
           }
         }
@@ -154,6 +161,15 @@ final class ActivityHooks {
 
   /**
    * Renderiza o local referenciado em atividades.
+   *
+   * @param array<mixed> $build
+   *   Render array do nó.
+   * @param \Drupal\node\NodeInterface $node
+   *   Nó renderizado.
+   * @param \Drupal\Core\Entity\Display\EntityViewDisplayInterface $display
+   *   Display da visualização.
+   * @param string $viewMode
+   *   Modo de visualização.
    */
   #[Hook('node_view')]
   public function nodeView(array &$build, NodeInterface $node, EntityViewDisplayInterface $display, string $viewMode): void {
@@ -184,6 +200,13 @@ final class ActivityHooks {
 
   /**
    * Groups Activity fields and attaches the owner module's validator.
+   *
+   * @param array<mixed> $form
+   *   Formulário do nó.
+   * @param \Drupal\Core\Form\FormStateInterface $formState
+   *   Estado do formulário.
+   * @param string $formId
+   *   Identificador do formulário.
    */
   #[Hook('form_node_form_alter')]
   public function formNodeFormAlter(array &$form, FormStateInterface $formState, string $formId): void {
@@ -235,19 +258,56 @@ final class ActivityHooks {
         '#weight' => $weight,
       ];
       foreach ($fields as $field) {
-        if (isset($form[$field])) {
+        if (isset($form[$field]) && is_array($form[$field])) {
           $form[$field]['#group'] = $id;
         }
       }
     }
 
-    if (isset($form['author'])) {
+    if (isset($form['author']) && is_array($form['author'])) {
       $form['author']['#title'] = $this->translation->translate('Conta responsável pelo cadastro');
     }
-    if (isset($form['options'])) {
+    if (isset($form['options']) && is_array($form['options'])) {
       $form['options']['#title'] = $this->translation->translate('Publicação');
     }
-    $form['#validate'][] = 'aculta_activity.form_callbacks:validateActivity';
+    $validar = $form['#validate'] ?? [];
+    if (!is_array($validar)) {
+      $validar = [];
+    }
+    $validar[] = 'aculta_activity.form_callbacks:validateActivity';
+    $form['#validate'] = $validar;
+  }
+
+  /**
+   * Converte um valor de campo em texto, sem alterar escalares.
+   *
+   * @param mixed $valor
+   *   Valor lido do campo.
+   *
+   * @return string
+   *   Texto do valor, ou vazio para valores não escalares e NULL.
+   */
+  private static function texto(mixed $valor): string {
+    return is_scalar($valor) ? (string) $valor : '';
+  }
+
+  /**
+   * Lê uma propriedade de um item de endereço como texto.
+   *
+   * @param mixed $item
+   *   Item do campo de endereço.
+   * @param string $campo
+   *   Nome da propriedade do endereço.
+   *
+   * @return string
+   *   Valor como texto, ou vazio quando ausente.
+   */
+  private static function campoEndereco(mixed $item, string $campo): string {
+    if (!$item instanceof FieldItemInterface) {
+      return '';
+    }
+    $valores = $item->getValue();
+    return self::texto(is_array($valores) ? ($valores[$campo] ?? NULL) : NULL);
   }
 
 }
