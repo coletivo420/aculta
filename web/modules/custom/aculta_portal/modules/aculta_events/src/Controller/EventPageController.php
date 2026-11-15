@@ -403,8 +403,9 @@ final class EventPageController extends ControllerBase {
 
     $eventType = $evento->get('field_tipo')->entity?->label();
     $eventType = $eventType !== NULL ? (string) $eventType : NULL;
-    $description = (string) $evento->get('body')->value;
-    $organizer = $organizadorIdentidade?->toArray()['display_name'] ?? NULL;
+    $description = $this->textValue($evento->get('body')->value);
+    $organizerName = $organizadorIdentidade?->toArray()['display_name'] ?? NULL;
+    $organizer = is_string($organizerName) ? $organizerName : NULL;
     $slots = [
       'title' => $this->buildTitleSlot(
         (string) $evento->label(),
@@ -586,6 +587,13 @@ final class EventPageController extends ControllerBase {
       throw new NotFoundHttpException();
     }
     return $evento;
+  }
+
+  /**
+   * Texto de um valor; vazio quando o valor não é escalar.
+   */
+  private function textValue(mixed $value): string {
+    return is_scalar($value) || $value instanceof \Stringable ? (string) $value : '';
   }
 
 }

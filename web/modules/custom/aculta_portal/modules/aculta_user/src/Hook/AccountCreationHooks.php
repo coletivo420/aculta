@@ -54,7 +54,8 @@ final class AccountCreationHooks {
       return;
     }
     $file = $account->hasField('user_picture') ? $account->get('user_picture')->entity : NULL;
-    if ($file instanceof FileInterface && !$file->isPermanent() && !str_starts_with($file->getFileUri(), AvatarPool::DIRECTORY . '/')) {
+    $fileUri = $file instanceof FileInterface ? $file->getFileUri() : NULL;
+    if ($file instanceof FileInterface && !$file->isPermanent() && !(is_string($fileUri) && str_starts_with($fileUri, AvatarPool::DIRECTORY . '/'))) {
       $file->setPermanent();
       $file->save();
       return;

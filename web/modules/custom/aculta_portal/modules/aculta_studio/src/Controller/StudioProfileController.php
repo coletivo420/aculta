@@ -69,7 +69,8 @@ final class StudioProfileController {
     if ($identity !== NULL) {
       $cache->addCacheableDependency($identity);
       $identityData = $identity->toArray();
-      $displayName = (string) ($identityData['display_name'] ?: $displayName);
+      $identityName = $identityData['display_name'] ?? NULL;
+      $displayName = is_string($identityName) && $identityName !== '' && $identityName !== '0' ? $identityName : $displayName;
       $avatar = $identityData['avatar'] ?? [];
     }
 

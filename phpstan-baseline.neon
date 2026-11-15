@@ -21687,7 +21687,7 @@ parameters:
 		-
 			rawMessage: Cannot cast mixed to string.
 			identifier: cast.string
-			count: 11
+			count: 10
 			path: web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventPageController.php
 
 		-
@@ -42393,7 +42393,7 @@ parameters:
 		-
 			rawMessage: Cannot cast mixed to string.
 			identifier: cast.string
-			count: 3
+			count: 2
 			path: web/modules/custom/aculta_portal/modules/aculta_linkweed/src/Controller/LinkPagePublicController.php
 
 		-
@@ -54141,12 +54141,6 @@ parameters:
 		-
 			rawMessage: Cannot cast mixed to string.
 			identifier: cast.string
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_magazine/src/Presentation/PostPresentation.php
-
-		-
-			rawMessage: Coalesce operator ?? is unnecessary because the left side is always set and the right side is null.
-			identifier: nullCoalesce.unnecessary
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_magazine/src/Presentation/PostPresentation.php
 
@@ -71717,12 +71711,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_studio/src/Experience/AccountExperienceProvider.php
 
 		-
-			rawMessage: Coalesce operator ?? is unnecessary because the left side is always set and the right side is null.
-			identifier: nullCoalesce.unnecessary
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_studio/src/Experience/AccountExperienceProvider.php
-
-		-
 			rawMessage: Instanceof between Drupal\Core\Access\AccessResultInterface and Drupal\Core\Access\AccessResultInterface will always evaluate to true.
 			identifier: instanceof.alwaysTrue
 			count: 1
@@ -73839,12 +73827,6 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_user/src/EventSubscriber/RoleInheritanceCurrentUserSubscriber.php
-
-		-
-			rawMessage: 'Parameter #1 $haystack of function str_starts_with expects string, string|null given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Hook/AccountCreationHooks.php
 
 		-
 			rawMessage: 'Method Drupal\aculta_user\Hook\AccountMenuPresentationHooks::preprocessPage() has parameter $variables with no value type specified in iterable type array.'

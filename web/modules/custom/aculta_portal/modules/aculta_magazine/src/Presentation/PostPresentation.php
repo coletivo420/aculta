@@ -114,7 +114,8 @@ final class PostPresentation {
     $identity = $this->identities->resolvePublic($owner);
     $tags = array_merge($tags, $identity->getCacheTags());
     $data = $identity->toArray();
-    $name = (string) ($data['display_name'] ?? '');
+    $rawName = $data['display_name'] ?? NULL;
+    $name = is_string($rawName) ? $rawName : '';
     $profileUrl = $data['profile_url'] ?? NULL;
     if ($name !== '' && is_string($profileUrl) && $profileUrl !== '') {
       return PortalLinkElement::build(
