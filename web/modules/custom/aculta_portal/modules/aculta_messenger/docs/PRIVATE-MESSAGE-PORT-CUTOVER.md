@@ -47,3 +47,14 @@ Preservar a licença upstream GPL-2.0-or-later, autorias, o `LICENSE.txt` origin
 ## Estado de execução
 
 **Concluído:** conferência do pacote, classificação e preparação automática do código, inventário direcionado do módulo em `dev`, script de staging e runbook. **Pendente:** mesclagem em `src/` ativo, ports dos hooks/services e testes, migração de schema/provider, retirada de Composer/contrib, homologação em clone e no Runtime. Acesso GitHub não equivale a acesso ao banco do servidor.
+
+
+## Preflight automático somente leitura
+
+Em um clone devidamente bootstrapped, sem escrita, registre o inventário pré/pós:
+
+```bash
+vendor/bin/drush scr scripts/private_message_preflight.php --uri=https://dominio-do-clone.exemplo > var/private-message-preflight-before.json
+```
+
+Este script consulta os providers atuais/instalados de três tipos de entidade, field storage providers, contagens de tabelas, UUIDs distintos quando presentes, nomes de configurações dependentes do contrib e a presença do token de corpo no modelo legado. **Não inclui corpos ou dados pessoais no relatório e não executa migração.** Rodar somente após confirmar que Drush aponta para o banco clonado correto, e comparar com relatório pós-corte. Dados operacionais e backups ficam fora do Git e do docroot.
