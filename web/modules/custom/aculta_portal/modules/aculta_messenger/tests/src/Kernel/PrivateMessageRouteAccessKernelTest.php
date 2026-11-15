@@ -187,6 +187,9 @@ final class PrivateMessageRouteAccessKernelTest extends KernelTestBase {
     $access = $this->container->get('access_manager');
     $csrf = $this->container->get('csrf_token');
 
+    // The flag module decorates access_check.csrf and allows anonymous users
+    // without a token. Run the checks as the authenticated member, as in a request.
+    $this->container->get('current_user')->setAccount($member);
     // The route's _csrf_token requirement is enforced by access_check.csrf.
     $csrfCheck = $this->container->get('access_check.csrf');
     $missingToken = Request::create('/' . $path, 'POST');
