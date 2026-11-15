@@ -282,7 +282,7 @@ final class FriendshipManager implements FriendshipManagerInterface {
       (string) $friendship->id(),
       $friendship->getRequesterId(),
       $friendship->getRecipientId(),
-      (int) $friendship->get('changed')->value,
+      is_numeric($friendship->get('changed')->value) ? (int) $friendship->get('changed')->value : 0,
     ), FriendshipChangedEvent::NAME);
   }
 

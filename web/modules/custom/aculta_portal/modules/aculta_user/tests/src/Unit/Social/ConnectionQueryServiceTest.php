@@ -218,7 +218,7 @@ final class ConnectionQueryServiceTest extends UnitTestCase {
     $banManager->method('isBanned')->willReturn(FALSE);
     $banManager->method('isCurrentUserBannedByUser')->willReturn(FALSE);
 
-    $publicIdentity->method('publicDisplayName')->willReturnCallback(function (UserInterface $user): ?string {
+    $publicIdentity->method('publicDisplayName')->willReturnCallback(function (UserInterface $user): string {
       return 'User ' . $user->id();
     });
 
