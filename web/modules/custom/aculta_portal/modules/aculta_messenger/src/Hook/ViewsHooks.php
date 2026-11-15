@@ -20,6 +20,8 @@ class ViewsHooks {
    */
   #[Hook('views_data')]
   public function viewsData(): array {
+    /** @var array<string, array<string, mixed>> $data */
+    $data = [];
     $data['private_message_threads']['has_history'] = [
       'title' => $this->t('Clean history'),
       'group' => $this->t('Private Message Thread'),

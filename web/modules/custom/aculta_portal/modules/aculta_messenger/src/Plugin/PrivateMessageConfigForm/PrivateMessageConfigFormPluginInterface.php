@@ -60,6 +60,8 @@ interface PrivateMessageConfigFormPluginInterface extends PluginInspectionInterf
    *
    * @param array<string, mixed> $values
    *   An array of values for form elements added by this plugin.
+   *
+   * @return void
    */
   public function submitForm(array $values);
 

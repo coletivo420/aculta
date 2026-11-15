@@ -24,9 +24,14 @@ class UniqueBanConstraintValidator extends ConstraintValidator implements Contai
 
   /**
    * {@inheritdoc}
+   *
+   * @param mixed $value
    */
   public function validate($value, Constraint $constraint): void {
     assert($value instanceof PrivateMessageBan);
+    if (!$constraint instanceof UniqueBanConstraint) {
+      throw new \InvalidArgumentException('UniqueBanConstraintValidator recebeu uma constraint de outro tipo.');
+    }
 
     $storage = $this->entityTypeManager->getStorage('private_message_ban');
     $query = $storage->getQuery()

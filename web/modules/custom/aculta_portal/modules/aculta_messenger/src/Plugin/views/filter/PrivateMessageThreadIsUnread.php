@@ -62,9 +62,12 @@ class PrivateMessageThreadIsUnread extends FilterPluginBase {
       'extra' => 'aculta_pm_thread_history.access_timestamp < private_message_threads.updated',
     ];
 
+    /** @var \Drupal\views\Plugin\views\join\JoinPluginBase $join */
     $join = $this->joinHandler->createInstance('standard', $definition);
-    $this->query->addRelationship('aculta_pm_thread_history', $join, 'access_timestamp');
-    $this->query->addWhere(NULL, 'aculta_pm_thread_history.uid', $current_user_id);
+    /** @var \Drupal\views\Plugin\views\query\Sql $sqlQuery */
+    $sqlQuery = $this->query;
+    $sqlQuery->addRelationship('aculta_pm_thread_history', $join, 'access_timestamp');
+    $sqlQuery->addWhere(NULL, 'aculta_pm_thread_history.uid', $current_user_id);
 
     if (!empty($this->value)) {
       parent::query();

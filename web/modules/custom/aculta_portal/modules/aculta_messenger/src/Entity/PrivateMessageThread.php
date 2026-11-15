@@ -67,7 +67,9 @@ class PrivateMessageThread extends ContentEntityBase implements PrivateMessageTh
    * {@inheritdoc}
    */
   public function getMembers(): array {
-    return $this->get('members')->referencedEntities();
+    /** @var array<\Drupal\user\UserInterface> $members */
+    $members = $this->get('members')->referencedEntities();
+    return $members;
   }
 
   /**
@@ -75,7 +77,9 @@ class PrivateMessageThread extends ContentEntityBase implements PrivateMessageTh
    */
   public function getMemberIds(): array {
     $members = [];
-    foreach ($this->get('members')->getValue() as $member_item) {
+    /** @var array<array<string, int|string>> $member_values */
+    $member_values = $this->get('members')->getValue();
+    foreach ($member_values as $member_item) {
       $members[] = (int) $member_item['target_id'];
     }
     return $members;
@@ -121,17 +125,22 @@ class PrivateMessageThread extends ContentEntityBase implements PrivateMessageTh
    * {@inheritdoc}
    */
   public function getMessages(bool $includeBlocked = FALSE): array {
-    $messages = array_values($this->get('private_messages')->referencedEntities());
+    /** @var array<\Drupal\aculta_messenger\Entity\PrivateMessageInterface> $referenced */
+    $referenced = $this->get('private_messages')->referencedEntities();
+    /** @var array<\Drupal\aculta_messenger\Entity\PrivateMessageInterface> $messages */
+    $messages = array_values($referenced);
     if ($includeBlocked) {
       return $messages;
     }
 
     $bannedUsers = \Drupal::service('aculta_messenger.pm.ban_manager')->getBannedUsers(\Drupal::currentUser()->id());
-    return array_filter($messages, function ($message, $index) use ($bannedUsers) {
+    /** @var array<\Drupal\aculta_messenger\Entity\PrivateMessageInterface> $visible */
+    $visible = array_filter($messages, function ($message, $index) use ($bannedUsers) {
       // The first message is always displayed, regardless of the ban status.
       // This is to ensure that the thread display is not broken.
       return $index === 0 || !in_array($message->getOwnerId(), $bannedUsers);
     }, ARRAY_FILTER_USE_BOTH);
+    return $visible;
   }
 
   /**
@@ -141,8 +150,12 @@ class PrivateMessageThread extends ContentEntityBase implements PrivateMessageTh
 
     $messages = $this->getMessages();
     if (count($messages) > \Drupal::config('private_message_thread.settings')->get('message_count')) {
+      /** @var \Drupal\Core\Field\EntityReferenceFieldItemListInterface<\Drupal\Core\Entity\EntityInterface> $list */
       $list = $this->get('private_messages');
-      $filtered_messages = array_slice($messages, -1 * \Drupal::config('private_message_thread.settings')->get('message_count'));
+      /** @var int $message_count */
+      $message_count = \Drupal::config('private_message_thread.settings')->get('message_count');
+      $filtered_messages = array_slice($messages, -1 * $message_count);
+      /** @var \Drupal\aculta_messenger\Entity\PrivateMessageInterface $first_message */
       $first_message = array_shift($filtered_messages);
       $first_key = $first_message->id();
       foreach ($list->referencedEntities() as $list_item) {
@@ -163,7 +176,9 @@ class PrivateMessageThread extends ContentEntityBase implements PrivateMessageTh
     $messages = $this->getMessages();
     $last_timestamp = 0;
     foreach ($messages as $message) {
-      $creation_date = (int) $message->get('created')->value;
+      /** @var int|string|null $created */
+      $created = $message->get('created')->value;
+      $creation_date = (int) $created;
       $last_timestamp = max($creation_date, $last_timestamp);
     }
 
@@ -185,12 +200,15 @@ class PrivateMessageThread extends ContentEntityBase implements PrivateMessageTh
    * {@inheritdoc}
    */
   public function getLastAccessTimestamp(AccountInterface $account): int {
-    return (int) \Drupal::database()->select('aculta_pm_thread_history', 'aculta_pm_thread_history')
+    $query = \Drupal::database()->select('aculta_pm_thread_history', 'aculta_pm_thread_history')
       ->condition('uid', $account->id())
       ->condition('thread_id', $this->id())
-      ->fields('aculta_pm_thread_history', ['access_timestamp'])
-      ->execute()
-      ->fetchField();
+      ->fields('aculta_pm_thread_history', ['access_timestamp']);
+    /** @var \Drupal\Core\Database\StatementInterface<mixed> $statement */
+    $statement = $query->execute();
+    /** @var int|string|null $timestamp */
+    $timestamp = $statement->fetchField();
+    return (int) $timestamp;
   }
 
   /**
@@ -209,12 +227,15 @@ class PrivateMessageThread extends ContentEntityBase implements PrivateMessageTh
    * {@inheritdoc}
    */
   public function getLastDeleteTimestamp(AccountInterface $account): int {
-    return (int) \Drupal::database()->select('aculta_pm_thread_history', 'aculta_pm_thread_history')
+    $query = \Drupal::database()->select('aculta_pm_thread_history', 'aculta_pm_thread_history')
       ->condition('uid', $account->id())
       ->condition('thread_id', $this->id())
-      ->fields('aculta_pm_thread_history', ['delete_timestamp'])
-      ->execute()
-      ->fetchField();
+      ->fields('aculta_pm_thread_history', ['delete_timestamp']);
+    /** @var \Drupal\Core\Database\StatementInterface<mixed> $statement */
+    $statement = $query->execute();
+    /** @var int|string|null $timestamp */
+    $timestamp = $statement->fetchField();
+    return (int) $timestamp;
   }
 
   /**
@@ -285,7 +306,9 @@ class PrivateMessageThread extends ContentEntityBase implements PrivateMessageTh
     $query = \Drupal::database()->select('aculta_pm_thread_history', 'aculta_pm_thread_history')
       ->condition('thread_id', $this->id());
     $query->addExpression('MIN(delete_timestamp)', 'min_deleted');
-    $min_deleted = $query->execute()->fetchField();
+    /** @var \Drupal\Core\Database\StatementInterface<mixed> $statement */
+    $statement = $query->execute();
+    $min_deleted = $statement->fetchField();
 
     // If no messages have been created after every member has deleted thread.
     if ($min_deleted >= $last_creation_timestamp) {
@@ -303,6 +326,7 @@ class PrivateMessageThread extends ContentEntityBase implements PrivateMessageTh
     $start_index = FALSE;
     foreach ($messages as $index => $message) {
       if ($message->getCreatedTime() > $last_delete_timestamp) {
+        /** @var int $start_index */
         $start_index = $index;
 
         break;
@@ -320,7 +344,9 @@ class PrivateMessageThread extends ContentEntityBase implements PrivateMessageTh
    * {@inheritdoc}
    */
   public function getUpdatedTime(): int {
-    return (int) $this->get('updated')->value;
+    /** @var int|string|null $updated */
+    $updated = $this->get('updated')->value;
+    return (int) $updated;
   }
 
   /**
@@ -347,10 +373,14 @@ class PrivateMessageThread extends ContentEntityBase implements PrivateMessageTh
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type): array {
     $fields = parent::baseFieldDefinitions($entity_type);
 
-    $fields['id']->setLabel(t('Private message thread ID'))
+    /** @var \Drupal\Core\Field\BaseFieldDefinition $id_field */
+    $id_field = $fields['id'];
+    $id_field->setLabel(t('Private message thread ID'))
       ->setDescription(t('The private message thread ID.'));
 
-    $fields['uuid']->setDescription(t('The custom private message thread UUID.'));
+    /** @var \Drupal\Core\Field\BaseFieldDefinition $uuid_field */
+    $uuid_field = $fields['uuid'];
+    $uuid_field->setDescription(t('The custom private message thread UUID.'));
 
     $fields['updated'] = BaseFieldDefinition::create('changed')
       ->setLabel(t('Updated'))

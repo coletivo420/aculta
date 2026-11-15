@@ -22,6 +22,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Defines the private message thread message field formatter.
+ *
+ * @extends \Drupal\Core\Field\FormatterBase<\Drupal\Core\Field\FieldItemListInterface<\Drupal\Core\Field\FieldItemInterface>>
  */
 #[FieldFormatter(
   id: 'private_message_thread_message_formatter',
@@ -105,11 +107,12 @@ class PrivateMessageThreadMessageFormatter extends FormatterBase implements Cont
    */
   public function settingsSummary(): array {
     $summary = [];
+    /** @var array{message_count: int|string, ajax_previous_load_count: int|string, ajax_refresh_rate: int|string, message_order: string|null, view_mode: string, ...<string, mixed>} $settings */
     $settings = $this->getSettings();
 
     $summary['message_count'] = $this->t('Number of threads to show on load: @count', ['@count' => $settings['message_count']]);
     $summary['ajax_previous_load_count'] = $this->t('Number of threads to show when clicking load previous: @count', ['@count' => $settings['ajax_previous_load_count']]);
-    $summary['message_order'] = $this->t('Order of messages: @order', ['@order' => $this->translateKey('order', $settings['message_order'])]);
+    $summary['message_order'] = $this->t('Order of messages: @order', ['@order' => $this->translateKey('order', $settings['message_order']) ?? '']);
     if ($settings['ajax_refresh_rate']) {
       $summary['ajax_refresh_rate'] = $this->t('Ajax refresh rate: @count seconds', ['@count' => $settings['ajax_refresh_rate']]);
     }
@@ -190,10 +193,13 @@ class PrivateMessageThreadMessageFormatter extends FormatterBase implements Cont
 
   /**
    * {@inheritdoc}
+   * @param \Drupal\Core\Field\FieldItemListInterface<\Drupal\Core\Field\FieldItemInterface> $items
    */
   public function viewElements(FieldItemListInterface $items, $langcode): array {
+    /** @var \Drupal\aculta_messenger\Entity\PrivateMessageThreadInterface $private_message_thread */
     $private_message_thread = $items->getEntity();
 
+    /** @var array{'#prefix': string, '#suffix': string, '#attached'?: array{drupalSettings?: array<string, mixed>, library?: list<string>, ...<string, mixed>}, ...<string, mixed>} $element */
     $element = [
       '#prefix' => '<div class="private-message-thread-messages">',
       '#suffix' => '</div>',
@@ -201,15 +207,17 @@ class PrivateMessageThreadMessageFormatter extends FormatterBase implements Cont
 
     $view_builder = $this->entityTypeManager->getViewBuilder('private_message');
 
+    /** @var \Drupal\Core\Session\AccountInterface $user */
     $user = $this->entityTypeManager
       ->getStorage('user')
       ->load($this->currentUser->id());
     $messages = $private_message_thread->filterUserDeletedMessages($user);
     $total = count($messages);
-    $messages = array_slice($messages, -1 * $this->getSetting('message_count'));
+    $messages = array_slice($messages, -1 * (int) $this->getSetting('message_count'));
 
     foreach ($messages as $message) {
-      $element[$message->id()] = $view_builder->view($message, $this->getSetting('view_mode'));
+      /** @var \Drupal\aculta_messenger\Entity\PrivateMessageInterface $message */
+      $element[(string) $message->id()] = $view_builder->view($message, (string) $this->getSetting('view_mode'));
     }
 
     if ($this->getSetting('message_order') == 'desc') {
@@ -238,7 +246,7 @@ class PrivateMessageThreadMessageFormatter extends FormatterBase implements Cont
       'newMessageCheckUrl' => $new_url->toString(),
       'previousMessageCheckUrl' => $prev_url->toString(),
       'messageOrder' => $this->getSetting('message_order'),
-      'refreshRate' => $this->getSetting('ajax_refresh_rate') * 1000,
+      'refreshRate' => (int) $this->getSetting('ajax_refresh_rate') * 1000,
       'loadThreadUrl' => $load_url->toString(),
       'previousLoadCount' => $this->getSetting('ajax_previous_load_count'),
       'messageCount' => $this->getSetting('message_count'),

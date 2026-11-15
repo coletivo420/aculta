@@ -21,6 +21,9 @@ class PrivateMessageThreadCacheContext implements CacheContextInterface {
 
   /**
    * {@inheritdoc}
+   *
+   * @return \Drupal\Core\StringTranslation\TranslatableMarkup
+   *   The translated label.
    */
   public static function getLabel() {
     return t('Private Message Thread');
@@ -30,9 +33,12 @@ class PrivateMessageThreadCacheContext implements CacheContextInterface {
    * {@inheritdoc}
    */
   public function getContext(): string {
+    /** @var \Drupal\Core\Entity\EntityInterface|null $thread */
     $thread = $this->currentRouteMatch->getParameter('private_message_thread');
     if ($thread) {
-      return (string) $thread->id();
+      /** @var string|int $threadId */
+      $threadId = $thread->id();
+      return (string) $threadId;
     }
     return 'none';
   }

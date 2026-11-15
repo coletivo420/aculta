@@ -109,7 +109,7 @@ interface PrivateMessageServiceInterface {
    *
    * @param array<string, mixed> $existingThreadIds
    *   An array of private message thread last update times, keyed by thread ID.
-   * @param int $count
+   * @param int|false $count
    *   The number of threads to return if no existing thread IDs were provided.
    *
    * @return array<string, mixed>
@@ -142,6 +142,8 @@ interface PrivateMessageServiceInterface {
 
   /**
    * Marks a timestamp at which all threads are considered read.
+   *
+   * @return void
    */
   public function updateLastCheckTime();
 
@@ -150,6 +152,8 @@ interface PrivateMessageServiceInterface {
    *
    * @param \Drupal\aculta_messenger\Entity\PrivateMessageThreadInterface $thread
    *   The thread whose access time should be updated.
+   *
+   * @return void
    */
   public function updateThreadAccessTime(PrivateMessageThreadInterface $thread);
 
@@ -177,6 +181,8 @@ interface PrivateMessageServiceInterface {
    *   The display being used to render the entity.
    * @param string $view_mode
    *   The view mode being used to render the entity.
+   *
+   * @return void
    */
   public function createRenderablePrivateMessageThreadLink(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, $view_mode);
 

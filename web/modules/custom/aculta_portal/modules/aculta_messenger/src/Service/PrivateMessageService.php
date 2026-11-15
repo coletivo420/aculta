@@ -57,9 +57,11 @@ class PrivateMessageService implements PrivateMessageServiceInterface {
     $thread_id = $this->getThreadIdForMembers($members);
 
     if ($thread_id) {
-      return $this->entityTypeManager
+      /** @var \Drupal\aculta_messenger\Entity\PrivateMessageThreadInterface $thread */
+      $thread = $this->entityTypeManager
         ->getStorage('private_message_thread')
         ->load($thread_id);
+      return $thread;
     }
 
     return $this->createPrivateMessageThread($members);
@@ -71,9 +73,11 @@ class PrivateMessageService implements PrivateMessageServiceInterface {
   public function getFirstThreadForUser(UserInterface $user): PrivateMessageThreadInterface|false {
     $thread_id = $this->getFirstThreadIdForUser($user);
     if ($thread_id) {
-      return $this->entityTypeManager
+      /** @var \Drupal\aculta_messenger\Entity\PrivateMessageThreadInterface $thread */
+      $thread = $this->entityTypeManager
         ->getStorage('private_message_thread')
         ->load($thread_id);
+      return $thread;
     }
 
     return FALSE;
@@ -81,6 +85,7 @@ class PrivateMessageService implements PrivateMessageServiceInterface {
 
   /**
    * {@inheritdoc}
+   * @param int|false|null $timestamp
    */
   public function getThreadsForUser(int $count, /* ?int */$timestamp = NULL): array {
     if ($timestamp === FALSE) {
@@ -92,16 +97,21 @@ class PrivateMessageService implements PrivateMessageServiceInterface {
       'next_exists' => FALSE,
     ];
 
+    /** @var \Drupal\user\UserInterface $user */
     $user = $this->entityTypeManager
       ->getStorage('user')
       ->load($this->currentUser->id());
+    /** @var list<int|string> $thread_ids */
     $thread_ids = $this->getThreadIdsForUser($user, $count, $timestamp);
     if (count($thread_ids)) {
+      /** @var array<int, \Drupal\aculta_messenger\Entity\PrivateMessageThreadInterface> $threads */
       $threads = $this->entityTypeManager
         ->getStorage('private_message_thread')
         ->loadMultiple($thread_ids);
       if (count($threads)) {
+        /** @var \Drupal\aculta_messenger\Entity\PrivateMessageThreadInterface $last_thread */
         $last_thread = end($threads);
+        /** @var int $last_timestamp */
         $last_timestamp = $last_thread->get('updated')->value;
         $return['next_exists'] = $this->checkForNextThread($user, $last_timestamp);
         $return['threads'] = $threads;
@@ -115,6 +125,7 @@ class PrivateMessageService implements PrivateMessageServiceInterface {
    * {@inheritdoc}
    */
   public function getCountThreadsForUser(): int {
+    /** @var \Drupal\user\UserInterface $user */
     $user = $this->entityTypeManager
       ->getStorage('user')
       ->load($this->currentUser->id());
@@ -124,9 +135,10 @@ class PrivateMessageService implements PrivateMessageServiceInterface {
 
   /**
    * {@inheritdoc}
-   * @return array<string, mixed>
+   * @return list<\Drupal\aculta_messenger\Entity\PrivateMessageInterface>
    */
   public function getNewMessages($threadId, $messageId) {
+    /** @var \Drupal\aculta_messenger\Entity\PrivateMessageThreadInterface|null $private_message_thread */
     $private_message_thread = $this->entityTypeManager
       ->getStorage('private_message_thread')
       ->load($threadId);
@@ -135,6 +147,7 @@ class PrivateMessageService implements PrivateMessageServiceInterface {
     }
 
     $response = [];
+    /** @var \Drupal\aculta_messenger\Entity\PrivateMessageInterface $message */
     foreach ($private_message_thread->getMessages() as $message) {
       if ($message->id() > $messageId) {
         $response[] = $message;
@@ -157,15 +170,20 @@ class PrivateMessageService implements PrivateMessageServiceInterface {
     $start_index = FALSE;
     $slice_count = FALSE;
 
+    /** @var \Drupal\aculta_messenger\Entity\PrivateMessageThreadInterface|null $private_message_thread */
     $private_message_thread = $this->entityTypeManager
       ->getStorage('private_message_thread')
       ->load($threadId);
     if ($private_message_thread && $private_message_thread->isMember($this->currentUser->id())) {
+      /** @var \Drupal\user\UserInterface $user */
       $user = $this->entityTypeManager
         ->getStorage('user')
         ->load($this->currentUser->id());
+      /** @var array<int, \Drupal\aculta_messenger\Entity\PrivateMessageInterface> $messages */
       $messages = $private_message_thread->filterUserDeletedMessages($user);
+      /** @var array<string, mixed> $settings */
       $settings = $this->configFactory->get('core.entity_view_display.private_message_thread.private_message_thread.default')->get('content.private_messages.settings');
+      /** @var int $count */
       $count = $settings['ajax_previous_load_count'];
 
       $total = count($messages);
@@ -272,9 +290,11 @@ class PrivateMessageService implements PrivateMessageServiceInterface {
   public function getThreadFromMessage(PrivateMessageInterface $privateMessage) {
     $thread_id = $this->getThreadIdFromMessage($privateMessage);
     if ($thread_id) {
-      return $this->entityTypeManager
+      /** @var \Drupal\aculta_messenger\Entity\PrivateMessageThread $thread */
+      $thread = $this->entityTypeManager
         ->getStorage('private_message_thread')
         ->load($thread_id);
+      return $thread;
     }
 
     return FALSE;
@@ -296,6 +316,7 @@ class PrivateMessageService implements PrivateMessageServiceInterface {
       if ($current_user->isAuthenticated()) {
         if ($current_user->hasPermission('use private messaging system') && $current_user->id() != $author->id()) {
           $user_entity = $this->entityTypeManager->getStorage('user')->load($this->currentUser->id());
+          /** @var array<\Drupal\user\UserInterface> $members */
           $members = [$user_entity, $author];
           $thread_id = $this->getThreadIdForMembers($members);
           if ($thread_id) {
@@ -335,13 +356,16 @@ class PrivateMessageService implements PrivateMessageServiceInterface {
 
   /**
    * {@inheritdoc}
-   * @return array<string, mixed>
+   * @return list<mixed>
    */
   public function getThreadIds() {
-    return $this->database->select('private_message_threads', 'pmt')
-      ->fields('pmt', ['id'])
-      ->execute()
-      ->fetchCol();
+    $query = $this->database->select('private_message_threads', 'pmt')
+      ->fields('pmt', ['id']);
+    /** @var \Drupal\Core\Database\StatementInterface<int, mixed> $statement */
+    $statement = $query->execute();
+    /** @var list<mixed> $thread_ids */
+    $thread_ids = $statement->fetchCol();
+    return $thread_ids;
   }
 
   /**
@@ -363,13 +387,17 @@ class PrivateMessageService implements PrivateMessageServiceInterface {
       'messages_data.id = thread_message.private_messages_target_id'
     );
     $query->where('[messages_data].[created] > [aculta_pm_thread_history].[access_timestamp]');
-    return $query->countQuery()->execute()->fetchField();
+    /** @var \Drupal\Core\Database\StatementInterface<int, mixed> $statement */
+    $statement = $query->countQuery()->execute();
+    /** @var int $count */
+    $count = $statement->fetchField();
+    return $count;
   }
 
   /**
    * Create a new private message thread for the given users.
    *
-   * @param \Drupal\user\Entity\User[] $members
+   * @param \Drupal\user\UserInterface[] $members
    *   An array of users who will be members of the given thread.
    *
    * @return \Drupal\aculta_messenger\Entity\PrivateMessageThread
@@ -413,14 +441,19 @@ class PrivateMessageService implements PrivateMessageServiceInterface {
         ->condition('members_target_id', $uid);
       $query->condition('entity_id', $subQuery, 'IN');
     }
-    $thread_ids = $query->execute()->fetchCol();
+    /** @var \Drupal\Core\Database\StatementInterface<int, mixed> $statement */
+    $statement = $query->execute();
+    /** @var list<int|string> $thread_ids */
+    $thread_ids = $statement->fetchCol();
 
     // Exclude threads with other participants.
     foreach ($thread_ids as $thread_id) {
       $query = $this->database->select('private_message_thread__members', 'pmt')
         ->condition('members_target_id', $uids, 'NOT IN')
         ->condition('entity_id', $thread_id);
-      if ($query->countQuery()->execute()->fetchField() == 0) {
+      /** @var \Drupal\Core\Database\StatementInterface<int, mixed> $count_statement */
+      $count_statement = $query->countQuery()->execute();
+      if ($count_statement->fetchField() == 0) {
         return (int) $thread_id;
       }
     }
@@ -450,7 +483,10 @@ class PrivateMessageService implements PrivateMessageServiceInterface {
     $query->condition('thread.id', $bannedThreadsQuery, 'NOT IN');
     $query->orderBy('thread.updated', 'desc');
     $query->range(0, 1);
-    $return = $query->execute()->fetchField();
+    /** @var \Drupal\Core\Database\StatementInterface<int, mixed> $statement */
+    $statement = $query->execute();
+    /** @var int|string|false $return */
+    $return = $statement->fetchField();
 
     return $return !== FALSE ? (int) $return : FALSE;
   }
@@ -460,13 +496,13 @@ class PrivateMessageService implements PrivateMessageServiceInterface {
    *
    * @param \Drupal\user\UserInterface $user
    *   The user whose most recently thread IDs should be retrieved.
-   * @param mixed $count
+   * @param int|false $count
    *   The number of thread IDs to retrieve or FALSE to retrieve them all.
-   * @param int $timestamp
+   * @param int|false|null $timestamp
    *   A timestamp relative to which only thread IDs with an earlier timestamp
    *   should be returned.
    *
-   * @return array<string, mixed>
+   * @return list<mixed>
    *   An array of thread IDs if any threads exist.
    */
   protected function getThreadIdsForUser(UserInterface $user, $count = FALSE, $timestamp = FALSE): array {
@@ -491,10 +527,15 @@ class PrivateMessageService implements PrivateMessageServiceInterface {
     $query->orderBy('thread.id');
 
     if ($count > 0) {
+      /** @var int $count */
       $query->range(0, $count);
     }
 
-    return $query->execute()->fetchCol();
+    /** @var \Drupal\Core\Database\StatementInterface<int, mixed> $statement */
+    $statement = $query->execute();
+    /** @var list<mixed> $thread_ids */
+    $thread_ids = $statement->fetchCol();
+    return $thread_ids;
   }
 
   /**
@@ -543,12 +584,12 @@ class PrivateMessageService implements PrivateMessageServiceInterface {
    * Otherwise the number of IDs returned will be the number provided for
    * $count.
    *
-   * @param array<string, mixed> $existingThreadIds
+   * @param list<string> $existingThreadIds
    *   An array of thread IDs to be compared against.
-   * @param int $count
+   * @param int|false $count
    *   The number of threads to return if no existing thread IDs were provided.
    *
-   * @return array<string, mixed>
+   * @return array<string, \stdClass>
    *   An array, keyed by thread ID, with each element of the array containing
    *   an object with the following two properties:
    *   - id: The thread ID
@@ -576,10 +617,14 @@ class PrivateMessageService implements PrivateMessageServiceInterface {
       $query->condition('thread.updated', $subquery, '>=');
     }
     else {
-      $query->range(0, $count);
+      $query->range(0, (int) $count);
     }
 
-    return $query->execute()->fetchAllAssoc('id');
+    /** @var \Drupal\Core\Database\StatementInterface<int, mixed> $statement */
+    $statement = $query->execute();
+    /** @var array<string, \stdClass> $thread_infos */
+    $thread_infos = $statement->fetchAllAssoc('id');
+    return $thread_infos;
   }
 
   /**
@@ -590,7 +635,7 @@ class PrivateMessageService implements PrivateMessageServiceInterface {
    *
    * @param int $uid
    *   The user ID of the user whose count should be retrieved.
-   * @param int $lastCheckTimestamp
+   * @param int|float|string $lastCheckTimestamp
    *   A UNIX timestamp indicating the time after which to check.
    *
    * @return int
@@ -611,7 +656,11 @@ class PrivateMessageService implements PrivateMessageServiceInterface {
     $query->condition('thread.id', $bannedThreadsQuery, 'NOT IN');
     $query->groupBy('thread.id');
 
-    return $query->countQuery()->execute()->fetchField();
+    /** @var \Drupal\Core\Database\StatementInterface<int, mixed> $statement */
+    $statement = $query->countQuery()->execute();
+    /** @var int $count */
+    $count = $statement->fetchField();
+    return $count;
   }
 
   /**
@@ -622,7 +671,7 @@ class PrivateMessageService implements PrivateMessageServiceInterface {
    *
    * @param int $uid
    *   The user ID of the user whose count should be retrieved.
-   * @param int $lastCheckTimestamp
+   * @param int|float|string $lastCheckTimestamp
    *   A UNIX timestamp indicating the time after which to check.
    *
    * @return int
@@ -661,7 +710,11 @@ class PrivateMessageService implements PrivateMessageServiceInterface {
       ->condition('thread.id', $bannedThreadsQuery, 'NOT IN')
       ->where('thread_history.access_timestamp < thread.updated');
     $query = $query->countQuery();
-    return $query->execute()->fetchField();
+    /** @var \Drupal\Core\Database\StatementInterface<int, mixed> $statement */
+    $statement = $query->execute();
+    /** @var int $count */
+    $count = $statement->fetchField();
+    return $count;
   }
 
   /**
@@ -683,10 +736,12 @@ class PrivateMessageService implements PrivateMessageServiceInterface {
       'messages.entity_id = thread.id AND messages.private_messages_target_id = :message_id',
       [':message_id' => $privateMessage->id()]
     );
-    return $query
-      ->range(0, 1)
-      ->execute()
-      ->fetchField();
+    $query->range(0, 1);
+    /** @var \Drupal\Core\Database\StatementInterface<int, mixed> $statement */
+    $statement = $query->execute();
+    /** @var int $thread_id */
+    $thread_id = $statement->fetchField();
+    return $thread_id;
   }
 
   /**

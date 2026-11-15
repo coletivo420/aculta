@@ -22,13 +22,13 @@ class PrivateMessageBanForm extends ContentEntityForm {
     switch ($status) {
       case SAVED_NEW:
         $this->messenger()->addMessage($this->t('Created the %label Private Message Ban.', [
-          '%label' => $this->entity->label(),
+          '%label' => (string) $this->entity->label(),
         ]));
         break;
 
       default:
         $this->messenger()->addMessage($this->t('Saved the %label Private Message Ban.', [
-          '%label' => $this->entity->label(),
+          '%label' => (string) $this->entity->label(),
         ]));
     }
 

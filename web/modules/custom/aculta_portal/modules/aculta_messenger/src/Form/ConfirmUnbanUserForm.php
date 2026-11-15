@@ -46,12 +46,14 @@ class ConfirmUnbanUserForm extends ConfirmFormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state, ?UserInterface $user = NULL): array {
     $this->user = $user;
-    return parent::buildForm($form, $form_state);
+    /** @var array<string, mixed> $built */
+    $built = parent::buildForm($form, $form_state);
+    return $built;
   }
 
   /**
    * {@inheritdoc}
-   * @param array<string, mixed> $form
+   * @param array<string, mixed> &$form
    */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
     // Add a security if the user id is unknown.
@@ -67,7 +69,7 @@ class ConfirmUnbanUserForm extends ConfirmFormBase {
 
   /**
    * {@inheritdoc}
-   * @param array<string, mixed> $form
+   * @param array<string, mixed> &$form
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $form_state->setRedirect('private_message.private_message_page');

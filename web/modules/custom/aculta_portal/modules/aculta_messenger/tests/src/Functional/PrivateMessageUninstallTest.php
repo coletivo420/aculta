@@ -25,7 +25,7 @@ class PrivateMessageUninstallTest extends BrowserTestBase {
   /**
    * Modules to install.
    *
-   * @var array
+   * @var array<string>
    */
   protected static $modules = ['private_message'];
 
@@ -81,7 +81,7 @@ class PrivateMessageUninstallTest extends BrowserTestBase {
       ->getPage()
       ->clickLink('Delete all private message content');
     $this->assertSession()->statusCodeEquals(200);
-    $this->submitForm([], t('Confirm'));
+    $this->submitForm([], (string) t('Confirm'));
 
     $this->assertSame(0, $this->retrieveCount());
   }

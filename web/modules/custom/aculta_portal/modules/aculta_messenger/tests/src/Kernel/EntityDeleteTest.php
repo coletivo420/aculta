@@ -68,6 +68,7 @@ final class EntityDeleteTest extends KernelTestBase {
 
     // Create a few messages.
     for ($i = 0; $i < 5; $i++) {
+      /** @var \Drupal\aculta_messenger\Entity\PrivateMessageInterface $message */
       $message = \Drupal::entityTypeManager()
         ->getStorage('private_message')
         ->create([
@@ -86,9 +87,11 @@ final class EntityDeleteTest extends KernelTestBase {
     $this->thread->delete();
 
     // Assert that the thread has been deleted.
+    /** @var int|string $threadId */
+    $threadId = $this->thread->id();
     $this->assertNull(\Drupal::entityTypeManager()
       ->getStorage('private_message_thread')
-      ->load($this->thread->id()));
+      ->load($threadId));
 
     // Assert no messages are left.
     $this->assertEmpty(\Drupal::entityTypeManager()
@@ -111,9 +114,11 @@ final class EntityDeleteTest extends KernelTestBase {
     $this->thread->delete();
 
     // Assert that the thread has been deleted.
+    /** @var int|string $threadId */
+    $threadId = $this->thread->id();
     $this->assertNull(\Drupal::entityTypeManager()
       ->getStorage('private_message_thread')
-      ->load($this->thread->id()));
+      ->load($threadId));
 
     // Assert no messages are left.
     $this->assertEmpty(\Drupal::entityTypeManager()
@@ -141,9 +146,11 @@ final class EntityDeleteTest extends KernelTestBase {
    */
   public function testStorageThreadAndMessageDeletion(): void {
     \Drupal::entityTypeManager()->getStorage('private_message_thread')->delete([$this->thread]);
+    /** @var int|string $threadId */
+    $threadId = $this->thread->id();
     $this->assertNull(\Drupal::entityTypeManager()
       ->getStorage('private_message')
-      ->load($this->thread->id()));
+      ->load($threadId));
   }
 
 }

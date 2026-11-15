@@ -32,7 +32,7 @@ class PrivateMessageBanListBuilder extends EntityListBuilder {
     /** @var \Drupal\aculta_messenger\Entity\PrivateMessageBanInterface $entity */
     $row['id'] = $entity->id();
     $row['name'] = Link::createFromRoute(
-      $entity->label(),
+      $entity->label() ?? '',
       'entity.private_message_ban.edit_form',
       ['private_message_ban' => $entity->id()]
     );

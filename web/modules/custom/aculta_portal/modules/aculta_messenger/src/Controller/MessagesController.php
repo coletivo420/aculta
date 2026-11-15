@@ -369,10 +369,12 @@ final class MessagesController extends ControllerBase {
   /**
    * The member must be another member of the thread: a box never acts on the current member or on a stranger. */
   private function assertOtherMember(PrivateMessageThreadInterface $thread, UserInterface $user, $access): void {
+    /** @var int|string $userId */
+    $userId = $user->id();
     if (!$access->isAllowed()
       || !$thread->isMember($this->account->id())
       || (int) $user->id() === (int) $this->account->id()
-      || !$thread->isMember($user->id())) {
+      || !$thread->isMember($userId)) {
       throw new NotFoundHttpException();
     }
   }

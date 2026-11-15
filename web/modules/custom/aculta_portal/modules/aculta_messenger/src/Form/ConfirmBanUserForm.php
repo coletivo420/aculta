@@ -46,13 +46,18 @@ class ConfirmBanUserForm extends ConfirmFormBase {
    * @return array<string, mixed>
    */
   public function buildForm(array $form, FormStateInterface $form_state, ?UserInterface $user = NULL): array {
+    /** @var UserInterface $user */
     $this->user = $user;
-    return parent::buildForm($form, $form_state);
+    /** @var array<string, mixed> $built */
+    $built = parent::buildForm($form, $form_state);
+    return $built;
   }
 
   /**
-   * {@inheritdoc}
-   * @param array<string, mixed> $form
+   * Validates the ban confirmation form.
+   *
+   * @param array<array-key, mixed> &$form
+   *   The form structure, passed by reference.
    */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
     // Add a security if the user id is unknown.
@@ -69,17 +74,22 @@ class ConfirmBanUserForm extends ConfirmFormBase {
 
   /**
    * {@inheritdoc}
-   * @param array<string, mixed> $form
+   * @param array<array-key, mixed> &$form
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $form_state->setRedirect('private_message.private_message_page');
 
-    // If user is already banned, do nothing.
-    if ($this->privateMessageBanManager->isBanned($this->user->id())) {
+    $userId = $this->user->id();
+    if ($userId === NULL) {
       return;
     }
 
-    $this->privateMessageBanManager->banUser($this->user->id());
+    // If user is already banned, do nothing.
+    if ($this->privateMessageBanManager->isBanned($userId)) {
+      return;
+    }
+
+    $this->privateMessageBanManager->banUser($userId);
     $this->messenger()->addStatus($this->t('The user %name has been banned.', [
       '%name' => $this->user->getDisplayName(),
     ]));

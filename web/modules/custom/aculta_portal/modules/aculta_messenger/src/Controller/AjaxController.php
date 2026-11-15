@@ -52,13 +52,16 @@ class AjaxController extends ControllerBase implements AjaxControllerInterface {
    */
   protected function getNewPrivateMessages(): AjaxResponse {
     $response = new AjaxResponse();
-    $thread_id = $this->requestStack->getCurrentRequest()->get('threadid');
-    $message_id = $this->requestStack->getCurrentRequest()->get('messageid');
+    /** @var \Symfony\Component\HttpFoundation\Request $request */
+    $request = $this->requestStack->getCurrentRequest();
+    $thread_id = $request->get('threadid');
+    $message_id = $request->get('messageid');
 
     if (is_numeric($thread_id) && is_numeric($message_id)) {
       $thread = $this->entityTypeManager()->getStorage('private_message_thread')
         ->load($thread_id);
       if ($thread instanceof PrivateMessageThreadInterface) {
+        /** @var list<\Drupal\aculta_messenger\Entity\PrivateMessageInterface> $new_messages */
         $new_messages = $this->privateMessageService->getNewMessages($thread_id, $message_id);
         $this->privateMessageService->updateThreadAccessTime($thread);
         $count = count($new_messages);
@@ -94,10 +97,12 @@ class AjaxController extends ControllerBase implements AjaxControllerInterface {
   protected function getOldPrivateMessages(): AjaxResponse {
     $response = new AjaxResponse();
 
+    /** @var \Symfony\Component\HttpFoundation\Request $current_request */
     $current_request = $this->requestStack->getCurrentRequest();
     $thread_id = $current_request->get('threadid');
     $message_id = $current_request->get('messageid');
     if (is_numeric($thread_id) && is_numeric($message_id)) {
+      /** @var array{messages: list<\Drupal\aculta_messenger\Entity\PrivateMessageInterface>, next_exists: bool} $message_info */
       $message_info = $this->privateMessageService->getPreviousMessages($thread_id, $message_id);
 
       if (count($message_info['messages'])) {
@@ -132,8 +137,10 @@ class AjaxController extends ControllerBase implements AjaxControllerInterface {
   protected function getOldInboxThreads(): AjaxResponse {
     $response = new AjaxResponse();
 
-    $timestamp = $this->requestStack->getCurrentRequest()->get('timestamp');
-    $thread_count = (int) $this->requestStack->getCurrentRequest()->get('count');
+    /** @var \Symfony\Component\HttpFoundation\Request $request */
+    $request = $this->requestStack->getCurrentRequest();
+    $timestamp = $request->get('timestamp');
+    $thread_count = (int) $request->get('count');
     if (is_numeric($timestamp)) {
       $thread_info = $this->privateMessageService->getThreadsForUser($thread_count, intval($timestamp));
       $has_next = FALSE;
@@ -165,7 +172,9 @@ class AjaxController extends ControllerBase implements AjaxControllerInterface {
   protected function getNewInboxThreads(): AjaxResponse {
     $response = new AjaxResponse();
 
-    $info = $this->requestStack->getCurrentRequest()->get('ids');
+    /** @var \Symfony\Component\HttpFoundation\Request $request */
+    $request = $this->requestStack->getCurrentRequest();
+    $info = $request->get('ids');
 
     // Check to see if any thread IDs were POSTed.
     if (is_array($info) && count($info)) {
@@ -175,12 +184,14 @@ class AjaxController extends ControllerBase implements AjaxControllerInterface {
     else {
       // No IDs were posted, so the maximum possible number of threads to be
       // returned is retrieved from the block settings.
+      /** @var int $thread_count */
       $thread_count = $this->config('block.block.privatemessageinbox')
         ->get('settings.thread_count');
       $inbox_threads = $this->privateMessageService->getUpdatedInboxThreads([], $thread_count);
     }
 
     // Only need to do something if any thread IDS were found.
+    /** @var array{thread_ids: list<int|string>, new_threads: array<int|string, \Drupal\aculta_messenger\Entity\PrivateMessageThreadInterface>} $inbox_threads */
     if (count($inbox_threads['thread_ids'])) {
       $view_builder = $this->entityTypeManager()->getViewBuilder('private_message_thread');
 
@@ -241,7 +252,9 @@ class AjaxController extends ControllerBase implements AjaxControllerInterface {
   protected function loadThread(): AjaxResponse {
     $response = new AjaxResponse();
 
-    $thread_id = $this->requestStack->getCurrentRequest()->get('id');
+    /** @var \Symfony\Component\HttpFoundation\Request $request */
+    $request = $this->requestStack->getCurrentRequest();
+    $thread_id = $request->get('id');
     if ($thread_id) {
       $thread = $this->entityTypeManager()->getStorage('private_message_thread')->load($thread_id);
 

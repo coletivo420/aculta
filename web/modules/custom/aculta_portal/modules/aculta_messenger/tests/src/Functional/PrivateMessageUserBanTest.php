@@ -74,7 +74,7 @@ class PrivateMessageUserBanTest extends BrowserTestBase {
   /**
    * Tests access to the ban listing.
    */
-  public function testBanPageRouteAccess() {
+  public function testBanPageRouteAccess(): void {
     $this->drupalLogin($this->users['a']);
     $this->drupalGet('/private-message/ban');
     $this->assertSession()->statusCodeEquals(200);
@@ -88,7 +88,7 @@ class PrivateMessageUserBanTest extends BrowserTestBase {
   /**
    * Tests for BanUserForm.
    */
-  public function testBanUserFormSubmission() {
+  public function testBanUserFormSubmission(): void {
     $this->drupalLogin($this->users['a']);
     $this->drupalGet('/private-message/ban');
 

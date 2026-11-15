@@ -233,10 +233,12 @@ final class PrivateMessageFormValidator {
     UserInterface $sender,
     bool $allowNewEmptyThread = FALSE,
   ): bool {
-    if ((int) $sender->id() !== (int) $this->currentUser->id()
+    $senderId = $sender->id();
+    if ((int) $senderId !== (int) $this->currentUser->id()
       || !$sender->isActive()
       || !$sender->hasPermission('use private messaging system')
-      || !$thread->isMember($sender->id())) {
+      || $senderId === NULL
+      || !$thread->isMember($senderId)) {
       return FALSE;
     }
 

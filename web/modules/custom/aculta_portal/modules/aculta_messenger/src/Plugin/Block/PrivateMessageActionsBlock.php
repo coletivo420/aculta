@@ -75,6 +75,8 @@ class PrivateMessageActionsBlock extends BlockBase implements ContainerFactoryPl
 
     $config = $this->configFactory->get('private_message.settings');
     $url = Url::fromRoute('private_message.private_message_create');
+    /** @var array{links?: list<array<string, mixed>>, '#attributes'?: array{class?: list<string>}} $block */
+    $block = [];
     $block['links'][] = [
       '#type' => 'link',
       '#title' => $config->get("create_message_label"),

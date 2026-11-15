@@ -260,6 +260,8 @@ final class UnreadThreadCounterTest extends UnitTestCase {
 
   /**
    * Creates a message fixture.
+   *
+   * @return \PHPUnit\Framework\MockObject\MockObject&\Drupal\aculta_messenger\Entity\PrivateMessageInterface
    */
   private function message(int $owner, int $created): PrivateMessageInterface {
     $message = $this->createMock(PrivateMessageInterface::class);

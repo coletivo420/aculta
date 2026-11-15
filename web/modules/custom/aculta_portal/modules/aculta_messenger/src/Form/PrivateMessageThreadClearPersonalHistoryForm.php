@@ -50,6 +50,7 @@ class PrivateMessageThreadClearPersonalHistoryForm extends ContentEntityConfirmF
    * @param array<string, mixed> $form
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
+    /** @var array<string, mixed> $form */
     parent::submitForm($form, $form_state);
 
     $this->getEntity()->clearAccountHistory($this->currentUser());

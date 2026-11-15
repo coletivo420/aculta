@@ -102,6 +102,8 @@ interface PrivateMessageThreadInterface extends ContentEntityInterface {
    * Filters the list down to only the newest messages.
    *
    * Note that other messages will be loadable through AJAX.
+   *
+   * @return void
    */
   public function filterNewestMessages();
 

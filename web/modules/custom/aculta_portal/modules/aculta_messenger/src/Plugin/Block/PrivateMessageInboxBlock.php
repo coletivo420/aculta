@@ -84,9 +84,11 @@ class PrivateMessageInboxBlock extends BlockBase implements BlockPluginInterface
    * @return array<string, mixed>
    */
   public function build(): array {
+    /** @var array{thread_count: int, ajax_load_count: int, ajax_refresh_rate: int} $config */
     $config = $this->getConfiguration();
     $thread_info = $this->privateMessageService->getThreadsForUser((int) $config['thread_count']);
     $total_thread = $this->privateMessageService->getCountThreadsForUser();
+    $block = [];
     if (count($thread_info['threads'])) {
       $view_builder = $this->entityTypeManager->getViewBuilder('private_message_thread');
       $threads = $thread_info['threads'];
@@ -151,6 +153,7 @@ class PrivateMessageInboxBlock extends BlockBase implements BlockPluginInterface
     $block['#prefix'] = '<div class="private-message-thread--full-container">';
     $block['#suffix'] = '</div>';
 
+    /** @var array<string, mixed> $block */
     return $block;
   }
 
@@ -215,6 +218,7 @@ class PrivateMessageInboxBlock extends BlockBase implements BlockPluginInterface
       '#description' => $this->t('The number of seconds after which the inbox should refresh itself. Setting this to a low number will result in more requests to the server, adding overhead and bandwidth. Setting this number to zero will disable ajax refresh, and the inbox will only updated if/when the page is refreshed.'),
     ];
 
+    /** @var array<string, mixed> $form */
     return $form;
   }
 

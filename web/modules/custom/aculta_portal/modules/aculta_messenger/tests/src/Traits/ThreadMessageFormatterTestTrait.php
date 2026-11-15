@@ -27,7 +27,7 @@ trait ThreadMessageFormatterTestTrait {
   /**
    * Gets message ids from markup.
    *
-   * @return array<string, mixed>
+   * @return list<string|null>
    *   List of message ids.
    */
   protected function getMessageIdsFromMarkup(): array {
@@ -45,7 +45,7 @@ trait ThreadMessageFormatterTestTrait {
    * @param \Drupal\aculta_messenger\Entity\PrivateMessageThreadInterface $thread
    *   Thread.
    *
-   * @return array<string, mixed>
+   * @return list<int|string|null>
    *   List of message ids.
    */
   protected function getMessageIdsForThread(PrivateMessageThreadInterface $thread): array {
@@ -77,6 +77,8 @@ trait ThreadMessageFormatterTestTrait {
    */
   protected function updateWidgetSettings(array $settings): void {
     $widget = EntityViewDisplay::load('private_message_thread.private_message_thread.default');
+    assert($widget instanceof EntityViewDisplay);
+    /** @var array{settings: array<string, mixed>} $component */
     $component = $widget->getComponent('private_messages');
     $component['settings'] = $settings + $component['settings'];
 

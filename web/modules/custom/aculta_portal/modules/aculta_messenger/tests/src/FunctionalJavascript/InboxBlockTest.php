@@ -68,7 +68,7 @@ class InboxBlockTest extends WebDriverTestBase {
       ->elementExists('css', '.private-message-thread-inbox[data-thread-id="' . $lastThread->id() . '"]');
     $this->assertStringContainsString(
       'active-thread',
-      $element->getAttribute('class'),
+      (string) $element->getAttribute('class'),
     );
 
     foreach ($this->threads as $thread) {

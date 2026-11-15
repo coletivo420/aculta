@@ -66,20 +66,21 @@ class BanUserForm extends FormBase {
    * @param array<string, mixed> $form
    */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
+    /** @var int|string $userId */
     $userId = $form_state->getValue('banned_user');
     // Add security to prevent blocking ourselves.
     if ($userId === $this->currentUser()->id()) {
-      $form_state->setErrorByName($userId, $this->t("You can't block yourself."));
+      $form_state->setErrorByName((string) $userId, $this->t("You can't block yourself."));
     }
 
     // Add a security if the user id is unknown.
     if (empty($userId) ||
       empty($this->entityTypeManager->getStorage('user')->load($userId))) {
-      $form_state->setErrorByName($userId, $this->t('The user id is unknown.'));
+      $form_state->setErrorByName((string) $userId, $this->t('The user id is unknown.'));
     }
 
     if (!empty($userId) && $this->privateMessageBanManager->isBanned($userId)) {
-      $form_state->setErrorByName($userId, $this->t('The user is already blocked.'));
+      $form_state->setErrorByName((string) $userId, $this->t('The user is already blocked.'));
     }
   }
 
@@ -88,12 +89,13 @@ class BanUserForm extends FormBase {
    * @param array<string, mixed> $form
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
+    /** @var int|string $userId */
     $userId = $form_state->getValue('banned_user');
     $this->privateMessageBanManager->banUser($userId);
+    /** @var \Drupal\user\UserInterface $bannedUser */
+    $bannedUser = $this->entityTypeManager->getStorage('user')->load($userId);
     $this->messenger()->addStatus($this->t('The user %name has been banned.', [
-      '%name' => $this->entityTypeManager->getStorage('user')
-        ->load($userId)
-        ->getDisplayName(),
+      '%name' => $bannedUser->getDisplayName(),
     ]));
   }
 

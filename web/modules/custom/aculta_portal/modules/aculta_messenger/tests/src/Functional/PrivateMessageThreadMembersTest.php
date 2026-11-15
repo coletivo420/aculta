@@ -49,8 +49,8 @@ class PrivateMessageThreadMembersTest extends BrowserTestBase {
       'message[0][value]' => $this->getRandomGenerator()->sentences(5),
     ], 'Send');
     $this->assertSession()->statusCodeEquals(200);
-    $this->assertSession()->elementTextContains('css', '.private-message-recipients article:nth-of-type(1) .username', $this->users['b']->getDisplayName());
-    $this->assertSession()->elementTextContains('css', '.private-message-recipients article:nth-of-type(2) .username', $this->users['c']->getDisplayName());
+    $this->assertSession()->elementTextContains('css', '.private-message-recipients article:nth-of-type(1) .username', (string) $this->users['b']->getDisplayName());
+    $this->assertSession()->elementTextContains('css', '.private-message-recipients article:nth-of-type(2) .username', (string) $this->users['c']->getDisplayName());
     $this->drupalLogin($this->users['b']);
     $this->drupalGet('private-message/create');
     $this->assertSession()->statusCodeEquals(200);
@@ -59,7 +59,7 @@ class PrivateMessageThreadMembersTest extends BrowserTestBase {
       'message[0][value]' => $this->getRandomGenerator()->sentences(5),
     ], 'Send');
     $this->assertSession()->statusCodeEquals(200);
-    $this->assertSession()->elementTextContains('css', '.private-message-recipients .username', $this->users['c']->getDisplayName());
+    $this->assertSession()->elementTextContains('css', '.private-message-recipients .username', (string) $this->users['c']->getDisplayName());
 
     $this->drupalLogin($this->users['c']);
     $this->drupalGet('private-message/create');
@@ -69,7 +69,7 @@ class PrivateMessageThreadMembersTest extends BrowserTestBase {
       'message[0][value]' => $this->getRandomGenerator()->sentences(5),
     ], 'Send');
     $this->assertSession()->statusCodeEquals(200);
-    $this->assertSession()->elementTextContains('css', '.private-message-recipients .username', $this->users['a']->getDisplayName());
+    $this->assertSession()->elementTextContains('css', '.private-message-recipients .username', (string) $this->users['a']->getDisplayName());
   }
 
   /**
@@ -126,7 +126,7 @@ class PrivateMessageThreadMembersTest extends BrowserTestBase {
       'message[0][value]' => $this->getRandomGenerator()->sentences(5),
     ], 'Send');
     $this->assertSession()->statusCodeEquals(200);
-    $this->assertSession()->elementTextContains('css', '.private-message-recipients article:nth-of-type(1) .username', $this->users['b']->getDisplayName());
+    $this->assertSession()->elementTextContains('css', '.private-message-recipients article:nth-of-type(1) .username', (string) $this->users['b']->getDisplayName());
 
     // Assure that when we create another thread, with an extra user, this
     // group get their own, unique thread.
@@ -137,8 +137,8 @@ class PrivateMessageThreadMembersTest extends BrowserTestBase {
       'message[0][value]' => $this->getRandomGenerator()->sentences(5),
     ], 'Send');
     $this->assertSession()->statusCodeEquals(200);
-    $this->assertSession()->elementTextContains('css', '.private-message-recipients article:nth-of-type(1) .username', $this->users['b']->getDisplayName());
-    $this->assertSession()->elementTextContains('css', '.private-message-recipients article:nth-of-type(2) .username', $this->users['c']->getDisplayName());
+    $this->assertSession()->elementTextContains('css', '.private-message-recipients article:nth-of-type(1) .username', (string) $this->users['b']->getDisplayName());
+    $this->assertSession()->elementTextContains('css', '.private-message-recipients article:nth-of-type(2) .username', (string) $this->users['c']->getDisplayName());
   }
 
 }

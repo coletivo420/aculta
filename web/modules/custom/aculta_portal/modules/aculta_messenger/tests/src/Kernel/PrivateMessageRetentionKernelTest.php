@@ -265,7 +265,9 @@ final class PrivateMessageRetentionKernelTest extends KernelTestBase {
         'created' => $timestamp + $index,
       ]);
       $privateMessage->save();
-      $thread->addMessageById($privateMessage->id());
+      /** @var int|string $privateMessageId */
+      $privateMessageId = $privateMessage->id();
+      $thread->addMessageById($privateMessageId);
       $this->createNotice((int) $first->id(), (int) $privateMessage->id());
     }
     $thread->save();

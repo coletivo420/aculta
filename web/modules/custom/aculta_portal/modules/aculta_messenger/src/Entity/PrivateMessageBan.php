@@ -60,7 +60,9 @@ class PrivateMessageBan extends ContentEntityBase implements PrivateMessageBanIn
    * {@inheritdoc}
    */
   public function getCreatedTime(): int {
-    return (int) $this->get('created')->value;
+    /** @var int|string|null $created */
+    $created = $this->get('created')->value;
+    return (int) $created;
   }
 
   /**
@@ -98,10 +100,13 @@ class PrivateMessageBan extends ContentEntityBase implements PrivateMessageBanIn
    * {@inheritdoc}
    */
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type): array {
+    /** @var array<string, \Drupal\Core\Field\FieldDefinitionInterface> $fields */
     $fields = parent::baseFieldDefinitions($entity_type);
     $fields += static::ownerBaseFieldDefinitions($entity_type);
 
-    $fields['owner']
+    /** @var \Drupal\Core\Field\BaseFieldDefinition $owner */
+    $owner = $fields['owner'];
+    $owner
       ->setLabel(t('Owned by'))
       ->setDescription(t('The ID of user who performed the ban.'))
       ->setSetting('target_type', 'user')
@@ -139,6 +144,7 @@ class PrivateMessageBan extends ContentEntityBase implements PrivateMessageBanIn
       ->setLabel(t('Created'))
       ->setDescription(t('The time that the entity was created.'));
 
+    /** @var array<string, \Drupal\Core\Field\FieldDefinitionInterface> $fields */
     return $fields;
   }
 

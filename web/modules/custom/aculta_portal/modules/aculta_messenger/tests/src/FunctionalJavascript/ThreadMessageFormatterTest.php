@@ -41,7 +41,7 @@ class ThreadMessageFormatterTest extends WebDriverTestBase {
    * Tests load previous functionality.
    *
    * @dataProvider loadPreviousProvider
-   * @param array<string, mixed> $offset
+   * @param array<int, int> $offset
    */
   public function testLoadPrevious(string $order, bool $reverse, array $offset): void {
     $thread = $this->createThreadWithMessages([
@@ -156,6 +156,7 @@ class ThreadMessageFormatterTest extends WebDriverTestBase {
 
     // Delete a previous message.
     $messages = $thread->getMessages();
+    /** @var \Drupal\aculta_messenger\Entity\PrivateMessageInterface $firstMessage */
     $firstMessage = reset($messages);
     $firstMessage->delete();
 

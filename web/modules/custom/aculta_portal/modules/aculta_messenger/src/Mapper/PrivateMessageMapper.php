@@ -21,7 +21,7 @@ class PrivateMessageMapper implements PrivateMessageMapperInterface {
 
   /**
    * {@inheritdoc}
-   * @param array<string, mixed> $members
+   * @param array<int, \Drupal\user\UserInterface> $members
    */
   public function getThreadIdForMembers(array $members) {
     $uids = [];
@@ -41,14 +41,19 @@ class PrivateMessageMapper implements PrivateMessageMapperInterface {
         ->condition('members_target_id', $uid);
       $query->condition('entity_id', $subQuery, 'IN');
     }
-    $thread_ids = $query->execute()->fetchCol();
+    /** @var \Drupal\Core\Database\StatementInterface<int, mixed> $statement */
+    $statement = $query->execute();
+    /** @var list<int> $thread_ids */
+    $thread_ids = $statement->fetchCol();
 
     // Exclude threads with other participants.
     foreach ($thread_ids as $thread_id) {
       $query = $this->database->select('private_message_thread__members', 'pmt')
         ->condition('members_target_id', $uids, 'NOT IN')
         ->condition('entity_id', $thread_id);
-      if ($query->countQuery()->execute()->fetchField() == 0) {
+      /** @var \Drupal\Core\Database\StatementInterface<int, mixed> $countStatement */
+      $countStatement = $query->countQuery()->execute();
+      if ($countStatement->fetchField() == 0) {
         return $thread_id;
       }
     }
@@ -72,13 +77,17 @@ class PrivateMessageMapper implements PrivateMessageMapperInterface {
     $query->condition('thread.id', $bannedThreadsQuery, 'NOT IN');
     $query->orderBy('thread.updated', 'desc');
     $query->range(0, 1);
-    return $query->execute()->fetchField();
+    /** @var \Drupal\Core\Database\StatementInterface<int, mixed> $statement */
+    $statement = $query->execute();
+    /** @var int|false $threadId */
+    $threadId = $statement->fetchField();
+    return $threadId;
 
   }
 
   /**
    * {@inheritdoc}
-   * @return array<string, mixed>
+   * @return array<mixed, mixed>
    */
   public function getThreadIdsForUser(UserInterface $user, $count = FALSE, $timestamp = FALSE): array {
 
@@ -103,10 +112,14 @@ class PrivateMessageMapper implements PrivateMessageMapperInterface {
     $query->orderBy('thread.id');
 
     if ($count > 0) {
-      $query->range(0, $count);
+      /** @var int $rangeLength */
+      $rangeLength = $count;
+      $query->range(0, $rangeLength);
     }
 
-    return $query->execute()->fetchCol();
+    /** @var \Drupal\Core\Database\StatementInterface<int, mixed> $statement */
+    $statement = $query->execute();
+    return $statement->fetchCol();
 
   }
 
@@ -142,7 +155,7 @@ class PrivateMessageMapper implements PrivateMessageMapperInterface {
   /**
    * {@inheritdoc}
    * @param array<string, mixed> $existingThreadIds
-   * @return array<string, mixed>
+   * @return array<mixed, mixed>
    */
   public function getUpdatedInboxThreadIds(array $existingThreadIds, $count = FALSE): array {
 
@@ -167,10 +180,12 @@ class PrivateMessageMapper implements PrivateMessageMapperInterface {
       $query->condition('thread.updated', $subquery, '>=');
     }
     else {
-      $query->range(0, $count);
+      $query->range(0, (int) $count);
     }
 
-    return $query->execute()->fetchAllAssoc('id');
+    /** @var \Drupal\Core\Database\StatementInterface<int, mixed> $statement */
+    $statement = $query->execute();
+    return $statement->fetchAllAssoc('id');
   }
 
   /**
@@ -192,7 +207,11 @@ class PrivateMessageMapper implements PrivateMessageMapperInterface {
     $query->condition('thread.id', $bannedThreadsQuery, 'NOT IN');
     $query->groupBy('thread.id');
 
-    return $query->countQuery()->execute()->fetchField();
+    /** @var \Drupal\Core\Database\StatementInterface<int, mixed> $statement */
+    $statement = $query->countQuery()->execute();
+    /** @var int $unreadCount */
+    $unreadCount = $statement->fetchField();
+    return $unreadCount;
   }
 
   /**
@@ -231,7 +250,11 @@ class PrivateMessageMapper implements PrivateMessageMapperInterface {
       ->condition('thread.id', $bannedThreadsQuery, 'NOT IN')
       ->where('thread_history.access_timestamp < thread.updated');
     $query = $query->countQuery();
-    return $query->execute()->fetchField();
+    /** @var \Drupal\Core\Database\StatementInterface<int, mixed> $statement */
+    $statement = $query->execute();
+    /** @var int $unreadMessageCount */
+    $unreadMessageCount = $statement->fetchField();
+    return $unreadMessageCount;
   }
 
   /**
@@ -253,7 +276,11 @@ class PrivateMessageMapper implements PrivateMessageMapperInterface {
       'messages_data.id = thread_message.private_messages_target_id'
     );
     $query->where('[messages_data].[created] > [aculta_pm_thread_history].[access_timestamp]');
-    return $query->countQuery()->execute()->fetchField();
+    /** @var \Drupal\Core\Database\StatementInterface<int, mixed> $statement */
+    $statement = $query->countQuery()->execute();
+    /** @var int $unreadCount */
+    $unreadCount = $statement->fetchField();
+    return $unreadCount;
   }
 
   /**
@@ -267,21 +294,25 @@ class PrivateMessageMapper implements PrivateMessageMapperInterface {
       'messages.entity_id = thread.id AND messages.private_messages_target_id = :message_id',
       [':message_id' => $privateMessage->id()]
     );
-    return $query
+    /** @var \Drupal\Core\Database\StatementInterface<int, mixed> $statement */
+    $statement = $query
       ->range(0, 1)
-      ->execute()
-      ->fetchField();
+      ->execute();
+    /** @var int $threadId */
+    $threadId = $statement->fetchField();
+    return $threadId;
   }
 
   /**
    * {@inheritdoc}
-   * @return array<string, mixed>
+   * @return array<mixed, mixed>
    */
   public function getThreadIds(): array {
-    return $this->database->select('private_message_threads', 'pmt')
+    /** @var \Drupal\Core\Database\StatementInterface<int, mixed> $statement */
+    $statement = $this->database->select('private_message_threads', 'pmt')
       ->fields('pmt', ['id'])
-      ->execute()
-      ->fetchCol();
+      ->execute();
+    return $statement->fetchCol();
   }
 
   /**

@@ -45,7 +45,11 @@ abstract class PrivateMessageConfigFormBase extends PluginBase implements Privat
    * {@inheritdoc}
    */
   public function getName(): MarkupInterface|string {
-    return $this->pluginDefinition['name'];
+    /** @var array<string, mixed> $definition */
+    $definition = $this->pluginDefinition;
+    /** @var \Drupal\Core\StringTranslation\TranslatableMarkup|string $name */
+    $name = $definition['name'];
+    return $name;
   }
 
   /**

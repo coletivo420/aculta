@@ -235,10 +235,10 @@ final class NewConversationForm extends FormBase {
     $thread = PrivateMessageThread::create(['members' => $members]);
     $formState->set('pmt_entity', $thread);
     $sender = $this->entityTypes->getStorage('user')->load($this->currentUser->id());
+    /** @var array<int, \Drupal\user\UserInterface> $participants */
+    $participants = $sender instanceof UserInterface ? array_merge([$sender], $recipients) : [];
     if ($sender instanceof UserInterface
-      && $this->privateMessageMapper->getThreadIdForMembers(
-        array_merge([$sender], $recipients),
-      )) {
+      && $this->privateMessageMapper->getThreadIdForMembers($participants)) {
       // Existing threads remain replyable after preference changes.
       $formState->set('existing_conversation', TRUE);
     }
@@ -280,7 +280,9 @@ final class NewConversationForm extends FormBase {
       $this->validator->releaseSubmissionLocks();
       return;
     }
-    $thread = $this->resolveThreadForSubmission(array_merge([$sender], $recipients), $formState);
+    /** @var array<int, \Drupal\user\UserInterface> $submissionMembers */
+    $submissionMembers = array_merge([$sender], $recipients);
+    $thread = $this->resolveThreadForSubmission($submissionMembers, $formState);
     if (!$thread instanceof PrivateMessageThreadInterface) {
       $this->validator->releaseSubmissionLocks();
       return;
@@ -328,7 +330,7 @@ final class NewConversationForm extends FormBase {
    * to follow the established-thread policy, then revalidate preferences and
    * friendship immediately before creating a new thread.
    *
-   * @param \Drupal\user\UserInterface[] $members
+   * @param array<int, \Drupal\user\UserInterface> $members
    *   Sender and recipients in the exact order used by Private Message.
    * @param \Drupal\Core\Form\FormStateInterface $formState
    *   Current form input and validation state.

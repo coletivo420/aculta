@@ -17,7 +17,7 @@ interface PrivateMessageMapperInterface {
    * The thread returned will contain all of the given UIDs, and only the given
    * UIDs.
    *
-   * @param array<string, mixed> $uids
+   * @param array<int, \Drupal\user\UserInterface> $uids
    *   An array of User IDs of users whose thread should be
    *   retrieved.
    *
@@ -46,7 +46,7 @@ interface PrivateMessageMapperInterface {
    *   The user whose most recently thread IDs should be retrieved.
    * @param mixed $count
    *   The number of thread IDs to retrieve or FALSE to retrieve them all.
-   * @param int $timestamp
+   * @param int|false $timestamp
    *   A timestamp relative to which only thread IDs with an earlier timestamp
    *   should be returned.
    *
@@ -79,7 +79,7 @@ interface PrivateMessageMapperInterface {
    *
    * @param array<string, mixed> $existingThreadIds
    *   An array of thread IDs to be compared against.
-   * @param int $count
+   * @param int|false $count
    *   The number of threads to return if no existing thread IDs were provided.
    *
    * @return array<string, mixed>

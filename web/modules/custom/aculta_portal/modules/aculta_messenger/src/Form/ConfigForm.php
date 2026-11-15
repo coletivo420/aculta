@@ -237,11 +237,14 @@ class ConfigForm extends ConfigFormBase {
 
     $definitions = $this->privateMessageConfigFormManager->getDefinitions();
     foreach ($definitions as $definition) {
+      /** @var array{id: string} $definition */
       /** @var \Drupal\aculta_messenger\Plugin\PrivateMessageConfigForm\PrivateMessageConfigFormPluginInterface $instance */
       $instance = $this->privateMessageConfigFormManager->createInstance($definition['id']);
+      /** @var array<string, mixed> $pluginDefinition */
+      $pluginDefinition = $instance->getPluginDefinition();
       $form[$instance->getPluginId()] = [
         '#type' => 'details',
-        '#title' => $instance->getPluginDefinition()['name'] ?? '',
+        '#title' => $pluginDefinition['name'] ?? '',
         '#tree' => TRUE,
         '#open' => TRUE,
       ];
@@ -250,7 +253,9 @@ class ConfigForm extends ConfigFormBase {
       }
     }
 
-    return parent::buildForm($form, $form_state);
+    /** @var array<string, mixed> $builtForm */
+    $builtForm = parent::buildForm($form, $form_state);
+    return $builtForm;
   }
 
   /**
@@ -260,6 +265,8 @@ class ConfigForm extends ConfigFormBase {
   public function validateForm(array &$form, FormStateInterface $form_state): void {
     $definitions = $this->privateMessageConfigFormManager->getDefinitions();
     foreach ($definitions as $definition) {
+      /** @var array{id: string} $definition */
+      /** @var \Drupal\aculta_messenger\Plugin\PrivateMessageConfigForm\PrivateMessageConfigFormPluginInterface $instance */
       $instance = $this->privateMessageConfigFormManager->createInstance($definition['id']);
       $instance->validateForm($form, $form_state);
     }
@@ -272,16 +279,23 @@ class ConfigForm extends ConfigFormBase {
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $definitions = $this->privateMessageConfigFormManager->getDefinitions();
     foreach ($definitions as $definition) {
+      /** @var array{id: string} $definition */
+      /** @var \Drupal\aculta_messenger\Plugin\PrivateMessageConfigForm\PrivateMessageConfigFormPluginInterface $instance */
       $instance = $this->privateMessageConfigFormManager->createInstance($definition['id']);
-      $instance->submitForm($form_state->getValue($instance->getId()));
+      $values = $form_state->getValue($instance->getId());
+      if (is_array($values)) {
+        /** @var array<string, mixed> $values */
+        $instance->submitForm($values);
+      }
     }
 
+    /** @var array<string, mixed> $form */
     parent::submitForm($form, $form_state);
   }
 
   /**
    * {@inheritdoc}
-   * @return array<string, mixed>
+   * @return array<int, string>
    */
   protected function getEditableConfigNames(): array {
     return [

@@ -44,6 +44,8 @@ class SendPrivateMessage extends RulesActionBase implements ContainerFactoryPlug
   /**
    * Tipagem do porte Private Message.
    * @param array<string, mixed> $configuration
+   * @param string $plugin_id
+   * @param mixed $plugin_definition
    */
   public function __construct(
     array $configuration,

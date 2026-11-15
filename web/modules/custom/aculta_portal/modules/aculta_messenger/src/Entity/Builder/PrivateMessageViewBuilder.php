@@ -17,6 +17,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Build handler for private messages.
+ *
+ * @phpstan-consistent-constructor
  */
 class PrivateMessageViewBuilder extends EntityViewBuilder {
 
@@ -58,6 +60,8 @@ class PrivateMessageViewBuilder extends EntityViewBuilder {
     $classes[] = 'private-message-' . $view_mode;
     $classes[] = 'private-message-author-' . ($this->currentUser->id() == $entity->getOwnerId() ? 'self' : 'other');
 
+    /** @var array<string, mixed> $build */
+    $build = [];
     $build['wrapper'] = [
       '#type' => 'container',
       '#attributes' => [
@@ -74,6 +78,7 @@ class PrivateMessageViewBuilder extends EntityViewBuilder {
 
     $this->moduleHandler()->alter('private_message_view', $build, $entity, $view_mode);
 
+    /** @var array<string, mixed> $build */
     return $build;
   }
 

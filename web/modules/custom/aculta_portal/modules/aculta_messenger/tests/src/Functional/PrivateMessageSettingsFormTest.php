@@ -69,7 +69,7 @@ class PrivateMessageSettingsFormTest extends BrowserTestBase {
     $this->assertSession()->statusCodeEquals(200);
 
     // Test form submission.
-    $this->submitForm([], t('Save configuration'));
+    $this->submitForm([], (string) t('Save configuration'));
     $this->assertSession()
       ->pageTextContainsOnce('The configuration options have been saved.');
   }

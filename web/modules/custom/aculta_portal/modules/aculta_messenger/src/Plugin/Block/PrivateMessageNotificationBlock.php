@@ -81,6 +81,7 @@ class PrivateMessageNotificationBlock extends BlockBase implements BlockPluginIn
    * @return array<string, mixed>
    */
   public function build(): array {
+    /** @var array{'#theme': string, '#new_items_count'?: mixed, '#count_method'?: mixed, '#attached'?: array{drupalSettings?: array<string, array<string, mixed>>, library?: list<string>}, '#attributes'?: array{class?: list<string>}} $block */
     $block = [
       '#theme' => 'private_message_notification_block',
     ];
@@ -160,6 +161,7 @@ class PrivateMessageNotificationBlock extends BlockBase implements BlockPluginIn
    * @return array<string, mixed>
    */
   public function blockForm($form, FormStateInterface $form_state): array {
+    /** @var array<string, mixed> $form */
     $form = parent::blockForm($form, $form_state);
 
     $config = $this->getConfiguration();

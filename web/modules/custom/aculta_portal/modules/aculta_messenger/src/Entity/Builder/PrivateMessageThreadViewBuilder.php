@@ -19,6 +19,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Build handler for private message threads.
+ *
+ * @phpstan-consistent-constructor
  */
 class PrivateMessageThreadViewBuilder extends EntityViewBuilder {
 
@@ -54,6 +56,7 @@ class PrivateMessageThreadViewBuilder extends EntityViewBuilder {
   public function view(EntityInterface $entity, $view_mode = 'full', $langcode = NULL): array {
     assert($entity instanceof PrivateMessageThreadInterface);
 
+    /** @var array<string, mixed> $build */
     $build = parent::view($entity, $view_mode, $langcode);
 
     $classes = ['private-message-thread'];
@@ -90,11 +93,15 @@ class PrivateMessageThreadViewBuilder extends EntityViewBuilder {
 
       $entity->updateLastAccessTime($this->currentUser);
 
-      $build['#prefix'] = '<div id="private-message-page"><div id="private-message-thread-' . $entity->id() . '" class="' . implode(' ', $classes) . '" data-thread-id="' . $entity->id() . '" data-last-update="' . $entity->get('updated')->value . '">';
+      /** @var scalar|null $last_update */
+      $last_update = $entity->get('updated')->value;
+      $build['#prefix'] = '<div id="private-message-page"><div id="private-message-thread-' . $entity->id() . '" class="' . implode(' ', $classes) . '" data-thread-id="' . $entity->id() . '" data-last-update="' . $last_update . '">';
       $build['#suffix'] = '</div></div>';
     }
     else {
-      $build['#prefix'] = '<div class="' . implode(' ', $classes) . '" data-thread-id="' . $entity->id() . '" data-last-update="' . $entity->get('updated')->value . '">';
+      /** @var scalar|null $last_update */
+      $last_update = $entity->get('updated')->value;
+      $build['#prefix'] = '<div class="' . implode(' ', $classes) . '" data-thread-id="' . $entity->id() . '" data-last-update="' . $last_update . '">';
       $build['#suffix'] = '</div>';
     }
 

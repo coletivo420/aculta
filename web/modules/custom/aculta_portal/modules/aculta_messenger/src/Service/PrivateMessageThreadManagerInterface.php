@@ -24,6 +24,8 @@ interface PrivateMessageThreadManagerInterface {
    * @param \Drupal\aculta_messenger\Entity\PrivateMessageThreadInterface|null $thread
    *   (optional) The private message thread. If NULL, one will be loaded
    *   using the members array.
+   *
+   * @return void
    */
   public function saveThread(PrivateMessageInterface $message, array $members = [], ?PrivateMessageThreadInterface $thread = NULL);
 

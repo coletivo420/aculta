@@ -33,10 +33,11 @@ class PrivateMessageBanManager implements PrivateMessageBanManagerInterface {
     $select
       ->addExpression('1');
 
-    return (bool) $select->condition('pmb.owner', $this->currentUser->id())
+    /** @var \Drupal\Core\Database\StatementInterface<int, mixed> $statement */
+    $statement = $select->condition('pmb.owner', $this->currentUser->id())
       ->condition('pmb.target', $user_id)
-      ->execute()
-      ->fetchField();
+      ->execute();
+    return (bool) $statement->fetchField();
   }
 
   /**
@@ -50,24 +51,26 @@ class PrivateMessageBanManager implements PrivateMessageBanManagerInterface {
     $select
       ->addExpression('1');
 
-    return (bool) $select->condition('pmb.owner', $user_id)
+    /** @var \Drupal\Core\Database\StatementInterface<int, mixed> $statement */
+    $statement = $select->condition('pmb.owner', $user_id)
       ->condition('pmb.target', $this->currentUser->id())
-      ->execute()
-      ->fetchField();
+      ->execute();
+    return (bool) $statement->fetchField();
   }
 
   /**
    * {@inheritdoc}
-   * @return array<string, mixed>
+   * @return array<mixed, mixed>
    */
   public function getBannedUsers(int|string $user_id): array {
-    return $this
+    /** @var \Drupal\Core\Database\StatementInterface<int, mixed> $statement */
+    $statement = $this
       ->database
       ->select('private_message_ban', 'pmb')
       ->fields('pmb', ['target'])
       ->condition('pmb.owner', $user_id)
-      ->execute()
-      ->fetchCol();
+      ->execute();
+    return $statement->fetchCol();
   }
 
   /**

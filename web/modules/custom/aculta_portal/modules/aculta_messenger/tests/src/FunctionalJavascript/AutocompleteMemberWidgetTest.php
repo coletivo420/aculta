@@ -57,10 +57,12 @@ class AutocompleteMemberWidgetTest extends WebDriverTestBase {
     $this->drupalLogin($logged);
     $this->drupalGet('/private-message/create');
 
+    /** @var \Behat\Mink\Element\NodeElement $inputElement */
     $inputElement = $this->assertSession()
       ->waitForElement('css', '#edit-members-target-id');
     $inputElement->setValue('test');
 
+    /** @var \Behat\Mink\Element\NodeElement $autocompleteElement */
     $autocompleteElement = $this->assertSession()
       ->waitForElementVisible('css', '.ui-autocomplete');
 
@@ -78,9 +80,11 @@ class AutocompleteMemberWidgetTest extends WebDriverTestBase {
 
     $this->drupalGet('/private-message/create');
 
+    /** @var \Behat\Mink\Element\NodeElement $inputElement */
     $inputElement = $this->assertSession()->waitForElement('css', '#edit-members-target-id');
     $inputElement->setValue($pickedUser->getAccountName());
 
+    /** @var \Behat\Mink\Element\NodeElement $autocompleteElement */
     $autocompleteElement = $this->assertSession()->waitForElementVisible('css', '.ui-autocomplete');
     $results = $autocompleteElement->findAll('css', 'li a');
     $this->assertCount(1, $results);
@@ -99,7 +103,7 @@ class AutocompleteMemberWidgetTest extends WebDriverTestBase {
   /**
    * Creates a user whose name begins with 'test'.
    *
-   * @param array<string, mixed> $permissions
+   * @param array<string> $permissions
    *   Permissions.
    *
    * @return \Drupal\user\UserInterface

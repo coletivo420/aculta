@@ -61,7 +61,9 @@ function aculta_messenger_pm_engine_install(): array {
   }
   $database = \Drupal::database();
   if (!$database->schema()->tableExists('aculta_pm_thread_history')) {
-    $database->schema()->createTable('aculta_pm_thread_history', aculta_messenger_schema()['aculta_pm_thread_history']);
+    /** @var array<string, mixed> $history_schema */
+    $history_schema = aculta_messenger_schema()['aculta_pm_thread_history'];
+    $database->schema()->createTable('aculta_pm_thread_history', $history_schema);
     $report[] = 'tabela aculta_pm_thread_history criada vazia';
   }
   $config_factory = \Drupal::configFactory();
@@ -80,6 +82,7 @@ function aculta_messenger_pm_engine_install(): array {
     if (!$config_factory->get($name)->isNew()) {
       continue;
     }
+    /** @var array<string, mixed> $data */
     $data = \Symfony\Component\Yaml\Yaml::parseFile(__DIR__ . '/config/install/' . $name . '.yml');
     $config_factory->getEditable($name)->setData($data)->save();
     $report[] = "config $name criada";

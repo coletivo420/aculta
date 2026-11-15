@@ -14,6 +14,8 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
 
 /**
  * Defines the private message member field formatter.
+ *
+ * @extends \Drupal\Core\Field\FormatterBase<\Drupal\Core\Field\FieldItemListInterface<\Drupal\Core\Field\FieldItemInterface>>
  */
 #[FieldFormatter(
   id: 'private_message_thread_members_number_formatter',
@@ -36,7 +38,9 @@ class PrivateMessageThreadMembersNumberFormatter extends FormatterBase implement
    */
   public function settingsSummary(): array {
     $summary = [];
-    $summary['members_number_suffix'] = $this->t('The members number suffix text: %members_number_suffix. Example: 5 %members_number_suffix', ['%members_number_suffix' => $this->getSetting('members_number_suffix')]);
+    /** @var string $suffix_summary */
+    $suffix_summary = $this->getSetting('members_number_suffix');
+    $summary['members_number_suffix'] = $this->t('The members number suffix text: %members_number_suffix. Example: 5 %members_number_suffix', ['%members_number_suffix' => $suffix_summary]);
     return $summary;
   }
 
@@ -69,9 +73,11 @@ class PrivateMessageThreadMembersNumberFormatter extends FormatterBase implement
 
   /**
    * {@inheritdoc}
+   * @param \Drupal\Core\Field\FieldItemListInterface<\Drupal\Core\Field\FieldItemInterface> $items
    */
   public function viewElements(FieldItemListInterface $items, $langcode): array {
     $users_num = count($items);
+    /** @var string $suffix */
     $suffix = $this->getSetting('members_number_suffix');
 
     return [

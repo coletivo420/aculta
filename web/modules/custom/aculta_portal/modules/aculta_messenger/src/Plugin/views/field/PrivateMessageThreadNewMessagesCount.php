@@ -62,7 +62,8 @@ class PrivateMessageThreadNewMessagesCount extends FieldPluginBase {
     $thread = $this->getEntity($values);
 
     // @todo Optimize this, consider deletions and banned users.
-    return (string) $this->privateMessageService->getThreadUnreadMessageCount($this->currentUser->id(), $thread->id());
+    $threadId = (int) $thread->id();
+    return (string) $this->privateMessageService->getThreadUnreadMessageCount($this->currentUser->id(), $threadId);
   }
 
 }

@@ -47,11 +47,15 @@ class PrivateMessage extends ContentEntityBase implements PrivateMessageInterfac
    * {@inheritdoc}
    */
   public function getCreatedTime(): int {
-    return (int) $this->get('created')->value;
+    /** @var int|string|null $created */
+    $created = $this->get('created')->value;
+    return (int) $created;
   }
 
   /**
    * {@inheritdoc}
+   *
+   * @return mixed
    */
   public function getMessage() {
     return $this->get('message')->value;
@@ -59,18 +63,28 @@ class PrivateMessage extends ContentEntityBase implements PrivateMessageInterfac
 
   /**
    * {@inheritdoc}
+   *
+   * @return array<string, \Drupal\Core\Field\FieldDefinitionInterface>
    */
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type): array {
+    /** @var array<string, \Drupal\Core\Field\FieldDefinitionInterface> $fields */
     $fields = parent::baseFieldDefinitions($entity_type);
+    /** @var array<string, \Drupal\Core\Field\FieldDefinitionInterface> $fields */
     $fields += static::ownerBaseFieldDefinitions($entity_type);
 
-    $fields['id']->setLabel(t('Private message ID'))
+    /** @var \Drupal\Core\Field\BaseFieldDefinition $id_field */
+    $id_field = $fields['id'];
+    $id_field->setLabel(t('Private message ID'))
       ->setDescription(t('The private message ID.'));
 
-    $fields['uuid']->setDescription(t('The custom private message UUID.'));
+    /** @var \Drupal\Core\Field\BaseFieldDefinition $uuid_field */
+    $uuid_field = $fields['uuid'];
+    $uuid_field->setDescription(t('The custom private message UUID.'));
 
     // No form field is provided, as the user will always be the current user.
-    $fields['owner']
+    /** @var \Drupal\Core\Field\BaseFieldDefinition $owner_field */
+    $owner_field = $fields['owner'];
+    $owner_field
       ->setLabel(t('From'))
       ->setDescription(t('The author of the private message'))
       ->setSetting('target_type', 'user')
@@ -115,6 +129,7 @@ class PrivateMessage extends ContentEntityBase implements PrivateMessageInterfac
       ])
       ->setDisplayConfigurable('view', TRUE);
 
+    /** @var array<string, \Drupal\Core\Field\FieldDefinitionInterface> $fields */
     return $fields;
   }
 

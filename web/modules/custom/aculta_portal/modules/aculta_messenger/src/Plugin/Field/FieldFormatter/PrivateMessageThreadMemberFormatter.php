@@ -21,6 +21,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Defines the private message member field formatter.
+ *
+ * @extends FormatterBase<\Drupal\Core\Field\FieldItemListInterface>
  */
 #[FieldFormatter(
   id: 'private_message_thread_member_formatter',
@@ -99,11 +101,14 @@ class PrivateMessageThreadMemberFormatter extends FormatterBase implements Conta
       $summary['format'] = $this->t('Displays members using their username, linked to the user account if the viewer has permission to access user profiles');
     }
     elseif ($this->getSetting('display_type') === 'entity') {
+      /** @var string $display_mode */
+      $display_mode = $this->getSetting('entity_display_mode');
       $summary['format'] = $this->t('Displays members using the %display_mode display mode of the user entity', [
-        '%display_mode' => $this->getSetting('entity_display_mode'),
+        '%display_mode' => $display_mode,
       ]);
     }
 
+    /** @var string $members_prefix */
     $members_prefix = $this->getSetting('members_prefix');
     if (empty($members_prefix)) {
       $summary['field_prefix'] = $this->t('The members list is shown without a prefix');
@@ -112,6 +117,7 @@ class PrivateMessageThreadMemberFormatter extends FormatterBase implements Conta
       $summary['field_prefix'] = $this->t('The members list is prefixed with the text: %members_prefix.', ['%members_prefix' => $members_prefix]);
     }
 
+    /** @var string $separator */
     $separator = $this->getSetting('separator');
     if (empty($separator)) {
       $summary['separator'] = $this->t('No separator between the members list.');
@@ -172,7 +178,9 @@ class PrivateMessageThreadMemberFormatter extends FormatterBase implements Conta
     ];
 
     $options = [];
-    foreach ($this->entityDisplayRepository->getViewModes('user') as $display_mode_id => $display_mode) {
+    /** @var array<string, array<string, mixed>> $view_modes */
+    $view_modes = $this->entityDisplayRepository->getViewModes('user');
+    foreach ($view_modes as $display_mode_id => $display_mode) {
       $options[$display_mode_id] = $display_mode['label'];
     }
 
@@ -236,11 +244,15 @@ class PrivateMessageThreadMemberFormatter extends FormatterBase implements Conta
    * @return array<string, mixed>
    */
   public function ajaxCallback(array $form, FormStateInterface $form_state): array {
-    return $form['fields'][$this->getFieldName()]['plugin']['settings_edit_form']['settings']['entity_display_mode'];
+    /** @var array<string, array<string, array<string, array<string, array<string, array<string, mixed>>>>>> $fields */
+    $fields = $form['fields'];
+    return $fields[$this->getFieldName()]['plugin']['settings_edit_form']['settings']['entity_display_mode'];
   }
 
   /**
    * {@inheritdoc}
+   *
+   * @param \Drupal\Core\Field\FieldItemListInterface<\Drupal\Core\Field\FieldItemInterface> $items
    */
   public function viewElements(FieldItemListInterface $items, $langcode): array {
     $access_profiles = $this->currentUser->hasPermission('access user profiles');
@@ -248,7 +260,9 @@ class PrivateMessageThreadMemberFormatter extends FormatterBase implements Conta
     $display_current_user = $this->getSetting('display_current_user');
 
     $view_builder = $this->entityTypeManager->getViewBuilder('user');
+    /** @var \Drupal\Core\Field\FieldItemInterface&\Drupal\Core\Field\Plugin\Field\FieldType\EntityReferenceItem<\Drupal\Core\Entity\EntityInterface> $item */
     foreach ($items as $delta => $item) {
+      /** @var \Drupal\user\UserInterface|null $user */
       $user = $item->entity;
       if ($user) {
         if ($user->id() != $this->currentUser->id() || ($user->id() == $this->currentUser->id() && $display_current_user)) {
@@ -265,7 +279,9 @@ class PrivateMessageThreadMemberFormatter extends FormatterBase implements Conta
             }
           }
           elseif ($this->getSetting('display_type') == 'entity') {
-            $renderable = $view_builder->view($user, $this->getSetting('entity_display_mode'));
+            /** @var string $entity_display_mode */
+            $entity_display_mode = $this->getSetting('entity_display_mode');
+            $renderable = $view_builder->view($user, $entity_display_mode);
             $users[$user->id()] = $this->renderer->render($renderable);
           }
         }
@@ -281,9 +297,11 @@ class PrivateMessageThreadMemberFormatter extends FormatterBase implements Conta
       '#markup' => '',
     ];
 
+    /** @var string $separator */
     $separator = $this->getSetting('separator');
     $prefix_separator = $this->getSetting('prefix_separator');
 
+    /** @var string $members_prefix */
     $members_prefix = $this->getSetting('members_prefix');
     if (strlen($members_prefix)) {
       $first_separator = $prefix_separator && (count($users) > 0) ? $separator : '';
@@ -300,7 +318,9 @@ class PrivateMessageThreadMemberFormatter extends FormatterBase implements Conta
    * Retrieve the name of the field.
    */
   protected function getFieldName(): string {
-    return $this->fieldDefinition->getItemDefinition()->getFieldDefinition()->getName();
+    /** @var \Drupal\Core\Field\TypedData\FieldItemDataDefinition $item_definition */
+    $item_definition = $this->fieldDefinition->getItemDefinition();
+    return $item_definition->getFieldDefinition()->getName();
   }
 
 }

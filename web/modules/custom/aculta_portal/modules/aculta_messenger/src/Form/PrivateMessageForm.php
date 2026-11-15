@@ -65,11 +65,13 @@ class PrivateMessageForm extends ContentEntityForm {
    *
    * This allows for the form to be used multiple times on a page.
    *
-   * @param mixed $id
+   * @param string|int $id
    *   An ID required to be unique each time the form is called on a page.
+   *
+   * @return void
    */
   public function setFormId($id) {
-    $this->formId = Html::escape($id);
+    $this->formId = Html::escape((string) $id);
   }
 
   /**
@@ -91,6 +93,7 @@ class PrivateMessageForm extends ContentEntityForm {
    * @return array<string, mixed>
    */
   public function buildForm(array $form, FormStateInterface $form_state, ?PrivateMessageThreadInterface $privateMessageThread = NULL): array {
+    /** @var array<string, mixed> $form */
     $form = parent::buildForm($form, $form_state);
 
     if ($privateMessageThread) {
@@ -103,8 +106,10 @@ class PrivateMessageForm extends ContentEntityForm {
         if (\in_array($bannedUser, $threadMembers)) {
 
           if (!empty($this->getPrivateMessageSettings()->get('ban_message'))) {
+            /** @var string $ban_message */
+            $ban_message = $this->getPrivateMessageSettings()->get('ban_message');
             $this->messenger()
-              ->addError($this->getPrivateMessageSettings()->get('ban_message'));
+              ->addError($ban_message);
 
             $form['message_for_user'] = [
               StatusMessages::renderMessages(),
@@ -128,8 +133,10 @@ class PrivateMessageForm extends ContentEntityForm {
             if (in_array($this->currentUser()->id(), $bannedUsers)) {
 
               if (!empty($this->getPrivateMessageSettings()->get('ban_message'))) {
+                /** @var string $ban_message */
+                $ban_message = $this->getPrivateMessageSettings()->get('ban_message');
                 $this->messenger()
-                  ->addError($this->getPrivateMessageSettings()->get('ban_message'));
+                  ->addError($ban_message);
 
                 $form['message_for_user'] = [
                   StatusMessages::renderMessages(),
@@ -223,7 +230,9 @@ class PrivateMessageForm extends ContentEntityForm {
     // Next, load the field definitions as defined on the entity type.
     $field_definitions = PrivateMessageThread::baseFieldDefinitions($entity_type);
 
+    /** @var \Drupal\aculta_messenger\Entity\PrivateMessageThreadInterface $entity */
     $entity = $formState->get('pmt_entity');
+    /** @var \Drupal\Core\Entity\Display\EntityFormDisplayInterface $form_display */
     $form_display = $formState->get('pmt_form_display');
 
     $form_display->extractFormValues($entity, $form, $formState);
@@ -250,11 +259,15 @@ class PrivateMessageForm extends ContentEntityForm {
     }
 
     if ((count($members) === 1 && $this->currentUser()->id() === $members[0]->id())) {
-      $formState->setError($form['members'], $this->t('You can not send a message to yourself only.'));
+      /** @var array<string, mixed> $members_element */
+      $members_element = $form['members'];
+      $formState->setError($members_element, $this->t('You can not send a message to yourself only.'));
     }
 
     if (count($members) <> count($selectedMembers)) {
-      $formState->setError($form['members'], $this->t('You can not send a message because there are inactive users selected for this thread.'));
+      /** @var array<string, mixed> $members_element */
+      $members_element = $form['members'];
+      $formState->setError($members_element, $this->t('You can not send a message because there are inactive users selected for this thread.'));
     }
 
     // Get a typed data element that can be used for validation.
@@ -267,7 +280,9 @@ class PrivateMessageForm extends ContentEntityForm {
     if ($violations->count() > 0) {
       // Output any errors for found constraint violations.
       foreach ($violations as $violation) {
-        $formState->setError($form['members'], $violation->getMessage());
+        /** @var array<string, mixed> $members_element */
+        $members_element = $form['members'];
+        $formState->setError($members_element, $violation->getMessage());
       }
     }
   }
@@ -312,8 +327,10 @@ class PrivateMessageForm extends ContentEntityForm {
       return $response;
     }
 
+    /** @var \Drupal\Core\Entity\EntityFormInterface $current_form_object */
+    $current_form_object = $formState->getFormObject();
     /** @var \Drupal\aculta_messenger\Entity\PrivateMessageInterface $message */
-    $message = $formState->getFormObject()->getEntity();
+    $message = $current_form_object->getEntity();
 
     // @todo move to message method
     $threads = $this->entityTypeManager
@@ -337,7 +354,9 @@ class PrivateMessageForm extends ContentEntityForm {
     $new_form = $this->formBuilder
       ->buildForm($form_object, $new_form_state);
 
-    $response->setAttachments($new_form['#attached']);
+    /** @var array<string, mixed> $attachments */
+    $attachments = $new_form['#attached'];
+    $response->setAttachments($attachments);
 
     $response->addCommand(new ReplaceCommand('.private-message-add-form', $new_form));
     $response->addCommand(new PrivateMessageLoadNewMessagesCommand());
@@ -366,7 +385,7 @@ class PrivateMessageForm extends ContentEntityForm {
     /** @var \Drupal\aculta_messenger\Entity\PrivateMessageThreadInterface $entity */
     $entity = $form_state->get('pmt_entity');
 
-    /** @var \Drupal\aculta_messenger\Entity\PrivateMessageThreadInterface $private_message_thread */
+    /** @var \Drupal\aculta_messenger\Entity\PrivateMessageThreadInterface|null $private_message_thread */
     $private_message_thread = $form_state->get('thread');
     if (!$private_message_thread) {
       // Generate an array containing the members of the thread.
@@ -394,7 +413,9 @@ class PrivateMessageForm extends ContentEntityForm {
     }
 
     // Save the thread.
-    $this->privateMessageThreadManager->saveThread($this->entity, $private_message_thread->getMembers(), $private_message_thread);
+    /** @var \Drupal\aculta_messenger\Entity\PrivateMessageInterface $private_message */
+    $private_message = $this->entity;
+    $this->privateMessageThreadManager->saveThread($private_message, $private_message_thread->getMembers(), $private_message_thread);
 
     // Save the thread to the form state.
     $form_state->set('private_message_thread', $private_message_thread);

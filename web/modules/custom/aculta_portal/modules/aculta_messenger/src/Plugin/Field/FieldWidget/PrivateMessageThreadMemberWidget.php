@@ -92,13 +92,16 @@ class PrivateMessageThreadMemberWidget extends EntityReferenceAutocompleteWidget
    *
    * The settings summary is returned empty, as the parent settings have no
    * effect on this form.
-   * @return array<string, mixed>
+   * @return array<int|string, mixed>
    */
   public function settingsSummary(): array {
+    /** @var array<int|string, mixed> $summary */
     $summary = parent::settingsSummary();
 
     unset($summary[0]);
-    $summary[] = $this->t('Maximum thread members: @count', ['@count' => $this->getSetting('max_members')]);
+    /** @var int $maxMembers */
+    $maxMembers = $this->getSetting('max_members');
+    $summary[] = $this->t('Maximum thread members: @count', ['@count' => $maxMembers]);
 
     return $summary;
   }
@@ -109,6 +112,7 @@ class PrivateMessageThreadMemberWidget extends EntityReferenceAutocompleteWidget
    * @return array<string, mixed>
    */
   public function settingsForm(array $form, FormStateInterface $form_state): array {
+    /** @var array<string, mixed> $form */
     $form = parent::settingsForm($form, $form_state);
 
     $form['max_members'] = [
@@ -124,13 +128,16 @@ class PrivateMessageThreadMemberWidget extends EntityReferenceAutocompleteWidget
 
   /**
    * {@inheritdoc}
+   * @param \Drupal\Core\Field\FieldItemListInterface<\Drupal\Core\Field\FieldItemInterface> $items
    * @param array<string, mixed> $element
-   * @param array<string, mixed> $form
+   * @param array &$form
    * @return array<string, mixed>
    */
   public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state): array {
+    /** @var array{target_id: array<string, mixed>, '#element_validate'?: array<mixed>, ...} $element */
     $element = parent::formElement($items, $delta, $element, $form, $form_state);
 
+    /** @var int $maxMembers */
     $maxMembers = $this->getSetting('max_members');
 
     $element['target_id']['#tags'] = TRUE;
@@ -171,7 +178,10 @@ class PrivateMessageThreadMemberWidget extends EntityReferenceAutocompleteWidget
    *   Recipient.
    */
   protected function getDefaultRecipient(): ?UserInterface {
-    $recipientId = $this->requestStack->getCurrentRequest()->get('recipient');
+    /** @var \Symfony\Component\HttpFoundation\Request $currentRequest */
+    $currentRequest = $this->requestStack->getCurrentRequest();
+    /** @var int|string|null $recipientId */
+    $recipientId = $currentRequest->get('recipient');
     if (!$recipientId) {
       return NULL;
     }
@@ -188,11 +198,13 @@ class PrivateMessageThreadMemberWidget extends EntityReferenceAutocompleteWidget
    * of allowed users has been entered. This is because the field itself is
    * created as an unlimited cardinality field, but the widget allows for
    * setting a maximum number of users.
-   * @param array<string, mixed> $element
+   * @param array{'#parents': array<int|string>, '#max_members': int, ...} $element
    */
   public static function validateFormElement(array $element, FormStateInterface $form_state): void {
     $inputExists = FALSE;
+    /** @var array<string, mixed>|null $input */
     $input = NestedArray::getValue($form_state->getValues(), $element['#parents'], $inputExists);
+    /** @var array<mixed> $values */
     $values = $input['target_id'] ?? [];
     if ($inputExists && count($values) > $element['#max_members']) {
       $form_state->setError($element, t('Private messages threads cannot have more than @count members', ['@count' => $element['#max_members']]));
@@ -206,7 +218,9 @@ class PrivateMessageThreadMemberWidget extends EntityReferenceAutocompleteWidget
    * @return array<string, mixed>
    */
   public function massageFormValues(array $values, array $form, FormStateInterface $form_state): array {
-    return $values['target_id'] ?? [];
+    /** @var array<string, mixed> $targetValues */
+    $targetValues = $values['target_id'] ?? [];
+    return $targetValues;
   }
 
 }

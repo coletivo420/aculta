@@ -14,7 +14,7 @@ trait InboxBlockTestTrait {
   /**
    * Get threads.
    *
-   * @return array<string, mixed>
+   * @return array<\Behat\Mink\Element\NodeElement>
    *   Threads.
    */
   protected function getThreads(): array {

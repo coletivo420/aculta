@@ -39,6 +39,7 @@ class PrivateMessageController extends ControllerBase implements PrivateMessageC
       $view_builder = $this->entityTypeManager()->getViewBuilder('private_message_thread');
       // No wrapper is provided, as the full view mode of the entity already
       // provides the #private-message-page wrapper.
+      /** @var array<string, mixed> $page */
       $page = $view_builder->view($private_message_thread);
     }
     else {
@@ -133,6 +134,7 @@ class PrivateMessageController extends ControllerBase implements PrivateMessageC
 
       $destination = Url::fromRoute('<current>')->getInternalPath();
       foreach ($private_message_bans as $private_message_ban) {
+        /** @var string $label */
         $label = $this->config('private_message.settings')->get('unban_label');
         $url = Url::fromRoute('private_message.unban_user_form',
           ['user' => $private_message_ban->getTargetId()],

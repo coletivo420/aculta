@@ -62,7 +62,7 @@ class PrivateMessageThreadHasNewMessage extends FieldPluginBase {
     /** @var \Drupal\aculta_messenger\Entity\PrivateMessageThread $thread */
     $thread = $this->getEntity($values);
 
-    return $this->privateMessageService->getThreadUnreadMessageCount($this->currentUser->id(), $thread->id()) > 0 ?
+    return $this->privateMessageService->getThreadUnreadMessageCount($this->currentUser->id(), (int) $thread->id()) > 0 ?
       $this->t('New message!') :
       $this->t('No new messages');
   }
