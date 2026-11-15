@@ -9,6 +9,7 @@ use Drupal\aculta_user\ParticipationEditWindow;
 use Drupal\aculta_user\ParticipationRules;
 use Drupal\comment\CommentInterface;
 use Drupal\Component\Datetime\TimeInterface;
+use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Config\ImmutableConfig;
@@ -41,6 +42,7 @@ final class ParticipationEditWindowHooksTest extends TestCase {
     $comment->method('bundle')->willReturn('comment');
 
     $result = $this->hook()->entityAccess($comment, 'update', $this->account(17));
+        self::assertInstanceOf(AccessResult::class, $result);
 
     self::assertTrue($result->isNeutral());
     self::assertSame([], $result->getCacheContexts());
@@ -55,6 +57,7 @@ final class ParticipationEditWindowHooksTest extends TestCase {
     $entity->method('getEntityTypeId')->willReturn('taxonomy_term');
 
     $result = $this->hook()->entityAccess($entity, 'update', $this->account(17));
+        self::assertInstanceOf(AccessResult::class, $result);
 
     self::assertTrue($result->isNeutral());
     self::assertSame([], $result->getCacheContexts());
@@ -67,6 +70,7 @@ final class ParticipationEditWindowHooksTest extends TestCase {
     $comment = $this->comment(17, 'aculta_forum_topic', 900);
 
     $result = $this->hook()->entityAccess($comment, 'update', $this->account(17));
+        self::assertInstanceOf(AccessResult::class, $result);
 
     self::assertTrue($result->isNeutral());
     self::assertSame(['user', 'user.permissions'], $result->getCacheContexts());
@@ -82,6 +86,7 @@ final class ParticipationEditWindowHooksTest extends TestCase {
     $comment = $this->comment(17, 'aculta_forum_topic', 100);
 
     $result = $this->hook()->entityAccess($comment, 'update', $this->account(17));
+        self::assertInstanceOf(AccessResult::class, $result);
 
     self::assertTrue($result->isForbidden());
     self::assertSame(['user', 'user.permissions'], $result->getCacheContexts());
@@ -94,6 +99,7 @@ final class ParticipationEditWindowHooksTest extends TestCase {
     $comment = $this->comment(17, 'aculta_lms_topic', 700);
 
     $result = $this->hook()->entityAccess($comment, 'update', $this->account(17));
+        self::assertInstanceOf(AccessResult::class, $result);
 
     // Ten minutes after publication this is still open on the Forum policy and
     // already closed on the five-minute LMS policy.
@@ -108,6 +114,7 @@ final class ParticipationEditWindowHooksTest extends TestCase {
     $post = $this->forumPost(17, 900);
 
     $result = $this->hook()->entityAccess($post, 'update', $this->account(17));
+        self::assertInstanceOf(AccessResult::class, $result);
 
     self::assertTrue($result->isNeutral());
     self::assertSame(['user', 'user.permissions'], $result->getCacheContexts());
@@ -122,6 +129,7 @@ final class ParticipationEditWindowHooksTest extends TestCase {
     $comment = $this->comment(17, 'aculta_forum_topic', 100);
 
     $result = $this->hook()->entityAccess($comment, 'view', $this->account(17));
+        self::assertInstanceOf(AccessResult::class, $result);
 
     self::assertTrue($result->isNeutral());
     self::assertSame([], $result->getCacheContexts());
@@ -134,6 +142,7 @@ final class ParticipationEditWindowHooksTest extends TestCase {
     $comment = $this->comment(17, 'aculta_forum_topic', 100);
 
     $result = $this->hook()->entityAccess($comment, 'update', $this->account(18));
+        self::assertInstanceOf(AccessResult::class, $result);
 
     self::assertTrue($result->isNeutral());
     self::assertSame([], $result->getCacheContexts());
@@ -146,6 +155,7 @@ final class ParticipationEditWindowHooksTest extends TestCase {
     $comment = $this->comment(17, 'aculta_forum_topic', 100);
 
     $result = $this->hook()->entityAccess($comment, 'update', $this->account(17, 'administer comments'));
+        self::assertInstanceOf(AccessResult::class, $result);
 
     self::assertTrue($result->isNeutral());
     self::assertSame([], $result->getCacheContexts());
@@ -265,12 +275,18 @@ final class ParticipationEditWindowHooksTest extends TestCase {
 /**
  * Minimal field list exposing a timestamp.
  */
+/**
+ * @extends FieldItemList<\Drupal\Core\Field\FieldItemInterface>
+ */
 final class ParticipationEditWindowHooksFieldList extends FieldItemList {
 
   public function __construct(protected readonly int $timestamp) {}
 
   /**
    * {@inheritdoc}
+   */
+  /**
+   * @param string $property_name
    */
   public function __get($property_name): mixed {
     return $property_name === 'value' ? $this->timestamp : parent::__get($property_name);

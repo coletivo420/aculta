@@ -51,7 +51,15 @@ final class AccountBioCardTest extends UnitTestCase {
     $entity_type_manager->method('getStorage')->with('profile')->willReturn($profile_storage);
 
     $build = (new AccountBioCard($entity_type_manager))->build($account);
+    self::assertIsArray($build['#slots']);
+    self::assertIsArray($build['#slots']['content']);
+    self::assertIsArray($build['#slots']['content']['dialog']);
     $dialog = $build['#slots']['content']['dialog'];
+    self::assertIsArray($dialog['#props']);
+    self::assertIsArray($dialog['#slots']);
+    self::assertIsArray($dialog['#slots']['content']);
+    self::assertIsArray($dialog['#slots']['content']['#attributes']);
+    self::assertIsArray($dialog['#attributes']);
 
     self::assertSame('aculta420_v2:dialog', $dialog['#component']);
     self::assertSame('aculta-account-bio-dialog', $dialog['#props']['id']);
