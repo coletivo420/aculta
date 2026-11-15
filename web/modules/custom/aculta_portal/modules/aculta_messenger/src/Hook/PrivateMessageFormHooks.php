@@ -16,6 +16,13 @@ final class PrivateMessageFormHooks {
 
   /**
    * Enforces plain text and ACULTA send policies on native PM forms.
+   *
+   * @param array<array-key, mixed> $form
+   *   O valor informado para $form.
+   * @param FormStateInterface $formState
+   *   O valor informado para $formState.
+   * @param string $formId
+   *   O valor informado para $formId.
    */
   #[Hook('form_alter')]
   public function formAlter(array &$form, FormStateInterface $formState, string $formId): void {

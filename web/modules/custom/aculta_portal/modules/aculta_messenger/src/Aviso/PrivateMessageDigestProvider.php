@@ -187,6 +187,13 @@ final class PrivateMessageDigestProvider implements AvisoDigestProviderIdentityI
 
   /**
    * Marks selected records complete without advancing the seven-day window.
+   *
+   * @param iterable<\Drupal\Core\Entity\EntityInterface> $notices
+   *   O valor informado para $notices.
+   * @param ?int $uid
+   *   O valor informado para $uid.
+   * @param string $status
+   *   O valor informado para $status.
    */
   private function markRecordsDone(iterable $notices, ?int $uid = NULL, string $status = 'cancelled'): void {
     foreach ($notices as $notice) {

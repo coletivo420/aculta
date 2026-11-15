@@ -174,6 +174,9 @@ final class NewConversationController extends ControllerBase {
    *   Members and their policy-approved display names.
    * @param int[] $selectedIds
    *   IDs already selected in the group form.
+   *
+   * @return array<array-key, mixed>
+   *   O resultado da operação.
    */
   private function memberResults(array $candidates, array $selectedIds = []): array {
     // The drawer turns links into chips. Without JavaScript each link carries

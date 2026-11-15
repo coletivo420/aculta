@@ -67,6 +67,18 @@ final class ConversationRelationshipForm extends FormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<array-key, mixed> $form
+   *   O valor informado para $form.
+   * @param FormStateInterface $formState
+   *   O valor informado para $formState.
+   * @param ?int $targetUid
+   *   O valor informado para $targetUid.
+   * @param ?string $postUrl
+   *   O valor informado para $postUrl.
+   *
+   * @return array<array-key, mixed>
+   *   O resultado da operação.
    */
   public function buildForm(array $form, FormStateInterface $formState, ?int $targetUid = NULL, ?string $postUrl = NULL): array {
     $postUrl ??= $formState->get('post_url');

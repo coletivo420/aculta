@@ -49,6 +49,9 @@ final class MessengerBarHooks {
 
   /**
    * Adds the Messenger controls for the current account.
+   *
+   * @param array<string, mixed> $variables
+   *   O valor informado para $variables.
    */
   #[Hook('preprocess_page')]
   public function preprocessPage(array &$variables): void {

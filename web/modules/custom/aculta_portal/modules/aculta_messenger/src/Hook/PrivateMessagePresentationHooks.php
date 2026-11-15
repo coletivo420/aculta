@@ -23,7 +23,11 @@ final class PrivateMessagePresentationHooks {
   ) {}
 
   /**
- * Adds the sender avatar and direction state without changing message data. */
+   * Adds the sender avatar and direction state without changing message data.
+   *
+   * @param array<string, mixed> $variables
+   *   O valor informado para $variables.
+   */
   #[Hook('preprocess_private_message')]
   public function preprocessPrivateMessage(array &$variables): void {
     $message = $variables['private_message'] ?? $variables['elements']['#private_message'] ?? NULL;

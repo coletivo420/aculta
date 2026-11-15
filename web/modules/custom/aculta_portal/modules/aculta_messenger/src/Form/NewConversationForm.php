@@ -68,6 +68,14 @@ final class NewConversationForm extends FormBase {
    *
    * A profile's "Iniciar conversa" action fixes the recipient, so that form
    * contains only the message. The group flow uses the recipients in the chips.
+   *
+   * @param array<array-key, mixed> $form
+   *   O valor informado para $form.
+   * @param FormStateInterface $formState
+   *   O valor informado para $formState.
+   *
+   * @return array<array-key, mixed>
+   *   O resultado da operação.
    */
   public function buildForm(array $form, FormStateInterface $formState): array {
     $fixed = $formState->get('recipient') !== NULL;

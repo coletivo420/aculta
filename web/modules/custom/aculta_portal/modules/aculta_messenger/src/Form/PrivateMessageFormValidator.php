@@ -53,7 +53,13 @@ final class PrivateMessageFormValidator {
   ) {}
 
   /**
-   * Rejects recipients who have blocked the current sender. */
+   * Rejects recipients who have blocked the current sender.
+   *
+   * @param array<array-key, mixed> $form
+   *   O valor informado para $form.
+   * @param FormStateInterface $formState
+   *   O valor informado para $formState.
+   */
   public function validateBlockedRecipients(array &$form, FormStateInterface $formState): void {
     if ($formState->hasAnyErrors()) {
       return;

@@ -37,6 +37,15 @@ final class PrivateMessageReplyHooks {
 
   /**
    * Adds the native composer when a site's thread display omitted its field.
+   *
+   * @param array<array-key, mixed> $build
+   *   O valor informado para $build.
+   * @param EntityInterface $entity
+   *   O valor informado para $entity.
+   * @param EntityViewDisplayInterface $display
+   *   O valor informado para $display.
+   * @param string $view_mode
+   *   O valor informado para $view_mode.
    */
   #[Hook('entity_view')]
   public function entityView(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, string $view_mode): void {

@@ -27,6 +27,13 @@ final class PrivateMessageUnreadIndicatorHooks {
    * Messenger counter uses `message.created > last_access`. At second-level
    * timestamp precision those rules disagree exactly at equality. Keep the
    * inbox decoration consistent with the counter without changing contrib.
+   *
+   * @param array<array-key, mixed> $build
+   *   O valor informado para $build.
+   * @param EntityInterface $entity
+   *   O valor informado para $entity.
+   * @param EntityViewDisplayInterface $display
+   *   O valor informado para $display.
    */
   #[Hook('entity_view_alter')]
   public function entityViewAlter(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display): void {
