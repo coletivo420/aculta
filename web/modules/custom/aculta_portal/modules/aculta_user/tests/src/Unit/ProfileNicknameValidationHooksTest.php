@@ -40,7 +40,9 @@ final class ProfileNicknameValidationHooksTest extends UnitTestCase {
 
     $this->hooks()->formAlter($form, $state, 'profile_profile_edit_form');
 
+    self::assertIsArray($form['#validate']);
     self::assertCount(1, $form['#validate']);
+    self::assertIsArray($form['#validate'][0]);
     self::assertSame('validateNickname', $form['#validate'][0][1]);
   }
 

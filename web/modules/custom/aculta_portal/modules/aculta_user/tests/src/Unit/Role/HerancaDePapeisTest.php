@@ -45,6 +45,10 @@ final class HerancaDePapeisTest extends UnitTestCase {
    * @return \Drupal\aculta_user\Role\HerancaDePapeis
    *   Serviço configurado.
    */
+  /**
+   * @param list<string> $cadeia
+   * @param list<string> $gravadosNoBanco
+   */
   private function servico(array $cadeia, array $gravadosNoBanco = []): HerancaDePapeis {
     $configuracao = $this->createMock(Config::class);
     $configuracao->method('get')->willReturnCallback(fn (string $chave) => match ($chave) {
