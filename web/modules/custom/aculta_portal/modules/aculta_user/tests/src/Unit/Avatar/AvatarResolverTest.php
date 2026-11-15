@@ -54,6 +54,9 @@ class AvatarResolverTest extends UnitTestCase {
 
     $cacheability = new CacheableMetadata();
     $build = $resolver->build($account, 'Ana', FALSE, $cacheability);
+    self::assertIsArray($build);
+    self::assertIsArray($build['#cache']);
+    self::assertIsArray($build['#cache']['tags']);
 
     self::assertSame('image_style', $build['#theme']);
     self::assertSame(AvatarPool::DIRECTORY . '/avatar-17.png', $build['#uri']);

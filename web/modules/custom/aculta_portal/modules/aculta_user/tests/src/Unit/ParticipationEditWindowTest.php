@@ -497,6 +497,8 @@ final class ParticipationEditWindowTest extends TestCase {
 
 /**
  * Minimal field list exposing a timestamp and emptiness.
+ *
+ * @extends FieldItemList<\Drupal\Core\Field\FieldItemInterface>
  */
 final class ParticipationEditWindowFieldList extends FieldItemList {
 
@@ -504,6 +506,9 @@ final class ParticipationEditWindowFieldList extends FieldItemList {
 
   /**
    * {@inheritdoc}
+   */
+  /**
+   * @param string $property_name
    */
   public function __get($property_name): mixed {
     return $property_name === 'value' ? $this->timestamp : parent::__get($property_name);
@@ -548,6 +553,9 @@ final class ParticipationEditWindowExemptionStub implements EditWindowExemptionI
 
   /**
    * Declares cacheability to merge into the exemption result.
+   *
+   * @param list<string> $contexts
+   * @param list<string> $tags
    */
   public function withCacheability(array $contexts, array $tags): self {
     $this->cacheability = ['cacheContexts' => $contexts, 'cacheTags' => $tags];

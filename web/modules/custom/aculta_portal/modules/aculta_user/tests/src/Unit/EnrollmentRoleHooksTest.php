@@ -27,6 +27,8 @@ class EnrollmentRoleHooksTest extends UnitTestCase {
 
   /**
    * Relação de grupo com plugin, tipo de grupo e conta informados.
+   *
+   * @param list<string> $papeisDeGrupo
    */
   private function relacao(string $plugin, string $tipoGrupo, ?UserInterface $conta, array $papeisDeGrupo = []): GroupRelationshipInterface {
     $campo = $this->createMock(FieldItemListInterface::class);
@@ -53,6 +55,10 @@ class EnrollmentRoleHooksTest extends UnitTestCase {
    * Gestor de entidades cujo storage de perfil já contém os ids informados.
    *
    * O callback de criação marca $criou e registra os valores usados.
+   */
+  /**
+   * @param list<string> $perfisExistentes
+   * @param array<string, mixed>|null $valoresCriados
    */
   private function entityTypeManager(array $perfisExistentes, bool &$criou, ?array &$valoresCriados = NULL): EntityTypeManagerInterface {
     $consulta = $this->createMock(QueryInterface::class);
@@ -87,6 +93,7 @@ class EnrollmentRoleHooksTest extends UnitTestCase {
     (new EnrollmentRoleHooks($this->entityTypeManager([], $criou, $valores)))
       ->groupRelationshipInsert($this->relacao('group_membership', 'lms_course', $conta));
     $this->assertTrue($criou);
+    self::assertIsArray($valores);
     $this->assertSame(['type' => 'estudante', 'uid' => 7], $valores);
   }
 

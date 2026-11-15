@@ -63,7 +63,7 @@ final class AuthorIdentityResolverTest extends UnitTestCase {
   /**
    * Creates a resolver with one principal profile and no public avatar fields.
    *
-   * @return array{0: AuthorIdentityResolver, 1: UserInterface}
+   * @return array{0: AuthorIdentityResolver, 1: UserInterface&\PHPUnit\Framework\MockObject\MockObject}
    *   The resolver and its account fixture.
    */
   private function resolver(string $nicknameValue, bool $profilePublic): array {
@@ -112,6 +112,9 @@ final class AuthorIdentityResolverTest extends UnitTestCase {
 
   /**
    * Creates a single field item fixture.
+   */
+  /**
+   * @return FieldItemListInterface<\Drupal\Core\Field\FieldItemInterface>
    */
   private function field(mixed $value): FieldItemListInterface {
     $field = $this->createMock(FieldItemListInterface::class);
