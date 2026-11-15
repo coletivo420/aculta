@@ -95,6 +95,7 @@ final class EntityDeleteTest extends KernelTestBase {
     'workflows',
     'entity_reference_revisions',
     'image',
+    'link',
   ];
 
   /**
@@ -115,6 +116,11 @@ final class EntityDeleteTest extends KernelTestBase {
     $this->installEntitySchema('private_message_ban');
     $this->installEntitySchema('private_message_thread');
     $this->installEntitySchema('private_message');
+    $this->installSchema('aculta_user', ['aculta_user_nickname']);
+    $this->installConfig('aculta_user');
+    $this->installSchema('user', ['users_data']);
+    $this->installEntitySchema('profile');
+    $this->installEntitySchema('path_alias');
     $this->installSchema('aculta_messenger', ['aculta_pm_thread_history']);
 
     $this->installConfig([

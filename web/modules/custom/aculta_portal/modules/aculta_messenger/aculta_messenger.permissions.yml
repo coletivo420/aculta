@@ -1,3 +1,7 @@
+use private messaging system:
+  title: 'Usar mensagens privadas'
+  restrict access: false
+
 administer aculta messenger:
   title: 'Administrar mensagens, avisos e políticas de e-mail'
   restrict access: true
