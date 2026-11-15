@@ -113,6 +113,7 @@
       <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_statistics/tests/src/Functional</directory>
     </testsuite>
     <testsuite name="functionaljs">
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/FunctionalJavascript</directory>
       <directory suffix="Test.php">web/modules/custom/aculta_portal/tests/src/FunctionalJavascript</directory>
     </testsuite>
   </testsuites>
