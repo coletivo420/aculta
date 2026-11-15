@@ -33,8 +33,8 @@ final class UnreadThreadCounterTest extends UnitTestCase {
       updated: 1000,
       lastAccess: 1000,
       messages: [],
-      loadMessages: $this->never(),
-      checkAccess: $this->never(),
+      loadMessagesNever: TRUE,
+      checkAccessNever: TRUE,
     );
     $this->assertFalse($this->counter()->isUnread($thread));
   }
@@ -97,7 +97,7 @@ final class UnreadThreadCounterTest extends UnitTestCase {
    * Treats messages created at the last-access second as read.
    */
   public function testMessageCreatedInTheSameSecondAsLastAccessIsRead(): void {
-    $thread = $this->thread(updated: 1000, lastAccess: 1000, messages: [$this->message(self::OTHER, 1000)], loadMessages: $this->never());
+    $thread = $this->thread(updated: 1000, lastAccess: 1000, messages: [$this->message(self::OTHER, 1000)], loadMessagesNever: TRUE);
     $this->assertFalse($this->counter()->isUnread($thread));
   }
 
@@ -110,7 +110,7 @@ final class UnreadThreadCounterTest extends UnitTestCase {
     $account->method('isAuthenticated')->willReturn(TRUE);
 
     $unread = $this->thread(updated: 1200, lastAccess: 1000, messages: [$this->message(self::OTHER, 1200)]);
-    $read = $this->thread(updated: 1000, lastAccess: 1000, messages: [], loadMessages: $this->never());
+    $read = $this->thread(updated: 1000, lastAccess: 1000, messages: [], loadMessagesNever: TRUE);
     $inaccessible = $this->thread(
       updated: 1200,
       lastAccess: 1000,
@@ -224,12 +224,12 @@ final class UnreadThreadCounterTest extends UnitTestCase {
    *   Current user's last access timestamp.
    * @param \Drupal\aculta_messenger\Entity\PrivateMessageInterface[] $messages
    *   Messages attached to the thread.
-   * @param \PHPUnit\Framework\MockObject\Rule\InvocationOrder|null $loadMessages
-   *   Expected call count for loading messages.
+   * @param bool $loadMessagesNever
+   *   Whether loading messages must never run.
    * @param \Drupal\Core\Access\AccessResult|null $accessResult
    *   Access result for the current user.
-   * @param \PHPUnit\Framework\MockObject\Rule\InvocationOrder|null $checkAccess
-   *   Expected access-check invocation count.
+   * @param bool $checkAccessNever
+   *   Whether the access check must never run.
    *
    * @return \Drupal\aculta_messenger\Entity\PrivateMessageThreadInterface
    *   Thread mock.
@@ -238,13 +238,13 @@ final class UnreadThreadCounterTest extends UnitTestCase {
     int $updated,
     int $lastAccess,
     array $messages,
-    $loadMessages = NULL,
+    bool $loadMessagesNever = FALSE,
     ?AccessResult $accessResult = NULL,
-    $checkAccess = NULL,
+    bool $checkAccessNever = FALSE,
   ): PrivateMessageThreadInterface {
     $thread = $this->createMock(PrivateMessageThreadInterface::class);
-    if ($checkAccess !== NULL) {
-      $thread->expects($checkAccess)->method('access')->willReturn($accessResult ?? AccessResult::allowed());
+    if ($checkAccessNever) {
+      $thread->expects($this->never())->method('access')->willReturn($accessResult ?? AccessResult::allowed());
     }
     else {
       $thread->method('access')->willReturn($accessResult ?? AccessResult::allowed());
@@ -253,7 +253,7 @@ final class UnreadThreadCounterTest extends UnitTestCase {
     $updatedField->value = (string) $updated;
     $thread->method('get')->with('updated')->willReturn($updatedField);
     $thread->method('getLastAccessTimestamp')->willReturn($lastAccess);
-    $expect = $loadMessages ?? $this->any();
+    $expect = $loadMessagesNever ? $this->never() : $this->any();
     $thread->expects($expect)->method('getMessages')->willReturn($messages);
     return $thread;
   }

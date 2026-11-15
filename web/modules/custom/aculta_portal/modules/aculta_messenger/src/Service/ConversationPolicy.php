@@ -59,28 +59,28 @@ final class ConversationPolicy {
    * Returns the maximum number of other members allowed in a group.
    */
   public function groupMaxMembers(): int {
-    return $this->clamp((int) $this->get('group_max_members', self::DEFAULT_GROUP_MAX_MEMBERS), 2, 50);
+    return $this->clamp($this->intValue('group_max_members', self::DEFAULT_GROUP_MAX_MEMBERS), 2, 50);
   }
 
   /**
    * Returns months of inactivity before a member conversation is removed.
    */
   public function retentionMonths(): int {
-    return $this->clamp((int) $this->get('retention_months', self::DEFAULT_RETENTION_MONTHS), 1, 36);
+    return $this->clamp($this->intValue('retention_months', self::DEFAULT_RETENTION_MONTHS), 1, 36);
   }
 
   /**
    * Returns the maximum threads removed by one cron run.
    */
   public function cleanupBatch(): int {
-    return $this->clamp((int) $this->get('cleanup_batch', self::DEFAULT_CLEANUP_BATCH), 1, 500);
+    return $this->clamp($this->intValue('cleanup_batch', self::DEFAULT_CLEANUP_BATCH), 1, 500);
   }
 
   /**
    * Returns the maximum messages one account may send in an hour.
    */
   public function sendLimitPerHour(): int {
-    return $this->clamp((int) $this->get('send_limit_per_hour', self::DEFAULT_SEND_LIMIT_PER_HOUR), 1, 1000);
+    return $this->clamp($this->intValue('send_limit_per_hour', self::DEFAULT_SEND_LIMIT_PER_HOUR), 1, 1000);
   }
 
   /**
@@ -90,6 +90,14 @@ final class ConversationPolicy {
     return $recipient->isActive()
       && $recipient->hasPermission('use private messaging system')
       && $recipient->hasPermission('access user profiles');
+  }
+
+  /**
+   * Returns an integer setting, or the default when the stored value is not numeric.
+   */
+  private function intValue(string $key, int $default): int {
+    $value = $this->get($key, $default);
+    return is_numeric($value) ? (int) $value : $default;
   }
 
   /**

@@ -37,6 +37,9 @@ final class PrivateMessageReplyHooksTest extends UnitTestCase {
 
     $notice = $noticeMethod->invoke($hook, $thread, $state->stateFor($thread));
 
+    if (!is_array($notice) || !is_array($notice['text'] ?? NULL)) {
+      self::fail('The notice has no text element.');
+    }
     self::assertSame(
       'Você bloqueou um participante desta conversa. Remova o bloqueio nas opções dessa pessoa para enviar mensagens novamente.',
       $notice['text']['#plain_text'],

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_messenger\Unit;
 
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Access\AccessResult;
 use Drupal\aculta_messenger\Form\NewConversationForm;
 use Drupal\aculta_user\Identity\PublicMemberIdentityInterface;
@@ -445,7 +446,7 @@ final class NewConversationRecipientIdsTest extends UnitTestCase {
 
     self::assertSame(
       'Não foi possível iniciar uma conversa com este destinatário.',
-      (string) $formState->getErrors()['members'],
+      $formState->getErrors()['members'] instanceof TranslatableMarkup ? $formState->getErrors()['members']->getUntranslatedString() : $formState->getErrors()['members'],
     );
   }
 

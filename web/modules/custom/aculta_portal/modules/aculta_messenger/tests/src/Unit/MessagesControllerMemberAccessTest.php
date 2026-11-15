@@ -40,15 +40,15 @@ final class MessagesControllerMemberAccessTest extends UnitTestCase {
       $controller->drawerMemberRelationship($thread, $stranger);
       self::fail('A manipulated user parameter outside the thread must be hidden.');
     }
-    catch (NotFoundHttpException) {
-      self::assertTrue(TRUE);
+    catch (NotFoundHttpException $exception) {
+      self::assertSame(404, $exception->getStatusCode());
     }
     try {
       $controller->memberOptions($thread, $stranger);
       self::fail('A manipulated user parameter outside the thread must not open its options.');
     }
-    catch (NotFoundHttpException) {
-      self::assertTrue(TRUE);
+    catch (NotFoundHttpException $exception) {
+      self::assertSame(404, $exception->getStatusCode());
     }
 
     $self = $this->user(42);
@@ -56,15 +56,15 @@ final class MessagesControllerMemberAccessTest extends UnitTestCase {
       $controller->drawerMemberRelationship($thread, $self);
       self::fail('A member cannot act on their own per-member relationship box.');
     }
-    catch (NotFoundHttpException) {
-      self::assertTrue(TRUE);
+    catch (NotFoundHttpException $exception) {
+      self::assertSame(404, $exception->getStatusCode());
     }
     try {
       $controller->memberOptions($thread, $self);
       self::fail('A member cannot open their own per-member relationship box.');
     }
-    catch (NotFoundHttpException) {
-      self::assertTrue(TRUE);
+    catch (NotFoundHttpException $exception) {
+      self::assertSame(404, $exception->getStatusCode());
     }
   }
 

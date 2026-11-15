@@ -334,13 +334,13 @@ final class ConversationRelationshipFormTest extends UnitTestCase {
     $profileState->set('profile', TRUE);
     $profileState->set('return_path', '/members/84');
     $profile = $form->buildForm([], $profileState, 84);
-    self::assertArrayNotHasKey('clear', $profile['actions']);
-    self::assertArrayNotHasKey('clear_confirm', $profile['actions']);
+    self::assertArrayNotHasKey('clear', $this->actionsOf($profile));
+    self::assertArrayNotHasKey('clear_confirm', $this->actionsOf($profile));
 
     $groupState = new FormState();
     $groupState->set('group', TRUE);
     $group = $form->buildForm([], $groupState);
-    self::assertArrayHasKey('clear', $group['actions']);
+    self::assertArrayHasKey('clear', $this->actionsOf($group));
   }
 
   /**
@@ -430,6 +430,23 @@ final class ConversationRelationshipFormTest extends UnitTestCase {
     $user->method('isActive')->willReturn(TRUE);
     $user->method('hasPermission')->willReturn(TRUE);
     return $user;
+  }
+
+  /**
+   * Returns the actions element of a built form, failing the test when it is missing.
+   *
+   * @param array<array-key, mixed> $form
+   *   O formulário construído.
+   *
+   * @return array<array-key, mixed>
+   *   Os botões do formulário.
+   */
+  private function actionsOf(array $form): array {
+    $actions = $form['actions'] ?? NULL;
+    if (!is_array($actions)) {
+      self::fail('The form has no actions element.');
+    }
+    return $actions;
   }
 
 }

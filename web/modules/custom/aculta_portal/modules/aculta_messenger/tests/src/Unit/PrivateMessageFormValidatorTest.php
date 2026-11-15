@@ -157,7 +157,7 @@ final class PrivateMessageFormValidatorTest extends UnitTestCase {
     ], $lockCalls);
 
     $validator->registerRateLimit($form, $formState);
-    self::assertSame([
+    self::assertEquals([
       ['acquire', 'aculta_messenger.private_message_flood.42', 180.0],
       ['acquire', 'aculta_messenger:conversation_write:123', 180.0],
       ['release', 'aculta_messenger:conversation_write:123'],

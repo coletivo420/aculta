@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_messenger\Kernel;
 
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\aculta_messenger\Form\PrivateMessageFormValidator;
 use Drupal\aculta_messenger\Service\ConversationPolicy;
 use Drupal\aculta_messenger\Service\ConversationWriteLock;
@@ -76,7 +77,7 @@ final class PrivateMessageFloodKernelTest extends KernelTestBase {
 
     self::assertSame(
       'Você atingiu o limite temporário de envio de mensagens. Tente novamente mais tarde.',
-      (string) $state->getErrors()['message'],
+      $state->getErrors()['message'] instanceof TranslatableMarkup ? $state->getErrors()['message']->getUntranslatedString() : $state->getErrors()['message'],
     );
   }
 
@@ -105,11 +106,14 @@ final class PrivateMessageFloodKernelTest extends KernelTestBase {
     $secondState->clearErrors();
 
     $first->registerRateLimit($form, $firstState);
-    self::assertSame(0, (int) $this->container->get('database')->select('semaphore', 'lock')
+    $lockCount = $this->container->get('database')->select('semaphore', 'lock')
       ->condition('name', 'aculta_messenger.private_message_flood.' . $account->id())
       ->countQuery()
-      ->execute()
-      ->fetchField(), 'The persisted submission releases its sender lock.');
+      ->execute();
+    if ($lockCount === NULL) {
+      self::fail('The semaphore count query did not execute.');
+    }
+    self::assertEquals(0, $lockCount->fetchField(), 'The persisted submission releases its sender lock.');
     $afterRelease = $this->validator($flood, new PersistentDatabaseLockBackend($this->container->get('database')));
     $afterReleaseState = new FormState();
     $afterRelease->validateRateLimit($form, $afterReleaseState);

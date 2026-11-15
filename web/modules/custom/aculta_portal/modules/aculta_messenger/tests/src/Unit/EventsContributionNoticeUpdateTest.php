@@ -25,8 +25,8 @@ final class EventsContributionNoticeUpdateTest extends UnitTestCase {
     require_once DRUPAL_ROOT . '/modules/custom/aculta_portal/modules/aculta_messenger/aculta_messenger.install';
 
     $modulePath = DRUPAL_ROOT . '/modules/custom/aculta_portal/modules/aculta_messenger';
-    $pathResolver = $this->createStub(ExtensionPathResolver::class);
-    $pathResolver->method('getPath')->with('module', 'aculta_messenger')->willReturn($modulePath);
+    $pathResolver = $this->createMock(ExtensionPathResolver::class);
+    $pathResolver->expects(self::atLeastOnce())->method('getPath')->with('module', 'aculta_messenger')->willReturn($modulePath);
 
     $configManager = $this->createMock(ConfigManagerInterface::class);
     $configManager->method('loadConfigEntityByName')
@@ -56,7 +56,6 @@ final class EventsContributionNoticeUpdateTest extends UnitTestCase {
         \Drupal::unsetContainer();
       }
     }
-    $this->addToAssertionCount(1);
   }
 
 }
