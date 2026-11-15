@@ -270,7 +270,7 @@ class PrivateMessageThreadMemberFormatter extends FormatterBase implements Conta
     $view_builder = $this->entityTypeManager->getViewBuilder('user');
     foreach ($items as $delta => $item) {
       /** @var \Drupal\user\UserInterface|null $user */
-      $user = $item->entity;
+      $user = $item instanceof \Drupal\Core\Field\Plugin\Field\FieldType\EntityReferenceItem ? $item->entity : NULL;
       if ($user) {
         if ($user->id() != $this->currentUser->id() || ($user->id() == $this->currentUser->id() && $display_current_user)) {
           if ($this->getSetting('display_type') == 'label') {
