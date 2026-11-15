@@ -9,6 +9,7 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Field\FormatterBase;
 use Drupal\Core\Field\Attribute\FieldFormatter;
 use Drupal\Core\Field\FieldDefinitionInterface;
+use Drupal\Core\Field\FieldItemInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\EntityReferenceFieldItemListInterface;
 use Drupal\Core\Session\AccountProxyInterface;
@@ -24,7 +25,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Plugin implementation of the H5P formatter.
  *
- * @extends \Drupal\Core\Field\FormatterBase<\Drupal\Core\Field\FieldItemListInterface<\Drupal\aculta_lms_h5p\Plugin\Field\FieldType\aculta_H5PItem>>
+ * @extends \Drupal\Core\Field\FormatterBase<\Drupal\Core\Field\FieldItemListInterface<\Drupal\Core\Field\FieldItemInterface>>
  */
 #[FieldFormatter(
   id: 'h5p_default',
@@ -120,9 +121,6 @@ final class aculta_H5PDefaultFormatter extends FormatterBase {
   /**
    * {@inheritdoc}
    *
-   * @param \Drupal\Core\Field\FieldItemListInterface<\Drupal\aculta_lms_h5p\Plugin\Field\FieldType\aculta_H5PItem> $items
-   *   H5P field items.
-   *
    * @return array<int, array<array-key, mixed>>
    *   Render arrays for each H5P item.
    */
@@ -148,6 +146,9 @@ final class aculta_H5PDefaultFormatter extends FormatterBase {
     }
 
     foreach ($items as $delta => $item) {
+      if (!$item instanceof \Drupal\aculta_lms_h5p\Plugin\Field\FieldType\aculta_H5PItem) {
+        continue;
+      }
       /** @var array{h5p_content_id?: mixed} $value */
       $value = $item->getValue();
       $contentId = $value['h5p_content_id'] ?? NULL;

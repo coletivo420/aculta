@@ -5,9 +5,13 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_lms_h5p\Kernel;
 
 use Drupal\aculta_lms_h5p\Controller\aculta_H5PAJAX;
+use Drupal\aculta_lms_h5p\Access\aculta_H5PCourseAccessManager;
 use Drupal\aculta_lms_h5p\aculta_H5PDrupal\aculta_H5PDrupal;
+use Drupal\aculta_lms_h5p\Entity\aculta_H5PContent;
+use Drupal\aculta_lms_h5p\Plugin\Condition\GroupHasaculta_H5PActivities;
 use Drupal\Core\Form\FormState;
 use Drupal\aculta_lms_h5p\Plugin\Field\FieldWidget\aculta_H5PEditorWidget;
+use Drupal\aculta_lms_h5p\Plugin\Field\FieldFormatter\aculta_H5PDefaultFormatter;
 use Drupal\aculta_document_viewer\Pdf\PdfViewerBuilderInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Drupal\field\Entity\FieldConfig;
@@ -16,6 +20,8 @@ use Drupal\group\Entity\Group;
 use Drupal\group\Entity\GroupRole;
 use Drupal\group\Entity\GroupType;
 use Drupal\group\Entity\GroupInterface;
+use Drupal\group\Entity\Storage\GroupRelationshipTypeStorageInterface;
+use Drupal\group\Entity\GroupTypeInterface;
 use Drupal\media\Entity\Media;
 use Drupal\node\Entity\NodeType;
 use Drupal\media\Entity\MediaType;
@@ -85,10 +91,8 @@ final class aculta_H5PCourseAccessIntegrationTest extends KernelTestBase {
    * {@inheritdoc} */
   protected function setUp(): void {
     parent::setUp();
-    $this->container->set(
-      'aculta_document_viewer.pdf_builder',
-      $this->createMock(PdfViewerBuilderInterface::class),
-    );
+    $pdfViewerBuilder = $this->createMock(PdfViewerBuilderInterface::class);
+    $this->container->set('aculta_document_viewer.pdf_builder', $pdfViewerBuilder);
     $this->installConfig([
       'system',
       'user',
@@ -189,6 +193,7 @@ final class aculta_H5PCourseAccessIntegrationTest extends KernelTestBase {
       'field_definition' => $course->getFieldDefinition('field_h5p_activities'),
       'configuration' => ['type' => 'h5p_editor'],
     ]);
+    self::assertInstanceOf(aculta_H5PEditorWidget::class, $widget);
     $formState = new FormState();
     $formState->setValue(
       ['field_h5p_activities', 0, 'h5p_content'],
@@ -269,13 +274,16 @@ final class aculta_H5PCourseAccessIntegrationTest extends KernelTestBase {
 
     $relationshipTypes = $this->container->get('entity_type.manager')
       ->getStorage('group_relationship_type');
+    self::assertInstanceOf(GroupRelationshipTypeStorageInterface::class, $relationshipTypes);
     $relationshipTypeId = $relationshipTypes->getRelationshipTypeId(
       'lms_course',
       'aculta_document_viewer:course_document',
     );
     if (!$relationshipTypes->load($relationshipTypeId)) {
+      $courseType = GroupType::load('lms_course');
+      self::assertInstanceOf(GroupTypeInterface::class, $courseType);
       $relationshipTypes->createFromPlugin(
-        GroupType::load('lms_course'),
+        $courseType,
         'aculta_document_viewer:course_document',
       )->save();
     }
@@ -304,22 +312,17 @@ final class aculta_H5PCourseAccessIntegrationTest extends KernelTestBase {
       'title' => 'Atividade vinculada',
       'a11y_title' => 'Atividade de teste em iframe',
     ]);
+    self::assertInstanceOf(aculta_H5PContent::class, $content);
     $content->save();
     $this->container->get('database')->insert('h5p_content_libraries')->fields([
       'content_id' => $content->id(),
       'library_id' => 1,
       'dependency_type' => 'preloaded',
     ])->execute();
-    self::assertSame(
-      'media',
-      $content->getFieldDefinition('course_documents')->getSetting('target_type'),
-    );
-    self::assertSame(
-      -1,
-      $content->getFieldDefinition('course_documents')
-        ->getFieldStorageDefinition()
-        ->getCardinality(),
-    );
+    $documentFieldDefinition = $content->getFieldDefinition('course_documents');
+    self::assertNotNull($documentFieldDefinition);
+    self::assertSame('media', $documentFieldDefinition->getSetting('target_type'));
+    self::assertSame(-1, $documentFieldDefinition->getFieldStorageDefinition()->getCardinality());
     MediaType::create([
       'id' => 'h5p_test_media',
       'label' => 'H5P test media',
@@ -346,9 +349,14 @@ final class aculta_H5PCourseAccessIntegrationTest extends KernelTestBase {
     $document->save();
     $content->set('course_documents', [['target_id' => $document->id()]]);
     $content->save();
+    $contentId = $content->id();
+    self::assertNotNull($contentId);
     $content = $this->container->get('entity_type.manager')
       ->getStorage('aculta_h5p_content')
-      ->load($content->id());
+      ->load($contentId);
+    self::assertInstanceOf(aculta_H5PContent::class, $content);
+    $contentId = $content->id();
+    self::assertNotNull($contentId);
 
     $courseDocument = Media::create([
       'bundle' => 'course_document',
@@ -376,20 +384,26 @@ final class aculta_H5PCourseAccessIntegrationTest extends KernelTestBase {
       ['target_id' => $unlinkedCourseDocument->id()],
     ]);
     $content->save();
+    $contentId = $content->id();
+    self::assertNotNull($contentId);
     $content = $this->container->get('entity_type.manager')
       ->getStorage('aculta_h5p_content')
-      ->load($content->id());
+      ->load($contentId);
+    self::assertInstanceOf(aculta_H5PContent::class, $content);
     self::assertSame(
       (int) $document->id(),
       (int) $content->get('course_documents')->target_id,
     );
     $course->get('field_h5p_activities')->appendItem(['h5p_content_id' => $content->id()]);
     $course->save();
-    self::assertInstanceOf(GroupInterface::class, $course);
     self::assertCount(1, $course->getRelationships('aculta_document_viewer:course_document'));
-    self::assertCount(3, $content->get('course_documents')->referencedEntities());
+    $referencedDocuments = $content->get('course_documents')->referencedEntities();
+    if (!is_array($referencedDocuments)) {
+      throw new \UnexpectedValueException('The course document references must be a list.');
+    }
+    self::assertCount(3, $referencedDocuments);
 
-    $access = $this->container->get('aculta_lms_h5p.course_access');
+    $access = new aculta_H5PCourseAccessManager($this->container->get('entity_type.manager'));
     self::assertTrue($access->studentAccess((int) $course->id(), (int) $content->id(), $student)->isAllowed());
     self::assertFalse($access->studentAccess((int) $course->id(), (int) $content->id(), $outsider)->isAllowed());
     self::assertFalse($access->studentAccess((int) $course->id(), (int) $content->id() + 100, $student)->isAllowed());
@@ -410,9 +424,12 @@ final class aculta_H5PCourseAccessIntegrationTest extends KernelTestBase {
       'field_definition' => $course->getFieldDefinition('field_h5p_activities'),
       'view_mode' => 'default',
     ]);
+    self::assertInstanceOf(aculta_H5PDefaultFormatter::class, $formatter);
     $deniedElements = $formatter->viewElements($course->get('field_h5p_activities'), 'en');
     self::assertFalse($deniedElements[0]['#access']);
-    self::assertContains('user', $deniedElements[0]['#cache']['contexts']);
+    $deniedCache = $this->requireArray($deniedElements[0]['#cache'] ?? NULL);
+    $deniedContexts = $this->requireArray($deniedCache['contexts'] ?? NULL);
+    self::assertContains('user', $deniedContexts);
     $this->container->get('current_user')->setAccount($student);
 
     $pdfViewerBuild = [
@@ -420,7 +437,9 @@ final class aculta_H5PCourseAccessIntegrationTest extends KernelTestBase {
       '#attributes' => ['data-aculta-pdf-viewer' => 'true'],
     ];
     $courseDocumentId = (int) $courseDocument->id();
-    $this->container->get('aculta_document_viewer.pdf_builder')
+    $pdfViewerBuilder = $this->createMock(PdfViewerBuilderInterface::class);
+    $this->container->set('aculta_document_viewer.pdf_builder', $pdfViewerBuilder);
+    $pdfViewerBuilder
       ->expects(self::once())
       ->method('build')
       ->with(
@@ -430,46 +449,72 @@ final class aculta_H5PCourseAccessIntegrationTest extends KernelTestBase {
       ->willReturn($pdfViewerBuild);
 
     $studentElements = $formatter->viewElements($course->get('field_h5p_activities'), 'en');
+    $studentElement = $this->requireArray($studentElements[0] ?? NULL);
+    $iframe = $this->requireArray($studentElement['iframe'] ?? NULL);
+    $iframeAttributes = $this->requireArray($iframe['#attributes'] ?? NULL);
+    $attached = $this->requireArray($studentElement['#attached'] ?? NULL);
+    $libraries = $this->requireArray($attached['library'] ?? NULL);
+    $cache = $this->requireArray($studentElement['#cache'] ?? NULL);
+    $drupalSettings = $this->requireArray($attached['drupalSettings'] ?? NULL);
+    $h5pSettings = $this->requireArray($drupalSettings['h5p'] ?? NULL);
+    $h5pIntegration = $this->requireArray($h5pSettings['H5PIntegration'] ?? NULL);
+    $coreIntegration = $this->requireArray($h5pIntegration['core'] ?? NULL);
+    $contentsIntegration = $this->requireArray($h5pIntegration['contents'] ?? NULL);
+    $contentIntegration = $this->requireArray($contentsIntegration['cid-' . $content->id()] ?? NULL);
+    $courseDocuments = $this->requireArray($studentElement['course_documents'] ?? NULL);
+    $courseDocumentSlots = $this->requireArray($courseDocuments['#slots'] ?? NULL);
+    $courseDocumentContent = $this->requireArray($courseDocumentSlots['content'] ?? NULL);
+    $wrapperAttributes = $this->requireArray($studentElement['#attributes'] ?? NULL);
+    $wrapperClasses = $this->requireArray($wrapperAttributes['class'] ?? NULL);
+    $contentIdAttribute = $iframeAttributes['data-content-id'] ?? NULL;
+    if (!is_string($contentIdAttribute)) {
+      throw new \UnexpectedValueException('The iframe content ID attribute is missing.');
+    }
     self::assertSame('container', $studentElements[0]['#type']);
-    self::assertSame('h5p-iframe-wrapper', $studentElements[0]['#attributes']['class'][0]);
-    self::assertSame('h5p-iframe-' . $content->id(), $studentElements[0]['iframe']['#attributes']['id']);
-    self::assertSame((string) $content->id(), (string) $studentElements[0]['iframe']['#attributes']['data-content-id']);
-    self::assertSame('Atividade de teste em iframe', $studentElements[0]['iframe']['#attributes']['title']);
-    self::assertSame('allowfullscreen', $studentElements[0]['iframe']['#attributes']['allowfullscreen']);
-    self::assertArrayNotHasKey('src', $studentElements[0]['iframe']['#attributes']);
-    self::assertContains('aculta_lms_h5p/h5p.content', $studentElements[0]['#attached']['library']);
-    self::assertSame(12 * 60 * 60, $studentElements[0]['#cache']['max-age']);
-    $h5pIntegration = $studentElements[0]['#attached']['drupalSettings']['h5p']['H5PIntegration'];
-    self::assertNotEmpty($h5pIntegration['core']['scripts']);
-    self::assertNotEmpty($h5pIntegration['core']['styles']);
-    $contentIntegration = $h5pIntegration['contents']['cid-' . $content->id()];
+    self::assertSame('h5p-iframe-wrapper', $wrapperClasses[0]);
+    self::assertSame('h5p-iframe-' . $contentId, $iframeAttributes['id']);
+    self::assertSame((string) $contentId, $contentIdAttribute);
+    self::assertSame('Atividade de teste em iframe', $iframeAttributes['title']);
+    self::assertSame('allowfullscreen', $iframeAttributes['allowfullscreen']);
+    self::assertArrayNotHasKey('src', $iframeAttributes);
+    self::assertContains('aculta_lms_h5p/h5p.content', $libraries);
+    self::assertSame(12 * 60 * 60, $cache['max-age']);
+    self::assertNotEmpty($coreIntegration['scripts']);
+    self::assertNotEmpty($coreIntegration['styles']);
     self::assertSame(
       '/h5p-library-assets/libraries/H5P.IframeTest-1.0/js/iframe-test.js?ver=1.0.0',
-      $contentIntegration['scripts'][0],
+      $this->requireArray($contentIntegration['scripts'] ?? NULL)[0],
     );
     self::assertSame(
       '/h5p-library-assets/libraries/H5P.IframeTest-1.0/css/iframe-test.css?ver=1.0.0',
-      $contentIntegration['styles'][0],
+      $this->requireArray($contentIntegration['styles'] ?? NULL)[0],
     );
     self::assertSame(
       'aculta420_v2:layout-section',
-      $studentElements[0]['course_documents']['#component'],
+      $courseDocuments['#component'],
     );
     self::assertSame(
       [$pdfViewerBuild],
-      $studentElements[0]['course_documents']['#slots']['content'],
+      $courseDocumentContent,
       'Only PDF Media related to the current course is passed to the shared viewer.',
     );
 
     $condition = $this->container->get('plugin.manager.condition')->createInstance('aculta_lms_h5p_group_has_activities');
+    self::assertInstanceOf(GroupHasaculta_H5PActivities::class, $condition);
     $condition->setContextValue('group', $course);
     self::assertTrue($condition->evaluate());
     $integration = aculta_H5PDrupal::getGenericaculta_H5PIntegrationSettings($course);
+    $ajaxIntegration = $this->requireArray($integration['ajax'] ?? NULL);
+    $contentUserDataUrl = $ajaxIntegration['contentUserData'] ?? NULL;
+    $setFinishedUrl = $ajaxIntegration['setFinished'] ?? NULL;
+    if (!is_string($contentUserDataUrl) || !is_string($setFinishedUrl)) {
+      throw new \UnexpectedValueException('The H5P AJAX integration URLs are missing.');
+    }
     self::assertStringContainsString(
       '/h5p-ajax/' . $course->id() . '/content-user-data/:contentId/:dataType/:subContentId?token=',
-      $integration['ajax']['contentUserData'],
+      $contentUserDataUrl,
     );
-    self::assertMatchesRegularExpression('/^\/h5p-ajax\/' . $course->id() . '\/set-finished\.json\?token=[a-f0-9]+$/', $integration['ajax']['setFinished']);
+    self::assertMatchesRegularExpression('/^\/h5p-ajax\/' . $course->id() . '\/set-finished\.json\?token=[a-f0-9]+$/', $setFinishedUrl);
 
     // Exercise the real progress endpoint and ensure state is scoped to the
     // authenticated student, course membership, and H5P content.
@@ -481,7 +526,9 @@ final class aculta_H5PCourseAccessIntegrationTest extends KernelTestBase {
     self::assertSame(200, $saved->getStatusCode());
     $loadRequest = Request::create('/?token=' . $token, 'GET');
     $loaded = $controller->contentUserData((int) $course->id(), (int) $content->id(), 'state', 0, $loadRequest);
-    self::assertSame('{"answer":"saved"}', json_decode((string) $loaded->getContent(), TRUE)['data']);
+    $loadedData = json_decode((string) $loaded->getContent(), TRUE);
+    self::assertIsArray($loadedData);
+    self::assertSame('{"answer":"saved"}', $loadedData['data'] ?? NULL);
     self::assertStringContainsString('private', (string) $loaded->headers->get('Cache-Control'));
     self::assertStringContainsString('no-store', (string) $loaded->headers->get('Cache-Control'));
 
@@ -490,12 +537,16 @@ final class aculta_H5PCourseAccessIntegrationTest extends KernelTestBase {
     $this->container->get('current_user')->setAccount(new AnonymousUserSession());
     $this->container->get('current_user')->setAccount($student);
     $restored = $controller->contentUserData((int) $course->id(), (int) $content->id(), 'state', 0, $loadRequest);
-    self::assertSame('{"answer":"saved"}', json_decode((string) $restored->getContent(), TRUE)['data']);
+    $restoredData = json_decode((string) $restored->getContent(), TRUE);
+    self::assertIsArray($restoredData);
+    self::assertSame('{"answer":"saved"}', $restoredData['data'] ?? NULL);
 
     // Another enrolled account cannot read the first student's saved state.
     $this->container->get('current_user')->setAccount($otherStudent);
     $otherStudentState = $controller->contentUserData((int) $course->id(), (int) $content->id(), 'state', 0, $loadRequest);
-    self::assertNull(json_decode((string) $otherStudentState->getContent(), TRUE)['data']);
+    $otherStudentData = json_decode((string) $otherStudentState->getContent(), TRUE);
+    self::assertIsArray($otherStudentData);
+    self::assertNull($otherStudentData['data'] ?? NULL);
     $this->container->get('current_user')->setAccount($student);
 
     $resultToken = \H5PCore::createToken('result');
@@ -507,14 +558,24 @@ final class aculta_H5PCourseAccessIntegrationTest extends KernelTestBase {
     ]);
     $result = $controller->setFinished((int) $course->id(), $resultRequest);
     self::assertSame(200, $result->getStatusCode());
-    $score = $this->container->get('database')->select('h5p_points', 'p')
+    $scoreStatement = $this->container->get('database')->select('h5p_points', 'p')
       ->fields('p', ['started', 'points', 'max_points'])
       ->condition('content_id', $content->id())
       ->condition('uid', $student->id())
-      ->execute()->fetchAssoc();
-    self::assertSame('123456', (string) $score['started']);
-    self::assertSame('3', (string) $score['points']);
-    self::assertSame('5', (string) $score['max_points']);
+      ->execute();
+    self::assertNotNull($scoreStatement);
+    $score = $scoreStatement->fetchAssoc();
+    if (!is_array($score)) {
+      throw new \UnexpectedValueException('The H5P result row was not found.');
+    }
+    foreach (['started', 'points', 'max_points'] as $scoreKey) {
+      if (!is_string($score[$scoreKey] ?? NULL)) {
+        throw new \UnexpectedValueException('The H5P result row contains a non-string value.');
+      }
+    }
+    self::assertSame('123456', $score['started']);
+    self::assertSame('3', $score['points']);
+    self::assertSame('5', $score['max_points']);
 
     $this->container->get('current_user')->setAccount($outsider);
     $denied = $controller->contentUserData((int) $course->id(), (int) $content->id(), 'state', 0, $loadRequest);
@@ -525,6 +586,22 @@ final class aculta_H5PCourseAccessIntegrationTest extends KernelTestBase {
 
     $course->removeMember($student);
     self::assertFalse($access->studentAccess((int) $course->id(), (int) $content->id(), $student)->isAllowed());
+  }
+
+  /**
+   * Ensures a render array value is an array before inspecting nested values.
+   *
+   * @param mixed $value
+   *   Value to validate.
+   *
+   * @return array<array-key, mixed>
+   *   Validated array.
+   */
+  private function requireArray(mixed $value): array {
+    if (!is_array($value)) {
+      throw new \UnexpectedValueException('Expected an array in the H5P render output.');
+    }
+    return $value;
   }
 
 }
