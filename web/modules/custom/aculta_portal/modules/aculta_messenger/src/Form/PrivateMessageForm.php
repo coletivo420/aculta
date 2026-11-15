@@ -453,7 +453,7 @@ class PrivateMessageForm extends ContentEntityForm {
   public function save(array $form, FormStateInterface $form_state): int {
     $status = parent::save($form, $form_state);
 
-    /** @var \Drupal\aculta_messenger\Entity\PrivateMessageThreadInterface $entity */
+    /** @var \Drupal\aculta_messenger\Entity\PrivateMessageThreadInterface|null $entity */
     $entity = $form_state->get('pmt_entity');
 
     /** @var \Drupal\aculta_messenger\Entity\PrivateMessageThreadInterface|null $private_message_thread */
@@ -469,12 +469,14 @@ class PrivateMessageForm extends ContentEntityForm {
         $members[] = $current_user;
       }
 
-      foreach ($entity->get('members') as $user) {
-        if ($user instanceof EntityReferenceItem) {
-          $user = $user->entity;
-        }
-        if ($user instanceof UserInterface) {
-          $members[] = $user;
+      if ($entity !== NULL) {
+        foreach ($entity->get('members') as $user) {
+          if ($user instanceof EntityReferenceItem) {
+            $user = $user->entity;
+          }
+          if ($user instanceof UserInterface) {
+            $members[] = $user;
+          }
         }
       }
       // Get a private message thread containing the given users.
