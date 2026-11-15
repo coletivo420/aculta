@@ -72,8 +72,6 @@ trait ThreadMessageFormatterTestTrait {
    *
    * @param array<string, mixed> $settings
    *   Settings to overwrite.
-   * @param array<string, mixed> $settings
-   * @param array<string, mixed> $settings
    */
   protected function updateWidgetSettings(array $settings): void {
     $widget = EntityViewDisplay::load('private_message_thread.private_message_thread.default');

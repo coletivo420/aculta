@@ -41,7 +41,12 @@ class ThreadMessageFormatterTest extends WebDriverTestBase {
    * Tests load previous functionality.
    *
    * @dataProvider loadPreviousProvider
+   * @param string $order
+   *   Ordem das mensagens.
+   * @param bool $reverse
+   *   Se a ordem é invertida.
    * @param array<int, int> $offset
+   *   Deslocamentos de paginação.
    */
   public function testLoadPrevious(string $order, bool $reverse, array $offset): void {
     $thread = $this->createThreadWithMessages([

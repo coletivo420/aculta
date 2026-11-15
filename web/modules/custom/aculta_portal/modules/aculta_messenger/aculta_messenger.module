@@ -2,6 +2,7 @@
 
 /**
  * @file
+ * Hooks do módulo ACULTA Messenger.
  */
 
 use Drupal\Core\Entity\EntityInterface;
@@ -51,6 +52,7 @@ function aculta_messenger_queue_info_alter(array &$definitions): void {
  * Tipagem do porte Private Message.
  *
  * @return array<string, mixed>
+ *   Definições de campos extras da entidade de conversa.
  */
 function aculta_messenger_views_data(): array {
   return \Drupal::service(ViewsHooks::class)->viewsData();
@@ -60,6 +62,7 @@ function aculta_messenger_views_data(): array {
  * Implements hook_entity_extra_field_info().
  *
  * @return array<string, mixed>
+ *   Campos extras de exibição por tipo de entidade.
  */
 function aculta_messenger_entity_extra_field_info(): array {
   $fields = [];
@@ -179,8 +182,10 @@ function aculta_messenger_entity_extra_field_info(): array {
 /**
  * Implements hook_ENTITY_TYPE_view().
  *
- * @see hook_entity_view()
  * @param array<string, mixed> $build
+ *   Renderização da conversa, alterada antes da exibição.
+ *
+ * @see hook_entity_view()
  */
 function aculta_messenger_private_message_thread_view(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display): void {
   /** @var PrivateMessageThreadInterface $entity */
@@ -250,6 +255,7 @@ function aculta_messenger_private_message_thread_view(array &$build, EntityInter
  * Implements hook_theme().
  *
  * @return array<string, mixed>
+ *   Definições de temas do módulo.
  */
 function aculta_messenger_theme(): array {
   return [
@@ -353,6 +359,7 @@ function aculta_messenger_preprocess_private_message(array &$variables): void {
  * upon.
  *
  * @param array<string, mixed> $vars
+ *   Variáveis do campo, ajustadas pelo hook.
  */
 function aculta_messenger_preprocess_field__private_message_thread__private_messages(array &$vars): void {
   /** @var array<int|string, array<string, mixed>> $items */
@@ -372,6 +379,7 @@ function aculta_messenger_preprocess_field__private_message_thread__private_mess
  * depended upon.
  *
  * @param array<string, mixed> $vars
+ *   Variáveis do campo, ajustadas pelo hook.
  */
 function aculta_messenger_preprocess_container(array &$vars): void {
   /** @var array<string, mixed> $element */
@@ -398,6 +406,7 @@ function aculta_messenger_preprocess_container(array &$vars): void {
  * Swaps out tokens with values.
  *
  * @param array<string, mixed> $build
+ *   Renderização da mensagem, alterada antes da exibição.
  */
 function aculta_messenger_message_view_alter(array &$build): void {
   /** @var \Drupal\user\EntityOwnerInterface&\Drupal\Core\Entity\ContentEntityInterface $message */
@@ -430,7 +439,10 @@ function aculta_messenger_message_view_alter(array &$build): void {
  * Implements hook_suggestions_HOOK_alter().
  *
  * @param array<int|string, mixed> $suggestions
+ *   Sugestões de template, complementadas pelo hook.
  * @param array<string, mixed> $vars
+ *   Variáveis do template.
+ *   Variáveis do campo, ajustadas pelo hook.
  */
 function aculta_messenger_theme_suggestions_private_message_thread_alter(array &$suggestions, array &$vars): void {
   /** @var array<string, mixed> $elements */
@@ -444,7 +456,10 @@ function aculta_messenger_theme_suggestions_private_message_thread_alter(array &
  * Implements hook_suggestions_HOOK_alter().
  *
  * @param array<int|string, mixed> $suggestions
+ *   Sugestões de template, complementadas pelo hook.
  * @param array<string, mixed> $vars
+ *   Variáveis do template.
+ *   Variáveis do campo, ajustadas pelo hook.
  */
 function aculta_messenger_theme_suggestions_private_message_alter(array &$suggestions, array &$vars): void {
   /** @var array<string, mixed> $elements */
@@ -500,6 +515,7 @@ function aculta_messenger_entity_query_user_alter(QueryInterface $query): void {
  * Implements hook_config_schema_info_alter().
  *
  * @param array<string, mixed> $definitions
+ *   Definições de schema de configuração, alteradas pelo hook.
  */
 function aculta_messenger_config_schema_info_alter(array &$definitions): void {
   if (isset($definitions['entity_reference_selection.default:user'])) {
