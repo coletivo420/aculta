@@ -46,7 +46,9 @@ Preservar a licença upstream GPL-2.0-or-later, autorias, o `LICENSE.txt` origin
 
 ## Estado de execução
 
-**Concluído:** conferência do pacote, classificação e preparação automática do código, inventário direcionado do módulo em `dev`, script de staging e runbook. **Pendente:** mesclagem em `src/` ativo, ports dos hooks/services e testes, migração de schema/provider, retirada de Composer/contrib, homologação em clone e no Runtime. Acesso GitHub não equivale a acesso ao banco do servidor.
+**Concluído:** conferência do pacote, classificação e preparação automática do código, inventário direcionado do módulo em `dev`, script de staging e runbook. **Concluído após o corte (branch `pm-corte-direto`):** código portado para `src/` ativo; entidades `private_message`, `private_message_thread` e `private_message_ban` sob `aculta_messenger`; rota `entity.private_message_thread.canonical` (`/mensagens/conversa/{private_message_thread}`) apontando para `MessagesController::drawerConversation`; permissão `use private messaging system` definida em `aculta_messenger.permissions.yml` e concedida somente a `email_confirmed` (não a `authenticated`); `drupal/private_message` retirado de `composer.json` e `composer.lock`; ajustes de tipagem e docblocks para PHPStan, com baseline reduzida de 786 para 4 erros na última medição.
+
+**Pendente:** resolver os 3 erros de injeção do H5P (`aculta_lms_h5p`, controllers `aculta_H5PAJAX`, `aculta_H5PEditorAjaxController`, `aculta_H5PFileController`), cuja causa não foi localizada; decidir o tratamento de `new static` em `PrivateMessageConfigFormBase::create`; escrever as descrições de docblock do PHPCS (304 erros em 71 arquivos); rodar Functional; rebase sobre `origin/dev` e fast-forward só após Unit, PHPCS, PHPStan, Kernel e Functional verdes. Acesso GitHub não equivale a acesso ao banco do servidor.
 
 
 ## Preflight automático somente leitura
@@ -73,10 +75,18 @@ Janela única autorizada. Aplicada em `aculta_runtime` e ensaiada antes em `acul
 - `composer.json` e `composer.lock` sem `drupal/private_message` (única mudança no lock); `composer validate` válido.
 - Testes unitários: `aculta_messenger` 403 testes OK (1 deprecação herdada do upstream em `PrivateMessageMapperInterface`); `aculta_user` Social 4 testes OK.
 
-**Pendente (não executado nesta janela):**
+**Verificações posteriores ao corte:**
 
-- Gates completos: PHPStan nível 10 com baseline, PHPCS, Kernel/MariaDB, Functional, Playwright, Semgrep.
-- Testes de navegador e smoke HTTP nos dez site keys (não feitos: o Runtime não foi acessado via HTTP nesta janela).
+- Kernel no MariaDB `aculta_simpletest` (fora do Runtime e sem SQLite, conforme `BANCO-DE-TESTE.md`): última rodada completa com 63 testes, 1646 asserções, 0 erros e 0 falhas (somente deprecações). A rota passa a ser testada com o membro autenticado, porque o módulo `flag` decora `access_check.csrf` e permite anônimo sem token; por isso o teste de acesso à rota roda como membro.
+- Unit `aculta_messenger`: 403 testes, 4386 asserções, OK.
+- Rodada completa de Kernel após os últimos commits de PHPStan: em andamento no momento desta atualização; o resultado deve ser registrado aqui somente depois de concluída.
+
+**Pendente (não executado):**
+
+- Gates ainda não concluídos: PHPCS, Functional, Playwright e Semgrep. PHPStan está com 4 erros na última medição (3 de H5P, 1 de `new static`).
+- Testes de navegador e smoke HTTP nos dez site keys (o Runtime não foi acessado via HTTP nesta janela).
 - Hooks de formulário de usuário e de perfil do PM não foram portados (UI paralela; plano P1.4).
-- Skills e README/ARCHITECTURE/CHANGELOG: apenas esta seção foi atualizada.
+- Hooks `aculta_messenger_install` e `aculta_messenger_private_message_thread_view` tiveram a assinatura alterada por decisão do responsável (remoção de `$is_syncing` e `$view_mode`); conferir chamadores antes de fechar.
+- README/ARCHITECTURE/CHANGELOG do módulo: ainda sem o estado pós-corte.
 - Remoção de `captcha.captcha_point.private_message_add_form` (mantida; config do captcha para o formulário portado).
+- Credenciais de cópia de banco ficam em `~/.config/aculta-clone-pm/db.php` (modo 0600, fora do repositório); `web/sites/clone-pm/` e `web/sites/sites.php` são locais e estão excluídos via `.git/info/exclude`. Nada disso deve ser versionado.
