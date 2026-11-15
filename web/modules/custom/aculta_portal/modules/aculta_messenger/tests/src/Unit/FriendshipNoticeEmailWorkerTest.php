@@ -517,6 +517,12 @@ final class FriendshipNoticeEmailWorkerTest extends UnitTestCase {
 
   /**
    * Creates a scalar field item fixture.
+   *
+   * @param mixed $value
+   *   O valor informado para $value.
+   *
+   * @return FieldItemListInterface<\Drupal\Core\Field\FieldItemInterface>
+   *   O resultado da operação.
    */
   private function fieldValue(mixed $value): FieldItemListInterface {
     $field = $this->createMock(FieldItemListInterface::class);

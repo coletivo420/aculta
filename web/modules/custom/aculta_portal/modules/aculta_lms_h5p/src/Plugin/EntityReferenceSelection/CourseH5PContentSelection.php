@@ -33,6 +33,32 @@ use Symfony\Component\HttpFoundation\RequestStack;
 )]
 final class CourseH5PContentSelection extends DefaultSelection {
 
+  /**
+   * Cria o seletor de conteúdos H5P do curso.
+   *
+   * @param array<string, mixed> $configuration
+   *   A configuração do plugin.
+   * @param array<array-key, mixed> $plugin_id
+   *   O identificador do plugin.
+   * @param array<array-key, mixed> $plugin_definition
+   *   A definição do plugin.
+   * @param EntityTypeManagerInterface $entity_type_manager
+   *   O valor informado para $entity_type_manager.
+   * @param ModuleHandlerInterface $module_handler
+   *   O valor informado para $module_handler.
+   * @param AccountInterface $current_user
+   *   O valor informado para $current_user.
+   * @param EntityFieldManagerInterface $entity_field_manager
+   *   O valor informado para $entity_field_manager.
+   * @param EntityTypeBundleInfoInterface $entity_type_bundle_info
+   *   O valor informado para $entity_type_bundle_info.
+   * @param EntityRepositoryInterface $entity_repository
+   *   O valor informado para $entity_repository.
+   * @param RequestStack $requestStack
+   *   O valor informado para $requestStack.
+   * @param aculta_H5PCourseAccessManager $h5pAccess
+   *   O valor informado para $h5pAccess.
+   */
   public function __construct(
     array $configuration,
     $plugin_id,
@@ -51,6 +77,15 @@ final class CourseH5PContentSelection extends DefaultSelection {
 
   /**
    * {@inheritdoc}
+   *
+   * @param ContainerInterface $container
+   *   O valor informado para $container.
+   * @param array<string, mixed> $configuration
+   *   O valor informado para $configuration.
+   * @param mixed $plugin_id
+   *   O valor informado para $plugin_id.
+   * @param mixed $plugin_definition
+   *   O valor informado para $plugin_definition.
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): static {
     /** @var aculta_H5PCourseAccessManager $h5pAccess */
@@ -72,6 +107,16 @@ final class CourseH5PContentSelection extends DefaultSelection {
 
   /**
    * {@inheritdoc}
+   *
+   * @param mixed $match
+   *   O valor informado para $match.
+   * @param mixed $match_operator
+   *   O valor informado para $match_operator.
+   * @param mixed $limit
+   *   O valor informado para $limit.
+   *
+   * @return array<array-key, mixed>
+   *   O resultado da operação.
    */
   public function getReferenceableEntities($match = NULL, $match_operator = 'CONTAINS', $limit = 0): array {
     $course = $this->courseContext();
@@ -110,6 +155,12 @@ final class CourseH5PContentSelection extends DefaultSelection {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<int, int|string> $ids
+   *   O valor informado para $ids.
+   *
+   * @return array<array-key, mixed>
+   *   O resultado da operação.
    */
   public function validateReferenceableEntities(array $ids): array {
     $entities = $this->getReferenceableEntities();

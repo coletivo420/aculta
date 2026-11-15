@@ -52,6 +52,34 @@ final class PrivateMessageNotificationWorker extends QueueWorkerBase implements 
 
   private const MAX_ATTEMPTS = 3;
 
+  /**
+   * Cria o worker de notificações de mensagens privadas.
+   *
+   * @param array<string, mixed> $configuration
+   *   A configuração do plugin.
+   * @param string $plugin_id
+   *   O identificador do plugin.
+   * @param mixed $plugin_definition
+   *   A definição do plugin.
+   * @param EntityTypeManagerInterface $entityTypeManager
+   *   O valor informado para $entityTypeManager.
+   * @param PrivateMessageServiceInterface $privateMessageService
+   *   O valor informado para $privateMessageService.
+   * @param ConversationWriteLock $conversationWriteLock
+   *   O valor informado para $conversationWriteLock.
+   * @param MessageNotifyInterface $messageNotify
+   *   O valor informado para $messageNotify.
+   * @param AcultaMailerInterface $mailer
+   *   O valor informado para $mailer.
+   * @param DomainSiteManager $siteManager
+   *   O valor informado para $siteManager.
+   * @param LockBackendInterface $lock
+   *   O valor informado para $lock.
+   * @param AvisoPreferenciasInterface $preferences
+   *   O valor informado para $preferences.
+   * @param EmailConfirmationPolicy $emailPolicy
+   *   O valor informado para $emailPolicy.
+   */
   public function __construct(
     array $configuration,
     string $plugin_id,
@@ -70,16 +98,16 @@ final class PrivateMessageNotificationWorker extends QueueWorkerBase implements 
   }
 
   /**
-   * {@inheritdoc}
+   * Cria o worker a partir do contêiner de serviços.
    *
    * @param ContainerInterface $container
-   *   O valor informado para $container.
+   *   O contêiner de serviços.
    * @param array<string, mixed> $configuration
-   *   O valor informado para $configuration.
-   * @param mixed $plugin_id
-   *   O valor informado para $plugin_id.
-   * @param mixed $plugin_definition
-   *   O valor informado para $plugin_definition.
+   *   A configuração do plugin.
+   * @param array<array-key, mixed> $plugin_id
+   *   O identificador do plugin.
+   * @param array<array-key, mixed> $plugin_definition
+   *   A definição do plugin.
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): static {
     return new static(
