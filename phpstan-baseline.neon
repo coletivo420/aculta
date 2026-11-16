@@ -58390,12 +58390,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Unit/PrivateMessageRetentionHooksTest.php
 
 		-
-			rawMessage: 'Parameter #2 $haystack of static method PHPUnit\Framework\Assert::assertStringContainsString() expects string, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Unit/PrivateMessageUnreadIndicatorHooksTest.php
-
-		-
 			rawMessage: 'Call to an undefined method object::getFieldDefinitions().'
 			identifier: method.notFound
 			count: 1

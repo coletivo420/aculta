@@ -66,7 +66,9 @@ final class PrivateMessageUnreadIndicatorHooksTest extends UnitTestCase {
 
     $this->hooks()->entityViewAlter($build, $thread, $this->display('inbox'));
 
-    self::assertStringContainsString('unread-thread', $build['#prefix']);
+    $prefix = $build['#prefix'];
+    self::assertIsString($prefix);
+    self::assertStringContainsString('unread-thread', $prefix);
   }
 
   /**
