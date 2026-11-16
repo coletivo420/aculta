@@ -12,7 +12,6 @@ declare(strict_types=1);
 use Drupal\Component\Render\FormattableMarkup;
 use Drupal\Core\Cache\NullBackend;
 use Drupal\Core\Plugin\DefaultPluginManager;
-use Drupal\Core\Render\Markup;
 use Drupal\Core\Theme\ComponentNegotiator;
 use Drupal\Core\Theme\ComponentPluginManager;
 
@@ -276,23 +275,23 @@ $samples = [
       'author_name' => 'Autora de exemplo',
     ],
     '#slots' => [
-      'avatar' => Markup::create('<img src="/author-avatar.png" alt="Retrato da autora">'),
-      'body' => Markup::create('<p>Comentário renderizado.</p>'),
-      'actions' => Markup::create('<a href="/comentarios/1">Link permanente</a>'),
-      'reactions_slot' => Markup::create('<button type="button">Reagir</button>'),
+      'avatar' => new FormattableMarkup('<img src="/author-avatar.png" alt="Retrato da autora">', []),
+      'body' => new FormattableMarkup('<p>Comentário renderizado.</p>', []),
+      'actions' => new FormattableMarkup('<a href="/comentarios/1">Link permanente</a>', []),
+      'reactions_slot' => new FormattableMarkup('<button type="button">Reagir</button>', []),
     ],
   ],
   'forum-post-card' => [
     '#props' => ['author_name' => 'Autora de exemplo'],
     '#slots' => [
-      'avatar' => Markup::create('<img src="/author-avatar.png" alt="Retrato da autora">'),
+      'avatar' => new FormattableMarkup('<img src="/author-avatar.png" alt="Retrato da autora">', []),
       'body' => 'Mensagem do fórum.',
     ],
   ],
   'forum-reply-compact' => [
     '#props' => ['author_name' => 'Autora de exemplo'],
     '#slots' => [
-      'avatar' => Markup::create('<img src="/author-avatar.png" alt="Retrato da autora">'),
+      'avatar' => new FormattableMarkup('<img src="/author-avatar.png" alt="Retrato da autora">', []),
       'content' => 'Resposta do fórum.',
     ],
   ],
@@ -303,7 +302,7 @@ $samples = [
   'account-terms-modal' => [
     '#props' => ['title' => 'Termos da conta'],
     '#slots' => [
-      'content' => Markup::create('<form><div class="portal-terms-modal__documents"><a href="#uso">Termos</a></div><button>Continuar</button></form>'),
+      'content' => new FormattableMarkup('<form><div class="portal-terms-modal__documents"><a href="#uso">Termos</a></div><button>Continuar</button></form>', []),
     ],
   ],
   'account-menu' => [
@@ -324,15 +323,15 @@ $samples = [
       'accordion_items' => [['label' => 'Pedidos', 'href' => '/conta/pedidos', 'open' => FALSE]],
       'logout' => ['label' => 'Sair', 'href' => '/user/logout'],
     ],
-    '#slots' => ['content' => Markup::create('<p>Resumo da conta.</p>')],
+    '#slots' => ['content' => new FormattableMarkup('<p>Resumo da conta.</p>', [])],
   ],
   'account-profile-card' => [
     '#props' => [],
-    '#slots' => ['content' => Markup::create('<article class="portal-account-bio"><h3>Sobre</h3><p>Biografia.</p></article>')],
+    '#slots' => ['content' => new FormattableMarkup('<article class="portal-account-bio"><h3>Sobre</h3><p>Biografia.</p></article>', [])],
   ],
   'account-courses' => [
     '#props' => [],
-    '#slots' => ['content' => Markup::create('<article class="portal-account-course"><h3>Curso de exemplo</h3><div class="portal-account-course__meta">Em andamento</div></article>')],
+    '#slots' => ['content' => new FormattableMarkup('<article class="portal-account-course"><h3>Curso de exemplo</h3><div class="portal-account-course__meta">Em andamento</div></article>', [])],
   ],
   'audio-player' => ['#props' => ['src' => '/files/sample.mp3', 'title' => 'Sessão cultural']],
   'alerts-trigger' => ['#props' => ['href' => '/avisos/resumo', 'count' => 0]],
@@ -367,17 +366,17 @@ $samples = [
   'article-authors' => [
     '#props' => [],
     '#slots' => [
-      'title' => Markup::create('<h2>Autoria</h2>'),
-      'authors' => Markup::create('<article class="author-card">Pessoa autora</article>'),
+      'title' => new FormattableMarkup('<h2>Autoria</h2>', []),
+      'authors' => new FormattableMarkup('<article class="author-card">Pessoa autora</article>', []),
     ],
   ],
   'courses-catalog' => [
     '#props' => [],
     '#slots' => [
-      'intro' => Markup::create('<p>Formação para ampliar conhecimento e fortalecer direitos.</p>'),
-      'catalog_title' => Markup::create('<h2>Cursos disponíveis</h2>'),
-      'catalog' => Markup::create('<ul><li>Curso de exemplo</li></ul>'),
-      'collaboration' => Markup::create('<p>Acesse sua conta para participar.</p>'),
+      'intro' => new FormattableMarkup('<p>Formação para ampliar conhecimento e fortalecer direitos.</p>', []),
+      'catalog_title' => new FormattableMarkup('<h2>Cursos disponíveis</h2>', []),
+      'catalog' => new FormattableMarkup('<ul><li>Curso de exemplo</li></ul>', []),
+      'collaboration' => new FormattableMarkup('<p>Acesse sua conta para participar.</p>', []),
     ],
   ],
   'account-experience-card' => [
@@ -405,12 +404,12 @@ $samples = [
       'account_link_description' => 'Preferências e dados cadastrais',
     ],
     '#slots' => [
-      'menu' => Markup::create('<nav aria-label="Studio"><a href="/conta">Conta</a></nav>'),
-      'avatar' => Markup::create('<img src="/avatar.svg" alt="" width="96" height="96">'),
-      'profile_link' => Markup::create('<a href="/perfil/exemplo">Ver perfil</a>'),
-      'calendar' => Markup::create('<section>Calendário</section>'),
-      'connections' => Markup::create('<section>Conexões</section>'),
-      'experiences' => Markup::create('<li class="aculta-account-experience-item"><article class="aculta-xp-card">Curso</article></li>'),
+      'menu' => new FormattableMarkup('<nav aria-label="Studio"><a href="/conta">Conta</a></nav>', []),
+      'avatar' => new FormattableMarkup('<img src="/avatar.svg" alt="" width="96" height="96">', []),
+      'profile_link' => new FormattableMarkup('<a href="/perfil/exemplo">Ver perfil</a>', []),
+      'calendar' => new FormattableMarkup('<section>Calendário</section>', []),
+      'connections' => new FormattableMarkup('<section>Conexões</section>', []),
+      'experiences' => new FormattableMarkup('<li class="aculta-account-experience-item"><article class="aculta-xp-card">Curso</article></li>', []),
     ],
   ],
   'consent-banner' => [
@@ -419,12 +418,12 @@ $samples = [
   'data-table' => [
     '#props' => ['label' => 'Tabela de conteúdos', 'mobile_variant' => 'cards'],
     '#slots' => [
-      'table' => Markup::create('<table class="data-table__table" role="table"><caption>Conteúdos recentes</caption><thead role="rowgroup"><tr role="row"><th id="col-title" scope="col" role="columnheader">Título</th><th id="col-status" scope="col" role="columnheader">Status</th></tr></thead><tbody role="rowgroup"><tr role="row"><td role="cell" headers="col-title" data-label="Título">Revista cultural</td><td role="cell" headers="col-status" data-label="Status">Rascunho</td></tr></tbody></table>'),
+      'table' => new FormattableMarkup('<table class="data-table__table" role="table"><caption>Conteúdos recentes</caption><thead role="rowgroup"><tr role="row"><th id="col-title" scope="col" role="columnheader">Título</th><th id="col-status" scope="col" role="columnheader">Status</th></tr></thead><tbody role="rowgroup"><tr role="row"><td role="cell" headers="col-title" data-label="Título">Revista cultural</td><td role="cell" headers="col-status" data-label="Status">Rascunho</td></tr></tbody></table>', []),
     ],
   ],
   'document-download' => [
     '#props' => ['format' => 'PDF', 'size' => '2,4 MB', 'format_token' => 'pdf'],
-    '#slots' => ['link' => Markup::create('<a href="/manual.pdf">Manual do curso</a>')],
+    '#slots' => ['link' => new FormattableMarkup('<a href="/manual.pdf">Manual do curso</a>', [])],
   ],
   'discussion-reaction-bar' => [
     '#props' => [
@@ -446,13 +445,13 @@ $samples = [
   ],
   'donation-presentation' => [
     '#props' => ['variant' => 'thanks'],
-    '#slots' => ['content' => Markup::create('<p class="donation-presentation__donor">Pessoa de exemplo</p>')],
+    '#slots' => ['content' => new FormattableMarkup('<p class="donation-presentation__donor">Pessoa de exemplo</p>', [])],
   ],
   'empty-state' => [
     '#props' => ['compact' => FALSE],
     '#slots' => [
-      'message' => Markup::create('<p>Você ainda não está matriculado em nenhum curso.</p>'),
-      'actions' => Markup::create('<a href="/catalogo">Explorar o catálogo de cursos</a>'),
+      'message' => new FormattableMarkup('<p>Você ainda não está matriculado em nenhum curso.</p>', []),
+      'actions' => new FormattableMarkup('<a href="/catalogo">Explorar o catálogo de cursos</a>', []),
     ],
   ],
   'events-upcoming-block' => [
@@ -471,8 +470,8 @@ $samples = [
       'trigger_url' => '/destino-completo',
     ],
     '#slots' => [
-      'content' => Markup::create('<p>Conteúdo do diálogo.</p>'),
-      'actions' => Markup::create('<a class="button button--outline" href="/destino-completo">Continuar</a>'),
+      'content' => new FormattableMarkup('<p>Conteúdo do diálogo.</p>', []),
+      'actions' => new FormattableMarkup('<a class="button button--outline" href="/destino-completo">Continuar</a>', []),
     ],
   ],
   'delete-confirm' => [
@@ -505,8 +504,8 @@ $samples = [
   'form-field' => [
     '#props' => ['id' => 'email', 'invalid' => TRUE],
     '#slots' => [
-      'label' => Markup::create('<label for="email-control">E-mail</label>'),
-      'control' => Markup::create('<input id="email-control" name="email" type="email" aria-invalid="true" aria-describedby="email-description email-error">'),
+      'label' => new FormattableMarkup('<label for="email-control">E-mail</label>', []),
+      'control' => new FormattableMarkup('<input id="email-control" name="email" type="email" aria-invalid="true" aria-describedby="email-description email-error">', []),
       'description' => 'Informe um endereço válido.',
       'error' => 'Revise o endereço informado.',
     ],
@@ -522,15 +521,15 @@ $samples = [
   ],
   'forum-category-page' => [
     '#props' => [],
-    '#slots' => ['content' => Markup::create('<header class="forum-category-header"><h1>Categoria</h1></header><div class="aculta-forum-category-page__layout"><main>Tópicos</main><aside>Regras</aside></div>')],
+    '#slots' => ['content' => new FormattableMarkup('<header class="forum-category-header"><h1>Categoria</h1></header><div class="aculta-forum-category-page__layout"><main>Tópicos</main><aside>Regras</aside></div>', [])],
   ],
   'forum-list-page' => [
     '#props' => [],
-    '#slots' => ['content' => Markup::create('<section class="aculta-forum-list__panel" aria-label="Lista"><div class="aculta-forum-list__rows"><article>Tópico</article></div></section>')],
+    '#slots' => ['content' => new FormattableMarkup('<section class="aculta-forum-list__panel" aria-label="Lista"><div class="aculta-forum-list__rows"><article>Tópico</article></div></section>', [])],
   ],
   'forum-search-page' => [
     '#props' => [],
-    '#slots' => ['content' => Markup::create('<form id="views-exposed-form-aculta-forum-search-page-search"><div class="form-item-keys"><input name="keys"></div><div class="form-item-categoria"><select name="categoria"></select></div><div id="edit-actions"><button type="submit">Buscar</button></div></form><div class="view-aculta-forum-search"><div class="view-empty">Sem resultados</div></div>')],
+    '#slots' => ['content' => new FormattableMarkup('<form id="views-exposed-form-aculta-forum-search-page-search"><div class="form-item-keys"><input name="keys"></div><div class="form-item-categoria"><select name="categoria"></select></div><div id="edit-actions"><button type="submit">Buscar</button></div></form><div class="view-aculta-forum-search"><div class="view-empty">Sem resultados</div></div>', [])],
   ],
   'forum-topic' => [
     '#props' => ['variant' => 'teaser', 'has_title' => TRUE, 'has_meta' => TRUE, 'has_bookmark' => FALSE],
@@ -548,16 +547,16 @@ $samples = [
       'created' => 1793836800,
     ],
     '#slots' => [
-      'topic' => Markup::create('<section class="aculta-forum-topic__presentation aculta-forum-topic__presentation--full"><p>Conteúdo do tópico.</p></section>'),
+      'topic' => new FormattableMarkup('<section class="aculta-forum-topic__presentation aculta-forum-topic__presentation--full"><p>Conteúdo do tópico.</p></section>', []),
     ],
   ],
   'forum-topic-row' => [
     '#props' => ['pinned' => TRUE, 'badges' => NULL, 'replies' => NULL, 'views' => NULL, 'last_activity' => NULL],
     '#slots' => [
-      'title' => Markup::create('<a href="/discussoes/topico-exemplo">Tópico de teste</a>'),
-      'meta' => Markup::create('<article class="author-card">Autoria pública</article><span class="forum-topic-row__category">Cultura</span>'),
-      'replies_content' => Markup::create('42'),
-      'activity_content' => Markup::create('2h atrás'),
+      'title' => new FormattableMarkup('<a href="/discussoes/topico-exemplo">Tópico de teste</a>', []),
+      'meta' => new FormattableMarkup('<article class="author-card">Autoria pública</article><span class="forum-topic-row__category">Cultura</span>', []),
+      'replies_content' => new FormattableMarkup('42', []),
+      'activity_content' => new FormattableMarkup('2h atrás', []),
     ],
   ],
   'heading' => [
@@ -569,7 +568,7 @@ $samples = [
   ],
   'hint' => [
     '#props' => ['tone' => 'muted'],
-    '#slots' => ['content' => Markup::create('Texto auxiliar fictício.')],
+    '#slots' => ['content' => new FormattableMarkup('Texto auxiliar fictício.', [])],
   ],
   'icon' => ['#props' => ['name' => 'map-pin', 'variant' => 'duotone', 'size' => 'md']],
   'layout-page' => [
@@ -590,10 +589,10 @@ $samples = [
       'certificates_title' => 'Meus certificados',
     ],
     '#slots' => [
-      'resume' => Markup::create('<article class="lms-learning-course-card">Continuar curso</article>'),
-      'courses' => Markup::create('<article class="lms-learning-course-card">Meu curso</article>'),
-      'empty_action' => Markup::create('<a href="/cursos">Explorar cursos</a>'),
-      'certificates' => Markup::create('<article class="lms-certificate-card">Certificado</article>'),
+      'resume' => new FormattableMarkup('<article class="lms-learning-course-card">Continuar curso</article>', []),
+      'courses' => new FormattableMarkup('<article class="lms-learning-course-card">Meu curso</article>', []),
+      'empty_action' => new FormattableMarkup('<a href="/cursos">Explorar cursos</a>', []),
+      'certificates' => new FormattableMarkup('<article class="lms-certificate-card">Certificado</article>', []),
     ],
   ],
   'lms-learning-course-card' => [
@@ -611,8 +610,8 @@ $samples = [
       'current_lesson' => 'Próxima aula: Introdução',
     ],
     '#slots' => [
-      'journey_action' => Markup::create('<a href="/group/1">Ver jornada</a>'),
-      'continue_action' => Markup::create('<a href="/group/1/aula/1">Continuar</a>'),
+      'journey_action' => new FormattableMarkup('<a href="/group/1">Ver jornada</a>', []),
+      'continue_action' => new FormattableMarkup('<a href="/group/1/aula/1">Continuar</a>', []),
     ],
   ],
   'lms-certificate-card' => [
@@ -622,25 +621,25 @@ $samples = [
       'status_text' => 'Válido',
       'issued_text' => 'Emitido hoje',
     ],
-    '#slots' => ['verification_action' => Markup::create('<a href="/certificados/1">Ver certificado</a>')],
+    '#slots' => ['verification_action' => new FormattableMarkup('<a href="/certificados/1">Ver certificado</a>', [])],
   ],
   'lms-learning-journey' => [
     '#props' => [],
     '#slots' => [
-      'content' => Markup::create('<section data-portal-ui="aculta-learning-journey"><h2 data-portal-ui="aculta-learning-journey__title">Minha jornada</h2><ol data-portal-ui="aculta-learning-journey__lessons"><li>Aula 1</li></ol></section>'),
+      'content' => new FormattableMarkup('<section data-portal-ui="aculta-learning-journey"><h2 data-portal-ui="aculta-learning-journey__title">Minha jornada</h2><ol data-portal-ui="aculta-learning-journey__lessons"><li>Aula 1</li></ol></section>', []),
     ],
   ],
   'lms-learning-room' => [
     '#props' => [],
     '#slots' => [
-      'content' => Markup::create('<main data-portal-ui="aculta-learning-room"><div data-portal-ui="aculta-learning-room__layout"><article data-portal-ui="aculta-learning-room__content">Atividade</article></div></main>'),
+      'content' => new FormattableMarkup('<main data-portal-ui="aculta-learning-room"><div data-portal-ui="aculta-learning-room__layout"><article data-portal-ui="aculta-learning-room__content">Atividade</article></div></main>', []),
     ],
   ],
   'layout-section' => [
     '#props' => [],
     '#slots' => [
-      'header' => Markup::create('<h2>Participantes</h2>'),
-      'content' => Markup::create('<div>Cartões de participantes.</div>'),
+      'header' => new FormattableMarkup('<h2>Participantes</h2>', []),
+      'content' => new FormattableMarkup('<div>Cartões de participantes.</div>', []),
     ],
   ],
   'lms-lesson-page' => [
@@ -652,22 +651,22 @@ $samples = [
   'lms-course-curriculum' => [
     '#props' => [],
     '#slots' => [
-      'header' => Markup::create('<h1>Curso de exemplo</h1>'),
-      'summary' => Markup::create('<p>1 aula</p>'),
-      'actions' => Markup::create('<a href="/curso/aula/adicionar">Adicionar aula</a>'),
-      'lessons_heading' => Markup::create('Estrutura do curso'),
-      'lessons' => Markup::create('<ol><li>Aula de exemplo</li></ol>'),
+      'header' => new FormattableMarkup('<h1>Curso de exemplo</h1>', []),
+      'summary' => new FormattableMarkup('<p>1 aula</p>', []),
+      'actions' => new FormattableMarkup('<a href="/curso/aula/adicionar">Adicionar aula</a>', []),
+      'lessons_heading' => new FormattableMarkup('Estrutura do curso', []),
+      'lessons' => new FormattableMarkup('<ol><li>Aula de exemplo</li></ol>', []),
       'lesson_order_form' => '',
-      'resources' => Markup::create('<section class="aculta-lms-course-builder__resources"><h2>Materiais de apoio</h2><ul><li>Leitura complementar</li></ul></section>'),
+      'resources' => new FormattableMarkup('<section class="aculta-lms-course-builder__resources"><h2>Materiais de apoio</h2><ul><li>Leitura complementar</li></ul></section>', []),
     ],
   ],
   'lms-course-materials' => [
     '#props' => [],
     '#slots' => [
-      'title' => Markup::create('<h2>Documentos privados do curso</h2>'),
-      'description' => Markup::create('<p>Arquivos vinculados ao curso.</p>'),
-      'add' => Markup::create('<a href="/curso/documentos/adicionar">Adicionar documento</a>'),
-      'items' => Markup::create('<ul><li>Material de estudo.pdf</li></ul>'),
+      'title' => new FormattableMarkup('<h2>Documentos privados do curso</h2>', []),
+      'description' => new FormattableMarkup('<p>Arquivos vinculados ao curso.</p>', []),
+      'add' => new FormattableMarkup('<a href="/curso/documentos/adicionar">Adicionar documento</a>', []),
+      'items' => new FormattableMarkup('<ul><li>Material de estudo.pdf</li></ul>', []),
       'empty' => '',
       'unavailable' => '',
     ],
@@ -675,9 +674,9 @@ $samples = [
   'lms-h5p-course' => [
     '#props' => [],
     '#slots' => [
-      'title' => Markup::create('<h2>Curso de exemplo</h2>'),
-      'course_link' => Markup::create('<a href="/ganjalab/curso">Acessar curso</a>'),
-      'activities' => Markup::create('<div>Atividade H5P</div>'),
+      'title' => new FormattableMarkup('<h2>Curso de exemplo</h2>', []),
+      'course_link' => new FormattableMarkup('<a href="/ganjalab/curso">Acessar curso</a>', []),
+      'activities' => new FormattableMarkup('<div>Atividade H5P</div>', []),
     ],
   ],
   'map-popup' => [
@@ -727,46 +726,46 @@ $samples = [
   ],
   'profile-details' => [
     '#props' => ['title' => 'Biografia', 'title_id' => 'studio-profile-bio-title', 'heading_level' => 2],
-    '#slots' => ['bio' => Markup::create('<p>Biografia autorizada.</p>'), 'actions' => ''],
+    '#slots' => ['bio' => new FormattableMarkup('<p>Biografia autorizada.</p>', []), 'actions' => ''],
   ],
   'portal-requirements' => [
     '#props' => [],
-    '#slots' => ['content' => Markup::create('<section><h2>Requisitos</h2><div class="aculta-portal-requirements__legend">Estados</div></section>')],
+    '#slots' => ['content' => new FormattableMarkup('<section><h2>Requisitos</h2><div class="aculta-portal-requirements__legend">Estados</div></section>', [])],
   ],
   'progress' => [
     '#props' => ['id' => 'curso-progresso', 'label' => 'Progresso do curso', 'value' => 60, 'max' => 100],
   ],
   'related-content' => [
     '#props' => [],
-    '#slots' => ['content' => Markup::create('<h3>Conteúdo relacionado</h3><ul><li>Local relacionado</li></ul>')],
+    '#slots' => ['content' => new FormattableMarkup('<h3>Conteúdo relacionado</h3><ul><li>Local relacionado</li></ul>', [])],
   ],
   'search-preview' => [
     '#props' => [],
-    '#slots' => ['content' => Markup::create('<ul><li><a href="/busca">Resultado de exemplo</a></li></ul>')],
+    '#slots' => ['content' => new FormattableMarkup('<ul><li><a href="/busca">Resultado de exemplo</a></li></ul>', [])],
   ],
   'green-stash-page' => [
     '#props' => [],
-    '#slots' => ['content' => Markup::create('<section class="studio aculta-green-stash"><h2>Produtos</h2><nav class="aculta-green-stash__navigation"><a class="aculta-green-stash__navigation-link" href="/green-stash" aria-current="page">Produtos</a></nav><div class="aculta-green-stash__products"><h3>Produto de exemplo</h3></div></section>')],
+    '#slots' => ['content' => new FormattableMarkup('<section class="studio aculta-green-stash"><h2>Produtos</h2><nav class="aculta-green-stash__navigation"><a class="aculta-green-stash__navigation-link" href="/green-stash" aria-current="page">Produtos</a></nav><div class="aculta-green-stash__products"><h3>Produto de exemplo</h3></div></section>', [])],
   ],
   'image-audit-report' => [
     '#props' => [],
-    '#slots' => ['content' => Markup::create('<p>Relatório somente de leitura.</p><table><caption>Resumo</caption><tbody><tr><td>Imagens</td><td>12</td></tr></tbody></table>')],
+    '#slots' => ['content' => new FormattableMarkup('<p>Relatório somente de leitura.</p><table><caption>Resumo</caption><tbody><tr><td>Imagens</td><td>12</td></tr></tbody></table>', [])],
   ],
   'sales-panel' => [
     '#props' => [],
-    '#slots' => ['content' => Markup::create('<section><h2>Vendas por período</h2><table><caption>Relatório demonstrativo</caption><tbody><tr><td>2026-11</td><td>3</td></tr></tbody></table></section>')],
+    '#slots' => ['content' => new FormattableMarkup('<section><h2>Vendas por período</h2><table><caption>Relatório demonstrativo</caption><tbody><tr><td>2026-11</td><td>3</td></tr></tbody></table></section>', [])],
   ],
   'saved-content-page' => [
     '#props' => [],
-    '#slots' => ['content' => Markup::create('<h1 class="page-title">Itens salvos</h1><ul class="studio-saved-tabs"><li><a href="/salvos" aria-current="page">Salvos</a></li></ul><div class="studio-saved-list-wrapper"><ul class="studio-card-compact-list"><li><article class="studio-card-compact"><a class="compact-card-title" href="/conteudo">Conteúdo salvo</a></article></li></ul></div>')],
+    '#slots' => ['content' => new FormattableMarkup('<h1 class="page-title">Itens salvos</h1><ul class="studio-saved-tabs"><li><a href="/salvos" aria-current="page">Salvos</a></li></ul><div class="studio-saved-list-wrapper"><ul class="studio-card-compact-list"><li><article class="studio-card-compact"><a class="compact-card-title" href="/conteudo">Conteúdo salvo</a></article></li></ul></div>', [])],
   ],
   'secret-reveal' => [
     '#props' => [],
-    '#slots' => ['content' => Markup::create('<p>Nome da credencial</p><pre>valor oculto</pre>')],
+    '#slots' => ['content' => new FormattableMarkup('<p>Nome da credencial</p><pre>valor oculto</pre>', [])],
   ],
   'studio-account-section-layout' => [
     '#props' => [],
-    '#slots' => ['content' => Markup::create('<section class="studio studio-account-section"><details class="studio-account-section__navigation"><summary>Seções</summary><ul class="studio-account-nav-list"><li><a href="/conta">Dados</a></li></ul></details><div data-aculta-account-main>Conteúdo</div></section>')],
+    '#slots' => ['content' => new FormattableMarkup('<section class="studio studio-account-section"><details class="studio-account-section__navigation"><summary>Seções</summary><ul class="studio-account-nav-list"><li><a href="/conta">Dados</a></li></ul></details><div data-aculta-account-main>Conteúdo</div></section>', [])],
   ],
   'studio-menu' => [
     '#props' => ['title' => 'Studio Dashboard'],
@@ -785,7 +784,7 @@ $samples = [
   ],
   'studio-listing-table' => [
     '#props' => [],
-    '#slots' => ['content' => Markup::create('<div class="studio__listing-wrap"><table class="studio__listing"><thead><tr><th>Título</th></tr></thead><tbody><tr><td>Exemplo</td></tr></tbody></table></div>')],
+    '#slots' => ['content' => new FormattableMarkup('<div class="studio__listing-wrap"><table class="studio__listing"><thead><tr><th>Título</th></tr></thead><tbody><tr><td>Exemplo</td></tr></tbody></table></div>', [])],
   ],
   'studio-menu-item' => [
     '#props' => ['title' => 'Meu Perfil', 'url' => '/conta/perfil', 'current' => TRUE, 'icon' => 'user'],
@@ -793,40 +792,40 @@ $samples = [
   ],
   'studio-section-header' => [
     '#props' => [],
-    '#slots' => ['content' => Markup::create('<div class="studio__section-header"><h2 data-portal-ui="studio-heading">Perfil editorial</h2><ul class="studio__actions"><li><a href="#editar">Editar</a></li></ul></div>')],
+    '#slots' => ['content' => new FormattableMarkup('<div class="studio__section-header"><h2 data-portal-ui="studio-heading">Perfil editorial</h2><ul class="studio__actions"><li><a href="#editar">Editar</a></li></ul></div>', [])],
   ],
   'studio-revista-form' => [
     '#props' => [],
-    '#slots' => ['content' => Markup::create('<form class="node-revista-form"><fieldset><legend>Publicação</legend><label for="title">Título</label><input id="title" value="Exemplo"><div class="form-actions"><button class="form-submit">Salvar</button></div></fieldset></form>')],
+    '#slots' => ['content' => new FormattableMarkup('<form class="node-revista-form"><fieldset><legend>Publicação</legend><label for="title">Título</label><input id="title" value="Exemplo"><div class="form-actions"><button class="form-submit">Salvar</button></div></fieldset></form>', [])],
   ],
   'profile-editor-dialog' => [
     '#props' => [],
     '#slots' => [
-      'intro' => Markup::create('<p>Gerencie sua identidade.</p>'),
-      'identity' => Markup::create('<h2>Identidade</h2>'),
-      'bio' => Markup::create('<h2>Biografia</h2>'),
-      'social_links' => Markup::create('<h2>Redes sociais</h2>'),
+      'intro' => new FormattableMarkup('<p>Gerencie sua identidade.</p>', []),
+      'identity' => new FormattableMarkup('<h2>Identidade</h2>', []),
+      'bio' => new FormattableMarkup('<h2>Biografia</h2>', []),
+      'social_links' => new FormattableMarkup('<h2>Redes sociais</h2>', []),
     ],
   ],
   'studio-shell' => [
     '#props' => [],
-    '#slots' => ['content' => Markup::create('<div class="studio__layout"><nav class="studio__sidebar">Painel</nav><main class="studio__main"><h1>Marley</h1><form><label for="shell-title">Título</label><input id="shell-title"><button class="form-submit">Salvar</button></form></main></div>')],
+    '#slots' => ['content' => new FormattableMarkup('<div class="studio__layout"><nav class="studio__sidebar">Painel</nav><main class="studio__main"><h1>Marley</h1><form><label for="shell-title">Título</label><input id="shell-title"><button class="form-submit">Salvar</button></form></main></div>', [])],
   ],
   'studio-form' => [
     '#props' => [],
-    '#slots' => ['content' => Markup::create('<form><fieldset><legend>Perfil</legend><label for="studio-form-title">Título</label><input id="studio-form-title" value="Exemplo"><div class="form-actions"><button class="form-submit">Salvar</button></div></fieldset></form>')],
+    '#slots' => ['content' => new FormattableMarkup('<form><fieldset><legend>Perfil</legend><label for="studio-form-title">Título</label><input id="studio-form-title" value="Exemplo"><div class="form-actions"><button class="form-submit">Salvar</button></div></fieldset></form>', [])],
   ],
   'studio-course-authoring-page' => [
     '#props' => [],
-    '#slots' => ['content' => Markup::create('<section class="studio-course-authoring"><a class="studio-course-authoring__back" href="#educador">Voltar</a><form><label for="course-name">Nome</label><input id="course-name"><button class="form-submit">Criar curso</button></form></section>')],
+    '#slots' => ['content' => new FormattableMarkup('<section class="studio-course-authoring"><a class="studio-course-authoring__back" href="#educador">Voltar</a><form><label for="course-name">Nome</label><input id="course-name"><button class="form-submit">Criar curso</button></form></section>', [])],
   ],
   'support-form' => [
     '#props' => [],
-    '#slots' => ['content' => Markup::create('<form class="aculta-support"><fieldset><legend>Apoio</legend><div class="form-actions"><button>Continuar</button></div></fieldset></form>')],
+    '#slots' => ['content' => new FormattableMarkup('<form class="aculta-support"><fieldset><legend>Apoio</legend><div class="form-actions"><button>Continuar</button></div></fieldset></form>', [])],
   ],
   'public-profile-page' => [
     '#props' => [],
-    '#slots' => ['content' => Markup::create('<section class="portal-profile"><header class="portal-profile__header"><h2 class="portal-profile__name">Pessoa exemplo</h2></header><p class="portal-profile__bio">Biografia pública de exemplo.</p></section>')],
+    '#slots' => ['content' => new FormattableMarkup('<section class="portal-profile"><header class="portal-profile__header"><h2 class="portal-profile__name">Pessoa exemplo</h2></header><p class="portal-profile__bio">Biografia pública de exemplo.</p></section>', [])],
   ],
   'site-footer' => [
     '#props' => [],
@@ -842,8 +841,8 @@ $samples = [
       'total_steps' => 4,
     ],
     '#slots' => [
-      'content' => Markup::create('<p>Bem-vindo ao percurso do curso.</p>'),
-      'actions' => Markup::create('<a class="button button--primary" href="/curso/etapa-2">Avançar</a>'),
+      'content' => new FormattableMarkup('<p>Bem-vindo ao percurso do curso.</p>', []),
+      'actions' => new FormattableMarkup('<a class="button button--primary" href="/curso/etapa-2">Avançar</a>', []),
     ],
   ],
   'revista-teaser' => [
@@ -857,9 +856,9 @@ $samples = [
       'read_label' => 'Ler artigo',
     ],
     '#slots' => [
-      'category' => Markup::create('<span>Cultivo</span>'),
-      'subtitle' => Markup::create('<span>Subtítulo do artigo</span>'),
-      'summary' => Markup::create('<p>Resumo do artigo editorial.</p>'),
+      'category' => new FormattableMarkup('<span>Cultivo</span>', []),
+      'subtitle' => new FormattableMarkup('<span>Subtítulo do artigo</span>', []),
+      'summary' => new FormattableMarkup('<p>Resumo do artigo editorial.</p>', []),
     ],
   ],
   'revista-listing' => [
@@ -869,7 +868,7 @@ $samples = [
       'has_items' => TRUE,
     ],
     '#slots' => [
-      'items' => Markup::create('<div class="revista-items"><p>Lista de publicações</p></div>'),
+      'items' => new FormattableMarkup('<div class="revista-items"><p>Lista de publicações</p></div>', []),
     ],
   ],
   'revista-publication' => [
@@ -883,11 +882,11 @@ $samples = [
       'has_discussion' => FALSE,
     ],
     '#slots' => [
-      'meta' => Markup::create('<div>Publicado em 2026-11-05</div>'),
-      'subtitle' => Markup::create('<h2>Subtítulo</h2>'),
-      'summary' => Markup::create('<p>Resumo da publicação</p>'),
-      'body' => Markup::create('<p>Corpo completo do artigo editorial.</p>'),
-      'authors' => Markup::create('<div>Autoria Coletiva</div>'),
+      'meta' => new FormattableMarkup('<div>Publicado em 2026-11-05</div>', []),
+      'subtitle' => new FormattableMarkup('<h2>Subtítulo</h2>', []),
+      'summary' => new FormattableMarkup('<p>Resumo da publicação</p>', []),
+      'body' => new FormattableMarkup('<p>Corpo completo do artigo editorial.</p>', []),
+      'authors' => new FormattableMarkup('<div>Autoria Coletiva</div>', []),
     ],
   ],
   'wiki-entry' => [
@@ -902,10 +901,10 @@ $samples = [
       'has_discussion' => FALSE,
     ],
     '#slots' => [
-      'title' => Markup::create('<h1>Canabinoides</h1>'),
-      'summary' => Markup::create('<p>Resumo do verbete enciclopédico.</p>'),
-      'categories' => Markup::create('<ul><li>Ciência</li></ul>'),
-      'body' => Markup::create('<p>Texto completo do verbete.</p>'),
+      'title' => new FormattableMarkup('<h1>Canabinoides</h1>', []),
+      'summary' => new FormattableMarkup('<p>Resumo do verbete enciclopédico.</p>', []),
+      'categories' => new FormattableMarkup('<ul><li>Ciência</li></ul>', []),
+      'body' => new FormattableMarkup('<p>Texto completo do verbete.</p>', []),
     ],
   ],
   'social-links-page' => [
@@ -919,13 +918,13 @@ $samples = [
   'product-card' => [
     '#props' => [],
     '#slots' => [
-      'content' => Markup::create('<div><a href="/produtos">Produto de teste</a><p>Resumo do produto.</p><form><label for="test-size">Tamanho</label><select id="test-size"><option>P</option></select><button type="button">Adicionar ao carrinho</button></form></div>'),
+      'content' => new FormattableMarkup('<div><a href="/produtos">Produto de teste</a><p>Resumo do produto.</p><form><label for="test-size">Tamanho</label><select id="test-size"><option>P</option></select><button type="button">Adicionar ao carrinho</button></form></div>', []),
     ],
   ],
   'tabs' => [
     '#props' => ['label' => 'Suítes ACULTA'],
     '#slots' => [
-      'items' => Markup::create('<div class="item-list"><ul class="item-list__items"><li><a href="/marley" aria-current="page">Marley</a></li><li><a href="/ganjalab">Ganjalab</a></li></ul></div>'),
+      'items' => new FormattableMarkup('<div class="item-list"><ul class="item-list__items"><li><a href="/marley" aria-current="page">Marley</a></li><li><a href="/ganjalab">Ganjalab</a></li></ul></div>', []),
     ],
   ],
   'forum-quote' => [
@@ -937,7 +936,7 @@ $samples = [
       'accent_side' => 'start',
     ],
     '#slots' => [
-      'content' => Markup::create('<p>Texto citado de exemplo.</p>'),
+      'content' => new FormattableMarkup('<p>Texto citado de exemplo.</p>', []),
     ],
   ],
   'reply-indent' => [
@@ -946,7 +945,7 @@ $samples = [
       'depth' => 2,
     ],
     '#slots' => [
-      'content' => Markup::create('<p>Conteúdo da resposta recuada.</p>'),
+      'content' => new FormattableMarkup('<p>Conteúdo da resposta recuada.</p>', []),
     ],
   ],
 ];
