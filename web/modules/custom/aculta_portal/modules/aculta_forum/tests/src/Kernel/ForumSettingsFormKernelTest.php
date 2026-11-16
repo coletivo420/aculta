@@ -60,16 +60,20 @@ final class ForumSettingsFormKernelTest extends KernelTestBase {
    */
   public function testDefaults(): void {
     $form = $this->form->buildForm([], new FormState());
+    $commentMove = $form['comment_move_enabled'] ?? NULL;
+    self::assertIsArray($commentMove);
+    $editWindow = $form['edit_window_minutes'] ?? NULL;
+    self::assertIsArray($editWindow);
 
-    self::assertSame('checkbox', $form['comment_move_enabled']['#type']);
+    self::assertSame('checkbox', $commentMove['#type'] ?? NULL);
     self::assertSame(
       'aculta_forum.settings:comment_move_enabled',
-      $form['comment_move_enabled']['#config_target'],
+      $commentMove['#config_target'] ?? NULL,
     );
-    self::assertSame('number', $form['edit_window_minutes']['#type']);
-    self::assertSame(10, $form['edit_window_minutes']['#default_value']);
-    self::assertSame(0, $form['edit_window_minutes']['#min']);
-    self::assertTrue($form['edit_window_minutes']['#required']);
+    self::assertSame('number', $editWindow['#type'] ?? NULL);
+    self::assertSame(10, $editWindow['#default_value'] ?? NULL);
+    self::assertSame(0, $editWindow['#min'] ?? NULL);
+    self::assertTrue($editWindow['#required'] ?? NULL);
   }
 
   /**
@@ -87,6 +91,67 @@ final class ForumSettingsFormKernelTest extends KernelTestBase {
     $negative->setValue('edit_window_minutes', -5);
     $this->form->submitForm($form, $negative);
     self::assertSame(0, $this->container->get('config.factory')
+      ->get('aculta_forum.settings')->get('edit_window_minutes'));
+  }
+
+  /**
+   * Malformed reaction configuration is excluded and valid edits are stored.
+   */
+  public function testReactionConfigurationIsValidated(): void {
+    $this->container->get('config.factory')->getEditable('aculta_forum.settings')
+      ->set('allowed_reactions', [
+        ['id' => 'heart', 'icon' => 'heart', 'label' => 'Coração', 'enabled' => TRUE],
+        ['id' => ['invalid'], 'icon' => 'broken', 'label' => 'Inválida', 'enabled' => TRUE],
+        ['id' => 'sem_rotulo', 'icon' => 'broken', 'enabled' => TRUE],
+        'entrada inválida',
+      ])
+      ->set('default_reaction', 'heart')
+      ->set('reactions_enabled', TRUE)
+      ->save();
+
+    $form = $this->form->buildForm([], new FormState());
+    $fieldset = $form['reactions_fieldset'] ?? NULL;
+    self::assertIsArray($fieldset);
+    $defaultReaction = $fieldset['default_reaction'] ?? NULL;
+    self::assertIsArray($defaultReaction);
+    self::assertSame(['heart' => 'Coração (heart)'], $defaultReaction['#options'] ?? NULL);
+
+    $table = $fieldset['reactions_table'] ?? NULL;
+    self::assertIsArray($table);
+    $row = $table[0] ?? NULL;
+    self::assertIsArray($row);
+    $id = $row['id'] ?? NULL;
+    self::assertIsArray($id);
+    self::assertSame('<code>heart</code>', $id['#markup'] ?? NULL);
+
+    $state = new FormState();
+    $state->setValue('edit_window_minutes', '15');
+    $state->setValue('reply_max_depth', '3');
+    $state->setValue('topic_author_delete_policy', 'direct_delete');
+    $state->setValue('reactions_enabled', '1');
+    $state->setValue('default_reaction', 'heart');
+    $state->setValue('reactions_table', [
+      0 => ['icon' => 'heart-new', 'label' => 'Novo rótulo', 'enabled' => 0],
+    ]);
+    $submissionForm = [];
+    $this->form->submitForm($submissionForm, $state);
+
+    $saved = $this->container->get('config.factory')->get('aculta_forum.settings');
+    self::assertSame(15, $saved->get('edit_window_minutes'));
+    self::assertSame(3, $saved->get('reply_max_depth'));
+    self::assertSame('direct_delete', $saved->get('topic_author_delete_policy'));
+    self::assertTrue($saved->get('reactions_enabled'));
+    self::assertSame('heart', $saved->get('default_reaction'));
+    self::assertSame([
+      ['id' => 'heart', 'icon' => 'heart-new', 'label' => 'Novo rótulo', 'enabled' => FALSE],
+    ], $saved->get('allowed_reactions'));
+
+    $invalidState = new FormState();
+    $invalidState->setValue('edit_window_minutes', '90');
+    $invalidState->setValue('reply_max_depth', '8');
+    $this->form->submitForm($submissionForm, $invalidState);
+    self::assertArrayHasKey('reply_max_depth', $invalidState->getErrors());
+    self::assertSame(15, $this->container->get('config.factory')
       ->get('aculta_forum.settings')->get('edit_window_minutes'));
   }
 
