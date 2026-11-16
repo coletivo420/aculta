@@ -32,6 +32,8 @@ use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Yaml\Yaml;
 
+require_once DRUPAL_ROOT . '/modules/custom/aculta_portal/modules/aculta_forum/aculta_forum.install';
+
 /**
  * Runs the Comment-to-ForumPost migration with a persistent Migrate map.
  */
@@ -167,6 +169,65 @@ final class ForumCommentMigrationBatchKernelTest extends KernelTestBase {
       'field_domain_source' => ['target_id' => 'forum_aculta_org'],
     ]);
     $this->topic->save();
+  }
+
+  /**
+   * The first-publication update backfills published comments lacking a marker.
+   */
+  public function testFirstPublicationUpdateBackfillsMissingMarkers(): void {
+    $marked = $this->comment('Already marked');
+    $markedId = (int) $marked->id();
+
+    $legacy = Comment::create([
+      'comment_type' => 'aculta_discussion_post',
+      'entity_type' => 'node',
+      'entity_id' => $this->topic->id(),
+      'field_name' => 'field_aculta_discussion',
+      'uid' => $this->author->id(),
+      'subject' => 'Legacy published reply',
+      'comment_body' => ['value' => 'Legacy body', 'format' => 'forum'],
+      'status' => CommentInterface::PUBLISHED,
+    ]);
+    $legacy->save();
+    $legacyId = (int) $legacy->id();
+    $legacyCreated = (int) $legacy->getCreatedTime();
+
+    $unpublished = Comment::create([
+      'comment_type' => 'aculta_discussion_post',
+      'entity_type' => 'node',
+      'entity_id' => $this->topic->id(),
+      'field_name' => 'field_aculta_discussion',
+      'uid' => $this->author->id(),
+      'subject' => 'Legacy unpublished reply',
+      'comment_body' => ['value' => 'Unpublished body', 'format' => 'forum'],
+      'status' => 0,
+    ]);
+    $unpublished->save();
+    $unpublishedId = (int) $unpublished->id();
+
+    $sandbox = [];
+    aculta_forum_update_9001($sandbox);
+
+    self::assertSame(1, $sandbox['#finished']);
+    self::assertSame(2, $sandbox['scanned']);
+    self::assertSame(1, $sandbox['processed']);
+    self::assertSame($legacyId, $sandbox['last_cid']);
+    unset($sandbox['#finished']);
+    aculta_forum_update_9001($sandbox);
+    self::assertSame(1, $sandbox['#finished']);
+    self::assertSame(2, $sandbox['scanned']);
+    self::assertSame(1, $sandbox['processed']);
+    $storage = $this->container->get('entity_type.manager')->getStorage('comment');
+    $storage->resetCache([$markedId, $legacyId, $unpublishedId]);
+    $reloadedMarked = $storage->load($markedId);
+    self::assertInstanceOf(CommentInterface::class, $reloadedMarked);
+    self::assertSame(1700000000, (int) $reloadedMarked->get('field_aculta_published_at')->value);
+    $reloadedLegacy = $storage->load($legacyId);
+    self::assertInstanceOf(CommentInterface::class, $reloadedLegacy);
+    self::assertSame($legacyCreated, (int) $reloadedLegacy->get('field_aculta_published_at')->value);
+    $reloadedUnpublished = $storage->load($unpublishedId);
+    self::assertInstanceOf(CommentInterface::class, $reloadedUnpublished);
+    self::assertTrue($reloadedUnpublished->get('field_aculta_published_at')->isEmpty());
   }
 
   /**
