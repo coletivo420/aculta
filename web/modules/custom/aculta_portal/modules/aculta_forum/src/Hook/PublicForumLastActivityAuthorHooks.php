@@ -64,11 +64,14 @@ final class PublicForumLastActivityAuthorHooks {
    * Core Comment statistics and the ForumPost aggregate identify the latest
    * response. Identity and historical-author presentation remain owned by
    * aculta_user; Drupal login names are never used for presentation.
+   *
+   * @param array<string, mixed> $variables
+   *   Preprocess variables supplied by Views.
    */
   #[Hook('preprocess_views_view_fields')]
   public function preprocessViewsViewFields(array &$variables): void {
     $view = $variables['view'] ?? NULL;
-    if ($view === NULL || $view->id() !== 'aculta_forum_public_topics') {
+    if (!$view instanceof ViewExecutable || $view->id() !== 'aculta_forum_public_topics') {
       return;
     }
 
@@ -83,9 +86,7 @@ final class PublicForumLastActivityAuthorHooks {
     else {
       $topicIds = [];
       foreach ($view->result as $resultRow) {
-        if ($resultRow instanceof ResultRow) {
-          $topicIds[] = (int) $view->field['nid']->getValue($resultRow);
-        }
+        $topicIds[] = self::intValue($view->field['nid']->getValue($resultRow));
       }
       $statistics = $this->postStatistics->getByTopics($topicIds);
       $postIds = array_values(array_unique(array_filter(array_map(
@@ -104,10 +105,10 @@ final class PublicForumLastActivityAuthorHooks {
       $this->preparedViews[$view] = $statistics;
     }
 
-    $topicId = (int) $view->field['nid']->getValue($row);
-    $commentCount = (int) $view->field['last_comment_count']->getValue($row);
-    $commentTimestamp = $commentCount > 0 ? (int) $view->field['last_comment_timestamp']->getValue($row) : 0;
-    $latestActivity = (int) $view->field['last_updated']->getValue($row);
+    $topicId = self::intValue($view->field['nid']->getValue($row));
+    $commentCount = self::intValue($view->field['last_comment_count']->getValue($row));
+    $commentTimestamp = $commentCount > 0 ? self::intValue($view->field['last_comment_timestamp']->getValue($row)) : 0;
+    $latestActivity = self::intValue($view->field['last_updated']->getValue($row));
     $post = $statistics[$topicId] ?? ['count' => 0, 'last_activity' => 0, 'last_post_id' => 0];
     $postTimestamp = (int) $post['last_activity'];
     $latestResponse = max($commentTimestamp, $postTimestamp);
@@ -120,7 +121,7 @@ final class PublicForumLastActivityAuthorHooks {
     if ($postTimestamp >= $commentTimestamp && (int) $post['last_post_id'] > 0) {
       $postEntity = $this->forumPosts[(int) $post['last_post_id']] ?? NULL;
       if ($postEntity instanceof ForumPost && $postEntity->hasField('legacy_author') && !$postEntity->get('legacy_author')->isEmpty()) {
-        $legacyAuthor = $this->legacyAuthors[(int) $postEntity->get('legacy_author')->target_id] ?? NULL;
+        $legacyAuthor = $this->legacyAuthors[self::intValue($postEntity->get('legacy_author')->target_id)] ?? NULL;
         if ($legacyAuthor instanceof LegacyAuthor) {
           $variables['last_comment_author'] = $this->authorCardBuilder->buildLegacyForum($legacyAuthor);
         }
@@ -130,7 +131,7 @@ final class PublicForumLastActivityAuthorHooks {
       $accountId = $postEntity instanceof ForumPost ? (int) $postEntity->getOwnerId() : 0;
     }
     else {
-      $accountId = (int) $view->field['last_comment_uid']->getValue($row);
+      $accountId = self::intValue($view->field['last_comment_uid']->getValue($row));
     }
 
     $account = $this->accounts[$accountId] ?? NULL;
@@ -152,10 +153,15 @@ final class PublicForumLastActivityAuthorHooks {
     }
 
     // Keep the no-card result fresh if a public nickname/profile is added.
-    $placeholder = ['#markup' => ''];
-    CacheableMetadata::createFromObject($account)->applyTo($placeholder);
-    $placeholder['#cache']['max-age'] = 0;
-    $variables['last_comment_author_cache'] = $placeholder;
+    $metadata = CacheableMetadata::createFromObject($account);
+    $variables['last_comment_author_cache'] = [
+      '#markup' => '',
+      '#cache' => [
+        'contexts' => $metadata->getCacheContexts(),
+        'tags' => $metadata->getCacheTags(),
+        'max-age' => 0,
+      ],
+    ];
   }
 
   /**
@@ -170,10 +176,10 @@ final class PublicForumLastActivityAuthorHooks {
     $accountIds = [];
     $legacyAuthorIds = [];
     foreach ($view->result as $resultRow) {
-      $topicId = (int) $view->field['nid']->getValue($resultRow);
-      $commentCount = (int) $view->field['last_comment_count']->getValue($resultRow);
-      $commentTimestamp = $commentCount > 0 ? (int) $view->field['last_comment_timestamp']->getValue($resultRow) : 0;
-      $latestActivity = (int) $view->field['last_updated']->getValue($resultRow);
+      $topicId = self::intValue($view->field['nid']->getValue($resultRow));
+      $commentCount = self::intValue($view->field['last_comment_count']->getValue($resultRow));
+      $commentTimestamp = $commentCount > 0 ? self::intValue($view->field['last_comment_timestamp']->getValue($resultRow)) : 0;
+      $latestActivity = self::intValue($view->field['last_updated']->getValue($resultRow));
       $post = $statistics[$topicId] ?? ['count' => 0, 'last_activity' => 0, 'last_post_id' => 0];
       $postTimestamp = (int) $post['last_activity'];
       $latestResponse = max($commentTimestamp, $postTimestamp);
@@ -184,7 +190,7 @@ final class PublicForumLastActivityAuthorHooks {
       if ($postTimestamp >= $commentTimestamp && (int) $post['last_post_id'] > 0) {
         $postEntity = $this->forumPosts[(int) $post['last_post_id']] ?? NULL;
         if ($postEntity instanceof ForumPost && $postEntity->hasField('legacy_author') && !$postEntity->get('legacy_author')->isEmpty()) {
-          $legacyAuthorId = (int) $postEntity->get('legacy_author')->target_id;
+          $legacyAuthorId = self::intValue($postEntity->get('legacy_author')->target_id);
           if ($legacyAuthorId > 0) {
             $legacyAuthorIds[] = $legacyAuthorId;
           }
@@ -194,7 +200,7 @@ final class PublicForumLastActivityAuthorHooks {
         }
       }
       else {
-        $uid = (int) $view->field['last_comment_uid']->getValue($resultRow);
+        $uid = self::intValue($view->field['last_comment_uid']->getValue($resultRow));
         if ($uid > 0) {
           $accountIds[] = $uid;
         }
@@ -213,6 +219,23 @@ final class PublicForumLastActivityAuthorHooks {
         }
       }
     }
+  }
+
+  /**
+   * Converts numeric Views and entity values without coercing unrelated values.
+   */
+  private static function intValue(mixed $value): int {
+    if (is_int($value)) {
+      return $value;
+    }
+    if (is_float($value) || is_bool($value)) {
+      return (int) $value;
+    }
+    if (is_string($value) && is_numeric($value)) {
+      return (int) $value;
+    }
+
+    return 0;
   }
 
 }
