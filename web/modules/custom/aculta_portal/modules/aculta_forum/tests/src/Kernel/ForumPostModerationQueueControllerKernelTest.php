@@ -16,6 +16,8 @@ use Drupal\node\Entity\NodeType;
 use Drupal\user\Entity\Role;
 use Drupal\user\Entity\User;
 use Drupal\user\RoleInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\Core\Url;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -123,8 +125,12 @@ final class ForumPostModerationQueueControllerKernelTest extends KernelTestBase 
         'is_default' => $id === 'aculta_org',
       ])->save();
     }
-    Role::load(RoleInterface::ANONYMOUS_ID)->grantPermission('access content')->save();
-    Role::load(RoleInterface::AUTHENTICATED_ID)
+    $anonymousRole = Role::load(RoleInterface::ANONYMOUS_ID);
+    self::assertInstanceOf(Role::class, $anonymousRole);
+    $anonymousRole->grantPermission('access content')->save();
+    $authenticatedRole = Role::load(RoleInterface::AUTHENTICATED_ID);
+    self::assertInstanceOf(Role::class, $authenticatedRole);
+    $authenticatedRole
       ->grantPermission('access content')
       ->grantPermission('view any unpublished content')
       ->save();
@@ -166,17 +172,33 @@ final class ForumPostModerationQueueControllerKernelTest extends KernelTestBase 
     $this->post($this->forumTopic, 'Já publicada', 'published');
 
     $build = $this->purpose->runInSite('forum', fn () => $this->controller()->queue());
+    self::assertIsArray($build);
 
-    self::assertSame('table', $build['#type']);
-    self::assertCount(1, $build['#rows']);
-    $row = $build['#rows'][0];
-    self::assertSame('Aguardando revisão', $row[0]['data']['#plain_text']);
-    self::assertSame('Tópico do Fórum', $row[1]['data']['#plain_text']);
-    $links = $row[4]['data']['#links'];
-    self::assertSame('aculta_forum.post_moderate', $links['review']['url']->getRouteName());
-    self::assertSame((string) $review->getRevisionId(), $links['review']['url']->getRouteParameters()['revision_id']);
-    self::assertSame('aculta_forum.post_revision_history', $links['history']['url']->getRouteName());
-    self::assertSame('Não há publicações aguardando moderação.', (string) $build['#empty']);
+    self::assertSame('table', $this->stringEntry($build, '#type'));
+    $rows = $this->arrayEntry($build, '#rows');
+    self::assertCount(1, $rows);
+    $row = $this->arrayEntry($rows, 0);
+    $titleData = $this->arrayEntry($this->arrayEntry($row, 0), 'data');
+    self::assertSame('Aguardando revisão', $this->stringEntry($titleData, '#plain_text'));
+    $topicData = $this->arrayEntry($this->arrayEntry($row, 1), 'data');
+    self::assertSame('Tópico do Fórum', $this->stringEntry($topicData, '#plain_text'));
+    $operations = $this->arrayEntry($this->arrayEntry($row, 4), 'data');
+    self::assertSame('operations', $this->stringEntry($operations, '#type'));
+    $links = $this->arrayEntry($operations, '#links');
+    $reviewLink = $this->arrayEntry($links, 'review');
+    $reviewUrl = $reviewLink['url'] ?? NULL;
+    self::assertInstanceOf(Url::class, $reviewUrl);
+    self::assertSame('aculta_forum.post_moderate', $reviewUrl->getRouteName());
+    $revisionId = $review->getRevisionId();
+    self::assertNotNull($revisionId);
+    self::assertSame((string) $revisionId, $this->stringEntry($reviewUrl->getRouteParameters(), 'revision_id'));
+    $historyLink = $this->arrayEntry($links, 'history');
+    $historyUrl = $historyLink['url'] ?? NULL;
+    self::assertInstanceOf(Url::class, $historyUrl);
+    self::assertSame('aculta_forum.post_revision_history', $historyUrl->getRouteName());
+    $empty = $build['#empty'] ?? NULL;
+    self::assertInstanceOf(TranslatableMarkup::class, $empty);
+    self::assertSame('Não há publicações aguardando moderação.', (string) $empty);
   }
 
   /**
@@ -185,7 +207,8 @@ final class ForumPostModerationQueueControllerKernelTest extends KernelTestBase 
   public function testQueueEmptyWithoutReviewPosts(): void {
     $this->post($this->forumTopic, 'Rascunho', 'draft');
     $build = $this->purpose->runInSite('forum', fn () => $this->controller()->queue());
-    self::assertSame([], $build['#rows']);
+    self::assertIsArray($build);
+    self::assertSame([], $this->arrayEntry($build, '#rows'));
   }
 
   /**
@@ -228,6 +251,40 @@ final class ForumPostModerationQueueControllerKernelTest extends KernelTestBase 
     ]);
     $post->save();
     return $post;
+  }
+
+  /**
+   * Reads and verifies a render array item.
+   *
+   * @param array<array-key, mixed> $values
+   *   Values to read from.
+   * @param int|string $key
+   *   Key to read.
+   *
+   * @return array<array-key, mixed>
+   *   The item after confirming that it is an array.
+   */
+  private function arrayEntry(array $values, int|string $key): array {
+    $value = $values[$key] ?? NULL;
+    self::assertIsArray($value);
+    return $value;
+  }
+
+  /**
+   * Reads and verifies a string render array item.
+   *
+   * @param array<array-key, mixed> $values
+   *   Values to read from.
+   * @param string $key
+   *   Key to read.
+   *
+   * @return string
+   *   The item after confirming that it is a string.
+   */
+  private function stringEntry(array $values, string $key): string {
+    $value = $values[$key] ?? NULL;
+    self::assertIsString($value);
+    return $value;
   }
 
 }
