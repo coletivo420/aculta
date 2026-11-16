@@ -2,7 +2,10 @@
 
 declare(strict_types=1);
 
-require_once __DIR__ . '/../vendor/autoload.php';
+$autoload = __DIR__ . '/../vendor/autoload.php';
+if (is_file($autoload)) {
+  require_once $autoload;
+}
 
 use Symfony\Component\Process\Process;
 
