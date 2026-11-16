@@ -7,12 +7,18 @@ namespace Drupal\aculta_forum\Hook;
 use Drupal\aculta_forum\Service\DiscussionReactionBuilder;
 use Drupal\aculta_forum\Service\DiscussionReactionManager;
 use Drupal\comment\CommentInterface;
+use Drupal\Core\Block\BlockPluginInterface;
+use Drupal\Core\Access\CsrfTokenGenerator;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Hook\Order\Order;
+use Drupal\Core\KeyValueStore\KeyValueFactoryInterface;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
 use Drupal\user\EntityOwnerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -30,15 +36,24 @@ final class DiscussionReactionEntityViewHooks {
     #[Autowire(service: 'current_user')]
     private readonly AccountProxyInterface $currentUser,
     #[Autowire(service: 'entity_type.manager')]
-    private readonly \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager,
+    private readonly EntityTypeManagerInterface $entityTypeManager,
     #[Autowire(service: 'keyvalue')]
-    private readonly \Drupal\Core\KeyValueStore\KeyValueFactoryInterface $keyValueFactory,
+    private readonly KeyValueFactoryInterface $keyValueFactory,
     #[Autowire(service: 'csrf_token')]
-    private readonly \Drupal\Core\Access\CsrfTokenGenerator $csrfGenerator,
+    private readonly CsrfTokenGenerator $csrfGenerator,
   ) {}
 
   /**
    * Implements hook_entity_view().
+   *
+   * @param array<array-key, mixed> $build
+   *   The entity render array.
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   The entity being rendered.
+   * @param \Drupal\Core\Entity\Display\EntityViewDisplayInterface $display
+   *   The entity view display.
+   * @param string $view_mode
+   *   The view mode.
    */
   #[Hook('entity_view', order: Order::Last)]
   public function entityView(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, string $view_mode): void {
@@ -64,13 +79,17 @@ final class DiscussionReactionEntityViewHooks {
 
   /**
    * Enriches author card and preprocess variables for comment templates.
+   *
+   * @param array<string, mixed> $variables
+   *   Comment template variables.
    */
   #[Hook('preprocess_comment')]
   public function preprocessComment(array &$variables): void {
     // Nível real da resposta: o Drupal grava um ponto por nível na coluna thread.
     $threadComment = $variables['comment'] ?? NULL;
-    if ($threadComment instanceof \Drupal\comment\CommentInterface) {
-      $variables['reply_depth'] = min(3, substr_count((string) $threadComment->get('thread')->value, '.'));
+    if ($threadComment instanceof CommentInterface) {
+      $thread = $threadComment->get('thread')->value;
+      $variables['reply_depth'] = min(3, is_string($thread) ? substr_count($thread, '.') : 0);
       // Resposta em nível: lado oposto ao cartão ao qual responde (pai). A raiz segue a alternância da conversa.
       $variables['accent_side'] = $this->discussionSide($threadComment);
       // Comentários de publicação da Revista: sem tópico; a publicação é o próprio tópico.
@@ -78,7 +97,7 @@ final class DiscussionReactionEntityViewHooks {
       $variables['publication_comment'] = $host instanceof NodeInterface && $host->bundle() === 'revista';
       // Controles administrativos valem para todo comentário da discussão (fórum, LMS, Revista e Wiki).
       $variables['admin_url'] = $this->currentUser->hasPermission('administer comments')
-        ? \Drupal\Core\Url::fromRoute('aculta_forum.comment_moderation', ['comment' => (int) $threadComment->id()])->toString()
+        ? Url::fromRoute('aculta_forum.comment_moderation', ['comment' => (int) $threadComment->id()])->toString()
         : NULL;
       // Estado de exclusão vale para todo comentário da discussão, não só para a Revista.
       $cid = (int) $threadComment->id();
@@ -95,8 +114,8 @@ final class DiscussionReactionEntityViewHooks {
       $variables['delete_token'] = $this->csrfGenerator->get('aculta_forum.comment.delete.' . $cid);
       $variables['delete_url'] = '/discussoes/' . $cid . '/excluir';
       $variables['delete_message'] = $isAdmin
-        ? (string) new \Drupal\Core\StringTranslation\TranslatableMarkup('O conteúdo será substituído por "Conteúdo removido pela moderação". Para excluir o bloco de vez, use os controles do comentário.')
-        : (string) new \Drupal\Core\StringTranslation\TranslatableMarkup('A resposta ficará como "Comentário excluído" e não poderá mais ser editada.');
+        ? (string) new TranslatableMarkup('O conteúdo será substituído por "Conteúdo removido pela moderação". Para excluir o bloco de vez, use os controles do comentário.')
+        : (string) new TranslatableMarkup('A resposta ficará como "Comentário excluído" e não poderá mais ser editada.');
       if ($variables['publication_comment']) {
         $reactions = $this->reactionManager->loadReactions('comment', (int) $threadComment->id(), NULL);
         $total = 0;
@@ -134,7 +153,8 @@ final class DiscussionReactionEntityViewHooks {
         $variables['reply_first'] = $position === 0;
       }
     }
-    $comment = $variables['elements']['#comment'] ?? NULL;
+    $elements = $variables['elements'] ?? NULL;
+    $comment = is_array($elements) ? ($elements['#comment'] ?? NULL) : NULL;
     if (!$comment instanceof CommentInterface
       || $comment->bundle() !== 'aculta_discussion_post'
       || $comment->getFieldName() !== 'field_aculta_discussion') {
@@ -148,26 +168,41 @@ final class DiscussionReactionEntityViewHooks {
       $variables['author_posts'] = $postsCount;
       $variables['author_reactions_received'] = $stats['reactions_received'];
       $variables['author_reactions_given'] = $stats['reactions_given'];
-      if (isset($variables['content']['author_card']) && is_array($variables['content']['author_card'])) {
-        $variables['content']['author_card']['#reactions_received'] = $stats['reactions_received'];
-        $variables['content']['author_card']['#reactions_given'] = $stats['reactions_given'];
+      $content = $variables['content'] ?? NULL;
+      if (is_array($content) && isset($content['author_card']) && is_array($content['author_card'])) {
+        $content['author_card']['#reactions_received'] = $stats['reactions_received'];
+        $content['author_card']['#reactions_given'] = $stats['reactions_given'];
+        $variables['content'] = $content;
       }
     }
 
-    if (!isset($variables['content']['reaction_bar'])) {
-      $variables['content']['reaction_bar'] = $this->reactionBuilder->build($comment, $this->currentUser) + ['#weight' => 20];
+    $content = $variables['content'] ?? NULL;
+    if (!is_array($content)) {
+      $content = [];
     }
-    $variables['reaction_bar'] = $variables['content']['reaction_bar'];
+    if (!isset($content['reaction_bar']) || !is_array($content['reaction_bar'])) {
+      $content['reaction_bar'] = $this->reactionBuilder->build($comment, $this->currentUser) + ['#weight' => 20];
+    }
+    $variables['content'] = $content;
+    $variables['reaction_bar'] = $content['reaction_bar'];
     // Contador de reações recebidas (somente leitura), com os dados da própria barra de reação.
     $barProps = $variables['reaction_bar']['#props'] ?? [];
-    if (!empty($barProps['reactions'])) {
+    if (!is_array($barProps)) {
+      $barProps = [];
+    }
+    $reactions = $barProps['reactions'] ?? NULL;
+    if (is_array($reactions) && $reactions !== []) {
+      $allowedReactions = $barProps['allowed_reactions'] ?? [];
+      if (!is_array($allowedReactions)) {
+        $allowedReactions = [];
+      }
       $variables['reactions_received'] = [
         '#type' => 'component',
         '#component' => 'aculta420_v2:discussion-reactions-received',
         '#props' => [
           'target_id' => 'discussion-reactions-comment-' . $comment->id(),
-          'reactions' => $barProps['reactions'],
-          'allowed_reactions' => $barProps['allowed_reactions'] ?? [],
+          'reactions' => $reactions,
+          'allowed_reactions' => $allowedReactions,
         ],
       ];
     }
@@ -175,10 +210,17 @@ final class DiscussionReactionEntityViewHooks {
 
   /**
    * Enriches author stats and reaction bar for forum topic node templates.
+   *
+   * @param array<string, mixed> $variables
+   *   Node template variables.
    */
   #[Hook('preprocess_node')]
   public function preprocessNode(array &$variables): void {
-    $node = $variables['node'] ?? ($variables['elements']['#node'] ?? NULL);
+    $node = $variables['node'] ?? NULL;
+    $elements = $variables['elements'] ?? NULL;
+    if ($node === NULL && is_array($elements)) {
+      $node = $elements['#node'] ?? NULL;
+    }
     if (!$node instanceof NodeInterface || $node->bundle() !== 'aculta_forum_topic') {
       return;
     }
@@ -190,20 +232,32 @@ final class DiscussionReactionEntityViewHooks {
       $variables['author_posts'] = $postsCount;
       $variables['author_reactions_received'] = $stats['reactions_received'];
       $variables['author_reactions_given'] = $stats['reactions_given'];
-      if (isset($variables['content']['author_card']) && is_array($variables['content']['author_card'])) {
-        $variables['content']['author_card']['#reactions_received'] = $stats['reactions_received'];
-        $variables['content']['author_card']['#reactions_given'] = $stats['reactions_given'];
+      $content = $variables['content'] ?? NULL;
+      if (is_array($content) && isset($content['author_card']) && is_array($content['author_card'])) {
+        $content['author_card']['#reactions_received'] = $stats['reactions_received'];
+        $content['author_card']['#reactions_given'] = $stats['reactions_given'];
+        $variables['content'] = $content;
       }
     }
 
-    if (!isset($variables['content']['reaction_bar'])) {
-      $variables['content']['reaction_bar'] = $this->reactionBuilder->build($node, $this->currentUser) + ['#weight' => 20];
+    $content = $variables['content'] ?? NULL;
+    if (!is_array($content)) {
+      $content = [];
     }
-    $variables['reaction_bar'] = $variables['content']['reaction_bar'];
+    if (!isset($content['reaction_bar']) || !is_array($content['reaction_bar'])) {
+      $content['reaction_bar'] = $this->reactionBuilder->build($node, $this->currentUser) + ['#weight' => 20];
+    }
+    $variables['content'] = $content;
+    $variables['reaction_bar'] = $content['reaction_bar'];
   }
 
   /**
    * Attaches author reaction and post stats to the entity build array.
+   *
+   * @param array<array-key, mixed> $build
+   *   The entity render array.
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   The entity whose author data is added.
    */
   private function enrichAuthorStats(array &$build, EntityInterface $entity): void {
     $uid = $entity instanceof EntityOwnerInterface ? (int) $entity->getOwnerId() : 0;
@@ -216,12 +270,32 @@ final class DiscussionReactionEntityViewHooks {
     $build['#author_posts'] = $postsCount;
     $build['#author_reactions_received'] = $stats['reactions_received'];
     $build['#author_reactions_given'] = $stats['reactions_given'];
-    $build['#cache']['tags'][] = 'aculta_user_reactions:' . $uid;
+    $cache = $build['#cache'] ?? NULL;
+    if (!is_array($cache)) {
+      $cache = [];
+    }
+    $tags = $cache['tags'] ?? NULL;
+    if (!is_array($tags)) {
+      $tags = [];
+    }
+    $tags[] = 'aculta_user_reactions:' . $uid;
+    $cache['tags'] = $tags;
+    $build['#cache'] = $cache;
 
     if (isset($build['author_card']) && is_array($build['author_card'])) {
       $build['author_card']['#reactions_received'] = $stats['reactions_received'];
       $build['author_card']['#reactions_given'] = $stats['reactions_given'];
-      $build['author_card']['#cache']['tags'][] = 'aculta_user_reactions:' . $uid;
+      $authorCardCache = $build['author_card']['#cache'] ?? NULL;
+      if (!is_array($authorCardCache)) {
+        $authorCardCache = [];
+      }
+      $authorCardTags = $authorCardCache['tags'] ?? NULL;
+      if (!is_array($authorCardTags)) {
+        $authorCardTags = [];
+      }
+      $authorCardTags[] = 'aculta_user_reactions:' . $uid;
+      $authorCardCache['tags'] = $authorCardTags;
+      $build['author_card']['#cache'] = $authorCardCache;
     }
   }
 
@@ -256,11 +330,15 @@ final class DiscussionReactionEntityViewHooks {
    * Revista: comentários por total de reações (desc) e depois data (desc); respostas seguem o pai.
    *
    * A seção de comentários da publicação é renderizada pelo bloco do campo, e não pelo build da entidade.
+   *
+   * @param array<array-key, mixed> $build
+   *   The block render array.
+   * @param \Drupal\Core\Block\BlockPluginInterface $block
+   *   The block plugin.
    */
   #[Hook('block_view_alter')]
-  public function revistaCommentBlockOrder(array &$build, $block): void {
-    if (!is_object($block) || !method_exists($block, 'getPluginId')
-      || !str_starts_with((string) $block->getPluginId(), 'field_block:node:revista:field_aculta_discussion')) {
+  public function revistaCommentBlockOrder(array &$build, BlockPluginInterface $block): void {
+    if (!str_starts_with($block->getPluginId(), 'field_block:node:revista:field_aculta_discussion')) {
       return;
     }
     $this->orderCommentsIn($build);
@@ -268,6 +346,13 @@ final class DiscussionReactionEntityViewHooks {
 
   /**
    * Revista (entidade): mesma ordenação quando a seção vem do build da entidade.
+   *
+   * @param array<array-key, mixed> $build
+   *   The entity render array.
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   The entity being rendered.
+   * @param \Drupal\Core\Entity\Display\EntityViewDisplayInterface $display
+   *   The entity view display.
    */
   #[Hook('entity_view_alter')]
   public function revistaCommentOrder(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display): void {
@@ -280,6 +365,9 @@ final class DiscussionReactionEntityViewHooks {
 
   /**
    * Revista: a seção de comentários da publicação é ordenada no preprocess do nó.
+   *
+   * @param array<string, mixed> $variables
+   *   Node template variables.
    */
   #[Hook('preprocess_node')]
   public function revistaCommentPreprocessOrder(array &$variables): void {
@@ -287,31 +375,43 @@ final class DiscussionReactionEntityViewHooks {
     if (!$node instanceof NodeInterface || $node->bundle() !== 'revista') {
       return;
     }
-    if (isset($variables['content']['field_aculta_discussion']) && is_array($variables['content']['field_aculta_discussion'])) {
-      $this->orderCommentsIn($variables['content']['field_aculta_discussion']);
+    $content = $variables['content'] ?? NULL;
+    if (is_array($content) && isset($content['field_aculta_discussion']) && is_array($content['field_aculta_discussion'])) {
+      $this->orderCommentsIn($content['field_aculta_discussion']);
+      $variables['content'] = $content;
     }
   }
 
   /**
    * Encontra listas de comentários (chave comments com elementos #comment) e reordena cada uma.
+   *
+   * @param array<array-key, mixed> $element
+   *   A render array that may contain a comment list.
    */
   private function orderCommentsIn(array &$element): void {
     if (isset($element['comments']) && is_array($element['comments'])) {
       $this->reorderCommentItems($element['comments']);
     }
     foreach (Element::children($element) as $key) {
-      if (is_array($element[$key])) {
-        $this->orderCommentsIn($element[$key]);
+      if ((!is_int($key) && !is_string($key)) || !isset($element[$key]) || !is_array($element[$key])) {
+        continue;
       }
+      $this->orderCommentsIn($element[$key]);
     }
   }
 
   /**
    * Reordena uma lista de comentários: raízes por total de reações e data; respostas logo após o pai.
+   *
+   * @param array<array-key, mixed> $items
+   *   The render array items keyed by comment ID or render element key.
    */
   private function reorderCommentItems(array &$items): void {
     $comments = [];
     foreach (Element::children($items) as $key) {
+      if ((!is_int($key) && !is_string($key)) || !isset($items[$key]) || !is_array($items[$key])) {
+        continue;
+      }
       $comment = $items[$key]['#comment'] ?? NULL;
       if ($comment instanceof CommentInterface) {
         $comments[(int) $comment->id()] = $comment;
@@ -354,7 +454,12 @@ final class DiscussionReactionEntityViewHooks {
       $walk($root);
     }
     foreach ($order as $index => $cid) {
-      $items[$cid]['#weight'] = $index;
+      $item = $items[$cid] ?? NULL;
+      if (!is_array($item)) {
+        continue;
+      }
+      $item['#weight'] = $index;
+      $items[$cid] = $item;
     }
   }
 
