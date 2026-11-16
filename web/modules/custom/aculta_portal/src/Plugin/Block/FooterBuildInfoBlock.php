@@ -48,7 +48,7 @@ final class FooterBuildInfoBlock extends BlockBase {
    * Retorna os 7 primeiros caracteres do commit atual, ou "desconhecida".
    */
   public static function shortHash(): string {
-    $root = dirname((string) \Drupal::root());
+    $root = dirname(defined('DRUPAL_ROOT') ? DRUPAL_ROOT : '');
     $head_file = $root . '/.git/HEAD';
     if (!is_readable($head_file)) {
       return 'desconhecida';
