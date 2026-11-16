@@ -26,15 +26,15 @@ body:has([data-theme="dark"]) .ck-body-wrapper {
 }
 
 [data-theme="dark"] .ck-editor__editable {
-  background: var(--color-surface);
   color: var(--color-text-primary);
+  background: var(--color-surface);
 }
 
 [data-theme="dark"] .vertical-tabs,
 [data-theme="dark"] .vertical-tabs__menu,
 [data-theme="dark"] .vertical-tabs__menu-item {
-  background: var(--color-surface-raised);
   color: var(--color-text-primary);
+  background: var(--color-surface-raised);
 }
 
 [data-theme="dark"] .vertical-tabs__menu-item-title {
@@ -48,15 +48,15 @@ body:has([data-theme="dark"]) .ck-body-wrapper {
 /* Painéis do CKEditor (emoji, menus) ficam fora do contêiner da story, anexados ao body. */
 body:has([data-theme="dark"]) .ck-body-wrapper .ck-dropdown__panel,
 body:has([data-theme="dark"]) .ck-body-wrapper .ck-aculta-fluent-emoji-panel {
-  background: var(--color-surface-raised);
   color: var(--color-text-primary);
+  background: var(--color-surface-raised);
 }
 
 /* Campos de formulário dentro do escuro: superfície e texto do tema escuro (campos de busca e similares). */
 [data-theme="dark"] :is(input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]), select, textarea) {
-  background-color: var(--color-surface);
   color: var(--color-text-primary);
   border-color: var(--color-border);
+  background-color: var(--color-surface);
 }
 
 [data-theme="dark"] :is(input, select, textarea)::placeholder {

@@ -8,12 +8,12 @@
 .discussion-reactions-received__badge {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
   padding: 2px 8px;
+  color: var(--color-text-secondary);
   border: 1px solid var(--color-border);
   border-radius: 999px;
-  color: var(--color-text-secondary);
   font-size: var(--font-size-sm);
+  gap: 4px;
 }
 
 .discussion-reactions-received__count {
@@ -24,30 +24,30 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-inline-size: 1.75rem;
-  block-size: 1.75rem;
-  padding-inline: var(--spacing-xs);
+  cursor: pointer;
+  color: var(--color-text-secondary);
   border: 1px solid var(--color-border);
   border-radius: 999px;
   background: transparent;
-  color: var(--color-text-secondary);
   font-weight: 600;
-  cursor: pointer;
+  min-inline-size: 1.75rem;
+  block-size: 1.75rem;
+  padding-inline: var(--spacing-xs);
 }
 
 .discussion-reactions-received__popover[popover] {
-  margin: 0;
-  inset: auto;
   top: anchor(bottom);
   left: anchor(left);
+  margin: 0;
   margin-block-start: 6px;
-  position-try-fallbacks: flip-block;
   padding: var(--spacing-xs);
+  color: var(--color-text);
   border: 1px solid var(--color-border);
   border-radius: var(--border-radius-lg);
   background: var(--color-surface);
   box-shadow: 0 8px 24px rgb(0 0 0 / .18);
-  color: var(--color-text);
+  inset: auto;
+  position-try-fallbacks: flip-block;
 }
 
 .discussion-reactions-received__popover-list {

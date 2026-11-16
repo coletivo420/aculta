@@ -151,7 +151,6 @@
   margin-block-start: var(--spacing-xs, .5rem);
 }
 
-
 .discussion-reply-composer__form .button--primary:hover,
 .discussion-reply-composer__form button[type="submit"]:not(.button--danger):not(.button--secondary):not(.button--outline):not(.button--ghost):hover,
 .discussion-reply-composer__form input[type="submit"]:not(.button--danger):not(.button--secondary):not(.button--outline):not(.button--ghost):hover {
