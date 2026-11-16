@@ -44,7 +44,11 @@ final class EmailConfirmationNotice {
   ) {}
 
   /**
-   * Render array do aviso, ou NULL quando não deve aparecer. */
+   * Render array do aviso, ou NULL quando não deve aparecer.
+   *
+   * @return array<string, mixed>|null
+   *   O array de renderização, ou NULL.
+   */
   public function build(): ?array {
     if (!in_array($this->routeMatch->getRouteName(), self::ACCOUNT_ROUTES, TRUE)
       || $this->currentUser->isAnonymous()

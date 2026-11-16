@@ -25,6 +25,9 @@ use Drupal\user\Plugin\EntityReferenceSelection\UserSelection;
  * Implements hook_queue_info_alter().
  *
  * Do not instantiate scheduled workers for disabled optional integrations.
+ *
+ * @param array<string, array<string, mixed>> $definitions
+ *   As definições das filas, indexadas pelo identificador da fila.
  */
 function aculta_messenger_queue_info_alter(array &$definitions): void {
   $module_handler = \Drupal::moduleHandler();

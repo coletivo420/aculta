@@ -56512,11 +56512,6 @@ parameters:
 			count: 4
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/aculta_messenger.install
 
-		-
-			rawMessage: 'Function aculta_messenger_queue_info_alter() has parameter $definitions with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/aculta_messenger.module
 
 		-
 			rawMessage: 'Argument of an invalid type Drupal\Core\Database\StatementInterface|null supplied for foreach, only iterables are supported.'
@@ -73914,11 +73909,6 @@ parameters:
 			count: 1
 			path: web/modules/custom/aculta_portal/src/Account/EmailConfirmationNotice.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Account\EmailConfirmationNotice::build() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Account/EmailConfirmationNotice.php
 
 		-
 			rawMessage: 'Parameter #3 $context1 is passed by reference so it does not accept readonly property Drupal\aculta_portal\Account\EmailConfirmationNotice::$currentUser.'
