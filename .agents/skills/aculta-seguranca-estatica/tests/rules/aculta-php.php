@@ -10,8 +10,12 @@ eval($codigo);
 shell_exec('ls');
 // ruleid: aculta-php-eval-or-dynamic-exec
 passthru($cmd, $code);
+// ruleid: aculta-php-eval-or-dynamic-exec
+proc_open($command, $descriptors, $pipes);
 // ok: aculta-php-eval-or-dynamic-exec
 $resultado = json_decode($texto, TRUE);
+// ok: aculta-php-eval-or-dynamic-exec
+(new \Symfony\Component\Process\Process(['git', 'status']))->run();
 
 // ruleid: aculta-php-unserialize-untrusted
 $dados = unserialize($payload);

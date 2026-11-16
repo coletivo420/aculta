@@ -6,7 +6,6 @@ namespace Drupal\aculta420_v2\Story;
 
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
-use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\ui_patterns_library\StoryDefault;
 use Drupal\user\Form\UserLoginForm;
@@ -31,7 +30,6 @@ final class AuthDialogStory extends StoryDefault implements ContainerFactoryPlug
     $plugin_id,
     $plugin_definition,
     protected FormBuilderInterface $formBuilder,
-    protected RendererInterface $renderer,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }
@@ -47,7 +45,6 @@ final class AuthDialogStory extends StoryDefault implements ContainerFactoryPlug
       $plugin_id,
       $plugin_definition,
       $container->get('form_builder'),
-      $container->get('renderer'),
     );
     $instance->setStringTranslation($container->get('string_translation'));
     return $instance;
@@ -100,13 +97,8 @@ final class AuthDialogStory extends StoryDefault implements ContainerFactoryPlug
       $form['actions'] = $actions;
     }
 
-    $rendered = $this->renderer->renderInIsolation($form);
-    $attached = $form['#attached'] ?? [];
     return [
-      'content' => [
-        '#markup' => $rendered,
-        '#attached' => is_array($attached) ? $attached : [],
-      ],
+      'content' => $form,
     ];
   }
 

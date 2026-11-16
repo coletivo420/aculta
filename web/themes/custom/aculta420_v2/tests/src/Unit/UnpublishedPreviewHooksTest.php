@@ -54,7 +54,11 @@ final class UnpublishedPreviewHooksTest extends UnitTestCase {
       'full',
     );
 
-    self::assertSame(['aculta420_v2/unpublished-preview'], $build['#attached']['library']);
+    self::assertIsArray($build['#attached'] ?? NULL);
+    self::assertSame(
+      ['aculta420_v2/unpublished-preview'],
+      $build['#attached']['library'],
+    );
   }
 
   public function testDoesNotAttachWhenUiStylesDidNotSelectTheMarker(): void {

@@ -30,7 +30,14 @@ class AvisoRetencaoTest extends UnitTestCase {
   /**
    * Só os tipos do Fórum são sujeitos à retenção. */
   public function testTiposSujeitosSaoOsDoForum(): void {
-    $this->assertSame([Aviso::TIPO_RESPOSTA, Aviso::TIPO_ATUALIZACAO], AvisoRetencao::TIPOS);
+    $types = AvisoRetencao::TIPOS;
+    sort($types);
+    self::assertContains(Aviso::TIPO_RESPOSTA, $types);
+    self::assertContains(Aviso::TIPO_ATUALIZACAO, $types);
+    self::assertSame(
+      [Aviso::TIPO_ATUALIZACAO, Aviso::TIPO_RESPOSTA],
+      $types,
+    );
   }
 
 }

@@ -8,7 +8,6 @@ use Drupal\Core\Entity\EntityFormBuilderInterface;
 use Drupal\aculta_forum\Form\DiscussionReplyPopupLayout;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
-use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\ui_patterns_library\StoryDefault;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -33,7 +32,6 @@ final class DiscussionReplyComposerStory extends StoryDefault implements Contain
     $plugin_definition,
     protected EntityTypeManagerInterface $entityTypeManager,
     protected EntityFormBuilderInterface $entityFormBuilder,
-    protected RendererInterface $renderer,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }
@@ -50,7 +48,6 @@ final class DiscussionReplyComposerStory extends StoryDefault implements Contain
       $plugin_definition,
       $container->get('entity_type.manager'),
       $container->get('entity.form_builder'),
-      $container->get('renderer'),
     );
     $instance->setStringTranslation($container->get('string_translation'));
     return $instance;
@@ -113,17 +110,11 @@ final class DiscussionReplyComposerStory extends StoryDefault implements Contain
       $form['actions'] = $actions;
     }
 
-    // Renderiza o formulário e preserva os anexos produzidos pelo CKEditor 5.
-    $rendered = $this->renderer->renderInIsolation($form);
-    $attached = $form['#attached'] ?? [];
-
+    // Retorna o render array para propagar anexos e metadados do CKEditor 5.
     return [
       'messages' => [],
       'context' => [],
-      'form' => [
-        '#markup' => $rendered,
-        '#attached' => is_array($attached) ? $attached : [],
-      ],
+      'form' => $form,
     ];
   }
 

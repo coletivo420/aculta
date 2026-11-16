@@ -8,7 +8,6 @@ use Drupal\aculta_magazine\Form\StudioContentPopupLayout;
 use Drupal\Core\Entity\EntityFormBuilderInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
-use Drupal\Core\Render\RendererInterface;
 use Drupal\ui_patterns_library\StoryDefault;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -27,7 +26,6 @@ final class DiscussionContentComposerStory extends StoryDefault implements Conta
     $plugin_definition,
     protected EntityTypeManagerInterface $entityTypeManager,
     protected EntityFormBuilderInterface $entityFormBuilder,
-    protected RendererInterface $renderer,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }
@@ -44,7 +42,6 @@ final class DiscussionContentComposerStory extends StoryDefault implements Conta
       $plugin_definition,
       $container->get('entity_type.manager'),
       $container->get('entity.form_builder'),
-      $container->get('renderer'),
     );
   }
 
@@ -73,14 +70,8 @@ final class DiscussionContentComposerStory extends StoryDefault implements Conta
     $form = $this->entityFormBuilder->getForm($node, 'default');
     // Mesmo layout do popup "Nova publicação" do Marley.
     StudioContentPopupLayout::apply($form);
-    $rendered = $this->renderer->renderInIsolation($form);
-    $attached = $form['#attached'] ?? [];
-
     return [
-      'form' => [
-        '#markup' => $rendered,
-        '#attached' => is_array($attached) ? $attached : [],
-      ],
+      'form' => $form,
     ];
   }
 

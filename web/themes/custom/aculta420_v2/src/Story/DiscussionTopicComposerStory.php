@@ -8,7 +8,6 @@ use Drupal\Core\Entity\EntityFormBuilderInterface;
 use Drupal\aculta_forum\Form\TopicPopupLayout;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
-use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\ui_patterns_library\StoryDefault;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -32,7 +31,6 @@ final class DiscussionTopicComposerStory extends StoryDefault implements Contain
     $plugin_definition,
     protected EntityTypeManagerInterface $entityTypeManager,
     protected EntityFormBuilderInterface $entityFormBuilder,
-    protected RendererInterface $renderer,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }
@@ -49,7 +47,6 @@ final class DiscussionTopicComposerStory extends StoryDefault implements Contain
       $plugin_definition,
       $container->get('entity_type.manager'),
       $container->get('entity.form_builder'),
-      $container->get('renderer'),
     );
     $instance->setStringTranslation($container->get('string_translation'));
     return $instance;
@@ -85,15 +82,9 @@ final class DiscussionTopicComposerStory extends StoryDefault implements Contain
     // Mesmo layout do popup Criar tópico (fórum).
     TopicPopupLayout::apply($form);
 
-    $rendered = $this->renderer->renderInIsolation($form);
-    $attached = $form['#attached'] ?? [];
-
     return [
       'messages' => [],
-      'form' => [
-        '#markup' => $rendered,
-        '#attached' => is_array($attached) ? $attached : [],
-      ],
+      'form' => $form,
     ];
   }
 

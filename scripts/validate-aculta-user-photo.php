@@ -189,7 +189,8 @@ if (!is_array($catalog)) {
 else {
   $active = 0;
   foreach ($catalog as $item) {
-    if (is_array($item) && !empty($item['active']) && is_file($module . '/assets/avatars/' . ($item['file'] ?? ''))) {
+    $file = is_array($item) && is_string($item['file'] ?? NULL) ? $item['file'] : '';
+    if (is_array($item) && !empty($item['active']) && $file !== '' && is_file($module . '/assets/avatars/' . $file)) {
       $active++;
     }
   }

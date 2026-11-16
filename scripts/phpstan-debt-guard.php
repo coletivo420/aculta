@@ -546,7 +546,10 @@ function phpstan_guard_run(array $command): array {
   fclose($pipes[1]);
   fclose($pipes[2]);
   $code = proc_close($process);
-  return ['code' => $code, 'output' => (string) $stdout . (string) $stderr];
+  return [
+    'code' => $code,
+    'output' => (string) $stdout . (string) $stderr,
+  ];
 }
 
 /**

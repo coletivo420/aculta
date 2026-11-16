@@ -66,10 +66,15 @@ class PrivateMessageController extends ControllerBase implements PrivateMessageC
    *   A lista com os valores resultantes.
    */
   public function pmSettingsPage(): array {
-    $url = Url::fromRoute('private_message.admin_config.config')->toString();
-    $message = $this->t('You can find module settings here: <a href="@url">page</a>', ['@url' => $url]);
     return [
-      '#markup' => $message,
+      'message' => [
+        '#plain_text' => $this->t('You can find module settings here:'),
+        '#suffix' => ' ',
+      ],
+      'link' => Link::fromTextAndUrl(
+        $this->t('page'),
+        Url::fromRoute('private_message.admin_config.config'),
+      )->toRenderable(),
     ];
   }
 

@@ -51,6 +51,12 @@ rules:
               trait $TRAIT {
                 ...
               }
+    # ContentEntityBase constrói entidades via storage e não oferece injeção
+    # por construtor. Exceção exata: chamadas legadas em PrivateMessageThread,
+    # já acompanhadas por TODO para extração futura de serviços.
+    paths:
+      exclude:
+        - /web/modules/custom/aculta_portal/modules/aculta_messenger/src/Entity/PrivateMessageThread.php
 
 
   - id: aculta-php-raw-redirect-cross-host

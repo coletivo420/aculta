@@ -297,10 +297,12 @@ function phpstan_report_messages(string $path): array {
  */
 function phpstan_report_git(array $arguments): string {
   $command = 'git ' . implode(' ', array_map('escapeshellarg', $arguments)) . ' 2>/dev/null';
-  $output = [];
-  $code = 0;
-  exec($command, $output, $code);
-  return $code === 0 ? trim((string) ($output[0] ?? '')) : '';
+  $output = shell_exec($command);
+  if (!is_string($output)) {
+    return '';
+  }
+  $firstLine = strtok(trim($output), "\n");
+  return $firstLine === FALSE ? '' : trim($firstLine);
 }
 
 /**
@@ -311,8 +313,7 @@ function phpstan_report_phpstan_version(): string {
   if (!is_file($binary)) {
     return 'desconhecida';
   }
-  $output = [];
-  $code = 0;
-  exec(escapeshellarg(PHP_BINARY) . ' ' . escapeshellarg($binary) . ' --version 2>/dev/null', $output, $code);
-  return $code === 0 ? trim((string) ($output[0] ?? '')) : 'desconhecida';
+  $command = escapeshellarg(PHP_BINARY) . ' ' . escapeshellarg($binary) . ' --version 2>/dev/null';
+  $output = shell_exec($command);
+  return is_string($output) ? trim($output) : 'desconhecida';
 }

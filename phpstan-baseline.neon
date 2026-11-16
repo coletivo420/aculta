@@ -4509,11 +4509,6 @@ parameters:
 			count: 4
 			path: scripts/validate-aculta-portal-drupal12.php
 
-		-
-			rawMessage: Binary operation "." between non-falsy-string and mixed results in an error.
-			identifier: binaryOp.invalid
-			count: 1
-			path: scripts/validate-aculta-user-photo.php
 
 		-
 			rawMessage: Cannot access offset 'permissions' on mixed.
@@ -56979,11 +56974,6 @@ parameters:
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Unit/AvisoPreferenciasTest.php
 
-		-
-			rawMessage: 'Call to method PHPUnit\Framework\Assert::assertSame() with array{''forum_resposta'', ''forum_atualizacao''} and array{''forum_resposta'', ''forum_atualizacao''} will always evaluate to true.'
-			identifier: method.alreadyNarrowedType
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Unit/AvisoRetencaoTest.php
 
 		-
 			rawMessage: 'Call to an undefined method Drupal\Core\Entity\ContentEntityInterface::expects().'
@@ -78783,11 +78773,6 @@ parameters:
 			count: 1
 			path: web/themes/custom/aculta420_v2/tests/src/Unit/UiIconsPackTest.php
 
-		-
-			rawMessage: Cannot access offset 'library' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/themes/custom/aculta420_v2/tests/src/Unit/UnpublishedPreviewHooksTest.php
 
 		-
 			rawMessage: '''
