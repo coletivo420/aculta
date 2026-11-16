@@ -6,6 +6,8 @@ namespace Drupal\Tests\aculta_forum\Kernel;
 
 use Drupal\aculta_forum\Controller\ForumPostRevisionHistoryController;
 use Drupal\aculta_forum\Entity\ForumPost;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\Core\Url;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\user\Entity\User;
 use PHPUnit\Framework\Attributes\Group;
@@ -118,25 +120,125 @@ final class ForumPostRevisionHistoryControllerKernelTest extends KernelTestBase 
 
     self::assertSame('container', $build['#type']);
     self::assertArrayNotHasKey('comparison_selection', $build);
-    $rows = $build['history']['#rows'];
+    $rows = $this->historyRows($build);
     self::assertCount(2, $rows);
 
     $newest = $rows[0];
-    self::assertSame((string) $this->secondRevision, $newest[0]['data']['#plain_text']);
-    self::assertSame('published', $newest[3]['data']['#plain_text']);
-    self::assertSame('Segunda versão', $newest[4]['data']['#plain_text']);
-    self::assertSame('Revisão atual', (string) $newest[6]['data']['#plain_text']);
-    $comparison = $newest[7]['data'][0];
-    self::assertSame('aculta_forum.post_revision_compare', $comparison['#url']->getRouteName());
-    self::assertSame((string) $this->firstRevision, (string) $comparison['#url']->getRouteParameters()['left_revision']);
-    self::assertSame((string) $this->secondRevision, (string) $comparison['#url']->getRouteParameters()['right_revision']);
+    $this->assertPlainTextCell($newest, 0, (string) $this->secondRevision);
+    $this->assertPlainTextCell($newest, 3, 'published');
+    $this->assertPlainTextCell($newest, 4, 'Segunda versão');
+    $this->assertTranslatedCell($newest, 6, 'Revisão atual');
+    $this->assertComparisonCell($newest, 7, $this->firstRevision, $this->secondRevision);
 
     $oldest = $rows[1];
-    self::assertSame((string) $this->firstRevision, $oldest[0]['data']['#plain_text']);
-    self::assertSame('review', $oldest[3]['data']['#plain_text']);
-    self::assertSame('Histórica', (string) $oldest[6]['data']['#plain_text']);
-    self::assertSame([], $oldest[7]['data']);
-    self::assertSame('aculta_forum.post_moderation_queue', $build['back']['#url']->getRouteName());
+    $this->assertPlainTextCell($oldest, 0, (string) $this->firstRevision);
+    $this->assertPlainTextCell($oldest, 3, 'review');
+    $this->assertTranslatedCell($oldest, 6, 'Histórica');
+    $this->assertEmptyOperationsCell($oldest, 7);
+    $back = $build['back'];
+    self::assertIsArray($back);
+    self::assertInstanceOf(Url::class, $back['#url']);
+    self::assertSame('aculta_forum.post_moderation_queue', $back['#url']->getRouteName());
+  }
+
+  /**
+   * Validates and returns the rows from the controller's history render array.
+   *
+   * @param array<array-key, mixed> $build
+   *   The controller render array.
+   *
+   * @return list<array<array-key, mixed>>
+   *   Validated history rows.
+   */
+  private function historyRows(array $build): array {
+    $history = $build['history'];
+    self::assertIsArray($history);
+    $rows = $history['#rows'];
+    self::assertIsArray($rows);
+    $validatedRows = [];
+    foreach ($rows as $row) {
+      self::assertIsArray($row);
+      $validatedRows[] = $row;
+    }
+    return $validatedRows;
+  }
+
+  /**
+   * Asserts one plain-text table cell.
+   *
+   * @param array<array-key, mixed> $row
+   *   The table row.
+   * @param int $column
+   *   The column index.
+   * @param string $expected
+   *   The expected cell text.
+   */
+  private function assertPlainTextCell(array $row, int $column, string $expected): void {
+    $cell = $row[$column];
+    self::assertIsArray($cell);
+    $data = $cell['data'];
+    self::assertIsArray($data);
+    self::assertSame($expected, $data['#plain_text']);
+  }
+
+  /**
+   * Asserts one translated table cell.
+   *
+   * @param array<array-key, mixed> $row
+   *   The table row.
+   * @param int $column
+   *   The column index.
+   * @param string $expected
+   *   The expected translated text.
+   */
+  private function assertTranslatedCell(array $row, int $column, string $expected): void {
+    $cell = $row[$column];
+    self::assertIsArray($cell);
+    $data = $cell['data'];
+    self::assertIsArray($data);
+    self::assertInstanceOf(TranslatableMarkup::class, $data['#plain_text']);
+    self::assertSame($expected, (string) $data['#plain_text']);
+  }
+
+  /**
+   * Asserts the previous-revision comparison link in a table cell.
+   *
+   * @param array<array-key, mixed> $row
+   *   The table row.
+   * @param int $column
+   *   The column index.
+   * @param int $leftRevision
+   *   The revision on the left side of the comparison.
+   * @param int $rightRevision
+   *   The revision on the right side of the comparison.
+   */
+  private function assertComparisonCell(array $row, int $column, int $leftRevision, int $rightRevision): void {
+    $cell = $row[$column];
+    self::assertIsArray($cell);
+    $operations = $cell['data'];
+    self::assertIsArray($operations);
+    $comparison = $operations[0];
+    self::assertIsArray($comparison);
+    $url = $comparison['#url'];
+    self::assertInstanceOf(Url::class, $url);
+    self::assertSame('aculta_forum.post_revision_compare', $url->getRouteName());
+    $parameters = $url->getRouteParameters();
+    self::assertSame($leftRevision, $parameters['left_revision']);
+    self::assertSame($rightRevision, $parameters['right_revision']);
+  }
+
+  /**
+   * Asserts that a table cell has no operations.
+   *
+   * @param array<array-key, mixed> $row
+   *   The table row.
+   * @param int $column
+   *   The column index.
+   */
+  private function assertEmptyOperationsCell(array $row, int $column): void {
+    $cell = $row[$column];
+    self::assertIsArray($cell);
+    self::assertSame([], $cell['data']);
   }
 
   /**
