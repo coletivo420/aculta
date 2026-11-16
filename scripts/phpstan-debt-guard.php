@@ -2,6 +2,10 @@
 
 declare(strict_types=1);
 
+require_once __DIR__ . '/../vendor/autoload.php';
+
+use Symfony\Component\Process\Process;
+
 /**
  * @file
  * Blocking gates for the frozen PHPStan level 10 debt.
@@ -536,19 +540,11 @@ function phpstan_guard_analysis(string $path): array {
  *   Exit code and captured output.
  */
 function phpstan_guard_run(array $command): array {
-  $descriptors = [1 => ['pipe', 'w'], 2 => ['pipe', 'w']];
-  $process = proc_open($command, $descriptors, $pipes);
-  if (!is_resource($process)) {
-    throw new RuntimeException('não foi possível executar: ' . implode(' ', $command));
-  }
-  $stdout = stream_get_contents($pipes[1]);
-  $stderr = stream_get_contents($pipes[2]);
-  fclose($pipes[1]);
-  fclose($pipes[2]);
-  $code = proc_close($process);
+  $process = new Process($command);
+  $process->run();
   return [
-    'code' => $code,
-    'output' => (string) $stdout . (string) $stderr,
+    'code' => $process->getExitCode() ?? 1,
+    'output' => $process->getOutput() . $process->getErrorOutput(),
   ];
 }
 

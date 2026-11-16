@@ -2,6 +2,10 @@
 
 declare(strict_types=1);
 
+require_once __DIR__ . '/../vendor/autoload.php';
+
+use Symfony\Component\Process\Process;
+
 /**
  * @file
  * Builds the PHPStan debt report from the frozen baseline and an analysis JSON.
@@ -296,13 +300,16 @@ function phpstan_report_messages(string $path): array {
  *   Git arguments.
  */
 function phpstan_report_git(array $arguments): string {
-  $command = 'git ' . implode(' ', array_map('escapeshellarg', $arguments)) . ' 2>/dev/null';
-  $output = shell_exec($command);
-  if (!is_string($output)) {
+  $process = new Process(['git', ...$arguments]);
+  $process->run();
+  if (!$process->isSuccessful()) {
     return '';
   }
-  $firstLine = strtok(trim($output), "\n");
-  return $firstLine === FALSE ? '' : trim($firstLine);
+  $output = trim($process->getOutput());
+  if ($output === '') {
+    return '';
+  }
+  return trim(explode("\n", $output)[0]);
 }
 
 /**
@@ -313,7 +320,7 @@ function phpstan_report_phpstan_version(): string {
   if (!is_file($binary)) {
     return 'desconhecida';
   }
-  $command = escapeshellarg(PHP_BINARY) . ' ' . escapeshellarg($binary) . ' --version 2>/dev/null';
-  $output = shell_exec($command);
-  return is_string($output) ? trim($output) : 'desconhecida';
+  $process = new Process([PHP_BINARY, $binary, '--version']);
+  $process->run();
+  return $process->isSuccessful() ? trim($process->getOutput()) : 'desconhecida';
 }

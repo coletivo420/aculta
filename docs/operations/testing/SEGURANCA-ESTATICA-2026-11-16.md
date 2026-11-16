@@ -13,8 +13,8 @@ Escopo: revisão dos 24 achados publicados no PR #305 e nova execução das regr
 
 ## Correções
 
-- `scripts/phpstan-debt-guard.php`: processo executado com argumentos em lista via `proc_open()`; removida a concatenação de comando.
-- `scripts/phpstan-debt-report.php`: comandos Git e PHPStan passam por `shell_exec()` com binário/argumentos escapados e saída validada.
+- `scripts/phpstan-debt-guard.php`: processo executado com argumentos em lista via `Symfony Process`; removido `proc_open()`.
+- `scripts/phpstan-debt-report.php`: comandos Git e PHPStan passam por `Symfony Process` com argumentos em lista e saída validada.
 - `PrivateMessageController::pmSettingsPage()`: removido HTML traduzido em `#markup`; texto e link agora são renderizados como elementos separados.
 - Quatro Stories de `aculta420_v2`: removidos `renderInIsolation()` e `#markup` que reempacotavam a saída. Slots retornam o render array original para manter anexos e metadados de cache.
 
