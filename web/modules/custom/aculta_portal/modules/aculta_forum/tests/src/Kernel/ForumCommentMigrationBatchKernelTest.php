@@ -221,10 +221,10 @@ final class ForumCommentMigrationBatchKernelTest extends KernelTestBase {
     $storage->resetCache([$markedId, $legacyId, $unpublishedId]);
     $reloadedMarked = $storage->load($markedId);
     self::assertInstanceOf(CommentInterface::class, $reloadedMarked);
-    self::assertSame(1700000000, (int) $reloadedMarked->get('field_aculta_published_at')->value);
+    self::assertSame('1700000000', $reloadedMarked->get('field_aculta_published_at')->value);
     $reloadedLegacy = $storage->load($legacyId);
     self::assertInstanceOf(CommentInterface::class, $reloadedLegacy);
-    self::assertSame($legacyCreated, (int) $reloadedLegacy->get('field_aculta_published_at')->value);
+    self::assertSame((string) $legacyCreated, $reloadedLegacy->get('field_aculta_published_at')->value);
     $reloadedUnpublished = $storage->load($unpublishedId);
     self::assertInstanceOf(CommentInterface::class, $reloadedUnpublished);
     self::assertTrue($reloadedUnpublished->get('field_aculta_published_at')->isEmpty());
