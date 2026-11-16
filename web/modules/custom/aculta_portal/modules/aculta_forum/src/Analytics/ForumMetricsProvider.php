@@ -8,6 +8,7 @@ use Drupal\aculta_forum\Service\DiscussionReactionManager;
 use Drupal\aculta_portal\Statistics\MetricProviderInterface;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Database\Connection;
+use Drupal\Core\Database\Query\SelectInterface;
 
 /**
  * Calcula indicadores do Fórum público diretamente nas entidades oficiais.
@@ -86,7 +87,7 @@ final class ForumMetricsProvider implements MetricProviderInterface {
     if (!$this->scopeResolver->applyPublicTopicConditions($query, 'n')) {
       return NULL;
     }
-    return (int) $query->countQuery()->execute()->fetchField();
+    return $this->countResult($query->countQuery());
   }
 
   /**
@@ -105,7 +106,11 @@ final class ForumMetricsProvider implements MetricProviderInterface {
       if (!$this->scopeResolver->applyPublicTopicConditions($comments, 'n')) {
         return NULL;
       }
-      $total += (int) $comments->countQuery()->execute()->fetchField();
+      $count = $this->countResult($comments->countQuery());
+      if ($count === NULL) {
+        return NULL;
+      }
+      $total += $count;
     }
 
     if ($schema->tableExists('aculta_forum_post_field_data')) {
@@ -116,7 +121,11 @@ final class ForumMetricsProvider implements MetricProviderInterface {
       if (!$this->scopeResolver->applyPublicTopicConditions($posts, 'n')) {
         return NULL;
       }
-      $total += (int) $posts->countQuery()->execute()->fetchField();
+      $count = $this->countResult($posts->countQuery());
+      if ($count === NULL) {
+        return NULL;
+      }
+      $total += $count;
     }
 
     return $total;
@@ -144,7 +153,11 @@ final class ForumMetricsProvider implements MetricProviderInterface {
     if ($restricted !== []) {
       $query->condition('nc.field_aculta_categories_target_id', $restricted, 'NOT IN');
     }
-    return count($query->execute()->fetchCol());
+    $statement = $query->execute();
+    if ($statement === NULL) {
+      return NULL;
+    }
+    return count($statement->fetchCol());
   }
 
   /**
@@ -181,7 +194,7 @@ final class ForumMetricsProvider implements MetricProviderInterface {
       $query->condition('n.nid', $replied, 'NOT IN');
     }
 
-    return (int) $query->countQuery()->execute()->fetchField();
+    return $this->countResult($query->countQuery());
   }
 
   /**
@@ -193,8 +206,15 @@ final class ForumMetricsProvider implements MetricProviderInterface {
       if ($query === NULL) {
         return NULL;
       }
-      foreach ($query->execute()->fetchCol() as $uid) {
-        $uid = (int) $uid;
+      $statement = $query->execute();
+      if ($statement === NULL) {
+        return NULL;
+      }
+      foreach ($statement->fetchCol() as $uidValue) {
+        $uid = $this->databaseInteger($uidValue);
+        if ($uid === NULL) {
+          return NULL;
+        }
         if ($uid > 0) {
           $uids[$uid] = TRUE;
         }
@@ -212,9 +232,19 @@ final class ForumMetricsProvider implements MetricProviderInterface {
       if ($query === NULL) {
         return NULL;
       }
-      foreach ($query->execute() as $row) {
-        $uid = (int) $row->uid;
-        $created = (int) $row->first_created;
+      $statement = $query->execute();
+      if ($statement === NULL) {
+        return NULL;
+      }
+      foreach ($statement as $row) {
+        if (!$row instanceof \stdClass) {
+          return NULL;
+        }
+        $uid = $this->databaseInteger($row->uid ?? NULL);
+        $created = $this->databaseInteger($row->first_created ?? NULL);
+        if ($uid === NULL || $created === NULL) {
+          return NULL;
+        }
         if ($uid > 0) {
           $first[$uid] = isset($first[$uid]) ? min($first[$uid], $created) : $created;
         }
@@ -234,25 +264,47 @@ final class ForumMetricsProvider implements MetricProviderInterface {
    */
   private function responseDistribution(int $from, int $to, int $percentile): ?int {
     $topics = $this->database->select('node_field_data', 'n');
-    $topics->fields('n', ['nid', 'created', 'uid']);
+    $topics->fields('n', ['nid', 'created']);
     $topics->condition('n.created', $from, '>=');
     $topics->condition('n.created', $to, '<');
     if (!$this->scopeResolver->applyPublicTopicConditions($topics, 'n')) {
       return NULL;
     }
     $topicRows = [];
-    foreach ($topics->execute() as $row) {
-      $topicRows[(int) $row->nid] = $row;
+    $topicStatement = $topics->execute();
+    if ($topicStatement === NULL) {
+      return NULL;
+    }
+    foreach ($topicStatement as $row) {
+      if (!$row instanceof \stdClass) {
+        return NULL;
+      }
+      $topicId = $this->databaseInteger($row->nid ?? NULL);
+      $created = $this->databaseInteger($row->created ?? NULL);
+      if ($topicId === NULL || $created === NULL) {
+        return NULL;
+      }
+      $topicRows[$topicId] = $created;
     }
 
     $firstReplies = [];
     foreach ($this->firstReplyQueries($from, $to) as $query) {
       if ($query === NULL) {
-        continue;
+        return NULL;
       }
-      foreach ($query->execute() as $row) {
-        $topicId = (int) $row->topic;
-        $created = (int) $row->first_reply;
+      $statement = $query->execute();
+      if ($statement === NULL) {
+        return NULL;
+      }
+      foreach ($statement as $row) {
+        if (!$row instanceof \stdClass) {
+          return NULL;
+        }
+        $topicId = $this->databaseInteger($row->topic ?? NULL);
+        $created = $this->databaseInteger($row->first_reply ?? NULL);
+        if ($topicId === NULL || $created === NULL) {
+          return NULL;
+        }
         $firstReplies[$topicId] = isset($firstReplies[$topicId])
           ? min($firstReplies[$topicId], $created)
           : $created;
@@ -265,7 +317,7 @@ final class ForumMetricsProvider implements MetricProviderInterface {
       if ($reply === NULL) {
         continue;
       }
-      $diff = (int) $reply - (int) $row->created;
+      $diff = $reply - $row;
       if ($diff >= 0) {
         $minutes[] = intdiv($diff, 60);
       }
@@ -296,7 +348,11 @@ final class ForumMetricsProvider implements MetricProviderInterface {
     if (!$this->scopeResolver->applyPublicTopicConditions($nodes, 'n')) {
       return NULL;
     }
-    $total += (int) $nodes->countQuery()->execute()->fetchField();
+    $count = $this->countResult($nodes->countQuery());
+    if ($count === NULL) {
+      return NULL;
+    }
+    $total += $count;
 
     if ($schema->tableExists('comment_field_data')) {
       $comments = $this->database->select(DiscussionReactionManager::TABLE_REACTIONS, 'r');
@@ -309,7 +365,11 @@ final class ForumMetricsProvider implements MetricProviderInterface {
       if (!$this->scopeResolver->applyPublicTopicConditions($comments, 'n')) {
         return NULL;
       }
-      $total += (int) $comments->countQuery()->execute()->fetchField();
+      $count = $this->countResult($comments->countQuery());
+      if ($count === NULL) {
+        return NULL;
+      }
+      $total += $count;
     }
 
     if ($schema->tableExists('aculta_forum_post_field_data')) {
@@ -323,7 +383,11 @@ final class ForumMetricsProvider implements MetricProviderInterface {
       if (!$this->scopeResolver->applyPublicTopicConditions($posts, 'n')) {
         return NULL;
       }
-      $total += (int) $posts->countQuery()->execute()->fetchField();
+      $count = $this->countResult($posts->countQuery());
+      if ($count === NULL) {
+        return NULL;
+      }
+      $total += $count;
     }
 
     return $total;
@@ -340,7 +404,31 @@ final class ForumMetricsProvider implements MetricProviderInterface {
     $query = $this->database->select('aculta_forum_post_field_data', 'p');
     $query->condition('p.status', 0);
     $query->condition('p.default_langcode', 1);
-    return (int) $query->countQuery()->execute()->fetchField();
+    return $this->countResult($query->countQuery());
+  }
+
+  /**
+   * Executa uma consulta de contagem e valida o escalar retornado pelo driver.
+   */
+  private function countResult(SelectInterface $query): ?int {
+    $statement = $query->execute();
+    if ($statement === NULL) {
+      return NULL;
+    }
+    return $this->databaseInteger($statement->fetchField());
+  }
+
+  /**
+   * Converte um escalar inteiro retornado pelo driver sem coerção permissiva.
+   */
+  private function databaseInteger(mixed $value): ?int {
+    if (is_int($value)) {
+      return $value;
+    }
+    if (!is_string($value) || preg_match('/^-?\\d+$/D', $value) !== 1) {
+      return NULL;
+    }
+    return (int) $value;
   }
 
   /**
