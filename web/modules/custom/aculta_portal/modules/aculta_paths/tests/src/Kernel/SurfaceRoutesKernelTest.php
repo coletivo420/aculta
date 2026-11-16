@@ -30,7 +30,6 @@ final class SurfaceRoutesKernelTest extends KernelTestBase {
     'aculta_mailer',
     'aculta_mail_confirmer',
     'aculta_messenger',
-    'private_message',
     'site_alert',
     'message_notify',
     'message_subscribe',

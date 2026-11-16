@@ -35,6 +35,9 @@ final class SurfaceEditController extends ControllerBase {
 
   /**
    * Rota aculta_paths.editar.
+   *
+   * @return \Symfony\Component\HttpFoundation\Response|array<array-key, mixed>
+   *   A resposta da rota ou o array de renderização.
    */
   public function abrir(string $site_key, Request $request): Response|array {
     if (!array_key_exists($site_key, DomainSurfaceMap::DOMAIN_IDS)) {
