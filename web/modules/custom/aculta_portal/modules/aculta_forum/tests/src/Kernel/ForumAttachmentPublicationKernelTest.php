@@ -22,6 +22,9 @@ use Drupal\comment\CommentingStatus;
 use Drupal\comment\Entity\Comment;
 use Drupal\comment\Tests\CommentTestTrait;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Access\AccessResultInterface;
+use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Session\AnonymousUserSession;
 use Drupal\domain\Entity\Domain;
 use Drupal\field\Entity\FieldConfig;
@@ -30,7 +33,7 @@ use Drupal\file\Entity\File;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\media\Entity\Media;
 use Drupal\media\Entity\MediaType;
-use Drupal\media_gallery\MediaGalleryInterface;
+use Drupal\media_gallery\Entity\MediaGallery;
 use Drupal\node\Entity\Node;
 use Drupal\node\Entity\NodeType;
 use Drupal\node\NodeInterface;
@@ -232,7 +235,10 @@ final class ForumAttachmentPublicationKernelTest extends KernelTestBase {
     $gallery_publication = new ForumGalleryPublication($this->container->get('entity_type.manager'), $this->publication);
     $hooks = new ForumAttachmentPublicationHooks($this->publication, $gallery_publication);
 
-    $this->assertInstanceOf(ForumAttachmentPublicationHooks::class, $hooks);
+    $method = new \ReflectionMethod($hooks, 'entityInsert');
+    $attributes = $method->getAttributes(Hook::class);
+    self::assertCount(1, $attributes);
+    self::assertSame('entity_insert', $attributes[0]->newInstance()->hook);
   }
 
   /**
@@ -260,7 +266,7 @@ final class ForumAttachmentPublicationKernelTest extends KernelTestBase {
       'name' => 'anexo.pdf',
       'uid' => $this->author->id(),
       'status' => 0,
-      'field_media_forum_attachment' => ['target_id' => $file->id()],
+      'field_media_forum_attachment' => ['target_id' => $this->entityId($file)],
     ]);
     $media->save();
 
@@ -311,8 +317,10 @@ final class ForumAttachmentPublicationKernelTest extends KernelTestBase {
    */
   public function testRestrictedReferencePublishesMediaAndAccountAccessDecides(): void {
     $anonymous_role = Role::load('anonymous');
+    self::assertInstanceOf(Role::class, $anonymous_role);
     $anonymous_role->revokePermission('access comments')->save();
     $authenticated_role = Role::load('authenticated');
+    self::assertInstanceOf(Role::class, $authenticated_role);
     $authenticated_role->grantPermission('access content');
     $authenticated_role->grantPermission('access comments');
     $authenticated_role->save();
@@ -332,7 +340,8 @@ final class ForumAttachmentPublicationKernelTest extends KernelTestBase {
 
     self::assertTrue($this->isAttachmentPublished($media), 'A referência em tópico publicado publica a Media.');
     // syncComment saves a separate Media instance; reload for the access hook.
-    $media = $this->container->get('entity_type.manager')->getStorage('media')->load($media->id());
+    $media = $this->container->get('entity_type.manager')->getStorage('media')->load($this->entityId($media));
+    self::assertInstanceOf(Media::class, $media);
     self::assertFalse($this->publication->hasCurrentPublicReference($media), 'A conta anônima não tem referência acessível.');
     self::assertTrue($this->publication->hasCurrentPublicReference($media, $member), 'A conta com acesso ao Comment tem referência acessível.');
 
@@ -341,35 +350,39 @@ final class ForumAttachmentPublicationKernelTest extends KernelTestBase {
       'forum',
       fn () => $hooks->mediaAccess($media, 'view', new AnonymousUserSession()),
     );
-    self::assertTrue($anonymous_result?->isForbidden(), 'O anônimo não lê a Media de referência restrita.');
+    self::assertInstanceOf(AccessResultInterface::class, $anonymous_result);
+    self::assertTrue($anonymous_result->isForbidden(), 'O anônimo não lê a Media de referência restrita.');
 
     $member_result = $this->purpose->runInSite(
       'forum',
       fn () => $hooks->mediaAccess($media, 'view', $member),
     );
-    self::assertTrue($member_result?->isAllowed(), 'A conta que lê o host lê a Media publicada.');
+    self::assertInstanceOf(AccessResultInterface::class, $member_result);
+    self::assertTrue($member_result->isAllowed(), 'A conta que lê o host lê a Media publicada.');
 
     // Losing access to the host must deny the Media on the next check.
     $topic->setUnpublished()->save();
     // The Comment holds the host reference in its field cache; a real request
     // would reload it, so reset the static caches before rechecking access.
-    $this->container->get('entity_type.manager')->getStorage('node')->resetCache([$topic->id()]);
-    $this->container->get('entity_type.manager')->getStorage('comment')->resetCache([$comment->id()]);
+    $this->container->get('entity_type.manager')->getStorage('node')->resetCache([$this->entityId($topic)]);
+    $this->container->get('entity_type.manager')->getStorage('comment')->resetCache([$this->entityId($comment)]);
     self::assertFalse($this->publication->hasCurrentPublicReference($media, $member), 'Reference no longer public for member.');
     $revoked = $this->purpose->runInSite(
       'forum',
       fn () => $hooks->mediaAccess($media, 'view', $member),
     );
-    self::assertTrue($revoked?->isForbidden(), 'A perda de acesso ao tópico nega a Media.');
+    self::assertInstanceOf(AccessResultInterface::class, $revoked);
+    self::assertTrue($revoked->isForbidden(), 'A perda de acesso ao tópico nega a Media.');
 
     $topic->setPublished()->save();
-    $this->container->get('entity_type.manager')->getStorage('node')->resetCache([$topic->id()]);
-    $this->container->get('entity_type.manager')->getStorage('comment')->resetCache([$comment->id()]);
+    $this->container->get('entity_type.manager')->getStorage('node')->resetCache([$this->entityId($topic)]);
+    $this->container->get('entity_type.manager')->getStorage('comment')->resetCache([$this->entityId($comment)]);
     $restored = $this->purpose->runInSite(
       'forum',
       fn () => $hooks->mediaAccess($media, 'view', $member),
     );
-    self::assertTrue($restored?->isAllowed(), 'Republicar o tópico devolve o acesso.');
+    self::assertInstanceOf(AccessResultInterface::class, $restored);
+    self::assertTrue($restored->isAllowed(), 'Republicar o tópico devolve o acesso.');
   }
 
   /**
@@ -394,20 +407,22 @@ final class ForumAttachmentPublicationKernelTest extends KernelTestBase {
       'main',
       fn () => $hooks->mediaAccess($media, 'view', new AnonymousUserSession()),
     );
-    self::assertTrue($outside?->isForbidden(), 'Fora do purpose Fórum o anexo é negado.');
+    self::assertInstanceOf(AccessResultInterface::class, $outside);
+    self::assertTrue($outside->isForbidden(), 'Fora do purpose Fórum o anexo é negado.');
 
     $inside = $this->purpose->runInSite(
       'forum',
       fn () => $hooks->mediaAccess($media, 'view', new AnonymousUserSession()),
     );
-    self::assertFalse($inside?->isForbidden(), 'No purpose Fórum a mídia não publicada volta à política do dono.');
+    self::assertInstanceOf(AccessResultInterface::class, $inside);
+    self::assertFalse($inside->isForbidden(), 'No purpose Fórum a mídia não publicada volta à política do dono.');
 
     $gallery = $this->container->get('entity_type.manager')->getStorage('media_gallery')->create([
       'title' => 'Galeria de purpose',
       'uid' => $this->author->id(),
       'status' => FALSE,
       'field_gallery_purpose' => 'forum',
-      'images' => [['target_id' => $media->id()]],
+      'images' => [['target_id' => $this->entityId($media)]],
     ]);
     $gallery->save();
 
@@ -415,13 +430,15 @@ final class ForumAttachmentPublicationKernelTest extends KernelTestBase {
       'main',
       fn () => $hooks->entityAccess($gallery, 'view', new AnonymousUserSession()),
     );
-    self::assertTrue($gallery_outside?->isForbidden(), 'Fora do purpose Fórum a galeria é negada.');
+    self::assertInstanceOf(AccessResultInterface::class, $gallery_outside);
+    self::assertTrue($gallery_outside->isForbidden(), 'Fora do purpose Fórum a galeria é negada.');
 
     $gallery_inside = $this->purpose->runInSite(
       'forum',
       fn () => $hooks->entityAccess($gallery, 'view', new AnonymousUserSession()),
     );
-    self::assertFalse($gallery_inside?->isForbidden(), 'No purpose Fórum a galeria não publicada volta à política do dono.');
+    self::assertInstanceOf(AccessResultInterface::class, $gallery_inside);
+    self::assertFalse($gallery_inside->isForbidden(), 'No purpose Fórum a galeria não publicada volta à política do dono.');
   }
 
   /**
@@ -440,7 +457,8 @@ final class ForumAttachmentPublicationKernelTest extends KernelTestBase {
     $original_comment = clone $comment;
     $comment->set('comment_body', ['value' => 'Imagem removida.', 'format' => 'plain_text']);
     $comment->save();
-    $stored_comment = $this->container->get('entity_type.manager')->getStorage('comment')->load($comment->id());
+    $stored_comment = $this->container->get('entity_type.manager')->getStorage('comment')->load($this->entityId($comment));
+    self::assertInstanceOf(Comment::class, $stored_comment);
     self::assertSame('Imagem removida.', $stored_comment->get('comment_body')->value);
     // The update hook receives this snapshot during the save operation.
     $comment->setOriginal($original_comment);
@@ -468,10 +486,10 @@ final class ForumAttachmentPublicationKernelTest extends KernelTestBase {
       'uid' => $this->author->id(),
       'status' => FALSE,
       'field_gallery_purpose' => 'forum',
-      'images' => [['target_id' => $gallery_draft_media->id()]],
+      'images' => [['target_id' => $this->entityId($gallery_draft_media)]],
     ]);
     $gallery_draft->save();
-    $gallery_comment = $this->commentWithGallery($topic, $gallery_draft->uuid(), CommentInterface::NOT_PUBLISHED);
+    $gallery_comment = $this->commentWithGallery($topic, $this->entityUuid($gallery_draft), CommentInterface::NOT_PUBLISHED);
 
     $cleanup = $this->cleanup();
 
@@ -484,14 +502,14 @@ final class ForumAttachmentPublicationKernelTest extends KernelTestBase {
       ))->inspect($orphan),
     );
     self::assertSame(1, $cleanup->cleanup());
-    self::assertNull($this->container->get('entity_type.manager')->getStorage('media')->load($orphan->id()));
-    self::assertNull($this->container->get('entity_type.manager')->getStorage('file')->load($orphan_file->id()));
-    self::assertInstanceOf(CommentInterface::class, $draft);
-    self::assertNotNull($this->container->get('entity_type.manager')->getStorage('media')->load($draft_media->id()));
-    self::assertNotNull($this->container->get('entity_type.manager')->getStorage('file')->load($draft_file->id()));
-    self::assertInstanceOf(CommentInterface::class, $gallery_comment);
-    self::assertNotNull($this->container->get('entity_type.manager')->getStorage('media')->load($gallery_draft_media->id()));
-    self::assertNotNull($this->container->get('entity_type.manager')->getStorage('file')->load($gallery_draft_file->id()));
+    self::assertNull($this->container->get('entity_type.manager')->getStorage('media')->load($this->entityId($orphan)));
+    self::assertNull($this->container->get('entity_type.manager')->getStorage('file')->load($this->entityId($orphan_file)));
+    self::assertFalse($draft->isPublished(), 'The Comment fixture remains a draft.');
+    self::assertNotNull($this->container->get('entity_type.manager')->getStorage('media')->load($this->entityId($draft_media)));
+    self::assertNotNull($this->container->get('entity_type.manager')->getStorage('file')->load($this->entityId($draft_file)));
+    self::assertFalse($gallery_comment->isPublished(), 'The Gallery Comment fixture remains a draft.');
+    self::assertNotNull($this->container->get('entity_type.manager')->getStorage('media')->load($this->entityId($gallery_draft_media)));
+    self::assertNotNull($this->container->get('entity_type.manager')->getStorage('file')->load($this->entityId($gallery_draft_file)));
   }
 
   /**
@@ -504,9 +522,9 @@ final class ForumAttachmentPublicationKernelTest extends KernelTestBase {
     $topic = $this->createTopic();
     $post = ForumPost::create([
       'uid' => $this->author->id(),
-      'topic' => $topic->id(),
+      'topic' => $this->entityId($topic),
       'body' => [
-        'value' => sprintf('<drupal-media data-entity-type="media" data-entity-uuid="%s"></drupal-media>', $media->uuid()),
+        'value' => sprintf('<drupal-media data-entity-type="media" data-entity-uuid="%s"></drupal-media>', $this->entityUuid($media)),
         'format' => 'plain_text',
       ],
     ]);
@@ -517,14 +535,14 @@ final class ForumAttachmentPublicationKernelTest extends KernelTestBase {
 
     self::assertSame(0, $this->cleanup()->cleanup());
     $storage = $this->container->get('entity_type.manager');
-    self::assertNotNull($storage->getStorage('media')->load($media->id()));
-    self::assertNotNull($storage->getStorage('file')->load($file->id()));
+    self::assertNotNull($storage->getStorage('media')->load($this->entityId($media)));
+    self::assertNotNull($storage->getStorage('file')->load($this->entityId($file)));
 
     // Removing the post also removes the only revision that embedded the Media.
     $post->delete();
     self::assertSame(1, $this->cleanup()->cleanup());
-    self::assertNull($storage->getStorage('media')->load($media->id()));
-    self::assertNull($storage->getStorage('file')->load($file->id()));
+    self::assertNull($storage->getStorage('media')->load($this->entityId($media)));
+    self::assertNull($storage->getStorage('file')->load($this->entityId($file)));
   }
 
   /**
@@ -554,7 +572,7 @@ final class ForumAttachmentPublicationKernelTest extends KernelTestBase {
       'status' => 1,
       'uid' => $this->author->id(),
       'body' => [
-        'value' => sprintf('<drupal-media data-entity-type="media" data-entity-uuid="%s"></drupal-media>', $media->uuid()),
+        'value' => sprintf('<drupal-media data-entity-type="media" data-entity-uuid="%s"></drupal-media>', $this->entityUuid($media)),
         'format' => 'plain_text',
       ],
     ])->save();
@@ -571,8 +589,8 @@ final class ForumAttachmentPublicationKernelTest extends KernelTestBase {
     );
     self::assertSame(0, $this->cleanup()->cleanup());
     $storage = $this->container->get('entity_type.manager');
-    self::assertNotNull($storage->getStorage('media')->load($media->id()));
-    self::assertNotNull($storage->getStorage('file')->load($file->id()));
+    self::assertNotNull($storage->getStorage('media')->load($this->entityId($media)));
+    self::assertNotNull($storage->getStorage('file')->load($this->entityId($file)));
   }
 
   /**
@@ -588,9 +606,9 @@ final class ForumAttachmentPublicationKernelTest extends KernelTestBase {
 
     self::assertSame(0, $this->cleanup()->cleanup());
     $storage = $this->container->get('entity_type.manager');
-    self::assertNull($storage->getStorage('media')->load($orphan->id()));
-    self::assertNotNull($storage->getStorage('media')->load($shared->id()));
-    self::assertNotNull($storage->getStorage('file')->load($file->id()));
+    self::assertNull($storage->getStorage('media')->load($this->entityId($orphan)));
+    self::assertNotNull($storage->getStorage('media')->load($this->entityId($shared)));
+    self::assertNotNull($storage->getStorage('file')->load($this->entityId($file)));
   }
 
   /**
@@ -605,11 +623,11 @@ final class ForumAttachmentPublicationKernelTest extends KernelTestBase {
       'uid' => $this->author->id(),
       'status' => TRUE,
       'field_gallery_purpose' => 'forum',
-      'images' => [['target_id' => $media->id()]],
+      'images' => [['target_id' => $this->entityId($media)]],
     ]);
-    self::assertInstanceOf(MediaGalleryInterface::class, $gallery);
+    self::assertInstanceOf(MediaGallery::class, $gallery);
     $gallery->save();
-    $comment = $this->commentWithGallery($topic, $gallery->uuid(), CommentInterface::PUBLISHED);
+    $comment = $this->commentWithGallery($topic, $this->entityUuid($gallery), CommentInterface::PUBLISHED);
 
     self::assertSame([], $this->container->get('entity_usage.usage')->listSources($media, FALSE));
     $this->publication->syncMediaEntity($media);
@@ -631,8 +649,10 @@ final class ForumAttachmentPublicationKernelTest extends KernelTestBase {
    */
   public function testRestrictedGalleryPublishesAndAccountAccessDecides(): void {
     $anonymous_role = Role::load('anonymous');
+    self::assertInstanceOf(Role::class, $anonymous_role);
     $anonymous_role->revokePermission('access comments')->save();
     $authenticated_role = Role::load('authenticated');
+    self::assertInstanceOf(Role::class, $authenticated_role);
     $authenticated_role->grantPermission('access content');
     $authenticated_role->grantPermission('access comments');
     $authenticated_role->save();
@@ -651,16 +671,16 @@ final class ForumAttachmentPublicationKernelTest extends KernelTestBase {
       'uid' => $this->author->id(),
       'status' => FALSE,
       'field_gallery_purpose' => 'forum',
-      'images' => [['target_id' => $media->id()]],
+      'images' => [['target_id' => $this->entityId($media)]],
     ]);
-    self::assertInstanceOf(MediaGalleryInterface::class, $gallery);
+    self::assertInstanceOf(MediaGallery::class, $gallery);
     $gallery->save();
-    $comment = $this->commentWithGallery($topic, $gallery->uuid(), CommentInterface::PUBLISHED);
+    $comment = $this->commentWithGallery($topic, $this->entityUuid($gallery), CommentInterface::PUBLISHED);
 
     $gallery_publication = new ForumGalleryPublication($this->container->get('entity_type.manager'), $this->publication);
     $gallery_publication->syncComment($comment);
-    $gallery = $this->container->get('entity_type.manager')->getStorage('media_gallery')->loadUnchanged($gallery->id());
-    self::assertInstanceOf(MediaGalleryInterface::class, $gallery);
+    $gallery = $this->container->get('entity_type.manager')->getStorage('media_gallery')->loadUnchanged($this->entityId($gallery));
+    self::assertInstanceOf(MediaGallery::class, $gallery);
     self::assertTrue($gallery->isPublished(), 'A referência ativa publica a Galeria.');
     self::assertFalse($this->publication->hasCurrentPublicGalleryReference($gallery), 'A conta anônima não tem referência acessível.');
     self::assertTrue($this->publication->hasCurrentPublicGalleryReference($gallery, $member), 'A conta com acesso ao Comment tem referência acessível.');
@@ -670,12 +690,14 @@ final class ForumAttachmentPublicationKernelTest extends KernelTestBase {
       'forum',
       fn () => $hooks->entityAccess($gallery, 'view', new AnonymousUserSession()),
     );
-    self::assertTrue($anonymous_result?->isForbidden(), 'O anônimo não lê a Galeria de referência restrita.');
+    self::assertInstanceOf(AccessResultInterface::class, $anonymous_result);
+    self::assertTrue($anonymous_result->isForbidden(), 'O anônimo não lê a Galeria de referência restrita.');
     $member_result = $this->purpose->runInSite(
       'forum',
       fn () => $hooks->entityAccess($gallery, 'view', $member),
     );
-    self::assertTrue($member_result?->isAllowed(), 'A conta que lê o host lê a Galeria publicada.');
+    self::assertInstanceOf(AccessResultInterface::class, $member_result);
+    self::assertTrue($member_result->isAllowed(), 'A conta que lê o host lê a Galeria publicada.');
   }
 
   /**
@@ -690,10 +712,11 @@ final class ForumAttachmentPublicationKernelTest extends KernelTestBase {
       'uid' => $this->author->id(),
       'status' => FALSE,
       'field_gallery_purpose' => 'forum',
-      'images' => [['target_id' => $media->id()]],
+      'images' => [['target_id' => $this->entityId($media)]],
     ]);
+    self::assertInstanceOf(MediaGallery::class, $gallery);
     $gallery->save();
-    $comment = $this->commentWithGallery($topic, $gallery->uuid(), CommentInterface::PUBLISHED);
+    $comment = $this->commentWithGallery($topic, $this->entityUuid($gallery), CommentInterface::PUBLISHED);
     $gallery_publication = new ForumGalleryPublication($this->container->get('entity_type.manager'), $this->publication);
     $gallery_publication->syncComment($comment);
     self::assertTrue($this->isAttachmentPublished($media));
@@ -716,12 +739,12 @@ final class ForumAttachmentPublicationKernelTest extends KernelTestBase {
   private function comment(NodeInterface $topic, Media $media, int $status): CommentInterface {
     $body = sprintf(
       '<drupal-media data-entity-type="media" data-entity-uuid="%s"></drupal-media>',
-      $media->uuid(),
+      $this->entityUuid($media),
     );
     $comment = Comment::create([
       'comment_type' => 'aculta_discussion_post',
       'entity_type' => 'node',
-      'entity_id' => $topic->id(),
+      'entity_id' => $this->entityId($topic),
       'field_name' => 'field_aculta_discussion',
       'uid' => $this->author->id(),
       'subject' => 'Attachment comment',
@@ -739,7 +762,7 @@ final class ForumAttachmentPublicationKernelTest extends KernelTestBase {
     $comment = Comment::create([
       'comment_type' => 'aculta_discussion_post',
       'entity_type' => 'node',
-      'entity_id' => $topic->id(),
+      'entity_id' => $this->entityId($topic),
       'field_name' => 'field_aculta_discussion',
       'uid' => $this->author->id(),
       'subject' => 'Forum gallery comment',
@@ -778,7 +801,7 @@ final class ForumAttachmentPublicationKernelTest extends KernelTestBase {
       'uid' => $this->author->id(),
       'status' => 0,
       'created' => $created,
-      'field_media_forum_attachment' => ['target_id' => $file->id()],
+      'field_media_forum_attachment' => ['target_id' => $this->entityId($file)],
     ]);
     $media->save();
     return $media;
@@ -816,13 +839,13 @@ final class ForumAttachmentPublicationKernelTest extends KernelTestBase {
       $state->set(CleanupFailureTestHooks::STATE_KEY, FALSE);
     }
     $storage = $this->container->get('entity_type.manager');
-    self::assertNotNull($storage->getStorage('media')->load($media->id()));
-    self::assertNotNull($storage->getStorage('file')->load($file->id()));
+    self::assertNotNull($storage->getStorage('media')->load($this->entityId($media)));
+    self::assertNotNull($storage->getStorage('file')->load($this->entityId($file)));
 
     // The next run retries and removes both entities.
     self::assertSame(1, $this->cleanup()->cleanup());
-    self::assertNull($storage->getStorage('media')->load($media->id()));
-    self::assertNull($storage->getStorage('file')->load($file->id()));
+    self::assertNull($storage->getStorage('media')->load($this->entityId($media)));
+    self::assertNull($storage->getStorage('file')->load($this->entityId($file)));
   }
 
   /**
@@ -867,9 +890,9 @@ final class ForumAttachmentPublicationKernelTest extends KernelTestBase {
    */
   private function registerEmbedUsage(Media $media, CommentInterface $comment): void {
     $this->container->get('entity_usage.usage')->registerUsage(
-      (int) $media->id(),
+      (int) $this->entityId($media),
       'media',
-      (int) $comment->id(),
+      (int) $this->entityId($comment),
       'comment',
       $comment->language()->getId(),
       (int) $comment->getRevisionId(),
@@ -879,12 +902,34 @@ final class ForumAttachmentPublicationKernelTest extends KernelTestBase {
   }
 
   /**
+   * Returns the persisted identifier for an entity fixture.
+   */
+  private function entityId(EntityInterface $entity): int|string {
+    $id = $entity->id();
+    if (!is_int($id) && !is_string($id)) {
+      throw new \LogicException('The entity fixture must be saved before use.');
+    }
+    return $id;
+  }
+
+  /**
+   * Returns the UUID for a saved entity fixture.
+   */
+  private function entityUuid(EntityInterface $entity): string {
+    $uuid = $entity->uuid();
+    if (!is_string($uuid) || $uuid === '') {
+      throw new \LogicException('The entity fixture must have a UUID before use.');
+    }
+    return $uuid;
+  }
+
+  /**
    * Loads the persisted publication state after reconciliation.
    */
   private function isAttachmentPublished(Media $media): bool {
     $stored = $this->container->get('entity_type.manager')
       ->getStorage('media')
-      ->load($media->id());
+      ->load($this->entityId($media));
     return $stored instanceof Media && $stored->isPublished();
   }
 
