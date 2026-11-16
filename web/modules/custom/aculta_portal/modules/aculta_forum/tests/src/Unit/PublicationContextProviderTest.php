@@ -13,6 +13,7 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -64,7 +65,7 @@ final class PublicationContextProviderTest extends TestCase {
     self::assertTrue($context->getReadAccess()->isAllowed());
     self::assertTrue($context->getWriteAccess()->isAllowed());
     self::assertFalse($context->getModerationAccess()->isAllowed());
-    self::assertContains('user.permissions', $context->getWriteAccess()->getCacheContexts());
+    self::assertContains('user.permissions', $context->getCacheContexts());
     self::assertContains('node:revista', $context->getCacheTags());
     self::assertSame($url, $context->getCanonicalUrl());
   }
@@ -117,8 +118,11 @@ final class PublicationContextProviderTest extends TestCase {
 
   /**
    * Creates a mock publication with the requested Comment status.
+   *
+   * @return NodeInterface&MockObject
+   *   A publication node double.
    */
-  private function publicationContextNode(int $status): NodeInterface {
+  private function publicationContextNode(int $status): NodeInterface&MockObject {
     $node = $this->node('revista', TRUE);
     $field = $this->createMock(FieldItemListInterface::class);
     $field->method('getValue')->willReturn([['status' => $status]]);
@@ -132,8 +136,11 @@ final class PublicationContextProviderTest extends TestCase {
 
   /**
    * Creates a Node mock with optional field support.
+   *
+   * @return NodeInterface&MockObject
+   *   A node double.
    */
-  private function node(string $bundle, bool $hasField, bool $isNew = FALSE): NodeInterface {
+  private function node(string $bundle, bool $hasField, bool $isNew = FALSE): NodeInterface&MockObject {
     $node = $this->createMock(NodeInterface::class);
     $node->method('bundle')->willReturn($bundle);
     $node->method('hasField')->willReturnCallback(static fn (string $field): bool => $field === 'field_aculta_discussion' && $hasField);
@@ -146,6 +153,9 @@ final class PublicationContextProviderTest extends TestCase {
 
   /**
    * Creates an account mock with the supplied permissions.
+   *
+   * @param list<string> $permissions
+   *   Permissions granted to the account.
    */
   private function account(array $permissions): AccountInterface {
     $account = $this->createMock(AccountInterface::class);
