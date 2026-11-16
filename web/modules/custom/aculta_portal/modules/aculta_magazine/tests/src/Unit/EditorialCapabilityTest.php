@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_magazine\Unit;
 
 use Drupal\aculta_magazine\Access\EditorialCapability;
+use Drupal\Core\Cache\CacheableDependencyInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Config\ImmutableConfig;
 use Drupal\Core\Session\AccountInterface;
@@ -32,7 +33,9 @@ final class EditorialCapabilityTest extends UnitTestCase {
 
     self::assertTrue($capability->access(EditorialCapability::AUTHORING, $editor)->isAllowed());
     self::assertFalse($capability->access(EditorialCapability::REVIEW, $editor)->isAllowed());
-    self::assertContains('config:aculta_magazine.settings', $capability->access(EditorialCapability::AUTHORING, $editor)->getCacheTags());
+    $access = $capability->access(EditorialCapability::AUTHORING, $editor);
+    self::assertInstanceOf(CacheableDependencyInterface::class, $access);
+    self::assertContains('config:aculta_magazine.settings', $access->getCacheTags());
   }
 
   /**

@@ -70,9 +70,9 @@ final class EditorialWorkspaceAccessTest extends UnitTestCase {
 
     $build = $workspace->createPopup();
 
-    self::assertSame('aculta420_v2:discussion-content-composer', $build['#component']);
-    self::assertFalse($build['#props']['standalone_popup']);
-    self::assertSame($form, $build['#slots']['form']);
+    self::assertSame('aculta420_v2:discussion-content-composer', self::valueAt($build, '#component'));
+    self::assertFalse(self::valueAt($build, '#props', 'standalone_popup'));
+    self::assertSame($form, self::valueAt($build, '#slots', 'form'));
   }
 
   /**
@@ -112,6 +112,21 @@ final class EditorialWorkspaceAccessTest extends UnitTestCase {
       $this->createMock(DateFormatterInterface::class),
     );
     return [$workspace, $node];
+  }
+
+  /**
+   * Reads a render value while validating every parent mapping.
+   */
+  private static function valueAt(mixed $render, string ...$path): mixed {
+    $value = $render;
+    foreach ($path as $key) {
+      if (!is_array($value) || !array_key_exists($key, $value)) {
+        throw new \UnexpectedValueException(sprintf('Missing render array key "%s".', $key));
+      }
+      $value = $value[$key];
+    }
+
+    return $value;
   }
 
 }
