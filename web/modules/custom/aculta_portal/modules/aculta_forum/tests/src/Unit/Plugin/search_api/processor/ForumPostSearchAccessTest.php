@@ -73,6 +73,18 @@ final class ForumPostSearchAccessTest extends TestCase {
   }
 
   /**
+   * A missing account aborts the query before any access conditions are built.
+   */
+  public function testMissingAccountAbortsQuery(): void {
+    $query = $this->query();
+    $query->setOption('search_api_access_account', NULL);
+    $this->processor(['all' => [0]])->preprocessSearchQuery($query);
+
+    self::assertTrue($query->wasAborted());
+    self::assertNull($this->grantCondition($query));
+  }
+
+  /**
    * A bypass account does not receive the grants condition.
    */
   public function testBypassSkipsGrantCondition(): void {
@@ -99,7 +111,7 @@ final class ForumPostSearchAccessTest extends TestCase {
   /**
    * Builds the processor with the requested Node grants.
    *
-   * @param array $grants
+   * @param array<string, list<int|string>> $grants
    *   Grant map returned by NodeGrantsHelper.
    */
   private function processor(array $grants): ForumPostSearchAccess {
@@ -139,13 +151,23 @@ final class ForumPostSearchAccessTest extends TestCase {
   /**
    * Returns the value list of the forum_search_topic_grants condition.
    *
-   * @return array|null
+   * @return list<int|string>|null
    *   The IN values, or NULL when the condition is absent.
    */
   private function grantCondition(Query $query): ?array {
-    foreach ($this->conditions($query->getConditionGroup()) as [$field, $operator, $value]) {
+    foreach ($this->conditions($query->getConditionGroup()) as $condition) {
+      [$field, $operator, $value] = $condition;
       if ($field === 'forum_search_topic_grants' && $operator === 'IN') {
-        return $value;
+        if (!is_array($value)) {
+          return NULL;
+        }
+        $grants = [];
+        foreach ($value as $grant) {
+          if (is_int($grant) || is_string($grant)) {
+            $grants[] = $grant;
+          }
+        }
+        return $grants;
       }
     }
     return NULL;
@@ -154,7 +176,7 @@ final class ForumPostSearchAccessTest extends TestCase {
   /**
    * Flattens nested condition groups into field, operator and value tuples.
    *
-   * @return array
+   * @return list<array{0: string, 1: string, 2: mixed}>
    *   Flat condition list.
    */
   private function conditions(ConditionGroupInterface $group): array {

@@ -8,8 +8,10 @@ use Drupal\aculta_forum\Entity\ForumPost;
 use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\Component\Utility\DeprecationHelper;
 use Drupal\Core\Database\Connection;
+use Drupal\Core\Database\StatementInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
@@ -22,7 +24,6 @@ use Drupal\search_api\Item\ItemInterface;
 use Drupal\search_api\Processor\ProcessorPluginBase;
 use Drupal\search_api\Processor\ProcessorProperty;
 use Drupal\search_api\Query\QueryInterface;
-use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -46,11 +47,14 @@ final class ForumPostSearchAccess extends ProcessorPluginBase implements Contain
 
   /**
    * Constructs the processor.
+   *
+   * @param array<mixed> $configuration
+   * @param array<string, mixed> $plugin_definition
    */
   public function __construct(
     array $configuration,
     $plugin_id,
-    $plugin_definition,
+    array $plugin_definition,
     protected readonly AccountProxyInterface $currentUser,
     protected readonly EntityTypeManagerInterface $entityTypeManager,
     protected readonly ?object $nodeGrantsHelper,
@@ -62,18 +66,42 @@ final class ForumPostSearchAccess extends ProcessorPluginBase implements Contain
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<mixed> $configuration
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): static {
+    $validatedConfiguration = self::validatePluginArray($configuration, 'configuration');
+    $validatedDefinition = self::validatePluginArray($plugin_definition, 'plugin definition');
     return new static(
-      $configuration,
+      $validatedConfiguration,
       $plugin_id,
-      $plugin_definition,
+      $validatedDefinition,
       $container->get('current_user'),
       $container->get('entity_type.manager'),
       $container->has(NodeGrantsHelper::class) ? $container->get(NodeGrantsHelper::class) : NULL,
       $container->get('database'),
       $container->get('aculta_portal.domain_site'),
     );
+  }
+
+  /**
+   * Validates the array data passed through the Search API plugin factory.
+   *
+   * @return array<string, mixed>
+   *   The validated plugin data.
+   */
+  private static function validatePluginArray(mixed $value, string $name): array {
+    if (!is_array($value)) {
+      throw new \UnexpectedValueException(sprintf('The Search API %s must be an array.', $name));
+    }
+    $validated = [];
+    foreach ($value as $key => $item) {
+      if (!is_string($key)) {
+        throw new \UnexpectedValueException(sprintf('The Search API %s must use string keys.', $name));
+      }
+      $validated[$key] = $item;
+    }
+    return $validated;
   }
 
   /**
@@ -133,15 +161,23 @@ final class ForumPostSearchAccess extends ProcessorPluginBase implements Contain
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<array-key, ItemInterface<\Drupal\Core\TypedData\ComplexDataInterface>> $items
+   *   Search API items to filter before indexing.
    */
   public function alterIndexedItems(array &$items): void {
     foreach ($items as $item_id => $item) {
-      $entity = $item->getOriginalObject()->getValue();
+      $originalObject = $item->getOriginalObject();
+      if ($originalObject === NULL) {
+        unset($items[$item_id]);
+        continue;
+      }
+      $entity = $originalObject->getValue();
       if (!$entity instanceof ForumPost) {
         continue;
       }
       $topic = $this->getTopic($entity);
-      if (!$this->isPublicForumTopic($topic) || !$topic->isPublished() || !$entity->isPublished()) {
+      if ($topic === NULL || !$this->isPublicForumTopic($topic) || !$topic->isPublished() || !$entity->isPublished()) {
         unset($items[$item_id]);
       }
     }
@@ -149,9 +185,16 @@ final class ForumPostSearchAccess extends ProcessorPluginBase implements Contain
 
   /**
    * {@inheritdoc}
+   *
+   * @param ItemInterface<\Drupal\Core\TypedData\ComplexDataInterface> $item
+   *   Search API item that wraps typed data.
    */
   public function addFieldValues(ItemInterface $item): void {
-    $entity = $item->getOriginalObject()->getValue();
+    $originalObject = $item->getOriginalObject();
+    if ($originalObject === NULL) {
+      return;
+    }
+    $entity = $originalObject->getValue();
     if (!$entity instanceof ContentEntityInterface) {
       return;
     }
@@ -170,14 +213,19 @@ final class ForumPostSearchAccess extends ProcessorPluginBase implements Contain
       return;
     }
 
-    if (!$this->isPublicForumTopic($topic)) {
+    if ($topic === NULL || !$this->isPublicForumTopic($topic)) {
+      return;
+    }
+
+    $topicId = $topic->id();
+    if (!is_int($topicId) && !is_string($topicId)) {
       return;
     }
 
     $values = [
       'forum_search_type' => $type,
       'forum_search_domain' => (string) $topic->get('field_domain_source')->target_id,
-      'forum_search_topic_id' => (int) $topic->id(),
+      'forum_search_topic_id' => (int) $topicId,
       'forum_search_topic_published' => $topic->isPublished(),
       'forum_search_post_published' => $post_published,
       'forum_search_topic_grants' => $this->topicViewGrants($topic),
@@ -194,9 +242,17 @@ final class ForumPostSearchAccess extends ProcessorPluginBase implements Contain
     if ($topic->hasField('field_aculta_categories') && !$topic->get('field_aculta_categories')->isEmpty()) {
       $fields = $this->getFieldsHelper()->filterForPropertyPath($item->getFields(), NULL, 'forum_search_category');
       foreach ($fields as $field) {
-        foreach ($topic->get('field_aculta_categories')->getValue() as $category) {
-          if (!empty($category['target_id'])) {
-            $field->addValue((int) $category['target_id']);
+        $categories = $topic->get('field_aculta_categories')->getValue();
+        if (!is_array($categories)) {
+          continue;
+        }
+        foreach ($categories as $category) {
+          if (!is_array($category)) {
+            continue;
+          }
+          $categoryId = $category['target_id'] ?? NULL;
+          if (is_int($categoryId) || (is_string($categoryId) && ctype_digit($categoryId))) {
+            $field->addValue((int) $categoryId);
           }
         }
       }
@@ -241,13 +297,21 @@ final class ForumPostSearchAccess extends ProcessorPluginBase implements Contain
       $grants = DeprecationHelper::backwardsCompatibleCall(
         \Drupal::VERSION,
         '11.4.0',
-        fn (): array => $this->nodeGrantsHelper->nodeAccessGrants('view', $account),
+        fn (): array => $this->nodeGrantsHelper instanceof NodeGrantsHelper
+          ? $this->nodeGrantsHelper->nodeAccessGrants('view', $account)
+          : throw new \LogicException('The Node grants service is required on Drupal 11.4 and later.'),
         // Core 11.3 fallback. The dynamic call keeps static deprecation audits
         // from flagging a compatibility path that is unreachable on 11.4+.
         static fn (): array => (array) \call_user_func('node_access_grants', 'view', $account),
       );
       foreach ($grants as $realm => $gids) {
+        if (!is_array($gids)) {
+          throw new \UnexpectedValueException('Node access grants have an invalid structure.');
+        }
         foreach ($gids as $gid) {
+          if (!is_int($gid) && !is_string($gid)) {
+            throw new \UnexpectedValueException('Node access grant IDs must be integers or strings.');
+          }
           $grant_values[] = sprintf('node_access_%s:%s', $realm, $gid);
         }
       }
@@ -271,11 +335,14 @@ final class ForumPostSearchAccess extends ProcessorPluginBase implements Contain
    * Checks the Forum topic bundle and Domain purpose.
    */
   private function isPublicForumTopic(?NodeInterface $topic): bool {
-    return $topic instanceof NodeInterface
-      && $topic->bundle() === self::TOPIC_BUNDLE
-      && $topic->hasField('field_domain_source')
-      && !$topic->get('field_domain_source')->isEmpty()
-      && $this->siteManager->getSiteKeyValueForDomainId((string) $topic->get('field_domain_source')->target_id) === 'forum';
+    if (!$topic instanceof NodeInterface
+      || $topic->bundle() !== self::TOPIC_BUNDLE
+      || !$topic->hasField('field_domain_source')
+      || $topic->get('field_domain_source')->isEmpty()) {
+      return FALSE;
+    }
+    $domainId = $topic->get('field_domain_source')->target_id;
+    return $this->siteManager->getSiteKeyValueForDomainId($domainId) === 'forum';
   }
 
   /**
@@ -293,8 +360,16 @@ final class ForumPostSearchAccess extends ProcessorPluginBase implements Contain
       ->condition('nid', 0)
       ->condition('nid', (int) $topic->id());
     $records = $query->condition($ids)->execute();
+    if (!$records instanceof StatementInterface) {
+      throw new \RuntimeException('Unable to load Forum topic view grants.');
+    }
     $grants = [];
     foreach ($records as $record) {
+      if (!is_object($record) || !isset($record->realm, $record->gid)
+        || (!is_string($record->realm) && !is_int($record->realm))
+        || (!is_string($record->gid) && !is_int($record->gid))) {
+        throw new \UnexpectedValueException('Forum topic view grants have an invalid database result.');
+      }
       $grants[] = sprintf('node_access_%s:%s', $record->realm, $record->gid);
     }
     return $grants !== [] ? array_values(array_unique($grants)) : ['node_access__all'];

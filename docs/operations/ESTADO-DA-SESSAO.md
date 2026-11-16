@@ -30,3 +30,13 @@
 - **Verificações:** `git diff --check` pendente; actionlint local DEFERRED (binário ausente), validado no CI após push.
 - **Pendências e bloqueios:** confirmar um único scan por SHA, incluindo Semgrep; Kernel global segue pendente por shutdown sem JUnit.
 - **Próximo passo:** commit/push, acompanhar actionlint e verificar execução única.
+
+# PHPStan — acessibilidade da busca do Fórum — 2026-11-16
+
+- **Objetivo:** reduzir a dívida PHPStan do `ForumPostSearchAccess` em lote de pelo menos 30 ocorrências, preservando a segurança de grants.
+- **Estado:** lote completo localmente, ainda não publicado. `HEAD` e `origin/dev` estão em `304912fad1f72b5db625cd6b841390d962d09526`; branch `dev`. Corrigidas 27 ocorrências do processor e 5 do teste; removidas as 26 entradas correspondentes do baseline. `alterIndexedItems()` documenta o array de `ItemInterface<ComplexDataInterface>`, sem stub ou supressão.
+- **Decisões:** ausências e estruturas inválidas de grants falham fechado; realm numérico é aceito por causa da coerção de chaves do PHP. Revisão independente R2 final sem blocker após a anotação genérica.
+- **Arquivos do lote:** `web/modules/custom/aculta_portal/modules/aculta_forum/src/Plugin/search_api/processor/ForumPostSearchAccess.php`, `web/modules/custom/aculta_portal/modules/aculta_forum/tests/src/Unit/Plugin/search_api/processor/ForumPostSearchAccessTest.php`, `phpstan-baseline.neon` e este handoff.
+- **Verificações:** análise canônica `vendor/bin/phpstan analyse --no-progress --error-format=json` PASS (exit 0); guard `check --analysis` PASS; guard `diff --changed-files` PASS; teste focado PASS (5 testes, 13 assertions); PHP lint PASS; descoberta PHPUnit PASS; validador Drupal 12 PASS (1236 checks); `git diff --check` PASS.
+- **Pendências:** staged diff revisado e pronto para commit em português e push fast-forward para `origin/dev`. Não há migração Runtime implícita. Preservar a modificação local alheia em `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/PrivateMessageController.php`.
+- **Próximo passo:** conferir `HEAD`/`origin/dev`, publicar apenas os três arquivos do lote e este handoff; após confirmar SHA remoto, parar e entregar novo handoff.
