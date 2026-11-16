@@ -1,12 +1,6 @@
 parameters:
 	ignoreErrors:
 		-
-			rawMessage: 'Method Drupal\aculta_user\Badge\BadgeService::definitions() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Badge/BadgeService.php
-
-		-
 			rawMessage: Cannot access offset 'address' on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
@@ -31329,43 +31323,6 @@ parameters:
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_forum/tests/src/Unit/ForumReactionsConfigTest.php
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 		-
 			rawMessage: 'Call to an undefined method Drupal\search_api\Query\QueryInterface::expects().'
 			identifier: method.notFound
@@ -31407,207 +31364,6 @@ parameters:
 			identifier: encapsedStringPart.nonString
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_forum/tests/src/Unit/ForumServiceDefinitionsTest.php
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 		-
 			rawMessage: 'Call to an undefined method object::method().'
@@ -44581,17 +44337,11 @@ parameters:
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_lms_h5p/src/Plugin/EntityReferenceSelection/CourseH5PContentSelection.php
 
-
-
-
-
-
 		-
 			rawMessage: 'Parameter #1 $array of function array_keys expects array, mixed given.'
 			identifier: argument.type
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_lms_h5p/src/Plugin/EntityReferenceSelection/CourseH5PContentSelection.php
-
 
 		-
 			rawMessage: 'Parameter #1 $value of function count expects array|Countable, mixed given.'
@@ -47526,7 +47276,6 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_lms_h5p/tests/src/Unit/Lmsaculta_H5PDiscussionResolverTest.php
-
 
 		-
 			rawMessage: 'Offset string on array{} on left side of ?? does not exist.'
@@ -52604,7 +52353,6 @@ parameters:
 			count: 4
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/aculta_messenger.install
 
-
 		-
 			rawMessage: 'Argument of an invalid type Drupal\Core\Database\StatementInterface|null supplied for foreach, only iterables are supported.'
 			identifier: foreach.nonIterable
@@ -53175,7 +52923,6 @@ parameters:
 			count: 2
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Aviso/PrivateMessageDigestProvider.php
 
-
 		-
 			rawMessage: 'Parameter #1 $ids of method Drupal\Core\Entity\EntityStorageInterface::loadMultiple() expects array<int|string>|null, array|int given.'
 			identifier: argument.type
@@ -53422,51 +53169,11 @@ parameters:
 			count: 10
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php
 
-
-
-
-
-
-
-
-
 		-
 			rawMessage: 'Method Drupal\aculta_messenger\Controller\MessagesController::assertOtherMember() has parameter $access with no type specified.'
 			identifier: missingType.parameter
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 		-
 			rawMessage: 'Offset ''alerta''|''amizade''|''aprendizagem''|''comunicado''|''conquistas''|''doacao''|''forum''|''loja''|''wiki'' might not exist on array{comunicado?: Drupal\aculta_messenger\Aviso\PersonalNoticePageState, forum: Drupal\aculta_messenger\Aviso\PersonalNoticePageState, alerta?: Drupal\aculta_messenger\Aviso\PersonalNoticePageState, amizade?: Drupal\aculta_messenger\Aviso\PersonalNoticePageState, aprendizagem?: Drupal\aculta_messenger\Aviso\PersonalNoticePageState, wiki?: Drupal\aculta_messenger\Aviso\PersonalNoticePageState, revista?: Drupal\aculta_messenger\Aviso\PersonalNoticePageState, loja?: Drupal\aculta_messenger\Aviso\PersonalNoticePageState, ...}.'
@@ -53540,7 +53247,6 @@ parameters:
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php
 
-
 		-
 			rawMessage: 'Parameter #3 $filters of static method Drupal\aculta_messenger\Service\NoticePaginationUrlBuilder::filteredPage() expects array<string, string>, array<mixed> given.'
 			identifier: argument.type
@@ -53552,7 +53258,6 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php
-
 
 		-
 			rawMessage: 'Parameter #4 $filters of static method Drupal\aculta_messenger\Service\NoticePaginationUrlBuilder::globalPage() expects array<string, string>, array<mixed> given.'
@@ -53577,12 +53282,6 @@ parameters:
 			identifier: cast.string
 			count: 2
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/NewConversationController.php
-
-
-
-
-
-
 
 		-
 			rawMessage: 'Argument of an invalid type mixed supplied for foreach, only iterables are supported.'
@@ -53806,15 +53505,6 @@ parameters:
 			count: 5
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/ConversationRelationshipForm.php
 
-
-
-
-
-
-
-
-
-
 		-
 			rawMessage: 'Parameter #1 $postUrl of method Drupal\aculta_messenger\Form\ConversationRelationshipForm::actionWithSessionToken() expects string, mixed given.'
 			identifier: argument.type
@@ -53959,14 +53649,6 @@ parameters:
 			count: 2
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/NewConversationForm.php
 
-
-
-
-
-
-
-
-
 		-
 			rawMessage: 'Parameter #1 $id of method Drupal\Core\Entity\ContentEntityStorageBase::loadUnchanged() expects int|string, mixed given.'
 			identifier: argument.type
@@ -54038,13 +53720,6 @@ parameters:
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/PrivateMessageFormValidator.php
-
-
-
-
-
-
-
 
 		-
 			rawMessage: 'Parameter #2 $sender of method Drupal\aculta_messenger\Form\PrivateMessageFormValidator::validateFreshThreadAccess() expects Drupal\user\UserInterface, Drupal\user\Entity\User|null given.'
@@ -54226,9 +53901,6 @@ parameters:
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Hook/MessengerBarHooks.php
 
-
-
-
 		-
 			rawMessage: 'Parameter #1 $array of function array_column expects array, mixed given.'
 			identifier: argument.type
@@ -54355,13 +54027,11 @@ parameters:
 			count: 3
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Hook/PrivateMessageFormHooks.php
 
-
 		-
 			rawMessage: Cannot access offset '#private_message' on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Hook/PrivateMessagePresentationHooks.php
-
 
 		-
 			rawMessage: Cannot access an offset on mixed.
@@ -54398,14 +54068,6 @@ parameters:
 			identifier: method.nonObject
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Hook/PrivateMessageReplyHooks.php
-
-
-
-
-
-
-
-
 
 		-
 			rawMessage: Cannot access offset 'email_summary' on mixed.
@@ -55829,9 +55491,6 @@ parameters:
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Plugin/QueueWorker/PrivateMessageNotificationWorker.php
 
-
-
-
 		-
 			rawMessage: Cannot access offset int|string|null on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
@@ -56558,8 +56217,6 @@ parameters:
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Integration/Lms/Unit/LearningNoticeDigestIntegrationTest.php
 
-
-
 		-
 			rawMessage: 'Offset string does not exist on array{}.'
 			identifier: offsetAccess.notFound
@@ -56626,7 +56283,6 @@ parameters:
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Integration/Lms/Unit/LearningNoticeEventSubscriberTest.php
 
-
 		-
 			rawMessage: 'Method Drupal\Tests\aculta_messenger\Integration\Lms\Unit\LearningNoticeStaleAnswerTest::field() return type with generic interface Drupal\Core\Field\FieldItemListInterface does not specify its types: T'
 			identifier: missingType.generics
@@ -56668,7 +56324,6 @@ parameters:
 			identifier: match.unhandled
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Integration/Magazine/Kernel/MagazineNoticePersistenceKernelTest.php
-
 
 		-
 			rawMessage: 'Parameter #2 $haystack of static method PHPUnit\Framework\Assert::assertStringContainsString() expects string, mixed given.'
@@ -56952,8 +56607,6 @@ parameters:
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Kernel/AvisosResumoMailerKernelTest.php
 
-
-
 		-
 			rawMessage: 'Parameter #2 $haystack of static method PHPUnit\Framework\Assert::assertCount() expects Countable|iterable, mixed given.'
 			identifier: argument.type
@@ -57140,11 +56793,6 @@ parameters:
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Kernel/FriendshipNoticePipelineKernelTest.php
 
-
-
-
-
-
 		-
 			rawMessage: 'Parameter #1 $id of method Drupal\Core\Entity\EntityStorageInterface::load() expects int|string, int|string|null given.'
 			identifier: argument.type
@@ -57228,7 +56876,6 @@ parameters:
 			identifier: return.type
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Kernel/PrivateMessageRouteAccessKernelTest.php
-
 
 		-
 			rawMessage: 'Parameter #1 $path of class Symfony\Component\Routing\Route constructor expects string, mixed given.'
@@ -57560,8 +57207,6 @@ parameters:
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Unit/CommunicationSettingsFormTest.php
 
-
-
 		-
 			rawMessage: 'Parameter #3 $resolve of static method Drupal\aculta_messenger\Aviso\EligibleNoticePage::collect() expects callable(mixed): mixed, Closure(int): (array{title: non-falsy-string}|null) given.'
 			identifier: argument.type
@@ -57579,9 +57224,6 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Unit/EventsContributionNoticeConsumerTest.php
-
-
-
 
 		-
 			rawMessage: 'Cannot call method canViewTopic() on mixed.'
@@ -57666,7 +57308,6 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Unit/FriendRequestsFormTest.php
-
 
 		-
 			rawMessage: 'Call to an undefined method Drupal\message\MessageInterface::expects().'
@@ -57847,7 +57488,6 @@ parameters:
 			identifier: method.nonObject
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Unit/MessageSubscribeEventHooksTest.php
-
 
 		-
 			rawMessage: Anonymous function should return Drupal\field\FieldStorageConfigInterface but returns mixed.
@@ -58191,7 +57831,6 @@ parameters:
 			count: 2
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Unit/NewConversationControllerTest.php
 
-
 		-
 			rawMessage: 'Cannot call method offsetGet() on mixed.'
 			identifier: method.nonObject
@@ -58203,8 +57842,6 @@ parameters:
 			identifier: cast.string
 			count: 2
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Unit/NewConversationControllerTest.php
-
-
 
 		-
 			rawMessage: 'Call to an undefined method Drupal\message\MessageInterface::expects().'
@@ -58644,7 +58281,6 @@ parameters:
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Unit/PrivateMessageFormHooksTest.php
 
-
 		-
 			rawMessage: Cannot access property $context on Drupal\aculta_mailer\Message\MailMessage|null.
 			identifier: property.nonObject
@@ -58674,7 +58310,6 @@ parameters:
 			identifier: cast.int
 			count: 2
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Unit/PrivateMessageNotificationWorkerTest.php
-
 
 		-
 			rawMessage: 'Method Drupal\Tests\aculta_messenger\Unit\PrivateMessageNotificationWorkerTest::field() return type with generic interface Drupal\Core\Field\FieldItemListInterface does not specify its types: T'
@@ -58754,14 +58389,11 @@ parameters:
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Unit/PrivateMessageRetentionHooksTest.php
 
-
 		-
 			rawMessage: 'Parameter #2 $haystack of static method PHPUnit\Framework\Assert::assertStringContainsString() expects string, mixed given.'
 			identifier: argument.type
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Unit/PrivateMessageUnreadIndicatorHooksTest.php
-
-
 
 		-
 			rawMessage: 'Call to an undefined method object::getFieldDefinitions().'
@@ -60958,7 +60590,6 @@ parameters:
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_patcher/tests/src/Unit/PatchManifestExporterTest.php
-
 
 		-
 			rawMessage: 'Offset ''account''|''courses''|''eventos''|''forum''|''links''|''magazine''|''main''|''shop''|''support''|''wiki'' on array{main: ''Principal'', account: ''Conta'', support: ''Apoio'', magazine: ''Revista'', wiki: ''Wiki'', shop: ''Loja'', courses: ''Cursos'', forum: ''Fórum'', ...} on left side of ?? always exists and is not nullable.'
@@ -66025,6 +65656,12 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Avatar/AvatarResolver.php
 
 		-
+			rawMessage: 'Method Drupal\aculta_user\Badge\BadgeService::definitions() return type has no value type specified in iterable type array.'
+			identifier: missingType.iterableValue
+			count: 1
+			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Badge/BadgeService.php
+
+		-
 			rawMessage: Cannot access offset 'aculta_user_author_card' on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
@@ -69995,7 +69632,6 @@ parameters:
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
 			path: web/modules/custom/aculta_portal/src/Account/EmailConfirmationNotice.php
-
 
 		-
 			rawMessage: 'Parameter #3 $context1 is passed by reference so it does not accept readonly property Drupal\aculta_portal\Account\EmailConfirmationNotice::$currentUser.'
