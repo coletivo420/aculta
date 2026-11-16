@@ -59,6 +59,8 @@ final class MailDashboardController extends ControllerBase {
 
   /**
    * Página do painel: período e tipo escolhidos na query (`dias`, `tipo`) valem para gráfico e tabelas.
+   *
+   * @return array<string, mixed>
    */
   public function overview(Request $request): array {
     $now = $this->time->getRequestTime();
@@ -81,6 +83,7 @@ final class MailDashboardController extends ControllerBase {
       'nao_confirmados' => [$this->t('Não confirmados'), '#616161'],
       'falha' => [$this->t('Com falha'), '#c62828'],
     ];
+    /** @var array<string, array<int, int>> $perCategory */
     $perCategory = [];
     foreach (array_keys($categories) as $key) {
       $perCategory[$key] = $this->dashboard->dailyCounts($since, MailDashboard::FILTERS[$key]);
@@ -102,10 +105,22 @@ final class MailDashboardController extends ControllerBase {
       $table[] = array_merge([(string) $label], $values, [array_sum($values)]);
     }
 
+    /** @var array<string, mixed> $summary */
     $summary = $this->dashboard->summary($since);
     $total = $filter === 'todos'
-      ? $summary['total']
+      ? (isset($summary['total']) && is_numeric($summary['total']) ? (int) $summary['total'] : 0)
       : array_sum(array_map('array_sum', array_intersect_key($perCategory, [$filter => TRUE])));
+
+    /** @var array<string, int> $byStatus */
+    $byStatus = isset($summary['by_status']) && is_array($summary['by_status']) ? $summary['by_status'] : [];
+    /** @var array<string, int> $byTransport */
+    $byTransport = isset($summary['by_transport']) && is_array($summary['by_transport']) ? $summary['by_transport'] : [];
+    /** @var array<string, int> $byType */
+    $byType = isset($summary['by_type']) && is_array($summary['by_type']) ? $summary['by_type'] : [];
+    /** @var array<string, int> $byError */
+    $byError = isset($summary['by_error']) && is_array($summary['by_error']) ? $summary['by_error'] : [];
+
+    $labelledStatus = $this->labelled($byStatus, self::STATUS_LABELS);
 
     $build = [
       '#type' => 'container',
@@ -115,7 +130,7 @@ final class MailDashboardController extends ControllerBase {
       'controles' => $this->controls($days, $filter),
       'resumo' => [
         '#markup' => '<p><strong>' . $this->t('@total envio(s) no período (@tipo)', [
-          '@total' => $total,
+          '@total' => (string) $total,
           '@tipo' => (string) $this->filterLabel($filter),
         ]) . '</strong></p>',
       ],
@@ -132,18 +147,20 @@ final class MailDashboardController extends ControllerBase {
           '#rows' => $table,
         ]),
       ],
-      'status_chart' => $this->chart($this->t('Estado'), $this->labelled($summary['by_status'], self::STATUS_LABELS)),
-      'transport_chart' => $this->chart($this->t('Transporte'), $summary['by_transport']),
-      'status' => $this->table($this->t('Estado'), $this->labelled($summary['by_status'], self::STATUS_LABELS)),
-      'type' => $this->table($this->t('Tipo'), $summary['by_type']),
-      'transport' => $this->table($this->t('Transporte'), $summary['by_transport']),
-      'error' => $this->table($this->t('Motivo da falha'), $summary['by_error']),
+      'status_chart' => $this->chart($this->t('Estado'), $labelledStatus),
+      'transport_chart' => $this->chart($this->t('Transporte'), $byTransport),
+      'status' => $this->table($this->t('Estado'), $labelledStatus),
+      'type' => $this->table($this->t('Tipo'), $byType),
+      'transport' => $this->table($this->t('Transporte'), $byTransport),
+      'error' => $this->table($this->t('Motivo da falha'), $byError),
     ];
     return $build;
   }
 
   /**
    * Formulário de seleção (GET, sem JavaScript): período e tipo, com botão de aplicar.
+   *
+   * @return array<string, mixed>
    */
   private function controls(int $days, string $filter): array {
     $periodOptions = '';
@@ -182,31 +199,48 @@ final class MailDashboardController extends ControllerBase {
 
   /**
    * Relatório de falhas: texto completo do erro por envio, para o administrador.
+   *
+   * @return array<string, mixed>
    */
   public function failures(): array {
     $since = $this->time->getRequestTime() - 30 * 86400;
     $rows = [];
-    foreach ($this->dashboard->recentFailures($since) as $failure) {
+    /** @var iterable<mixed> $failures */
+    $failures = $this->dashboard->recentFailures($since);
+    foreach ($failures as $failure) {
+      if (!is_array($failure)) {
+        continue;
+      }
+      $created = isset($failure['created']) && is_numeric($failure['created']) ? (int) $failure['created'] : 0;
+      $type = isset($failure['type']) && is_scalar($failure['type']) ? (string) $failure['type'] : '';
+      $correlationId = isset($failure['correlation_id']) && is_scalar($failure['correlation_id']) ? (string) $failure['correlation_id'] : '';
+      $transport = isset($failure['transport']) && is_scalar($failure['transport']) ? (string) $failure['transport'] : '';
+      $attempts = isset($failure['attempts']) && is_scalar($failure['attempts']) ? (string) $failure['attempts'] : '0';
+      $errorCode = isset($failure['error_code']) && is_scalar($failure['error_code']) ? (string) $failure['error_code'] : '';
+      $errorMessage = isset($failure['error_message']) && is_scalar($failure['error_message']) ? (string) $failure['error_message'] : '';
+      $resendable = !empty($failure['resendable']);
+      $id = isset($failure['id']) && is_scalar($failure['id']) ? (string) $failure['id'] : '';
+
       $rows[] = [
-        date('Y-m-d H:i', $failure['created']),
-        $failure['type'],
-        $failure['correlation_id'],
-        $failure['transport'],
-        $failure['attempts'],
-        $failure['error_code'],
-        $failure['error_message'],
-        $failure['resendable'] ? [
+        date('Y-m-d H:i', $created),
+        $type,
+        $correlationId,
+        $transport,
+        $attempts,
+        $errorCode,
+        $errorMessage,
+        $resendable ? [
           'data' => [
             '#type' => 'link',
             '#title' => $this->t('Reenviar'),
-            '#url' => Url::fromRoute('aculta_mailer.failure_resend', ['log_id' => $failure['id']]),
+            '#url' => Url::fromRoute('aculta_mailer.failure_resend', ['log_id' => $id]),
           ],
         ] : '-',
         [
           'data' => [
             '#type' => 'link',
             '#title' => $this->t('Estado'),
-            '#url' => Url::fromRoute('aculta_mailer.log_status', ['log_id' => $failure['id']]),
+            '#url' => Url::fromRoute('aculta_mailer.log_status', ['log_id' => $id]),
           ],
         ],
       ];
@@ -243,6 +277,9 @@ final class MailDashboardController extends ControllerBase {
       $days = 30;
     }
     $handle = fopen('php://temp', 'w+');
+    if ($handle === FALSE) {
+      throw new \RuntimeException('Não foi possível abrir o fluxo temporário para exportação de CSV.');
+    }
     fputcsv($handle, [
       (string) $this->t('Data'),
       (string) $this->t('Tipo'),
@@ -252,15 +289,26 @@ final class MailDashboardController extends ControllerBase {
       (string) $this->t('Código'),
       (string) $this->t('Correlação'),
     ], ';');
-    foreach ($this->dashboard->exportRows($this->time->getRequestTime() - $days * 86400) as $row) {
+    /** @var iterable<array<string, mixed>> $rows */
+    $rows = $this->dashboard->exportRows($this->time->getRequestTime() - $days * 86400);
+    foreach ($rows as $row) {
+      $created = isset($row['created']) && is_numeric($row['created']) ? (int) $row['created'] : 0;
+      $type = isset($row['type']) && is_scalar($row['type']) ? (string) $row['type'] : '';
+      $statusRaw = isset($row['status']) && is_scalar($row['status']) ? (string) $row['status'] : '';
+      $status = self::STATUS_LABELS[$statusRaw] ?? $statusRaw;
+      $transport = isset($row['transport']) && is_scalar($row['transport']) ? (string) $row['transport'] : '';
+      $attempts = isset($row['attempts']) && is_scalar($row['attempts']) ? (string) $row['attempts'] : '0';
+      $errorCode = isset($row['error_code']) && is_scalar($row['error_code']) ? (string) $row['error_code'] : '';
+      $correlationId = isset($row['correlation_id']) && is_scalar($row['correlation_id']) ? (string) $row['correlation_id'] : '';
+
       fputcsv($handle, [
-        date('Y-m-d H:i', (int) $row['created']),
-        $row['type'],
-        self::STATUS_LABELS[$row['status']] ?? $row['status'],
-        $row['transport'],
-        $row['attempts'],
-        $row['error_code'],
-        $row['correlation_id'],
+        date('Y-m-d H:i', $created),
+        $type,
+        $status,
+        $transport,
+        $attempts,
+        $errorCode,
+        $correlationId,
       ], ';');
     }
     rewind($handle);
@@ -275,29 +323,50 @@ final class MailDashboardController extends ControllerBase {
 
   /**
    * Diagnóstico: transportes configurados (sem credenciais), último envio e falha, fila e cron.
+   *
+   * @return array<string, mixed>
    */
   public function diagnostics(): array {
+    /** @var array<string, mixed> $report */
     $report = $this->diagnostics->report();
     $transports = [];
-    foreach ($report['transports'] as $id => $row) {
+    /** @var array<string, array<string, mixed>> $reportTransports */
+    $reportTransports = isset($report['transports']) && is_array($report['transports']) ? $report['transports'] : [];
+    foreach ($reportTransports as $id => $row) {
+      $plugin = isset($row['plugin']) && is_scalar($row['plugin']) ? (string) $row['plugin'] : '';
       // Brevo é API: não tem servidor, porta nem certificado. Mostrar isso em vez de ":0".
-      $api = $row['plugin'] === 'brevo';
+      $api = $plugin === 'brevo';
+      $label = isset($row['label']) && is_scalar($row['label']) ? (string) $row['label'] : (string) $id;
+      $host = isset($row['host']) && is_scalar($row['host']) ? (string) $row['host'] : '';
+      $port = isset($row['port']) && is_scalar($row['port']) ? (string) $row['port'] : '';
+      $verifyPeer = !empty($row['verify_peer']);
+      $userSet = !empty($row['user_set']);
+      $passSet = !empty($row['pass_set']);
+      $lastSent = isset($row['last_sent']) && is_numeric($row['last_sent']) ? (int) $row['last_sent'] : 0;
+      $lastFailure = isset($row['last_failure']) && is_numeric($row['last_failure']) ? (int) $row['last_failure'] : 0;
+
       $transports[] = [
         $id,
-        $row['label'],
-        $api ? $this->t('API (sem servidor)') : $row['host'] . ':' . $row['port'],
-        $api ? $this->t('não se aplica') : ($row['verify_peer'] ? $this->t('sim') : $this->t('não')),
-        $api ? $this->t('não se aplica') : ($row['user_set'] ? $this->t('preenchido') : $this->t('vazio')),
-        $api ? $this->t('chave no arquivo de segredos') : ($row['pass_set'] ? $this->t('preenchida') : $this->t('vazia')),
-        $row['last_sent'] ? date('Y-m-d H:i', $row['last_sent']) : $this->t('nunca'),
-        $row['last_failure'] ? date('Y-m-d H:i', $row['last_failure']) : $this->t('nunca'),
+        $label,
+        $api ? $this->t('API (sem servidor)') : $host . ':' . $port,
+        $api ? $this->t('não se aplica') : ($verifyPeer ? $this->t('sim') : $this->t('não')),
+        $api ? $this->t('não se aplica') : ($userSet ? $this->t('preenchido') : $this->t('vazio')),
+        $api ? $this->t('chave no arquivo de segredos') : ($passSet ? $this->t('preenchida') : $this->t('vazia')),
+        $lastSent > 0 ? date('Y-m-d H:i', $lastSent) : $this->t('nunca'),
+        $lastFailure > 0 ? date('Y-m-d H:i', $lastFailure) : $this->t('nunca'),
       ];
     }
+    $defaultTransport = isset($report['default']) && is_scalar($report['default']) ? (string) $report['default'] : '';
+    $failover = isset($report['failover']) && is_array($report['failover']) ? $report['failover'] : [];
+    $fallback = isset($failover['fallback']) && is_scalar($failover['fallback']) ? (string) $failover['fallback'] : '-';
+    $queueItems = isset($report['queue_items']) && is_numeric($report['queue_items']) ? (int) $report['queue_items'] : 0;
+    $cronLast = isset($report['cron_last']) && is_numeric($report['cron_last']) ? (int) $report['cron_last'] : 0;
+
     return [
       'default' => [
         '#markup' => '<p>' . $this->t('Padrão: @default. Contingência: @fallback.', [
-          '@default' => $report['default'],
-          '@fallback' => $report['failover']['fallback'] ?? '-',
+          '@default' => $defaultTransport,
+          '@fallback' => $fallback,
         ]) . '</p>',
       ],
       'transports' => $this->scrollable([
@@ -316,10 +385,10 @@ final class MailDashboardController extends ControllerBase {
         '#empty' => $this->t('Transportes indisponíveis: o módulo de transporte não está habilitado.'),
       ]),
       'domain' => $this->senderDomain(),
-      'queue' => ['#markup' => '<p>' . $this->t('Mensagens na fila: @n.', ['@n' => $report['queue_items']]) . '</p>'],
+      'queue' => ['#markup' => '<p>' . $this->t('Mensagens na fila: @n.', ['@n' => (string) $queueItems]) . '</p>'],
       'cron' => [
         '#markup' => '<p>' . $this->t('Última execução do cron: @when.', [
-          '@when' => $report['cron_last'] ? date('Y-m-d H:i', $report['cron_last']) : $this->t('nunca'),
+          '@when' => $cronLast > 0 ? date('Y-m-d H:i', $cronLast) : $this->t('nunca'),
         ]) . '</p>',
       ],
     ];
@@ -327,31 +396,41 @@ final class MailDashboardController extends ControllerBase {
 
   /**
    * SPF, DKIM e DMARC do domínio do remetente (`system.site:mail`).
+   *
+   * @return array<string, mixed>
    */
   private function senderDomain(): array {
-    $sender = (string) $this->config('system.site')->get('mail');
+    $mailConfig = $this->config('system.site')->get('mail');
+    $sender = is_scalar($mailConfig) ? (string) $mailConfig : '';
     if (!str_contains($sender, '@')) {
       return ['#markup' => '<p>' . $this->t('Domínio do remetente não configurado.') . '</p>'];
     }
-    $check = $this->domainCheck->check(substr(strrchr($sender, '@'), 1));
-    $spf = match ($check['spf']) {
+    $domainPart = substr(strrchr($sender, '@') ?: '', 1);
+    /** @var array<string, mixed> $check */
+    $check = $this->domainCheck->check($domainPart);
+    $spfVal = isset($check['spf']) && is_scalar($check['spf']) ? (string) $check['spf'] : '';
+    $spf = match ($spfVal) {
       SenderDomainCheck::SPF_OK => $this->t('encontrado'),
       SenderDomainCheck::SPF_MULTIPLE => $this->t('mais de um registro (inválido)'),
       default => $this->t('não encontrado'),
     };
-    $dmarc = $check['dmarc'] === SenderDomainCheck::DMARC_MISSING
+    $dmarcVal = isset($check['dmarc']) && is_scalar($check['dmarc']) ? (string) $check['dmarc'] : '';
+    $dmarc = $dmarcVal === SenderDomainCheck::DMARC_MISSING
       ? $this->t('não encontrado ou sem política')
-      : $this->t('política @policy', ['@policy' => $check['dmarc']]);
-    $active = array_keys(array_filter($check['dkim']));
+      : $this->t('política @policy', ['@policy' => $dmarcVal]);
+    /** @var array<string, bool> $dkimArray */
+    $dkimArray = isset($check['dkim']) && is_array($check['dkim']) ? $check['dkim'] : [];
+    $active = array_keys(array_filter($dkimArray));
     $dkim = $active === []
       ? $this->t('nenhum seletor com chave ativa')
       : $this->t('ativo: @selectors', ['@selectors' => implode(', ', $active)]);
+    $domain = isset($check['domain']) && is_scalar($check['domain']) ? (string) $check['domain'] : '';
     return [
       'intro' => ['#markup' => '<p>' . $this->t('Autenticação do domínio remetente, pelo DNS. A validação do domínio no Brevo é conferida no painel do Brevo.') . '</p>'],
       'table' => $this->scrollable([
         '#type' => 'table',
         '#header' => [$this->t('Domínio'), $this->t('SPF'), $this->t('DKIM'), $this->t('DMARC')],
-        '#rows' => [[$check['domain'], $spf, $dkim, $dmarc]],
+        '#rows' => [[$domain, $spf, $dkim, $dmarc]],
       ]),
     ];
   }
@@ -361,10 +440,10 @@ final class MailDashboardController extends ControllerBase {
    *
    * @param \Drupal\Core\StringTranslation\TranslatableMarkup $label
    *   Título da primeira coluna.
-   * @param array $counts
+   * @param array<string, int> $counts
    *   Contagem por valor.
    *
-   * @return array
+   * @return array<string, mixed>
    *   Render array de tabela.
    */
   private function table(TranslatableMarkup $label, array $counts): array {
@@ -382,17 +461,26 @@ final class MailDashboardController extends ControllerBase {
 
   /**
    * Rótulos legíveis nas chaves de uma contagem; chave sem rótulo fica como está.
+   *
+   * @param array<string, int> $counts
+   * @param array<string, string> $labels
+   *
+   * @return array<string, int>
    */
   private function labelled(array $counts, array $labels): array {
     $out = [];
     foreach ($counts as $key => $count) {
-      $out[(string) ($labels[$key] ?? $key)] = $count;
+      $out[$labels[$key] ?? (string) $key] = $count;
     }
     return $out;
   }
 
   /**
    * Barras de contagem com o elemento nativo progress: o valor aparece como texto, então não depende de cor.
+   *
+   * @param array<string, int> $counts
+   *
+   * @return array<string, mixed>
    */
   private function chart(TranslatableMarkup $label, array $counts): array {
     if ($counts === []) {
@@ -402,13 +490,17 @@ final class MailDashboardController extends ControllerBase {
     $items = [];
     foreach ($counts as $name => $count) {
       // O nome e o valor vão em texto, escapados; a barra é só apoio visual.
-      $items[] = ['#markup' => Html::escape($name . ': ' . $count) . ' <progress value="' . (int) $count . '" max="' . $max . '"></progress>'];
+      $items[] = ['#markup' => Html::escape($name . ': ' . (string) $count) . ' <progress value="' . (int) $count . '" max="' . $max . '"></progress>'];
     }
     return ['#theme' => 'item_list', '#title' => $label, '#items' => $items];
   }
 
   /**
    * Tabela dentro de um contêiner com rolagem horizontal (estilo em css/admin.css).
+   *
+   * @param array<string, mixed> $table
+   *
+   * @return array<string, mixed>
    */
   private function scrollable(array $table): array {
     return [
