@@ -28,28 +28,28 @@ final class MagazineAdminViewsConfigTest extends UnitTestCase {
     $comments_sync = Yaml::parseFile($repository_path . '/config/sync/' . $comments_filename);
     // Config Sync may contain runtime-only Views state. Assert the shared
     // contract explicitly instead of comparing unrelated serialization data.
-    self::assertSame($page['id'], $page_sync['id']);
-    self::assertSame($page['display']['page_magazine']['display_options']['path'], $page_sync['display']['page_magazine']['display_options']['path']);
-    self::assertSame($page['display']['default']['display_options']['filters']['type']['value'], $page_sync['display']['default']['display_options']['filters']['type']['value']);
+    self::assertSame(self::value($page, 'id'), self::value($page_sync, 'id'));
+    self::assertSame(self::value($page, 'display', 'page_magazine', 'display_options', 'path'), self::value($page_sync, 'display', 'page_magazine', 'display_options', 'path'));
+    self::assertSame(self::value($page, 'display', 'default', 'display_options', 'filters', 'type', 'value'), self::value($page_sync, 'display', 'default', 'display_options', 'filters', 'type', 'value'));
     self::assertSame($comments, $comments_sync);
 
-    self::assertSame('painel-administrativo/revista/publicacoes', $page['display']['page_magazine']['display_options']['path']);
+    self::assertSame('painel-administrativo/revista/publicacoes', self::value($page, 'display', 'page_magazine', 'display_options', 'path'));
     self::assertSame(
       ['revista' => 'revista'],
-      $page['display']['default']['display_options']['filters']['type']['value'],
+      self::value($page, 'display', 'default', 'display_options', 'filters', 'type', 'value'),
     );
-    self::assertSame('administer site configuration', $page['display']['default']['display_options']['access']['options']['perm']);
+    self::assertSame('administer site configuration', self::value($page, 'display', 'default', 'display_options', 'access', 'options', 'perm'));
 
-    $options = $comments['display']['default']['display_options'];
-    self::assertSame('administer comments', $options['access']['options']['perm']);
-    self::assertSame('field_aculta_discussion', $options['filters']['field_name']['value']);
-    self::assertSame(['revista' => 'revista'], $options['filters']['type']['value']);
-    self::assertSame('block', $comments['display']['block_comments']['display_plugin']);
+    $options = self::arrayValue($comments, 'display', 'default', 'display_options');
+    self::assertSame('administer comments', self::value($options, 'access', 'options', 'perm'));
+    self::assertSame('field_aculta_discussion', self::value($options, 'filters', 'field_name', 'value'));
+    self::assertSame(['revista' => 'revista'], self::value($options, 'filters', 'type', 'value'));
+    self::assertSame('block', self::value($comments, 'display', 'block_comments', 'display_plugin'));
 
     $block = Yaml::parseFile($repository_path . '/config/sync/block.block.aculta_magazine_admin_comments.yml');
-    self::assertSame('views_block:aculta_magazine_admin_comments-block_comments', $block['plugin']);
-    self::assertStringContainsString('/painel-administrativo/revista/comentarios', $block['visibility']['request_path']['pages']);
-    self::assertSame('main', $block['visibility']['aculta_domain_site']['site_key']);
+    self::assertSame('views_block:aculta_magazine_admin_comments-block_comments', self::value($block, 'plugin'));
+    self::assertStringContainsString('/painel-administrativo/revista/comentarios', self::stringValue($block, 'visibility', 'request_path', 'pages'));
+    self::assertSame('main', self::value($block, 'visibility', 'aculta_domain_site', 'site_key'));
   }
 
   /**
@@ -58,10 +58,10 @@ final class MagazineAdminViewsConfigTest extends UnitTestCase {
   public function testAdministrativeMenuLinkTargetsUnifiedMagazinePage(): void {
     $menu = Yaml::parseFile(dirname(__DIR__, 3) . '/aculta_magazine.links.menu.yml');
 
-    self::assertSame('aculta_magazine.admin', $menu['aculta_magazine.admin']['route_name']);
-    self::assertSame('system.admin', $menu['aculta_magazine.admin']['parent']);
-    self::assertSame('admin', $menu['aculta_magazine.admin']['menu_name']);
-    self::assertSame('view.aculta_magazine_admin_content.page_magazine', $menu['aculta_magazine.admin_publications']['route_name']);
+    self::assertSame('aculta_magazine.admin', self::value($menu, 'aculta_magazine.admin', 'route_name'));
+    self::assertSame('system.admin', self::value($menu, 'aculta_magazine.admin', 'parent'));
+    self::assertSame('admin', self::value($menu, 'aculta_magazine.admin', 'menu_name'));
+    self::assertSame('view.aculta_magazine_admin_content.page_magazine', self::value($menu, 'aculta_magazine.admin_publications', 'route_name'));
   }
 
   /**
@@ -76,13 +76,56 @@ final class MagazineAdminViewsConfigTest extends UnitTestCase {
     }
 
     $pathauto = Yaml::parseFile($repository_path . '/config/sync/pathauto.pattern.aculta_article.yml');
-    $pathauto_criteria = array_values($pathauto['selection_criteria']);
-    self::assertSame(['revista' => 'revista'], $pathauto_criteria[0]['bundles']);
+    $pathauto_criteria = array_values(self::arrayValue($pathauto, 'selection_criteria'));
+    self::assertSame(['revista' => 'revista'], self::value($pathauto_criteria[0] ?? NULL, 'bundles'));
 
     $search = Yaml::parseFile($repository_path . '/config/sync/search_api.index.aculta_conteudo.yml');
-    self::assertContains('revista', $search['datasource_settings']['entity:node']['bundles']['selected']);
-    self::assertNotContains('article', $search['datasource_settings']['entity:node']['bundles']['selected']);
-    self::assertNotContains('blog', $search['datasource_settings']['entity:node']['bundles']['selected']);
+    $selected_bundles = self::arrayValue($search, 'datasource_settings', 'entity:node', 'bundles', 'selected');
+    self::assertContains('revista', $selected_bundles);
+    self::assertNotContains('article', $selected_bundles);
+    self::assertNotContains('blog', $selected_bundles);
+  }
+
+  /**
+   * Reads a YAML value while validating every parent mapping.
+   */
+  private static function value(mixed $data, string ...$path): mixed {
+    $value = $data;
+    foreach ($path as $key) {
+      if (!is_array($value) || !array_key_exists($key, $value)) {
+        throw new \UnexpectedValueException(sprintf('Missing YAML mapping key "%s".', $key));
+      }
+      $value = $value[$key];
+    }
+
+    return $value;
+  }
+
+  /**
+   * Reads a YAML mapping while validating every parent mapping.
+   *
+   * @return array<array-key, mixed>
+   *   YAML mapping.
+   */
+  private static function arrayValue(mixed $data, string ...$path): array {
+    $value = self::value($data, ...$path);
+    if (!is_array($value)) {
+      throw new \UnexpectedValueException(sprintf('YAML path "%s" must contain a mapping.', implode('.', $path)));
+    }
+
+    return $value;
+  }
+
+  /**
+   * Reads a YAML string while validating every parent mapping.
+   */
+  private static function stringValue(mixed $data, string ...$path): string {
+    $value = self::value($data, ...$path);
+    if (!is_string($value)) {
+      throw new \UnexpectedValueException(sprintf('YAML path "%s" must contain a string.', implode('.', $path)));
+    }
+
+    return $value;
   }
 
 }
