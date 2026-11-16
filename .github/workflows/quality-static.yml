@@ -184,11 +184,22 @@ jobs:
     - name: Semgrep local rules, apenas achado novo (baseline)
       env:
         SEMGREP_RULES: .agents/skills/aculta-seguranca-estatica/rules/aculta-php.yml
+        PR_HEAD_REF: ${{ github.event.pull_request.head.ref }}
+        PR_BASE_REF: ${{ github.event.pull_request.base.ref }}
+        PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
       run: |
-        # A triagem integral de Semgrep mais recente está registrada em 9d06d2167.
-        # Comparar a PR de dev com main reabre centenas de achados históricos já triados.
+        # PR de feature: avaliar apenas o delta contra a base efetiva, sem
+        # reabrir achados historicos da branch dev. Todas as regras continuam.
+        # PR de integracao dev -> main usa o marco da triagem integral,
+        # pois cada push de dev ja passou pelo gate incremental.
         if [ "$GITHUB_EVENT_NAME" = "pull_request" ]; then
-          base="9d06d21673d44e09944c14ef31c218aba6db4b0f"
+          if [ "$PR_HEAD_REF" = "dev" ] &&
+             [ "$PR_BASE_REF" = "main" ]; then
+            base="9d06d21673d44e09944c14ef31c218aba6db4b0f"
+          else
+            pr_base="$PR_BASE_SHA"
+            base="$(git merge-base "$pr_base" HEAD 2>/dev/null || printf '%s' "$pr_base")"
+          fi
         else
           base="${{ github.event.before }}"
         fi

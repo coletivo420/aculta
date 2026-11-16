@@ -1015,24 +1015,6 @@ parameters:
 			path: scripts/audit-portal-config-sync-phase2.php
 
 		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::get().'
-			identifier: method.notFound
-			count: 7
-			path: scripts/audit-support-data-details.php
-
-		-
-			rawMessage: Cannot access property $value on mixed.
-			identifier: property.nonObject
-			count: 3
-			path: scripts/audit-support-data-details.php
-
-		-
-			rawMessage: 'Cannot call method isEmpty() on mixed.'
-			identifier: method.nonObject
-			count: 4
-			path: scripts/audit-support-data-details.php
-
-		-
 			rawMessage: 'Parameter #1 $collection of method Drupal\Core\Config\CachedStorage::createCollection() expects string, mixed given.'
 			identifier: argument.type
 			count: 1
@@ -5637,12 +5619,6 @@ parameters:
 			identifier: argument.type
 			count: 2
 			path: scripts/validate-aculta420-v2-foundations.php
-
-		-
-			rawMessage: 'Call to static method create() of internal class Drupal\Core\Render\Markup from outside its root namespace Drupal.'
-			identifier: staticMethod.internalClass
-			count: 105
-			path: scripts/validate-aculta420-v2-sdc.php
 
 		-
 			rawMessage: Cannot access offset 'component' on mixed.
