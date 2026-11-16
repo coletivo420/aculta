@@ -67,9 +67,8 @@ class PrivateMessageController extends ControllerBase implements PrivateMessageC
    */
   public function pmSettingsPage(): array {
     $url = Url::fromRoute('private_message.admin_config.config')->toString();
-    $message = $this->t('You can find module settings here: <a href="@url">page</a>', ['@url' => $url]);
     return [
-      '#markup' => $message,
+      '#markup' => $this->t('You can find module settings here: <a href="@url">page</a>', ['@url' => $url]),
     ];
   }
 
