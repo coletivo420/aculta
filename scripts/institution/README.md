@@ -53,8 +53,6 @@ verificação específica.
 
 ## Configuração de produção
 
-`MULTIDOMAIN-SETTINGS-PRODUCTION.example.php` é exemplo sem segredos.
-
 Settings reais e credenciais pertencem ao ambiente privado.
 
 ## Histórico

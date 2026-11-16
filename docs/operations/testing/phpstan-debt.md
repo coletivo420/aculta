@@ -1,10 +1,10 @@
 # Dívida PHPStan — ACULTA
 
-Gerado em 2026-11-16T10:35:11+00:00 por `scripts/phpstan-debt-report.php`.
+Gerado em 2026-11-16T12:25:43+00:00 por `scripts/phpstan-debt-report.php`.
 
 | Item | Valor |
 | --- | --- |
-| Commit | `a7371ec42` |
+| Commit | `c22415dd1992b04a2e118c9d3f6f4b77509a93cc` |
 | PHP | 8.4.27 |
 | PHPStan | PHPStan - PHP Static Analysis Tool 2.3.5 |
 | Nível | 10 |
@@ -15,39 +15,28 @@ Gerado em 2026-11-16T10:35:11+00:00 por `scripts/phpstan-debt-report.php`.
 
 | Medida | Ocorrências |
 | --- | ---: |
-| Total bruto no nível 10 | 21965 |
-| Dívida congelada no baseline | 21965 |
+| Total bruto no nível 10 | 20971 |
+| Dívida congelada no baseline | 20971 |
 | Erros não suprimidos | 0 |
-| Entradas no baseline | 13128 |
-| Produção | 13976 |
-| Testes | 7989 |
+| Entradas no baseline | 12760 |
+| Produção | 12984 |
+| Testes | 7987 |
 
 ## Criticidade funcional
 
 | Criticidade | Ocorrências |
 | --- | ---: |
 | alta | 221 |
-| media | 19349 |
-| baixa | 2395 |
-
-## Evolução desde o baseline de referência
-
-| Classificação | Entradas |
-| --- | ---: |
-| Dívida removida | 1 |
-| Dívida mantida | 13128 |
-| Nova dívida (bloqueante) | 0 |
-| Contagem aumentada (bloqueante) | 0 |
-| Contagem reduzida | 0 |
-| Identidade de erro alterada (revisão) | 0 |
+| media | 18362 |
+| baixa | 2388 |
 
 ## Dívida por módulo (prioridade de redução)
 
 | Módulo | Ocorrências |
 | --- | ---: |
-| scripts | 2995 |
+| scripts | 2003 |
 | aculta_portal | 1993 |
-| aculta_messenger | 1829 |
+| aculta_messenger | 1828 |
 | aculta_events | 1783 |
 | aculta_wiki | 1457 |
 | aculta_forum | 1248 |
@@ -58,7 +47,7 @@ Gerado em 2026-11-16T10:35:11+00:00 por `scripts/phpstan-debt-report.php`.
 | aculta_mailer | 652 |
 | aculta_studio | 613 |
 | aculta_pagamentos_mercadopago | 594 |
-| aculta420_v2 | 479 |
+| aculta420_v2 | 478 |
 | aculta_donation | 378 |
 | aculta_linkweed | 377 |
 | aculta_statistics | 351 |
@@ -80,43 +69,40 @@ Gerado em 2026-11-16T10:35:11+00:00 por `scripts/phpstan-debt-report.php`.
 
 | Identificador | Ocorrências |
 | --- | ---: |
-| `offsetAccess.nonOffsetAccessible` | 6364 |
-| `argument.type` | 4053 |
-| `method.nonObject` | 2427 |
-| `missingType.iterableValue` | 2221 |
-| `cast.string` | 1846 |
-| `cast.int` | 1145 |
-| `method.notFound` | 785 |
-| `property.nonObject` | 562 |
-| `return.type` | 347 |
-| `foreach.nonIterable` | 319 |
-| `binaryOp.invalid` | 277 |
-| `offsetAccess.invalidOffset` | 177 |
+| `offsetAccess.nonOffsetAccessible` | 5774 |
+| `argument.type` | 3942 |
+| `method.nonObject` | 2337 |
+| `missingType.iterableValue` | 2214 |
+| `cast.string` | 1844 |
+| `cast.int` | 1144 |
+| `method.notFound` | 765 |
+| `property.nonObject` | 553 |
+| `return.type` | 346 |
+| `foreach.nonIterable` | 311 |
+| `binaryOp.invalid` | 255 |
+| `offsetAccess.invalidOffset` | 155 |
 | `missingType.return` | 119 |
 | `property.notFound` | 113 |
-| `staticMethod.internalClass` | 105 |
-| `encapsedStringPart.nonString` | 97 |
-| `offsetAccess.notFound` | 88 |
+| `encapsedStringPart.nonString` | 96 |
+| `offsetAccess.notFound` | 86 |
 | `staticMethod.alreadyNarrowedType` | 76 |
-| `method.alreadyNarrowedType` | 74 |
+| `method.alreadyNarrowedType` | 73 |
 | `nullCoalesce.offset` | 71 |
+| `instanceof.alwaysTrue` | 53 |
 
 ## Arquivos com mais dívida
 
 | Arquivo | Ocorrências |
 | --- | ---: |
 | `web/modules/custom/aculta_portal/modules/aculta_wiki/tests/src/Kernel/WikiLeadImageLifecycleKernelTest.php` | 819 |
-| `scripts/validate-ui-patterns-views-cutover.php` | 305 |
 | `web/modules/custom/aculta_portal/modules/aculta_lms_h5p/src/aculta_H5PDrupal/aculta_H5PDrupal.php` | 270 |
 | `scripts/inventory-ui-suite-consumers.php` | 237 |
 | `scripts/lib/Aculta420DesignFoundationsAnalyzer.php` | 206 |
 | `web/modules/custom/aculta_portal/modules/aculta_deployer/src/Cli.php` | 191 |
 | `web/modules/custom/aculta_portal/modules/aculta_pagamentos_mercadopago/src/Plugin/Commerce/PaymentGateway/CheckoutPro.php` | 189 |
-| `scripts/validate-portal-commerce-security.php` | 177 |
 | `web/modules/custom/aculta_portal/modules/aculta_index/src/Integrity/ContentIndexIntegrityChecker.php` | 177 |
-| `scripts/validate-aculta420-v2-sdc.php` | 173 |
+| `scripts/validate-portal-commerce-security.php` | 176 |
 | `web/themes/custom/aculta420_v2/src/Hook/PagePresentationHooks.php` | 169 |
-| `scripts/install-institution.php` | 163 |
 | `web/modules/custom/aculta_portal/modules/aculta_events/tests/src/Kernel/EventOrganizationLifecycleKernelTest.php` | 140 |
 | `web/modules/custom/aculta_portal/modules/aculta_studio/tests/src/Unit/StudioProfileControllerTest.php` | 118 |
 | `web/modules/custom/aculta_portal/src/Hook/PortalHooks.php` | 118 |
@@ -125,6 +111,9 @@ Gerado em 2026-11-16T10:35:11+00:00 por `scripts/phpstan-debt-report.php`.
 | `web/modules/custom/aculta_portal/modules/aculta_events/tests/src/Kernel/EventStructuredDataKernelTest.php` | 104 |
 | `web/modules/custom/aculta_portal/modules/aculta_events/tests/src/Kernel/EventOrganizationAdminAndModalKernelTest.php` | 100 |
 | `web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/AcultaLmsInstallTest.php` | 95 |
+| `web/modules/custom/aculta_portal/modules/aculta_cgu/tests/src/Kernel/ContributionLifecycleKernelTest.php` | 92 |
+| `web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/AttemptArchiveLifecycleTest.php` | 88 |
+| `scripts/institution/phase6-account-email-test.php` | 85 |
 
 ## Como usar
 

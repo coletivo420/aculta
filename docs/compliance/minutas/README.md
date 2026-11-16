@@ -1,7 +1,7 @@
 # Minutas dos Termos de Uso e da Política de Privacidade
 
 Cópias para leitura e revisão no GitHub. **Minutas, não publicadas.** A fonte única do texto é o HTML em
-`scripts/institution/` (o instalador `scripts/install-institution.php` publica a Política a partir dele). As cópias
+`scripts/institution/` (fonte do conteúdo institucional da Política de Privacidade). As cópias
 em Markdown são geradas por `python3 -I scripts/compliance/render-minutas.py`; não edite os `.md` à mão.
 
 | Documento | Fonte | Cópia | Versão |

@@ -494,7 +494,8 @@ $support_html = (string) \Drupal::service('renderer')->renderRoot($support_form)
 // O aviso de indisponibilidade acompanha o estado real do gateway: desligado
 // → aviso e sem /apoiar; ligado → sem aviso.
 $support_notice = str_contains($support_html, 'apoio financeiro está temporariamente indisponível');
-$gateway_enabled = (bool) \Drupal::entityTypeManager()->getStorage('commerce_payment_gateway')->load('mercado_pago')?->status();
+$gateway = \Drupal::entityTypeManager()->getStorage('commerce_payment_gateway')->load('mercado_pago');
+$gateway_enabled = $gateway instanceof \Drupal\commerce_payment\Entity\PaymentGatewayInterface && $gateway->status();
 $assert($gateway_enabled ? !$support_notice : ($support_notice && !str_contains($support_html, '/apoiar')), 'The public support page matches the Mercado Pago gateway state (notice only while disabled).');
 
 // Exercise the amount guard and Form API number minimum with values kept only
@@ -930,27 +931,18 @@ $other_gateway_event = new RequestEvent($kernel, $other_gateway_request, HttpKer
 $subscriber->onKernelRequest($other_gateway_event);
 $assert(!$other_gateway_event->hasResponse() && $other_gateway_request->query->has('data_id'), 'Other Commerce gateways pass through untouched.');
 
-// O teste precisa do gateway desligado. Desliga-se só durante o teste, sem
-// chamar a API externa, e restaura-se o estado original.
-$mp_config = \Drupal::configFactory()->getEditable('commerce_payment.commerce_payment_gateway.mercado_pago');
-$mp_original_status = $mp_config->get('status');
-try {
-  $mp_config->set('status', FALSE)->save();
-  \Drupal::entityTypeManager()->getStorage('commerce_payment_gateway')->resetCache(['mercado_pago']);
-  $disabled_gateway_request = $make_webhook_request(['data.id' => $webhook_data_id, 'type' => 'payment'], [
-    'type' => 'payment',
-    'data' => ['id' => $webhook_data_id],
-  ], $valid_signature, $webhook_request_id);
-  $disabled_gateway_request->attributes->set('_route', 'commerce_payment.notify');
-  $disabled_gateway_request->attributes->set('commerce_payment_gateway', 'mercado_pago');
-  $disabled_gateway_event = new RequestEvent($kernel, $disabled_gateway_request, HttpKernelInterface::MAIN_REQUEST);
-  $subscriber->onKernelRequest($disabled_gateway_event);
-  $assert($disabled_gateway_event->hasResponse() && $disabled_gateway_event->getResponse()->getStatusCode() === 503, 'The live native-route subscriber blocks notify while the Mercado Pago gateway entity is disabled.');
-}
-finally {
-  \Drupal::configFactory()->getEditable('commerce_payment.commerce_payment_gateway.mercado_pago')->set('status', $mp_original_status)->save();
-  \Drupal::entityTypeManager()->getStorage('commerce_payment_gateway')->resetCache(['mercado_pago']);
-}
+// Validação de segurança read-only: testa o bloqueio com gateway desligado
+// pelo WebhookGuard sem mutar o estado persistente de configuração no banco.
+$disabled_gateway_request = $make_webhook_request(['data.id' => $webhook_data_id, 'type' => 'payment'], [
+  'type' => 'payment',
+  'data' => ['id' => $webhook_data_id],
+], $valid_signature, $webhook_request_id);
+$disabled_gateway_request->attributes->set('_route', 'commerce_payment.notify');
+$disabled_gateway_request->attributes->set('commerce_payment_gateway', 'mercado_pago');
+/** @var \Drupal\aculta_pagamentos_mercadopago\Commerce\MercadoPago\WebhookGuard $webhook_guard */
+$webhook_guard = \Drupal::service('aculta_pagamentos_mercadopago.webhook_guard');
+$disabled_gateway_response = $webhook_guard->validateAndNormalize($disabled_gateway_request, FALSE, NULL);
+$assert($disabled_gateway_response instanceof \Symfony\Component\HttpFoundation\Response && $disabled_gateway_response->getStatusCode() === 503, 'The live native-route subscriber blocks notify while the Mercado Pago gateway entity is disabled.');
 $assert($subscriber::getSubscribedEvents()[KernelEvents::REQUEST][1] === 29, 'Webhook guard runs after Drupal routing at the audited request event priority.');
 
 $other_route_request = $make_webhook_request(['data.id' => $webhook_data_id, 'type' => 'payment'], [

@@ -29,8 +29,82 @@ $assert = static function (bool $condition, string $message) use (&$failures, &$
   }
 };
 
-$libraries = Yaml::parseFile($theme . '/aculta420_v2.libraries.yml');
-$global = array_keys($libraries['global-styling']['css']['theme'] ?? []);
+/**
+ * Parses a YAML file into an array.
+ *
+ * @param string $path
+ * @return array<string, mixed>
+ */
+function css_scope_yaml_file(string $path): array {
+  $data = Yaml::parseFile($path);
+  if (!is_array($data)) {
+    return [];
+  }
+  /** @var array<string, mixed> $result */
+  $result = [];
+  foreach ($data as $k => $v) {
+    $result[(string) $k] = $v;
+  }
+  return $result;
+}
+
+/**
+ * Safely traverses nested arrays.
+ *
+ * @param mixed $data
+ * @param string ...$keys
+ * @return mixed
+ */
+function css_scope_yaml_get(mixed $data, string ...$keys): mixed {
+  $curr = $data;
+  foreach ($keys as $k) {
+    if (!is_array($curr) || !array_key_exists($k, $curr)) {
+      return NULL;
+    }
+    $curr = $curr[$k];
+  }
+  return $curr;
+}
+
+/**
+ * Safely retrieves nested array keys as strings.
+ *
+ * @param mixed $data
+ * @param string ...$keys
+ * @return list<string>
+ */
+function css_scope_yaml_keys(mixed $data, string ...$keys): array {
+  $val = css_scope_yaml_get($data, ...$keys);
+  if (!is_array($val)) {
+    return [];
+  }
+  /** @var list<string> $keysList */
+  $keysList = array_map('strval', array_keys($val));
+  return $keysList;
+}
+
+/**
+ * Safely retrieves a nested array.
+ *
+ * @param mixed $data
+ * @param string ...$keys
+ * @return array<string, mixed>
+ */
+function css_scope_yaml_array(mixed $data, string ...$keys): array {
+  $val = css_scope_yaml_get($data, ...$keys);
+  if (!is_array($val)) {
+    return [];
+  }
+  /** @var array<string, mixed> $result */
+  $result = [];
+  foreach ($val as $k => $v) {
+    $result[(string) $k] = $v;
+  }
+  return $result;
+}
+
+$libraries = css_scope_yaml_file($theme . '/aculta420_v2.libraries.yml');
+$global = css_scope_yaml_keys($libraries, 'global-styling', 'css', 'theme');
 $surfacePanelComponent = (string) file_get_contents($theme . '/components/surface-panel/surface-panel.component.yml');
 $assert(!in_array('components/surface-panel/surface-panel.css', $global, TRUE), 'surface-panel.css voltou ao global-styling.');
 $assert(str_contains($surfacePanelComponent, 'surface-panel.css'), 'O SDC surface-panel deixou de declarar seu CSS próprio.');
@@ -46,18 +120,18 @@ $portalUiMapPath = $theme . '/src/styles/portal-ui-map.css';
 $portalUiMapCss = is_file($portalUiMapPath) ? (string) file_get_contents($portalUiMapPath) : '';
 $portalRequirementsCss = (string) file_get_contents($theme . '/components/portal-requirements/portal-requirements.css');
 $portalRequirementsController = (string) file_get_contents($root . '/web/modules/custom/aculta_portal/src/Controller/PortalRequirementsController.php');
-$addressFields = array_keys($libraries['address-fields']['css']['theme'] ?? []);
+$addressFields = css_scope_yaml_keys($libraries, 'address-fields', 'css', 'theme');
 $accountAddressForm = (string) file_get_contents($root . '/web/modules/custom/aculta_portal/src/Account/AccountAddressForm.php');
 $assert(!in_array('src/styles/portal-ui-extras.css', $global, TRUE), 'portal-ui-extras.css voltou ao global-styling.');
 $assert(!is_file($portalExtrasPath), 'portal-ui-extras.css permaneceu depois de migrar seus consumidores.');
 $assert(in_array('src/styles/address-fields.css', $addressFields, TRUE), 'A biblioteca address-fields não declara sua folha.');
 $assert(str_contains($addressFieldsCss, '.portal-street-number input.form-text'), 'address-fields.css perdeu o estilo do campo de número.');
 $assert(str_contains($accountAddressForm, "'aculta420_v2/address-fields'"), 'AccountAddressForm não anexa o CSS contextual ao widget com Número/S/N.');
-$loginPage = array_keys($libraries['login-page']['css']['theme'] ?? []);
+$loginPage = css_scope_yaml_keys($libraries, 'login-page', 'css', 'theme');
 $loginPageCss = (string) file_get_contents($theme . '/src/styles/login-page.css');
 $supportPageCss = (string) file_get_contents($theme . '/components/support-form/support-form.css');
 $supportComponent = (string) file_get_contents($theme . '/components/support-form/support-form.component.yml');
-$searchPage = array_keys($libraries['search-page']['css']['theme'] ?? []);
+$searchPage = css_scope_yaml_keys($libraries, 'search-page', 'css', 'theme');
 $searchPageCss = (string) file_get_contents($theme . '/src/styles/search.css');
 $supportForm = (string) file_get_contents($root . '/web/modules/custom/aculta_portal/src/Support/Form/SupportForm.php');
 $presentationHooks = (string) file_get_contents($theme . '/src/Hook/PagePresentationHooks.php');
@@ -74,40 +148,43 @@ $assert(!str_contains($portalExtrasCss, '[data-portal-ui="support-form"]'), 'O s
 $assert(!str_contains($supportForm, "'aculta_portal/support'"), 'SupportForm mantém referência à biblioteca inexistente aculta_portal/support.');
 $assert(!in_array('src/styles/search.css', $global, TRUE), 'search.css voltou ao global-styling.');
 $assert(in_array('src/styles/search.css', $searchPage, TRUE), 'A biblioteca search-page não declara search.css.');
-$assert(($libraries['search-page']['dependencies'] ?? []) === ['aculta420_v2/global-styling'], 'A biblioteca search-page deve depender de global-styling.');
+$assert(css_scope_yaml_get($libraries, 'search-page', 'dependencies') === ['aculta420_v2/global-styling'], 'A biblioteca search-page deve depender de global-styling.');
 $assert(str_contains($presentationHooks, "=== 'aculta_portal.search'"), 'A biblioteca search-page não está restrita à rota de busca.');
 $assert(str_contains($searchPageCss, '.aculta-search__results'), 'search.css perdeu estilos da página central de busca.');
 $assert(!str_contains($portalUiMapCss, '.aculta-portal-requirements'), 'Layout do relatório de requisitos permaneceu no mapa global.');
 $assert(!is_file($portalUiMapPath), 'portal-ui-map.css permaneceu após migrar seus últimos consumidores.');
 $assert(!in_array('src/styles/portal-ui-map.css', $global, TRUE), 'portal-ui-map.css voltou ao global-styling.');
-$assert(isset($libraries['unpublished-preview']['css']['theme']['src/styles/unpublished-preview.css']), 'A prévia editorial não declara biblioteca própria.');
+$assert(css_scope_yaml_get($libraries, 'unpublished-preview', 'css', 'theme', 'src/styles/unpublished-preview.css') !== NULL, 'A prévia editorial não declara biblioteca própria.');
 $assert(str_contains((string) file_get_contents($theme . '/src/Hook/UnpublishedPreviewHooks.php'), "'aculta420_v2/unpublished-preview'"), 'A prévia editorial não anexa sua biblioteca contextual.');
 $assert(str_contains($portalRequirementsCss, '.portal-requirements .aculta-portal-requirements__cep'), 'O SDC portal-requirements perdeu estilos de seção.');
 $assert(str_contains($portalRequirementsController, "'aculta420_v2:portal-requirements'"), 'O relatório de requisitos não compõe seu SDC.');
-$statistics = array_keys($libraries['statistics']['css']['theme'] ?? []);
+$statistics = css_scope_yaml_keys($libraries, 'statistics', 'css', 'theme');
 
 $assert(!in_array('src/styles/statistics.css', $global, TRUE), 'statistics.css voltou ao global-styling.');
 $assert(in_array('src/styles/statistics.css', $statistics, TRUE), 'A biblioteca statistics não declara src/styles/statistics.css.');
 $assert(is_file($theme . '/src/styles/statistics.css'), 'O arquivo statistics.css não existe.');
-$assert(($libraries['statistics']['dependencies'] ?? []) === ['aculta420_v2/global-styling'], 'A biblioteca statistics deve depender de global-styling.');
+$assert(css_scope_yaml_get($libraries, 'statistics', 'dependencies') === ['aculta420_v2/global-styling'], 'A biblioteca statistics deve depender de global-styling.');
 
 $assert(!isset($libraries['studio']), 'A biblioteca contextual studio deve ser substituída pelo SDC studio-shell.');
 $assert(!is_file($theme . '/src/styles/studio.css'), 'studio.css permaneceu após migrar o escopo para o SDC.');
 $assert(!in_array('src/styles/studio-identity.css', $global, TRUE), 'studio-identity.css voltou ao global-styling.');
 $assert(!is_file($theme . '/src/styles/studio-identity.css'), 'studio-identity.css reapareceu sem consumidor que aplique html.studio-identity.');
 $studioShellMetadataPath = $theme . '/components/studio-shell/studio-shell.component.yml';
-$studioShellMetadata = is_file($studioShellMetadataPath) ? Yaml::parseFile($studioShellMetadataPath) : [];
-$assert(isset($studioShellMetadata['assets']['css']['component']['studio-shell.css']), 'O SDC studio-shell não declara seu CSS local.');
+$studioShellMetadata = is_file($studioShellMetadataPath) ? css_scope_yaml_file($studioShellMetadataPath) : [];
+$studioShellCompCss = css_scope_yaml_array($studioShellMetadata, 'assets', 'css', 'component');
+$assert(isset($studioShellCompCss['studio-shell.css']), 'O SDC studio-shell não declara seu CSS local.');
 $assert(is_file($theme . '/components/studio-shell/studio-shell.css'), 'O CSS do SDC studio-shell não existe.');
 $studioFormMetadataPath = $theme . '/components/studio-form/studio-form.component.yml';
-$studioFormMetadata = is_file($studioFormMetadataPath) ? Yaml::parseFile($studioFormMetadataPath) : [];
-$assert(isset($studioFormMetadata['assets']['css']['component']['studio-form.css']), 'O SDC studio-form não declara seu CSS local.');
+$studioFormMetadata = is_file($studioFormMetadataPath) ? css_scope_yaml_file($studioFormMetadataPath) : [];
+$studioFormCompCss = css_scope_yaml_array($studioFormMetadata, 'assets', 'css', 'component');
+$assert(isset($studioFormCompCss['studio-form.css']), 'O SDC studio-form não declara seu CSS local.');
 $assert(is_file($theme . '/components/studio-form/studio-form.css'), 'O CSS do SDC studio-form não existe.');
 $studioShellCss = (string) file_get_contents($theme . '/components/studio-shell/studio-shell.css');
 $assert(!str_contains($studioShellCss, '.studio__main form'), 'A skin de formulários ainda está no CSS genérico studio-shell.');
 $studioSectionHeaderMetadataPath = $theme . '/components/studio-section-header/studio-section-header.component.yml';
-$studioSectionHeaderMetadata = is_file($studioSectionHeaderMetadataPath) ? Yaml::parseFile($studioSectionHeaderMetadataPath) : [];
-$assert(isset($studioSectionHeaderMetadata['assets']['css']['component']['studio-section-header.css']), 'O SDC studio-section-header não declara seu CSS local.');
+$studioSectionHeaderMetadata = is_file($studioSectionHeaderMetadataPath) ? css_scope_yaml_file($studioSectionHeaderMetadataPath) : [];
+$studioSectionHeaderCompCss = css_scope_yaml_array($studioSectionHeaderMetadata, 'assets', 'css', 'component');
+$assert(isset($studioSectionHeaderCompCss['studio-section-header.css']), 'O SDC studio-section-header não declara seu CSS local.');
 $assert(is_file($theme . '/components/studio-section-header/studio-section-header.css'), 'O CSS do SDC studio-section-header não existe.');
 
 $statisticsCss = (string) file_get_contents($theme . '/src/styles/statistics.css');
@@ -151,7 +228,7 @@ $assert(!str_contains($accountCss, '.portal-terms-modal__documents'), 'O estilo 
 $assert(str_contains($accountAgreementHooks, "'aculta420_v2:account-terms-modal'"), 'O hook de acordo do Portal não compõe diretamente o SDC account-terms-modal.');
 $assert(str_contains($accountTermsTwig, "setAttribute('id', 'aculta-account-terms')") && str_contains($accountTermsTwig, "setAttribute('data-dialog-title', title)") && str_contains($accountTermsTwig, "setAttribute('hidden', 'hidden')"), 'O SDC account-terms-modal perdeu atributos consumidos pelo diálogo.');
 
-$accountDashboardComponent = Yaml::parseFile($theme . '/components/account-experience-dashboard/account-experience-dashboard.component.yml');
+$accountDashboardComponent = css_scope_yaml_file($theme . '/components/account-experience-dashboard/account-experience-dashboard.component.yml');
 $studioShellCss = (string) file_get_contents($theme . '/components/studio-shell/studio-shell.css');
 $accountDashboardCss = (string) file_get_contents($theme . '/components/account-experience-dashboard/account-experience-dashboard.css');
 $studioSectionHeaderCss = (string) file_get_contents($theme . '/components/studio-section-header/studio-section-header.css');
@@ -161,7 +238,7 @@ $learnerDashboardSdc = Yaml::parseFile($theme . '/components/lms-learning-dashbo
 $learnerDashboardTwig = (string) file_get_contents($theme . '/components/lms-learning-dashboard/lms-learning-dashboard.twig');
 $assert(str_contains($learnerDashboardComposer, "'#component' => 'aculta420_v2:lms-learning-dashboard'"), 'O composer do estudante deixou de emitir a nova página SDC.');
 $assert(!str_contains($learnerDashboardComposer, 'aculta_portal_component') && !str_contains($learnerDashboardComposer, 'aculta-learning-home'), 'O composer do estudante reteve wrappers ou marcadores da página legada.');
-$assert(isset($learnerDashboardSdc['slots']['courses'], $learnerDashboardSdc['slots']['resume'], $learnerDashboardSdc['slots']['certificates']), 'O SDC novo do estudante perdeu os slots de cursos/jornada/certificados.');
+$assert(css_scope_yaml_get($learnerDashboardSdc, 'slots', 'courses') !== NULL && css_scope_yaml_get($learnerDashboardSdc, 'slots', 'resume') !== NULL && css_scope_yaml_get($learnerDashboardSdc, 'slots', 'certificates') !== NULL, 'O SDC novo do estudante perdeu os slots de cursos/jornada/certificados.');
 $assert(str_contains($learnerDashboardTwig, "include('aculta420_v2:heading'") && str_contains($learnerDashboardTwig, "include('aculta420_v2:empty-state'"), 'A página nova deixou de compor heading/empty-state por SDC.');
 $assert(!str_contains($portalUiHooks, "'studio-fidelity-scope'"), 'O token de escopo legado do dashboard LMS permaneceu no mapa.');
 $assert(!str_contains($studioShellCss, '[data-portal-ui="studio-heading"]'), 'O estilo de studio-heading permaneceu no CSS geral do shell.');
@@ -185,8 +262,8 @@ $accountDashboardTemplatePath = $theme . '/templates/aculta-studio-account.html.
 $accountDashboardTemplate = is_file($accountDashboardTemplatePath)
     ? (string) file_get_contents($accountDashboardTemplatePath)
     : '';
-$assert(isset($accountDashboardComponent['libraryOverrides']['js']['../../js/account-carousel.js']), 'O SDC account-experience-dashboard não declara o JS local do carrossel.');
-$assert(($accountDashboardComponent['libraryOverrides']['dependencies'] ?? []) === ['core/drupal', 'core/once'], 'O carrossel do dashboard não declara dependências de behavior.');
+$assert(css_scope_yaml_get($accountDashboardComponent, 'libraryOverrides', 'js', '../../js/account-carousel.js') !== NULL, 'O SDC account-experience-dashboard não declara o JS local do carrossel.');
+$assert(css_scope_yaml_get($accountDashboardComponent, 'libraryOverrides', 'dependencies') === ['core/drupal', 'core/once'], 'O carrossel do dashboard não declara dependências de behavior.');
 $assert(!str_contains($accountDashboardTemplate, "attach_library('aculta420_v2/account-carousel')"), 'O template legado ainda anexa a biblioteca account-carousel inexistente.');
 $connectionsBlockTwig = (string) file_get_contents($theme . '/components/studio-connections-block/studio-connections-block.twig');
 $connectionsPageTwig = (string) file_get_contents($theme . '/components/studio-connections-page/studio-connections-page.twig');
@@ -214,15 +291,15 @@ $messengerOptions = (string) file_get_contents($root . '/web/modules/custom/acul
 $assert(!str_contains($messengerCss, '.accordion'), 'Os seletores Bootstrap antigos voltaram ao disclosure de opções do Messenger.');
 $assert(str_contains($messengerOptions, "'#type' => 'details'") && str_contains($messengerOptions, "'#summary_attributes'"), 'O disclosure de opções do Messenger deve manter o contrato nativo details/summary.');
 $forumListCss = (string) file_get_contents($theme . '/components/forum-list-page/forum-list-page.css');
-$forumTopicView = (string) file_get_contents($theme . '/templates/views/views-view-fields--aculta-forum-public-topics.html.twig');
+$forumTopicsViewYml = (string) file_get_contents($root . '/config/sync/views.view.aculta_forum_public_topics.yml');
 $forumTopicRowCss = (string) file_get_contents($theme . '/components/forum-topic-row/forum-topic-row.css');
 $assert(!str_contains($forumListCss, '.forum-topic-row__avatar') && str_contains($forumTopicRowCss, '.forum-topic-row__avatar'), 'O CSS duplicado de avatar do Fórum voltou para a página listagem ou saiu do SDC dono.');
-$assert(str_contains($forumTopicView, "include('aculta420_v2:forum-topic-row'"), 'A View pública deve continuar compondo o SDC que possui o estilo compartilhado do avatar.');
+$assert(str_contains($forumTopicsViewYml, "'aculta420_v2:forum-topic-row'"), 'A View pública deve continuar compondo o SDC que possui o estilo compartilhado do avatar.');
 $pdfViewerRoot = $root . '/web/modules/custom/aculta_portal/modules/aculta_document_viewer';
-$pdfViewerLibrary = Yaml::parseFile($pdfViewerRoot . '/aculta_document_viewer.libraries.yml');
+$pdfViewerLibrary = css_scope_yaml_file($pdfViewerRoot . '/aculta_document_viewer.libraries.yml');
 $pdfViewerCss = (string) file_get_contents($pdfViewerRoot . '/css/pdf-viewer.css');
 $pdfViewerJs = (string) file_get_contents($pdfViewerRoot . '/js/pdf-viewer.mjs');
-$assert(isset($pdfViewerLibrary['aculta_document_viewer_pdf']['css']['component']['css/pdf-viewer.css']), 'A biblioteca PDF não declara seu CSS contextual.');
+$assert(css_scope_yaml_get($pdfViewerLibrary, 'aculta_document_viewer_pdf', 'css', 'component', 'css/pdf-viewer.css') !== NULL, 'A biblioteca PDF não declara seu CSS contextual.');
 $assert(str_contains($pdfViewerJs, 'button button--outline aculta-pdf-viewer__thumbnail-button') && !str_contains($pdfViewerJs, 'flex-column'), 'O visualizador PDF ainda emite utilitários de layout legados.');
 $assert(str_contains($pdfViewerCss, '.aculta-pdf-viewer__thumbnail-button') && str_contains($pdfViewerCss, 'flex-direction: column'), 'O CSS local PDF perdeu o layout vertical das miniaturas.');
 $connectionsCss = (string) file_get_contents($theme . '/components/studio-connections-page/studio-connections-page.css');
@@ -310,7 +387,7 @@ $assert(str_contains($consentJs, '[data-consent-banner]'), 'O JavaScript do cons
 $secretCss = (string) file_get_contents($theme . '/components/secret-reveal/secret-reveal.css');
 $secretComponent = (string) file_get_contents($theme . '/components/secret-reveal/secret-reveal.component.yml');
 $secretController = (string) file_get_contents($root . '/web/modules/custom/aculta_portal/modules/aculta_secrets_manager/src/Controller/SecretsController.php');
-$secretAdmin = array_keys($libraries['secrets-admin']['css']['theme'] ?? []);
+$secretAdmin = css_scope_yaml_keys($libraries, 'secrets-admin', 'css', 'theme');
 $secretAdminCss = (string) file_get_contents($theme . '/src/styles/secrets-admin.css');
 $assert(str_contains($presentationHooks, "'aculta_portal.secrets_'"), 'A biblioteca secrets-admin não está limitada às rotas do módulo de segredos.');
 $assert(!str_contains($portalExtrasCss, '.aculta-secret-popup__value'), 'Estilos da revelação de segredos voltaram ao CSS global.');
@@ -322,7 +399,7 @@ $assert(in_array('src/styles/secrets-admin.css', $secretAdmin, TRUE), 'A bibliot
 $assert(str_contains($secretAdminCss, '.ui-dialog:has(.aculta-secret-dialog'), 'A folha contextual não dimensiona os formulários do modal.');
 
 $accountDialogsCss = (string) file_get_contents($theme . '/src/styles/account-dialogs.css');
-$accountDialogs = array_keys($libraries['account-dialogs']['css']['theme'] ?? []);
+$accountDialogs = css_scope_yaml_keys($libraries, 'account-dialogs', 'css', 'theme');
 $surfaceHooks = (string) file_get_contents($theme . '/src/Hook/SurfaceSettingsHooks.php');
 $assert(!str_contains($portalExtrasCss, '.ui-dialog:has'), 'Seletores globais de modais Drupal voltaram a portal-ui-extras.');
 $assert(in_array('src/styles/account-dialogs.css', $accountDialogs, TRUE), 'A biblioteca account-dialogs não declara sua folha.');
@@ -333,13 +410,13 @@ $assert(str_contains($presentationHooks, "'aculta420_v2/account-dialogs'"), 'As 
 
 $revistaCss = (string) file_get_contents($theme . '/components/revista-publication/revista-publication.css');
 $revistaComponent = (string) file_get_contents($theme . '/components/revista-publication/revista-publication.component.yml');
-$revistaTemplate = (string) file_get_contents($theme . '/templates/content/node--revista--full.html.twig');
+$revistaDisplay = (string) file_get_contents($root . '/config/sync/core.entity_view_display.node.revista.full.yml');
 $assert(str_contains($revistaCss, '.portal-post__meta'), 'O SDC revista-publication perdeu os estilos de metadados.');
 $assert(!str_contains($portalExtrasCss, '.portal-post__meta'), 'Metadados editoriais voltaram ao portal-ui-extras global.');
 $assert(str_contains($revistaComponent, 'revista-publication.css'), 'O SDC revista-publication não declara seu CSS.');
-$assert(!str_contains($revistaTemplate, "attach_library('aculta420_v2/revista-publication')"), 'O template ainda anexa uma biblioteca inexistente em vez do asset SDC.');
+$assert(str_contains($revistaDisplay, 'revista_publication'), 'O display full da Revista deve utilizar o componente revista_publication sem depender de template legado.');
 
-$portalAccount = array_keys($libraries['portal-account']['css']['theme'] ?? []);
+$portalAccount = css_scope_yaml_keys($libraries, 'portal-account', 'css', 'theme');
 $portalAccountCss = (string) file_get_contents($theme . '/src/styles/portal-account.css');
 $accountShellCss = (string) file_get_contents($theme . '/components/account-shell/account-shell.css');
 $assert(!in_array('src/styles/portal-account.css', $global, TRUE), 'portal-account.css voltou ao global-styling.');
@@ -352,13 +429,13 @@ $surfaceHook = (string) file_get_contents($theme . '/src/Hook/SurfaceSettingsHoo
 $assert(str_contains($surfaceHook, 'aculta420_v2/portal-account'), 'O preprocess_html não anexa a biblioteca portal-account.');
 $assert(str_contains($surfaceHook, "\$siteKey === 'account'"), 'O preprocess_html não restringe o CSS ao site_key account.');
 
-$eventOrganization = array_keys($libraries['event-organization']['css']['theme'] ?? []);
+$eventOrganization = css_scope_yaml_keys($libraries, 'event-organization', 'css', 'theme');
 $assert(!in_array('src/styles/event-organization.css', $global, TRUE), 'event-organization.css voltou ao global-styling.');
 $assert(in_array('src/styles/event-organization.css', $eventOrganization, TRUE), 'A biblioteca event-organization não declara o arquivo.');
 $assert(str_contains($hook, 'aculta420_v2/event-organization'), 'O hook não anexa a biblioteca event-organization.');
 $assert(str_contains($hook, "'aculta_events.'"), 'O hook não restringe o CSS às rotas aculta_events.*.');
 
-$wiki = array_keys($libraries['wiki']['css']['theme'] ?? []);
+$wiki = css_scope_yaml_keys($libraries, 'wiki', 'css', 'theme');
 $assert(!in_array('src/styles/wiki.css', $global, TRUE), 'wiki.css voltou ao global-styling.');
 $assert(in_array('src/styles/wiki.css', $wiki, TRUE), 'A biblioteca wiki não declara wiki.css.');
 $assert(str_contains($surfaceHook, 'aculta420_v2/wiki'), 'O preprocess_html não anexa a biblioteca wiki.');
@@ -369,15 +446,16 @@ $assert(!is_file($theme . '/src/styles/forum.css'), 'A folha legada forum.css pe
 $assert(!str_contains($hook, 'aculta420_v2/forum'), 'PagePresentationHooks ainda anexa a biblioteca removida forum.');
 foreach (['forum-list-page', 'forum-category-page', 'forum-search-page'] as $forumComponent) {
   $metadataPath = $theme . '/components/' . $forumComponent . '/' . $forumComponent . '.component.yml';
-  $metadata = is_file($metadataPath) ? Yaml::parseFile($metadataPath) : [];
-  $componentCss = $metadata['assets']['css']['component'] ?? [];
+  $metadata = is_file($metadataPath) ? css_scope_yaml_file($metadataPath) : [];
+  $componentCss = css_scope_yaml_array($metadata, 'assets', 'css', 'component');
   $assert(isset($componentCss[$forumComponent . '.css']), "O SDC {$forumComponent} não declara seu CSS local.");
   $assert(is_file($theme . '/components/' . $forumComponent . '/' . $forumComponent . '.css'), "O asset CSS do SDC {$forumComponent} não existe.");
 }
-$assert(is_file($theme . '/templates/views/views-view--aculta-forum-search--page-search.html.twig'), 'A busca do Fórum não tem template que compõe o SDC local.');
+$forumSearchView = (string) file_get_contents($root . '/config/sync/views.view.aculta_forum_search.yml');
+$assert(str_contains($forumSearchView, "'aculta420_v2:forum-search-page'"), 'A busca do Fórum deve compor o SDC local via UI Patterns.');
 $assert(str_contains($hook, "'view.aculta_forum"), 'O hook deixou de reconhecer rotas View do Fórum para composição de cabeçalho.');
 
-$events = array_keys($libraries['events']['css']['theme'] ?? []);
+$events = css_scope_yaml_keys($libraries, 'events', 'css', 'theme');
 $assert(!in_array('src/styles/events.css', $global, TRUE), 'events.css voltou ao global-styling.');
 $assert(in_array('src/styles/events.css', $events, TRUE), 'A biblioteca events não declara events.css.');
 $assert(str_contains($hook, 'aculta420_v2/events'), 'O hook não anexa a biblioteca events.');
