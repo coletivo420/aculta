@@ -32649,227 +32649,42 @@ parameters:
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_forum/tests/src/Unit/ForumReactionsConfigTest.php
 
-		-
-			rawMessage: Cannot access offset ':default' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/tests/src/Unit/ForumSearchConfigTest.php
 
-		-
-			rawMessage: Cannot access offset 'access' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/tests/src/Unit/ForumSearchConfigTest.php
 
-		-
-			rawMessage: Cannot access offset 'area_text_custom' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 3
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/tests/src/Unit/ForumSearchConfigTest.php
 
-		-
-			rawMessage: Cannot access offset 'bundles' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/tests/src/Unit/ForumSearchConfigTest.php
 
-		-
-			rawMessage: Cannot access offset 'cache' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/tests/src/Unit/ForumSearchConfigTest.php
 
-		-
-			rawMessage: Cannot access offset 'content' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/tests/src/Unit/ForumSearchConfigTest.php
 
-		-
-			rawMessage: Cannot access offset 'datasource_settings' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/tests/src/Unit/ForumSearchConfigTest.php
 
-		-
-			rawMessage: Cannot access offset 'default' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 11
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/tests/src/Unit/ForumSearchConfigTest.php
 
-		-
-			rawMessage: Cannot access offset 'display' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 12
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/tests/src/Unit/ForumSearchConfigTest.php
 
-		-
-			rawMessage: Cannot access offset 'display_options' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 12
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/tests/src/Unit/ForumSearchConfigTest.php
 
-		-
-			rawMessage: Cannot access offset 'empty' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 3
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/tests/src/Unit/ForumSearchConfigTest.php
 
-		-
-			rawMessage: Cannot access offset 'entity:aculta_forum_post' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/tests/src/Unit/ForumSearchConfigTest.php
 
-		-
-			rawMessage: Cannot access offset 'entity:node' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/tests/src/Unit/ForumSearchConfigTest.php
 
-		-
-			rawMessage: Cannot access offset 'expose' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/tests/src/Unit/ForumSearchConfigTest.php
 
-		-
-			rawMessage: Cannot access offset 'field' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/tests/src/Unit/ForumSearchConfigTest.php
 
-		-
-			rawMessage: Cannot access offset 'field_settings' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/tests/src/Unit/ForumSearchConfigTest.php
 
-		-
-			rawMessage: Cannot access offset 'filters' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 4
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/tests/src/Unit/ForumSearchConfigTest.php
 
-		-
-			rawMessage: Cannot access offset 'forum_category' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/tests/src/Unit/ForumSearchConfigTest.php
 
-		-
-			rawMessage: Cannot access offset 'forum_search_category' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/tests/src/Unit/ForumSearchConfigTest.php
 
-		-
-			rawMessage: Cannot access offset 'identifier' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/tests/src/Unit/ForumSearchConfigTest.php
 
-		-
-			rawMessage: Cannot access offset 'index_directly' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/tests/src/Unit/ForumSearchConfigTest.php
 
-		-
-			rawMessage: Cannot access offset 'options' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 4
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/tests/src/Unit/ForumSearchConfigTest.php
 
-		-
-			rawMessage: Cannot access offset 'page_search' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/tests/src/Unit/ForumSearchConfigTest.php
 
-		-
-			rawMessage: Cannot access offset 'path' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/tests/src/Unit/ForumSearchConfigTest.php
 
-		-
-			rawMessage: Cannot access offset 'perm' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/tests/src/Unit/ForumSearchConfigTest.php
 
-		-
-			rawMessage: Cannot access offset 'plugin_id' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/tests/src/Unit/ForumSearchConfigTest.php
 
-		-
-			rawMessage: Cannot access offset 'processor_settings' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/tests/src/Unit/ForumSearchConfigTest.php
 
-		-
-			rawMessage: Cannot access offset 'property_path' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/tests/src/Unit/ForumSearchConfigTest.php
 
-		-
-			rawMessage: Cannot access offset 'query' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/tests/src/Unit/ForumSearchConfigTest.php
 
-		-
-			rawMessage: Cannot access offset 'row' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/tests/src/Unit/ForumSearchConfigTest.php
 
-		-
-			rawMessage: Cannot access offset 'selected' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/tests/src/Unit/ForumSearchConfigTest.php
 
-		-
-			rawMessage: Cannot access offset 'type' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 4
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/tests/src/Unit/ForumSearchConfigTest.php
 
-		-
-			rawMessage: Cannot access offset 'value' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/tests/src/Unit/ForumSearchConfigTest.php
 
-		-
-			rawMessage: Cannot access offset 'view_modes' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/tests/src/Unit/ForumSearchConfigTest.php
 
-		-
-			rawMessage: 'Parameter #2 $array of static method PHPUnit\Framework\Assert::assertArrayHasKey() expects array<mixed>|ArrayAccess<(int|string), mixed>, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/tests/src/Unit/ForumSearchConfigTest.php
 
-		-
-			rawMessage: 'Parameter #2 $array of static method PHPUnit\Framework\Assert::assertArrayNotHasKey() expects array<mixed>|ArrayAccess<(int|string), mixed>, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/tests/src/Unit/ForumSearchConfigTest.php
 
-		-
-			rawMessage: 'Parameter #2 $haystack of static method PHPUnit\Framework\Assert::assertStringContainsString() expects string, mixed given.'
-			identifier: argument.type
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/tests/src/Unit/ForumSearchConfigTest.php
 
 		-
 			rawMessage: 'Call to an undefined method Drupal\search_api\Query\QueryInterface::expects().'
