@@ -1,10 +1,10 @@
 # Dívida PHPStan — ACULTA
 
-Gerado em 2026-11-16T10:22:01+00:00 por `scripts/phpstan-debt-report.php`.
+Gerado em 2026-11-16T10:35:11+00:00 por `scripts/phpstan-debt-report.php`.
 
 | Item | Valor |
 | --- | --- |
-| Commit | `5226b10024b3194ea49321a0b2a769705fe03ae6` |
+| Commit | `a7371ec42` |
 | PHP | 8.4.27 |
 | PHPStan | PHPStan - PHP Static Analysis Tool 2.3.5 |
 | Nível | 10 |
@@ -15,27 +15,27 @@ Gerado em 2026-11-16T10:22:01+00:00 por `scripts/phpstan-debt-report.php`.
 
 | Medida | Ocorrências |
 | --- | ---: |
-| Total bruto no nível 10 | 21966 |
-| Dívida congelada no baseline | 21966 |
+| Total bruto no nível 10 | 21965 |
+| Dívida congelada no baseline | 21965 |
 | Erros não suprimidos | 0 |
-| Entradas no baseline | 13129 |
+| Entradas no baseline | 13128 |
 | Produção | 13976 |
-| Testes | 7990 |
+| Testes | 7989 |
 
 ## Criticidade funcional
 
 | Criticidade | Ocorrências |
 | --- | ---: |
 | alta | 221 |
-| media | 19350 |
+| media | 19349 |
 | baixa | 2395 |
 
 ## Evolução desde o baseline de referência
 
 | Classificação | Entradas |
 | --- | ---: |
-| Dívida removida | 0 |
-| Dívida mantida | 13129 |
+| Dívida removida | 1 |
+| Dívida mantida | 13128 |
 | Nova dívida (bloqueante) | 0 |
 | Contagem aumentada (bloqueante) | 0 |
 | Contagem reduzida | 0 |
@@ -47,7 +47,7 @@ Gerado em 2026-11-16T10:22:01+00:00 por `scripts/phpstan-debt-report.php`.
 | --- | ---: |
 | scripts | 2995 |
 | aculta_portal | 1993 |
-| aculta_messenger | 1830 |
+| aculta_messenger | 1829 |
 | aculta_events | 1783 |
 | aculta_wiki | 1457 |
 | aculta_forum | 1248 |
@@ -81,7 +81,7 @@ Gerado em 2026-11-16T10:22:01+00:00 por `scripts/phpstan-debt-report.php`.
 | Identificador | Ocorrências |
 | --- | ---: |
 | `offsetAccess.nonOffsetAccessible` | 6364 |
-| `argument.type` | 4054 |
+| `argument.type` | 4053 |
 | `method.nonObject` | 2427 |
 | `missingType.iterableValue` | 2221 |
 | `cast.string` | 1846 |
@@ -128,7 +128,6 @@ Gerado em 2026-11-16T10:22:01+00:00 por `scripts/phpstan-debt-report.php`.
 
 ## Como usar
 
-- Baseline reemitido em 2026-11-16 a partir de uma análise bruta nível 10: 13.129 entradas e 21.966 ocorrências; nenhuma supressão obsoleta ou dívida nova foi identificada.
 - O total congelado é o teto histórico; qualquer erro fora dele reprova o gate.
 - Ao alterar um arquivo, corrija a dívida desse arquivo antes de publicar.
 - O baseline não é regenerado automaticamente; reduções exigem remover as entradas correspondentes no mesmo commit.
