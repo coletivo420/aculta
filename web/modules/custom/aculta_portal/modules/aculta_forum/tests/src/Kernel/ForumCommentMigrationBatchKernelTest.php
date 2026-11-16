@@ -5,12 +5,15 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_forum\Kernel;
 
 use Drupal\aculta_forum\Plugin\migrate\destination\ForumCommentPost;
+use Drupal\aculta_forum\Entity\ForumPost;
 use Drupal\aculta_forum\Plugin\migrate\source\ForumComment;
 use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\comment\CommentInterface;
 use Drupal\comment\CommentingStatus;
 use Drupal\comment\Entity\Comment;
 use Drupal\comment\Tests\CommentTestTrait;
+use Drupal\Core\Database\StatementInterface;
+use Drupal\Core\TypedData\ComplexDataInterface;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\KernelTests\KernelTestBase;
@@ -177,8 +180,8 @@ final class ForumCommentMigrationBatchKernelTest extends KernelTestBase {
     self::assertSame(MigrationInterface::RESULT_COMPLETED, $result, implode("\n", $this->migrationMessages));
     self::assertSame(2, $this->postCount());
     $map = $this->migration()->getIdMap();
-    self::assertNotNull($map->lookupDestinationIds(['cid' => (int) $root->id()]));
-    self::assertNotNull($map->lookupDestinationIds(['cid' => (int) $reply->id()]));
+    self::assertNotEmpty($map->lookupDestinationIds(['cid' => (int) $root->id()]));
+    self::assertNotEmpty($map->lookupDestinationIds(['cid' => (int) $reply->id()]));
 
     // A replay imports nothing and keeps the same posts.
     self::assertSame(MigrationInterface::RESULT_COMPLETED, $this->runMigration());
@@ -188,7 +191,7 @@ final class ForumCommentMigrationBatchKernelTest extends KernelTestBase {
     $late = $this->comment('Resposta posterior', $root);
     self::assertSame(MigrationInterface::RESULT_COMPLETED, $this->runMigration());
     self::assertSame(3, $this->postCount());
-    self::assertNotNull($map->lookupDestinationIds(['cid' => (int) $late->id()]));
+    self::assertNotEmpty($map->lookupDestinationIds(['cid' => (int) $late->id()]));
   }
 
   /**
@@ -236,10 +239,13 @@ final class ForumCommentMigrationBatchKernelTest extends KernelTestBase {
     self::assertSame(1, $index->indexItems());
     $results = $index->query()->keys('migrationindexneedle')->execute()->getResultItems();
     self::assertCount(1, $results);
-    $post_id = (int) $this->migration()->getIdMap()
-      ->lookupDestinationIds(['cid' => (int) $comment->id()])[0][0];
+    $post_id = $this->destinationPostId((int) $comment->id());
     $result = reset($results);
-    self::assertSame($post_id, (int) $result->getOriginalObject()->getValue()->id());
+    $original_object = $result->getOriginalObject();
+    self::assertInstanceOf(ComplexDataInterface::class, $original_object);
+    $original_entity = $original_object->getValue();
+    self::assertInstanceOf(ForumPost::class, $original_entity);
+    self::assertSame($post_id, (int) $original_entity->id());
 
     self::assertSame(MigrationInterface::RESULT_COMPLETED, $this->runMigration());
     self::assertSame(0, $index->indexItems());
@@ -252,17 +258,18 @@ final class ForumCommentMigrationBatchKernelTest extends KernelTestBase {
   public function testParentMigrationResolvesCommentMap(): void {
     $production = Yaml::parseFile(dirname(__DIR__, 3) . '/migrations/aculta_forum_comment_parents.yml');
     $fixture = Yaml::parseFile(dirname(__DIR__, 2) . '/modules/aculta_forum_post_test/migrations/aculta_forum_comment_parents.yml');
-    self::assertSame($production['process'], $fixture['process']);
-    self::assertSame($production['destination']['plugin'], $fixture['destination']['plugin']);
-    self::assertSame($production['destination']['overwrite_properties'], $fixture['destination']['overwrite_properties']);
-    self::assertSame($production['migration_dependencies'], $fixture['migration_dependencies']);
+    self::assertIsArray($production);
+    self::assertIsArray($fixture);
+    self::assertSame($this->configArray($production)['process'], $this->configArray($fixture)['process']);
+    self::assertSame($this->configSection($production, 'destination')['plugin'], $this->configSection($fixture, 'destination')['plugin']);
+    self::assertSame($this->configSection($production, 'destination')['overwrite_properties'], $this->configSection($fixture, 'destination')['overwrite_properties']);
+    self::assertSame($this->configArray($production)['migration_dependencies'], $this->configArray($fixture)['migration_dependencies']);
 
     $root = $this->comment('Raiz');
     $reply = $this->comment('Resposta', $root);
     self::assertSame(MigrationInterface::RESULT_COMPLETED, $this->runMigration());
 
-    $migration = $this->container->get('plugin.manager.migration')
-      ->createInstance('aculta_forum_comment_parents');
+    $migration = $this->parentMigration();
     $migration->set('source', [
       'plugin' => 'embedded_data',
       'data_rows' => [
@@ -275,17 +282,14 @@ final class ForumCommentMigrationBatchKernelTest extends KernelTestBase {
     $result = (new MigrateExecutable($migration, $message))->import();
     self::assertSame(MigrationInterface::RESULT_COMPLETED, $result, implode("\n", $message->messages));
 
-    $map = $this->migration()->getIdMap();
-    $root_destination_ids = $map->lookupDestinationIds(['cid' => (int) $root->id()]);
-    $reply_destination_ids = $map->lookupDestinationIds(['cid' => (int) $reply->id()]);
-    $root_post_id = (int) $root_destination_ids[0][0];
-    $reply_post_id = (int) $reply_destination_ids[0][0];
+    $root_post_id = $this->destinationPostId((int) $root->id());
+    $reply_post_id = $this->destinationPostId((int) $reply->id());
     $posts = $this->container->get('entity_type.manager')->getStorage('aculta_forum_post');
     $root_post = $posts->load($root_post_id);
     $reply_post = $posts->load($reply_post_id);
 
-    self::assertNotNull($root_post);
-    self::assertNotNull($reply_post);
+    self::assertInstanceOf(ForumPost::class, $root_post);
+    self::assertInstanceOf(ForumPost::class, $reply_post);
     self::assertSame($root_post_id, (int) $reply_post->get('parent')->target_id);
     self::assertSame(2, $this->postCount());
 
@@ -294,8 +298,8 @@ final class ForumCommentMigrationBatchKernelTest extends KernelTestBase {
     $post_migration = $this->migration();
     self::assertSame(MigrationInterface::RESULT_COMPLETED, (new MigrateExecutable($post_migration, $message))->rollback());
     self::assertSame(0, $this->postCount());
-    self::assertSame(2, count($this->container->get('entity_type.manager')
-      ->getStorage('comment')->loadMultiple([(int) $root->id(), (int) $reply->id()])));
+    self::assertCount(2, $this->container->get('entity_type.manager')
+      ->getStorage('comment')->loadMultiple([(int) $root->id(), (int) $reply->id()]));
     self::assertSame([], $migration->getIdMap()->lookupDestinationIds(['cid' => (int) $reply->id()]));
     self::assertSame([], $post_migration->getIdMap()->lookupDestinationIds(['cid' => (int) $root->id()]));
   }
@@ -312,13 +316,17 @@ final class ForumCommentMigrationBatchKernelTest extends KernelTestBase {
 
     self::assertSame(MigrationInterface::RESULT_COMPLETED, $this->runMigration(), implode("\n", $this->migrationMessages));
 
-    $row = $this->container->get('database')->select('history', 'h')
+    $statement = $this->container->get('database')->select('history', 'h')
       ->fields('h', ['uid', 'nid', 'timestamp'])
       ->condition('h.uid', (int) $this->author->id())
       ->condition('h.nid', (int) $this->topic->id())
-      ->execute()
-      ->fetchObject();
+      ->execute();
+    self::assertInstanceOf(StatementInterface::class, $statement);
+    $row = $statement->fetchObject();
     self::assertNotNull($row);
+    self::assertIsObject($row);
+    self::assertObjectHasProperty('timestamp', $row);
+    self::assertIsNumeric($row->timestamp);
     self::assertSame(1700000123, (int) $row->timestamp);
     self::assertSame(2, $this->postCount());
   }
@@ -337,17 +345,14 @@ final class ForumCommentMigrationBatchKernelTest extends KernelTestBase {
     ];
 
     self::assertSame(MigrationInterface::RESULT_COMPLETED, $this->runMigration(), implode("\n", $this->migrationMessages));
-    $map = $this->migration()->getIdMap();
     $post_ids = [];
     foreach ($comments as $cid => $comment) {
-      $destination = $map->lookupDestinationIds(['cid' => $cid]);
-      self::assertNotEmpty($destination, 'Comment ' . $cid . ' precisa de destino.');
-      $post_ids[$cid] = (int) $destination[0][0];
+      self::assertNotEmpty($this->migration()->getIdMap()->lookupDestinationIds(['cid' => $cid]), 'Comment ' . $cid . ' precisa de destino.');
+      $post_ids[$cid] = $this->destinationPostId($cid);
     }
     self::assertCount(3, array_unique($post_ids));
 
-    $parent_migration = $this->container->get('plugin.manager.migration')
-      ->createInstance('aculta_forum_comment_parents');
+    $parent_migration = $this->parentMigration();
     $parent_migration->set('source', [
       'plugin' => 'embedded_data',
       'data_rows' => [
@@ -368,18 +373,18 @@ final class ForumCommentMigrationBatchKernelTest extends KernelTestBase {
     $posts = [];
     foreach ($post_ids as $cid => $post_id) {
       $post = $storage->load($post_id);
-      self::assertNotNull($post);
+      self::assertInstanceOf(ForumPost::class, $post);
       $posts[$cid] = $post;
       $comment = $comments[$cid];
-      self::assertSame((string) $comment->getSubject(), (string) $post->get('subject')->value);
-      self::assertSame((string) $comment->get('comment_body')->value, (string) $post->get('body')->value);
-      self::assertSame((int) $comment->getOwnerId(), (int) $post->getOwnerId());
-      self::assertSame((int) $comment->id(), (int) $post->get('thread_position')->value);
-      self::assertSame((int) $comment->getCreatedTime(), (int) $post->get('created')->value);
-      self::assertSame((int) $comment->getChangedTime(), (int) $post->get('changed')->value);
-      self::assertSame((int) $comment->isPublished(), (int) $post->isPublished());
+      self::assertSame($comment->getSubject(), $post->get('subject')->value);
+      self::assertSame($comment->get('comment_body')->value, $post->get('body')->value);
+      self::assertSame($comment->getOwnerId(), $post->getOwnerId());
+      self::assertSame($comment->id(), $post->get('thread_position')->value);
+      self::assertSame((string) $comment->getCreatedTime(), $post->get('created')->value);
+      self::assertSame((string) $comment->getChangedTime(), $post->get('changed')->value);
+      self::assertSame($comment->isPublished(), $post->isPublished());
       self::assertSame('published', $post->get('moderation_state')->value);
-      self::assertSame(1700000000, (int) $post->get('first_published')->value);
+      self::assertSame('1700000000', $post->get('first_published')->value);
     }
 
     self::assertEmpty($posts[(int) $root->id()]->get('parent')->target_id, 'A raiz não recebe pai: ' . var_export($posts[(int) $root->id()]->get('parent')->getValue(), TRUE) . ' ids=' . var_export($post_ids, TRUE));
@@ -401,10 +406,7 @@ final class ForumCommentMigrationBatchKernelTest extends KernelTestBase {
     );
     self::assertSame(3, $this->postCount());
     foreach ($comments as $cid => $comment) {
-      self::assertSame(
-        $post_ids[$cid],
-        (int) $this->migration()->getIdMap()->lookupDestinationIds(['cid' => $cid])[0][0],
-      );
+      self::assertSame($post_ids[$cid], $this->destinationPostId($cid));
     }
   }
 
@@ -422,8 +424,8 @@ final class ForumCommentMigrationBatchKernelTest extends KernelTestBase {
     self::assertSame(2, $this->postCount());
     self::assertSame(MigrationInterface::RESULT_COMPLETED, $executable->rollback(), implode("\n", $message->messages));
     self::assertSame(0, $this->postCount());
-    self::assertSame(2, count($this->container->get('entity_type.manager')
-      ->getStorage('comment')->loadMultiple([(int) $root->id(), (int) $reply->id()])));
+    self::assertCount(2, $this->container->get('entity_type.manager')
+      ->getStorage('comment')->loadMultiple([(int) $root->id(), (int) $reply->id()]));
     self::assertSame([], $migration->getIdMap()->lookupDestinationIds(['cid' => (int) $root->id()]));
   }
 
@@ -489,6 +491,62 @@ final class ForumCommentMigrationBatchKernelTest extends KernelTestBase {
       $reflection->setValue($migration, $value);
     }
     return $migration;
+  }
+
+  /**
+   * Creates the parent migration with a statically known plugin type.
+   */
+  private function parentMigration(): Migration {
+    $migration = $this->container->get('plugin.manager.migration')
+      ->createInstance('aculta_forum_comment_parents');
+    if (!$migration instanceof Migration) {
+      throw new \UnexpectedValueException('Expected the parent migration plugin.');
+    }
+    return $migration;
+  }
+
+  /**
+   * Parses migration YAML as a configuration map.
+   *
+   * @return array<array-key, mixed>
+   *   Parsed configuration.
+   */
+  private function configArray(mixed $configuration): array {
+    if (!is_array($configuration)) {
+      throw new \UnexpectedValueException('Expected migration configuration to be a YAML map.');
+    }
+    return $configuration;
+  }
+
+  /**
+   * Gets and validates a nested configuration section.
+   *
+   * @return array<array-key, mixed>
+   *   Configuration section.
+   */
+  private function configSection(mixed $configuration, string $section): array {
+    $configuration = $this->configArray($configuration);
+    $value = $configuration[$section] ?? NULL;
+    if (!is_array($value)) {
+      throw new \UnexpectedValueException(sprintf('Expected migration section "%s" to be a map.', $section));
+    }
+    return $value;
+  }
+
+  /**
+   * Returns a mapped ForumPost ID for a source Comment ID.
+   */
+  private function destinationPostId(int $comment_id): int {
+    $destination_ids = $this->migration()->getIdMap()
+      ->lookupDestinationIds(['cid' => $comment_id]);
+    if (!isset($destination_ids[0]) || !is_array($destination_ids[0])) {
+      throw new \UnexpectedValueException('Expected a mapped ForumPost ID for comment ' . $comment_id . '.');
+    }
+    $post_id = $destination_ids[0][0] ?? NULL;
+    if (!is_int($post_id) && !is_string($post_id)) {
+      throw new \UnexpectedValueException('Expected a mapped ForumPost ID for comment ' . $comment_id . '.');
+    }
+    return (int) $post_id;
   }
 
   /**
