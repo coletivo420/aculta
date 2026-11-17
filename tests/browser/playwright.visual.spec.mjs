@@ -6,6 +6,7 @@
 //   - screenshot comparado com referência em SUITE_OUT. Snapshot faltante FALHA (updateSnapshots "none").
 // Referências versionadas só depois de revisão humana. Não use --update-snapshots.
 import { expect, test } from '@playwright/test';
+import { createHash } from 'node:crypto';
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -34,6 +35,12 @@ function findRoutesFiles(dir, found = []) {
   return found;
 }
 
+function snapshotRouteId(item) {
+  const routeIdentity = `${item.purpose}\0${item.front}\0${item.path}`;
+  const digest = createHash('sha256').update(routeIdentity).digest('hex').slice(0, 12);
+  return `${item.front}-${digest}`;
+}
+
 const routes = [];
 for (const file of findRoutesFiles(root).sort()) {
   const spec = JSON.parse(readFileSync(file, 'utf8'));
@@ -42,6 +49,11 @@ for (const file of findRoutesFiles(root).sort()) {
   for (const route of spec.public_routes || []) {
     routes.push({ purpose: spec.purpose, front: spec.front, originEnv, path: route.path });
   }
+}
+
+const routeIds = routes.map(snapshotRouteId);
+if (new Set(routeIds).size !== routeIds.length) {
+  throw new Error('Rotas visuais duplicadas: purpose/front/path precisa identificar um snapshot único.');
 }
 
 test.describe('regressão visual', () => {
@@ -69,7 +81,7 @@ test.describe('regressão visual', () => {
           expect(overflow, 'overflow horizontal').toBeLessThanOrEqual(0);
 
           const mask = VOLATILE.map((selector) => page.locator(selector));
-          await expect(page).toHaveScreenshot(`${item.front}-${theme}-${vp.name}.png`, {
+          await expect(page).toHaveScreenshot(`${snapshotRouteId(item)}-${theme}-${vp.name}.png`, {
             fullPage: true,
             animations: 'disabled',
             caret: 'hide',

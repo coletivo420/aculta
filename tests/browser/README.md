@@ -206,7 +206,9 @@ Frentes com `routes.json` que não têm referência: `aculta-theme-mobile-first`
 `GANJA_HOME`, `CALENDAR_HOST`).
 
 Regra: não usar `--update-snapshots`. Nova candidata exige `ACULTA_VISUAL_BASELINE=1`
-com `SUITE_OUT` novo e revisão humana antes de copiar.
+com `SUITE_OUT` novo e revisão humana antes de copiar. O nome de cada referência
+inclui um identificador estável derivado de `purpose`, frente e caminho da rota,
+para impedir que duas rotas da mesma frente compartilhem o mesmo PNG.
 
 ## Autenticação de teste
 
