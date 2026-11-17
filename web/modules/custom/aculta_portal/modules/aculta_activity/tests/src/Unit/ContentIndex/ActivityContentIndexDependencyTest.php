@@ -20,20 +20,26 @@ final class ActivityContentIndexDependencyTest extends UnitTestCase {
   public function testIndexAdapterIsOptionalAtModuleBoundary(): void {
     $moduleDirectory = dirname(__DIR__, 4);
     $info = Yaml::parseFile($moduleDirectory . '/aculta_activity.info.yml');
-    $dependencies = $info['dependencies'] ?? [];
+    self::assertIsArray($info);
+    $dependencies = is_array($info['dependencies'] ?? NULL) ? $info['dependencies'] : [];
 
     self::assertContains('aculta_portal:aculta_portal', $dependencies);
     self::assertNotContains('aculta_portal:aculta_index', $dependencies);
     self::assertNotContains('aculta_index', $dependencies);
 
-    $services = Yaml::parseFile($moduleDirectory . '/aculta_activity.services.yml')['services'];
+    $parsedServices = Yaml::parseFile($moduleDirectory . '/aculta_activity.services.yml');
+    self::assertIsArray($parsedServices);
+    $services = is_array($parsedServices['services'] ?? NULL) ? $parsedServices['services'] : [];
+    $providerService = is_array($services['aculta_activity.content_index_provider'] ?? NULL) ? $services['aculta_activity.content_index_provider'] : [];
+
     self::assertSame(
       'Drupal\\aculta_activity\\ContentIndex\\ActivityContentIndexProvider',
-      $services['aculta_activity.content_index_provider']['class'],
+      $providerService['class'] ?? NULL,
     );
+    $tags = is_array($providerService['tags'] ?? NULL) ? $providerService['tags'] : [];
     self::assertContains(
       ['name' => 'aculta_index.provider'],
-      $services['aculta_activity.content_index_provider']['tags'],
+      $tags,
     );
   }
 

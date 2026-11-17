@@ -106,8 +106,8 @@ final class OpenStreetMapOAuthSafetyKernelTest extends KernelTestBase {
       $api->update(['type' => 'node', 'id' => '1', 'version' => '1'], ['name' => 'Local fictício'], 'Teste fictício');
       $this->fail('An OSM edit must be refused without credentials.');
     }
-    catch (OpenStreetMapOAuthException) {
-      $this->assertTrue(TRUE);
+    catch (OpenStreetMapOAuthException $e) {
+      $this->assertNotEmpty($e->getMessage());
     }
     $http = new Client(['handler' => HandlerStack::create(new MockHandler([]))]);
     $client = new OpenStreetMapOAuthClient(
@@ -176,8 +176,8 @@ final class OpenStreetMapOAuthSafetyKernelTest extends KernelTestBase {
       $api->update(['type' => 'node', 'id' => '1', 'version' => '1'], ['name' => 'Local fictício'], 'Teste fictício');
       $this->fail('An OSM edit must be refused without an authenticated token.');
     }
-    catch (OpenStreetMapOAuthException) {
-      $this->assertTrue(TRUE);
+    catch (OpenStreetMapOAuthException $e) {
+      $this->assertNotEmpty($e->getMessage());
     }
   }
 
@@ -218,7 +218,7 @@ final class OpenStreetMapOAuthSafetyKernelTest extends KernelTestBase {
       }
 
       /** Returns the configured token encryption key. */
-      public function tokenEncryptionKey(): ?string {
+      public function tokenEncryptionKey(): string {
         return $this->key;
       }
 
@@ -250,7 +250,8 @@ final class OpenStreetMapOAuthSafetyKernelTest extends KernelTestBase {
     $this->assertSame($token, $store->load());
     $stored = $this->container->get('state')->get('aculta_events_openstreetmap.oauth_token.test');
     $this->assertIsArray($stored);
-    $this->assertStringNotContainsString($token, $stored['payload']);
+    $payload = is_scalar($stored['payload'] ?? NULL) ? (string) $stored['payload'] : '';
+    $this->assertStringNotContainsString($token, $payload);
     $this->assertNull($this->container->get('state')->get('aculta_events_openstreetmap.oauth_token.production'));
 
     $responses = [
@@ -270,12 +271,18 @@ final class OpenStreetMapOAuthSafetyKernelTest extends KernelTestBase {
     $this->assertArrayNotHasKey('contact:email', $found['tags']);
     $result = $api->update($found, ['name' => 'Local de teste fictício'], 'Atualização de teste fictícia');
     $this->assertSame(['changeset' => '42', 'version' => '2'], $result);
-    $this->assertCount(6, $history);
-    foreach ($history as $transaction) {
-      $this->assertStringStartsWith('https://master.apis.dev.openstreetmap.org/api/0.6/', (string) $transaction['request']->getUri());
-      $this->assertStringNotContainsString('api.openstreetmap.org/api', (string) $transaction['request']->getUri());
-      if ($transaction['request']->getMethod() !== 'GET') {
-        $this->assertSame('Bearer ' . $token, $transaction['request']->getHeaderLine('Authorization'));
+    $historyArray = (array) $history;
+    $this->assertCount(6, $historyArray);
+    foreach ($historyArray as $transaction) {
+      $transactionArray = is_array($transaction) ? $transaction : [];
+      $request = $transactionArray['request'] ?? NULL;
+      if ($request instanceof \Psr\Http\Message\RequestInterface) {
+        $uri = (string) $request->getUri();
+        $this->assertStringStartsWith('https://master.apis.dev.openstreetmap.org/api/0.6/', $uri);
+        $this->assertStringNotContainsString('api.openstreetmap.org/api', $uri);
+        if ($request->getMethod() !== 'GET') {
+          $this->assertSame('Bearer ' . $token, $request->getHeaderLine('Authorization'));
+        }
       }
     }
   }

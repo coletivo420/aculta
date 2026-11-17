@@ -29,7 +29,10 @@ function aculta_events_openstreetmap_update_10001(): string {
 }
 
 /**
- * Installs identity fields and returns their machine names. */
+ * Installs identity fields and returns their machine names.
+ *
+ * @return array<int, string>
+ */
 function _aculta_events_openstreetmap_install_identity_fields(): array {
   $manager = \Drupal::entityDefinitionUpdateManager();
   $definitions = \Drupal::service('entity_field.manager')->getBaseFieldDefinitions('aculta_event_location');
@@ -39,7 +42,7 @@ function _aculta_events_openstreetmap_install_identity_fields(): array {
       continue;
     }
     $definition = $definitions[$field_name] ?? NULL;
-    if ($definition === NULL) {
+    if (!$definition instanceof \Drupal\Core\Field\FieldStorageDefinitionInterface) {
       throw new \RuntimeException("$field_name is not defined on aculta_event_location.");
     }
     $manager->installFieldStorageDefinition($field_name, 'aculta_event_location', 'aculta_events', $definition);

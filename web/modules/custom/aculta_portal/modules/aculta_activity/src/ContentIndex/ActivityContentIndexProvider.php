@@ -57,7 +57,7 @@ final class ActivityContentIndexProvider implements ContentIndexProviderInterfac
    * {@inheritdoc}
    */
   public function project(ContentEntityInterface $entity): ?ContentIndexProjection {
-    if (!$this->isIndexable($entity)) {
+    if (!$this->isIndexable($entity) || !$entity instanceof NodeInterface) {
       return NULL;
     }
 
@@ -70,11 +70,16 @@ final class ActivityContentIndexProvider implements ContentIndexProviderInterfac
     // Activity's editorial image is an explicit Media reference. Keep only the
     // typed identity edge; Media access is revalidated by Index consumers.
     if ($entity->hasField('field_media_image') && !$entity->get('field_media_image')->isEmpty()) {
-      foreach ($entity->get('field_media_image')->getValue() as $item) {
-        $targetId = is_array($item) ? ($item['target_id'] ?? NULL) : NULL;
+      /** @var array<int, array<string, mixed>> $imageItems */
+      $imageItems = $entity->get('field_media_image')->getValue();
+      foreach ($imageItems as $item) {
+        $targetId = $item['target_id'] ?? NULL;
         if ($targetId !== NULL && $targetId !== '') {
-          $key = 'editorial_image:media:' . (string) $targetId;
-          $relations[$key] = new ContentIndexRelation('editorial_image', 'media', (string) $targetId);
+          $targetIdStr = is_scalar($targetId) ? (string) $targetId : '';
+          if ($targetIdStr !== '') {
+            $key = 'editorial_image:media:' . $targetIdStr;
+            $relations[$key] = new ContentIndexRelation('editorial_image', 'media', $targetIdStr);
+          }
         }
       }
     }
@@ -87,7 +92,7 @@ final class ActivityContentIndexProvider implements ContentIndexProviderInterfac
       (string) $entity->uuid(),
       (string) $entity->label(),
       $domainId,
-      $entity->isPublished(),
+      (bool) $entity->isPublished(),
       max(0, (int) $entity->getCreatedTime()),
       max(0, (int) $entity->getChangedTime()),
       relations: array_values($relations),
