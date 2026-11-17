@@ -177,6 +177,8 @@ final class SecretsController {
 
   /**
    * Builds the edit form for an active-environment credential.
+   *
+   * @return array<mixed>
    */
   public function edit(string $name): array {
     $this->assertInActiveScope($name);
@@ -185,6 +187,8 @@ final class SecretsController {
 
   /**
    * Builds a confirmation form to clear an active-environment credential.
+   *
+   * @return array<mixed>
    */
   public function clear(string $name): array {
     $this->assertInActiveScope($name);
@@ -299,9 +303,14 @@ final class SecretsController {
    */
   private function sharedNames(): array {
     $shared = [];
-    foreach ($this->secrets->contract()['variables'] ?? [] as $variable) {
-      if (count((array) ($variable['environments'] ?? [])) > 1) {
-        $shared[(string) $variable['name']] = TRUE;
+    $contract = $this->secrets->contract();
+    $variables = is_array($contract['variables'] ?? NULL) ? $contract['variables'] : [];
+    foreach ($variables as $variable) {
+      if (is_array($variable)) {
+        $environments = is_array($variable['environments'] ?? NULL) ? $variable['environments'] : [];
+        if (count($environments) > 1 && isset($variable['name']) && is_scalar($variable['name'])) {
+          $shared[(string) $variable['name']] = TRUE;
+        }
       }
     }
     return $shared;

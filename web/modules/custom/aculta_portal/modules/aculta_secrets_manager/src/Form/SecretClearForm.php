@@ -44,8 +44,17 @@ final class SecretClearForm extends FormBase implements ContainerInjectionInterf
 
   /**
    * Builds the credential removal confirmation form.
+   *
+   * @param array<mixed> $form
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   * @param string $name
+   *
+   * @return array<mixed>
    */
   public function buildForm(array $form, FormStateInterface $form_state, string $name = ''): array {
+    if (!isset($form['#attributes']) || !is_array($form['#attributes'])) {
+      $form['#attributes'] = [];
+    }
     $form['#attributes']['data-portal-ui'] = 'secret-dialog';
     $status = $this->secrets->status();
     if (!isset($status[$name])) {
@@ -82,9 +91,13 @@ final class SecretClearForm extends FormBase implements ContainerInjectionInterf
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<mixed> $form
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
-    $name = (string) $form_state->get('name');
+    $rawName = $form_state->get('name');
+    $name = is_scalar($rawName) ? (string) $rawName : '';
     $result = $this->secrets->clear($name);
     if ($result['ok']) {
       $this->messenger()->addStatus($this->t('@message', ['@message' => $result['message']]));

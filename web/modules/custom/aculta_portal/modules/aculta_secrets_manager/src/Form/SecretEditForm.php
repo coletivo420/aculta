@@ -44,8 +44,17 @@ final class SecretEditForm extends FormBase implements ContainerInjectionInterfa
 
   /**
    * Builds the credential edit form.
+   *
+   * @param array<mixed> $form
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   * @param string $name
+   *
+   * @return array<mixed>
    */
   public function buildForm(array $form, FormStateInterface $form_state, string $name = ''): array {
+    if (!isset($form['#attributes']) || !is_array($form['#attributes'])) {
+      $form['#attributes'] = [];
+    }
     $form['#attributes']['data-portal-ui'] = 'secret-dialog';
     $status = $this->secrets->status();
     if (!isset($status[$name])) {
@@ -91,10 +100,16 @@ final class SecretEditForm extends FormBase implements ContainerInjectionInterfa
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<mixed> $form
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
-    $name = (string) $form_state->get('name');
-    $result = $this->secrets->save([$name => (string) $form_state->getValue('value')]);
+    $rawName = $form_state->get('name');
+    $name = is_scalar($rawName) ? (string) $rawName : '';
+    $rawValue = $form_state->getValue('value');
+    $value = is_scalar($rawValue) ? (string) $rawValue : '';
+    $result = $this->secrets->save([$name => $value]);
     if ($result['ok']) {
       $this->messenger()->addStatus($this->t('@message', ['@message' => $result['message']]));
     }
