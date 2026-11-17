@@ -69,6 +69,7 @@ Scripts com `routes.json` têm cobertura de rotas públicas no runner comum.
 | [`tests/browser/transversal/aculta420-v2-empty-state/`](./transversal/aculta420-v2-empty-state/README.md) | ACULTA420 V2 — Empty state | 1 | sim |
 | [`tests/browser/transversal/aculta420-v2-footer/`](./transversal/aculta420-v2-footer/README.md) | ACULTA420 V2 — rodapé e regions do shell | 1 | sim |
 | [`tests/browser/transversal/aculta420-v2-navigation/`](./transversal/aculta420-v2-navigation/README.md) | Navegação SDC do ACULTA420 V2 | 4 | sim |
+| [`tests/browser/transversal/aculta420-v2-performance/`](./transversal/aculta420-v2-performance/README.md) | Baseline laboratorial de performance do ACULTA420 V2 | 1 | sim |
 | [`tests/browser/transversal/ui-styles-block/`](./transversal/ui-styles-block/README.md) | UI Styles Block — bloco de Documentos institucionais | 1 | não |
 | [`tests/browser/wiki/aculta-wiki/`](./wiki/aculta-wiki/README.md) | ACULTA Wiki — visual smoke test | 4 | sim |
 | [`tests/browser/wiki/aculta420-v2-wiki/`](./wiki/aculta420-v2-wiki/README.md) | ACULTA420 V2 — visual Wiki | 1 | sim |
