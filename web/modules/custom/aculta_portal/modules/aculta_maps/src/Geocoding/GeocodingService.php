@@ -78,6 +78,9 @@ final class GeocodingService {
   /**
    * Interprets a Nominatim JSON response without making a network request.
    *
+   * @param array<array-key, mixed> $data
+   *   Decoded JSON array.
+   *
    * @return array{lat: float, lng: float}|null
    *   Parsed coordinates or NULL.
    */
@@ -98,7 +101,8 @@ final class GeocodingService {
    * Waits for the public Nominatim one-request-per-second limit.
    */
   private function waitForRateLimit(): void {
-    $lastRequest = (int) $this->state->get(self::LAST_REQUEST_KEY, 0);
+    $lastRequestRaw = $this->state->get(self::LAST_REQUEST_KEY, 0);
+    $lastRequest = is_numeric($lastRequestRaw) ? (int) $lastRequestRaw : 0;
     $waitSeconds = 1 - ($this->time->getCurrentTime() - $lastRequest);
     if ($lastRequest > 0 && $waitSeconds > 0) {
       usleep((int) ($waitSeconds * 1_000_000));

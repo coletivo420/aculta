@@ -45993,383 +45993,68 @@ parameters:
 			count: 3
 			path: web/modules/custom/aculta_portal/modules/aculta_mailer/tests/src/Unit/MonitorParsersTest.php
 
-		-
-			rawMessage: Cannot cast mixed to string.
-			identifier: cast.string
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_maps/src/Form/MapSettingsForm.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_maps\Form\MapSettingsForm::buildForm() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_maps/src/Form/MapSettingsForm.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_maps\Form\MapSettingsForm::buildForm() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_maps/src/Form/MapSettingsForm.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_maps\Form\MapSettingsForm::getEditableConfigNames() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_maps/src/Form/MapSettingsForm.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_maps\Form\MapSettingsForm::submitForm() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_maps/src/Form/MapSettingsForm.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_maps\Form\MapSettingsForm::validateForm() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_maps/src/Form/MapSettingsForm.php
 
-		-
-			rawMessage: Cannot cast mixed to int.
-			identifier: cast.int
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_maps/src/Geocoding/GeocodingService.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_maps\Geocoding\GeocodingService::interpret() has parameter $data with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_maps/src/Geocoding/GeocodingService.php
 
-		-
-			rawMessage: 'Argument of an invalid type mixed supplied for foreach, only iterables are supported.'
-			identifier: foreach.nonIterable
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_maps/src/MapRenderer.php
 
-		-
-			rawMessage: Cannot cast mixed to float.
-			identifier: cast.double
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_maps/src/MapRenderer.php
 
-		-
-			rawMessage: Cannot cast mixed to int.
-			identifier: cast.int
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_maps/src/MapRenderer.php
 
-		-
-			rawMessage: Cannot cast mixed to string.
-			identifier: cast.string
-			count: 7
-			path: web/modules/custom/aculta_portal/modules/aculta_maps/src/MapRenderer.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_maps\MapRenderer::build() has parameter $options with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_maps/src/MapRenderer.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_maps\MapRenderer::build() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_maps/src/MapRenderer.php
 
-		-
-			rawMessage: Cannot cast mixed to string.
-			identifier: cast.string
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_maps/src/RouteLinkBuilder.php
 
-		-
-			rawMessage: Cannot access offset '#markup' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_maps/tests/src/Kernel/MapSettingsFormKernelTest.php
 
-		-
-			rawMessage: Cannot cast mixed to string.
-			identifier: cast.string
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_maps/tests/src/Kernel/MapSettingsFormKernelTest.php
 
-		-
-			rawMessage: Cannot access offset 'User-Agent' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_maps/tests/src/Unit/GeocodingServiceTest.php
 
-		-
-			rawMessage: Cannot access offset 'countrycodes' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_maps/tests/src/Unit/GeocodingServiceTest.php
 
-		-
-			rawMessage: Cannot access offset 'format' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_maps/tests/src/Unit/GeocodingServiceTest.php
 
-		-
-			rawMessage: Cannot access offset 'limit' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_maps/tests/src/Unit/GeocodingServiceTest.php
 
-		-
-			rawMessage: Cannot access offset '#access' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_maps/tests/src/Unit/MapRendererTest.php
 
-		-
-			rawMessage: Cannot access offset '#attached' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_maps/tests/src/Unit/MapRendererTest.php
 
-		-
-			rawMessage: Cannot access offset '#component' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_maps/tests/src/Unit/MapRendererTest.php
 
-		-
-			rawMessage: Cannot access offset '#context' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_maps/tests/src/Unit/MapRendererTest.php
 
-		-
-			rawMessage: Cannot access offset '#plain_text' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_maps/tests/src/Unit/MapRendererTest.php
 
-		-
-			rawMessage: Cannot access offset '#popup' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_maps/tests/src/Unit/MapRendererTest.php
 
-		-
-			rawMessage: Cannot access offset '#props' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_maps/tests/src/Unit/MapRendererTest.php
 
-		-
-			rawMessage: Cannot access offset '#template' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_maps/tests/src/Unit/MapRendererTest.php
 
-		-
-			rawMessage: Cannot access offset '#theme' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_maps/tests/src/Unit/MapRendererTest.php
 
-		-
-			rawMessage: Cannot access offset '#title' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_maps/tests/src/Unit/MapRendererTest.php
 
-		-
-			rawMessage: Cannot access offset '#type' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_maps/tests/src/Unit/MapRendererTest.php
 
-		-
-			rawMessage: Cannot access offset '#url' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_maps/tests/src/Unit/MapRendererTest.php
 
-		-
-			rawMessage: Cannot access offset 'aculta-map' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_maps/tests/src/Unit/MapRendererTest.php
 
-		-
-			rawMessage: Cannot access offset 'acultaMaps' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 8
-			path: web/modules/custom/aculta_portal/modules/aculta_maps/tests/src/Unit/MapRendererTest.php
 
-		-
-			rawMessage: Cannot access offset 'categoryColorClass' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_maps/tests/src/Unit/MapRendererTest.php
 
-		-
-			rawMessage: Cannot access offset 'drupalSettings' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 8
-			path: web/modules/custom/aculta_portal/modules/aculta_maps/tests/src/Unit/MapRendererTest.php
 
-		-
-			rawMessage: Cannot access offset 'event-map' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 5
-			path: web/modules/custom/aculta_portal/modules/aculta_maps/tests/src/Unit/MapRendererTest.php
 
-		-
-			rawMessage: Cannot access offset 'event-map-icon-0' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_maps/tests/src/Unit/MapRendererTest.php
 
-		-
-			rawMessage: Cannot access offset 'event-map-popup-0' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_maps/tests/src/Unit/MapRendererTest.php
 
-		-
-			rawMessage: Cannot access offset 'fallback-map' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_maps/tests/src/Unit/MapRendererTest.php
 
-		-
-			rawMessage: Cannot access offset 'icon' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_maps/tests/src/Unit/MapRendererTest.php
 
-		-
-			rawMessage: Cannot access offset 'iconTemplateId' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_maps/tests/src/Unit/MapRendererTest.php
 
-		-
-			rawMessage: Cannot access offset 'id' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_maps/tests/src/Unit/MapRendererTest.php
 
-		-
-			rawMessage: Cannot access offset 'lat' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_maps/tests/src/Unit/MapRendererTest.php
 
-		-
-			rawMessage: Cannot access offset 'library' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_maps/tests/src/Unit/MapRendererTest.php
 
-		-
-			rawMessage: Cannot access offset 'license' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_maps/tests/src/Unit/MapRendererTest.php
 
-		-
-			rawMessage: Cannot access offset 'lng' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_maps/tests/src/Unit/MapRendererTest.php
 
-		-
-			rawMessage: Cannot access offset 'markers' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 6
-			path: web/modules/custom/aculta_portal/modules/aculta_maps/tests/src/Unit/MapRendererTest.php
 
-		-
-			rawMessage: Cannot access offset 'name' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_maps/tests/src/Unit/MapRendererTest.php
 
-		-
-			rawMessage: Cannot access offset 'popupId' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_maps/tests/src/Unit/MapRendererTest.php
 
-		-
-			rawMessage: Cannot access offset 'provider' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_maps/tests/src/Unit/MapRendererTest.php
 
-		-
-			rawMessage: Cannot access offset 'routeUrl' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_maps/tests/src/Unit/MapRendererTest.php
 
-		-
-			rawMessage: Cannot access offset 'text' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_maps/tests/src/Unit/MapRendererTest.php
 
-		-
-			rawMessage: Cannot access offset 'url' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_maps/tests/src/Unit/MapRendererTest.php
 
-		-
-			rawMessage: Cannot access offset 0 on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 6
-			path: web/modules/custom/aculta_portal/modules/aculta_maps/tests/src/Unit/MapRendererTest.php
 
-		-
-			rawMessage: 'Cannot call method getUri() on mixed.'
-			identifier: method.nonObject
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_maps/tests/src/Unit/MapRendererTest.php
 
-		-
-			rawMessage: Cannot cast mixed to string.
-			identifier: cast.string
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_maps/tests/src/Unit/MapRendererTest.php
 
-		-
-			rawMessage: 'Parameter #2 $array of method PHPUnit\Framework\Assert::assertArrayNotHasKey() expects array<mixed>|ArrayAccess<(int|string), mixed>, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_maps/tests/src/Unit/MapRendererTest.php
 
-		-
-			rawMessage: 'Parameter #2 $haystack of method PHPUnit\Framework\Assert::assertCount() expects Countable|iterable, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_maps/tests/src/Unit/MapRendererTest.php
 
-		-
-			rawMessage: 'Parameter #2 $haystack of method PHPUnit\Framework\Assert::assertStringContainsString() expects string, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_maps/tests/src/Unit/MapRendererTest.php
 
-		-
-			rawMessage: Cannot access offset 'rel' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_maps/tests/src/Unit/RouteLinkBuilderTest.php
 
-		-
-			rawMessage: Cannot access offset 'target' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_maps/tests/src/Unit/RouteLinkBuilderTest.php
 
 		-
 			rawMessage: 'Argument of an invalid type mixed supplied for foreach, only iterables are supported.'

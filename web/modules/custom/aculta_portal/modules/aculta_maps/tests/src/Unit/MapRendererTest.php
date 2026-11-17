@@ -56,23 +56,56 @@ final class MapRendererTest extends UnitTestCase {
       ],
     ]);
 
-    $this->assertSame('event-map', $build['#attributes']['id']);
-    $this->assertSame('aculta_maps/map', $build['#attached']['library'][0]);
-    $this->assertSame(-16.68, $build['#attached']['drupalSettings']['acultaMaps']['event-map']['markers'][0]['lat']);
-    $this->assertSame(-49.26, $build['#attached']['drupalSettings']['acultaMaps']['event-map']['markers'][0]['lng']);
-    $this->assertCount(1, $build['#attached']['drupalSettings']['acultaMaps']['event-map']['markers']);
-    $this->assertSame('https://www.google.com/maps/dir/?destination=Goi%C3%A2nia', $build['#attached']['drupalSettings']['acultaMaps']['event-map']['markers'][0]['routeUrl']);
-    $marker = $build['#attached']['drupalSettings']['acultaMaps']['event-map']['markers'][0];
+    /** @var array<string, mixed> $attributes */
+    $attributes = $build['#attributes'] ?? [];
+    $this->assertSame('event-map', $attributes['id'] ?? NULL);
+    /** @var array<string, mixed> $attached */
+    $attached = $build['#attached'] ?? [];
+    /** @var list<string> $library */
+    $library = $attached['library'] ?? [];
+    $this->assertSame('aculta_maps/map', $library[0] ?? NULL);
+    /** @var array<string, mixed> $drupalSettings */
+    $drupalSettings = $attached['drupalSettings'] ?? [];
+    /** @var array<string, mixed> $acultaMaps */
+    $acultaMaps = $drupalSettings['acultaMaps'] ?? [];
+    /** @var array<string, mixed> $eventMap */
+    $eventMap = $acultaMaps['event-map'] ?? [];
+    /** @var list<array<string, mixed>> $markers */
+    $markers = $eventMap['markers'] ?? [];
+    $this->assertCount(1, $markers);
+    $marker = $markers[0];
+    $this->assertSame(-16.68, $marker['lat']);
+    $this->assertSame(-49.26, $marker['lng']);
+    $this->assertSame('https://www.google.com/maps/dir/?destination=Goi%C3%A2nia', $marker['routeUrl']);
     $this->assertSame('event-map-popup-0', $marker['popupId']);
     $this->assertSame('event-map-icon-0', $marker['iconTemplateId']);
     $this->assertSame('primary', $marker['categoryColorClass']);
-    $this->assertSame('aculta_maps_popup_template', $build['popup_templates'][$marker['popupId']]['#theme']);
-    $this->assertSame('Local aproximado', $build['popup_templates'][$marker['popupId']]['#popup']['#title']);
-    $iconTemplate = $build['icon_templates'][$marker['iconTemplateId']];
-    $this->assertSame('inline_template', $iconTemplate['#type']);
-    $this->assertStringContainsString('data-aculta-map-marker-icon-template', $iconTemplate['#template']);
-    $this->assertSame('aculta420_v2:icon', $iconTemplate['#context']['icon']['#component']);
-    $this->assertSame('map-pin', $iconTemplate['#context']['icon']['#props']['name']);
+    /** @var array<string, mixed> $popupTemplates */
+    $popupTemplates = $build['popup_templates'] ?? [];
+    /** @var array<string, mixed> $popupItem */
+    $popupItem = isset($popupTemplates['event-map-popup-0']) && is_array($popupTemplates['event-map-popup-0'])
+      ? $popupTemplates['event-map-popup-0']
+      : [];
+    $this->assertSame('aculta_maps_popup_template', $popupItem['#theme'] ?? NULL);
+    /** @var array<string, mixed> $popupContent */
+    $popupContent = $popupItem['#popup'] ?? [];
+    $this->assertSame('Local aproximado', $popupContent['#title'] ?? NULL);
+    /** @var array<string, mixed> $iconTemplates */
+    $iconTemplates = $build['icon_templates'] ?? [];
+    /** @var array<string, mixed> $iconTemplate */
+    $iconTemplate = isset($iconTemplates['event-map-icon-0']) && is_array($iconTemplates['event-map-icon-0'])
+      ? $iconTemplates['event-map-icon-0']
+      : [];
+    $this->assertSame('inline_template', $iconTemplate['#type'] ?? NULL);
+    $this->assertStringContainsString('data-aculta-map-marker-icon-template', is_scalar($iconTemplate['#template'] ?? NULL) ? (string) $iconTemplate['#template'] : '');
+    /** @var array<string, mixed> $iconContext */
+    $iconContext = $iconTemplate['#context'] ?? [];
+    /** @var array<string, mixed> $iconContextIcon */
+    $iconContextIcon = $iconContext['icon'] ?? [];
+    $this->assertSame('aculta420_v2:icon', $iconContextIcon['#component'] ?? NULL);
+    /** @var array<string, mixed> $iconProps */
+    $iconProps = $iconContextIcon['#props'] ?? [];
+    $this->assertSame('map-pin', $iconProps['name'] ?? NULL);
   }
 
   /**
@@ -97,9 +130,19 @@ final class MapRendererTest extends UnitTestCase {
         'routeUrl' => '//attacker.example/path',
       ]],
     ]);
-    $marker = $build['#attached']['drupalSettings']['acultaMaps']['aculta-map']['markers'][0];
-    $this->assertSame('', $marker['url']);
-    $this->assertSame('', $marker['routeUrl']);
+    /** @var array<string, mixed> $attached */
+    $attached = $build['#attached'] ?? [];
+    /** @var array<string, mixed> $drupalSettings */
+    $drupalSettings = $attached['drupalSettings'] ?? [];
+    /** @var array<string, mixed> $acultaMaps */
+    $acultaMaps = $drupalSettings['acultaMaps'] ?? [];
+    /** @var array<string, mixed> $acultaMap */
+    $acultaMap = $acultaMaps['aculta-map'] ?? [];
+    /** @var list<array<string, mixed>> $markers */
+    $markers = $acultaMap['markers'] ?? [];
+    $marker = $markers[0] ?? [];
+    $this->assertSame('', $marker['url'] ?? NULL);
+    $this->assertSame('', $marker['routeUrl'] ?? NULL);
   }
 
   /**
@@ -125,11 +168,19 @@ final class MapRendererTest extends UnitTestCase {
     $renderer = new MapRenderer($configFactory, $secrets, $user);
 
     $build = $renderer->build(['id' => 'fallback-map']);
-    $mapSettings = $build['#attached']['drupalSettings']['acultaMaps']['fallback-map'];
+    /** @var array<string, mixed> $attached */
+    $attached = $build['#attached'] ?? [];
+    /** @var array<string, mixed> $drupalSettings */
+    $drupalSettings = $attached['drupalSettings'] ?? [];
+    /** @var array<string, mixed> $acultaMaps */
+    $acultaMaps = $drupalSettings['acultaMaps'] ?? [];
+    /** @var array<string, mixed> $mapSettings */
+    $mapSettings = $acultaMaps['fallback-map'] ?? [];
 
-    $this->assertSame('openstreetmap', $mapSettings['provider']);
+    $this->assertSame('openstreetmap', $mapSettings['provider'] ?? NULL);
     $this->assertArrayNotHasKey('googleApiKey', $mapSettings);
-    $this->assertTrue($build['provider_notice']['#access']);
+    $providerNotice = is_array($build['provider_notice'] ?? NULL) ? $build['provider_notice'] : [];
+    $this->assertTrue(!empty($providerNotice['#access']));
   }
 
   /**
@@ -160,9 +211,29 @@ final class MapRendererTest extends UnitTestCase {
       'markers' => [['lat' => -16.68, 'lng' => -49.26, 'label' => 'Local']],
     ]);
 
-    $this->assertSame('google', $build['map']['#attached']['drupalSettings']['acultaMaps']['aculta-map']['provider']);
-    $this->assertStringContainsString('OpenStreetMap contributors', (string) $build['geocoding_attribution']['text']['#plain_text']);
-    $this->assertSame('https://www.openstreetmap.org/copyright', $build['geocoding_attribution']['license']['#url']->getUri());
+    /** @var array<string, mixed> $map */
+    $map = $build['map'] ?? [];
+    /** @var array<string, mixed> $mapAttached */
+    $mapAttached = $map['#attached'] ?? [];
+    /** @var array<string, mixed> $mapDrupalSettings */
+    $mapDrupalSettings = $mapAttached['drupalSettings'] ?? [];
+    /** @var array<string, mixed> $mapAcultaMaps */
+    $mapAcultaMaps = $mapDrupalSettings['acultaMaps'] ?? [];
+    /** @var array<string, mixed> $mapAcultaMap */
+    $mapAcultaMap = $mapAcultaMaps['aculta-map'] ?? [];
+
+    $this->assertSame('google', $mapAcultaMap['provider'] ?? NULL);
+    /** @var array<string, mixed> $attribution */
+    $attribution = $build['geocoding_attribution'] ?? [];
+    /** @var array<string, mixed> $textElem */
+    $textElem = $attribution['text'] ?? [];
+    $plainText = is_scalar($textElem['#plain_text'] ?? NULL) ? (string) $textElem['#plain_text'] : '';
+    $this->assertStringContainsString('OpenStreetMap contributors', $plainText);
+    /** @var array<string, mixed> $licenseElem */
+    $licenseElem = $attribution['license'] ?? [];
+    $urlObj = $licenseElem['#url'] ?? NULL;
+    $this->assertInstanceOf(\Drupal\Core\Url::class, $urlObj);
+    $this->assertSame('https://www.openstreetmap.org/copyright', $urlObj->getUri());
   }
 
 }

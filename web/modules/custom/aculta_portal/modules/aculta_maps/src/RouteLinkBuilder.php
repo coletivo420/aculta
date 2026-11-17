@@ -18,8 +18,8 @@ final class RouteLinkBuilder {
    * Builds a Google Maps directions URL for a supplied destination.
    */
   public function build(string $destination): Url {
-    $template = (string) ($this->configFactory->get('aculta_maps.settings')->get('route_url_template')
-      ?? 'https://www.google.com/maps/dir/?api=1&destination={destino}');
+    $rawTemplate = $this->configFactory->get('aculta_maps.settings')->get('route_url_template');
+    $template = is_scalar($rawTemplate) ? (string) $rawTemplate : 'https://www.google.com/maps/dir/?api=1&destination={destino}';
     $parts = parse_url(str_replace('{destino}', 'destination', $template));
     if (($parts['scheme'] ?? '') !== 'https'
       || !in_array($parts['host'] ?? '', ['www.google.com', 'maps.google.com'], TRUE)
