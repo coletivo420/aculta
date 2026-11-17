@@ -85,9 +85,12 @@ final class AccountDocumentStoreProfileKernelTest extends KernelTestBase {
     $store->save($first, $canonical);
 
     $profiles = $this->container->get('entity_type.manager')->getStorage('profile');
+    /** @var \Drupal\profile\Entity\ProfileInterface $profile */
     $profile = $profiles->loadUnchanged($this->profileId((int) $first->id()));
-    self::assertNotSame($canonical, $profile->get('field_documento')->value);
-    self::assertSame(64, strlen($profile->get('field_documento_indice')->value));
+    $docVal = $profile->get('field_documento')->value;
+    $indexVal = $profile->get('field_documento_indice')->value;
+    self::assertNotSame($canonical, is_scalar($docVal) ? (string) $docVal : '');
+    self::assertSame(64, strlen(is_scalar($indexVal) ? (string) $indexVal : ''));
     $profile->setUnpublished();
     $profile->save();
     self::assertSame('529.98*.***-**', $store->savedDocument($first));

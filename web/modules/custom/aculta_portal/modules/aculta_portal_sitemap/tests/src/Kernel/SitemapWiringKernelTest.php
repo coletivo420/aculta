@@ -112,7 +112,9 @@ final class SitemapWiringKernelTest extends KernelTestBase {
   public function testPurposeUrlGeneratorPluginIsDiscovered(): void {
     $manager = $this->container->get('plugin.manager.simple_sitemap.url_generator');
     self::assertTrue($manager->hasDefinition('aculta_purpose_node'));
-    self::assertSame(PurposeNodeUrlGenerator::class, $manager->getDefinition('aculta_purpose_node')['class']);
+    /** @var array<string, mixed> $definition */
+    $definition = $manager->getDefinition('aculta_purpose_node');
+    self::assertSame(PurposeNodeUrlGenerator::class, $definition['class'] ?? NULL);
   }
 
   /**
@@ -121,7 +123,9 @@ final class SitemapWiringKernelTest extends KernelTestBase {
    * The sitemap type itself lives in config/sync; this checks its entity type.
    */
   public function testSitemapTypeEntityIsRegistered(): void {
-    $definition = $this->container->get('entity_type.manager')->getDefinition('simple_sitemap_type');
+    /** @var \Drupal\Core\Entity\EntityTypeInterface|null $definition */
+    $definition = $this->container->get('entity_type.manager')->getDefinition('simple_sitemap_type', FALSE);
+    self::assertNotNull($definition);
     self::assertSame('simple_sitemap_type', $definition->id());
   }
 
@@ -150,8 +154,9 @@ final class SitemapWiringKernelTest extends KernelTestBase {
     $wiki->save();
 
     $storage = $this->container->get('config.storage');
+    $wikiDomainId = (string) $wiki->id();
     $collection = $storage->createCollection(
-      DomainConfigCollectionUtils::createDomainConfigCollectionName($wiki->id()),
+      DomainConfigCollectionUtils::createDomainConfigCollectionName($wikiDomainId),
     );
     $collection->write('system.site', ['page' => ['front' => '/wiki/inicio']]);
 
@@ -257,7 +262,11 @@ final class SitemapWiringKernelTest extends KernelTestBase {
       $generated = $generator->generate(['purpose' => 'wiki', 'path' => '/verbetes']);
       $expectedUrl = $siteManager->environmentPathUrl(SiteKey::Wiki, '/verbetes');
       self::assertNotNull($expectedUrl);
-      self::assertSame($expectedUrl->toString(), $generated[0]['url']);
+      $firstGenerated = $generated[0] ?? NULL;
+      self::assertIsArray($firstGenerated);
+      $url = $firstGenerated['url'] ?? NULL;
+      self::assertIsString($url);
+      self::assertSame($expectedUrl->toString(), $url);
     }
     finally {
       (new Filesystem())->remove($projectRoot);

@@ -27826,323 +27826,58 @@ parameters:
 			count: 2
 			path: web/modules/custom/aculta_portal/modules/aculta_game/tests/src/Unit/ForumParticipationPolicyTest.php
 
-		-
-			rawMessage: 'Cannot call method fetchField() on Drupal\Core\Database\StatementInterface|null.'
-			identifier: method.nonObject
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_id_cpf/aculta_id_cpf.install
 
-		-
-			rawMessage: Cannot cast mixed to int.
-			identifier: cast.int
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_id_cpf/aculta_id_cpf.install
 
-		-
-			rawMessage: 'Function aculta_id_cpf_update_10001() has an unused parameter $sandbox.'
-			identifier: function.unusedParameter
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_id_cpf/aculta_id_cpf.install
 
-		-
-			rawMessage: 'Function aculta_id_cpf_update_10001() has parameter $sandbox with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_id_cpf/aculta_id_cpf.install
 
-		-
-			rawMessage: 'Parameter #1 $profile of method Drupal\aculta_id_cpf\Service\AccountDocumentStore::indexStoredDocument() expects Drupal\profile\Entity\ProfileInterface, Drupal\Core\Entity\EntityInterface given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_id_cpf/aculta_id_cpf.install
 
-		-
-			rawMessage: 'Function aculta_id_cpf_form_alter() has an unused parameter $form_state.'
-			identifier: function.unusedParameter
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_id_cpf/aculta_id_cpf.module
 
-		-
-			rawMessage: 'Function aculta_id_cpf_form_alter() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_id_cpf/aculta_id_cpf.module
 
-		-
-			rawMessage: 'Parameter #2 $haystack of function array_search expects array, mixed given.'
-			identifier: argument.type
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_id_cpf/aculta_id_cpf.module
 
-		-
-			rawMessage: 'Parameter #2 $offset of function array_splice expects int, int|string given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_id_cpf/aculta_id_cpf.module
 
-		-
-			rawMessage: Cannot cast mixed to string.
-			identifier: cast.string
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_id_cpf/src/Service/AccountDocumentStore.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_id_cpf\Service\AccountDocumentStore::createParticipantProfile() should return Drupal\profile\Entity\ProfileInterface but returns Drupal\Core\Entity\EntityInterface.'
-			identifier: return.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_id_cpf/src/Service/AccountDocumentStore.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_id_cpf\Service\AccountDocumentStore::participantProfile() should return Drupal\profile\Entity\ProfileInterface|null but returns Drupal\Core\Entity\EntityInterface|null.'
-			identifier: return.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_id_cpf/src/Service/AccountDocumentStore.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_id_cpf\Service\AccountDocumentStore::profileFields() should return array<string, mixed> but returns array<mixed>.'
-			identifier: return.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_id_cpf/src/Service/AccountDocumentStore.php
 
-		-
-			rawMessage: 'Property Drupal\aculta_id_cpf\Service\AccountDocumentStore::$profileFields (array<string, mixed>|null) does not accept array<mixed>.'
-			identifier: assign.propertyType
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_id_cpf/src/Service/AccountDocumentStore.php
 
-		-
-			rawMessage: Cannot cast mixed to string.
-			identifier: cast.string
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_id_cpf/src/Service/CpfLoginFormCallbacks.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_id_cpf\Service\CpfLoginFormCallbacks::resolveIdentifier() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_id_cpf/src/Service/CpfLoginFormCallbacks.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_id_cpf\Service\CpfLoginFormCallbacks::restoreIdentifier() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_id_cpf/src/Service/CpfLoginFormCallbacks.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_id_cpf\Service\DocumentCipher::key() should return string|null but returns string|false.'
-			identifier: return.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_id_cpf/src/Service/DocumentCipher.php
 
-		-
-			rawMessage: 'Argument of an invalid type mixed supplied for foreach, only iterables are supported.'
-			identifier: foreach.nonIterable
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_id_cpf/tests/run.php
 
-		-
-			rawMessage: Cannot access offset 'invalid' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_id_cpf/tests/run.php
 
-		-
-			rawMessage: Cannot access offset 'valid' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_id_cpf/tests/run.php
 
-		-
-			rawMessage: 'Cannot access offset int<-2, max> on mixed.'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_id_cpf/tests/run.php
 
-		-
-			rawMessage: Cannot use array destructuring on mixed.
-			identifier: offsetAccess.nonArray
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_id_cpf/tests/run.php
 
-		-
-			rawMessage: 'Parameter #1 $input of method Drupal\aculta_id_cpf\Service\DocumentFormatter::format() expects string, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_id_cpf/tests/run.php
 
-		-
-			rawMessage: 'Parameter #1 $input of method Drupal\aculta_id_cpf\Service\DocumentFormatter::redact() expects string, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_id_cpf/tests/run.php
 
-		-
-			rawMessage: 'Parameter #1 $input of method Drupal\aculta_id_cpf\Service\DocumentValidator::canonicalize() expects string, array|int|stdClass|null given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_id_cpf/tests/run.php
 
-		-
-			rawMessage: 'Parameter #1 $input of method Drupal\aculta_id_cpf\Service\DocumentValidator::canonicalize() expects string, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_id_cpf/tests/run.php
 
-		-
-			rawMessage: 'Parameter #1 $input of method Drupal\aculta_id_cpf\Service\DocumentValidator::isValid() expects string, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_id_cpf/tests/run.php
 
-		-
-			rawMessage: 'Parameter #1 $string of function strlen expects string, mixed given.'
-			identifier: argument.type
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_id_cpf/tests/run.php
 
-		-
-			rawMessage: 'Parameter #1 $string of function substr expects string, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_id_cpf/tests/run.php
 
-		-
-			rawMessage: 'Parameter #1 $string of function substr_replace expects array|string, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_id_cpf/tests/run.php
 
-		-
-			rawMessage: 'Parameter #1 $value of static method Drupal\aculta_id_cpf\Enum\DocumentType::from() expects string, mixed given.'
-			identifier: argument.type
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_id_cpf/tests/run.php
 
-		-
-			rawMessage: 'Part $i (mixed) of encapsed string cannot be cast to string.'
-			identifier: encapsedStringPart.nonString
-			count: 5
-			path: web/modules/custom/aculta_portal/modules/aculta_id_cpf/tests/run.php
 
-		-
-			rawMessage: Cannot access property $value on mixed.
-			identifier: property.nonObject
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_id_cpf/tests/src/Kernel/AccountDocumentStoreProfileKernelTest.php
 
-		-
-			rawMessage: 'Cannot call method get() on Drupal\Core\Entity\EntityInterface|null.'
-			identifier: method.nonObject
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_id_cpf/tests/src/Kernel/AccountDocumentStoreProfileKernelTest.php
 
-		-
-			rawMessage: 'Cannot call method save() on Drupal\Core\Entity\EntityInterface|null.'
-			identifier: method.nonObject
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_id_cpf/tests/src/Kernel/AccountDocumentStoreProfileKernelTest.php
 
-		-
-			rawMessage: 'Cannot call method setUnpublished() on Drupal\Core\Entity\EntityInterface|null.'
-			identifier: method.nonObject
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_id_cpf/tests/src/Kernel/AccountDocumentStoreProfileKernelTest.php
 
-		-
-			rawMessage: 'Parameter #1 $string of function strlen expects string, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_id_cpf/tests/src/Kernel/AccountDocumentStoreProfileKernelTest.php
 
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityStorageInterface::loadByUser().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_id_cpf/tests/src/Kernel/AccountOtherDataFormIntegrationKernelTest.php
 
-		-
-			rawMessage: Cannot access offset '#default_value' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_id_cpf/tests/src/Kernel/AccountOtherDataFormIntegrationKernelTest.php
 
-		-
-			rawMessage: Cannot access offset '#disabled' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_id_cpf/tests/src/Kernel/AccountOtherDataFormIntegrationKernelTest.php
 
-		-
-			rawMessage: Cannot access offset '#required' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_id_cpf/tests/src/Kernel/AccountOtherDataFormIntegrationKernelTest.php
 
-		-
-			rawMessage: Cannot access offset '#type' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_id_cpf/tests/src/Kernel/AccountOtherDataFormIntegrationKernelTest.php
 
-		-
-			rawMessage: Cannot access property $value on mixed.
-			identifier: property.nonObject
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_id_cpf/tests/src/Kernel/AccountOtherDataFormIntegrationKernelTest.php
 
-		-
-			rawMessage: 'Cannot call method get() on mixed.'
-			identifier: method.nonObject
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_id_cpf/tests/src/Kernel/AccountOtherDataFormIntegrationKernelTest.php
 
-		-
-			rawMessage: Cannot cast mixed to string.
-			identifier: cast.string
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_id_cpf/tests/src/Kernel/AccountOtherDataFormIntegrationKernelTest.php
 
-		-
-			rawMessage: 'Parameter #1 $string of function strlen expects string, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_id_cpf/tests/src/Kernel/AccountOtherDataFormIntegrationKernelTest.php
 
-		-
-			rawMessage: 'Cannot call method fetchField() on Drupal\Core\Database\StatementInterface|null.'
-			identifier: method.nonObject
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_id_cpf/tests/src/Kernel/DocumentFingerprintUniqueIndexKernelTest.php
 
-		-
-			rawMessage: Cannot cast mixed to int.
-			identifier: cast.int
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_id_cpf/tests/src/Kernel/DocumentFingerprintUniqueIndexKernelTest.php
 
-		-
-			rawMessage: Cannot access offset 'invalid' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_id_cpf/tests/src/Unit/DocumentValidationTest.php
 
-		-
-			rawMessage: Cannot access offset 'valid' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_id_cpf/tests/src/Unit/DocumentValidationTest.php
 
-		-
-			rawMessage: 'Method Drupal\Tests\aculta_id_cpf\Unit\DocumentValidationTest::invalidDocuments() should return array<string, array{string, string}> but returns mixed.'
-			identifier: return.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_id_cpf/tests/src/Unit/DocumentValidationTest.php
 
-		-
-			rawMessage: 'Method Drupal\Tests\aculta_id_cpf\Unit\DocumentValidationTest::validDocuments() should return array<string, array{string, string, string, string}> but returns mixed.'
-			identifier: return.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_id_cpf/tests/src/Unit/DocumentValidationTest.php
 
 		-
 			rawMessage: 'Function aculta_image_schema() return type has no value type specified in iterable type array.'
@@ -54749,161 +54484,31 @@ parameters:
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_patcher/tests/src/Unit/PatchManifestExporterTest.php
 
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::get().'
-			identifier: method.notFound
-			count: 3
-			path: web/modules/custom/aculta_portal/modules/aculta_portal_sitemap/src/Plugin/simple_sitemap/UrlGenerator/PurposeNodeUrlGenerator.php
 
-		-
-			rawMessage: Cannot access offset 'front' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_portal_sitemap/src/Plugin/simple_sitemap/UrlGenerator/PurposeNodeUrlGenerator.php
 
-		-
-			rawMessage: Cannot access property $value on mixed.
-			identifier: property.nonObject
-			count: 3
-			path: web/modules/custom/aculta_portal/modules/aculta_portal_sitemap/src/Plugin/simple_sitemap/UrlGenerator/PurposeNodeUrlGenerator.php
 
-		-
-			rawMessage: Cannot cast mixed to int.
-			identifier: cast.int
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_portal_sitemap/src/Plugin/simple_sitemap/UrlGenerator/PurposeNodeUrlGenerator.php
 
-		-
-			rawMessage: Cannot cast mixed to string.
-			identifier: cast.string
-			count: 6
-			path: web/modules/custom/aculta_portal/modules/aculta_portal_sitemap/src/Plugin/simple_sitemap/UrlGenerator/PurposeNodeUrlGenerator.php
 
-		-
-			rawMessage: Instanceof between Drupal\node\Entity\Node and Drupal\node\NodeInterface will always evaluate to true.
-			identifier: instanceof.alwaysTrue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_portal_sitemap/src/Plugin/simple_sitemap/UrlGenerator/PurposeNodeUrlGenerator.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_portal_sitemap\Plugin\simple_sitemap\UrlGenerator\PurposeNodeUrlGenerator::__construct() has parameter $configuration with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_portal_sitemap/src/Plugin/simple_sitemap/UrlGenerator/PurposeNodeUrlGenerator.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_portal_sitemap\Plugin\simple_sitemap\UrlGenerator\PurposeNodeUrlGenerator::collect() has parameter $data_set with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_portal_sitemap/src/Plugin/simple_sitemap/UrlGenerator/PurposeNodeUrlGenerator.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_portal_sitemap\Plugin\simple_sitemap\UrlGenerator\PurposeNodeUrlGenerator::collect() should return array<int, array<string, mixed>> but returns list<array>.'
-			identifier: return.type
-			count: 4
-			path: web/modules/custom/aculta_portal/modules/aculta_portal_sitemap/src/Plugin/simple_sitemap/UrlGenerator/PurposeNodeUrlGenerator.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_portal_sitemap\Plugin\simple_sitemap\UrlGenerator\PurposeNodeUrlGenerator::create() has parameter $configuration with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_portal_sitemap/src/Plugin/simple_sitemap/UrlGenerator/PurposeNodeUrlGenerator.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_portal_sitemap\Plugin\simple_sitemap\UrlGenerator\PurposeNodeUrlGenerator::generate() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_portal_sitemap/src/Plugin/simple_sitemap/UrlGenerator/PurposeNodeUrlGenerator.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_portal_sitemap\Plugin\simple_sitemap\UrlGenerator\PurposeNodeUrlGenerator::getDataSets() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_portal_sitemap/src/Plugin/simple_sitemap/UrlGenerator/PurposeNodeUrlGenerator.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_portal_sitemap\Plugin\simple_sitemap\UrlGenerator\PurposeNodeUrlGenerator::processDataSet() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_portal_sitemap/src/Plugin/simple_sitemap/UrlGenerator/PurposeNodeUrlGenerator.php
 
-		-
-			rawMessage: 'Parameter #1 $data_set of method Drupal\aculta_portal_sitemap\Plugin\simple_sitemap\UrlGenerator\PurposeNodeUrlGenerator::collect() expects array, mixed given.'
-			identifier: argument.type
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_portal_sitemap/src/Plugin/simple_sitemap/UrlGenerator/PurposeNodeUrlGenerator.php
 
-		-
-			rawMessage: 'Parameter #1 $domain_id of static method Drupal\domain_config\Config\DomainConfigCollectionUtils::createDomainConfigCollectionName() expects string, int|string|null given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_portal_sitemap/src/Plugin/simple_sitemap/UrlGenerator/PurposeNodeUrlGenerator.php
 
-		-
-			rawMessage: 'Parameter #1 $ids of method Drupal\Core\Entity\EntityStorageBase::loadMultiple() expects array<int|string>|null, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_portal_sitemap/src/Plugin/simple_sitemap/UrlGenerator/PurposeNodeUrlGenerator.php
 
-		-
-			rawMessage: 'Parameter #1 $ids of method Drupal\Core\Entity\EntityStorageInterface::loadMultiple() expects array<int|string>|null, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_portal_sitemap/src/Plugin/simple_sitemap/UrlGenerator/PurposeNodeUrlGenerator.php
 
-		-
-			rawMessage: Using nullsafe method call on non-nullable type Drupal\simple_sitemap\Entity\SimpleSitemapInterface. Use -> instead.
-			identifier: nullsafe.neverNull
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_portal_sitemap/src/Plugin/simple_sitemap/UrlGenerator/PurposeNodeUrlGenerator.php
 
-		-
-			rawMessage: Cannot access offset 'class' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_portal_sitemap/tests/src/Kernel/SitemapWiringKernelTest.php
 
-		-
-			rawMessage: Cannot access offset 'url' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_portal_sitemap/tests/src/Kernel/SitemapWiringKernelTest.php
 
-		-
-			rawMessage: 'Cannot call method id() on mixed.'
-			identifier: method.nonObject
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_portal_sitemap/tests/src/Kernel/SitemapWiringKernelTest.php
 
-		-
-			rawMessage: 'Parameter #1 $domain_id of static method Drupal\domain_config\Config\DomainConfigCollectionUtils::createDomainConfigCollectionName() expects string, int|string|null given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_portal_sitemap/tests/src/Kernel/SitemapWiringKernelTest.php
 
-		-
-			rawMessage: 'Call to method PHPUnit\Framework\Assert::assertSame() with array{''/contato''} and array{''/contato''} will always evaluate to true.'
-			identifier: method.alreadyNarrowedType
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_portal_sitemap/tests/src/Unit/IndexingPolicyTest.php
 
-		-
-			rawMessage: 'Call to method PHPUnit\Framework\Assert::assertSame() with array{''/eventos'', ''/calendario'', ''/locais'', ''/mapa''} and array{''/eventos'', ''/calendario'', ''/locais'', ''/mapa''} will always evaluate to true.'
-			identifier: method.alreadyNarrowedType
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_portal_sitemap/tests/src/Unit/IndexingPolicyTest.php
 
-		-
-			rawMessage: 'Call to method PHPUnit\Framework\Assert::assertSame() with array{''/verbetes''} and array{''/verbetes''} will always evaluate to true.'
-			identifier: method.alreadyNarrowedType
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_portal_sitemap/tests/src/Unit/IndexingPolicyTest.php
 
-		-
-			rawMessage: 'Call to method PHPUnit\Framework\Assert::assertSame() with array{''page'', ''activity'', ''document'', ''wiki_entry'', ''revista''} and array{''page'', ''activity'', ''document'', ''wiki_entry'', ''revista''} will always evaluate to true.'
-			identifier: method.alreadyNarrowedType
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_portal_sitemap/tests/src/Unit/IndexingPolicyTest.php
 
 		-
 			rawMessage: 'Call to an undefined method Drupal\Core\Field\FieldDefinitionInterface::setRevisionable().'

@@ -9,13 +9,18 @@ use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Implements hook_form_alter().
+ *
+ * @param array<string, mixed> $form
  */
 function aculta_id_cpf_form_alter(array &$form, FormStateInterface $form_state, string $form_id): void {
+  // O hook_form_alter exige $form_state na assinatura; referenciamos para satisfazer linters.
+  unset($form_state);
   if (!in_array($form_id, ['user_login_form', 'aculta_login_popup_form'], TRUE)) {
     return;
   }
 
-  $validators = $form['#validate'] ?? [];
+  $validatorsRaw = $form['#validate'] ?? [];
+  $validators = is_array($validatorsRaw) ? array_values($validatorsRaw) : [];
   $authentication_validator = 'aculta_portal.form_callbacks:validateLoginAuthentication';
   $authentication_index = array_search($authentication_validator, $validators, TRUE);
   if ($authentication_index === FALSE) {

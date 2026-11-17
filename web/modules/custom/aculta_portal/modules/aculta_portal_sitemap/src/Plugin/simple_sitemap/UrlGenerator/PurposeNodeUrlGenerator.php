@@ -77,6 +77,13 @@ final class PurposeNodeUrlGenerator extends UrlGeneratorBase {
    */
   public const BUNDLES = ['page', 'activity', 'document', 'wiki_entry', 'revista'];
 
+  /**
+   * Constructs a PurposeNodeUrlGenerator.
+   *
+   * @param array<string, mixed> $configuration
+   * @param string $plugin_id
+   * @param mixed $plugin_definition
+   */
   public function __construct(
     array $configuration,
     $plugin_id,
@@ -90,11 +97,16 @@ final class PurposeNodeUrlGenerator extends UrlGeneratorBase {
     protected readonly AliasManagerInterface $aliasManager,
     protected readonly SurfaceConfigReader $surfaces,
   ) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $logger, $settings);
+    parent::__construct($configuration, (string) $plugin_id, $plugin_definition, $logger, $settings);
   }
 
   /**
    * Creates the plugin instance.
+   *
+   * @param \Symfony\Component\DependencyInjection\ContainerInterface $container
+   * @param array<string, mixed> $configuration
+   * @param string $plugin_id
+   * @param mixed $plugin_definition
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): SimpleSitemapPluginBase {
     return new static(
@@ -128,6 +140,8 @@ final class PurposeNodeUrlGenerator extends UrlGeneratorBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @return list<array<string, mixed>>
    */
   public function getDataSets(): array {
     $purpose = $this->sitemapPurpose();
@@ -152,7 +166,8 @@ final class PurposeNodeUrlGenerator extends UrlGeneratorBase {
       ->condition('field_domain_source', $domain->id())
       ->sort('nid')
       ->execute();
-    $size = (int) $this->settings->get('entities_per_queue_item', 50);
+    $sizeSetting = $this->settings->get('entities_per_queue_item', 50);
+    $size = is_numeric($sizeSetting) ? (int) $sizeSetting : 50;
     foreach (array_chunk(array_values($ids), max(1, $size)) as $chunk) {
       $sets[] = ['purpose' => $purpose, 'ids' => $chunk];
     }
@@ -172,71 +187,128 @@ final class PurposeNodeUrlGenerator extends UrlGeneratorBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param mixed $data_set
+   * @return array<int, array<string, mixed>>
    */
   protected function processDataSet($data_set): array {
-    return $this->collect($data_set);
+    $dataSetArray = is_array($data_set) ? $this->normalizeDataSet($data_set) : [];
+    return $this->collect($dataSetArray);
   }
 
   /**
    * Generates a flat list of path data, with one entry per URL.
    *
    * {@inheritdoc}
+   *
+   * @param mixed $data_set
+   * @return array<int, array<string, mixed>>
    */
   public function generate($data_set): array {
-    return $this->collect($data_set);
+    $dataSetArray = is_array($data_set) ? $this->normalizeDataSet($data_set) : [];
+    return $this->collect($dataSetArray);
+  }
+
+  /**
+   * Normalizes dataset array keys to string.
+   *
+   * @param array<mixed> $data_set
+   * @return array<string, mixed>
+   */
+  private function normalizeDataSet(array $data_set): array {
+    $normalized = [];
+    foreach ($data_set as $key => $value) {
+      if (is_string($key)) {
+        $normalized[$key] = $value;
+      }
+    }
+    return $normalized;
   }
 
   /**
    * Collects generated URLs for one dataset.
    *
+   * @param array<string, mixed> $data_set
+   *
    * @return array<int, array<string, mixed>>
    *   Generated path data.
    */
   private function collect(array $data_set): array {
-    $purpose = (string) ($data_set['purpose'] ?? '');
+    $purposeRaw = $data_set['purpose'] ?? '';
+    $purpose = is_scalar($purposeRaw) ? (string) $purposeRaw : '';
     if (!empty($data_set['root'])) {
       $root = $this->purposes->environmentPathUrl($purpose, '/');
-      return $root === NULL ? [] : [$this->constructPathData($root)];
+      if ($root === NULL) {
+        return [];
+      }
+      /** @var array<string, mixed> $pathData */
+      $pathData = $this->constructPathData($root);
+      return [$pathData];
     }
-    if (isset($data_set['event_ids'])) {
+    if (isset($data_set['event_ids']) && is_array($data_set['event_ids'])) {
       $resultados = [];
-      foreach ($this->entityTypeManager->getStorage('aculta_event')->loadMultiple($data_set['event_ids']) as $evento) {
+      /** @var list<int|string> $eventIds */
+      $eventIds = array_values(array_filter($data_set['event_ids'], static fn($id): bool => is_int($id) || is_string($id)));
+      /** @var \Drupal\Core\Entity\ContentEntityInterface $evento */
+      foreach ($this->entityTypeManager->getStorage('aculta_event')->loadMultiple($eventIds) as $evento) {
         // Só publicado entra; o status é conferido de novo, não só na consulta.
-        if ((string) $evento->get('field_status')->value !== 'publicado'
-          || (string) $evento->get('field_slug')->value === '') {
+        $statusField = $evento->get('field_status')->value;
+        $slugField = $evento->get('field_slug')->value;
+        $statusStr = is_scalar($statusField) ? (string) $statusField : '';
+        $slugStr = is_scalar($slugField) ? (string) $slugField : '';
+        if ($statusStr !== 'publicado' || $slugStr === '') {
           continue;
         }
-        $path = '/eventos/' . (string) $evento->get('field_slug')->value;
+        $path = '/eventos/' . $slugStr;
         $url = $this->purposes->environmentPathUrl($purpose, $path);
         if ($url !== NULL) {
           // Eventos não têm campo de alteração; lastmod é opcional.
-          $resultados[] = $this->constructPathData($url);
+          /** @var array<string, mixed> $pathData */
+          $pathData = $this->constructPathData($url);
+          $resultados[] = $pathData;
         }
       }
       return $resultados;
     }
     if (isset($data_set['path'])) {
-      $url = $this->purposes->environmentPathUrl($purpose, (string) $data_set['path']);
-      return $url === NULL ? [] : [$this->constructPathData($url)];
+      $pathStr = is_scalar($data_set['path']) ? (string) $data_set['path'] : '';
+      $url = $this->purposes->environmentPathUrl($purpose, $pathStr);
+      if ($url === NULL) {
+        return [];
+      }
+      /** @var array<string, mixed> $pathData */
+      $pathData = $this->constructPathData($url);
+      return [$pathData];
     }
     $results = [];
     // R4: a elegibilidade de visualização é verificada como usuário anônimo.
     $this->accountSwitcher->switchTo(new AnonymousUserSession());
     try {
-      foreach ($this->entityTypeManager->getStorage('node')->loadMultiple($data_set['ids'] ?? []) as $node) {
-        if (!$node instanceof NodeInterface || !$this->isEligible($node, $purpose)) {
+      $nodeIds = [];
+      if (isset($data_set['ids']) && is_array($data_set['ids'])) {
+        foreach ($data_set['ids'] as $id) {
+          if (is_int($id) || is_string($id)) {
+            $nodeIds[] = $id;
+          }
+        }
+      }
+      /** @var \Drupal\node\NodeInterface $node */
+      foreach ($this->entityTypeManager->getStorage('node')->loadMultiple($nodeIds) as $node) {
+        if (!$this->isEligible($node, $purpose)) {
           continue;
         }
         $url = $this->purposes->environmentRouteUrl($purpose,
           'entity.node.canonical',
-          ['node' => $node->id()],
+          ['node' => (string) $node->id()],
         );
         if ($url === NULL) {
           continue;
         }
-        $results[] = $this->constructPathData($url, [
+        /** @var array<string, mixed> $pathData */
+        $pathData = $this->constructPathData($url, [
           'lastmod' => date('c', (int) $node->getChangedTime()),
         ]);
+        $results[] = $pathData;
       }
     }
     finally {
@@ -271,9 +343,12 @@ final class PurposeNodeUrlGenerator extends UrlGeneratorBase {
       return FALSE;
     }
     // R5a: noindex declarado no metatag do nó.
-    if ($node->hasField('field_meta_tags') && !$node->get('field_meta_tags')->isEmpty()
-      && stripos((string) $node->get('field_meta_tags')->value, 'noindex') !== FALSE) {
-      return FALSE;
+    if ($node->hasField('field_meta_tags') && !$node->get('field_meta_tags')->isEmpty()) {
+      $metaValue = $node->get('field_meta_tags')->value;
+      $metaStr = is_scalar($metaValue) ? (string) $metaValue : '';
+      if (stripos($metaStr, 'noindex') !== FALSE) {
+        return FALSE;
+      }
     }
     return TRUE;
   }
@@ -287,11 +362,19 @@ final class PurposeNodeUrlGenerator extends UrlGeneratorBase {
       return FALSE;
     }
     // Sem sobrescrita do domínio, a página inicial é a global (system.site).
-    $front = $this->configStorage
-      ->createCollection(DomainConfigCollectionUtils::createDomainConfigCollectionName($domain->id()))
-      ->read('system.site')['page']['front']
-      ?? $this->configStorage->read('system.site')['page']['front']
-      ?? NULL;
+    $domainId = (string) $domain->id();
+    $domainSiteConfig = $this->configStorage
+      ->createCollection(DomainConfigCollectionUtils::createDomainConfigCollectionName($domainId))
+      ->read('system.site');
+    $globalSiteConfig = $this->configStorage->read('system.site');
+
+    $front = NULL;
+    if (is_array($domainSiteConfig) && isset($domainSiteConfig['page']) && is_array($domainSiteConfig['page']) && isset($domainSiteConfig['page']['front'])) {
+      $front = $domainSiteConfig['page']['front'];
+    }
+    elseif (is_array($globalSiteConfig) && isset($globalSiteConfig['page']) && is_array($globalSiteConfig['page']) && isset($globalSiteConfig['page']['front'])) {
+      $front = $globalSiteConfig['page']['front'];
+    }
     if (!is_string($front) || $front === '') {
       return FALSE;
     }
@@ -311,7 +394,10 @@ final class PurposeNodeUrlGenerator extends UrlGeneratorBase {
    * Gets the purpose configured for the active sitemap.
    */
   private function sitemapPurpose(): ?string {
-    $purpose = $this->sitemap?->getThirdPartySetting('aculta_portal_sitemap', self::PURPOSE_KEY);
+    if ($this->sitemap === NULL) {
+      return NULL;
+    }
+    $purpose = $this->sitemap->getThirdPartySetting('aculta_portal_sitemap', self::PURPOSE_KEY);
     return is_string($purpose) && $purpose !== '' ? $purpose : NULL;
   }
 
