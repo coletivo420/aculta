@@ -10,14 +10,16 @@ use Drupal\ui_patterns_library\StoryDefault;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Uses the real account provider's authorized menu slots in the component library.
+ * Uses the Account provider's authorized menu slots.
+ *
+ * @phpstan-import-type StudioMenuBuild from AccountExperienceProvider
  */
 final class StudioMenuStory extends StoryDefault implements ContainerFactoryPluginInterface {
 
   /**
    * Cached menu build shared by props() and slots().
    *
-   * @var array<string, mixed>|null
+   * @var StudioMenuBuild|null
    */
   protected ?array $menuBuild = NULL;
 
@@ -46,27 +48,26 @@ final class StudioMenuStory extends StoryDefault implements ContainerFactoryPlug
    * {@inheritdoc}
    */
   public function props(): array {
-    return $this->menu()['#props'] ?? [];
+    return $this->menu()['#props'];
   }
 
   /**
    * {@inheritdoc}
    */
   public function slots(): array {
-    return $this->menu()['#slots'] ?? [];
+    return $this->menu()['#slots'];
   }
 
   /**
    * Gets the real menu render array from the account provider.
    *
-   * @return array<string, mixed>
+   * @return StudioMenuBuild
    *   The studio-menu component build.
    */
   private function menu(): array {
     if ($this->menuBuild === NULL) {
       $build = $this->accountExperienceProvider->build();
-      $menu = $build['#slots']['menu'] ?? [];
-      $this->menuBuild = is_array($menu) ? $menu : [];
+      $this->menuBuild = $build['#slots']['menu'];
     }
     return $this->menuBuild;
   }
