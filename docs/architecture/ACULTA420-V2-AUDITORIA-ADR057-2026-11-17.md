@@ -110,7 +110,7 @@ A ADR-056 contém triagem específica de hooks, slots, attributes, forms, respon
 
 core.extension ativa ui_patterns, ui_patterns_blocks, ui_patterns_field, ui_patterns_field_formatters, ui_patterns_layouts, ui_patterns_library e ui_patterns_views. O tema é baseless, Drupal ^11.5 || ^12, schema SDC estrito, com cinco regiões: institution, header, content, sidebar_first, footer.
 
-O inventário já gerado em [ui-suite-consumidores-iniciais.csv](inventarios/ui-suite-consumidores-iniciais.csv) tem 455 registros: 150 SDCs, 159 displays de Views, 52 placements, 22 displays Layout Builder, 18 templates de módulos, 17 overrides do tema, 36 integrações UI Suite e um engine visual. A coluna runtime_status mostra muitas entradas not_observed, portanto **a classificação UI_SUITE_NATIVE não equivale a demonstração do Runtime**.
+O inventário foi regenerado em 2026-11-17 a partir do checkout executável e tem 459 registros: 150 SDCs, 159 displays de Views, 52 placements, 22 displays Layout Builder, 22 templates de módulos, 17 overrides do tema, 36 integrações UI Suite e um engine visual. Status: 249 UI_SUITE_NATIVE, 165 FUNCTIONAL_NATIVE_EXCEPTION, 21 MIGRATION_IN_PROGRESS, 2 LEGACY_OBSOLETE e 22 BLOCKED_UPSTREAM. O campo `runtime_status` segue `not_observed` em 88 registros; **UI_SUITE_NATIVE não equivale a demonstração do Runtime**.
 
 **Ação:** ampliar o inventário para presets/controls e distinguir native, adapter, candidate, blocked, no-consumer e não observado.
 
@@ -118,7 +118,7 @@ O inventário já gerado em [ui-suite-consumidores-iniciais.csv](inventarios/ui-
 
 Não foi identificado um catálogo versionado de composições reutilizáveis por dez site_keys equivalente ao que a ADR-057 pretende. Já existem SDCs de landing, layout-page, layout-section, surface, headings, cards e dashboards. Os presets devem compor esses elementos e não duplicá-los.
 
-**Ação:** mapear APIs nativas de composições e reuso no UI Patterns/Drupal instalado; especificar configuração exportável, permissões, versões, rollback, revisão e consumidores. Criar no mínimo dez exemplos reais, não uma nova taxonomia visual obrigatória.
+**Ação:** mapear APIs nativas de composições e reuso no UI Patterns/Drupal instalado; especificar configuração exportável, permissões, versões, rollback, revisão e consumidores. Criar no mínimo dez exemplos reais, não uma nova taxonomia visual obrigatória. O primeiro catálogo com dez fontes reais por `site_key` está em [ADR-057-F2-presets-2026-11-17.md](../operations/testing/ADR-057-F2-presets-2026-11-17.md); ele identifica quais exemplos são YAML exportado e quais ainda são adaptadores de código. F2 continua parcial até confirmar edição, permissões, persistência e rollback por API instalada.
 
 ### A-08 - UI Styles já é amplo [MÉDIO]
 
