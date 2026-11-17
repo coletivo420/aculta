@@ -11,6 +11,8 @@
   <head>
     <head-placeholder token="{{ placeholder_token }}">
     <title>{{ head_title|safe_join(' | ') }}</title>
+    <link rel="preload" href="{{ base_path }}{{ directory }}/assets/fonts/inter/inter-latin-variable.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+    <link rel="preload" href="{{ base_path }}{{ directory }}/assets/fonts/oswald/oswald-latin-variable.woff2" as="font" type="font/woff2" crossorigin="anonymous">
     <link rel="icon" href="/{{ directory }}/assets/icons/aculta420-favicon.ico" sizes="any">
     <link rel="apple-touch-icon" href="/{{ directory }}/assets/icons/apple-touch-icon.png">
     <link rel="manifest" href="/{{ directory }}/assets/icons/site.webmanifest">

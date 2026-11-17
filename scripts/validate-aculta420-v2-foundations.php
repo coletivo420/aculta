@@ -19,18 +19,21 @@ $theme = $root . '/web/themes/custom/aculta420_v2';
 $tokensPath = $theme . '/src/styles/tokens.css';
 $basePath = $theme . '/src/styles/base.css';
 $layoutPath = $theme . '/src/styles/layout.css';
+$fontsPath = $theme . '/src/styles/fonts.css';
 $librariesPath = $theme . '/aculta420_v2.libraries.yml';
-$tokensCss = file_get_contents($tokensPath);
-$baseCss = file_get_contents($basePath);
-$layoutCss = file_get_contents($layoutPath);
-$libraries = file_get_contents($librariesPath);
-
-foreach ([$tokensCss, $baseCss, $layoutCss, $libraries] as $source) {
+$readRequired = static function (string $path): string {
+  $source = file_get_contents($path);
   if (!is_string($source)) {
     fwrite(STDERR, "V2 foundations: required source file could not be read.\n");
     exit(1);
   }
-}
+  return $source;
+};
+$tokensCss = $readRequired($tokensPath);
+$baseCss = $readRequired($basePath);
+$layoutCss = $readRequired($layoutPath);
+$fontsCss = $readRequired($fontsPath);
+$libraries = $readRequired($librariesPath);
 
 $rootTokens = [];
 $darkTokens = [];
@@ -56,7 +59,7 @@ $assert = static function (bool $condition, string $message): void {
 
 $assert(!str_contains($tokensCss, 'prefers-color-scheme'), 'color mode is not selected from the operating system');
 $assert(str_contains($tokensCss, '--font-family-base: Inter') && str_contains($tokensCss, '--font-family-heading: Oswald'), 'semantic typography uses the V1 Inter and Oswald families');
-$assert(str_contains($libraries, 'fonts.googleapis.com/css2?family=Inter') && str_contains($libraries, 'family=Oswald'), 'Inter and Oswald font faces are loaded by the Drupal library');
+$assert(str_contains($libraries, 'src/styles/fonts.css') && str_contains($fontsCss, 'font-family: Inter') && str_contains($fontsCss, 'font-family: Oswald'), 'Inter and Oswald font faces are loaded locally by the Drupal library');
 $assert(str_contains($tokensCss, '--spacing-md: .75rem') && str_contains($tokensCss, '--spacing-lg-compact: 1.25rem') && str_contains($tokensCss, '--spacing-section: clamp('), 'spacing tokens include the V1 intermediate and section scale');
 $assert(str_contains($tokensCss, '--radius-sm:') && str_contains($tokensCss, '--radius-base:') && str_contains($tokensCss, '--radius-lg:'), 'semantic radius scale is present');
 $assert(str_contains($baseCss, ':focus-visible') && str_contains($baseCss, 'var(--color-focus-ring)'), 'visible focus uses the semantic focus token');
@@ -178,18 +181,15 @@ $buttonStyleFiles = glob($theme . '/components/button/*.css') ?: [];
 $buttonStyleFiles[] = $theme . '/src/styles/buttons.css';
 $buttonStyleErrors = [];
 foreach ($buttonStyleFiles as $buttonStyleFile) {
-  $buttonStyle = file_get_contents($buttonStyleFile);
-  if (!is_string($buttonStyle)) {
-    $buttonStyleErrors[] = basename($buttonStyleFile) . ': arquivo não pôde ser lido';
-    continue;
-  }
+  $buttonStyle = $readRequired($buttonStyleFile);
   preg_match_all('/([^{}]+)\{([^{}]*)\}/s', $buttonStyle, $blocks, PREG_SET_ORDER);
   foreach ($blocks as $block) {
     $selector = $block[1];
     $declarations = $block[2];
     $isButtonSelector = preg_match('/(?:button|input\s*\[\s*type\s*=\s*["\'](?:submit|button|reset)["\']\]|\.form-submit|\.button|aculta-btn)/i', $selector) === 1;
     if ($isButtonSelector && preg_match('/--color-brand-highlight|--color-on-highlight|--purpose-|filter\s*:\s*brightness/i', $declarations)) {
-      $buttonStyleErrors[] = basename($buttonStyleFile) . ': ' . trim(preg_replace('/\s+/', ' ', $selector));
+      $normalizedSelector = preg_replace('/\s+/', ' ', $selector);
+      $buttonStyleErrors[] = basename($buttonStyleFile) . ': ' . trim($normalizedSelector ?? $selector);
     }
   }
 }
