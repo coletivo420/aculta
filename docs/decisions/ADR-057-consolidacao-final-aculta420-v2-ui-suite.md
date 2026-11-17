@@ -12,7 +12,8 @@
 
 | Frente | Estado comprovado |
 | --- | --- |
-| F0/F1 | Baseline estática e GET público passaram; Runtime Sync está BLOCKED por `RX`, drift e checkout sujo. PHPStan/Unit/qualidade passaram na PR #335; shards Kernel falharam e a comparação visual com snapshots divergiu. Aceite permanece parcial. |
+| P00 / F0 | Baseline estática e GET público passaram; Runtime Sync está BLOCKED por `RX`, drift e checkout sujo. |
+| P01 / F1 | PHPStan/Unit/qualidade passaram na PR #335; cinco shards Kernel executados somaram 101 erros e 7 falhas, o sexto foi cancelado. Causas estão agrupadas por owner; comparação visual com snapshots divergiu. P01 continua FAIL. |
 | P02 / RN-05 | PARCIAL: contratos locais de `site_key` e GET nos dez hosts passaram; autenticação, ACL, sessão, cache e US-14 permanecem DEFERRED. |
 | P03 | Sem implementação/evidência de fluxo editorial completo nos dez hosts. |
 | P04 | PARCIAL: packs/configuração alinhados; faltam validação editorial autenticada, seleção de região e renderização/acessibilidade nos consumidores reais. |
@@ -21,7 +22,7 @@
 | P07 | PARCIAL: baseline Firefox e Chromium em 10 hosts; CLS Chromium móvel excede `0,1` no MAIN, exige experimento causal e correção. |
 | P08/P09 | Não iniciados; dependem dos gates anteriores e aceite final. |
 
-Relatórios e limites: [F0/F1](../operations/testing/ADR-057-F0-F1-2026-11-17.md), [P02/RN-05](../operations/testing/ADR-057-P02-RN05-2026-11-17.md), [P04](../operations/testing/ADR-057-P04-2026-11-17.md), [P05](../operations/testing/ADR-057-P05-2026-11-17.md), [P06](../operations/testing/ADR-057-P06-2026-11-17.md) e [P07](../operations/testing/ADR-057-P07-2026-11-17.md). A ADR inteira continua PARCIAL; ADR-054/055 não estão encerradas e ADR-056 continua encerrada.
+Relatórios e limites: [F0/F1](../operations/testing/ADR-057-F0-F1-2026-11-17.md), [triagem Kernel P01](../operations/testing/ADR-057-P01-KERNEL-TRIAGEM-2026-11-17.md), [P02/RN-05](../operations/testing/ADR-057-P02-RN05-2026-11-17.md), [P04](../operations/testing/ADR-057-P04-2026-11-17.md), [P05](../operations/testing/ADR-057-P05-2026-11-17.md), [P06](../operations/testing/ADR-057-P06-2026-11-17.md) e [P07](../operations/testing/ADR-057-P07-2026-11-17.md). A ADR inteira continua PARCIAL; ADR-054/055 não estão encerradas e ADR-056 continua encerrada.
 
 ## 1. Contexto e decisão
 
