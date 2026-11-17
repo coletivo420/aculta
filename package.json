@@ -20,6 +20,8 @@
     "css:purge": "node scripts/css-audit/purge.mjs --mode=apply",
     "css:verify": "node scripts/css-audit/verify.mjs",
     "css:test": "node --test scripts/css-audit/tests/*.test.mjs",
-    "css:classify": "node scripts/css-audit/classify.mjs"
+    "css:classify": "node scripts/css-audit/classify.mjs",
+    "theme:adr057:audit": "node scripts/audit-aculta420-adr057.mjs --check --json",
+    "theme:adr057:test": "node --test scripts/tests/audit-aculta420-adr057.test.mjs"
   }
 }
