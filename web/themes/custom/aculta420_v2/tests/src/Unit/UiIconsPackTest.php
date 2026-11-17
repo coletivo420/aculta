@@ -103,7 +103,9 @@ final class UiIconsPackTest extends UnitTestCase {
     }
 
     $formDisplay = $this->parseYamlFile($root . '/config/sync/core.entity_form_display.node.wiki_entry.default.yml');
-    $formModules = $formDisplay['dependencies']['module'] ?? NULL;
+    $formDependencies = $formDisplay['dependencies'] ?? NULL;
+    self::assertIsArray($formDependencies);
+    $formModules = $formDependencies['module'] ?? NULL;
     self::assertIsArray($formModules);
     self::assertContains('ui_icons_field', $formModules);
     self::assertContains('ui_icons_popover', $formModules);
@@ -121,7 +123,9 @@ final class UiIconsPackTest extends UnitTestCase {
     self::assertFalse($widgetSettings['icon_position'] ?? NULL);
 
     $viewDisplay = $this->parseYamlFile($root . '/config/sync/core.entity_view_display.node.wiki_entry.default.yml');
-    $viewModules = $viewDisplay['dependencies']['module'] ?? NULL;
+    $viewDependencies = $viewDisplay['dependencies'] ?? NULL;
+    self::assertIsArray($viewDependencies);
+    $viewModules = $viewDependencies['module'] ?? NULL;
     self::assertIsArray($viewModules);
     self::assertContains('ui_icons_field', $viewModules);
     $thirdPartySettings = $viewDisplay['third_party_settings'] ?? NULL;

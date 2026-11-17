@@ -1,15 +1,39 @@
 {% set variant = variant|default('duotone') %}
 {% set size = size|default('md') %}
-{% set is_brocolis = name == 'aculta-brocolis' %}
-{# Os pesos extras só existem para o desenho ACULTA; Phosphor continua com dois pesos. #}
-{% set variant = is_brocolis or variant in ['regular', 'duotone'] ? variant : 'regular' %}
-{% if is_brocolis %}
-  {% set icon_filename = variant == 'regular' ? 'aculta-brocolis.svg' : 'aculta-brocolis-' ~ variant ~ '.svg' %}
-  {% set icon_file = '@aculta420_v2/assets/icons/aculta-brocolis/' ~ icon_filename %}
+{% set icon_value = icon|default({}) %}
+{% set icon_name = name|default('') %}
+{% set has_ui_icon = icon_value.pack_id|default('') is not empty and icon_value.icon_id|default('') is not empty %}
+{% set has_local_icon = icon_name is not empty %}
+{% set is_brocolis = has_ui_icon ? icon_value.pack_id == 'aculta_brocolis' : icon_name == 'aculta-brocolis' %}
+{% if has_ui_icon and icon_value.pack_id == 'aculta_phosphor_regular' %}
+  {% set icon_variant = 'regular' %}
+{% elseif has_ui_icon and icon_value.pack_id == 'aculta_phosphor_duotone' %}
+  {% set icon_variant = 'duotone' %}
+{% elseif has_ui_icon and icon_value.pack_id == 'aculta_brocolis' and icon_value.icon_id|slice(-8) == '-duotone' %}
+  {% set icon_variant = 'duotone' %}
+{% elseif has_ui_icon %}
+  {# Other Brócolis weights are identified by their SVG; duotone also uses the theme treatment. #}
+  {% set icon_variant = '' %}
 {% else %}
-  {% set icon_filename = variant == 'duotone' ? name ~ '-duotone.svg' : name ~ '.svg' %}
-  {% set icon_file = '@aculta420_v2/assets/icons/phosphor/' ~ variant ~ '/' ~ icon_filename %}
+  {# Pesos extras só existem para o desenho Brócolis; Phosphor fica regular/duotone. #}
+  {% set icon_variant = is_brocolis or variant in ['regular', 'duotone'] ? variant : 'regular' %}
 {% endif %}
-<span class="aculta-icon aculta-icon--{{ variant }} aculta-icon--{{ size }}{% if is_brocolis %} aculta-icon--brocolis{% endif %}"{% if color %} style="--icon-primary: {{ color }};"{% endif %}{% if label|default('')|trim is not empty %} role="img" aria-label="{{ label|trim }}"{% else %} aria-hidden="true"{% endif %}>
-  {{ source(icon_file, ignore_missing = true) }}
-</span>
+{% set icon_variant_class = icon_variant is not empty ? ' aculta-icon--' ~ icon_variant : '' %}
+{% if has_local_icon and not has_ui_icon %}
+  {% if is_brocolis %}
+    {% set icon_filename = icon_variant == 'regular' ? 'aculta-brocolis.svg' : 'aculta-brocolis-' ~ icon_variant ~ '.svg' %}
+    {% set icon_file = '@aculta420_v2/assets/icons/aculta-brocolis/' ~ icon_filename %}
+  {% else %}
+    {% set icon_filename = icon_variant == 'duotone' ? icon_name ~ '-duotone.svg' : icon_name ~ '.svg' %}
+    {% set icon_file = '@aculta420_v2/assets/icons/phosphor/' ~ icon_variant ~ '/' ~ icon_filename %}
+  {% endif %}
+{% endif %}
+{% if has_ui_icon or has_local_icon %}
+  <span class="aculta-icon{{ icon_variant_class }} aculta-icon--{{ size }}{% if is_brocolis %} aculta-icon--brocolis{% endif %}"{% if color %} style="--icon-primary: {{ color }};"{% endif %}{% if label|default('')|trim is not empty %} role="img" aria-label="{{ label|trim }}"{% else %} aria-hidden="true"{% endif %}>
+    {% if has_ui_icon %}
+      {{ icon(icon_value.pack_id, icon_value.icon_id, icon_value.settings|default({})) }}
+    {% else %}
+      {{ source(icon_file, ignore_missing: true) }}
+    {% endif %}
+  </span>
+{% endif %}
