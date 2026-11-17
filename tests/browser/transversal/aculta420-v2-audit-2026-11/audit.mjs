@@ -2,7 +2,7 @@
 // Homologação visual do tema aculta420_v2 (auditoria CSS/layout 2026-11-11).
 //
 // Mede, por domínio público e por largura, em claro e escuro:
-//   - canvas esperado (#f2f7f0 / #171513);
+//   - canvas esperado (#fff / #171513, conforme tokens.css);
 //   - ausência de overflow horizontal;
 //   - um único main e no máximo um h1;
 //   - contraste do cabeçalho institucional (WCAG AA 4.5:1);
@@ -46,7 +46,7 @@ const HOSTS = [
 ];
 const WIDTHS = [320, 390, 768, 959, 960, 1024, 1440];
 const MODES = ['light', 'dark'];
-const CANVAS = { light: '#f2f7f0', dark: '#171513' };
+const CANVAS = { light: '#ffffff', dark: '#171513' };
 const CAPTURE_WIDTHS = new Set([390, 1440]);
 
 const results = [];
