@@ -4,6 +4,7 @@
 
 - PR #335, commit testado `8ba1b03d9083f5f900b58eca99cc7647ad7746a2`.
 - GitHub Actions run `44080680393` (`PHP Quality Assurance`).
+- Comparação de baseline: PR base `5c496047509f43831de2a6996cbc6ba95d867749`, workflow run `44065410069` no próprio `dev`.
 - Cinco dos seis shards Kernel concluíram PHPUnit; um shard terminou cancelado sem resumo de testes. A conclusão do job desse shard não é PASS.
 - Os cinco relatórios concluídos somam 949 testes, 15.848 assertions, 101 erros e 7 falhas. Os números excluem o shard cancelado.
 - `phpstan`, `phpunit-unit`, `php-lint` e `test-discovery` concluíram sucesso; `PHPStan level 10 gate` concluiu sucesso. O debt-diff foi skipped por regra do workflow, não é um gate executado.
@@ -22,11 +23,15 @@
 ## Interpretação
 
 Os seis arquivos alterados pela PR #335 eram de auditoria, browser e
-documentação; não incluíam os módulos/testes citados nos erros acima. Isso
-permite não atribuir automaticamente essas falhas ao diff da PR, mas não prova
-que todas já existiam na base: não houve execução comparativa do mesmo workflow
-no commit pai. P01 continua **FAIL** até triagem por owner e um gate Kernel
-estável, sem ocultar falhas ou converter shard cancelado em sucesso.
+documentação; não incluíam os módulos/testes citados nos erros acima. Também
+comparei os logs dos mesmos shards nos runs do commit base e da PR: os blocos
+completos de erros/falhas e os resumos dos shards 1, 3, 4, 5 e 6 são idênticos.
+No shard 3, a única diferença textual é a ordem da lista de plugins válidos
+impressa pelo Plugin Manager; após ordenar essa enumeração, todo o bloco
+coincide. O shard 2 foi cancelado nos dois runs. Portanto, as falhas Kernel
+observadas já existiam no commit base e não foram introduzidas pela PR #335.
+P01 continua **FAIL** porque o baseline do CI ainda falha; a comparação de
+origem não substitui a resolução das falhas nem um gate Kernel estável.
 
 O bloqueio da suíte não pertence apenas à interface: há falhas de descoberta
 de SDC, integração UI Patterns/Views e schemas relevantes à ADR-057, além de
@@ -36,9 +41,9 @@ triagem.
 
 ## Próximos passos
 
-1. Reexecutar os shards no HEAD atual e comparar com o pai da PR para separar dívida já existente de regressões.
-2. Atribuir cada grupo ao owner do módulo e revisar primeiro descoberta SDC e plugin/schema UI Patterns/Views, que afetam diretamente a integração em avaliação.
-3. Corrigir as causas de cada owner em lotes isolados e manter failures/skipped/cancelled distintos no relatório e na proteção de branch.
+1. Atribuir os grupos confirmados como preexistentes aos owners dos módulos e priorizar descoberta SDC e plugin/schema UI Patterns/Views, que afetam diretamente a integração em avaliação.
+2. Corrigir as causas em lotes isolados e manter failures/skipped/cancelled distintos no relatório e na proteção de branch.
+3. Reexecutar todos os shards no HEAD atual depois das correções e exigir sucesso; o cancelamento do shard 2 nos dois runs não prova estabilidade.
 4. Após estabilizar, decidir se o gate Kernel pode ser obrigatório por shard sem continuar mascarando falha legítima.
 
 **Fonte:** logs de workflow dos jobs `134030642221`, `134030642171`,

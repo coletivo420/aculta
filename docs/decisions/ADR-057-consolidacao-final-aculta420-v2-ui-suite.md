@@ -13,7 +13,7 @@
 | Frente | Estado comprovado |
 | --- | --- |
 | P00 / F0 | Baseline estática e GET público passaram; Runtime Sync está BLOCKED por `RX`, drift e checkout sujo. |
-| P01 / F1 | PHPStan/Unit/qualidade passaram na PR #335; cinco shards Kernel executados somaram 101 erros e 7 falhas, o sexto foi cancelado. Causas estão agrupadas por owner; comparação visual com snapshots divergiu. P01 continua FAIL. |
+| P01 / F1 | PHPStan/Unit/qualidade passaram na PR #335. Comparação do run da PR com seu commit base confirmou os mesmos erros/falhas nos cinco shards Kernel concluídos; shard 2 cancelado em ambos. São falhas preexistentes, mas P01 continua FAIL até o baseline Kernel ficar verde. Comparação visual com snapshots divergiu. |
 | P02 / RN-05 | PARCIAL: contratos locais de `site_key` e GET nos dez hosts passaram; autenticação, ACL, sessão, cache e US-14 permanecem DEFERRED. |
 | P03 | Fase ainda não iniciada: preparada fundação de presets nomeados no `layout-grid` para documentos e catálogo Commerce; fluxo editorial completo, permissões, persistência/exportação, Runtime e homologação multidomínio continuam sem evidência. |
 | P04 | PARCIAL: packs/configuração alinhados; faltam validação editorial autenticada, seleção de região e renderização/acessibilidade nos consumidores reais. |
