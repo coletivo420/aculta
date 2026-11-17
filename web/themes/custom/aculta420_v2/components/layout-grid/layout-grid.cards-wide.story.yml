@@ -1,0 +1,9 @@
+name: Grade de cartões amplos
+description: Grade com largura mínima de 20rem por cartão.
+component: aculta420_v2:layout-grid
+props:
+  preset: cards-wide
+slots:
+  content:
+    type: inline_template
+    template: '<article>Cartão amplo 1</article><article>Cartão amplo 2</article><article>Cartão amplo 3</article>'

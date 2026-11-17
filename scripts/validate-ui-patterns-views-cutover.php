@@ -120,13 +120,17 @@ $assert(cutover_yaml_get($default, 'filters', 'status') !== NULL && cutover_yaml
 $assert(cutover_yaml_get($page, 'ui_patterns', 'component_id') === 'aculta420_v2:views-display', 'Display deve reutilizar o SDC views-display no options da View.');
 $assert(cutover_yaml_get($page, 'defaults', 'ui_patterns') === FALSE, 'O display deve selecionar explicitamente seu próprio componente em vez de herdar o valor vazio do default.');
 
+$documents = cutover_yaml_file($root . '/config/sync/views.view.aculta_documents.yml');
+$documentsDefault = cutover_yaml_array($documents, 'display', 'default', 'display_options');
+$assert(cutover_yaml_get($documentsDefault, 'style', 'options', 'ui_patterns', 'ui_patterns', 'props', 'preset', 'source', 'value') === 'cards-wide', 'A View de documentos deve usar o preset de cartões amplos.');
+
 $shop = cutover_yaml_file($root . '/config/sync/views.view.aculta_shop_catalog.yml');
 $shopDefault = cutover_yaml_array($shop, 'display', 'default', 'display_options');
 $shopModules = cutover_yaml_array($shop, 'dependencies', 'module');
 $assert(in_array('ui_patterns_views', $shopModules, TRUE), 'O catálogo Commerce deve declarar a dependência UI Patterns Views.');
 $assert(cutover_yaml_get($shopDefault, 'style', 'type') === 'ui_patterns', 'O catálogo Commerce deve usar UI Patterns Style.');
 $assert(cutover_yaml_get($shopDefault, 'style', 'options', 'ui_patterns', 'ui_patterns', 'component_id') === 'aculta420_v2:layout-grid', 'O catálogo Commerce deve reutilizar o layout-grid existente.');
-$assert(cutover_yaml_get($shopDefault, 'style', 'options', 'ui_patterns', 'ui_patterns', 'props', 'min_item_width', 'source', 'value') === '16rem', 'A grade Commerce deve usar a largura mínima editorial suportada.');
+$assert(cutover_yaml_get($shopDefault, 'style', 'options', 'ui_patterns', 'ui_patterns', 'props', 'preset', 'source', 'value') === 'cards-standard', 'A grade Commerce deve usar o preset de cartões padrão.');
 $assert(cutover_yaml_get($shopDefault, 'style', 'options', 'ui_patterns', 'ui_patterns', 'slots', 'content', 'sources', '0', 'source_id') === 'view_rows', 'O grid Commerce deve compor as rows renderizadas nativamente.');
 $assert(cutover_yaml_get($shopDefault, 'row', 'type') === 'entity:commerce_product' && cutover_yaml_get($shopDefault, 'row', 'options', 'view_mode') === 'catalog', 'O row nativo Commerce e seu display catalog devem permanecer.');
 $assert(cutover_yaml_get($shopDefault, 'pager', 'type') === 'full' && cutover_yaml_get($shopDefault, 'pager', 'options', 'items_per_page') === 12, 'O pager Commerce deve continuar completo com 12 itens por página.');
