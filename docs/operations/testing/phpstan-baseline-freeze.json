@@ -60,15 +60,26 @@
   },
   "generation_command": "vendor/bin/phpstan analyse --configuration=<configuração sem include do baseline> --no-progress --memory-limit=2G --generate-baseline=<baseline candidato>; revisar e remover somente entradas cuja correção foi confirmada.",
   "post_freeze_reductions": {
-    "date": "2026-11-16",
-    "entries_removed": 3977,
-    "occurrences_removed": 8974,
-    "current_entries": 12760,
-    "current_occurrences": 20971,
-    "current_production": 12984,
-    "current_tests": 7987,
-    "current_baseline_sha256": "9555c8d24fbb14b028ae754ed1bce7e7b38d1cd0c301b60bd00bf6dc98dc1986",
-    "reason": "Limpeza estrutural profunda de scripts legados e consolidação de validadores: eliminados 22 scripts e artefatos de provisionamento histórico e one-off; refatorados com tipagem estrita e sem mutação de runtime validate-ui-patterns-views-cutover.php, validate-aculta420-css-scope.php, validate-institution-content.php e validate-portal-commerce-security.php; redução de 368 entradas e 994 ocorrências na dívida PHPStan (de 21.965 para 20.971 ocorrências), com 20.971 congeladas e 0 não suprimidas no nível 10."
+    "date": "2026-11-17",
+    "entries_removed": 1712,
+    "occurrences_removed": 2873,
+    "current_entries": 11416,
+    "current_occurrences": 19092,
+    "current_production": 11465,
+    "current_tests": 7627,
+    "current_baseline_sha256": "f77a5f3799c635b04aa1b9a42a879900d079bd5c30cd4bda2e144ceb5643328f",
+    "reason": "Totais e checksum recalculados contra o baseline original em source_sha; o delta cumulativo intermediário não é atribuído nesta entrega. Incremento ADR-057: removidas 36 entradas/49 ocorrências resolvidas em scripts/validate-domain-presentation-contract.php e web/modules/custom/aculta_portal/tests/src/Unit/DomainPresentationContractTest.php, após análise global nível 10.",
+    "latest_reduction": {
+      "date": "2026-11-17",
+      "entries_removed": 36,
+      "occurrences_removed": 49,
+      "paths": [
+        "scripts/validate-domain-presentation-contract.php",
+        "web/modules/custom/aculta_portal/tests/src/Unit/DomainPresentationContractTest.php"
+      ],
+      "phpstan_level": 10,
+      "uncovered_errors": 0
+    }
   },
   "gates": {
     "check": "php scripts/phpstan-debt-guard.php check --baseline=phpstan-baseline.neon --config=phpstan.neon --git-base=origin/dev --analysis=artifacts/phpstan.json",
