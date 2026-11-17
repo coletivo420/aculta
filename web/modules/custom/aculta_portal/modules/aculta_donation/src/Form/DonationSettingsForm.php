@@ -6,6 +6,9 @@ namespace Drupal\aculta_donation\Form;
 
 use Drupal\commerce\EntityHelper;
 use Drupal\commerce_checkout\Entity\CheckoutFlowInterface;
+use Drupal\commerce_order\Entity\OrderItemTypeInterface;
+use Drupal\commerce_order\Entity\OrderTypeInterface;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -76,7 +79,7 @@ final class DonationSettingsForm extends ConfigFormBase {
   /**
    * Devolve os nomes das configurações editáveis pelo formulário.
    *
-   * @return array
+   * @return array<int, string>
    *   Nomes de configurações editáveis.
    */
   protected function getEditableConfigNames(): array {
@@ -86,12 +89,12 @@ final class DonationSettingsForm extends ConfigFormBase {
   /**
    * Monta o formulário de configuração do fluxo de doação.
    *
-   * @param array $form
+   * @param array<mixed> $form
    *   Estrutura do formulário.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   Estado atual do formulário.
    *
-   * @return array
+   * @return array<mixed>
    *   Estrutura do formulário.
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
@@ -196,7 +199,7 @@ final class DonationSettingsForm extends ConfigFormBase {
   /**
    * Valida a combinação de rotas e tipos de pedido escolhida.
    *
-   * @param array $form
+   * @param array<mixed> $form
    *   Estrutura do formulário.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   Estado atual do formulário.
@@ -222,7 +225,7 @@ final class DonationSettingsForm extends ConfigFormBase {
   /**
    * Salva a configuração do fluxo e aplica as ligações de tipos de pedido.
    *
-   * @param array $form
+   * @param array<mixed> $form
    *   Estrutura do formulário.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   Estado atual do formulário.
@@ -244,19 +247,23 @@ final class DonationSettingsForm extends ConfigFormBase {
     $config->save();
 
     // O fluxo fica no tipo de pedido, e o tipo de item fica ligado ao tipo de pedido escolhido.
-    foreach (['donate' => 'donate', 'cart' => 'cart'] as $rota => $prefixo) {
-      $tipoDePedido = $valores[$prefixo . '_order_type'] ?? NULL;
-      $tipoDeItem = $valores[$prefixo . '_item_type'] ?? NULL;
-      $fluxo = $valores[$prefixo . '_checkout_flow'] ?? NULL;
-      if ($tipoDePedido && $fluxo) {
+    foreach (['donate', 'cart'] as $prefixo) {
+      $tipoDePedido = isset($valores[$prefixo . '_order_type']) && is_string($valores[$prefixo . '_order_type']) ? $valores[$prefixo . '_order_type'] : NULL;
+      $tipoDeItem = isset($valores[$prefixo . '_item_type']) && is_string($valores[$prefixo . '_item_type']) ? $valores[$prefixo . '_item_type'] : NULL;
+      $fluxo = isset($valores[$prefixo . '_checkout_flow']) && is_string($valores[$prefixo . '_checkout_flow']) ? $valores[$prefixo . '_checkout_flow'] : NULL;
+      if ($tipoDePedido !== NULL && $fluxo !== NULL) {
         $pedido = $this->entityTypeManager->getStorage('commerce_order_type')->load($tipoDePedido);
-        $pedido?->setThirdPartySetting('commerce_checkout', 'checkout_flow', $fluxo);
-        $pedido?->save();
+        if ($pedido instanceof OrderTypeInterface) {
+          $pedido->setThirdPartySetting('commerce_checkout', 'checkout_flow', $fluxo);
+          $pedido->save();
+        }
       }
-      if ($tipoDePedido && $tipoDeItem) {
+      if ($tipoDePedido !== NULL && $tipoDeItem !== NULL) {
         $item = $this->entityTypeManager->getStorage('commerce_order_item_type')->load($tipoDeItem);
-        $item?->setOrderTypeId($tipoDePedido);
-        $item?->save();
+        if ($item instanceof OrderItemTypeInterface) {
+          $item->setOrderTypeId($tipoDePedido);
+          $item->save();
+        }
       }
     }
 
@@ -265,11 +272,16 @@ final class DonationSettingsForm extends ConfigFormBase {
   }
 
   /**
-   * Lista os fluxos de doação (TRUE) ou da loja (FALSE), com rótulos. */
+   * Lista os fluxos de doação (TRUE) ou da loja (FALSE), com rótulos.
+   *
+   * @param array<EntityInterface> $fluxos
+   * @return array<mixed>
+   */
   private function filtrarFluxos(array $fluxos, bool $doacao): array {
+    /** @var array<EntityInterface> $filtrados */
     $filtrados = array_filter(
       $fluxos,
-      static fn(CheckoutFlowInterface $fluxo): bool => str_starts_with($fluxo->getPluginId(), 'donation_checkout') === $doacao,
+      static fn(mixed $fluxo): bool => $fluxo instanceof CheckoutFlowInterface && str_starts_with($fluxo->getPluginId(), 'donation_checkout') === $doacao,
     );
     return EntityHelper::extractLabels($filtrados);
   }

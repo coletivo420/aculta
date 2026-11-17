@@ -54,6 +54,10 @@ class QuickDonationBlock extends BlockBase implements ContainerFactoryPluginInte
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $configuration
+   * @param string $plugin_id
+   * @param mixed $plugin_definition
    */
   final public function __construct(array $configuration, $plugin_id, $plugin_definition) {
     // @see https://phpstan.org/blog/solving-phpstan-error-unsafe-usage-of-new-static
@@ -64,6 +68,10 @@ class QuickDonationBlock extends BlockBase implements ContainerFactoryPluginInte
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $configuration
+   * @param string $plugin_id
+   * @param mixed $plugin_definition
    */
   public static function create(
     ContainerInterface $container,
@@ -86,23 +94,29 @@ class QuickDonationBlock extends BlockBase implements ContainerFactoryPluginInte
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<mixed> $form
    */
-  public function validateConfigurationForm(array &$form, FormStateInterface $form_state) {
+  public function validateConfigurationForm(array &$form, FormStateInterface $form_state): void {
     $donationConfig = $this->configFactory->get('aculta_donation.settings');
     $use_route = $donationConfig->get('donation_route');
     $route_allowed = $use_route === DonationSettingsForm::ROTA_DONATE || $use_route === DonationSettingsForm::ROTA_AMBAS;
     if (!$route_allowed) {
-      $form_state->setError($form['label'], $this->t('The Quick Donation block is only usable if donations are configured in Commerce to use the /donate route. Adjust the donation configuration before configuring this block.'));
+      $labelElement = isset($form['label']) && is_array($form['label']) ? $form['label'] : [];
+      $form_state->setError($labelElement, $this->t('The Quick Donation block is only usable if donations are configured in Commerce to use the /donate route. Adjust the donation configuration before configuring this block.'));
     }
   }
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<mixed> $form
+   * @return array<mixed>
    */
   public function blockForm(
     $form,
     FormStateInterface $form_state,
-  ) {
+  ): array {
     $form = parent::blockForm($form, $form_state);
 
     return $form;
@@ -110,31 +124,37 @@ class QuickDonationBlock extends BlockBase implements ContainerFactoryPluginInte
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<mixed> $form
    */
-  public function blockSubmit($form, FormStateInterface $form_state) {
+  public function blockSubmit($form, FormStateInterface $form_state): void {
     $this->configuration['compacto'] = (bool) $form_state->getValue('compacto');
   }
 
   /**
    * Builds the donation form.
    *
-   * @return array
+   * @return array<string, mixed>
    *   A render array.
    */
-  public function build() {
+  public function build(): array {
     // Mesma fonte da página de apoio: campanha vigente; sem campanha, os valores padrão de "Valores padrão" (painel).
     $campanha = $this->campanhas?->valoresSugeridos();
     $padrao = $this->configFactory->get('aculta_portal.support');
-    $valores = array_values($campanha['amounts'] ?? ($padrao->get('amounts') ?: [5, 10, 20, 50]));
-    $permiteOutro = (bool) ($campanha['customAmount'] ?? ($padrao->get('custom_amount') ?? TRUE));
+    $amountsConfig = $padrao->get('amounts');
+    $amountsDefault = is_array($amountsConfig) ? $amountsConfig : [5, 10, 20, 50];
+    $rawValores = $campanha !== NULL ? $campanha['amounts'] : $amountsDefault;
+    $valores = array_values($rawValores);
+    $permiteOutro = $campanha !== NULL ? $campanha['customAmount'] : (bool) $padrao->get('custom_amount');
     // Espaço reduzido: no máximo 3 sugestões e a opção curta "Outro", para caber em locais pequenos.
     if ($this->configuration['compacto'] ?? FALSE) {
       $valores = array_slice($valores, 0, 3);
     }
     $links = [];
     foreach ($valores as $delta => $amount) {
+      $amountNum = is_numeric($amount) ? (float) $amount : 0.0;
       $links[$delta] = [
-        'title' => 'R$ ' . number_format((float) $amount, 0, ',', '.'),
+        'title' => 'R$ ' . number_format($amountNum, 0, ',', '.'),
         'url' => $this->sites->routeUrl(SiteKey::Support, 'aculta_donation.donation.quick', ['amount' => $amount])?->toString() ?? Url::fromRoute('aculta_donation.donation.quick', ['amount' => $amount])->toString(),
       ];
     }
