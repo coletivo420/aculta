@@ -55958,11 +55958,6 @@ parameters:
 			count: 2
 			path: web/modules/custom/aculta_portal/modules/aculta_studio/src/Experience/AccountExperienceProvider.php
 
-		-
-			rawMessage: 'Strict comparison using === between Drupal\Core\Session\AccountInterface and null will always evaluate to false.'
-			identifier: identical.alwaysFalse
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_studio/src/Experience/AccountExperienceProvider.php
 
 		-
 			rawMessage: 'Property Drupal\aculta_studio\Experience\SavedExperienceProvider::$savedContent is never read, only written.'
@@ -68534,95 +68529,20 @@ parameters:
 			count: 8
 			path: web/themes/custom/aculta420_v2/tests/src/Unit/SurfaceSdcComponentsTest.php
 
-		-
-			rawMessage: 'Avoid calling Symfony\Component\Yaml\Yaml::parse() directly. Use \Drupal\Component\Serialization\Yaml::decode() instead, which handles exceptions consistently and applies the correct parse flags.'
-			identifier: drupal.symfonyYamlParse
-			count: 1
-			path: web/themes/custom/aculta420_v2/tests/src/Unit/UiIconsPackTest.php
 
-		-
-			rawMessage: Cannot access offset 'allowed_icon_pack' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/themes/custom/aculta420_v2/tests/src/Unit/UiIconsPackTest.php
 
-		-
-			rawMessage: Cannot access offset 'config' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/themes/custom/aculta420_v2/tests/src/Unit/UiIconsPackTest.php
 
-		-
-			rawMessage: Cannot access offset 'enabled' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/themes/custom/aculta420_v2/tests/src/Unit/UiIconsPackTest.php
 
-		-
-			rawMessage: Cannot access offset 'extractor' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/themes/custom/aculta420_v2/tests/src/Unit/UiIconsPackTest.php
 
-		-
-			rawMessage: Cannot access offset 'icon_required' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/themes/custom/aculta420_v2/tests/src/Unit/UiIconsPackTest.php
 
-		-
-			rawMessage: Cannot access offset 'icon_selector' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 2
-			path: web/themes/custom/aculta420_v2/tests/src/Unit/UiIconsPackTest.php
 
-		-
-			rawMessage: Cannot access offset 'label' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/themes/custom/aculta420_v2/tests/src/Unit/UiIconsPackTest.php
 
-		-
-			rawMessage: Cannot access offset 'module' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/themes/custom/aculta420_v2/tests/src/Unit/UiIconsPackTest.php
 
-		-
-			rawMessage: Cannot access offset 'sources' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/themes/custom/aculta420_v2/tests/src/Unit/UiIconsPackTest.php
 
-		-
-			rawMessage: Cannot access offset 'template' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/themes/custom/aculta420_v2/tests/src/Unit/UiIconsPackTest.php
 
-		-
-			rawMessage: Cannot access offset 'third_party_settings' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 3
-			path: web/themes/custom/aculta420_v2/tests/src/Unit/UiIconsPackTest.php
 
-		-
-			rawMessage: Cannot access offset 'ui_icons_menu' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 3
-			path: web/themes/custom/aculta420_v2/tests/src/Unit/UiIconsPackTest.php
 
-		-
-			rawMessage: 'Parameter #2 $array of static method PHPUnit\Framework\Assert::assertArrayHasKey() expects array<mixed>|ArrayAccess<(int|string), mixed>, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/themes/custom/aculta420_v2/tests/src/Unit/UiIconsPackTest.php
 
-		-
-			rawMessage: 'Parameter #2 $haystack of static method PHPUnit\Framework\Assert::assertCount() expects Countable|iterable, list<string>|false given.'
-			identifier: argument.type
-			count: 1
-			path: web/themes/custom/aculta420_v2/tests/src/Unit/UiIconsPackTest.php
 
 
 		-

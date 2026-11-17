@@ -290,7 +290,7 @@ final class AccountExperienceProvider implements StudioExperienceProviderInterfa
       catch (RouteNotFoundException) {
         continue;
       }
-      if ($this->currentUser === NULL || !$url->access($this->currentUser)) {
+      if (!$url->access($this->currentUser)) {
         continue;
       }
       $href = $url->toString();
