@@ -72,7 +72,7 @@ final readonly class QrCodePreset {
   /**
    * Retorna a cor de módulos como componentes RGB.
    *
-   * @return array{int, int, int}
+   * @return array{int<0, 255>, int<0, 255>, int<0, 255>}
    *   Componentes vermelho, verde e azul.
    */
   public function foregroundRgb(): array {
@@ -82,7 +82,7 @@ final readonly class QrCodePreset {
   /**
    * Retorna a cor de fundo como componentes RGB.
    *
-   * @return array{int, int, int}
+   * @return array{int<0, 255>, int<0, 255>, int<0, 255>}
    *   Componentes vermelho, verde e azul.
    */
   public function backgroundRgb(): array {
@@ -120,14 +120,17 @@ final readonly class QrCodePreset {
   /**
    * Converte `#RRGGBB` em componentes inteiros.
    *
-   * @return array{int, int, int}
+   * @return array{int<0, 255>, int<0, 255>, int<0, 255>}
    *   Componentes vermelho, verde e azul.
    */
   private static function hexToRgb(string $hex): array {
+    $r = hexdec(substr($hex, 1, 2));
+    $g = hexdec(substr($hex, 3, 2));
+    $b = hexdec(substr($hex, 5, 2));
     return [
-      (int) hexdec(substr($hex, 1, 2)),
-      (int) hexdec(substr($hex, 3, 2)),
-      (int) hexdec(substr($hex, 5, 2)),
+      max(0, min(255, (int) $r)),
+      max(0, min(255, (int) $g)),
+      max(0, min(255, (int) $b)),
     ];
   }
 

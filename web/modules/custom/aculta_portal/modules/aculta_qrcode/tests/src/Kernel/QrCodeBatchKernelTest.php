@@ -60,7 +60,7 @@ final class QrCodeBatchKernelTest extends KernelTestBase {
       /**
        * URL fixa de teste para o código.
        */
-      public function publicUrl(QrCode $entity): ?Url {
+      public function publicUrl(QrCode $entity): Url {
         return Url::fromUri('https://aculta.example/qr/' . $entity->getCode());
       }
 

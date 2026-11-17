@@ -54510,323 +54510,58 @@ parameters:
 
 
 
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Field\FieldDefinitionInterface::setRevisionable().'
-			identifier: method.notFound
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_qrcode/src/Entity/QrCode.php
 
-		-
-			rawMessage: 'Cannot call method getTimestamp() on mixed.'
-			identifier: method.nonObject
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_qrcode/src/Entity/QrCode.php
 
-		-
-			rawMessage: Cannot cast mixed to string.
-			identifier: cast.string
-			count: 6
-			path: web/modules/custom/aculta_portal/modules/aculta_qrcode/src/Entity/QrCode.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_qrcode\Entity\QrCode::baseFieldDefinitions() should return array<string, Drupal\Core\Field\FieldDefinitionInterface> but returns array<Drupal\Core\Field\FieldDefinitionInterface>.'
-			identifier: return.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_qrcode/src/Entity/QrCode.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_qrcode\Entity\QrCode::getValidFrom() should return int|null but returns mixed.'
-			identifier: return.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_qrcode/src/Entity/QrCode.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_qrcode\Entity\QrCode::getValidUntil() should return int|null but returns mixed.'
-			identifier: return.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_qrcode/src/Entity/QrCode.php
 
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::get().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_qrcode/src/Form/QrCodeForm.php
 
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::getBackground().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_qrcode/src/Form/QrCodeForm.php
 
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::getForeground().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_qrcode/src/Form/QrCodeForm.php
 
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::getPresetId().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_qrcode/src/Form/QrCodeForm.php
 
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::getValidFrom().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_qrcode/src/Form/QrCodeForm.php
 
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::getValidUntil().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_qrcode/src/Form/QrCodeForm.php
 
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::set().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_qrcode/src/Form/QrCodeForm.php
 
-		-
-			rawMessage: 'Cannot call method isEmpty() on mixed.'
-			identifier: method.nonObject
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_qrcode/src/Form/QrCodeForm.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_qrcode\Form\QrCodeForm::buildEntity() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_qrcode/src/Form/QrCodeForm.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_qrcode\Form\QrCodeForm::save() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_qrcode/src/Form/QrCodeForm.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_qrcode\Form\QrCodeForm::validateForm() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_qrcode/src/Form/QrCodeForm.php
 
-		-
-			rawMessage: 'Parameter #1 $from of method Drupal\aculta_qrcode\Service\QrCodeManager::validateWindow() expects int|null, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_qrcode/src/Form/QrCodeForm.php
 
-		-
-			rawMessage: 'Parameter #1 $id of method Drupal\aculta_qrcode\Service\QrCodePresetRegistry::customized() expects string, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_qrcode/src/Form/QrCodeForm.php
 
-		-
-			rawMessage: 'Parameter #2 $foreground of method Drupal\aculta_qrcode\Service\QrCodePresetRegistry::customized() expects string|null, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_qrcode/src/Form/QrCodeForm.php
 
-		-
-			rawMessage: 'Parameter #2 $until of method Drupal\aculta_qrcode\Service\QrCodeManager::validateWindow() expects int|null, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_qrcode/src/Form/QrCodeForm.php
 
-		-
-			rawMessage: 'Parameter #3 $background of method Drupal\aculta_qrcode\Service\QrCodePresetRegistry::customized() expects string|null, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_qrcode/src/Form/QrCodeForm.php
 
-		-
-			rawMessage: 'Return type (void) of method Drupal\aculta_qrcode\Form\QrCodeForm::validateForm() should be compatible with return type (Drupal\Core\Entity\ContentEntityInterface) of method Drupal\Core\Entity\ContentEntityFormInterface::validateForm()'
-			identifier: method.childReturnType
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_qrcode/src/Form/QrCodeForm.php
 
-		-
-			rawMessage: Access to an undefined property Drupal\Core\Field\FieldItemInterface::$entity.
-			identifier: property.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_qrcode/src/Plugin/Field/FieldFormatter/QrCodeSvgFormatter.php
 
-		-
-			rawMessage: 'Class Drupal\aculta_qrcode\Plugin\Field\FieldFormatter\QrCodeSvgFormatter extends generic class Drupal\Core\Field\FormatterBase but does not specify its types: T'
-			identifier: missingType.generics
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_qrcode/src/Plugin/Field/FieldFormatter/QrCodeSvgFormatter.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_qrcode\Plugin\Field\FieldFormatter\QrCodeSvgFormatter::__construct() has parameter $settings with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_qrcode/src/Plugin/Field/FieldFormatter/QrCodeSvgFormatter.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_qrcode\Plugin\Field\FieldFormatter\QrCodeSvgFormatter::__construct() has parameter $third_party_settings with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_qrcode/src/Plugin/Field/FieldFormatter/QrCodeSvgFormatter.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_qrcode\Plugin\Field\FieldFormatter\QrCodeSvgFormatter::create() has parameter $configuration with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_qrcode/src/Plugin/Field/FieldFormatter/QrCodeSvgFormatter.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_qrcode\Plugin\Field\FieldFormatter\QrCodeSvgFormatter::viewElements() has parameter $items with generic interface Drupal\Core\Field\FieldItemListInterface but does not specify its types: T'
-			identifier: missingType.generics
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_qrcode/src/Plugin/Field/FieldFormatter/QrCodeSvgFormatter.php
 
-		-
-			rawMessage: 'Parameter #3 $field_definition of class Drupal\aculta_qrcode\Plugin\Field\FieldFormatter\QrCodeSvgFormatter constructor expects Drupal\Core\Field\FieldDefinitionInterface, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_qrcode/src/Plugin/Field/FieldFormatter/QrCodeSvgFormatter.php
 
-		-
-			rawMessage: 'Parameter #4 $settings of class Drupal\aculta_qrcode\Plugin\Field\FieldFormatter\QrCodeSvgFormatter constructor expects array, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_qrcode/src/Plugin/Field/FieldFormatter/QrCodeSvgFormatter.php
 
-		-
-			rawMessage: 'Parameter #5 $label of class Drupal\aculta_qrcode\Plugin\Field\FieldFormatter\QrCodeSvgFormatter constructor expects string, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_qrcode/src/Plugin/Field/FieldFormatter/QrCodeSvgFormatter.php
 
-		-
-			rawMessage: 'Parameter #6 $view_mode of class Drupal\aculta_qrcode\Plugin\Field\FieldFormatter\QrCodeSvgFormatter constructor expects string, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_qrcode/src/Plugin/Field/FieldFormatter/QrCodeSvgFormatter.php
 
-		-
-			rawMessage: 'Parameter #7 $third_party_settings of class Drupal\aculta_qrcode\Plugin\Field\FieldFormatter\QrCodeSvgFormatter constructor expects array, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_qrcode/src/Plugin/Field/FieldFormatter/QrCodeSvgFormatter.php
 
-		-
-			rawMessage: 'Call to an undefined method object::addPage().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_qrcode/src/Service/QrCodeExporter.php
 
-		-
-			rawMessage: 'Call to an undefined method object::getBlob().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_qrcode/src/Service/QrCodeExporter.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_qrcode\Service\QrCodeExporter::pdf() should return string but returns mixed.'
-			identifier: return.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_qrcode/src/Service/QrCodeExporter.php
 
-		-
-			rawMessage: 'Strict comparison using === between string and false will always evaluate to false.'
-			identifier: identical.alwaysFalse
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_qrcode/src/Service/QrCodeExporter.php
 
-		-
-			rawMessage: 'Parameter #1 $red of class Endroid\QrCode\Color\Color constructor expects int<0, 255>, int given.'
-			identifier: argument.type
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_qrcode/src/Service/QrCodeGenerator.php
 
-		-
-			rawMessage: 'Parameter #2 $green of class Endroid\QrCode\Color\Color constructor expects int<0, 255>, int given.'
-			identifier: argument.type
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_qrcode/src/Service/QrCodeGenerator.php
 
-		-
-			rawMessage: 'Parameter #3 $blue of class Endroid\QrCode\Color\Color constructor expects int<0, 255>, int given.'
-			identifier: argument.type
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_qrcode/src/Service/QrCodeGenerator.php
 
-		-
-			rawMessage: 'Parameter #1 $entity of method Drupal\aculta_qrcode\Service\QrCodeManager::save() expects Drupal\aculta_qrcode\Entity\QrCode, Drupal\Core\Entity\EntityInterface given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_qrcode/src/Service/QrCodeManager.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_qrcode\Service\QrCodePublicUrlInterface@anonymous/web/modules/custom/aculta_portal/modules/aculta_qrcode/tests/src/Kernel/QrCodeBatchKernelTest.php:58::publicUrl() never returns null so it can be removed from the return type.'
-			identifier: return.unusedType
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_qrcode/tests/src/Kernel/QrCodeBatchKernelTest.php
 
-		-
-			rawMessage: 'Call to static method PHPUnit\Framework\Assert::assertInstanceOf() with ''Drupal\\Core\\Routing\\TrustedRedirectResponse'' and Drupal\Core\Routing\TrustedRedirectResponse will always evaluate to true.'
-			identifier: staticMethod.alreadyNarrowedType
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_qrcode/tests/src/Kernel/QrCodeEntityKernelTest.php
 
-		-
-			rawMessage: 'Call to static method PHPUnit\Framework\Assert::assertInstanceOf() with ''Drupal\\aculta_qrcode\\Entity\\QrCode'' and Drupal\aculta_qrcode\Entity\QrCode will always evaluate to true.'
-			identifier: staticMethod.alreadyNarrowedType
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_qrcode/tests/src/Kernel/QrCodeEntityKernelTest.php
 
-		-
-			rawMessage: 'Cannot call method getCode() on Drupal\Core\Entity\EntityInterface|null.'
-			identifier: method.nonObject
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_qrcode/tests/src/Kernel/QrCodeEntityKernelTest.php
 
-		-
-			rawMessage: 'Cannot call method getTargetUrl() on Drupal\Core\Entity\EntityInterface|null.'
-			identifier: method.nonObject
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_qrcode/tests/src/Kernel/QrCodeEntityKernelTest.php
 
-		-
-			rawMessage: 'Parameter #1 $id of method Drupal\Core\Entity\EntityStorageInterface::load() expects int|string, int|string|null given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_qrcode/tests/src/Kernel/QrCodeEntityKernelTest.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_qrcode\Service\QrCodePublicUrlInterface@anonymous/web/modules/custom/aculta_portal/modules/aculta_qrcode/tests/src/Kernel/QrCodeFormatterKernelTest.php:43::publicUrl() never returns null so it can be removed from the return type.'
-			identifier: return.unusedType
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_qrcode/tests/src/Kernel/QrCodeFormatterKernelTest.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_qrcode\Service\QrCodePublicUrlInterface@anonymous/web/modules/custom/aculta_portal/modules/aculta_qrcode/tests/src/Kernel/QrCodeRasterExportKernelTest.php:60::publicUrl() never returns null so it can be removed from the return type.'
-			identifier: return.unusedType
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_qrcode/tests/src/Kernel/QrCodeRasterExportKernelTest.php
 
-		-
-			rawMessage: 'Parameter #2 $string of static method PHPUnit\Framework\Assert::assertStringStartsWith() expects string, string|null given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_qrcode/tests/src/Kernel/QrCodeRasterExportKernelTest.php
 
-		-
-			rawMessage: 'Method Drupal\Tests\aculta_qrcode\Unit\QrCodePresetTest::testRejectsInvalidValues() has parameter $overrides with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_qrcode/tests/src/Unit/QrCodePresetTest.php
 
-		-
-			rawMessage: 'Parameter #1 $foreground of method Drupal\Tests\aculta_qrcode\Unit\QrCodePresetTest::preset() expects string|null, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_qrcode/tests/src/Unit/QrCodePresetTest.php
 
 		-
 			rawMessage: 'Argument of an invalid type mixed supplied for foreach, only iterables are supported.'

@@ -88,7 +88,8 @@ final class QrCodeExporter {
       $directory = self::DIRECTORY;
       $this->fileSystem->prepareDirectory($directory, FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS);
       $bytes = $this->generator->generate($payload, $preset, $format);
-      if ($this->fileSystem->saveData($bytes, $uri, FileExists::Replace) === FALSE) {
+      $savedUri = $this->fileSystem->saveData($bytes, $uri, FileExists::Replace);
+      if ($savedUri === '') {
         throw new \RuntimeException('Não foi possível gravar o derivado do QR Code.');
       }
       $realpath = $this->fileSystem->realpath($uri);
@@ -131,13 +132,15 @@ final class QrCodeExporter {
       . ($caption !== NULL ? '<p class="caption">' . $escape($caption) . '</p>' : '')
       . '<p class="url">' . $escape($payload) . '</p></main></html>';
 
+    /** @var \Drupal\entity_print\Plugin\PrintEngineInterface $engine */
     $engine = $this->printEngines->createInstance('dompdf', [
       'enable_remote' => FALSE,
       'embedded_php' => FALSE,
       'disable_log' => TRUE,
     ]);
     $engine->addPage($html);
-    return $engine->getBlob();
+    $blob = $engine->getBlob();
+    return is_string($blob) ? $blob : '';
   }
 
   /**
