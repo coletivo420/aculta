@@ -51,19 +51,26 @@ final class CepSources {
 
   /**
    * Returns enabled sources in lookup order.
+   *
+   * @return array<int, string>
    */
   public function ordered(): array {
     $config = $this->configs->get(self::SETTINGS);
-    $sources = $config->get('sources') ?? self::DEFAULTS['sources'];
+    $rawSources = $config->get('sources');
+    $sources = is_array($rawSources) ? $rawSources : self::DEFAULTS['sources'];
     $enabled = [];
     foreach (array_keys(self::LABELS) as $id) {
-      if (($sources[$id]['enabled'] ?? FALSE) === TRUE) {
-        $enabled[$id] = (int) ($sources[$id]['weight'] ?? 0);
+      $sourceEntry = is_array($sources[$id] ?? NULL) ? $sources[$id] : [];
+      if (($sourceEntry['enabled'] ?? FALSE) === TRUE) {
+        $weight = $sourceEntry['weight'] ?? 0;
+        $enabled[$id] = is_int($weight) || is_numeric($weight) ? (int) $weight : 0;
       }
     }
     asort($enabled);
+    /** @var array<int, string> $order */
     $order = array_keys($enabled);
-    $default = (string) ($config->get('default_source') ?? self::DEFAULTS['default_source']);
+    $rawDefault = $config->get('default_source');
+    $default = is_string($rawDefault) && $rawDefault !== '' ? $rawDefault : self::DEFAULTS['default_source'];
     if (in_array($default, $order, TRUE)) {
       $order = array_values(array_unique(array_merge([$default], $order)));
     }

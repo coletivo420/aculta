@@ -70,7 +70,7 @@ final class CepLocalStore {
     if ($handle === FALSE) {
       throw new \RuntimeException('Não foi possível ler o arquivo de origem.');
     }
-    $directory = self::DIRECTORY;
+    $directory = (string) self::DIRECTORY;
     $this->fileSystem->prepareDirectory($directory, FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS);
     $count = 0;
     $prefix = NULL;
@@ -113,7 +113,8 @@ final class CepLocalStore {
    */
   public function writeManifest(string $version, int $records, string $source): void {
     $manifest = ['version' => $version, 'records' => $records, 'source' => $source];
-    $this->fileSystem->prepareDirectory(dirname(self::MANIFEST), FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS);
+    $manifestDir = dirname(self::MANIFEST);
+    $this->fileSystem->prepareDirectory($manifestDir, FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS);
     $this->fileSystem->saveData((string) json_encode($manifest, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT), self::MANIFEST, FileExists::Replace);
     $this->makeReadable();
   }
@@ -153,8 +154,22 @@ final class CepLocalStore {
     if ($path === FALSE || !is_file($path)) {
       return NULL;
     }
-    $data = json_decode((string) file_get_contents($path), TRUE);
-    return is_array($data) && isset($data['version']) ? $data : NULL;
+    $raw = file_get_contents($path);
+    if ($raw === FALSE) {
+      return NULL;
+    }
+    $data = json_decode($raw, TRUE);
+    if (!is_array($data) || !isset($data['version']) || !is_string($data['version'])) {
+      return NULL;
+    }
+    $result = ['version' => $data['version']];
+    if (isset($data['records']) && is_numeric($data['records'])) {
+      $result['records'] = (int) $data['records'];
+    }
+    if (isset($data['source']) && is_string($data['source'])) {
+      $result['source'] = $data['source'];
+    }
+    return $result;
   }
 
   /**

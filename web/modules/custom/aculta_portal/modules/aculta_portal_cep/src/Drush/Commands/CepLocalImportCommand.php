@@ -39,15 +39,17 @@ final class CepLocalImportCommand extends Command {
    * {@inheritdoc}
    */
   protected function execute(InputInterface $input, OutputInterface $output): int {
+    $rawSource = $input->getArgument('source');
+    $source = is_scalar($rawSource) ? (string) $rawSource : '';
     try {
-      $count = $this->store->importTsv((string) $input->getArgument('source'));
+      $count = $this->store->importTsv($source);
     }
     catch (\Throwable $exception) {
       $output->writeln('<error>' . $exception->getMessage() . '</error>');
       return Command::FAILURE;
     }
     // The manifest records the import date and source filename.
-    $this->store->writeManifest(date('Y-m-d'), $count, basename((string) $input->getArgument('source')));
+    $this->store->writeManifest(date('Y-m-d'), $count, basename($source));
     $output->writeln('<info>' . $count . ' CEPs importados para ' . CepLocalStore::DIRECTORY . '.</info>');
     return Command::SUCCESS;
   }
