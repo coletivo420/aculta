@@ -43,3 +43,9 @@ props:
       title: Token CSS ou cor hexadecimal
       description: Valor CSS permitido para a cor primária, como var(--token), hexadecimal ou currentColor.
       pattern: '^(var\(--[a-z][a-z0-9-]*\)|#[0-9A-Fa-f]{3,8}|currentColor)$'
+    label:
+      type: string
+      title: Nome acessível
+      description: Quando informado, o ícone é informativo e recebe role img e este nome. Sem label, permanece decorativo e oculto de tecnologia assistiva.
+      minLength: 1
+      maxLength: 128

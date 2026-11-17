@@ -1,0 +1,7 @@
+name: Ícone informativo
+description: Ícone com nome acessível para transmitir significado sem texto adjacente.
+props:
+  name: star
+  variant: regular
+  size: md
+  label: Conteúdo em destaque
