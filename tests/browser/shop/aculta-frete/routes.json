@@ -1,11 +1,11 @@
 {
   "front": "aculta-frete",
   "purpose": "shop",
-  "origin_env": "ACULTA_SITE_ORIGIN",
+  "origin_env": "SHOP_HOST",
   "source": "tests/browser/shop/aculta-frete/README.md",
   "public_routes": [
-    { "path": "/" }
+    { "path": "/loja/produto/bloco-sativa/camiseta-abada-bloco-sativa-2026-regata" }
   ],
   "auth": { "account": "teste_comum" },
-  "notes": "Sem rota pública declarada. Os scripts usam produto e carrinho reais da Loja (bloco-sativa). Cobertura fica no script da frente."
+  "notes": "Rota pública do produto usado pelo script visual; carrinho e checkout não são navegados."
 }

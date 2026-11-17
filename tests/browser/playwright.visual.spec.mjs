@@ -72,10 +72,18 @@ test.describe('regressão visual', () => {
           }
           await page.setViewportSize({ width: vp.width, height: vp.height });
           await page.emulateMedia({ colorScheme: theme, reducedMotion: 'reduce' });
-          await page.goto(new URL(item.path, origin).toString(), { waitUntil: 'load', timeout });
+          const response = await page.goto(new URL(item.path, origin).toString(), { waitUntil: 'load', timeout });
+          expect(response?.ok(), `HTTP ${response?.status()} em ${item.front}${item.path}`).toBe(true);
           await page.evaluate((mode) => document.documentElement.setAttribute('data-theme', mode), theme);
           expect(await page.evaluate(() => document.documentElement.getAttribute('data-theme'))).toBe(theme);
           await page.evaluate(() => document.fonts.ready);
+
+          const landmarks = await page.evaluate(() => ({
+            main: document.querySelectorAll('main').length,
+            h1: document.querySelectorAll('h1').length,
+          }));
+          expect(landmarks.main, 'landmark main único').toBe(1);
+          expect(landmarks.h1, 'título H1 único').toBe(1);
 
           const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
           expect(overflow, 'overflow horizontal').toBeLessThanOrEqual(0);

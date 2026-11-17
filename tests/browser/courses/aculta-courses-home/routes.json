@@ -1,0 +1,10 @@
+{
+  "front": "aculta-courses-home",
+  "purpose": "courses",
+  "origin_env": "COURSES_HOST",
+  "source": "docs/architecture/multidomain.md",
+  "public_routes": [
+    { "path": "/" }
+  ],
+  "notes": "Raiz pública do domínio COURSES; somente navegação GET, sem autenticação ou escrita."
+}

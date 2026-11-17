@@ -127,8 +127,8 @@
   overflow-x: hidden;
   overflow-y: auto;
   padding: var(--spacing-base);
-  transition: transform var(--motion-slow) ease, visibility var(--motion-slow) ease;
-  transform: translateX(100%);
+  transition: clip-path var(--motion-slow) ease, visibility var(--motion-slow) ease;
+  clip-path: inset(0 0 0 100%);
   background: var(--color-surface);
   box-shadow: var(--shadow-lg);
   block-size: calc(100vh - var(--aculta-institution-bar-height, 2.25rem));
@@ -141,7 +141,7 @@
 
 .navigation-bar.has-js .navigation-bar__panel.is-open {
   visibility: visible;
-  transform: translateX(0);
+  clip-path: inset(0);
 }
 
 .navigation-bar.has-js .navigation-bar__close {
@@ -256,16 +256,16 @@
 
   [dir="rtl"] .navigation-bar.has-js .navigation-bar__panel,
   [dir="rtl"] .navigation-bar.has-js .navigation-bar__panel.is-open {
-    transform: none;
+    clip-path: none;
   }
 }
 
 [dir="rtl"] .navigation-bar.has-js .navigation-bar__panel {
-  transform: translateX(-100%);
+  clip-path: inset(0 100% 0 0);
 }
 
 [dir="rtl"] .navigation-bar.has-js .navigation-bar__panel.is-open {
-  transform: translateX(0);
+  clip-path: inset(0);
 }
 
 /* Wiki (v1 restaurada na v2): busca no cabeçalho, ao lado da logo pequena e antes do menu. */

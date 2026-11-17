@@ -1,8 +1,8 @@
 # ADR-057 - Consolidação final do ACULTA420 V2, UI Suite, qualidade visual e performance
 
-**Status:** PROPOSTA - PLANEJAMENTO DOCUMENTAL. Implementação não iniciada.  
+**Status:** EM EXECUÇÃO. F0 estático concluído; F1 em andamento.
 **Data:** 2026-11-17  
-**Branch alvo:** dev  
+**Branch de trabalho:** feat/adr057-f1-route-snapshots (derivada de origin/dev)
 **Baseline auditada:** 5c496047509f43831de2a6996cbc6ba95d867749  
 **Tema:** aculta420_v2, versão 1.5.0; versão 1.6.0 apenas como candidata de consolidação, sem alteração agora.  
 **Documentos predecessores:** ADR-054, ADR-055 e ADR-056.  

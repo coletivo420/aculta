@@ -17,6 +17,7 @@ Scripts com `routes.json` têm cobertura de rotas públicas no runner comum.
 | [`tests/browser/aculta-qrcode/`](./aculta-qrcode/README.md) | Validação visual do ACULTA QR Code | 1 | sim |
 | [`tests/browser/aculta-secrets-manager/`](./aculta-secrets-manager/README.md) | Painel de credenciais (aculta_secrets_manager) | 3 | sim |
 | [`tests/browser/aculta-statistics/`](./aculta-statistics/README.md) | Revisão visual do painel de estatísticas | 2 | sim |
+| [`tests/browser/courses/aculta-courses-home/`](./courses/aculta-courses-home/README.md) | Raiz pública do domínio de cursos | 0 | sim |
 | [`tests/browser/courses/aculta-forum-lms/`](./courses/aculta-forum-lms/README.md) | ACULTA Forum LMS — diálogo sob conteúdo H5P | 1 | sim |
 | [`tests/browser/courses/aculta-lms/`](./courses/aculta-lms/README.md) | Revisão visual do formulário de resposta com arquivo (LMS) | 2 | sim |
 | [`tests/browser/courses/aculta-lms-resources/`](./courses/aculta-lms-resources/README.md) | Revisão visual do campo de vídeos do curso | 1 | sim |
@@ -45,6 +46,7 @@ Scripts com `routes.json` têm cobertura de rotas públicas no runner comum.
 | [`tests/browser/studio/marley/`](./studio/marley/README.md) | Studio · Marley | 1 | sim |
 | [`tests/browser/studio/we-sativa/`](./studio/we-sativa/README.md) | Studio · WE SATIVA | 1 | sim |
 | [`tests/browser/support/aculta-faq/`](./support/aculta-faq/README.md) | Revisão visual do ACULTA FAQ | 1 | sim |
+| [`tests/browser/support/aculta-support-home/`](./support/aculta-support-home/README.md) | Raiz pública do domínio de apoio | 0 | sim |
 | [`tests/browser/transversal/aculta-botoes-a11y/`](./transversal/aculta-botoes-a11y/README.md) | Leitor de tela (Orca) — botões em estados autenticados | 1 | não |
 | [`tests/browser/transversal/aculta-content-admin/`](./transversal/aculta-content-admin/README.md) | Revisão visual do Painel de conteúdo | 1 | sim |
 | [`tests/browser/transversal/aculta-contraste/`](./transversal/aculta-contraste/README.md) | ACULTA — contraste de UI Skins | 2 | não |
@@ -54,6 +56,7 @@ Scripts com `routes.json` têm cobertura de rotas públicas no runner comum.
 | [`tests/browser/transversal/aculta-home-editorial-ui-patterns/`](./transversal/aculta-home-editorial-ui-patterns/README.md) | Home editorial — UI Patterns Views | 1 | não |
 | [`tests/browser/transversal/aculta-htmx-f1/`](./transversal/aculta-htmx-f1/README.md) | ACULTA420 V2 — HTMX F1 (busca e login) | 1 | sim |
 | [`tests/browser/transversal/aculta-image-admin/`](./transversal/aculta-image-admin/README.md) | Revisão visual das opções administrativas do ACULTA Image | 1 | sim |
+| [`tests/browser/transversal/aculta-papeis/`](./transversal/aculta-papeis/README.md) | Cobertura visual por papel | 1 | não |
 | [`tests/browser/transversal/aculta-teclado-foco/`](./transversal/aculta-teclado-foco/README.md) | ACULTA — teclado e foco visível | 1 | não |
 | [`tests/browser/transversal/aculta-theme-mobile-first/`](./transversal/aculta-theme-mobile-first/README.md) | ACULTA420 — SDC responsivos do tema | 35 | sim |
 | [`tests/browser/transversal/aculta-uploader/`](./transversal/aculta-uploader/README.md) | Smoke do aculta_file_uploader (navegador) | 1 | sim |
