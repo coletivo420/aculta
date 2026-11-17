@@ -1,12 +1,27 @@
 # ADR-057 - Consolidação final do ACULTA420 V2, UI Suite, qualidade visual e performance
 
-**Status:** PROPOSTA - PLANEJAMENTO DOCUMENTAL. Implementação não iniciada.  
+**Status:** EM IMPLEMENTAÇÃO — PARCIAL (2026-11-17).
 **Data:** 2026-11-17  
 **Branch alvo:** dev  
 **Baseline auditada:** 5c496047509f43831de2a6996cbc6ba95d867749  
 **Tema:** aculta420_v2, versão 1.5.0; versão 1.6.0 apenas como candidata de consolidação, sem alteração agora.  
 **Documentos predecessores:** ADR-054, ADR-055 e ADR-056.  
 **Auditoria vinculada:** [ACULTA420-V2-AUDITORIA-ADR057-2026-11-17.md](../architecture/ACULTA420-V2-AUDITORIA-ADR057-2026-11-17.md).
+
+### Estado da execução em 2026-11-17
+
+| Frente | Estado comprovado |
+| --- | --- |
+| F0/F1 | Baseline estática e GET público passaram; Runtime Sync está BLOCKED por `RX`, drift e checkout sujo. PHPStan/Unit/qualidade passaram na PR #335; shards Kernel falharam e a comparação visual com snapshots divergiu. Aceite permanece parcial. |
+| P02 / RN-05 | PARCIAL: contratos locais de `site_key` e GET nos dez hosts passaram; autenticação, ACL, sessão, cache e US-14 permanecem DEFERRED. |
+| P03 | Sem implementação/evidência de fluxo editorial completo nos dez hosts. |
+| P04 | PARCIAL: packs/configuração alinhados; faltam validação editorial autenticada, seleção de região e renderização/acessibilidade nos consumidores reais. |
+| P05 | BLOCKED_UPSTREAM: dependências sem cobertura de segurança/declaração Drupal 12; nenhum enable/import realizado. |
+| P06 | PARCIAL: smoke público multihost passou 700/700 verificações; snapshots, aceite humano, teclado, zoom e perfis autenticados pendentes. |
+| P07 | PARCIAL: baseline Firefox e Chromium em 10 hosts; CLS Chromium móvel excede `0,1` no MAIN, exige experimento causal e correção. |
+| P08/P09 | Não iniciados; dependem dos gates anteriores e aceite final. |
+
+Relatórios e limites: [F0/F1](../operations/testing/ADR-057-F0-F1-2026-11-17.md), [P02/RN-05](../operations/testing/ADR-057-P02-RN05-2026-11-17.md), [P04](../operations/testing/ADR-057-P04-2026-11-17.md), [P05](../operations/testing/ADR-057-P05-2026-11-17.md), [P06](../operations/testing/ADR-057-P06-2026-11-17.md) e [P07](../operations/testing/ADR-057-P07-2026-11-17.md). A ADR inteira continua PARCIAL; ADR-054/055 não estão encerradas e ADR-056 continua encerrada.
 
 ## 1. Contexto e decisão
 
@@ -219,8 +234,8 @@ ADR-057 só é IMPLEMENTED quando RN-05 e US-14 estão PASS, ADR-054/055 formalm
 
 Se Field Group estiver bloqueado por upstream, registrar a decisão e **não classificar a incorporação como entregue**. É permitido homologar os demais pacotes separadamente; a ADR como um todo continua PARTIAL/BLOCKED até revisão do escopo pelo responsável.
 
-## 9. Estado desta criação
+## 9. Histórico desta decisão
 
-Esta revisão foi apenas **auditoria estática GitHub, consulta a resultados existentes do CI e pesquisa documental upstream**. Não executou PHPStan, PHPUnit, Playwright nem Drush local, não acessou o Runtime vivo, não importou config, não instalou pacotes e não alterou arquivos de código. A publicação deste documento não implementa nenhum pacote.
+Na criação da decisão, foi feita somente **auditoria estática GitHub, consulta a resultados existentes do CI e pesquisa documental upstream**; nenhuma execução local/Runtime ou alteração de código ocorreu naquela revisão. A implementação posterior e as evidências desta etapa estão listadas em “Estado da execução” e nos relatórios vinculados.
 
 **Referências:** [ADR-054](ADR-054-refatoracao-aculta420-v2-sdc-layout-builder.md), [ADR-055](ADR-055-integracao-ui-icons-ui-styles-page-e-sistema-unificado-de-emojis.md), [ADR-056](ADR-056-ui-patterns-2-recomendacoes-e-corte-documentacao.md), [Gates V2](../../web/themes/custom/aculta420_v2/docs/gates.md), [TODO V2](../../web/themes/custom/aculta420_v2/TODO.md), [Auditoria ADR-057](../architecture/ACULTA420-V2-AUDITORIA-ADR057-2026-11-17.md).

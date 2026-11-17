@@ -44,3 +44,32 @@ Cada combinação verifica:
 - Contraste de todos os pares de tokens é coberto pelo gate
   `scripts/validate-aculta420-v2-foundations.php`; aqui só o cabeçalho
   institucional é medido no navegador.
+
+## Baseline de performance (P07)
+
+`performance.mjs` mede, sem autenticação, as origens declaradas em
+`ACULTA_PERF_HOSTS` como pares `site_key=https://host` separados por `;`.
+Use os dez hosts de desenvolvimento de `docs/architecture/multidomain.md`.
+Larguras e modos podem ser limitados para uma amostra rápida com
+`ACULTA_PERF_WIDTHS` e `ACULTA_PERF_MODES`; o padrão é 390/1440 px e claro/
+escuro. Cada combinação tem uma navegação fria em contexto novo e uma recarga
+quente no mesmo contexto.
+
+```sh
+SUITE_OUT="${SUITE_OUT:?diretório absoluto fora do Git}" \
+ACULTA_PERF_HOSTS="${ACULTA_PERF_HOSTS:?declare site_key=https://host pairs from multidomain.md}" \
+ACULTA_BROWSER_ENGINE=firefox ACULTA_BROWSER_ENV=desenvolvimento \
+node tests/browser/transversal/aculta420-v2-audit-2026-11/performance.mjs
+```
+
+O JSON `performance-summary.json` registra status, TTFB/DOM Ready/load, paint,
+LCP, CLS, long tasks, requests e tamanhos informados por Resource Timing,
+agrupados por CSS/JS/fontes/imagens e outros recursos. Em viewport móvel o
+runner tenta abrir o menu e registra a duração Event Timing como proxy de uma
+interação de laboratório. Esse valor não é INP; INP de campo p75, prioridade
+real do LCP e bytes de recursos cross-origin sem `Timing-Allow-Origin` ficam
+explicitamente fora da medição. O segundo carregamento é cache do navegador no
+mesmo contexto, não uma medição do cache CDN.
+
+Resultados e limitações das matrizes iniciais estão em
+[`ADR-057-P07-2026-11-17.md`](../../../../docs/operations/testing/ADR-057-P07-2026-11-17.md).
