@@ -21,11 +21,12 @@ final class DocumentCardComponentTest extends UnitTestCase {
     $themeDir = dirname(__DIR__, 3);
     $componentDir = $themeDir . '/components/document-card';
     $component = Yaml::parseFile($componentDir . '/document-card.component.yml');
-    self::assertFalse($component['props']['additionalProperties']);
-    self::assertSame(['title', 'url'], $component['props']['required']);
-    self::assertArrayHasKey('category', $component['slots']);
-    self::assertArrayHasKey('summary', $component['slots']);
-    self::assertArrayHasKey('attachment', $component['slots']);
+    self::assertFalse(self::valueAtPath($component, 'props', 'additionalProperties'));
+    self::assertSame(['title', 'url'], self::valueAtPath($component, 'props', 'required'));
+    $slots = self::arrayAtPath($component, 'slots');
+    self::assertArrayHasKey('category', $slots);
+    self::assertArrayHasKey('summary', $slots);
+    self::assertArrayHasKey('attachment', $slots);
     self::assertFileExists($componentDir . '/document-card.twig');
     self::assertFileExists($componentDir . '/document-card.css');
     self::assertFileExists($componentDir . '/document-card.default.story.yml');
@@ -52,13 +53,46 @@ final class DocumentCardComponentTest extends UnitTestCase {
   public function testDocumentsViewUsesUiPatternsGrid(): void {
     $root = dirname(__DIR__, 7);
     $view = Yaml::parseFile($root . '/config/sync/views.view.aculta_documents.yml');
-    $options = $view['display']['default']['display_options'];
-    self::assertSame('ui_patterns', $options['style']['type']);
-    self::assertSame('aculta420_v2:layout-grid', $options['style']['options']['ui_patterns']['ui_patterns']['component_id']);
-    self::assertSame('view_rows', $options['style']['options']['ui_patterns']['ui_patterns']['slots']['content']['sources'][0]['source_id']);
-    self::assertSame('entity:node', $options['row']['type']);
-    self::assertSame('teaser', $options['row']['options']['view_mode']);
-    self::assertSame('', $options['css_class']);
+    $options = self::arrayAtPath($view, 'display', 'default', 'display_options');
+    self::assertSame('ui_patterns', self::valueAtPath($options, 'style', 'type'));
+    self::assertSame('aculta420_v2:layout-grid', self::valueAtPath($options, 'style', 'options', 'ui_patterns', 'ui_patterns', 'component_id'));
+    self::assertSame('cards-wide', self::valueAtPath($options, 'style', 'options', 'ui_patterns', 'ui_patterns', 'props', 'preset', 'source', 'value'));
+    self::assertSame('view_rows', self::valueAtPath($options, 'style', 'options', 'ui_patterns', 'ui_patterns', 'slots', 'content', 'sources', '0', 'source_id'));
+    self::assertSame('entity:node', self::valueAtPath($options, 'row', 'type'));
+    self::assertSame('teaser', self::valueAtPath($options, 'row', 'options', 'view_mode'));
+    self::assertSame('', self::valueAtPath($options, 'css_class'));
+  }
+
+  /**
+   * Returns a nested YAML value after checking every container and key.
+   *
+   * @param string ...$path
+   *   Keys to traverse from the parsed YAML value.
+   */
+  private static function valueAtPath(mixed $value, string ...$path): mixed {
+    foreach ($path as $key) {
+      self::assertIsArray($value);
+      self::assertArrayHasKey($key, $value);
+      $value = $value[$key];
+    }
+
+    return $value;
+  }
+
+  /**
+   * Returns a nested YAML array after verifying its structure.
+   *
+   * @param string ...$path
+   *   Keys to traverse from the parsed YAML value.
+   *
+   * @return array<mixed>
+   *   The array at the requested path.
+   */
+  private static function arrayAtPath(mixed $value, string ...$path): array {
+    $value = self::valueAtPath($value, ...$path);
+    self::assertIsArray($value);
+
+    return $value;
   }
 
 }
