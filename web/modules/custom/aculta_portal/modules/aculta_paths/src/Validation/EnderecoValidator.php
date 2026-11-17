@@ -32,7 +32,7 @@ final class EnderecoValidator {
     // Tudo que é permitido sai; o que sobra são os caracteres recusados.
     $sobra = (string) preg_replace($host ? '/[a-z0-9.\-]/' : '/[a-z0-9\-]/', '', $valor);
     $proibidos = array_values(array_unique(mb_str_split($sobra)));
-    if ($proibidos !== [] && $proibidos[0] !== '') {
+    if ($proibidos !== []) {
       $lista = implode(', ', array_map(
         static fn (string $c): string => $c === ' ' ? '«espaço»' : '«' . $c . '»',
         $proibidos,

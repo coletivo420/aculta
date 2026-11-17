@@ -86,6 +86,7 @@ final class DnsClassificadorTest extends UnitTestCase {
       'cnames' => [],
     ]);
     $this->assertSame('outro_destino', $r['codigo']);
+    $this->assertArrayHasKey('destino', $r);
     $this->assertSame('9.9.9.9', $r['destino']);
   }
 

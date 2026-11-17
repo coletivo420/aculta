@@ -23,6 +23,9 @@ readonly class AccountCourseSummary {
 
   public const STATUS_AWAITING_EVALUATION = 'awaiting_evaluation';
 
+  /**
+   * @param array<int, string> $cacheTags
+   */
   public function __construct(
     public string $id,
     public string $label,

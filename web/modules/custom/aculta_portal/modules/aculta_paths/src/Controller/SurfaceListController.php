@@ -56,6 +56,9 @@ final class SurfaceListController extends ControllerBase {
 
   /**
    * Página com a tabela de caminhos e a orientação de DNS.
+   *
+   * @return array<string, mixed>
+   *   Render array da página.
    */
   public function pagina(): array {
     $leitura = $this->reader->leituraAtiva()
@@ -131,6 +134,11 @@ final class SurfaceListController extends ControllerBase {
 
   /**
    * Hosts vêm do Domain, nunca de texto fixo.
+   *
+   * @param string $site_key
+   *   Chave funcional da superfície.
+   * @param array{modo: string, ativa: bool, slug: string, titulo: string} $linha
+   *   Configuração da superfície.
    */
   private function caminhoPublico(string $site_key, array $linha): string {
     if ($linha['modo'] === 'desativado') {
@@ -148,6 +156,11 @@ final class SurfaceListController extends ControllerBase {
 
   /**
    * Status do DNS: só verifica o subdomínio; diretório não se aplica.
+   *
+   * @param string $site_key
+   *   Chave funcional da superfície.
+   * @param array{modo: string, ativa: bool, slug: string, titulo: string} $linha
+   *   Configuração da superfície.
    */
   private function statusDns(string $site_key, array $linha): string {
     if ($linha['modo'] === 'diretorio') {
@@ -165,6 +178,9 @@ final class SurfaceListController extends ControllerBase {
 
   /**
    * Explicação de como configurar o DNS, com o host principal do Domain.
+   *
+   * @return array<string, mixed>
+   *   Render array com as orientações de DNS.
    */
   private function orientacaoDns(): array {
     $principal = $this->sites->getDomain(SiteKey::Main);

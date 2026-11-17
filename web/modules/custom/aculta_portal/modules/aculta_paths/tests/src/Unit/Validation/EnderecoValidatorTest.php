@@ -94,7 +94,9 @@ final class EnderecoValidatorTest extends UnitTestCase {
    * Confirma que um valor vazio é recusado.
    */
   public function testVazioEhRecusado(): void {
-    $this->assertSame('vazio', EnderecoValidator::motivo('', FALSE)['codigo']);
+    $motivo = EnderecoValidator::motivo('', FALSE);
+    $this->assertNotNull($motivo);
+    $this->assertSame('vazio', $motivo['codigo']);
   }
 
 }

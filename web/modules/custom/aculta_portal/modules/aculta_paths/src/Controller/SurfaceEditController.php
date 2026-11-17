@@ -43,7 +43,7 @@ final class SurfaceEditController extends ControllerBase {
     if (!array_key_exists($site_key, DomainSurfaceMap::DOMAIN_IDS)) {
       throw new NotFoundHttpException();
     }
-    $titulo = SurfaceConfigReader::TITULOS[$site_key] ?? $site_key;
+    $titulo = SurfaceConfigReader::TITULOS[$site_key];
     $form = $this->formBuilder()->getForm(SurfaceEditForm::class, $site_key);
     if (!$request->isXmlHttpRequest()) {
       return $form;

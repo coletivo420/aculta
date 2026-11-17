@@ -39,8 +39,8 @@ final class DnsStatusChecker {
   public function status(string $host): array {
     $cid = 'aculta_paths:dns:' . $host;
     $cache = $this->cache->get($cid);
-    if ($cache && is_array($cache->data)) {
-      return $cache->data;
+    if ($cache && is_array($cache->data) && isset($cache->data['classe'], $cache->data['texto']) && is_string($cache->data['classe']) && is_string($cache->data['texto'])) {
+      return ['classe' => $cache->data['classe'], 'texto' => $cache->data['texto']];
     }
     $resultado = $this->verificar($host);
     $this->cache->set($cid, $resultado, time() + self::TTL);
@@ -89,10 +89,10 @@ final class DnsStatusChecker {
       return ['ips' => [], 'cnames' => []];
     }
     foreach ($registros as $registro) {
-      if (($registro['type'] ?? '') === 'A' && isset($registro['ip'])) {
+      if (($registro['type'] ?? '') === 'A' && isset($registro['ip']) && is_scalar($registro['ip'])) {
         $ips[] = (string) $registro['ip'];
       }
-      if (($registro['type'] ?? '') === 'CNAME' && isset($registro['target'])) {
+      if (($registro['type'] ?? '') === 'CNAME' && isset($registro['target']) && is_scalar($registro['target'])) {
         $cnames[] = strtolower(rtrim((string) $registro['target'], '.'));
       }
     }

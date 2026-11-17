@@ -33,7 +33,14 @@ final class SurfaceRoutesStaticTest extends UnitTestCase {
       'aculta_commerce/aculta_commerce.routing.yml',
     ] as $arquivo) {
       $dados = Yaml::parseFile($modulos . '/' . $arquivo);
-      $rotas = array_merge($rotas, is_array($dados) ? $dados : []);
+      if (is_array($dados)) {
+        foreach ($dados as $key => $item) {
+          if (is_string($key) && is_array($item)) {
+            /** @var array<string, mixed> $item */
+            $rotas[$key] = $item;
+          }
+        }
+      }
     }
     return $rotas;
   }
@@ -43,6 +50,8 @@ final class SurfaceRoutesStaticTest extends UnitTestCase {
    */
   public function testWeSativaEmCaminhoProprio(): void {
     $rotas = self::rotas();
+    $this->assertArrayHasKey('aculta_studio.we_sativa', $rotas);
+    $this->assertIsArray($rotas['aculta_studio.we_sativa']['options'] ?? NULL);
     $this->assertSame('/we-sativa', $rotas['aculta_studio.we_sativa']['path']);
     $this->assertSame('wiki', $rotas['aculta_studio.we_sativa']['options']['_aculta_site_key']);
     $this->assertSame('/we-sativa/inicio', $rotas['aculta_studio.we_sativa_start']['path']);
@@ -53,6 +62,8 @@ final class SurfaceRoutesStaticTest extends UnitTestCase {
    */
   public function testGreenStashEmCaminhoProprio(): void {
     $rotas = self::rotas();
+    $this->assertArrayHasKey('aculta_commerce.green_stash', $rotas);
+    $this->assertIsArray($rotas['aculta_commerce.green_stash']['options'] ?? NULL);
     $this->assertSame('/green-stash', $rotas['aculta_commerce.green_stash']['path']);
     $this->assertSame('shop', $rotas['aculta_commerce.green_stash']['options']['_aculta_site_key']);
   }
@@ -61,9 +72,11 @@ final class SurfaceRoutesStaticTest extends UnitTestCase {
    * Ação de decisão da WE SATIVA migrou para /we-sativa.
    */
   public function testAcaoDeDecisaoDaWeSativa(): void {
+    $rotas = self::rotas();
+    $this->assertArrayHasKey('aculta_wiki.proposal_decide', $rotas);
     $this->assertSame(
       '/we-sativa/propostas/{proposal}/decidir',
-      self::rotas()['aculta_wiki.proposal_decide']['path'],
+      $rotas['aculta_wiki.proposal_decide']['path'],
     );
   }
 
@@ -72,7 +85,11 @@ final class SurfaceRoutesStaticTest extends UnitTestCase {
    */
   public function testFormularioEhSoMain(): void {
     $dados = Yaml::parseFile(dirname(__DIR__, 3) . '/aculta_paths.routing.yml');
+    $this->assertIsArray($dados);
+    $this->assertIsArray($dados['aculta_paths.form'] ?? NULL);
     $rota = $dados['aculta_paths.form'];
+    $this->assertIsArray($rota['options'] ?? NULL);
+    $this->assertIsArray($rota['requirements'] ?? NULL);
     $this->assertSame('/painel-administrativo/aculta/caminhos', $rota['path']);
     $this->assertSame('main', $rota['options']['_aculta_site_key']);
     $this->assertSame('administrar superficies', $rota['requirements']['_permission']);
@@ -83,7 +100,11 @@ final class SurfaceRoutesStaticTest extends UnitTestCase {
    */
   public function testEdicaoEhSomenteMainComModal(): void {
     $dados = Yaml::parseFile(dirname(__DIR__, 3) . '/aculta_paths.routing.yml');
+    $this->assertIsArray($dados);
+    $this->assertIsArray($dados['aculta_paths.editar'] ?? NULL);
     $rota = $dados['aculta_paths.editar'];
+    $this->assertIsArray($rota['options'] ?? NULL);
+    $this->assertIsArray($rota['requirements'] ?? NULL);
     $this->assertSame('/painel-administrativo/aculta/caminhos/{site_key}/editar', $rota['path']);
     $this->assertSame('main', $rota['options']['_aculta_site_key']);
     $this->assertSame('administrar superficies', $rota['requirements']['_permission']);
@@ -95,7 +116,8 @@ final class SurfaceRoutesStaticTest extends UnitTestCase {
   public function testCaminhosAntigosNaoDeclarados(): void {
     $proibidos = ['/studio', '/wesativa', '/greenstash', '/wiki/busca', '/wiki/verbetes', '/wiki/propostas'];
     foreach (self::rotas() as $nome => $rota) {
-      $caminho = (string) ($rota['path'] ?? '');
+      $pathRaw = $rota['path'] ?? '';
+      $caminho = is_string($pathRaw) ? $pathRaw : '';
       foreach ($proibidos as $proibido) {
         $this->assertFalse(
           $caminho === $proibido || str_starts_with($caminho, $proibido . '/'),

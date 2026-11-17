@@ -56,18 +56,22 @@ final class SurfaceEditForm extends FormBase {
   /**
    * {@inheritdoc}
    *
-   * @param array $form
+   * @param array<string, mixed> $form
    *   Estrutura do formulário a construir.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   Estado atual do formulário.
    * @param string $site_key
    *   Chave funcional da superfície (validada pelo controlador).
+   *
+   * @return array<string, mixed>
+   *   Formulário construído.
    */
   public function buildForm(array $form, FormStateInterface $form_state, string $site_key = ''): array {
     $linha = $this->reader->superficies()[$site_key];
     $ehMain = $site_key === DomainSurfaceMap::MAIN;
     // Durante o rebuild do AJAX, o valor vem do estado; na primeira abertura, da configuração.
-    $modo = (string) ($form_state->getValue('modo') ?? $linha['modo']);
+    $modoRaw = $form_state->getValue('modo');
+    $modo = is_string($modoRaw) && $modoRaw !== '' ? $modoRaw : $linha['modo'];
 
     $form['#site_key'] = $site_key;
     // Wrapper do fragmento devolvido ao envio HTMX; é o mesmo bloco que o
@@ -174,13 +178,31 @@ final class SurfaceEditForm extends FormBase {
 
   /**
    * Callback do seletor de modo: devolve só o bloco do caminho.
+   *
+   * @param array<string, mixed> $form
+   *   Estrutura do formulário.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Estado atual do formulário.
+   *
+   * @return array<string, mixed>
+   *   Fragmento renderizável do caminho.
    */
   public function ajaxAtualizaCaminho(array &$form, FormStateInterface $form_state): array {
-    return $form['caminho'];
+    $caminho = $form['caminho'] ?? [];
+    if (!is_array($caminho)) {
+      return [];
+    }
+    /** @var array<string, mixed> $caminho */
+    return $caminho;
   }
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $form
+   *   Estrutura do formulário.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Estado atual do formulário.
    */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
     // O seletor AJAX produz estados intermediários (por exemplo, modo
@@ -190,8 +212,10 @@ final class SurfaceEditForm extends FormBase {
     if (($gatilho['#type'] ?? '') !== 'submit') {
       return;
     }
-    $site_key = (string) $form['#site_key'];
-    $modo = (string) $form_state->getValue('modo');
+    $site_keyRaw = $form['#site_key'] ?? '';
+    $site_key = is_string($site_keyRaw) ? $site_keyRaw : '';
+    $modoRaw = $form_state->getValue('modo');
+    $modo = is_string($modoRaw) ? $modoRaw : '';
 
     // Caracteres e formato: a mensagem diz o que foi recusado e por quê.
     if ($site_key !== DomainSurfaceMap::MAIN && $modo === 'diretorio') {
@@ -239,9 +263,15 @@ final class SurfaceEditForm extends FormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $form
+   *   Estrutura do formulário.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Estado atual do formulário.
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
-    $site_key = (string) $form['#site_key'];
+    $site_keyRaw = $form['#site_key'] ?? '';
+    $site_key = is_string($site_keyRaw) ? $site_keyRaw : '';
     $antes = $this->reader->superficies()[$site_key];
     $depois = $this->valoresDoFormulario($site_key, $form_state);
 
@@ -313,14 +343,16 @@ final class SurfaceEditForm extends FormBase {
    * Slug digitado, sempre em minúsculas e sem espaços nas bordas.
    */
   private function slugSubmetido(FormStateInterface $form_state): string {
-    return strtolower(trim((string) $form_state->getValue(['caminho', 'slug'])));
+    $valor = $form_state->getValue(['caminho', 'slug']);
+    return strtolower(trim(is_string($valor) ? $valor : ''));
   }
 
   /**
    * Host digitado, normalizado (minúsculas, sem espaços).
    */
   private function hostSubmetido(FormStateInterface $form_state): string {
-    return strtolower(trim((string) $form_state->getValue(['caminho', 'hostname'])));
+    $valor = $form_state->getValue(['caminho', 'hostname']);
+    return strtolower(trim(is_string($valor) ? $valor : ''));
   }
 
   /**
@@ -335,13 +367,16 @@ final class SurfaceEditForm extends FormBase {
    *   Valores normalizados da superfície.
    */
   private function valoresDoFormulario(string $site_key, FormStateInterface $form_state): array {
-    $modo = (string) $form_state->getValue('modo');
+    $modoRaw = $form_state->getValue('modo');
+    $modo = is_string($modoRaw) ? $modoRaw : '';
+    $tituloRaw = $form_state->getValue('titulo');
+    $titulo = is_string($tituloRaw) ? $tituloRaw : '';
     $ehMain = $site_key === DomainSurfaceMap::MAIN;
     return [
       'modo' => $ehMain ? 'subdominio' : $modo,
       'ativa' => $ehMain ? TRUE : (bool) $form_state->getValue('ativa'),
       'slug' => $modo === 'diretorio' ? $this->slugSubmetido($form_state) : '',
-      'titulo' => trim((string) $form_state->getValue('titulo')),
+      'titulo' => trim($titulo),
     ];
   }
 
