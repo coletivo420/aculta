@@ -57,10 +57,11 @@ final class NicknameRegistryKernelTest extends KernelTestBase {
 
     require_once dirname(__DIR__, 3) . '/aculta_user.install';
     $schema = aculta_user_schema();
-    self::assertIsArray($schema['aculta_user_nickname']);
+    $nicknameTable = $schema['aculta_user_nickname'] ?? NULL;
+    self::assertIsArray($nicknameTable);
     $this->container->get('database')->schema()->createTable(
       'aculta_user_nickname',
-      $schema['aculta_user_nickname'],
+      $nicknameTable,
     );
 
     FieldStorageConfig::create([

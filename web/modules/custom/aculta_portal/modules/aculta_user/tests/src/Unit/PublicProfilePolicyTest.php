@@ -16,6 +16,9 @@ class PublicProfilePolicyTest extends UnitTestCase {
 
   /**
    * Perfil com todos os itens ligados, para os cenários de exclusão.
+   *
+   * @param array<string, mixed> $override
+   * @return array<string, mixed>
    */
   private function perfilCompleto(array $override = []): array {
     return $override + [

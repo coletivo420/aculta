@@ -14,7 +14,10 @@ use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
 
 /**
- * Implements hook_schema(). */
+ * Implements hook_schema().
+ *
+ * @return array<string, array<string, mixed>>
+ */
 function aculta_user_schema(): array {
   $schema['aculta_user_agreement'] = [
     'description' => 'Append-only consent evidence; retained for the lifetime of the user account.',
@@ -67,23 +70,35 @@ function aculta_user_schema(): array {
 function aculta_user_update_10006(): string {
   $schema = \Drupal::database()->schema();
   if (!$schema->tableExists('aculta_user_agreement')) {
-    $schema->createTable('aculta_user_agreement', aculta_user_schema()['aculta_user_agreement']);
+    $schemaDef = aculta_user_schema();
+    $agreementTable = $schemaDef['aculta_user_agreement'] ?? NULL;
+    if (is_array($agreementTable)) {
+      $schema->createTable('aculta_user_agreement', $agreementTable);
+    }
   }
   if ($schema->tableExists('agreement')) {
-    $rows = \Drupal::database()->select('agreement', 'a')->fields('a', ['uid', 'type', 'agreed', 'agreed_date'])->execute();
+    $query = \Drupal::database()->select('agreement', 'a')->fields('a', ['uid', 'type', 'agreed', 'agreed_date'])->execute();
+    $rows = $query ? $query->fetchAll() : [];
     foreach ($rows as $row) {
-      $type = match ((string) $row->type) {
+      if (!is_object($row)) {
+        continue;
+      }
+      $rowType = is_scalar($row->type ?? NULL) ? (string) $row->type : '';
+      $type = match ($rowType) {
         'aculta_account_terms' => 'aculta_user_agreement_terms',
         'aculta_rastreamento' => 'aculta_user_agreement_email_tracking',
         'default' => 'aculta_user_agreement_default',
-        default => 'aculta_user_agreement_' . preg_replace('/[^a-z0-9_]+/', '_', (string) $row->type),
+        default => 'aculta_user_agreement_' . preg_replace('/[^a-z0-9_]+/', '_', $rowType),
       };
       // Só o aceite único entra no ledger (decisão 2026-10-21, docs/portal/ACEITE-UNICO.md). Demais tipos legados
       // não são migrados: o banco de teste não retém esse histórico.
       if ($type !== 'aculta_user_agreement_terms') {
         continue;
       }
-      \Drupal::service('aculta_user.aculta_user_agreement_ledger')->recordAcultaUserAgreement((int) $row->uid, $type, (int) $row->agreed ? 'accepted' : 'revoked', [], TRUE, (int) $row->agreed_date);
+      $uid = is_numeric($row->uid ?? NULL) ? (int) $row->uid : 0;
+      $agreed = !empty($row->agreed);
+      $agreedDate = is_numeric($row->agreed_date ?? NULL) ? (int) $row->agreed_date : 0;
+      \Drupal::service('aculta_user.aculta_user_agreement_ledger')->recordAcultaUserAgreement($uid, $type, $agreed ? 'accepted' : 'revoked', [], TRUE, $agreedDate);
     }
   }
   return (string) t('Created the append-only consent ledger and copied current Agreement records as incomplete legacy evidence.');
@@ -101,33 +116,53 @@ function aculta_user_update_10007(): string {
     if ($schema->indexExists('aculta_user_agreement', 'consent_lookup')) {
       $schema->dropIndex('aculta_user_agreement', 'consent_lookup');
     }
-    $schema->changeField('aculta_user_agreement', 'agreement', 'aculta_user_agreement_type', aculta_user_schema()['aculta_user_agreement']['fields']['aculta_user_agreement_type']);
-    $schema->addIndex('aculta_user_agreement', 'consent_lookup', ['uid', 'aculta_user_agreement_type', 'id'], aculta_user_schema()['aculta_user_agreement']);
+    $schemaDef = aculta_user_schema();
+    /** @var array<string, mixed> $agreementTable */
+    $agreementTable = $schemaDef['aculta_user_agreement'] ?? [];
+    /** @var array<string, mixed> $fieldSpec */
+    $fieldSpec = is_array($agreementTable['fields'] ?? NULL) && is_array($agreementTable['fields']['aculta_user_agreement_type'] ?? NULL)
+      ? $agreementTable['fields']['aculta_user_agreement_type']
+      : ['type' => 'varchar', 'length' => 64, 'not null' => TRUE];
+    $schema->changeField('aculta_user_agreement', 'agreement', 'aculta_user_agreement_type', $fieldSpec);
+    $schema->addIndex('aculta_user_agreement', 'consent_lookup', ['uid', 'aculta_user_agreement_type', 'id'], $agreementTable);
   }
   if ($schema->tableExists('aculta_user_agreement') && $schema->fieldExists('aculta_user_agreement', 'aculta_user_agreement_type')) {
     $previous = [];
-    foreach ($db->select('aculta_user_agreement', 'c')->fields('c')->orderBy('uid')->orderBy('id')->execute() as $row) {
-      $oldType = (string) $row->aculta_user_agreement_type;
+    $query = $db->select('aculta_user_agreement', 'c')->fields('c')->orderBy('uid')->orderBy('id')->execute();
+    $rows = $query ? $query->fetchAll() : [];
+    foreach ($rows as $row) {
+      if (!is_object($row)) {
+        continue;
+      }
+      $rowType = is_scalar($row->aculta_user_agreement_type ?? NULL) ? (string) $row->aculta_user_agreement_type : '';
+      $oldType = $rowType;
       $type = str_starts_with($oldType, 'aculta_user_agreement_') ? $oldType : match ($oldType) {
         'aculta_account_terms' => 'aculta_user_agreement_terms',
         'aculta_rastreamento' => 'aculta_user_agreement_email_tracking',
         'default' => 'aculta_user_agreement_default',
         default => 'aculta_user_agreement_' . preg_replace('/[^a-z0-9_]+/', '_', $oldType),
       };
-      $uid = (int) $row->uid;
+      $uid = is_numeric($row->uid ?? NULL) ? (int) $row->uid : 0;
+      $action = is_scalar($row->action ?? NULL) ? (string) $row->action : '';
+      $created = is_numeric($row->created ?? NULL) ? (int) $row->created : 0;
+      $ip = isset($row->ip_address) && (is_scalar($row->ip_address) || $row->ip_address instanceof \Stringable) ? (string) $row->ip_address : NULL;
+      $ua = isset($row->user_agent) && (is_scalar($row->user_agent) || $row->user_agent instanceof \Stringable) ? (string) $row->user_agent : NULL;
+      $docs = is_scalar($row->documents ?? NULL) ? (string) $row->documents : '';
+      $legacy = is_numeric($row->legacy ?? NULL) ? (int) $row->legacy : 0;
+      $rowId = is_numeric($row->id ?? NULL) ? (int) $row->id : 0;
       $values = [
         'uid' => $uid,
         'aculta_user_agreement_type' => $type,
-        'action' => (string) $row->action,
-        'created' => (int) $row->created,
-        'ip_address' => $row->ip_address === NULL ? NULL : (string) $row->ip_address,
-        'user_agent' => $row->user_agent === NULL ? NULL : (string) $row->user_agent,
-        'documents' => (string) $row->documents,
-        'legacy' => (int) $row->legacy,
+        'action' => $action,
+        'created' => $created,
+        'ip_address' => $ip,
+        'user_agent' => $ua,
+        'documents' => $docs,
+        'legacy' => $legacy,
         'previous_hash' => $previous[$uid] ?? '',
       ];
       $hash = hash_hmac('sha256', json_encode($values, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR), \Drupal::service('private_key')->get());
-      $db->update('aculta_user_agreement')->fields($values + ['record_hash' => $hash])->condition('id', (int) $row->id)->execute();
+      $db->update('aculta_user_agreement')->fields($values + ['record_hash' => $hash])->condition('id', $rowId)->execute();
       $previous[$uid] = $hash;
     }
   }
@@ -152,11 +187,20 @@ function aculta_user_update_10008(): string {
 function aculta_user_update_10009(): string {
   $db = \Drupal::database();
   $previous = [];
-  foreach ($db->select('aculta_user_agreement', 'c')->fields('c')->orderBy('uid')->orderBy('id')->execute() as $row) {
-    $uid = (int) $row->uid;
-    $documents = json_decode((string) $row->documents, TRUE, 512, JSON_THROW_ON_ERROR);
-    if ((int) $row->legacy === 1) {
-      $type = (string) $row->aculta_user_agreement_type;
+  $query = $db->select('aculta_user_agreement', 'c')->fields('c')->orderBy('uid')->orderBy('id')->execute();
+  $rows = $query ? $query->fetchAll() : [];
+  foreach ($rows as $row) {
+    if (!is_object($row)) {
+      continue;
+    }
+    $uid = is_numeric($row->uid ?? NULL) ? (int) $row->uid : 0;
+    $rawDocs = is_scalar($row->documents ?? NULL) ? (string) $row->documents : '{}';
+    /** @var array<string, mixed> $documents */
+    $documents = json_decode($rawDocs, TRUE, 512, JSON_THROW_ON_ERROR);
+    $legacy = is_numeric($row->legacy ?? NULL) ? (int) $row->legacy : 0;
+    $rowType = is_scalar($row->aculta_user_agreement_type ?? NULL) ? (string) $row->aculta_user_agreement_type : '';
+    if ($legacy === 1) {
+      $type = $rowType;
       $sourceType = match ($type) {
         'aculta_user_agreement_terms' => 'aculta_account_terms',
         'aculta_user_agreement_email_tracking' => 'aculta_rastreamento',
@@ -165,19 +209,24 @@ function aculta_user_update_10009(): string {
       };
       $documents['_legacy_source'] = ['contrib_type' => $sourceType, 'evidence' => 'last_state_only'];
     }
+    $action = is_scalar($row->action ?? NULL) ? (string) $row->action : '';
+    $created = is_numeric($row->created ?? NULL) ? (int) $row->created : 0;
+    $ip = isset($row->ip_address) && (is_scalar($row->ip_address) || $row->ip_address instanceof \Stringable) ? (string) $row->ip_address : NULL;
+    $ua = isset($row->user_agent) && (is_scalar($row->user_agent) || $row->user_agent instanceof \Stringable) ? (string) $row->user_agent : NULL;
+    $rowId = is_numeric($row->id ?? NULL) ? (int) $row->id : 0;
     $values = [
       'uid' => $uid,
-      'aculta_user_agreement_type' => (string) $row->aculta_user_agreement_type,
-      'action' => (string) $row->action,
-      'created' => (int) $row->created,
-      'ip_address' => $row->ip_address === NULL ? NULL : (string) $row->ip_address,
-      'user_agent' => $row->user_agent === NULL ? NULL : (string) $row->user_agent,
+      'aculta_user_agreement_type' => $rowType,
+      'action' => $action,
+      'created' => $created,
+      'ip_address' => $ip,
+      'user_agent' => $ua,
       'documents' => json_encode($documents, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR),
-      'legacy' => (int) $row->legacy,
+      'legacy' => $legacy,
       'previous_hash' => $previous[$uid] ?? '',
     ];
     $hash = hash_hmac('sha256', json_encode($values, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR), \Drupal::service('private_key')->get());
-    $db->update('aculta_user_agreement')->fields($values + ['record_hash' => $hash])->condition('id', (int) $row->id)->execute();
+    $db->update('aculta_user_agreement')->fields($values + ['record_hash' => $hash])->condition('id', $rowId)->execute();
     $previous[$uid] = $hash;
   }
   return (string) t('Recorded source type and scope on legacy evidence, then re-signed the account chains.');
@@ -189,9 +238,12 @@ function aculta_user_update_10010(): string {
   $db = \Drupal::database();
   $query = $db->select('aculta_user_agreement', 'a');
   $query->leftJoin('users_field_data', 'u', 'u.uid = a.uid');
-  $uids = $query->isNull('u.uid')->distinct()->fields('a', ['uid'])->execute()->fetchCol();
+  $queryResult = $query->isNull('u.uid')->distinct()->fields('a', ['uid'])->execute();
+  $uids = $queryResult ? $queryResult->fetchCol() : [];
   foreach ($uids as $uid) {
-    $db->delete('aculta_user_agreement')->condition('uid', (int) $uid)->execute();
+    if (is_numeric($uid)) {
+      $db->delete('aculta_user_agreement')->condition('uid', (int) $uid)->execute();
+    }
   }
   return (string) t('Removed legacy agreement evidence for accounts that no longer exist, according to the account-lifetime retention policy.');
 }
@@ -305,9 +357,14 @@ function aculta_user_update_10012(): string {
 function aculta_user_update_10013(): string {
   $schema = \Drupal::database()->schema();
   if (!$schema->tableExists('aculta_user_nickname')) {
-    $schema->createTable('aculta_user_nickname', aculta_user_schema()['aculta_user_nickname']);
+    $schemaDef = aculta_user_schema();
+    /** @var array<string, mixed> $nicknameTable */
+    $nicknameTable = $schemaDef['aculta_user_nickname'] ?? [];
+    $schema->createTable('aculta_user_nickname', $nicknameTable);
   }
-  $result = \Drupal::service('aculta_user.nickname_registry')->rebuild();
+  /** @var \Drupal\aculta_user\Account\NicknameRegistry $registry */
+  $registry = \Drupal::service('aculta_user.nickname_registry');
+  $result = $registry->rebuild();
   // Só contagens: nenhum apelido nem uid aparece no retorno.
   return (string) t('Built the public nickname index for @uids UIDs from @profiles role Profiles; reconciled @reconciled Profiles across @conflicts same-UID conflicts. Indexados: @uids; ignorados sem dono: @no_owner; ignorados vazios: @empty; órfãos com apelido (sem claim): @orphan; formato inválido (sem claim): @invalid.', [
     '@uids' => $result['uids'],
@@ -364,5 +421,5 @@ function _aculta_user_install_storage_definition(EntityDefinitionUpdateManagerIn
   if (!$definition instanceof FieldStorageDefinitionInterface) {
     throw new \RuntimeException(sprintf('Campo %s não possui definição de armazenamento instalável.', $fieldName));
   }
-  _aculta_user_install_storage_definition($manager, $fieldName, $entityTypeId, $definition);
+  $manager->installFieldStorageDefinition($fieldName, $entityTypeId, 'aculta_user', $definition);
 }

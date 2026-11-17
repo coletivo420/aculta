@@ -44,7 +44,7 @@ class AvatarResolver {
    * @param array<string, string> $attributes
    *   Atributos extras do elemento de avatar (por exemplo, data-portal-ui).
    *
-   * @return array|null
+   * @return array<string, mixed>|null
    *   Imagem cacheável ou NULL quando a fonte não está disponível.
    */
   public function build(?UserInterface $account, string $name, bool $showPhoto, CacheableMetadata $cacheability, array $attributes = []): ?array {
@@ -66,7 +66,7 @@ class AvatarResolver {
         if (is_string($uri) && ($showPhoto || $isPoolAvatar)) {
           $cacheability->addCacheableDependency($file);
           $avatar = $this->imageRenderer->build('avatar', $uri, $name, ['loading' => 'lazy']);
-          if ($avatar !== NULL) {
+          if (is_array($avatar)) {
             // Keep this renderable independently cache-safe. Consumers also
             // receive the metadata through $cacheability, but must not have to
             // remember to bubble it for the canonical picture.
@@ -74,8 +74,10 @@ class AvatarResolver {
               ->addCacheableDependency($account)
               ->addCacheableDependency($file)
               ->applyTo($avatar);
+            /** @var array<string, mixed> $avatar */
+            return $avatar;
           }
-          return $avatar;
+          return NULL;
         }
       }
     }
@@ -100,6 +102,7 @@ class AvatarResolver {
     if ($account !== NULL) {
       CacheableMetadata::createFromObject($account)->applyTo($avatar);
     }
+    /** @var array<string, mixed> $avatar */
     return $avatar;
   }
 

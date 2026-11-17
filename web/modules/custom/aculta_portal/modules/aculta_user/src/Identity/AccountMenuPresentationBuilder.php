@@ -25,7 +25,7 @@ final class AccountMenuPresentationBuilder {
   /**
    * Builds the signed-in user's display name and policy-approved avatar.
    *
-   * @return array{account_name: ?string, avatar: ?array, cacheability: \Drupal\Core\Cache\CacheableMetadata}
+   * @return array{account_name: ?string, avatar: ?array<string, mixed>, cacheability: \Drupal\Core\Cache\CacheableMetadata}
    *   Portal-owned display name, avatar, and cache metadata.
    */
   public function build(UserInterface $account): array {
@@ -60,8 +60,12 @@ final class AccountMenuPresentationBuilder {
       isset($visibleItems['foto']),
       $cacheability,
     );
-    if ($avatar !== NULL) {
+    if (is_array($avatar)) {
       $cacheability->applyTo($avatar);
+      /** @var array<string, mixed> $avatar */
+    }
+    else {
+      $avatar = NULL;
     }
 
     return [

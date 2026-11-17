@@ -83,7 +83,7 @@ final class AuthorCardBuilder {
    * @param array<array-key, mixed> $actions
    *   Ações renderizáveis fornecidas pelo chamador.
    *
-   * @return array|null
+   * @return array<string, mixed>|null
    *   Cacheable theme-hook array, or NULL if no public identity is available.
    */
   public function build(
@@ -107,7 +107,7 @@ final class AuthorCardBuilder {
    * The host must already have decided to show the account's display name,
    * such as the LMS class roster. The avatar is always the acervo one.
    *
-   * @return array<array-key, mixed>
+   * @return array<string, mixed>
    *   Render array do cartão de fallback.
    */
   public function buildFallback(UserInterface $account, string $size = 'sm', ?string $designation = NULL): array {
@@ -120,7 +120,7 @@ final class AuthorCardBuilder {
    * @param array<array-key, mixed> $actions
    *   Ações renderizáveis fornecidas pelo chamador.
    *
-   * @return array<array-key, mixed>
+   * @return array<string, mixed>
    *   Render array do cartão.
    */
   private function card(AuthorIdentity $identity, array $actions, ?string $designation, string $size): array {
@@ -142,6 +142,7 @@ final class AuthorCardBuilder {
       '#size' => in_array($size, ['sm', 'md', 'lg'], TRUE) ? $size : 'md',
     ];
     CacheableMetadata::createFromObject($identity)->applyTo($build);
+    /** @var array<string, mixed> $build */
     return $build;
   }
 
