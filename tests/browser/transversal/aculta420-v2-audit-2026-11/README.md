@@ -30,7 +30,7 @@ node tests/browser/transversal/aculta420-v2-audit-2026-11/audit.mjs
 
 Cada combinação verifica:
 
-1. canvas esperado (`#f2f7f0` no claro, `#171513` no escuro);
+1. canvas esperado (`#fff` no claro e `#171513` no escuro, conforme os tokens V2);
 2. ausência de overflow horizontal (`scrollWidth <= innerWidth + 1`);
 3. exatamente um `main` e no máximo um `h1`;
 4. contraste do cabeçalho institucional (mínimo 4,5:1);
