@@ -39,6 +39,7 @@ use Drupal\aculta_messenger\Entity\PrivateMessageThread;
 use Drupal\aculta_messenger\Entity\PrivateMessageThreadInterface;
 use Drupal\aculta_messenger\Service\PrivateMessageServiceInterface;
 use Drupal\aculta_messenger\Form\PrivateMessageFormValidator;
+use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Access\CsrfTokenGenerator;
 use Drupal\Component\Utility\Crypt;
 use Drupal\aculta_messenger\Service\MessengerCounts;
@@ -129,7 +130,11 @@ final class MessagesController extends ControllerBase {
   public function preview(): Response {
     $build = $this->newConversationAction() + $this->buildConversationList();
     // The native clear-history action remains a Drupal confirmation form.
-    $build['#attached']['library'][] = 'core/drupal.dialog.ajax';
+    $attached = isset($build['#attached']) && is_array($build['#attached']) ? $build['#attached'] : [];
+    $libraries = isset($attached['library']) && is_array($attached['library']) ? $attached['library'] : [];
+    $libraries[] = 'core/drupal.dialog.ajax';
+    $attached['library'] = $libraries;
+    $build['#attached'] = $attached;
     return $this->buildDrawerResponse($build, [
       'X-Aculta-Messages-Count' => (string) ($this->unreadThreadCounter->count() + count($this->friendshipManager->getIncomingRequests())),
     ]);
@@ -215,7 +220,8 @@ final class MessagesController extends ControllerBase {
     // A thread the member has just cleared has no messages for them, and Private Message does not let them open it:
     // the drawer goes back to the list, which shows what happened.
     if (($panel['cleared'] ?? FALSE) || !$private_message_thread->access('view', $this->account, TRUE)->isAllowed()) {
-      return $this->listWithMessage($panel['message'] ?? NULL);
+      $panelMsg = isset($panel['message']) && (is_scalar($panel['message']) || $panel['message'] instanceof \Stringable) ? (string) $panel['message'] : NULL;
+      return $this->listWithMessage($panelMsg);
     }
     return $this->conversationResponse($private_message_thread, $access, $panel);
   }
@@ -238,7 +244,10 @@ final class MessagesController extends ControllerBase {
     // The same rules as the native composer (block, friends-only, send limit), then the message is saved here.
     // The native form would redirect to its own page, which does not exist on this domain.
     $input = $this->requestStack->getCurrentRequest()?->request->all() ?? [];
-    $submittedText = $input['message'][0]['value'] ?? NULL;
+    $rawMessage = $input['message'] ?? NULL;
+    $submittedText = is_array($rawMessage) && isset($rawMessage[0]) && is_array($rawMessage[0])
+      ? ($rawMessage[0]['value'] ?? NULL)
+      : NULL;
     if (!is_string($submittedText)) {
       return new Response(
         '',
@@ -253,7 +262,8 @@ final class MessagesController extends ControllerBase {
     // The token of the reply form (the same check the Form API makes): a post without it is not accepted.
     // Core seeds a form's token with the placeholder of its form id (FormBuilder::doBuildForm).
     $seed = 'form_token_placeholder_' . Crypt::hashBase64('private_message_add_form');
-    if (!$this->csrfToken->validate((string) ($input['reply_token'] ?? ''), $seed)) {
+    $replyToken = isset($input['reply_token']) && is_scalar($input['reply_token']) ? (string) $input['reply_token'] : '';
+    if (!$this->csrfToken->validate($replyToken, $seed)) {
       $formState->setErrorByName('message', $this->translation->translate('A sessão expirou. Recarregue a página e tente de novo.'));
     }
     if ($text === '') {
@@ -263,7 +273,7 @@ final class MessagesController extends ControllerBase {
     $this->replyValidator->validateRateLimit($form, $formState);
     $panel = [];
     if ($formState->hasAnyErrors()) {
-      $panel['message'] = implode(' ', array_map(static fn($error) => (string) $error, array_values($formState->getErrors())));
+      $panel['message'] = implode(' ', array_map(static fn(mixed $error): string => is_scalar($error) || $error instanceof \Stringable ? (string) $error : '', array_values($formState->getErrors())));
     }
     else {
       $freshThread = $formState->get('thread');
@@ -322,7 +332,10 @@ final class MessagesController extends ControllerBase {
     }
     $this->submitRelationshipForm($state, $input);
     // The confirmation step is shown only right after "Limpar histórico" was pressed. Any other action ends it.
-    $trigger = (string) ($state->getTriggeringElement()['#name'] ?? '');
+    $triggeringElement = $state->getTriggeringElement();
+    $trigger = is_array($triggeringElement) && isset($triggeringElement['#name']) && is_scalar($triggeringElement['#name'])
+      ? (string) $triggeringElement['#name']
+      : '';
     return array_filter([
       'message' => $this->resultMessage($state),
       'clear_step' => $trigger === 'clear' ? $state->get('clear_step') : NULL,
@@ -357,7 +370,8 @@ final class MessagesController extends ControllerBase {
     }
     $result = $this->runMemberAction($private_message_thread, $user);
     if (!$private_message_thread->access('view', $this->account, TRUE)->isAllowed()) {
-      return $this->listWithMessage($result['message'] ?? NULL);
+      $resMsg = isset($result['message']) && (is_scalar($result['message']) || $result['message'] instanceof \Stringable) ? (string) $result['message'] : NULL;
+      return $this->listWithMessage($resMsg);
     }
     // The result belongs to the box that ran the action: that box is rebuilt open, with its message.
     return $this->conversationResponse($private_message_thread, $access, [], (int) $user->id(), $this->memberPanel($private_message_thread, $user, $result));
@@ -389,7 +403,7 @@ final class MessagesController extends ControllerBase {
 
   /**
    * The member must be another member of the thread: a box never acts on the current member or on a stranger. */
-  private function assertOtherMember(PrivateMessageThreadInterface $thread, UserInterface $user, $access): void {
+  private function assertOtherMember(PrivateMessageThreadInterface $thread, UserInterface $user, AccessResultInterface $access): void {
     /** @var int|string $userId */
     $userId = $user->id();
     if (!$access->isAllowed()
@@ -454,7 +468,8 @@ final class MessagesController extends ControllerBase {
   /**
    * The message the submit left for the member, or NULL when the action set none. */
   private function resultMessage(FormState $state): ?string {
-    return $state->get('message') === NULL ? NULL : (string) $state->get('message');
+    $msg = $state->get('message');
+    return is_scalar($msg) || $msg instanceof \Stringable ? (string) $msg : NULL;
   }
 
   /**
@@ -485,10 +500,12 @@ final class MessagesController extends ControllerBase {
         continue;
       }
       $box = OptionsDisclosure::build((string) $member->getDisplayName(), []);
-      $box['#attributes']['data-aculta-options-url'] = Url::fromRoute('aculta_messenger.member_options', [
+      $boxAttrs = isset($box['#attributes']) && is_array($box['#attributes']) ? $box['#attributes'] : [];
+      $boxAttrs['data-aculta-options-url'] = Url::fromRoute('aculta_messenger.member_options', [
         'private_message_thread' => $thread->id(),
         'user' => $member->id(),
       ])->toString();
+      $box['#attributes'] = $boxAttrs;
       $boxes[(int) $member->id()] = $box;
     }
     return $boxes;
@@ -527,7 +544,9 @@ final class MessagesController extends ControllerBase {
    */
   private function lazyOptionsDisclosure(PrivateMessageThreadInterface $thread): array {
     $box = OptionsDisclosure::build((string) $this->translation->translate('Opções'), []);
-    $box['#attributes']['data-aculta-options-url'] = Url::fromRoute('aculta_messenger.drawer_options', ['private_message_thread' => $thread->id()])->toString();
+    $boxAttrs = isset($box['#attributes']) && is_array($box['#attributes']) ? $box['#attributes'] : [];
+    $boxAttrs['data-aculta-options-url'] = Url::fromRoute('aculta_messenger.drawer_options', ['private_message_thread' => $thread->id()])->toString();
+    $box['#attributes'] = $boxAttrs;
     return $box;
   }
 
@@ -538,7 +557,7 @@ final class MessagesController extends ControllerBase {
    *
    * @param PrivateMessageThreadInterface $thread
    *   O valor informado para $thread.
-   * @param mixed $access
+   * @param AccessResultInterface $access
    *   O valor informado para $access.
    * @param array<array-key, mixed> $panel
    *   O valor informado para $panel.
@@ -547,7 +566,7 @@ final class MessagesController extends ControllerBase {
    * @param array<array-key, mixed> $actedPanel
    *   O valor informado para $actedPanel.
    */
-  private function conversationResponse(PrivateMessageThreadInterface $thread, $access, array $panel = [], ?int $actedUid = NULL, array $actedPanel = []): Response {
+  private function conversationResponse(PrivateMessageThreadInterface $thread, AccessResultInterface $access, array $panel = [], ?int $actedUid = NULL, array $actedPanel = []): Response {
     $threadBuild = $this->entityTypes->getViewBuilder('private_message_thread')->view($thread, 'full');
     $build = [
       '#type' => 'container',
@@ -793,7 +812,7 @@ final class MessagesController extends ControllerBase {
           if ($avatarAccess->isAllowed()) {
             $avatar = $this->avatarResolver->build(
               $sender,
-              $senderName,
+              (string) $senderName,
               TRUE,
               $cacheability,
               ['data-portal-ui' => 'messenger-sender-avatar-image'],
@@ -843,7 +862,13 @@ final class MessagesController extends ControllerBase {
       ];
       if ($senderBox['sender'] instanceof UserInterface) {
         $cacheability->addCacheableDependency($senderBox['sender']);
-        $box['avatar']['image']['#cache']['contexts'][] = 'user';
+        $avatarImage = $box['avatar']['image'];
+        $avatarCache = isset($avatarImage['#cache']) && is_array($avatarImage['#cache']) ? $avatarImage['#cache'] : [];
+        $avatarContexts = isset($avatarCache['contexts']) && is_array($avatarCache['contexts']) ? $avatarCache['contexts'] : [];
+        $avatarContexts[] = 'user';
+        $avatarCache['contexts'] = $avatarContexts;
+        $avatarImage['#cache'] = $avatarCache;
+        $box['avatar']['image'] = $avatarImage;
       }
       $items[] = $box;
     }
@@ -887,8 +912,9 @@ final class MessagesController extends ControllerBase {
     $filters = $this->noticeListFilter->normalize($this->requestStack->getCurrentRequest()?->query->all() ?? []);
     $resultado = $this->alertsBuild($filters, FALSE, TRUE);
     $resultadoBuild = is_array($resultado['build']) ? $resultado['build'] : [];
+    $contador = isset($resultado['contador']) && is_scalar($resultado['contador']) ? (string) $resultado['contador'] : '0';
     return $this->buildDrawerResponse($resultadoBuild, [
-      'X-Aculta-Alerts-Count' => (string) $resultado['contador'],
+      'X-Aculta-Alerts-Count' => $contador,
     ]);
   }
 
@@ -1001,12 +1027,13 @@ final class MessagesController extends ControllerBase {
       $personalNoticeLimit = $includeReadActions
         ? AvisoService::PERSONAL_NOTICE_LIST_LIMIT
         : self::PERSONAL_NOTICE_PREVIEW_LIMIT;
+      $readState = is_string($filters['leitura'] ?? NULL) && $filters['leitura'] !== '' ? (string) $filters['leitura'] : NULL;
       if ($includeReadActions && ($filters['origem'] === 'forum' || $globalOriginPaging)) {
         $forumPage = $this->avisos->listarDaPessoaPaginada(
           (int) $this->account->id(),
           $personalNoticeLimit,
           $forumOffset,
-          $filters['leitura'],
+          $readState,
         );
         $pessoais = $forumPage['items'];
         $forumHasNextPage = $forumPage['has_next'];
@@ -1016,15 +1043,16 @@ final class MessagesController extends ControllerBase {
         $pessoais = $this->avisos->listarDaPessoa(
           (int) $this->account->id(),
           $personalNoticeLimit,
-          $filters['leitura'],
+          $readState,
         );
       }
       foreach ($pessoais as $aviso) {
-        $nid = (int) $aviso->get('assunto_nid')->value;
-        $contador = (int) $aviso->get('contador_site')->value;
+        $nid = is_numeric($aviso->get('assunto_nid')->value) ? (int) $aviso->get('assunto_nid')->value : 0;
+        $contador = is_numeric($aviso->get('contador_site')->value) ? (int) $aviso->get('contador_site')->value : 0;
+        $titulo = is_scalar($aviso->get('titulo')->value) ? (string) $aviso->get('titulo')->value : '';
         // Aviso do Fórum: rótulo Lido/Não lido no topo da caixa, sem cor de tipo. Ler o tópico zera o contador.
         $items[] = $this->withNoticeFilterMetadata($this->noticeSummary(
-          (string) $aviso->get('titulo')->value,
+          $titulo,
           '',
           Url::fromRoute('entity.node.canonical', ['node' => $nid]),
           [],
@@ -1058,17 +1086,23 @@ final class MessagesController extends ControllerBase {
         $lido = isset($alertFlags['aculta_site_alert_read']);
         $rotulo = $this->readLabel(!$lido);
       }
+      $alertCreated = $alert->hasField('created') && !$alert->get('created')->isEmpty() && is_numeric($alert->get('created')->value)
+        ? (int) $alert->get('created')->value
+        : 0;
+      $alertLabel = is_scalar($alert->getLabel()) || $alert->getLabel() instanceof \Stringable ? (string) $alert->getLabel() : '';
+      $alertMessage = is_scalar($alert->getMessage()) || $alert->getMessage() instanceof \Stringable ? (string) $alert->getMessage() : '';
+      $alertSeverity = is_scalar($alert->getSeverity()) ? (string) $alert->getSeverity() : NULL;
       $items[] = $this->withNoticeFilterMetadata($this->noticeSummary(
-        (string) $alert->getLabel(),
-        $this->excerpt((string) $alert->getMessage()),
-        Url::fromRoute('aculta_messenger.alert_detail', ['site_alert' => $alert->id()]),
+        $alertLabel,
+        $this->excerpt($alertMessage),
+        Url::fromRoute('aculta_messenger.alert_detail', ['site_alert' => (string) $alert->id()]),
         $this->buildDismissalLink($dismissalFlag, $alert),
         NULL,
         FALSE,
-        NoticeType::fromSeverity($alert->getSeverity()),
+        NoticeType::fromSeverity($alertSeverity),
         $rotulo,
       ), 'alerta', $this->account->isAuthenticated() ? !$lido : NULL,
-        $alert->hasField('created') && !$alert->get('created')->isEmpty() ? (int) $alert->get('created')->value : 0);
+        $alertCreated);
     }
 
     $adapterFilters = $filters;
@@ -1081,22 +1115,29 @@ final class MessagesController extends ControllerBase {
     $alterContext = $this->account;
     $this->extensionModuleHandler?->alter('aculta_messenger_personal_notices', $items, $alterContext, $adapterFilters);
 
+    /** @var array<int, array<string, mixed>> $items */
     $alertPageState = $originPageStates['alerta'] ?? ($originPageState?->origin() === 'alerta' ? $originPageState : NULL);
     if ($alertPageState instanceof PersonalNoticePageState) {
       // Site Alert exposes the active set in one call. Slice only its source
       // group after applying the member's read-state filter.
-      $alertItems = array_values(array_filter($items, static fn(array $item): bool =>
-        ($item['#attributes']['data-aculta-notice-origin'] ?? NULL) === 'alerta'));
+      $alertItems = array_values(array_filter($items, static function (array $item): bool {
+        $attrs = isset($item['#attributes']) && is_array($item['#attributes']) ? $item['#attributes'] : [];
+        return ($attrs['data-aculta-notice-origin'] ?? NULL) === 'alerta';
+      }));
       $alertItems = $this->noticeListFilter->apply($alertItems, ['origem' => 'alerta', 'leitura' => $filters['leitura']]);
       $pageItems = $alertPageState->slice($alertItems, PersonalNoticePageState::PAGE_SIZE);
-      $items = array_values(array_filter($items, static fn(array $item): bool =>
-        ($item['#attributes']['data-aculta-notice-origin'] ?? NULL) !== 'alerta'));
+      $items = array_values(array_filter($items, static function (array $item): bool {
+        $attrs = isset($item['#attributes']) && is_array($item['#attributes']) ? $item['#attributes'] : [];
+        return ($attrs['data-aculta-notice-origin'] ?? NULL) !== 'alerta';
+      }));
       array_push($items, ...$pageItems);
     }
     if ($hasFilters) {
       $items = $this->noticeListFilter->apply($items, $filters);
       foreach ($items as &$item) {
-        $link = $item['link']['#element_attributes'] ?? NULL;
+        $link = is_array($item) && isset($item['link']) && is_array($item['link'])
+          ? ($item['link']['#element_attributes'] ?? NULL)
+          : NULL;
         if (!$link instanceof Attribute) {
           continue;
         }
@@ -1144,9 +1185,13 @@ final class MessagesController extends ControllerBase {
       'conquistas' => 'Conquistas',
     ];
     if ($globalOriginPaging) {
-      $filterQuery = array_filter($filters, static fn(string $value): bool => $value !== '');
+      /** @var array<string, string> $filterQuery */
+      $filterQuery = array_filter($filters, static fn(mixed $value): bool => is_string($value) && $value !== '');
       foreach ($globalPagerOriginLabels as $origin => $label) {
-        $pageState = $originPageStates[$origin];
+        $pageState = $originPageStates[$origin] ?? NULL;
+        if (!$pageState instanceof PersonalNoticePageState) {
+          continue;
+        }
         if ($pageState->offset() > 0) {
           $previousUrl = NoticePaginationUrlBuilder::globalPage(
             $originOffsets,
@@ -1177,7 +1222,8 @@ final class MessagesController extends ControllerBase {
     }
     if (!$globalOriginPaging && $includeReadActions && $filters['origem'] === 'forum'
       && ($forumOffset > 0 || $forumHasNextPage)) {
-      $filterQuery = array_filter($filters, static fn(string $value): bool => $value !== '');
+      /** @var array<string, string> $filterQuery */
+      $filterQuery = array_filter($filters, static fn(mixed $value): bool => is_string($value) && $value !== '');
       $pageSize = AvisoService::PERSONAL_NOTICE_LIST_LIMIT;
       if ($forumOffset > 0) {
         $previousUrl = NoticePaginationUrlBuilder::filteredPage(
@@ -1204,7 +1250,8 @@ final class MessagesController extends ControllerBase {
     if (!$globalOriginPaging && $originPageState instanceof PersonalNoticePageState
       && $originPageState->origin() !== 'forum'
       && ($originPageState->offset() > 0 || $originPageState->hasNext())) {
-      $filterQuery = array_filter($filters, static fn(string $value): bool => $value !== '');
+      /** @var array<string, string> $filterQuery */
+      $filterQuery = array_filter($filters, static fn(mixed $value): bool => is_string($value) && $value !== '');
       $pagerOriginLabel = [
         'comunicado' => 'Comunicados',
         'alerta' => 'Alertas do site',
@@ -1348,29 +1395,30 @@ final class MessagesController extends ControllerBase {
     string $label,
     ?Url $fallbackUrl,
   ): array {
-    $activeValue = $filters[$parameter] ?? '';
+    $activeValue = is_string($filters[$parameter] ?? NULL) ? (string) $filters[$parameter] : '';
     $summary = $activeValue !== '' && isset($options[$activeValue])
-      ? $label . ': ' . $options[$activeValue]
+      ? $label . ': ' . (is_scalar($options[$activeValue]) || $options[$activeValue] instanceof \Stringable ? (string) $options[$activeValue] : '')
       : $label;
     $links = [];
     foreach ($options as $value => $optionLabel) {
-      $query = array_filter($filters, static fn(string $filter): bool => $filter !== '');
-      if ($value === '') {
+      $valueKey = (string) $value;
+      $query = array_filter($filters, static fn(mixed $filter): bool => is_string($filter) && $filter !== '');
+      if ($valueKey === '') {
         unset($query[$parameter]);
       }
       else {
-        $query[$parameter] = $value;
+        $query[$parameter] = $valueKey;
       }
       $accountUrl = $fallbackUrl !== NULL ? clone $fallbackUrl : NULL;
       if ($accountUrl !== NULL) {
         $accountUrl->setOption('query', $query);
       }
       $fragmentUrl = Url::fromRoute('aculta_messenger.alerts_preview', [], ['query' => $query]);
-      $link = PortalLinkElement::build((string) $optionLabel, $accountUrl ?? $fragmentUrl, [
+      $link = PortalLinkElement::build(is_scalar($optionLabel) || $optionLabel instanceof \Stringable ? (string) $optionLabel : '', $accountUrl ?? $fragmentUrl, [
         'data-aculta-drawer-filter' => '',
         'data-aculta-drawer-filter-url' => $fragmentUrl->toString(),
       ]);
-      if ($activeValue === $value) {
+      if ($activeValue === $valueKey && ($link['#element_attributes'] ?? NULL) instanceof Attribute) {
         $link['#element_attributes']->setAttribute('aria-current', 'page');
         $link['#element_attributes']->addClass('is-active');
       }
@@ -1486,6 +1534,9 @@ final class MessagesController extends ControllerBase {
         }
         // The drawer lists a summary; the full notice opens in the same drawer (noticeDetail).
         // A persistent notice is not dismissed (no "×"): it stays in the list, and its own kind of card tells it apart.
+        $noticeTypeVal = $node->hasField('field_aculta_notice_type') && !$node->get('field_aculta_notice_type')->isEmpty() && is_scalar($node->get('field_aculta_notice_type')->value)
+          ? (string) $node->get('field_aculta_notice_type')->value
+          : NULL;
         $items[] = $this->withNoticeFilterMetadata($this->noticeSummary(
           (string) $node->label(),
           $this->excerpt($this->noticeText($node)),
@@ -1493,7 +1544,7 @@ final class MessagesController extends ControllerBase {
           [],
           $read ? (string) $this->translation->translate('Lido') : (string) $this->translation->translate('Não lido'),
           TRUE,
-          NoticeType::normalize($node->hasField('field_aculta_notice_type') && !$node->get('field_aculta_notice_type')->isEmpty() ? (string) $node->get('field_aculta_notice_type')->value : NULL),
+          NoticeType::normalize($noticeTypeVal),
         ), 'comunicado', !$read, (int) $node->getCreatedTime());
         if ($pageState?->origin() !== 'comunicado' && count($items) >= $limit) {
           break 2;
@@ -1593,13 +1644,15 @@ final class MessagesController extends ControllerBase {
    *   O resultado da operação.
    */
   private function withNoticeFilterMetadata(array $item, string $origin, ?bool $unread, int $recency = 0): array {
-    $item['#attributes']['data-aculta-notice-origin'] = $origin;
+    $attrs = isset($item['#attributes']) && is_array($item['#attributes']) ? $item['#attributes'] : [];
+    $attrs['data-aculta-notice-origin'] = $origin;
     if ($unread !== NULL) {
-      $item['#attributes']['data-aculta-notice-read'] = $unread ? 'unread' : 'read';
+      $attrs['data-aculta-notice-read'] = $unread ? 'unread' : 'read';
     }
     if ($recency > 0) {
-      $item['#attributes']['data-aculta-notice-recency'] = (string) $recency;
+      $attrs['data-aculta-notice-recency'] = (string) $recency;
     }
+    $item['#attributes'] = $attrs;
     return $item;
   }
 
@@ -1651,7 +1704,7 @@ final class MessagesController extends ControllerBase {
    */
   private function backToNoticesLink(): array {
     $filters = $this->noticeListFilter->normalize($this->requestStack->getCurrentRequest()?->query->all() ?? []);
-    $query = array_filter($filters, static fn(string $value): bool => $value !== '');
+    $query = array_filter($filters, static fn(mixed $value): bool => is_string($value) && $value !== '');
     return PortalLinkElement::build(
       $this->translation->translate('← Todos os avisos'),
       Url::fromRoute('aculta_messenger.alerts_preview', [], ['query' => $query]),
@@ -1681,7 +1734,7 @@ final class MessagesController extends ControllerBase {
         '#alert' => [
           'severity' => $site_alert->getSeverity(),
           'label' => $site_alert->getLabel(),
-          'message' => ['#type' => 'markup', '#markup' => Xss::filter($site_alert->getMessage())],
+          'message' => ['#type' => 'markup', '#markup' => Xss::filter(is_scalar($site_alert->getMessage()) || $site_alert->getMessage() instanceof \Stringable ? (string) $site_alert->getMessage() : '')],
         ],
       ],
     ];
@@ -1749,9 +1802,11 @@ final class MessagesController extends ControllerBase {
     }
     $link = $flag->getLinkTypePlugin()->getAsFlagLink($flag, $entity, 'default');
     $link['#title'] = ['#markup' => '×'];
-    $link['#attributes']['data-aculta-alert-dismiss'] = 'true';
-    $link['#attributes']['aria-label'] = (string) $this->translation->translate('Dispensar aviso');
-    $link['#attributes']['title'] = (string) $this->translation->translate('Dispensar aviso');
+    $attrs = isset($link['#attributes']) && is_array($link['#attributes']) ? $link['#attributes'] : [];
+    $attrs['data-aculta-alert-dismiss'] = 'true';
+    $attrs['aria-label'] = (string) $this->translation->translate('Dispensar aviso');
+    $attrs['title'] = (string) $this->translation->translate('Dispensar aviso');
+    $link['#attributes'] = $attrs;
     return $link;
   }
 
