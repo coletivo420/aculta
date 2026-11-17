@@ -54,7 +54,10 @@ final class DonationCampaign extends ConfigEntityBase {
   protected string $end = '';
 
   /**
-   * Valores sugeridos em reais, em ordem de exibição. */
+   * Valores sugeridos em reais, em ordem de exibição.
+   *
+   * @var array<int, int|string>
+   */
   protected array $amounts = [];
 
   /**
@@ -91,7 +94,7 @@ final class DonationCampaign extends ConfigEntityBase {
    *   Valores sugeridos em reais.
    */
   public function getAmounts(): array {
-    return array_map('intval', $this->amounts);
+    return array_map(static fn(mixed $v): int => (int) $v, $this->amounts);
   }
 
   /**

@@ -14,6 +14,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Field formatter to display a donation amount.
+ *
+ * @extends \Drupal\Core\Field\FormatterBase<\Drupal\Core\Field\FieldItemListInterface<\Drupal\Core\Field\FieldItemInterface>>
  */
 #[FieldFormatter(
   id: 'commerce_donation_summary_formatter',
@@ -40,6 +42,13 @@ class DonationSummaryFormatter extends FormatterBase implements ContainerFactory
 
   /**
    * {@inheritdoc}
+   *
+   * @param string $plugin_id
+   * @param mixed $plugin_definition
+   * @param array<mixed> $settings
+   * @param string $label
+   * @param string $view_mode
+   * @param array<mixed> $third_party_settings
    */
   final public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, $label, $view_mode, array $third_party_settings) {
     // @see https://phpstan.org/blog/solving-phpstan-error-unsafe-usage-of-new-static
@@ -48,16 +57,27 @@ class DonationSummaryFormatter extends FormatterBase implements ContainerFactory
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $configuration
+   * @param string $plugin_id
+   * @param mixed $plugin_definition
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    \assert($configuration['field_definition'] instanceof FieldDefinitionInterface);
+    $settings = isset($configuration['settings']) && is_array($configuration['settings']) ? $configuration['settings'] : [];
+    $thirdParty = isset($configuration['third_party_settings']) && is_array($configuration['third_party_settings']) ? $configuration['third_party_settings'] : [];
+    $rawLabel = $configuration['label'] ?? '';
+    $rawViewMode = $configuration['view_mode'] ?? '';
+    $label = is_scalar($rawLabel) ? (string) $rawLabel : '';
+    $viewMode = is_scalar($rawViewMode) ? (string) $rawViewMode : '';
     $instance = new static(
       $plugin_id,
       $plugin_definition,
       $configuration['field_definition'],
-      $configuration['settings'],
-      $configuration['label'],
-      $configuration['view_mode'],
-      $configuration['third_party_settings']
+      $settings,
+      $label,
+      $viewMode,
+      $thirdParty
     );
     $instance->store = $container->get('commerce_store.current_store');
     $instance->currencyFormatter = $container->get('commerce_price.currency_formatter');
@@ -66,8 +86,11 @@ class DonationSummaryFormatter extends FormatterBase implements ContainerFactory
 
   /**
    * {@inheritdoc}
+   *
+   * @param \Drupal\Core\Field\FieldItemListInterface<\Drupal\Core\Field\FieldItemInterface> $items
+   * @return array<int, array<string, mixed>>
    */
-  public function viewElements(FieldItemListInterface $items, $langcode) {
+  public function viewElements(FieldItemListInterface $items, $langcode): array {
     $elements = [];
 
     foreach ($items as $delta => $item) {
@@ -83,18 +106,19 @@ class DonationSummaryFormatter extends FormatterBase implements ContainerFactory
    * @param \Drupal\Core\Field\FieldItemInterface $item
    *   One field item.
    *
-   * @return string
+   * @return \Drupal\Core\StringTranslation\TranslatableMarkup
    *   The textual output generated.
    */
-  protected function viewValue(FieldItemInterface $item) {
+  protected function viewValue(FieldItemInterface $item): TranslatableMarkup {
     if (!$item instanceof PriceItem) {
       throw new \UnexpectedValueException('DonationLevelFormatter called on incompatible field type');
     }
     $donationAmount = $item->toPrice();
     $isMonthly = FALSE;
     $entity = $item->getEntity();
-    if ($entity->hasField('field_gift_type') && !$entity->field_gift_type->isEmpty()) {
-      $isMonthly = $entity->field_gift_type->first()->value == 'recurring';
+    if ($entity->hasField('field_gift_type') && !$entity->get('field_gift_type')->isEmpty()) {
+      $giftItem = $entity->get('field_gift_type')->first();
+      $isMonthly = $giftItem !== NULL && $giftItem->get('value')->getValue() === 'recurring';
     }
     $formatOptions = [
       'currency_display' => 'symbol',

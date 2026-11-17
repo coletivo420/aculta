@@ -16,14 +16,18 @@ class DonationSecuredRedirectResponse extends SecuredRedirectResponse {
 
   /**
    * {@inheritdoc}
+   *
+   * @param string $url
    */
   public function setTargetUrl($url): static {
-    if (!$this->isSafe($url)) {
-      throw new \InvalidArgumentException(sprintf('It is not safe to redirect to %s', $url));
+    $urlString = (string) $url;
+    if (!$this->isSafe($urlString)) {
+      throw new \InvalidArgumentException(sprintf('It is not safe to redirect to %s', $urlString));
     }
-    $redirect = Url::fromUri($url);
+    $redirect = Url::fromUri($urlString);
     $buildRedirect = RedirectResponse::setTargetUrl($redirect->toString());
-    $this->setContent($buildRedirect->getContent());
+    $content = $buildRedirect->getContent();
+    $this->setContent($content !== FALSE ? $content : '');
     return $this;
   }
 

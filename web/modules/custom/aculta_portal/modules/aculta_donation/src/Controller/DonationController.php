@@ -4,6 +4,8 @@ namespace Drupal\aculta_donation\Controller;
 
 use Drupal\commerce_cart\CartSession;
 use Drupal\commerce_cart\CartSessionInterface;
+use Drupal\commerce_order\Entity\OrderInterface;
+use Drupal\commerce_order\Entity\OrderItemInterface;
 use Drupal\commerce_checkout\CheckoutOrderManagerInterface;
 use Drupal\aculta_donation\Form\DonationSettingsForm;
 use Drupal\aculta_donation\NewOrder;
@@ -147,7 +149,7 @@ class DonationController implements ContainerInjectionInterface {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container) {
+  public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('form_builder'),
       $container->get('current_user'),
@@ -168,10 +170,10 @@ class DonationController implements ContainerInjectionInterface {
    * @param \Drupal\Core\Routing\RouteMatchInterface $route_match
    *   The route match.
    *
-   * @return \Drupal\aculta_donation\Routing\DonationSecuredRedirectResponse
+   * @return \Drupal\Core\Routing\TrustedRedirectResponse
    *   Redirect to an order specific flow.
    */
-  public function frontController(RouteMatchInterface $route_match) {
+  public function frontController(RouteMatchInterface $route_match): TrustedRedirectResponse {
     $config = $this->configFactory->get('aculta_donation.settings');
     $orderIds = $this->cartSession->getCartIds();
     // If the requested step is not available, both this controller and the
@@ -180,12 +182,22 @@ class DonationController implements ContainerInjectionInterface {
     $stepId = 'placeholder';
     if (empty($orderIds)) {
       // Create an order to get the flow plugin.
-      $order = $this->newOrders->get('single', $config->get('donate_item_type') ?? 'donation');
+      $rawItemType = $config->get('donate_item_type');
+      $itemTypeStr = is_string($rawItemType) ? $rawItemType : 'donation';
+      $order = $this->newOrders->get('single', $itemTypeStr);
       $order->save();
-      $this->cartSession->addCartId($order->id());
+      $this->cartSession->addCartId((int) $order->id());
     }
     else {
-      $order = $this->entityTypeManager->getStorage('commerce_order')->load(reset($orderIds));
+      $loadedOrder = $this->entityTypeManager->getStorage('commerce_order')->load(reset($orderIds));
+      if (!$loadedOrder instanceof OrderInterface) {
+        $rawItemType = $config->get('donate_item_type');
+        $itemTypeStr = is_string($rawItemType) ? $rawItemType : 'donation';
+        $loadedOrder = $this->newOrders->get('single', $itemTypeStr);
+        $loadedOrder->save();
+        $this->cartSession->addCartId((int) $loadedOrder->id());
+      }
+      $order = $loadedOrder;
     }
     // Always start at the first available step.
     $checkoutFlow = $this->checkoutOrderManager->getCheckoutFlow($order);
@@ -193,10 +205,10 @@ class DonationController implements ContainerInjectionInterface {
     // There are no order parameters so CheckoutFlowBase misses the order.
     if ($checkoutFlowPlugin instanceof DonationCheckoutFlow) {
       $checkoutFlowPlugin->conditionalOrderValue($order);
-      $stepId = $this->checkoutOrderManager->getCheckoutStepId($order);
+      $stepId = (string) $this->checkoutOrderManager->getCheckoutStepId($order);
     }
     $parameters = [
-      'commerce_order' => $order->id(),
+      'commerce_order' => (string) $order->id(),
       'step' => $stepId,
     ];
     return $this->constructStepRedirect($parameters);
@@ -208,18 +220,19 @@ class DonationController implements ContainerInjectionInterface {
    * @param \Drupal\Core\Routing\RouteMatchInterface $route_match
    *   The route match.
    *
-   * @return array|\Drupal\aculta_donation\Routing\DonationSecuredRedirectResponse
+   * @return array<mixed>|\Drupal\Core\Routing\TrustedRedirectResponse
    *   The render form.
    */
   public function nextStep(RouteMatchInterface $route_match) {
     /** @var \Drupal\commerce_order\Entity\OrderInterface $order */
     $order = $route_match->getParameter('commerce_order');
-    $requestedStepId = $route_match->getParameter('step');
+    $rawRequestedStep = $route_match->getParameter('step');
+    $requestedStepId = is_string($rawRequestedStep) ? $rawRequestedStep : NULL;
     $parameters = [
-      'commerce_order' => $order->id(),
+      'commerce_order' => (string) $order->id(),
     ];
-    $stepId = $this->checkoutOrderManager->getCheckoutStepId($order, $requestedStepId);
-    if ($requestedStepId != $stepId) {
+    $stepId = (string) $this->checkoutOrderManager->getCheckoutStepId($order, $requestedStepId);
+    if ($requestedStepId !== $stepId) {
       $parameters['step'] = $stepId;
       return $this->constructStepRedirect($parameters);
     }
@@ -227,7 +240,7 @@ class DonationController implements ContainerInjectionInterface {
     $checkout_flow = $this->checkoutOrderManager->getCheckoutFlow($order);
     $checkout_flow_plugin = $checkout_flow->getPlugin();
 
-    return $this->formBuilder->getForm($checkout_flow_plugin, $stepId);
+    return (array) $this->formBuilder->getForm($checkout_flow_plugin, $stepId);
   }
 
   /**
@@ -236,10 +249,10 @@ class DonationController implements ContainerInjectionInterface {
    * @param \Drupal\Core\Routing\RouteMatchInterface $route_match
    *   The route match.
    *
-   * @return \Drupal\aculta_donation\Routing\DonationSecuredRedirectResponse
+   * @return \Drupal\Core\Routing\TrustedRedirectResponse
    *   Our own redirection into the flow with order prepared.
    */
-  public function quickDonation(RouteMatchInterface $route_match) {
+  public function quickDonation(RouteMatchInterface $route_match): TrustedRedirectResponse {
     // Create an order.
     // Go directly to payment..
     $stepId = 'payment';
@@ -249,22 +262,23 @@ class DonationController implements ContainerInjectionInterface {
     $orderItems = $order->getItems();
     // Should only be one.
     $donation = reset($orderItems);
-    $donationAmount = $donation->field_donation_amount;
-    $amount = $route_match->getParameter('amount');
-    $donationAmount->setValue([
-      'number' => $amount,
-      'currency_code' => $this->currentStore->getStore()
-        ->getDefaultCurrencyCode(),
-    ]);
-    $donation->save();
-    $this->cartSession->addCartId($order->id());
+    if ($donation instanceof OrderItemInterface && $donation->hasField('field_donation_amount')) {
+      $amount = $route_match->getParameter('amount');
+      $currencyCode = $this->currentStore->getStore()->getDefaultCurrencyCode();
+      $donation->get('field_donation_amount')->setValue([
+        'number' => $amount,
+        'currency_code' => $currencyCode !== '' ? $currencyCode : 'BRL',
+      ]);
+      $donation->save();
+    }
+    $this->cartSession->addCartId((int) $order->id());
     $checkoutFlow = $this->checkoutOrderManager->getCheckoutFlow($order);
     $checkoutFlowPlugin = $checkoutFlow->getPlugin();
     if ($checkoutFlowPlugin instanceof DonationCheckoutFlow) {
       $checkoutFlowPlugin->conditionalOrderValue($order);
     }
     $parameters = [
-      'commerce_order' => $order->id(),
+      'commerce_order' => (string) $order->id(),
       'step' => $stepId,
     ];
     return $this->constructStepRedirect($parameters);
@@ -295,21 +309,26 @@ class DonationController implements ContainerInjectionInterface {
     $details_check = AccessResult::allowed();
     if ($route_match->getRouteName() === 'aculta_donation.donation_controller_formPage') {
       // Check existing order characteristics.
-      /** @var \Drupal\commerce_order\Entity\OrderInterface $order */
+      /** @var \Drupal\commerce_order\Entity\OrderInterface|null $order */
       $order = $route_match->getParameter('commerce_order');
-      if ($order->getState()->value == 'canceled') {
+      if ($order === NULL) {
+        return AccessResult::forbidden();
+      }
+      $stateItem = $order->getState();
+      if ($stateItem->getId() === 'canceled') {
         return AccessResult::forbidden()->addCacheableDependency($order);
-      }// The user can check out only their own non-empty orders.
+      }
+      // The user can check out only their own non-empty orders.
       if ($account->isAuthenticated()) {
-        $customer_check = $account->id() == $order->getCustomerId();
+        $customer_check = (string) $account->id() === (string) $order->getCustomerId();
       }
       else {
         $active_cart = $this->cartSession->hasCartId(
-          $order->id(),
+          (int) $order->id(),
           CartSession::ACTIVE
         );
         $completed_cart = $this->cartSession->hasCartId(
-          $order->id(),
+          (int) $order->id(),
           CartSession::COMPLETED
         );
         $customer_check = $active_cart || $completed_cart;
@@ -331,19 +350,19 @@ class DonationController implements ContainerInjectionInterface {
   /**
    * Utility method to build a redirect.
    *
-   * @param array $parameters
+   * @param array<string, mixed> $parameters
    *   The url parameters.
    *
-   * @return \Drupal\aculta_donation\Routing\DonationSecuredRedirectResponse
+   * @return \Drupal\Core\Routing\TrustedRedirectResponse
    *   The prepared redirect.
    */
-  protected function constructStepRedirect(array $parameters) {
+  protected function constructStepRedirect(array $parameters): TrustedRedirectResponse {
     // Etapas de checkout (Commerce) no domínio principal; o apoio só escolhe o valor.
     $url = $this->purposes->routeUrl(SiteKey::Main, 'aculta_donation.donation_controller_formPage', $parameters)
       ?? Url::fromRoute('aculta_donation.donation_controller_formPage', $parameters);
-    $query = $this->requestStack->getCurrentRequest()->query;
-    if ($query->has('donate_return')) {
-      $url->setOption('query', ['donate_return' => $query->get('donate_return')]);
+    $request = $this->requestStack->getCurrentRequest();
+    if ($request !== NULL && $request->query->has('donate_return')) {
+      $url->setOption('query', ['donate_return' => $request->query->get('donate_return')]);
     }
     return new TrustedRedirectResponse($url->toString());
   }

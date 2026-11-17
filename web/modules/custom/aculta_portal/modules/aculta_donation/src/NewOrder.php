@@ -80,23 +80,22 @@ class NewOrder {
    *
    * @throws \Drupal\Core\TypedData\Exception\ReadOnlyException
    */
-  public function get(string $giftType = 'single', string $orderItemTypeId = 'donation') {
-    /** @var \Drupal\commerce_order\Entity\Order $order */
+  public function get(string $giftType = 'single', string $orderItemTypeId = 'donation'): OrderInterface {
     $itemType = $this->entityTypeManager->getStorage('commerce_order_item_type')->load($orderItemTypeId);
     $orderType = 'default';
     if ($itemType instanceof OrderItemType) {
-      $type = $itemType->get('orderType');
-      $orderType = $type ?? $orderType;
+      $orderType = $itemType->getOrderTypeId();
     }
     // Doação mensal vira assinatura: pedido próprio, com o workflow recorrente e o fluxo de autorização.
     if ($giftType === 'recurring') {
       $orderType = 'assinatura';
     }
+    $store = $this->currentStore->getStore();
     $order = Order::create(
       [
         'type' => $orderType,
         'state' => 'draft',
-        'store_id' => $this->currentStore->getStore()->id(),
+        'store_id' => $store->id(),
         'uid' => $this->user->id(),
         'cart' => TRUE,
       ]
@@ -127,10 +126,12 @@ class NewOrder {
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    * @throws \Drupal\Core\TypedData\Exception\ReadOnlyException
    */
-  public function addDonationItem(OrderInterface $order, int $price = 0, string $giftType = 'single', string $orderItemTypeId = 'donation') {
-    $price = new Price(
-      $price,
-      $this->currentStore->getStore()->getDefaultCurrencyCode()
+  public function addDonationItem(OrderInterface $order, int $price = 0, string $giftType = 'single', string $orderItemTypeId = 'donation'): OrderInterface {
+    $store = $this->currentStore->getStore();
+    $currencyCode = $store->getDefaultCurrencyCode();
+    $priceObj = new Price(
+      (string) $price,
+      $currencyCode !== '' ? $currencyCode : 'BRL'
     );
     // Change method of getting order item type.
     $itemType = $this->entityTypeManager->getStorage('commerce_order_item_type')->load($orderItemTypeId);
@@ -142,8 +143,10 @@ class NewOrder {
         ]
       );
       /** @var \Drupal\commerce_order\Entity\OrderItem $donation */
-      $donation->setUnitPrice($price);
-      $donation->field_gift_type->setValue($giftType);
+      $donation->setUnitPrice($priceObj);
+      if ($donation->hasField('field_gift_type')) {
+        $donation->set('field_gift_type', $giftType);
+      }
       $this->prepopulate($donation);
       $order->addItem($donation);
     }
@@ -157,8 +160,11 @@ class NewOrder {
    * @param \Drupal\commerce_order\Entity\OrderItem $donation
    *   Our OrderItems are donations.
    */
-  public function prepopulate(OrderItem $donation) {
-    foreach ($this->currentRequest->query as $key => $value) {
+  public function prepopulate(OrderItem $donation): void {
+    if ($this->currentRequest === NULL) {
+      return;
+    }
+    foreach ($this->currentRequest->query->all() as $key => $value) {
       if ($donation->hasField('field_' . $key)) {
         $donation->set('field_' . $key, $value);
       }

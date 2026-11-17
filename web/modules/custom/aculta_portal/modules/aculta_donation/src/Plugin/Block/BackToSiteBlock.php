@@ -50,6 +50,10 @@ class BackToSiteBlock extends BlockBase implements ContainerFactoryPluginInterfa
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $configuration
+   * @param string $plugin_id
+   * @param mixed $plugin_definition
    */
   final public function __construct(array $configuration, $plugin_id, $plugin_definition) {
     // @see https://phpstan.org/blog/solving-phpstan-error-unsafe-usage-of-new-static
@@ -58,6 +62,10 @@ class BackToSiteBlock extends BlockBase implements ContainerFactoryPluginInterfa
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $configuration
+   * @param string $plugin_id
+   * @param mixed $plugin_definition
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
     $instance = new static($configuration, $plugin_id, $plugin_definition);
@@ -69,15 +77,17 @@ class BackToSiteBlock extends BlockBase implements ContainerFactoryPluginInterfa
 
   /**
    * {@inheritdoc}
+   *
+   * @return array<string, mixed>
    */
-  public function build() {
-    $config = $this->getConfiguration();
-    $query = $this->requestStack->getCurrentRequest()->query;
-    if (!$query->has('donate_return')) {
+  public function build(): array {
+    $request = $this->requestStack->getCurrentRequest();
+    $donateReturn = $request?->query->get('donate_return');
+    if ($donateReturn === NULL || $donateReturn === '') {
       $url = Url::fromRoute('<front>');
     }
     else {
-      $url = Url::fromUri('internal:' . $query->get('donate_return'));
+      $url = Url::fromUri('internal:' . (string) $donateReturn);
     }
 
     return [
