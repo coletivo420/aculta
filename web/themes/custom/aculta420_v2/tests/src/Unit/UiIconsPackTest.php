@@ -80,7 +80,7 @@ final class UiIconsPackTest extends UnitTestCase {
     $extensions = $this->parseYamlFile($root . '/config/sync/core.extension.yml');
     $modules = $extensions['module'] ?? NULL;
     self::assertIsArray($modules);
-    foreach (['ui_icons', 'ui_icons_field', 'ui_icons_menu', 'ui_icons_patterns', 'ui_icons_picker'] as $module) {
+    foreach (['ui_icons', 'ui_icons_field', 'ui_icons_menu', 'ui_icons_patterns', 'ui_icons_picker', 'ui_icons_popover'] as $module) {
       self::assertArrayHasKey($module, $modules);
       self::assertSame(0, $modules[$module]);
     }
@@ -101,6 +101,61 @@ final class UiIconsPackTest extends UnitTestCase {
       self::assertFalse($menuIconSettings['icon_required'] ?? NULL);
       self::assertTrue($menuIconSettings['icon_position'] ?? NULL);
     }
+
+    $formDisplay = $this->parseYamlFile($root . '/config/sync/core.entity_form_display.node.wiki_entry.default.yml');
+    $formModules = $formDisplay['dependencies']['module'] ?? NULL;
+    self::assertIsArray($formModules);
+    self::assertContains('ui_icons_field', $formModules);
+    self::assertContains('ui_icons_popover', $formModules);
+    $formContent = $formDisplay['content'] ?? NULL;
+    self::assertIsArray($formContent);
+    $referenceWidget = $formContent['field_wiki_references'] ?? NULL;
+    self::assertIsArray($referenceWidget);
+    self::assertSame('icon_link_widget', $referenceWidget['type'] ?? NULL);
+    $widgetSettings = $referenceWidget['settings'] ?? NULL;
+    self::assertIsArray($widgetSettings);
+    self::assertSame('icon_popover', $widgetSettings['icon_selector'] ?? NULL);
+    self::assertSame($allowed_packs, $widgetSettings['allowed_icon_pack'] ?? NULL);
+    self::assertSame(20, $widgetSettings['max_result'] ?? NULL);
+    self::assertFalse($widgetSettings['icon_required'] ?? NULL);
+    self::assertFalse($widgetSettings['icon_position'] ?? NULL);
+
+    $viewDisplay = $this->parseYamlFile($root . '/config/sync/core.entity_view_display.node.wiki_entry.default.yml');
+    $viewModules = $viewDisplay['dependencies']['module'] ?? NULL;
+    self::assertIsArray($viewModules);
+    self::assertContains('ui_icons_field', $viewModules);
+    $thirdPartySettings = $viewDisplay['third_party_settings'] ?? NULL;
+    self::assertIsArray($thirdPartySettings);
+    $layoutBuilder = $thirdPartySettings['layout_builder'] ?? NULL;
+    self::assertIsArray($layoutBuilder);
+    $sections = $layoutBuilder['sections'] ?? NULL;
+    self::assertIsArray($sections);
+    $referenceFormatter = NULL;
+    foreach ($sections as $section) {
+      if (!is_array($section)) {
+        continue;
+      }
+      $components = $section['components'] ?? NULL;
+      if (!is_array($components)) {
+        continue;
+      }
+      foreach ($components as $component) {
+        if (!is_array($component)) {
+          continue;
+        }
+        $configuration = $component['configuration'] ?? NULL;
+        if (!is_array($configuration) || ($configuration['id'] ?? NULL) !== 'field_block:node:wiki_entry:field_wiki_references') {
+          continue;
+        }
+        $referenceFormatter = $configuration['formatter'] ?? NULL;
+        break 2;
+      }
+    }
+    self::assertIsArray($referenceFormatter);
+    self::assertSame('icon_link_formatter', $referenceFormatter['type'] ?? NULL);
+    $formatterSettings = $referenceFormatter['settings'] ?? NULL;
+    self::assertIsArray($formatterSettings);
+    self::assertSame('before', $formatterSettings['icon_display'] ?? NULL);
   }
 
   /**

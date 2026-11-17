@@ -17,6 +17,7 @@ dependencies:
     - link
     - text
     - user
+    - ui_icons_field
 third_party_settings:
   layout_builder:
     enabled: true
@@ -116,7 +117,7 @@ third_party_settings:
               context_mapping:
                 entity: layout_builder.entity
               formatter:
-                type: link
+                type: icon_link_formatter
                 label: above
                 settings:
                   trim_length: 80
@@ -124,6 +125,8 @@ third_party_settings:
                   url_plain: false
                   rel: nofollow
                   target: _blank
+                  icon_settings: {  }
+                  icon_display: before
                 third_party_settings: {  }
             weight: 5
             additional: {  }

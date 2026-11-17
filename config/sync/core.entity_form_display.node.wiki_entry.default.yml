@@ -16,6 +16,8 @@ dependencies:
     - link
     - path
     - text_with_summary
+    - ui_icons_field
+    - ui_icons_popover
 id: node.wiki_entry.default
 targetEntityType: node
 bundle: wiki_entry
@@ -74,12 +76,22 @@ content:
       placeholder: ''
     third_party_settings: {  }
   field_wiki_references:
-    type: link_default
+    type: icon_link_widget
     weight: 5
     region: content
     settings:
       placeholder_url: 'https://'
       placeholder_title: 'Título da fonte'
+      allowed_icon_pack:
+        - aculta_phosphor_regular
+        - aculta_phosphor_duotone
+        - aculta_brocolis
+      icon_selector: icon_popover
+      result_format: grid
+      max_result: 20
+      icon_required: false
+      icon_position: false
+      show_settings: false
     third_party_settings: {  }
   field_wiki_related:
     type: entity_reference_autocomplete
