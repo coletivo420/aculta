@@ -100,13 +100,14 @@ final class CartCheckoutRoutesCharacterizationTest extends UnitTestCase {
   /**
    * Resumo comparável das três rotas do Commerce.
    *
-   * @return array<string, array<string, mixed>>
+   * @return array<string, array{path: string, requirements: array<int|string, mixed>}>
    *   Caminho e requisitos de cada rota do Commerce.
    */
   private function resumo(RouteCollection $colecao): array {
     $resumo = [];
     foreach (['commerce_cart.page', 'commerce_checkout.checkout', 'commerce_checkout.form'] as $nome) {
       $rota = $colecao->get($nome);
+      $this->assertInstanceOf(\Symfony\Component\Routing\Route::class, $rota);
       $resumo[$nome] = ['path' => $rota->getPath(), 'requirements' => $rota->getRequirements()];
     }
     return $resumo;

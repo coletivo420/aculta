@@ -41,6 +41,13 @@ final class BlockDomainConfigFormHooks {
 
   /**
    * Adds the domain selector before domain_config_ui builds its toggle.
+   *
+   * @param array<string, mixed> $form
+   *   The form array.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current form state.
+   * @param string $formId
+   *   The form ID.
    */
   #[Hook('form_alter', order: new OrderBefore(['domain_config_ui', 'domain_config_entity_ui']))]
   public function formAlter(array &$form, FormStateInterface $form_state, string $formId): void {
@@ -64,7 +71,7 @@ final class BlockDomainConfigFormHooks {
 
     $options = ['' => $this->t('- Global (sem override) -')];
     foreach ($domains as $domain) {
-      if ($domain instanceof DomainInterface && !$domain->isDefault()) {
+      if (!$domain->isDefault()) {
         $options[$domain->id()] = $domain->label();
       }
     }
@@ -98,7 +105,7 @@ final class BlockDomainConfigFormHooks {
         '#type' => 'html_tag',
         '#tag' => 'p',
         '#value' => $this->t('Editando o override de @domain. As alterações não afetam o valor global nem os demais domínios.', [
-          '@domain' => $domains[$selected]->label(),
+          '@domain' => (string) $domains[$selected]->label(),
         ]),
         '#weight' => -10,
       ];
@@ -114,7 +121,9 @@ final class BlockDomainConfigFormHooks {
   private function blockConfigNames(FormStateInterface $formState): array {
     $formObject = $formState->getFormObject();
     if ($formObject instanceof BlockListBuilder) {
-      return $this->configStorage->listAll('block.block.');
+      /** @var string[] $list */
+      $list = $this->configStorage->listAll('block.block.');
+      return $list;
     }
     if ($formObject instanceof EntityForm) {
       $entity = $formObject->getEntity();
@@ -127,6 +136,11 @@ final class BlockDomainConfigFormHooks {
 
   /**
    * Redirects to the current block form with the selected domain in the URL.
+   *
+   * @param array<string, mixed> $form
+   *   The form array.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current form state.
    */
   public function switchSubmit(array &$form, FormStateInterface $form_state): void {
     $domainId = $form_state->getValue(['aculta_domain_config', 'domain'], '');

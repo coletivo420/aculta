@@ -101,10 +101,13 @@ final class BlockOverrideReadKernelTest extends KernelTestBase {
     $context->setEditingDomain('test_domain', ['block.block.aculta_test_block']);
 
     $block = $storage->loadOverrideFree('aculta_test_block');
+    self::assertInstanceOf(\Drupal\Core\Entity\EntityInterface::class, $block);
     self::assertSame('Override', $block->label());
 
     $base = $this->container->get('config.storage')
       ->read('block.block.aculta_test_block');
+    self::assertIsArray($base);
+    self::assertIsArray($base['settings'] ?? NULL);
     self::assertSame('Base', $base['settings']['label']);
   }
 

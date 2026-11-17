@@ -37,9 +37,13 @@ final class BlockDomainConfigFormHooksTest extends UnitTestCase {
     $hooks->switchSubmit($form, $formState);
 
     $redirect = $formState->getRedirect();
+    self::assertInstanceOf(\Drupal\Core\Url::class, $redirect);
     self::assertSame('<current>', $redirect->getRouteName());
-    self::assertSame('/admin', $redirect->getOptions()['query']['destination']);
-    self::assertSame('new', $redirect->getOptions()['query'][DomainConfigSwitcherInterface::QUERY_ARG]);
+    $options = $redirect->getOptions();
+    self::assertIsArray($options['query'] ?? NULL);
+    $query = $options['query'];
+    self::assertSame('/admin', $query['destination'] ?? NULL);
+    self::assertSame('new', $query[DomainConfigSwitcherInterface::QUERY_ARG] ?? NULL);
   }
 
   /**
@@ -55,8 +59,12 @@ final class BlockDomainConfigFormHooksTest extends UnitTestCase {
 
     $hooks->switchSubmit($form, $formState);
 
-    $query = $formState->getRedirect()->getOptions()['query'];
-    self::assertSame('blocks', $query['destination']);
+    $redirect = $formState->getRedirect();
+    self::assertInstanceOf(\Drupal\Core\Url::class, $redirect);
+    $options = $redirect->getOptions();
+    self::assertIsArray($options['query'] ?? NULL);
+    $query = $options['query'];
+    self::assertSame('blocks', $query['destination'] ?? NULL);
     self::assertArrayNotHasKey(DomainConfigSwitcherInterface::QUERY_ARG, $query);
   }
 

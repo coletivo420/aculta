@@ -20,6 +20,11 @@ final class BlockDomainOverrideConfigEntityConverter extends BaseDomainOverrideC
 
   /**
    * {@inheritdoc}
+   *
+   * @param mixed $value
+   * @param mixed $definition
+   * @param string $name
+   * @param array<string, mixed> $defaults
    */
   public function convert($value, $definition, $name, array $defaults): mixed {
     $entityTypeId = $this->getEntityTypeFromDefaults($definition, $name, $defaults);
@@ -34,12 +39,15 @@ final class BlockDomainOverrideConfigEntityConverter extends BaseDomainOverrideC
     if (!$storage instanceof DomainAwareConfigEntityStorageInterface) {
       return parent::convert($value, $definition, $name, $defaults);
     }
-    $configName = $entityType->getConfigPrefix() . '.' . $value;
+    $valStr = is_scalar($value) ? (string) $value : '';
+    $configName = $entityType->getConfigPrefix() . '.' . $valStr;
     if ($this->manager->getActiveEditingDomainId()
-      && $this->manager->isAllowedConfiguration([$configName])
-      && $this->manager->isRegisteredConfiguration([$configName])) {
+      && $this->manager->isAllowedConfiguration($configName)
+      && $this->manager->isRegisteredConfiguration($configName)) {
       // loadOverrideFree() aciona o trait que dobra o override do domínio.
-      return $storage->loadOverrideFree($value);
+      if (method_exists($storage, 'loadOverrideFree')) {
+        return $storage->loadOverrideFree($valStr);
+      }
     }
     return parent::convert($value, $definition, $name, $defaults);
   }

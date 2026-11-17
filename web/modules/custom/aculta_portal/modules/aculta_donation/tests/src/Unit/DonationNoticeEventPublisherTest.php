@@ -22,6 +22,8 @@ use Drupal\state_machine\Event\WorkflowTransitionEvent;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 
+use PHPUnit\Framework\MockObject\MockObject;
+
 /**
  * Covers the two distinct Donation facts published to Messenger.
  */
@@ -93,8 +95,11 @@ final class DonationNoticeEventPublisherTest extends TestCase {
   }
 
   /**
-   * Creates a Donation order owned by an active registered user. */
-  private function donationOrder(): OrderInterface {
+   * Creates a Donation order owned by an active registered user.
+   *
+   * @return \Drupal\commerce_order\Entity\OrderInterface&\PHPUnit\Framework\MockObject\MockObject
+   */
+  private function donationOrder(): OrderInterface&MockObject {
     $item = $this->createMock(OrderItemInterface::class);
     $item->method('bundle')->willReturn('donation');
     $order = $this->createMock(OrderInterface::class);
