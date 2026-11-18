@@ -389,3 +389,24 @@ PHPStan nível 10 canônico produziu JSON válido com zero erros não suprimidos
 os guards `check` e `diff --include-worktree --analysis` passaram. Revisão
 independente do diff não encontrou achados. Runtime/browser não foi usado;
 esta correção não foi publicada nem sincronizada.
+
+## Fixture temporal do JSON-LD — 2026-11-18
+
+O `EventStructuredDataKernelTest` tinha duas datas de fixture fixas em
+`2026-11-15`. Na execução de 2026-11-18, o controller omitiu corretamente
+eventos que já não tinham datas futuras, deixando `html_head` vazio. Tornei os
+dois intervalos relativos a `datetime.time` do Kernel, como outros testes da
+classe já fazem. Os testes `testStructuredDataJsonLdOutput` e
+`testPrivateOrganizerIdentityIsOmittedFromEventPresentation` passaram: **2
+testes, 74 assertions**. PHP lint, PHPCS Drupal e `git diff --check` passaram.
+
+Uma nova execução integral de `--testsuite kernel` foi iniciada após as
+correções de Eventos, mas a sessão de captura expirou depois de mais de 26
+minutos; o processo terminou sem resumo recuperável e o arquivo de log ficou
+vazio. Classificação: **INCOMPLETA**, sem atualizar os totais ou o status P01.
+
+PHPStan global desta worktree terminou com exit 1 por um `return.type` em
+`EventOrganizationLifecycleKernelTest::queueItem()`, arquivo que também tinha
+alteração local fora deste recorte. Não atribuo essa ocorrência ao fixture
+JSON-LD. O gate PHPStan desta rodada é **FAIL**, não PASS. P01 continua
+**FAIL** até nova execução Kernel completa e os gates globais ficarem verdes.
