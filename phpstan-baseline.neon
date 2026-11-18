@@ -20303,12 +20303,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_events/tests/src/Kernel/EventStructuredDataKernelTest.php
 
 		-
-			rawMessage: 'Method Drupal\Tests\aculta_events\Kernel\EventStructuredDataKernelTest::extractJsonLd() should return array<string, mixed>|null but returns mixed.'
-			identifier: return.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/tests/src/Kernel/EventStructuredDataKernelTest.php
-
-		-
 			rawMessage: 'Offset ''@graph'' might not exist on array<string, mixed>|null.'
 			identifier: offsetAccess.notFound
 			count: 1

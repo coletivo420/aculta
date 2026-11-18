@@ -405,8 +405,11 @@ correções de Eventos, mas a sessão de captura expirou depois de mais de 26
 minutos; o processo terminou sem resumo recuperável e o arquivo de log ficou
 vazio. Classificação: **INCOMPLETA**, sem atualizar os totais ou o status P01.
 
-PHPStan global desta worktree terminou com exit 1 por um `return.type` em
-`EventOrganizationLifecycleKernelTest::queueItem()`, arquivo que também tinha
-alteração local fora deste recorte. Não atribuo essa ocorrência ao fixture
-JSON-LD. O gate PHPStan desta rodada é **FAIL**, não PASS. P01 continua
-**FAIL** até nova execução Kernel completa e os gates globais ficarem verdes.
+Uma primeira análise desta worktree retornou exit 1 por um `return.type` em
+`EventOrganizationLifecycleKernelTest::queueItem()` durante alteração local
+simultânea. Na reexecução canônica após a normalização do helper JSON-LD, o
+PHPStan nível 10 passou com JSON válido e zero erros não suprimidos; os guards
+`check` e `diff --include-worktree --analysis` passaram. A dívida congelada do
+arquivo `EventStructuredDataKernelTest.php` foi reduzida de 104 para 103
+ocorrências, removendo somente a entrada `return.type` corrigida. P01 continua
+**FAIL** porque falta um resumo recuperável da suíte Kernel completa atual.
