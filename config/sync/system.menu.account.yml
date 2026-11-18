@@ -8,7 +8,7 @@ third_party_settings:
     result_format: grid
     max_result: 20
     icon_required: false
-    icon_position: true
+    icon_position: false
     allowed_icon_pack:
       - aculta_phosphor_regular
       - aculta_phosphor_duotone
