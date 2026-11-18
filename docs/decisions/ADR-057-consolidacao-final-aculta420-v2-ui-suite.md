@@ -1,24 +1,24 @@
 # ADR-057 - Consolidação final do ACULTA420 V2, UI Suite, qualidade visual e performance
 
-**Status:** EM IMPLEMENTAÇÃO — PARCIAL (2026-11-17).
-**Data:** 2026-11-17  
+**Status:** EM IMPLEMENTAÇÃO — PARCIAL (2026-11-18).
+**Data:** 2026-11-18
 **Branch alvo:** dev  
 **Baseline auditada:** 5c496047509f43831de2a6996cbc6ba95d867749  
 **Tema:** aculta420_v2, versão 1.5.0; versão 1.6.0 apenas como candidata de consolidação, sem alteração agora.  
 **Documentos predecessores:** ADR-054, ADR-055 e ADR-056.  
 **Auditoria vinculada:** [ACULTA420-V2-AUDITORIA-ADR057-2026-11-17.md](../architecture/ACULTA420-V2-AUDITORIA-ADR057-2026-11-17.md).
 
-### Estado da execução em 2026-11-17
+### Estado da execução em 2026-11-18
 
 | Frente | Estado comprovado |
 | --- | --- |
 | P00 / F0 | Baseline estática e GET público passaram; Runtime Sync está BLOCKED por `RX`, drift e checkout sujo. |
-| P01 / F1 | PHPStan/Unit/qualidade passaram na PR #335. Comparação do run da PR com seu commit base confirmou os mesmos erros/falhas nos cinco shards Kernel concluídos; shard 2 cancelado em ambos. São falhas preexistentes, mas P01 continua FAIL até o baseline Kernel ficar verde. Comparação visual com snapshots divergiu. |
+| P01 / F1 | PHPStan/Unit/qualidade passaram na PR #335. A suíte Kernel local integral recuperada terminou FAIL (1.168 testes, 23.856 assertions, 56 erros, 3 falhas); correções focais de Eventos passaram, mas não confirmam suíte verde. P01 continua FAIL. Snapshots visuais divergiram. |
 | P02 / RN-05 | PARCIAL: contratos locais de `site_key` e GET nos dez hosts passaram; autenticação, ACL, sessão, cache e US-14 permanecem DEFERRED. |
 | P03 | Fase ainda não iniciada: preparada fundação de presets nomeados no `layout-grid` para documentos e catálogo Commerce; fluxo editorial completo, permissões, persistência/exportação, Runtime e homologação multidomínio continuam sem evidência. |
-| P04 | PARCIAL: packs/configuração alinhados; faltam validação editorial autenticada, seleção de região e renderização/acessibilidade nos consumidores reais. |
+| P04 | PARCIAL: packs/configuração alinhados; Brócolis duotone confirmado no asset/story e teste focal. Mapeamento de estilos para regiões foi proposto para revisão, sem aplicação; validação editorial autenticada e renderização/acessibilidade nos consumidores reais continuam pendentes. |
 | P05 | BLOCKED_UPSTREAM: dependências sem cobertura de segurança/declaração Drupal 12; nenhum enable/import realizado. |
-| P06 | PARCIAL: smoke público multihost passou 700/700 verificações; snapshots, aceite humano, teclado, zoom e perfis autenticados pendentes. |
+| P06 | PARCIAL: smoke público multihost passou 700/700 verificações; comparação com snapshots falhou em 10/10. Runner de navegação passou 8/100 nos dez domínios: shells observados divergem das pré-condições do runner e MAIN falhou teclado Enter/Escape. Aceite humano, zoom e perfis autenticados pendentes. |
 | P07 | PARCIAL: baseline Firefox/Chromium em dez hosts, incluindo calendário MAIN, login Conta e catálogo Loja; CLS Chromium móvel excede `0,1` no MAIN. Controles causais em `/` e `/calendario` confirmam contribuição da classe tardia `navigation-bar.has-js`; bootstrap antecipado e fontes locais foram implementados na worktree e passaram gates estáticos, mas a validação no Runtime, budgets e dados de campo continuam pendentes. |
 | P08/P09 | Não iniciados; dependem dos gates anteriores e aceite final. |
 
