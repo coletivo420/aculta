@@ -16,8 +16,10 @@ use Drupal\aculta420_v2\Hook\PortalUiHooks;
 
 /**
  * Implements hook_preprocess().
+ *
+ * @phpstan-param array<string, mixed> $variables
+ *   Variables supplied by the active theme hook.
  */
 function aculta420_v2_preprocess(array &$variables): void {
   PortalUiHooks::preprocessVariables($variables);
 }
-

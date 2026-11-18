@@ -27,8 +27,8 @@ final class SavedContentItem {
    *   Timestamp when item was flagged.
    * @param string $category
    *   Item category ('saved' or 'following').
-   * @param string|null $purpose
-   *   Resolved domain purpose.
+   * @param string|null $siteKey
+   *   Resolved domain site key.
    */
   public function __construct(
     public readonly string $entityTypeId,
@@ -37,7 +37,7 @@ final class SavedContentItem {
     public readonly string $flagId,
     public readonly int $createdTime,
     public readonly string $category,
-    public readonly ?string $purpose = NULL,
+    public readonly ?string $siteKey = NULL,
   ) {}
 
   /**
@@ -102,8 +102,8 @@ final class SavedContentItem {
   /**
    * Gets resolved purpose.
    */
-  public function getPurpose(): ?string {
-    return $this->purpose;
+  public function getSiteKey(): ?string {
+    return $this->siteKey;
   }
 
   /**

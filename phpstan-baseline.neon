@@ -55983,18 +55983,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/MarleyController.php
 
 		-
-			rawMessage: 'Parameter #1 $string of function htmlspecialchars expects string, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/SavedContentController.php
-
-		-
-			rawMessage: Value assigned to variable $itemsList is never read before being overwritten.
-			identifier: assign.overwritten
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/SavedContentController.php
-
-		-
 			rawMessage: Cannot access offset 'content' on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 2
@@ -64929,84 +64917,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/src/Sales/SalesReportQuery.php
 
 		-
-			rawMessage: Cannot access property $created on mixed.
-			identifier: property.nonObject
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Saved/SavedContentQuery.php
-
-		-
-			rawMessage: Cannot access property $entity_id on mixed.
-			identifier: property.nonObject
-			count: 2
-			path: web/modules/custom/aculta_portal/src/Saved/SavedContentQuery.php
-
-		-
-			rawMessage: Cannot access property $entity_type on mixed.
-			identifier: property.nonObject
-			count: 2
-			path: web/modules/custom/aculta_portal/src/Saved/SavedContentQuery.php
-
-		-
-			rawMessage: Cannot access property $flag_id on mixed.
-			identifier: property.nonObject
-			count: 2
-			path: web/modules/custom/aculta_portal/src/Saved/SavedContentQuery.php
-
-		-
-			rawMessage: 'Cannot call method fetchAll() on Drupal\Core\Database\StatementInterface|null.'
-			identifier: method.nonObject
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Saved/SavedContentQuery.php
-
-		-
-			rawMessage: 'Cannot call method fetchField() on Drupal\Core\Database\StatementInterface|null.'
-			identifier: method.nonObject
-			count: 3
-			path: web/modules/custom/aculta_portal/src/Saved/SavedContentQuery.php
-
-		-
-			rawMessage: Cannot cast mixed to int.
-			identifier: cast.int
-			count: 4
-			path: web/modules/custom/aculta_portal/src/Saved/SavedContentQuery.php
-
-		-
-			rawMessage: Instanceof between Drupal\Core\Entity\EntityInterface and Drupal\Core\Entity\EntityInterface will always evaluate to true.
-			identifier: instanceof.alwaysTrue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Saved/SavedContentQuery.php
-
-		-
-			rawMessage: 'Parameter #1 $entityTypeId of class Drupal\aculta_portal\Saved\SavedContentItem constructor expects string, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Saved/SavedContentQuery.php
-
-		-
-			rawMessage: 'Parameter #1 $ids of method Drupal\Core\Entity\EntityStorageInterface::loadMultiple() expects array<int|string>|null, list given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Saved/SavedContentQuery.php
-
-		-
-			rawMessage: 'Parameter #2 $entityId of class Drupal\aculta_portal\Saved\SavedContentItem constructor expects int|string, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Saved/SavedContentQuery.php
-
-		-
-			rawMessage: 'Parameter #4 $flagId of class Drupal\aculta_portal\Saved\SavedContentItem constructor expects string, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Saved/SavedContentQuery.php
-
-		-
-			rawMessage: Possibly invalid array key type mixed.
-			identifier: offsetAccess.invalidOffset
-			count: 5
-			path: web/modules/custom/aculta_portal/src/Saved/SavedContentQuery.php
-
-		-
 			rawMessage: 'Method Drupal\aculta_portal\Saved\SavedContentQueryResult::getCacheContexts() should return list<string> but returns array<string>.'
 			identifier: return.type
 			count: 1
@@ -67485,12 +67395,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/tests/src/Unit/Status/PhpExtensionRequirementsTest.php
 
 		-
-			rawMessage: 'Function aculta420_v2_preprocess() has parameter $variables with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/themes/custom/aculta420_v2/aculta420_v2.theme
-
-		-
 			rawMessage: Cannot cast mixed to string.
 			identifier: cast.string
 			count: 1
@@ -67879,36 +67783,6 @@ parameters:
 			identifier: offsetAccess.invalidOffset
 			count: 6
 			path: web/themes/custom/aculta420_v2/src/Hook/PagePresentationHooks.php
-
-		-
-			rawMessage: 'Cannot call method value() on Drupal\Core\Template\AttributeValueBase|null.'
-			identifier: method.nonObject
-			count: 1
-			path: web/themes/custom/aculta420_v2/src/Hook/PortalUiHooks.php
-
-		-
-			rawMessage: Cannot cast mixed to string.
-			identifier: cast.string
-			count: 1
-			path: web/themes/custom/aculta420_v2/src/Hook/PortalUiHooks.php
-
-		-
-			rawMessage: 'Method Drupal\aculta420_v2\Hook\PortalUiHooks::applyVariableAttributes() has parameter $variables with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/themes/custom/aculta420_v2/src/Hook/PortalUiHooks.php
-
-		-
-			rawMessage: 'Method Drupal\aculta420_v2\Hook\PortalUiHooks::preprocessContainer() has parameter $variables with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/themes/custom/aculta420_v2/src/Hook/PortalUiHooks.php
-
-		-
-			rawMessage: 'Method Drupal\aculta420_v2\Hook\PortalUiHooks::preprocessVariables() has parameter $variables with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/themes/custom/aculta420_v2/src/Hook/PortalUiHooks.php
 
 		-
 			rawMessage: Cannot access an offset on mixed.

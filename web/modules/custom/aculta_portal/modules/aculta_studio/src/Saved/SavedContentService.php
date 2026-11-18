@@ -44,7 +44,7 @@ class SavedContentService {
    *   flag_id: string,
    *   created: int,
    *   category: string,
-   *   purpose: string|null
+   *   site_key: string|null
    *   }>
    *   Authorized saved items, ordered newest first.
    */
@@ -75,7 +75,7 @@ class SavedContentService {
         'flag_id' => $item->getFlagId(),
         'created' => $item->getCreatedTime(),
         'category' => $item->getCategory(),
-        'purpose' => $item->getPurpose(),
+        'site_key' => $item->getSiteKey(),
       ];
     }
 
