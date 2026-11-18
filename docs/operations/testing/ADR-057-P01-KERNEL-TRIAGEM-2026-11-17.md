@@ -398,7 +398,8 @@ eventos que já não tinham datas futuras, deixando `html_head` vazio. Tornei os
 dois intervalos relativos a `datetime.time` do Kernel, como outros testes da
 classe já fazem. Os testes `testStructuredDataJsonLdOutput` e
 `testPrivateOrganizerIdentityIsOmittedFromEventPresentation` passaram: **2
-testes, 74 assertions**. PHP lint, PHPCS Drupal e `git diff --check` passaram.
+testes, 74 assertions**; a classe inteira passou: **6 testes, 162
+assertions**. PHP lint, PHPCS Drupal e `git diff --check` passaram.
 
 Uma nova execução integral de `--testsuite kernel` foi iniciada após as
 correções de Eventos, mas a sessão de captura expirou depois de mais de 26

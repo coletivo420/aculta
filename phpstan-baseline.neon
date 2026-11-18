@@ -15130,17 +15130,7 @@ parameters:
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_events/src/Access/EventOrganizationAccessControlHandler.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_events\Access\EventOrganizationAccessControlHandler::checkCreateAccess() has parameter $context with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/src/Access/EventOrganizationAccessControlHandler.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_events\Access\EventPermissionPolicy::getAssignableRoles() should return array<string, string> but returns array<int|string, string>.'
-			identifier: return.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/src/Access/EventPermissionPolicy.php
 
 		-
 			rawMessage: 'Parameter #1 $array of function array_intersect expects an array of values castable to string, array<mixed, mixed> given.'
@@ -19936,11 +19926,6 @@ parameters:
 			count: 9
 			path: web/modules/custom/aculta_portal/modules/aculta_events/tests/src/Kernel/EventOrganizationLifecycleKernelTest.php
 
-		-
-			rawMessage: 'Method Drupal\Tests\aculta_events\Kernel\EventOrganizationLifecycleKernelTest::queueItem() should return object{data: array<string, mixed>} but returns object.'
-			identifier: return.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/tests/src/Kernel/EventOrganizationLifecycleKernelTest.php
 
 		-
 			rawMessage: 'Parameter #1 $array of function array_filter expects array, mixed given.'
