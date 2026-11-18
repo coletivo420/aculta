@@ -110,8 +110,8 @@ final class ContributionLifecycle {
       }
 
       $settings = $this->configFactory->get('aculta_cgu.settings');
-      $floodLimit = max(1, (int) ($settings->get('flood_limit') ?? self::FLOOD_LIMIT));
-      $floodWindow = max(1, (int) ($settings->get('flood_window') ?? self::FLOOD_WINDOW));
+      $floodLimit = max(1, is_numeric($settings->get('flood_limit')) ? (int) $settings->get('flood_limit') : self::FLOOD_LIMIT);
+      $floodWindow = max(1, is_numeric($settings->get('flood_window')) ? (int) $settings->get('flood_window') : self::FLOOD_WINDOW);
       if (!$this->flood->isAllowed(self::FLOOD_EVENT, $floodLimit, $floodWindow, (string) $accountId)) {
         throw new TooManyRequestsHttpException($floodWindow, 'The temporary proposal limit has been reached.');
       }
@@ -189,21 +189,26 @@ final class ContributionLifecycle {
     if (!$proposal instanceof Contribution || (int) $proposal->getRevisionId() !== $expectedRevision) {
       throw new ConflictHttpException('The proposal changed while it was being reviewed.');
     }
-    $adapter = $this->adapters->get((string) $proposal->get('source')->value);
-    $intent = (string) $proposal->get('intent')->value;
+    $sourceVal = $proposal->get('source')->value;
+    $sourceStr = is_scalar($sourceVal) ? (string) $sourceVal : '';
+    $adapter = $this->adapters->get($sourceStr);
+    $intentVal = $proposal->get('intent')->value;
+    $intent = is_scalar($intentVal) ? (string) $intentVal : '';
     if ($outcome !== 'accepted' && $decisionData !== []) {
       throw new UnprocessableEntityHttpException('Only accepted decisions may include application choices.');
     }
     $decisionData = $adapter->validateDecisionData($intent, $selectedFields, $decisionData);
-    $targetUuid = $proposal->get('target_uuid')->value;
-    $target = $adapter->loadTarget($intent, $targetUuid ? (string) $targetUuid : NULL);
+    $targetUuidVal = $proposal->get('target_uuid')->value;
+    $targetUuid = is_string($targetUuidVal) && $targetUuidVal !== '' ? $targetUuidVal : NULL;
+    $target = $adapter->loadTarget($intent, $targetUuid);
     if (!$adapter->reviewAccess($this->currentUser, $intent, $target)) {
       throw new AccessDeniedHttpException();
     }
 
     $lockName = 'aculta_contributions.proposal:' . $id;
     $this->acquire($lockName);
-    $targetLock = 'aculta_contributions.target:' . hash('sha256', $proposal->get('source')->value . ':' . ($targetUuid ?: $proposal->uuid()));
+    $targetLockKey = $targetUuid ?? (string) $proposal->uuid();
+    $targetLock = 'aculta_contributions.target:' . hash('sha256', $sourceStr . ':' . $targetLockKey);
     try {
       $this->acquire($targetLock);
     }
@@ -216,10 +221,12 @@ final class ContributionLifecycle {
       if (!$current instanceof Contribution || (int) $current->getRevisionId() !== $expectedRevision) {
         throw new ConflictHttpException('The proposal changed while it was being reviewed.');
       }
-      if (!$this->stateMachine->canDecide((string) $current->get('state')->value, $outcome)) {
+      $currentStateVal = $current->get('state')->value;
+      $currentState = is_scalar($currentStateVal) ? (string) $currentStateVal : '';
+      if (!$this->stateMachine->canDecide($currentState, $outcome)) {
         throw new ConflictHttpException('This proposal is already in a final state.');
       }
-      $target = $adapter->loadTarget($intent, $targetUuid ? (string) $targetUuid : NULL);
+      $target = $adapter->loadTarget($intent, $targetUuid);
       if (!$adapter->reviewAccess($this->currentUser, $intent, $target)) {
         throw new AccessDeniedHttpException();
       }
@@ -288,9 +295,10 @@ final class ContributionLifecycle {
     if (!$this->currentUser->isAuthenticated()) {
       throw new AccessDeniedHttpException();
     }
-    $proposal = $this->entityTypeManager->getStorage('aculta_contribution')->load($proposal->id());
+    $proposalId = (int) $proposal->id();
+    $proposal = $this->entityTypeManager->getStorage('aculta_contribution')->load($proposalId);
     if (!$proposal instanceof Contribution || (int) $proposal->getRevisionId() !== $expectedRevision
-      || (int) $proposal->getOwnerId() !== (int) $this->currentUser->id()) {
+      || (int) ($proposal->getOwnerId() ?? 0) !== (int) $this->currentUser->id()) {
       throw new AccessDeniedHttpException();
     }
     $subject = trim($subject);
@@ -298,31 +306,41 @@ final class ContributionLifecycle {
     if ($subject === '' || mb_strlen($subject) > 255 || $rationale === '' || mb_strlen($rationale) > 5000) {
       throw new UnprocessableEntityHttpException('Proposal summary or rationale is invalid.');
     }
-    $adapter = $this->adapters->get((string) $proposal->get('source')->value);
-    $intent = (string) $proposal->get('intent')->value;
-    $targetUuid = $proposal->get('target_uuid')->value;
-    $target = $adapter->loadTarget($intent, $targetUuid ? (string) $targetUuid : NULL);
+    $sourceVal = $proposal->get('source')->value;
+    $sourceStr = is_scalar($sourceVal) ? (string) $sourceVal : '';
+    $adapter = $this->adapters->get($sourceStr);
+    $intentVal = $proposal->get('intent')->value;
+    $intent = is_scalar($intentVal) ? (string) $intentVal : '';
+    $targetUuidVal = $proposal->get('target_uuid')->value;
+    $targetUuid = is_string($targetUuidVal) && $targetUuidVal !== '' ? $targetUuidVal : NULL;
+    $target = $adapter->loadTarget($intent, $targetUuid);
     if (!$adapter->submitAccess($this->currentUser, $intent, $target)
       || !$adapter->entityAccess($this->currentUser, $proposal, 'update')->isAllowed()) {
       throw new AccessDeniedHttpException();
     }
     $payload = $adapter->validatePayload($intent, $payload, $target);
     $sourceData = $adapter->validateSourceData($intent, $sourceData);
-    $lockName = 'aculta_contributions.proposal:' . (int) $proposal->id();
+    $lockName = 'aculta_contributions.proposal:' . $proposalId;
     $this->acquire($lockName);
     try {
-      $current = $this->entityTypeManager->getStorage('aculta_contribution')->load($proposal->id());
+      $current = $this->entityTypeManager->getStorage('aculta_contribution')->load($proposalId);
       if (!$current instanceof Contribution || (int) $current->getRevisionId() !== $expectedRevision
-        || (int) $current->getOwnerId() !== (int) $this->currentUser->id()
-        || $current->get('state')->value !== 'needs_changes') {
+        || (int) ($current->getOwnerId() ?? 0) !== (int) $this->currentUser->id()) {
         throw new ConflictHttpException('The proposal can no longer be revised in its current state.');
       }
-      $target = $adapter->loadTarget($intent, $targetUuid ? (string) $targetUuid : NULL);
+      $stateVal = $current->get('state')->value;
+      $stateStr = is_scalar($stateVal) ? (string) $stateVal : '';
+      if ($stateStr !== 'needs_changes') {
+        throw new ConflictHttpException('The proposal can no longer be revised in its current state.');
+      }
+      $target = $adapter->loadTarget($intent, $targetUuid);
       if (!$adapter->submitAccess($this->currentUser, $intent, $target)
         || !$adapter->entityAccess($this->currentUser, $current, 'update')->isAllowed()) {
         throw new AccessDeniedHttpException();
       }
-      if (!hash_equals((string) $current->get('base_revision')->value, $adapter->currentVersion($intent, $target))) {
+      $baseRevVal = $current->get('base_revision')->value;
+      $baseRevStr = is_scalar($baseRevVal) ? (string) $baseRevVal : '';
+      if (!hash_equals($baseRevStr, $adapter->currentVersion($intent, $target))) {
         $current->set('state', 'conflict');
         $current->set('decision_note', 'The source changed since this proposal was submitted.');
         $current->setNewRevision(TRUE);
@@ -355,22 +373,29 @@ final class ContributionLifecycle {
     if (!$this->currentUser->isAuthenticated()) {
       throw new AccessDeniedHttpException();
     }
-    $proposal = $this->entityTypeManager->getStorage('aculta_contribution')->load($proposal->id());
+    $proposalId = (int) $proposal->id();
+    $proposal = $this->entityTypeManager->getStorage('aculta_contribution')->load($proposalId);
     if (!$proposal instanceof Contribution || (int) $proposal->getRevisionId() !== $expectedRevision
-      || (int) $proposal->getOwnerId() !== (int) $this->currentUser->id()) {
+      || (int) ($proposal->getOwnerId() ?? 0) !== (int) $this->currentUser->id()) {
       throw new AccessDeniedHttpException();
     }
-    $adapter = $this->adapters->get((string) $proposal->get('source')->value);
+    $sourceVal = $proposal->get('source')->value;
+    $sourceStr = is_scalar($sourceVal) ? (string) $sourceVal : '';
+    $adapter = $this->adapters->get($sourceStr);
     if (!$adapter->entityAccess($this->currentUser, $proposal, 'view')->isAllowed()) {
       throw new AccessDeniedHttpException();
     }
-    $lockName = 'aculta_contributions.proposal:' . (int) $proposal->id();
+    $lockName = 'aculta_contributions.proposal:' . $proposalId;
     $this->acquire($lockName);
     try {
-      $current = $this->entityTypeManager->getStorage('aculta_contribution')->load($proposal->id());
+      $current = $this->entityTypeManager->getStorage('aculta_contribution')->load($proposalId);
       if (!$current instanceof Contribution || (int) $current->getRevisionId() !== $expectedRevision
-        || (int) $current->getOwnerId() !== (int) $this->currentUser->id()
-        || !$this->stateMachine->canWithdraw((string) $current->get('state')->value)) {
+        || (int) ($current->getOwnerId() ?? 0) !== (int) $this->currentUser->id()) {
+        throw new ConflictHttpException('The proposal can no longer be revised in its current state.');
+      }
+      $stateVal = $current->get('state')->value;
+      $stateStr = is_scalar($stateVal) ? (string) $stateVal : '';
+      if (!$this->stateMachine->canWithdraw($stateStr)) {
         throw new ConflictHttpException('The proposal can no longer be withdrawn in its current state.');
       }
       if (!$adapter->entityAccess($this->currentUser, $current, 'view')->isAllowed()) {
@@ -390,11 +415,15 @@ final class ContributionLifecycle {
   }
 
   /**
-   * Applies only submitted keys selected by the reviewer. */
+   * Applies only submitted keys selected by the reviewer.
+   *
+   * @param list<string> $selectedFields
+   * @param array<string, mixed> $decisionData
+   */
   private function applySelectedFields(Contribution $proposal, array $selectedFields, array $decisionData): bool {
     $payload = $proposal->getPayload();
     foreach ($selectedFields as $field) {
-      if (!is_string($field) || !array_key_exists($field, $payload)) {
+      if (!array_key_exists($field, $payload)) {
         throw new UnprocessableEntityHttpException('A selected proposal field is unavailable.');
       }
     }
@@ -402,15 +431,21 @@ final class ContributionLifecycle {
     if ($selectedFields === []) {
       throw new UnprocessableEntityHttpException('Select at least one proposal field to accept.');
     }
-    $adapter = $this->adapters->get((string) $proposal->get('source')->value);
-    $intent = (string) $proposal->get('intent')->value;
-    $targetUuid = $proposal->get('target_uuid')->value;
-    $target = $adapter->loadTarget($intent, $targetUuid ? (string) $targetUuid : NULL);
+    $sourceVal = $proposal->get('source')->value;
+    $sourceStr = is_scalar($sourceVal) ? (string) $sourceVal : '';
+    $adapter = $this->adapters->get($sourceStr);
+    $intentVal = $proposal->get('intent')->value;
+    $intent = is_scalar($intentVal) ? (string) $intentVal : '';
+    $targetUuidVal = $proposal->get('target_uuid')->value;
+    $targetUuid = is_string($targetUuidVal) && $targetUuidVal !== '' ? $targetUuidVal : NULL;
+    $target = $adapter->loadTarget($intent, $targetUuid);
     if (!$adapter->applyAccess($this->currentUser, $intent, $target)) {
       throw new AccessDeniedHttpException('The domain policy no longer allows applying this proposal.');
     }
     $actualVersion = $adapter->currentVersion($intent, $target);
-    if (!hash_equals((string) $proposal->get('base_revision')->value, $actualVersion)) {
+    $baseRevVal = $proposal->get('base_revision')->value;
+    $baseRevStr = is_scalar($baseRevVal) ? (string) $baseRevVal : '';
+    if (!hash_equals($baseRevStr, $actualVersion)) {
       return FALSE;
     }
     $selected = array_intersect_key($payload, array_fill_keys($selectedFields, TRUE));
@@ -419,14 +454,14 @@ final class ContributionLifecycle {
         $proposal,
         $intent,
         $target,
-        (string) $proposal->get('base_revision')->value,
+        $baseRevStr,
         $selected,
         $this->currentUser,
         $decisionData,
       );
     }
     else {
-      $adapter->apply($intent, $target, (string) $proposal->get('base_revision')->value, $selected, $this->currentUser, $decisionData);
+      $adapter->apply($intent, $target, $baseRevStr, $selected, $this->currentUser, $decisionData);
     }
     return TRUE;
   }

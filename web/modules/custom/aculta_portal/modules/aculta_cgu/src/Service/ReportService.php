@@ -193,12 +193,14 @@ final class ReportService {
    *   Status ou transição inválidos, ou parecer longo demais.
    */
   public function decideReport(CguReport $report, AccountInterface $moderator, string $status, string $notes): void {
-    $purpose = (string) $report->get('purpose')->value;
+    $purposeVal = $report->get('purpose')->value;
+    $purpose = is_scalar($purposeVal) ? (string) $purposeVal : '';
     if (!ModerationScope::allows($moderator, $purpose)) {
       throw new AccessDeniedHttpException('Usuário sem permissão para moderar denúncias deste purpose.');
     }
 
-    $current = (string) $report->get('status')->value;
+    $currentVal = $report->get('status')->value;
+    $current = is_scalar($currentVal) ? (string) $currentVal : '';
     if (!in_array($status, self::TRANSITIONS[$current] ?? [], TRUE)) {
       throw new ReportNotAllowedException(sprintf('Transição de status inválida: %s para %s.', $current, $status));
     }

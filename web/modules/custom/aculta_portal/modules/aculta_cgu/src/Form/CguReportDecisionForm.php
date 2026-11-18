@@ -68,7 +68,8 @@ final class CguReportDecisionForm extends FormBase {
     if ($aculta_cgu_report === NULL) {
       return AccessResult::forbidden()->cachePerUser();
     }
-    $purpose = (string) $aculta_cgu_report->get('purpose')->value;
+    $purposeValue = $aculta_cgu_report->get('purpose')->value;
+    $purpose = is_scalar($purposeValue) ? (string) $purposeValue : '';
     if (ModerationScope::allows($account, $purpose)) {
       return AccessResult::allowed()->cachePerUser();
     }
@@ -77,6 +78,9 @@ final class CguReportDecisionForm extends FormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $form
+   * @return array<string, mixed>
    */
   public function buildForm(array $form, FormStateInterface $form_state, ?CguReport $aculta_cgu_report = NULL): array {
     if ($aculta_cgu_report === NULL) {
@@ -84,24 +88,31 @@ final class CguReportDecisionForm extends FormBase {
     }
     $this->report = $aculta_cgu_report;
 
-    $targetType = (string) $this->report->get('target_type')->value;
-    $targetId = (int) $this->report->get('target_id')->value;
-    $purpose = (string) $this->report->get('purpose')->value;
-    $status = (string) $this->report->get('status')->value;
-    $motivo = (string) $this->report->get('motivo')->value;
-    $created = (int) $this->report->get('created')->value;
+    $targetTypeValue = $this->report->get('target_type')->value;
+    $targetType = is_scalar($targetTypeValue) ? (string) $targetTypeValue : '';
+    $targetIdValue = $this->report->get('target_id')->value;
+    $targetId = is_numeric($targetIdValue) ? (int) $targetIdValue : 0;
+    $purposeValue = $this->report->get('purpose')->value;
+    $purpose = is_scalar($purposeValue) ? (string) $purposeValue : '';
+    $statusValue = $this->report->get('status')->value;
+    $status = is_scalar($statusValue) ? (string) $statusValue : '';
+    $motivoValue = $this->report->get('motivo')->value;
+    $motivo = is_scalar($motivoValue) ? (string) $motivoValue : '';
+    $createdValue = $this->report->get('created')->value;
+    $created = is_numeric($createdValue) ? (int) $createdValue : 0;
 
     $targetLabel = sprintf('%s #%d', $targetType, $targetId);
     if ($this->entityTypeMgr->hasDefinition($targetType)) {
       $targetEntity = $this->entityTypeMgr->getStorage($targetType)->load($targetId);
       if ($targetEntity !== NULL && $targetEntity->label()) {
-        $targetLabel = sprintf('%s (%s)', $targetEntity->label(), $targetLabel);
+        $targetLabel = sprintf('%s (%s)', (string) $targetEntity->label(), $targetLabel);
       }
     }
 
+    $reportId = (string) $this->report->id();
     $form['summary'] = [
       '#type' => 'details',
-      '#title' => $this->t('Dados da denúncia #@id', ['@id' => $this->report->id()]),
+      '#title' => $this->t('Dados da denúncia #@id', ['@id' => $reportId]),
       '#open' => TRUE,
       'content' => [
         '#theme' => 'table',
@@ -119,10 +130,15 @@ final class CguReportDecisionForm extends FormBase {
     $userStorage = $this->entityTypeMgr->getStorage('user');
 
     if ($status === ReportService::STATUS_UPHELD || $status === ReportService::STATUS_REJECTED) {
-      $decidedByUid = (int) $this->report->get('decided_by')->value;
+      $decidedByValue = $this->report->get('decided_by')->value;
+      $decidedByUid = is_numeric($decidedByValue) ? (int) $decidedByValue : 0;
       $decidedBy = $decidedByUid > 0 ? $userStorage->load($decidedByUid) : NULL;
       $decidedByName = $decidedBy !== NULL ? $decidedBy->getDisplayName() : ($decidedByUid > 0 ? sprintf('UID #%d', $decidedByUid) : '-');
-      $decidedAt = (int) $this->report->get('decided_at')->value;
+      $decidedAtValue = $this->report->get('decided_at')->value;
+      $decidedAt = is_numeric($decidedAtValue) ? (int) $decidedAtValue : 0;
+
+      $decisionNotesValue = $this->report->get('decision_notes')->value;
+      $decisionNotes = is_scalar($decisionNotesValue) ? (string) $decisionNotesValue : '';
 
       $form['decision_info'] = [
         '#type' => 'details',
@@ -134,7 +150,7 @@ final class CguReportDecisionForm extends FormBase {
             [$this->t('Situação:'), ucfirst($status)],
             [$this->t('Moderador:'), $decidedByName],
             [$this->t('Data da decisão:'), $decidedAt > 0 ? $this->dateFormatter->format($decidedAt, 'medium') : '-'],
-            [$this->t('Parecer registrado:'), (string) $this->report->get('decision_notes')->value],
+            [$this->t('Parecer registrado:'), $decisionNotes],
           ],
         ],
       ];
@@ -182,7 +198,7 @@ final class CguReportDecisionForm extends FormBase {
       $form['batch_apply'] = [
         '#type' => 'checkbox',
         '#title' => $this->t('Aplicar esta mesma decisão a todas as outras @count denúncias pendentes deste mesmo conteúdo', [
-          '@count' => $otherPendingCount,
+          '@count' => (string) $otherPendingCount,
         ]),
         '#default_value' => TRUE,
       ];
@@ -218,14 +234,18 @@ final class CguReportDecisionForm extends FormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $form
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     if ($this->report === NULL) {
       return;
     }
 
-    $decision = (string) $form_state->getValue('decision');
-    $notes = (string) $form_state->getValue('decision_notes');
+    $decisionVal = $form_state->getValue('decision');
+    $decision = is_scalar($decisionVal) ? (string) $decisionVal : '';
+    $notesVal = $form_state->getValue('decision_notes');
+    $notes = is_scalar($notesVal) ? (string) $notesVal : '';
     $batchApply = (bool) $form_state->getValue('batch_apply');
     $moderator = $this->currentUser();
 
@@ -234,11 +254,18 @@ final class CguReportDecisionForm extends FormBase {
 
       if ($batchApply) {
         $storage = $this->entityTypeMgr->getStorage('aculta_cgu_report');
+        $targetTypeValue = $this->report->get('target_type')->value;
+        $targetType = is_scalar($targetTypeValue) ? (string) $targetTypeValue : '';
+        $targetIdValue = $this->report->get('target_id')->value;
+        $targetId = is_numeric($targetIdValue) ? (int) $targetIdValue : 0;
+        $purposeValue = $this->report->get('purpose')->value;
+        $purpose = is_scalar($purposeValue) ? (string) $purposeValue : '';
+
         $otherPendingIds = $storage->getQuery()
           ->accessCheck(FALSE)
-          ->condition('target_type', (string) $this->report->get('target_type')->value)
-          ->condition('target_id', (int) $this->report->get('target_id')->value)
-          ->condition('purpose', (string) $this->report->get('purpose')->value)
+          ->condition('target_type', $targetType)
+          ->condition('target_id', $targetId)
+          ->condition('purpose', $purpose)
           ->condition('status', 'pendente')
           ->condition('id', (int) $this->report->id(), '<>')
           ->execute();
