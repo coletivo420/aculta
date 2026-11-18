@@ -61,12 +61,12 @@ final class AccountPasswordCreateForm extends FormBase {
   /**
    * Monta o formulário de criação de senha.
    *
-   * @param array $form
+   * @param array<mixed> $form
    *   Estrutura do formulário.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   Estado atual do formulário.
    *
-   * @return array
+   * @return array<mixed>
    *   Estrutura do formulário renderizável.
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
@@ -92,13 +92,14 @@ final class AccountPasswordCreateForm extends FormBase {
   /**
    * Valida o comprimento mínimo da senha informada.
    *
-   * @param array $form
+   * @param array<mixed> $form
    *   Estrutura do formulário.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   Estado atual do formulário.
    */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
-    $password = (string) $form_state->getValue('pass');
+    $rawPassword = $form_state->getValue('pass');
+    $password = is_scalar($rawPassword) ? (string) $rawPassword : '';
     if ($password !== '' && mb_strlen($password) < self::MIN_LENGTH) {
       $form_state->setErrorByName('pass', $this->t('A senha precisa ter pelo menos @min caracteres.', ['@min' => self::MIN_LENGTH]));
     }
@@ -107,20 +108,27 @@ final class AccountPasswordCreateForm extends FormBase {
   /**
    * Define a senha na conta da sessão e remove a marca de senha não definida.
    *
-   * @param array $form
+   * @param array<mixed> $form
    *   Estrutura do formulário.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   Estado atual do formulário.
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     // Sempre a conta da sessão: o formulário não recebe o usuário como parâmetro.
-    $account = $this->entities->getStorage('user')->load($this->currentUser()->id());
+    $uid = (int) $this->currentUser()->id();
+    if ($uid <= 0) {
+      return;
+    }
+    /** @var \Drupal\user\UserInterface|null $account */
+    $account = $this->entities->getStorage('user')->load($uid);
     if ($account === NULL) {
       return;
     }
-    $account->setPassword((string) $form_state->getValue('pass'));
+    $rawPassword = $form_state->getValue('pass');
+    $password = is_scalar($rawPassword) ? (string) $rawPassword : '';
+    $account->setPassword($password);
     $account->save();
-    $this->userData->delete('aculta_portal', $account->id(), 'social_auth_password_unset');
+    $this->userData->delete('aculta_portal', (int) $account->id(), 'social_auth_password_unset');
     $this->messages->addStatus($this->t('Senha criada. Agora você pode trocar sua senha quando quiser.'));
     $form_state->setRedirect('aculta_portal.security_password');
   }

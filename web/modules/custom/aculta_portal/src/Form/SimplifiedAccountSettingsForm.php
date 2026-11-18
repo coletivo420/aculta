@@ -33,6 +33,8 @@ final class SimplifiedAccountSettingsForm extends ConfigFormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @return list<string>
    */
   protected function getEditableConfigNames(): array {
     return [self::CONFIG];
@@ -40,8 +42,16 @@ final class SimplifiedAccountSettingsForm extends ConfigFormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<mixed> $form
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *
+   * @return array<mixed>
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
+    $rawResendWindow = $this->config(self::CONFIG)->get('resend_window');
+    $defaultResendWindow = is_numeric($rawResendWindow) ? (int) $rawResendWindow : self::DEFAULT_RESEND_WINDOW;
+
     $form['enabled'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Cadastro simplificado habilitado'),
@@ -52,7 +62,7 @@ final class SimplifiedAccountSettingsForm extends ConfigFormBase {
       '#type' => 'number',
       '#title' => $this->t('Intervalo entre reenvios (segundos)'),
       '#description' => $this->t('Tempo mínimo entre dois e-mails de confirmação para a mesma conta. Padrão: 900 (15 minutos). Vale só para este fluxo.'),
-      '#default_value' => (int) ($this->config(self::CONFIG)->get('resend_window') ?: self::DEFAULT_RESEND_WINDOW),
+      '#default_value' => $defaultResendWindow > 0 ? $defaultResendWindow : self::DEFAULT_RESEND_WINDOW,
       '#min' => 60,
       '#max' => 86400,
       '#step' => 1,
@@ -63,11 +73,17 @@ final class SimplifiedAccountSettingsForm extends ConfigFormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<mixed> $form
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
+    $rawResend = $form_state->getValue('resend_window');
+    $resendWindow = is_numeric($rawResend) ? (int) $rawResend : self::DEFAULT_RESEND_WINDOW;
+
     $this->config(self::CONFIG)
       ->set('enabled', (bool) $form_state->getValue('enabled'))
-      ->set('resend_window', (int) $form_state->getValue('resend_window'))
+      ->set('resend_window', $resendWindow)
       ->save();
     parent::submitForm($form, $form_state);
   }
