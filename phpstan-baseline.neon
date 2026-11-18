@@ -64488,6 +64488,7 @@ parameters:
 			path: web/themes/custom/aculta420_v2/src/Hook/PagePresentationHooks.php
 
 		-
+<<<<<<< HEAD
 			rawMessage: Cannot access offset 'csp_nonce' on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
@@ -64620,6 +64621,8 @@ parameters:
 			path: web/themes/custom/aculta420_v2/src/Hook/UiPatternsStoryHooks.php
 
 		-
+=======
+>>>>>>> 79e69cf11 (Corrige dívida PHPStan no tema ACULTA420 V2)
 			rawMessage: Cannot access an offset on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
@@ -64744,30 +64747,6 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: web/themes/custom/aculta420_v2/src/Story/NavigationBarWikiStory.php
-
-		-
-			rawMessage: 'Method Drupal\aculta420_v2\Story\StudioMenuStory::__construct() has parameter $configuration with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/themes/custom/aculta420_v2/src/Story/StudioMenuStory.php
-
-		-
-			rawMessage: 'Method Drupal\aculta420_v2\Story\StudioMenuStory::create() has parameter $configuration with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/themes/custom/aculta420_v2/src/Story/StudioMenuStory.php
-
-		-
-			rawMessage: 'Method Drupal\aculta420_v2\Story\StudioMenuStory::props() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/themes/custom/aculta420_v2/src/Story/StudioMenuStory.php
-
-		-
-			rawMessage: 'Method Drupal\aculta420_v2\Story\StudioMenuStory::slots() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/themes/custom/aculta420_v2/src/Story/StudioMenuStory.php
 
 		-
 			rawMessage: 'Avoid calling Symfony\Component\Yaml\Yaml::parse() directly. Use \Drupal\Component\Serialization\Yaml::decode() instead, which handles exceptions consistently and applies the correct parse flags.'
