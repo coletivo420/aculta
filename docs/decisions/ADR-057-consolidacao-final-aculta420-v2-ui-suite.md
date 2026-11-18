@@ -19,7 +19,7 @@
 | P04 | PARCIAL: packs/configuração alinhados; faltam validação editorial autenticada, seleção de região e renderização/acessibilidade nos consumidores reais. |
 | P05 | BLOCKED_UPSTREAM: dependências sem cobertura de segurança/declaração Drupal 12; nenhum enable/import realizado. |
 | P06 | PARCIAL: smoke público multihost passou 700/700 verificações; snapshots, aceite humano, teclado, zoom e perfis autenticados pendentes. |
-| P07 | PARCIAL: baseline Firefox e Chromium em 10 hosts; CLS Chromium móvel excede `0,1` no MAIN, exige experimento causal e correção. |
+| P07 | PARCIAL: baseline Firefox/Chromium em dez hosts, incluindo calendário MAIN, login Conta e catálogo Loja; CLS Chromium móvel excede `0,1` no MAIN. Controles causais em `/` e `/calendario` confirmam contribuição da classe tardia `navigation-bar.has-js`; bootstrap antecipado e fontes locais foram implementados na worktree e passaram gates estáticos, mas a validação no Runtime, budgets e dados de campo continuam pendentes. |
 | P08/P09 | Não iniciados; dependem dos gates anteriores e aceite final. |
 
 Relatórios e limites: [F0/F1](../operations/testing/ADR-057-F0-F1-2026-11-17.md), [triagem Kernel P01](../operations/testing/ADR-057-P01-KERNEL-TRIAGEM-2026-11-17.md), [P02/RN-05](../operations/testing/ADR-057-P02-RN05-2026-11-17.md), [preparação de presets P03](../operations/testing/ADR-057-P03-PRESETS-2026-11-17.md), [P04](../operations/testing/ADR-057-P04-2026-11-17.md), [P05](../operations/testing/ADR-057-P05-2026-11-17.md), [P06](../operations/testing/ADR-057-P06-2026-11-17.md) e [P07](../operations/testing/ADR-057-P07-2026-11-17.md). A ADR inteira continua PARCIAL; ADR-054/055 não estão encerradas e ADR-056 continua encerrada.

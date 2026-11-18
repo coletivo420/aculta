@@ -1,5 +1,21 @@
 # Assets institucionais ACULTA420 V2
 
+## Fontes Web
+
+`fonts/inter-latin-variable.woff2` (Inter v20) e
+`fonts/oswald-latin-variable.woff2` (Oswald v57) são os subconjuntos latinos
+variáveis para pesos 400–700. Foram obtidos da resposta oficial CSS2 do Google
+Fonts; os arquivos preservam as famílias originais e seus metadados. As licenças
+SIL Open Font License 1.1 estão copiadas em `fonts/INTER-OFL.txt` e
+`fonts/OSWALD-OFL.txt`; fontes oficiais: `google/fonts/ofl/inter` e
+`google/fonts/ofl/oswald`.
+
+O tema declara os arquivos em `global-styling` para preload Drupal e registra
+as faces em `fonts/fonts.css`. Somente o subconjunto latino é pré-carregado;
+caracteres fora dele usam a pilha de fallback do sistema. SHA-256:
+Inter `3100e775e8616cd2611beecfa23a4263d7037586789b43f035236a2e6fbd4c62`,
+Oswald `571f3457dab507b6f2ce5394d593ca015251b69fea81ab7a546bd2368e9fc3ed`.
+
 ## Phosphor Icons
 
 `icons/phosphor/regular/` e `icons/phosphor/duotone/` contêm os 3.024 SVGs

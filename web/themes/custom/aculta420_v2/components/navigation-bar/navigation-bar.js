@@ -43,6 +43,7 @@
           toggle.setAttribute('aria-expanded', 'false');
         });
         panel.classList.remove('is-open');
+        toggle.removeAttribute('disabled');
       });
     },
   };

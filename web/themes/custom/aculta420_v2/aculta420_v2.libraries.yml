@@ -104,10 +104,10 @@ statistics:
     - aculta420_v2/global-styling
 
 global-styling:
-  version: 1.2.0-dev.3
+  version: 1.2.0-dev.4
   css:
     theme:
-      'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Oswald:wght@400;500;600;700&display=swap': { type: external, minified: true }
+      assets/fonts/fonts.css: {}
       src/styles/tokens.css: {}
       src/styles/base.css: {}
       src/styles/layout.css: {}
@@ -118,6 +118,11 @@ global-styling:
       components/surface/surface.css: {}
       components/surface-accent/surface-accent.css: {}
       components/heading/heading.css: {}
+  fonts:
+    assets/fonts/inter-latin-variable.woff2:
+      preload: true
+    assets/fonts/oswald-latin-variable.woff2:
+      preload: true
   dependencies:
     - system/base
 
@@ -171,3 +176,8 @@ utility-drawers:
     - core/drupal
     - core/once
     - core/drupalSettings
+
+navigation-bar-bootstrap:
+  header: true
+  js:
+    js/navigation-bootstrap.js: { preprocess: false }

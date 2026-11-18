@@ -20,16 +20,16 @@ $tokensPath = $theme . '/src/styles/tokens.css';
 $basePath = $theme . '/src/styles/base.css';
 $layoutPath = $theme . '/src/styles/layout.css';
 $librariesPath = $theme . '/aculta420_v2.libraries.yml';
+$fontFacesPath = $theme . '/assets/fonts/fonts.css';
 $tokensCss = file_get_contents($tokensPath);
 $baseCss = file_get_contents($basePath);
 $layoutCss = file_get_contents($layoutPath);
 $libraries = file_get_contents($librariesPath);
+$fontFacesCss = file_get_contents($fontFacesPath);
 
-foreach ([$tokensCss, $baseCss, $layoutCss, $libraries] as $source) {
-  if (!is_string($source)) {
-    fwrite(STDERR, "V2 foundations: required source file could not be read.\n");
-    exit(1);
-  }
+if (!is_string($tokensCss) || !is_string($baseCss) || !is_string($layoutCss) || !is_string($libraries) || !is_string($fontFacesCss)) {
+  fwrite(STDERR, "V2 foundations: required source file could not be read.\n");
+  exit(1);
 }
 
 $rootTokens = [];
@@ -56,7 +56,24 @@ $assert = static function (bool $condition, string $message): void {
 
 $assert(!str_contains($tokensCss, 'prefers-color-scheme'), 'color mode is not selected from the operating system');
 $assert(str_contains($tokensCss, '--font-family-base: Inter') && str_contains($tokensCss, '--font-family-heading: Oswald'), 'semantic typography uses the V1 Inter and Oswald families');
-$assert(str_contains($libraries, 'fonts.googleapis.com/css2?family=Inter') && str_contains($libraries, 'family=Oswald'), 'Inter and Oswald font faces are loaded by the Drupal library');
+$localFonts = [
+  'assets/fonts/inter-latin-variable.woff2',
+  'assets/fonts/oswald-latin-variable.woff2',
+];
+$fontsPreloaded = TRUE;
+foreach ($localFonts as $font) {
+  $fontsPreloaded = $fontsPreloaded
+    && is_file($theme . '/' . $font)
+    && str_contains($libraries, $font);
+}
+$assert(
+  str_contains($libraries, 'assets/fonts/fonts.css')
+  && substr_count($libraries, 'preload: true') >= 2
+  && str_contains($fontFacesCss, 'font-family: Inter;')
+  && str_contains($fontFacesCss, 'font-family: Oswald;')
+  && $fontsPreloaded,
+  'Inter and Oswald local font faces are loaded and preloaded by the Drupal library',
+);
 $assert(str_contains($tokensCss, '--spacing-md: .75rem') && str_contains($tokensCss, '--spacing-lg-compact: 1.25rem') && str_contains($tokensCss, '--spacing-section: clamp('), 'spacing tokens include the V1 intermediate and section scale');
 $assert(str_contains($tokensCss, '--radius-sm:') && str_contains($tokensCss, '--radius-base:') && str_contains($tokensCss, '--radius-lg:'), 'semantic radius scale is present');
 $assert(str_contains($baseCss, ':focus-visible') && str_contains($baseCss, 'var(--color-focus-ring)'), 'visible focus uses the semantic focus token');

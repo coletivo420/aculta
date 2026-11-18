@@ -3791,21 +3791,9 @@ parameters:
 			path: scripts/validate-aculta420-ui-styles.php
 
 		-
-			rawMessage: 'Parameter #1 $haystack of function str_contains expects string, string|false given.'
-			identifier: argument.type
-			count: 16
-			path: scripts/validate-aculta420-v2-foundations.php
-
-		-
 			rawMessage: 'Parameter #1 $string of function trim expects string, string|null given.'
 			identifier: argument.type
 			count: 1
-			path: scripts/validate-aculta420-v2-foundations.php
-
-		-
-			rawMessage: 'Parameter #2 $subject of function preg_match expects string, string|false given.'
-			identifier: argument.type
-			count: 2
 			path: scripts/validate-aculta420-v2-foundations.php
 
 		-
