@@ -72,21 +72,30 @@ final class SalesPaymentCancelForm extends ConfirmFormBase {
 
   /**
    * Performs the build form operation.
+   *
+   * @param array<string, mixed> $form
+   * @return array<string, mixed>
    */
   public function buildForm(array $form, FormStateInterface $form_state, ?PaymentInterface $commerce_payment = NULL): array {
-    if ($this->pagamentos === NULL) {
+    if ($this->pagamentos === NULL || $commerce_payment === NULL) {
       throw new AccessDeniedHttpException();
     }
     $this->autorizar($commerce_payment);
     $form_state->set('pagamento_id', (int) $commerce_payment->id());
-    return parent::buildForm($form, $form_state);
+    /** @var array<string, mixed> $builtForm */
+    $builtForm = parent::buildForm($form, $form_state);
+    return $builtForm;
   }
 
   /**
    * Performs the submit form operation.
+   *
+   * @param array<string, mixed> $form
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
-    $pagamento = $this->entidades->getStorage('commerce_payment')->load((int) $form_state->get('pagamento_id'));
+    $rawId = $form_state->get('pagamento_id');
+    $pagamentoId = is_numeric($rawId) ? (int) $rawId : 0;
+    $pagamento = $this->entidades->getStorage('commerce_payment')->load($pagamentoId);
     if (!$pagamento instanceof PaymentInterface) {
       throw new AccessDeniedHttpException();
     }
