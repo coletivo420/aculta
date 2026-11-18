@@ -61,22 +61,20 @@
   "generation_command": "vendor/bin/phpstan analyse --configuration=<configuração sem include do baseline> --no-progress --memory-limit=2G --generate-baseline=<baseline candidato>; revisar e remover somente entradas cuja correção foi confirmada.",
   "post_freeze_reductions": {
     "date": "2026-11-18",
-    "entries_removed": 2330,
-    "occurrences_removed": 3730,
-    "current_entries": 10798,
-    "current_occurrences": 18235,
-    "current_production": 10701,
+    "entries_removed": 2331,
+    "occurrences_removed": 3731,
+    "current_entries": 10797,
+    "current_occurrences": 18234,
+    "current_production": 10700,
     "current_tests": 7534,
-    "current_baseline_sha256": "4fc9ca4908e4374e946cb0fa21112daeba078674ad846d0407552b9e561d1eb6",
-    "reason": "Concilia a fotografia acumulada com o baseline nível 10 em dev; inclui redução confirmada de 26 entradas/30 ocorrências em três arquivos PHP do tema aculta420_v2, sem diagnósticos não cobertos.",
+    "current_baseline_sha256": "cfecad79ddff310a8418e56c979d9d716f03cbdfb17590cacb1b20897f971856",
+    "reason": "Concilia a fotografia acumulada com o baseline nível 10 em dev; inclui redução confirmada de 26 entradas/30 ocorrências em três arquivos PHP do tema aculta420_v2, sem diagnósticos não cobertos. Inclui a tipagem de CspReportRequestGuardSubscriber::isReportingApiReport() e remove sua ocorrência confirmada do baseline.",
     "latest_reduction": {
       "date": "2026-11-18",
-      "entries_removed": 26,
-      "occurrences_removed": 30,
+      "entries_removed": 1,
+      "occurrences_removed": 1,
       "paths": [
-        "web/themes/custom/aculta420_v2/src/Hook/SurfaceSettingsHooks.php",
-        "web/themes/custom/aculta420_v2/src/Hook/UiPatternsStoryHooks.php",
-        "web/themes/custom/aculta420_v2/src/Story/StudioMenuStory.php"
+        "web/modules/custom/aculta_portal/modules/aculta_document_viewer/src/EventSubscriber/CspReportRequestGuardSubscriber.php"
       ],
       "phpstan_level": 10,
       "uncovered_errors": 0
