@@ -337,6 +337,26 @@ P01 permanece **FAIL** até a execução integral aprovada dos shards remotos.
 3. Reexecutar todos os shards no HEAD atual depois das correções e exigir sucesso; o cancelamento do shard 2 nos dois runs não prova estabilidade.
 4. Após estabilizar, decidir se o gate Kernel pode ser obrigatório por shard sem continuar mascarando falha legítima.
 
+## Revalidação focal local adicional — 2026-11-18
+
+No checkout `e66f2c5a501ad525952225971df18e9bfce1f09b`, com worktree suja,
+reexecutei no banco de teste `aculta_simpletest` as classes que ainda não tinham
+resumo registrado: `ContentIndexGalleryProviderKernelTest` (**2 testes/50
+assertions**), `ContentIndexMediaProviderKernelTest` (**5/102**),
+`AgendaEntriesProviderKernelTest` (**5/198**) e
+`SavedAndRecommendationsKernelTest` (**8/160**), todas com exit 0. A classe
+Unit `PrivateMessagePresentationHooksTest` também passou (**1 teste/15
+assertions**). Essas são evidências focais do estado local; não provam os
+shards completos nem mudam P01 de **FAIL**.
+
+Iniciei `vendor/bin/phpunit --testsuite kernel` no mesmo banco de teste para
+uma revalidação completa. A interação foi interrompida e o processo de captura
+perdeu o handle original; o processo PHPUnit continua ativo em observação pelo
+PID 356279, com subprocessos PHP e I/O crescente, mas sem saída final
+recuperável. Portanto essa execução é **INCOMPLETA**, não PASS nem FAIL, e não
+será usada como resultado de gate. Uma nova execução só deve ocorrer após o
+processo atual terminar e em sessão que preserve o resumo completo.
+
 **Fonte:** logs de workflow dos jobs `134030642221`, `134030642171`,
 `134030642368`, `134030642245` e `134030642464`; shard `134030642255`
 cancelado. Esta triagem não altera o status das ADR-054/055 nem fecha P01.
