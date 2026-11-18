@@ -360,3 +360,32 @@ processo atual terminar e em sessão que preserve o resumo completo.
 **Fonte:** logs de workflow dos jobs `134030642221`, `134030642171`,
 `134030642368`, `134030642245` e `134030642464`; shard `134030642255`
 cancelado. Esta triagem não altera o status das ADR-054/055 nem fecha P01.
+
+## Revalidação Kernel completa e correção de acesso — 2026-11-18
+
+Reexecutei a suíte oficial `vendor/bin/phpunit --testsuite kernel` no banco
+dedicado `aculta_simpletest`, no checkout local atualizado. Resultado: **1.168
+testes, 22.763 assertions, 88 erros, 4 falhas, 6 warnings, 4 depreciações,
+10 PHPUnit deprecations e 5 notices** (exit 2). Os erros continuam incluindo
+29 ocorrências de dependência `private_message` indisponível, 31 falhas de
+schema da View `eventos_datas_relacionadas`, 8 erros de plugin `ui_patterns`,
+9 de dependência `ui_patterns_views`, além de schemas de Wiki, renderização de
+Eventos e LMS. As quatro falhas foram em Structured Data de Eventos, retry de
+coordenadas do Maps e dois testes de Wiki. Os detalhes completos estão em
+`/tmp/aculta-adr057-kernel-current.log`. P01 permanece **FAIL**; a execução
+confirma problemas preexistentes no checkout, não sucesso de gate.
+
+A classe `EventOrganizationLifecycleKernelTest` tinha 31 erros de instalação
+por falta das dependências reais `block`, `views`, `ui_patterns` e
+`ui_patterns_views`; o harness agora as declara. Com a classe executável, o
+teste revelou que `suggest` combinava a policy permitida com um resultado
+`neutral`, mantendo o acesso neutro. O handler agora preserva o resultado da
+policy e agrega a cacheabilidade da organização. O teste focal passou (**1
+teste, 35 assertions**) e a classe completa passou (**31 testes, 1.051
+assertions**).
+
+PHP lint, PHPCS Drupal, descoberta PHPUnit e `git diff --check` passaram.
+PHPStan nível 10 canônico produziu JSON válido com zero erros não suprimidos;
+os guards `check` e `diff --include-worktree --analysis` passaram. Revisão
+independente do diff não encontrou achados. Runtime/browser não foi usado;
+esta correção não foi publicada nem sincronizada.
