@@ -417,9 +417,16 @@ final class EventDomainBoundaryKernelTest extends KernelTestBase {
     $this->date($draft, '2026-12-02T19:00:00');
 
     $build = $this->block()->build();
+    $props = $build['#props'] ?? NULL;
+    self::assertIsArray($props);
+    $items = $props['items'] ?? NULL;
+    self::assertIsArray($items);
 
-    self::assertCount(1, $build['#items']);
-    self::assertStringContainsString('Evento público', (string) $build['#items'][0]['title']);
+    self::assertCount(1, $items);
+    self::assertIsArray($items[0] ?? NULL);
+    self::assertArrayHasKey('title', $items[0]);
+    self::assertIsString($items[0]['title']);
+    self::assertStringContainsString('Evento público', $items[0]['title']);
     self::assertContains('aculta_event_list', $build['#cache']['tags']);
     self::assertContains('user', $build['#cache']['contexts']);
     self::assertContains('url.site', $build['#cache']['contexts']);
@@ -434,7 +441,16 @@ final class EventDomainBoundaryKernelTest extends KernelTestBase {
     $this->date($event, '2026-12-03T19:00:00');
 
     $build = $this->block()->build();
-    $links = array_column($build['#items'], 'url');
+    $props = $build['#props'] ?? NULL;
+    self::assertIsArray($props);
+    $items = $props['items'] ?? NULL;
+    self::assertIsArray($items);
+    foreach ($items as $item) {
+      self::assertIsArray($item);
+      self::assertArrayHasKey('url', $item);
+      self::assertIsString($item['url']);
+    }
+    $links = array_column($items, 'url');
 
     $forbiddenRoutes = [
       'aculta_events.event_edit',
