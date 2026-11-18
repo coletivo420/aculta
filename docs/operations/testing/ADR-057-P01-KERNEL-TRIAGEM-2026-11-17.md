@@ -414,3 +414,49 @@ PHPStan nível 10 passou com JSON válido e zero erros não suprimidos; os guard
 arquivo `EventStructuredDataKernelTest.php` foi reduzida de 104 para 103
 ocorrências, removendo somente a entrada `return.type` corrigida. P01 continua
 **FAIL** porque falta um resumo recuperável da suíte Kernel completa atual.
+
+## Contrato do bloco de próximos Eventos — 2026-11-18
+
+Os testes `EventDomainBoundaryKernelTest::testUpcomingBlockListsOnlyPublishedAndViewableEvents`
+e `testUpcomingBlockHasNoEditorialActions` liam `#items` na raiz, enquanto o
+bloco entrega os dados do componente em `#props.items`. Corrigi as assertions
+para conferir o shape real do componente, preservar o filtro de publicação, a
+cacheabilidade e a ausência de ações editoriais. Commit local:
+`1e4718c15` (`test(events): alinha assertions ao contrato do SDC`).
+
+PHP lint, PHPCS Drupal e o gate Drupal 12 do Portal (**1.236 checks**) passaram.
+A suíte oficial Unit passou (**3.332 testes, 19.208 assertions**, quatro
+depreciações PHPUnit). PHPStan nível 10 canônico passou com JSON válido e zero
+erros não suprimidos; `phpstan-debt-guard check` e `diff --changed-files
+--analysis` passaram, reduzindo a dívida `aculta_events` de 68 para 63
+ocorrências.
+
+A suíte Kernel integral observada em `/tmp/aculta-adr057-kernel-head-a821941ef-detached.log`
+começou antes do commit e terminou com exit 2 após 1 h 51 min: **1.168 testes,
+23.856 assertions, 56 erros, 3 falhas, 4 warnings, 4 depreciações e 10
+PHPUnit depreciações**. Portanto, agora há um resumo integral recuperável; o
+gate Kernel continua **FAIL**.
+
+Os erros incluem indisponibilidade de `private_message` no harness de Commerce,
+plugin Views `ui_patterns` e dependência `ui_patterns_views` ausentes em
+harnesses de Eventos/LMS, além de schema incompleto de `aculta420_v2.settings`
+para `ui_styles_entity_status` em três casos Wiki. Três falhas restantes são
+uma assertion em `MapControllerKernelTest` e duas assertions de formulários da
+Wiki. Os warnings incluem as duas assertions antigas de `#items` em
+`EventDomainBoundaryKernelTest`, uma chave ausente `titulo` em
+`SurfaceConfigReader` chamada pelo teste do Sitemap e uma chave `#title` em um
+teste Wiki. Esta execução precede a correção das assertions do bloco de Eventos
+e não mede exatamente o HEAD após ela.
+
+Após a liberação do processo, executei a classe completa
+`EventDomainBoundaryKernelTest` com `SIMPLETEST_DB` verificado como
+`aculta_simpletest`: **10 testes, 397 assertions, exit 0**, com duas
+depreciações PHPUnit. Isso confirma a correção do contrato `#props.items` nos
+dois casos de bloco, mas não elimina os outros erros/warnings dos shards nem
+fecha P01. O resultado da classe foi gravado no log local
+`/mnt/disco1/tmp/aculta-agent-logs/command-q6hn6z7w.log`.
+
+Os 56 erros não devem ser interpretados como 56 regressões da ADR-057. Os
+grupos indicados acima precisam de triagem por harness/owner, e as falhas de
+Wiki/Mapa permanecem abertas. P01 continua **FAIL** até a resolução por owner
+e uma execução Kernel estável no estado publicável.
