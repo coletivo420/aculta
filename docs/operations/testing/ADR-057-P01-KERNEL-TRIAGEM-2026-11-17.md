@@ -9,6 +9,10 @@
 - Os cinco relatórios concluídos somam 949 testes, 15.848 assertions, 101 erros e 7 falhas. Os números excluem o shard cancelado.
 - `phpstan`, `phpunit-unit`, `php-lint` e `test-discovery` concluíram sucesso; `PHPStan level 10 gate` concluiu sucesso. O debt-diff foi skipped por regra do workflow, não é um gate executado.
 
+## Situação da PR e proveniência
+
+Consulta GitHub em 2026-11-17 confirma que a PR #335 está **fechada e mesclada** no commit `444a6599e70c1b914004245d0607bee4f0469e70`. O `origin/dev` atual (`4dadf3b72f9ff4c0c170497f4b95a21f90195315`) tem esse merge como pai. As correções e evidências locais posteriores não podem ser acrescentadas à PR #335; permanecem na branch de trabalho local até publicação por um fluxo de revisão subsequente. A branch `dev` exige o check `PHPStan level 10 gate`.
+
 ## Causas agrupadas pelos logs
 
 | Shard | Resumo PHPUnit | Causa/owner indicado pelo teste | Escopo para P01 |
@@ -39,9 +43,219 @@ falhas independentes de Fórum, LMS, Commerce, Index, Activity, H5P, Maps e
 Calendário. Nenhuma configuração, dependência ou workflow foi alterado nesta
 triagem.
 
+## Correção focal posterior — configuração de tópico LMS
+
+No checkout local, o teste `LmsTopicBundleInstallKernelTest` reproduziu os
+quatro erros por plugin Views `ui_patterns` ausente. A lista de módulos do
+harness foi completada com `ui_patterns`, `ui_patterns_views`, `editor` e
+`ckeditor5`, dependências reais da configuração instalada pelo módulo LMS. O
+helper compartilhado agora valida YAML como mapa e restringe o tipo do Group
+Type antes de criar relações. Com essa correção, o Kernel focal passou: **4
+testes, 130 assertions**, com 12 depreciações de Core/contrib.
+
+A análise canônica PHPStan nível 10 passou (exit 0); `phpstan-debt-guard check`
+e `diff` passaram. Foram removidas 18 entradas de baseline que correspondiam
+às mensagens corrigidas no helper/teste, sem novos ignores. Esta é uma correção
+local e parcial: não reexecuta os outros casos de LMS/Fórum e não fecha P01.
+O baseline Kernel do CI ainda contém falhas independentes e shard cancelado.
+
+## Correção focal posterior — isolamento do contexto de discussão
+
+O teste `LmsDiscussionContextIsolationKernelTest` também reproduzia seis
+erros pela ausência de `ui_patterns`/`ui_patterns_views` durante a instalação
+da configuração de `aculta_lms`. O harness agora declara esses módulos e
+valida YAML e tipos retornados pelo Entity API antes de usá-los. O teste focal
+passou: **6 testes, 300 assertions**, com 17 depreciações de Core/contrib. A
+correção removeu 10 ocorrências congeladas no baseline deste teste; a análise
+canônica PHPStan nível 10 e os guards `check`/`diff` passaram. P01 permanece
+**FAIL** até a suíte completa do CI concluir sem falhas ou shard cancelado.
+
+## Correção focal posterior — fechamento de discussão LMS
+
+`LmsClosedDiscussionFieldKernelTest` reproduzia dois erros pelo plugin Views
+`ui_patterns` ausente. O harness passou a declarar `ui_patterns`,
+`ui_patterns_views`, `editor` e `ckeditor5`. As asserções de persistência e
+cache de acesso foram tipadas explicitamente, sem reduzir a cobertura negativa
+de acesso. O teste passou: **2 testes, 103 assertions**, com 11 depreciações
+de Core/contrib. Foram removidas nove entradas PHPStan congeladas desse teste.
+Isto corrige apenas este alvo local; não fecha os demais erros Kernel nem P01.
+
+## Correção focal posterior — matriz de moderação e acesso contextual
+
+Depois de habilitar as dependências reais do harness,
+`LmsCommentModerationMatrixKernelTest` revelou uma falha anterior escondida
+pelos erros de instalação: Educadores do curso eram negados ao moderar
+comentários na turma. A causa estava no `getGroupModerationAccess()`: combinar
+a permissão de associação `allowed` com uma dependência de cache `neutral` via
+`andIf()` produz resultado `neutral` no Drupal. A dependência agora é
+`allowed` e continua anexando o cache do Group. A matriz passou com **1 teste,
+72 assertions**, preservando as negações para estudante e outsider e as
+verificações de estado persistido. O harness também deixou de recriar campos
+que `prepareAcultaLmsPartialConfigDependencies()` já instala. Foram removidas
+cinco entradas congeladas PHPStan do teste. A revisão R2 independente passou,
+sem findings. P01 segue **FAIL** até a suíte Kernel completa ficar estável.
+
+## Correção focal posterior — importação das permissões LMS
+
+`LmsRolePermissionsConfigSyncKernelTest` instala o mesmo conjunto de
+configuração LMS e não declarava os plugins Views e editor necessários. O
+harness passou a carregar `ui_patterns`, `ui_patterns_views`, `editor` e
+`ckeditor5`. Também usa a interface `ImportableEntityStorageInterface` para a
+importação real de roles, valida os mapas YAML e estreita os tipos de role
+antes das asserções. O Kernel passou: **5 testes, 309 assertions**, com 11
+depreciações de Core/contrib. Foram removidas nove entradas PHPStan
+congeladas; a revisão independente R2 passou sem findings. A correção reduz
+mais erros focais, sem atestar os demais shards ou concluir P01.
+
+## Schema da View pública do Fórum
+
+A triagem encontrou `SchemaIncompleteException` na instalação de configuração
+LMS por opções já usadas pela View pública do Fórum: `variant`/`size` do campo
+`aculta_user_author_card` e a source `view_field_value` da prop `pinned`. O
+schema do campo agora pertence a `aculta_user`; o schema da source deriva do
+contrato `ui_patterns_source.view_field` e pertence a `aculta_forum`.
+
+Reexecutei `AcultaLmsInstallTest::testInstallRegistersOnlyTheOptionalIntegrationService`
+com `SIMPLETEST_DB` verificado como `aculta_simpletest`: **1 teste, 71
+assertions, OK**. A instalação passou sem `SchemaIncompleteException`. O
+PHPUnit registrou dois warnings preexistentes porque o hook do módulo
+`private_message` tenta incluir `private_message.theme.inc`, ausente no
+checkout. Este teste focal não reexecuta os shards e não quantifica a redução
+total do shard; P01 permanece **FAIL**.
+
+### Regressão cruzada em consumidores da configuração LMS/Fórum
+
+Reexecutei no `aculta_simpletest` os seis arquivos Kernel identificados por
+importar ou exercitar a configuração LMS/Fórum: `AcultaLmsInstallTest`,
+`LmsTopicBundleInstallKernelTest`, `LmsDiscussionContextIsolationKernelTest`,
+`LmsClosedDiscussionFieldKernelTest`, `LmsCommentModerationMatrixKernelTest` e
+`LmsRolePermissionsConfigSyncKernelTest`. O resumo foi **27 testes, 1.235
+assertions**, sem `SchemaIncompleteException` ou falha de assertion. O comando
+terminou com exit 1: `AcultaLmsInstallTest` emite dois warnings porque
+`aculta_messenger_theme()` ainda registra `private_message.theme.inc`, arquivo
+ausente no módulo portado; também houve uma depreciação. Portanto, o warning é
+uma pendência real do código do porte, não apenas dependência ausente no
+harness. A correção exige restaurar o preprocess compatível com o bloco ACULTA
+e testá-lo; não foi alterado nesta triagem.
+Portanto, a regressão de schema não foi reproduzida nesta bateria, mas a
+execução PHPUnit não é PASS por causa dos warnings e não substitui os shards
+completos. P01 continua **FAIL**.
+
+## Descoberta de SDC do tema nos testes de mídia privada
+
+Os casos `AcultaDocumentMediaEmbedTest::testPrivatePdfUsesCoreRouteAndRespectsMediaAccess`
+e `CourseDocumentAccessTest::testPrivatePdfRequiresCurrentGroupMembership`
+precisavam renderizar o SDC `account-terms-modal` na resposta de acesso negado.
+O harness agora instala e ativa `aculta420_v2` como tema ativo da requisição,
+preservando o valor de `system.theme.default`. A closure inclui UI Styles,
+UI Skins e UI Patterns Library, dependências efetivamente referenciadas durante
+a compilação do tema.
+
+Com `SIMPLETEST_DB` verificado como `aculta_simpletest`, as classes completas
+passaram: `AcultaDocumentMediaEmbedTest` (**4 testes, 305 assertions**) e
+`CourseDocumentAccessTest` (**1 teste, 47 assertions**). Isto confirma os
+consumidores e a descoberta do SDC nesses contextos; não quantifica outros
+consumidores não cobertos por essas classes. P01 segue **FAIL** até a suíte
+completa do CI concluir sem falhas ou shard cancelado.
+
+## Serviço de avatar no teste de integração Fórum/CGU
+
+O teste `ForumCguIntegrationKernelTest` mantém `aculta_user` fora da lista de
+módulos instalados, mas habilitar `aculta_forum` registra `ForumThemeHooks`,
+cujo construtor exige `aculta_user.avatar_resolver`. O harness agora fornece
+uma instância tipada sem construtor, tal como já fazia para
+`AuthorCardBuilder`; isso satisfaz apenas o wiring da extensão do tema e não
+ativa comportamento de avatar neste teste. A classe completa passou com
+**15 testes, 287 assertions, exit 0**. Permanecem 12 depreciações do Core/
+contrib (sem falha). Essa correção elimina a causa correspondente aos 15 erros
+do shard 3 no checkout atual; a suíte CI completa ainda precisa ser executada
+para confirmar a redução no shard. PHP lint, análise PHPStan nível 10 do arquivo
+e `git diff --check` passaram. Revisão independente R2: sem finding funcional
+ou de segurança; o revisor confirmou que o teste não chama `build()` no dummy.
+
+## Contratos SDC em Agenda e Studio; confirmação no CI atual
+
+Consultei o run `44092787085` do `PHP Quality Assurance` para o HEAD público de
+`origin/dev` (`4dadf3b72f9ff4c0c170497f4b95a21f90195315`). O workflow encerrou
+com sucesso, mas os shards Kernel 1, 3, 4, 5 e 6 falharam; o shard 2 foi
+cancelado. Isso confirma que o status agregado não representa uma suíte Kernel
+verde. No shard 3, as três falhas de assertion registradas eram incompatíveis
+com o contrato atual de SDC: o teste de Agenda lia `#titulo`, enquanto
+`EventPageController` entrega o título em `#slots.title.heading`; dois testes
+de Studio liam `content` na raiz, enquanto `SavedContentController` entrega o
+conteúdo no slot `#slots.content` do componente.
+
+Atualizei apenas as assertions dos testes, mantendo as negativas de matrícula,
+acesso anônimo, isolamento e exclusão de conteúdo de moderação. A classe de
+Agenda passou (**5 testes, 196 assertions**) e a classe Saved/Recommendations
+passou (**8 testes, 166 assertions**); juntas após as guardas de tipo: **13
+testes, 356 assertions, exit 0**, com 44 depreciações Core/contrib. PHP lint,
+PHPStan nível 10 nos dois arquivos e `git diff --check` passaram. Revisão
+independente R2: sem findings; confirmou que os casos negativos de acesso
+continuam presentes. As correções locais ainda precisam ser reexecutadas no CI
+para confirmar a redução real do shard 3.
+
+O shard 5 do mesmo run tinha três assertions antigas em
+`RelatedContentBlockKernelTest`, que buscavam `#items` na raiz, e seis falhas ao
+ativar gerações do índice com trabalhos de outros providers ainda pendentes.
+Os testes do bloco agora leem os itens de `#slots.content` e mantêm a cobertura
+que exclui locais privados. Os helpers dos testes de Media/Gallery agora drenam
+todos os IDs do registry antes de `validate()` e `activate()`; o gate de
+produção continua exigindo fila vazia para todos os providers. As duas classes
+passaram juntas: **7 testes, 151 assertions**, com 9 depreciações Core/contrib.
+A revisão independente R2 não encontrou findings e confirmou que a ordem e o
+gate de ativação não foram enfraquecidos. A classe do bloco passou com **7
+testes, 155 assertions**, 11 depreciações Core/contrib; manteve a ocultação de
+alvos privados e o caso fail-closed quando todos estão privados.
+
+Após essas correções, a análise canônica PHPStan nível 10 passou; os guards
+`check` e `diff --analysis` passaram e o baseline registrou redução legítima
+(sem novos ignores). PHP lint e `git diff --check` também passaram. As correções
+são locais: ainda não foram publicadas nem reexecutadas nos shards CI.
+
+## SDC do calendário interativo
+
+O shard 6 também falhava em `InteractiveControllerKernelTest` porque o teste
+esperava o antigo filho `componente` na raiz. A revisão do contrato revelou
+que o controller já retorna o SDC `aculta420_v2:calendar-interactive`, mas
+faltava declarar `#type: component`; corrigi o render array e atualizei o teste
+para ler os elementos dentro de `#slots.content`. Os attachments e a metadata
+de cache continuam no slot e agora são verificados explicitamente, incluindo
+biblioteca, `drupalSettings`, contexto `route`, tag de invalidação e max-age.
+O teste passou (**1 teste, 12 assertions**); PHPStan nível 10, guards do
+baseline, gate Drupal 12 do Portal (**1.236 checks**), PHP lint e
+`git diff --check` passaram. Revisão R1 independente: sem findings; confirmou
+que renderizar o slot propaga attachments e metadata. O fix ainda requer
+confirmação no shard CI atual.
+
+## Preprocess do bloco de notificação do Messenger
+
+A triagem local encontrou `hook_theme()` apontando para o arquivo inexistente
+`private_message.theme.inc`; o Twig consumia três variáveis ausentes. Comparei
+com o tarball upstream alpha5 cujo SHA-256 foi validado pelo runbook. O hook
+agora é OOP (`#[Hook]`) em `PrivateMessagePresentationHooks`, injeta
+`module_handler`, tradução e `RequestStack`, e devolve o link como render array.
+O caminho de imagem usa o módulo ativo `aculta_messenger` e respeita subdiretório;
+o count é não-negativo e limita o rótulo visual a `99+`. O Twig marca a imagem
+decorativa com `alt=""`; nenhum fluxo de inbox, ACL ou cache foi alterado.
+
+Verificações locais: teste Unit focal **1/15 assertions**; Unit completo
+**3.326 testes/19.173 assertions**, sem falhas (3 deprecações PHPUnit); Kernel
+completo do Messenger **63 testes/1.646 assertions**, sem falhas (115
+deprecações, 10 deprecações PHPUnit e 4 notices); lote Kernel focal dos sete arquivos: 33 testes/1.001 assertions, 147 depreciações,
+sem falhas; PHPCS dos arquivos PHP,
+gate Portal (**1.236 checks**), PHPStan canônico nível 10 e guard `check`
+passaram. Para honrar o guard de dívida tocada, corrigi tipos reais em sete
+arquivos que já estavam no diff: Calendar ficou sem erros baseline; CGU caiu de
+22 para 21; Document Viewer de 22 para 21 e de 6 para 4; Index Gallery de 26
+para 25; Index Media de 42 para 41; LMS Agenda de 21 para 19. A análise
+canônica não tem erros e os guards `check` e `diff --include-worktree` passaram,
+com 104 entradas removidas e quatro contagens reduzidas no baseline total.
+P01 global continua FAIL até reexecutar os shards completos.
+
 ## Próximos passos
 
-1. Atribuir os grupos confirmados como preexistentes aos owners dos módulos e priorizar descoberta SDC e plugin/schema UI Patterns/Views, que afetam diretamente a integração em avaliação.
+1. Reexecutar todos os shards para quantificar os fixes locais de schema da View, descoberta SDC, avatar do Fórum, Calendar e o preprocess do bloco Messenger; reavaliar outros consumidores do SDC no shard 1/6.
 2. Corrigir as causas em lotes isolados e manter failures/skipped/cancelled distintos no relatório e na proteção de branch.
 3. Reexecutar todos os shards no HEAD atual depois das correções e exigir sucesso; o cancelamento do shard 2 nos dois runs não prova estabilidade.
 4. Após estabilizar, decidir se o gate Kernel pode ser obrigatório por shard sem continuar mascarando falha legítima.
