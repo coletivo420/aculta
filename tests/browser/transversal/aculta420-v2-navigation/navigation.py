@@ -10,7 +10,7 @@ from pathlib import Path
 from websockets.sync.client import connect
 
 HERE = Path(__file__).resolve().parent
-ROOT = HERE.parents[2]
+ROOT = HERE.parents[3]
 sys.path.insert(0, str(ROOT / "tests/browser/shop/aculta-cpf-checkout"))
 from wdlib import Driver  # noqa: E402
 
