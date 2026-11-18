@@ -414,6 +414,22 @@ final class aculta_H5PCourseAccessIntegrationTest extends KernelTestBase {
     // Rendering denied H5P on a private course must preserve its cache access
     // metadata without calling methods that AccessResult does not provide.
     $this->container->get('current_user')->setAccount($outsider);
+    $pdfViewerBuild = [
+      '#type' => 'container',
+      '#attributes' => ['data-aculta-pdf-viewer' => 'true'],
+    ];
+    $courseDocumentId = (int) $courseDocument->id();
+    $pdfViewerBuilder = $this->createMock(PdfViewerBuilderInterface::class);
+    $this->container->set('aculta_document_viewer.pdf_builder', $pdfViewerBuilder);
+    $pdfViewerBuilder
+      ->expects(self::once())
+      ->method('build')
+      ->with(
+        self::callback(static fn ($media): bool => $media instanceof MediaInterface && (int) $media->id() === $courseDocumentId),
+        'field_media_course_document',
+      )
+      ->willReturn($pdfViewerBuild);
+
     $formatter = $this->container->get('plugin.manager.field.formatter')->getInstance([
       'configuration' => [
         'type' => 'h5p_default',
@@ -431,22 +447,6 @@ final class aculta_H5PCourseAccessIntegrationTest extends KernelTestBase {
     $deniedContexts = $this->requireArray($deniedCache['contexts'] ?? NULL);
     self::assertContains('user', $deniedContexts);
     $this->container->get('current_user')->setAccount($student);
-
-    $pdfViewerBuild = [
-      '#type' => 'container',
-      '#attributes' => ['data-aculta-pdf-viewer' => 'true'],
-    ];
-    $courseDocumentId = (int) $courseDocument->id();
-    $pdfViewerBuilder = $this->createMock(PdfViewerBuilderInterface::class);
-    $this->container->set('aculta_document_viewer.pdf_builder', $pdfViewerBuilder);
-    $pdfViewerBuilder
-      ->expects(self::once())
-      ->method('build')
-      ->with(
-        self::callback(static fn ($media): bool => $media instanceof MediaInterface && (int) $media->id() === $courseDocumentId),
-        'field_media_course_document',
-      )
-      ->willReturn($pdfViewerBuild);
 
     $studentElements = $formatter->viewElements($course->get('field_h5p_activities'), 'en');
     $studentElement = $this->requireArray($studentElements[0] ?? NULL);
