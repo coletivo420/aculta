@@ -98,6 +98,9 @@ final class CspReportRequestGuardSubscriber implements EventSubscriberInterface 
 
   /**
    * Checks the fields expected by the contrib Reporting API logger.
+   *
+   * @param array<array-key, mixed> $report
+   *   Decoded report fields.
    */
   private function isReportingApiReport(array $report): bool {
     return isset($report['type'], $report['url'], $report['body'])

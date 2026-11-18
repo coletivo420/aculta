@@ -12581,12 +12581,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_document_viewer/src/Docx/DocxViewerBuilder.php
 
 		-
-			rawMessage: 'Method Drupal\aculta_document_viewer\EventSubscriber\CspReportRequestGuardSubscriber::isReportingApiReport() has parameter $report with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_document_viewer/src/EventSubscriber/CspReportRequestGuardSubscriber.php
-
-		-
 			rawMessage: 'Parameter #2 $string of function explode expects string, string|null given.'
 			identifier: argument.type
 			count: 1
