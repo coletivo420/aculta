@@ -35,14 +35,14 @@ function aculta_lms_h5p_install(): void {
 /**
  * Check that H5P PHP setup and extension requirements are met.
  *
- * @param string $phase
+ * @param string $_phase
  *   The phase in which requirements are checked.
  *
  * @return array
  *   Requirements and their severity.
  */
 #[\Drupal\Core\Hook\Attribute\LegacyRequirementsHook]
-function aculta_lms_h5p_requirements($phase) {
+function aculta_lms_h5p_requirements($_phase) {
   $requirements = [];
 
   // Replicates functionality in H5P checkSetupErrorMessages since we can't include code from core for this.
