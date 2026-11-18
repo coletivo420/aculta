@@ -255,6 +255,14 @@ P01 global continua FAIL até reexecutar os shards completos.
 
 ## Próximos passos
 
+## Revalidação do merge da PR #335 e harnesses locais (2026-11-18)
+
+O run `44089290925` de `PHP Quality Assurance`, associado ao merge commit `444a6599e70c1b914004245d0607bee4f0469e70`, teve `phpstan`, `phpunit-unit`, `php-lint` e `test-discovery` com sucesso. O shard Kernel 1 falhou com 172 testes, 3.588 assertions e 8 erros: dois `LoaderError` para `aculta420_v2:account-terms-modal` nos Kernels `AcultaDocumentMediaEmbedTest`/`CourseDocumentAccessTest`; seis `PluginNotFoundException` porque o plugin Views `ui_patterns` não estava disponível durante a instalação de config LMS no `LmsDiscussionContextIsolationKernelTest`. O shard 2 iniciou 218 testes e foi interrompido após 126 testes pelo sinal de shutdown/cancelamento do runner; shards 3–6 foram cancelados. Portanto, o run não fornece uma suíte Kernel aprovada.
+
+No checkout local atual, os harnesses dessas duas frentes foram ajustados em arquivos que já estavam modificados na worktree: os dois testes de Document Viewer ativam a descoberta do tema SDC sem mudar `system.theme`; o teste de Fórum declara `ui_patterns` e `ui_patterns_views`. Reexecução focal em `aculta_simpletest` passou: Document Viewer **5 testes/353 assertions** e Fórum **6 testes/300 assertions**. Isso confirma localmente a correção das oito falhas do shard 1, sem provar os demais shards. Os arquivos de implementação/teste pertencem ao trabalho local paralelo e não foram incluídos neste registro.
+
+**Status P01: FAIL.** O único run remoto mais recente continua com shards falhos/cancelados. As correções locais não foram submetidas a uma execução CI completa porque a PR #335 já foi merged; requerem o fluxo subsequente de revisão/publicação e uma nova execução completa dos shards.
+
 ### Execução Kernel local e correção da fila editorial Wiki
 
 Uma execução local de `vendor/bin/phpunit --testsuite kernel` terminou com
