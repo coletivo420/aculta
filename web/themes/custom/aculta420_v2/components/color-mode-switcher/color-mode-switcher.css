@@ -34,8 +34,8 @@
 .color-mode-switcher__popover {
   position: fixed;
   inset: auto;
-  left: var(--color-mode-popover-left, 0);
   top: var(--color-mode-popover-top, 0);
+  left: var(--color-mode-popover-left, 0);
   inline-size: max-content;
   min-inline-size: 12rem;
   max-inline-size: min(16rem, calc(100vw - 1rem));
@@ -102,8 +102,8 @@
 .color-mode-switcher__selected-icon {
   display: inline-flex;
   margin-inline-start: auto;
-  color: var(--color-brand-highlight);
   opacity: 0;
+  color: var(--color-brand-highlight);
 }
 
 .color-mode-switcher__option input:checked + .color-mode-switcher__option-content .color-mode-switcher__selected-icon {
