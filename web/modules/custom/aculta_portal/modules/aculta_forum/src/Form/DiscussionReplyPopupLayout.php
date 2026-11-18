@@ -18,6 +18,8 @@ final class DiscussionReplyPopupLayout {
 
   /**
    * Aplica o layout do popup ao formulário de comentário.
+   *
+   * @param array<mixed> $form
    */
   public static function apply(array &$form, bool $isNew): void {
     // Resposta e edição não têm Assunto nem a marca "Rejeitado".
@@ -28,34 +30,36 @@ final class DiscussionReplyPopupLayout {
       }
     }
 
-    // Sem pré-visualização; "Publicar" ou "Salvar", conforme o caso.
-    unset($form['actions']['preview']);
-    if (isset($form['actions']['submit'])) {
-      $form['actions']['submit']['#value'] = $isNew ? t('Publicar comentário') : t('Salvar alterações');
-      $form['actions']['submit']['#button_type'] = 'primary';
+    if (isset($form['actions']) && is_array($form['actions'])) {
+      // Sem pré-visualização; "Publicar" ou "Salvar", conforme o caso.
+      unset($form['actions']['preview']);
+      if (isset($form['actions']['submit']) && is_array($form['actions']['submit'])) {
+        $form['actions']['submit']['#value'] = $isNew ? t('Publicar comentário') : t('Salvar alterações');
+        $form['actions']['submit']['#button_type'] = 'primary';
+      }
+      // "Limpar" zera o formulário (reset nativo, sem JavaScript).
+      $form['actions']['clear'] = [
+        '#type' => 'component',
+        '#component' => 'aculta420_v2:button',
+        '#props' => [
+          'text' => (string) t('Limpar'),
+          'variant' => 'secondary',
+          'attributes' => new \Drupal\Core\Template\Attribute(['data-aculta-reply-clear' => '']),
+        ],
+        '#weight' => 50,
+      ];
+      // "Cancelar" (secundário, como Limpar) fecha o popup.
+      $form['actions']['cancel'] = [
+        '#type' => 'component',
+        '#component' => 'aculta420_v2:button',
+        '#props' => [
+          'text' => (string) t('Cancelar'),
+          'variant' => 'secondary',
+          'attributes' => new \Drupal\Core\Template\Attribute(['data-aculta-dialog-close' => '']),
+        ],
+        '#weight' => 51,
+      ];
     }
-    // "Limpar" zera o formulário (reset nativo, sem JavaScript).
-    $form['actions']['clear'] = [
-      '#type' => 'component',
-      '#component' => 'aculta420_v2:button',
-      '#props' => [
-        'text' => (string) t('Limpar'),
-        'variant' => 'secondary',
-        'attributes' => new \Drupal\Core\Template\Attribute(['data-aculta-reply-clear' => '']),
-      ],
-      '#weight' => 50,
-    ];
-    // "Cancelar" (secundário, como Limpar) fecha o popup.
-    $form['actions']['cancel'] = [
-      '#type' => 'component',
-      '#component' => 'aculta420_v2:button',
-      '#props' => [
-        'text' => (string) t('Cancelar'),
-        'variant' => 'secondary',
-        'attributes' => new \Drupal\Core\Template\Attribute(['data-aculta-dialog-close' => '']),
-      ],
-      '#weight' => 51,
-    ];
   }
 
 }

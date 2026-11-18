@@ -48,16 +48,31 @@ final class TopicComposerFormHooks {
 
   /**
    * Alters the aculta_forum_topic node form used by the topic composer.
+   *
+   * @param array<mixed> $form
    */
   #[Hook('form_node_aculta_forum_topic_form_alter', order: Order::Last)]
   public function nodeFormAlter(array &$form, FormStateInterface $formState, string $formId): void {
-    if (isset($form['title'])) {
+    if (isset($form['title']) && is_array($form['title'])) {
       $form['title']['#weight'] = -10;
-      $form['title']['widget'][0]['value']['#title'] = $this->translation->translate('Assunto');
+      if (isset($form['title']['widget']) && is_array($form['title']['widget'])) {
+        $titleWidget = &$form['title']['widget'];
+        if (isset($titleWidget[0]) && is_array($titleWidget[0])) {
+          $titleFirst = &$titleWidget[0];
+          if (isset($titleFirst['value']) && is_array($titleFirst['value'])) {
+            $titleFirst['value']['#title'] = $this->translation->translate('Assunto');
+          }
+        }
+      }
     }
-    if (isset($form['body'])) {
+    if (isset($form['body']) && is_array($form['body'])) {
       $form['body']['#weight'] = 0;
-      $form['body']['widget'][0]['#title'] = $this->translation->translate('Comentário');
+      if (isset($form['body']['widget']) && is_array($form['body']['widget'])) {
+        $bodyWidget = &$form['body']['widget'];
+        if (isset($bodyWidget[0]) && is_array($bodyWidget[0])) {
+          $bodyWidget[0]['#title'] = $this->translation->translate('Comentário');
+        }
+      }
     }
 
     // Popup: o formulário envia por HTMX para o próprio endpoint e troca o corpo do diálogo.
@@ -72,6 +87,9 @@ final class TopicComposerFormHooks {
     // Layout do popup (ver TopicPopupLayout), também usado pela story do SDC.
     TopicPopupLayout::apply($form);
     // A resposta traz a página inteira: o HTMX recorta só o formulário do tópico para o popup.
+    if (!isset($form['#attributes']) || !is_array($form['#attributes'])) {
+      $form['#attributes'] = [];
+    }
     $form['#attributes']['data-aculta-topic-composer'] = '';
     $form['#attributes']['data-hx-select'] = '[data-aculta-topic-composer]';
     $htmx = new Htmx();
@@ -80,8 +98,14 @@ final class TopicComposerFormHooks {
       ->swap('innerHTML')
       ->onlyMainContent()
       ->applyTo($form);
-    if (isset($form['actions']['submit'])) {
-      $form['actions']['submit']['#submit'][] = self::class . ':redirectPopupToTopic';
+    if (isset($form['actions']) && is_array($form['actions'])) {
+      $actions = &$form['actions'];
+      if (isset($actions['submit']) && is_array($actions['submit'])) {
+        if (!isset($actions['submit']['#submit']) || !is_array($actions['submit']['#submit'])) {
+          $actions['submit']['#submit'] = [];
+        }
+        $actions['submit']['#submit'][] = self::class . ':redirectPopupToTopic';
+      }
     }
   }
 
@@ -89,6 +113,8 @@ final class TopicComposerFormHooks {
    * Após salvar o tópico no popup, leva o navegador ao tópico criado.
    *
    * Envio HTMX: HX-Redirect para o tópico. Envio comum: redirecionamento normal.
+   *
+   * @param array<mixed> $form
    */
   public function redirectPopupToTopic(array &$form, FormStateInterface $formState): void {
     $formObject = $formState->getFormObject();
