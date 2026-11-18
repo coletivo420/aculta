@@ -50,7 +50,7 @@ final class SurfaceSettingsHooks implements ContainerInjectionInterface {
   /**
    * Applies UI Skins nonce, color mode, and surface classes to the HTML page.
    *
-   * @param array $variables
+   * @param array<mixed> $variables
    *   HTML template variables, altered by reference.
    */
   #[Hook('preprocess_html')]
@@ -59,9 +59,8 @@ final class SurfaceSettingsHooks implements ContainerInjectionInterface {
 
     // A theme may provide only one preprocess_html implementation. Keep the
     // Portal's explicit color mode and surface settings in this hook.
-    $rawPreference = $variables['aculta_color_mode'] ?? NULL;
-    $preference = is_string($rawPreference) && in_array($rawPreference, ['light', 'dark', 'auto'], TRUE)
-      ? $rawPreference
+    $preference = in_array($variables['aculta_color_mode'] ?? NULL, ['light', 'dark', 'auto'], TRUE)
+      ? $variables['aculta_color_mode']
       : 'light';
     $mode = $preference === 'dark' ? 'dark' : 'light';
     $siteKey = $variables['aculta_site_key'] ?? NULL;
@@ -96,22 +95,22 @@ final class SurfaceSettingsHooks implements ContainerInjectionInterface {
     };
     $bodyAttributes->addClass([
       'aculta-radius--button-' . $this->safeValue(
-        (string) $settings('aculta_radius_button', 'lg'),
+        $settings('aculta_radius_button', 'lg'),
         ['base', 'lg', 'full'],
         'lg',
       ),
       'aculta-radius--card-' . $this->safeValue(
-        (string) $settings('aculta_radius_card', 'lg'),
+        $settings('aculta_radius_card', 'lg'),
         ['base', 'lg'],
         'lg',
       ),
       'aculta-radius--field-' . $this->safeValue(
-        (string) $settings('aculta_radius_field', 'base'),
+        $settings('aculta_radius_field', 'base'),
         ['sm', 'base'],
         'base',
       ),
       'aculta-accent--' . $this->safeValue(
-        (string) $settings('aculta_accent_override', 'mapping'),
+        $settings('aculta_accent_override', 'mapping'),
         ['mapping', 'green', 'yellow', 'red'],
         'mapping',
       ),
@@ -131,24 +130,6 @@ final class SurfaceSettingsHooks implements ContainerInjectionInterface {
   }
 
   /**
-   * Adds a response nonce to UI Skins' generated inline stylesheet.
-   */
-  private function addUiSkinsNonce(array &$variables): void {
-    $key = PageTop::PAGE_TOP_CSS_VARIABLES_KEY;
-    if (!isset($variables['page_top'][$key]) || !is_array($variables['page_top'][$key])) {
-      return;
-    }
-
-    $placeholder = $this->nonceBuilder->getPlaceholderKey();
-    $element = &$variables['page_top'][$key];
-    $element['#attributes']['nonce'] = $placeholder;
-    $element['#attached']['csp_nonce']['style'] = [Csp::POLICY_UNSAFE_INLINE];
-    $element['#attached']['placeholders'][$placeholder] = [
-      '#lazy_builder' => ['csp.nonce_builder:renderNonce', []],
-    ];
-  }
-
-  /**
    * Attaches a theme library while preserving other render attachments.
    *
    * @param array<mixed> $variables
@@ -165,11 +146,43 @@ final class SurfaceSettingsHooks implements ContainerInjectionInterface {
   }
 
   /**
+   * Adds a response nonce to UI Skins' generated inline stylesheet.
+   *
+   * @param array<mixed> $variables
+   *   HTML template variables, altered by reference.
+   */
+  private function addUiSkinsNonce(array &$variables): void {
+    $key = PageTop::PAGE_TOP_CSS_VARIABLES_KEY;
+    $pageTop = $variables['page_top'] ?? NULL;
+    if (!is_array($pageTop) || !isset($pageTop[$key]) || !is_array($pageTop[$key])) {
+      return;
+    }
+
+    $placeholder = $this->nonceBuilder->getPlaceholderKey();
+    $element = $pageTop[$key];
+    $attributes = is_array($element['#attributes'] ?? NULL) ? $element['#attributes'] : [];
+    $attributes['nonce'] = $placeholder;
+    $element['#attributes'] = $attributes;
+    $attached = is_array($element['#attached'] ?? NULL) ? $element['#attached'] : [];
+    $cspNonce = is_array($attached['csp_nonce'] ?? NULL) ? $attached['csp_nonce'] : [];
+    $cspNonce['style'] = [Csp::POLICY_UNSAFE_INLINE];
+    $attached['csp_nonce'] = $cspNonce;
+    $placeholders = is_array($attached['placeholders'] ?? NULL) ? $attached['placeholders'] : [];
+    $placeholders[$placeholder] = [
+      '#lazy_builder' => ['csp.nonce_builder:renderNonce', []],
+    ];
+    $attached['placeholders'] = $placeholders;
+    $element['#attached'] = $attached;
+    $pageTop[$key] = $element;
+    $variables['page_top'] = $pageTop;
+  }
+
+  /**
    * Devolve o valor se ele estiver na lista permitida; senão, o fallback.
    *
-   * @param string $value
+   * @param mixed $value
    *   Valor recebido da configuração.
-   * @param array $allowed
+   * @param list<string> $allowed
    *   Valores aceitos.
    * @param string $fallback
    *   Valor usado quando $value não é permitido.
@@ -177,8 +190,8 @@ final class SurfaceSettingsHooks implements ContainerInjectionInterface {
    * @return string
    *   O valor permitido ou o fallback.
    */
-  private function safeValue(string $value, array $allowed, string $fallback): string {
-    return in_array($value, $allowed, TRUE) ? $value : $fallback;
+  private function safeValue(mixed $value, array $allowed, string $fallback): string {
+    return is_string($value) && in_array($value, $allowed, TRUE) ? $value : $fallback;
   }
 
 }

@@ -10,7 +10,7 @@ use Drupal\ui_patterns_library\StoryDefault;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Uses the Account provider's authorized menu slots.
+ * Uses the real account provider's authorized menu slots in the component library.
  *
  * @phpstan-import-type StudioMenuBuild from AccountExperienceProvider
  */
@@ -23,6 +23,10 @@ final class StudioMenuStory extends StoryDefault implements ContainerFactoryPlug
    */
   protected ?array $menuBuild = NULL;
 
+  /**
+   * @param array<mixed> $configuration
+   *   Plugin configuration.
+   */
   public function __construct(
     array $configuration,
     $plugin_id,
@@ -34,6 +38,9 @@ final class StudioMenuStory extends StoryDefault implements ContainerFactoryPlug
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<mixed> $configuration
+   *   Plugin configuration.
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): static {
     return new static(
@@ -46,6 +53,9 @@ final class StudioMenuStory extends StoryDefault implements ContainerFactoryPlug
 
   /**
    * {@inheritdoc}
+   *
+   * @return array<mixed>
+   *   Story props.
    */
   public function props(): array {
     return $this->menu()['#props'];
@@ -53,6 +63,9 @@ final class StudioMenuStory extends StoryDefault implements ContainerFactoryPlug
 
   /**
    * {@inheritdoc}
+   *
+   * @return array<mixed>
+   *   Story slots.
    */
   public function slots(): array {
     return $this->menu()['#slots'];
