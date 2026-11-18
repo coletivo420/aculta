@@ -38,6 +38,9 @@ final class ForumQuoteHooks {
 
   /**
    * Adds a reply action that passes the source ID as a validated quote hint.
+   *
+   * @param array<mixed> $links
+   * @param array<mixed> $context
    */
   #[Hook('comment_links_alter')]
   public function commentLinksAlter(array &$links, CommentInterface $comment, array &$context): void {
@@ -75,6 +78,7 @@ final class ForumQuoteHooks {
       ],
     ]);
 
+    $commentIdStr = (string) $comment->id();
     // COM-08/COM-10/COM-11: Estrutura neutra de links Drupal, com atributos semânticos,
     // inserida no grupo 'comment' para ser coletada por Link::preRenderLinks.
     $quoteLink = [
@@ -83,11 +87,11 @@ final class ForumQuoteHooks {
       'attributes' => [
         'class' => ['resposta-acao', 'resposta-acao--citar', 'use-htmx'],
         'data-action' => 'resposta-citar',
-        'data-quote-id' => (string) $comment->id(),
+        'data-quote-id' => $commentIdStr,
         'data-hx-get' => $endpointUrl->toString(),
         'data-hx-target' => '#' . $composerId,
         'data-hx-swap' => 'outerHTML',
-        'aria-label' => (string) $this->translation->translate('Citar comentário #@id', ['@id' => $comment->id()]),
+        'aria-label' => (string) $this->translation->translate('Citar comentário #@id', ['@id' => $commentIdStr]),
       ],
     ];
 
@@ -100,11 +104,17 @@ final class ForumQuoteHooks {
       ->addCacheableDependency($discussion->getWriteAccess())
       ->addCacheContexts(['user.permissions']);
 
-    if (isset($links['comment'])) {
+    if (isset($links['comment']) && is_array($links['comment'])) {
+      if (!isset($links['comment']['#links']) || !is_array($links['comment']['#links'])) {
+        $links['comment']['#links'] = [];
+      }
       $links['comment']['#links']['resposta-citar'] = $quoteLink;
       $cacheability->applyTo($links['comment']);
     }
     else {
+      if (!isset($links['#links']) || !is_array($links['#links'])) {
+        $links['#links'] = [];
+      }
       $links['#links']['resposta-citar'] = $quoteLink;
       $cacheability->applyTo($links);
     }
@@ -112,6 +122,8 @@ final class ForumQuoteHooks {
 
   /**
    * Prefills only the exact published parent comment reached by the link.
+   *
+   * @param array<mixed> $form
    */
   #[Hook('form_comment_form_alter')]
   public function commentFormAlter(array &$form, FormStateInterface $formState, string $formId): void {
@@ -162,7 +174,8 @@ final class ForumQuoteHooks {
       return;
     }
     $processedBody = $bodyItem->get('processed');
-    $quote = $this->quoteBuilder->build((string) $processedBody->getValue(), $parent->getAuthorName());
+    $bodyValue = $processedBody->getValue();
+    $quote = $this->quoteBuilder->build(is_scalar($bodyValue) ? (string) $bodyValue : '', $parent->getAuthorName());
     if ($quote === NULL) {
       return;
     }
@@ -170,12 +183,25 @@ final class ForumQuoteHooks {
     // Before processing, text_format keeps #default_value on the element
     // itself; the nested value/format children only exist afterwards.
     // #default_value is NULL for a new reply, so array_key_exists() is used.
-    $processed = isset($form['comment_body']['widget'][0]['value']);
-    if ($processed) {
-      $body =& $form['comment_body']['widget'][0]['value'];
+    if (!isset($form['comment_body']) || !is_array($form['comment_body'])) {
+      return;
     }
-    elseif (array_key_exists('#default_value', $form['comment_body']['widget'][0] ?? [])) {
-      $body =& $form['comment_body']['widget'][0];
+    $commentBodyElement = &$form['comment_body'];
+    if (!isset($commentBodyElement['widget']) || !is_array($commentBodyElement['widget'])) {
+      return;
+    }
+    $widget = &$commentBodyElement['widget'];
+    if (!isset($widget[0]) || !is_array($widget[0])) {
+      return;
+    }
+    $firstWidget = &$widget[0];
+
+    $processed = isset($firstWidget['value']) && is_array($firstWidget['value']);
+    if ($processed) {
+      $body = &$firstWidget['value'];
+    }
+    elseif (array_key_exists('#default_value', $firstWidget)) {
+      $body = &$firstWidget;
     }
     else {
       return;

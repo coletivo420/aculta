@@ -42,7 +42,7 @@ class DiscussionReplyFormBuilder {
    * @param string|null $quote
    *   Optional quote text to prefill.
    *
-   * @return array
+   * @return array<string, mixed>
    *   A render array containing the form or access notification.
    */
   public function buildReplyForm(EntityInterface $host, AccountInterface $account, ?int $parentId = NULL, ?string $quote = NULL): array {
@@ -89,21 +89,28 @@ class DiscussionReplyFormBuilder {
     // already processed when it comes back from the form builder, so the
     // rendered textarea reads #value; #default_value alone never reaches it.
     if ($quote !== NULL && $quote !== '') {
-      if (isset($form['comment_body']['widget'][0]['value'])) {
-        $body =& $form['comment_body']['widget'][0]['value'];
+      if (isset($form['comment_body']) && is_array($form['comment_body'])) {
+        $commentBody = &$form['comment_body'];
+        if (isset($commentBody['widget']) && is_array($commentBody['widget'])) {
+          $widget = &$commentBody['widget'];
+          if (isset($widget[0]) && is_array($widget[0])) {
+            $firstWidget = &$widget[0];
+            $body = NULL;
+            if (isset($firstWidget['value']) && is_array($firstWidget['value'])) {
+              $body = &$firstWidget['value'];
+            }
+            elseif (array_key_exists('#default_value', $firstWidget)) {
+              $body = &$firstWidget;
+            }
+            if (is_array($body) && empty($body['#default_value']) && empty($body['#value'])) {
+              $body['#default_value'] = $quote;
+              // Processed text_format renders #value; without it the quote is lost.
+              $body['#value'] = $quote;
+            }
+            unset($body);
+          }
+        }
       }
-      elseif (array_key_exists('#default_value', $form['comment_body']['widget'][0] ?? [])) {
-        $body =& $form['comment_body']['widget'][0];
-      }
-      else {
-        $body = NULL;
-      }
-      if (is_array($body) && empty($body['#default_value']) && empty($body['#value'])) {
-        $body['#default_value'] = $quote;
-        // Processed text_format renders #value; without it the quote is lost.
-        $body['#value'] = $quote;
-      }
-      unset($body);
     }
 
     // The composer posts back to the host page, which returns the whole main
@@ -114,6 +121,9 @@ class DiscussionReplyFormBuilder {
     // próprio compositor: se a resposta trouxer o compositor (erro de validação), ele
     // aparece no diálogo; se não trouxer, a postagem foi publicada (ver forum-quote.js).
     $dialogBodyId = 'aculta-reply-dialog-body';
+    if (!isset($form['#attributes']) || !is_array($form['#attributes'])) {
+      $form['#attributes'] = [];
+    }
     $form['#attributes']['data-hx-target'] = '#' . $dialogBodyId;
     $form['#attributes']['data-hx-select'] = '[data-discussion-reply-composer]';
     $form['#attributes']['data-hx-swap'] = 'innerHTML';
@@ -155,6 +165,8 @@ class DiscussionReplyFormBuilder {
    * Builds the composer that edits an existing discussion comment inside the popup.
    *
    * O formulário salva na rota de edição do próprio comentário; o envio redireciona ao permalink.
+   *
+   * @return array<string, mixed>
    */
   public function buildEditForm(CommentInterface $comment, AccountInterface $account): array {
     $host = $comment->getCommentedEntity();
@@ -176,6 +188,9 @@ class DiscussionReplyFormBuilder {
 
     $form = $this->entityFormBuilder->getForm($comment);
     // Mesmo destino de envio do compositor de resposta: o popup troca o corpo do diálogo.
+    if (!isset($form['#attributes']) || !is_array($form['#attributes'])) {
+      $form['#attributes'] = [];
+    }
     $form['#attributes']['data-hx-target'] = '#aculta-reply-dialog-body';
     $form['#attributes']['data-hx-select'] = '[data-discussion-reply-composer]';
     $form['#attributes']['data-hx-swap'] = 'innerHTML';
@@ -205,7 +220,8 @@ class DiscussionReplyFormBuilder {
     if ($bodyItem === NULL) {
       return NULL;
     }
-    $processed = (string) $bodyItem->get('processed')->getValue();
+    $processedValue = $bodyItem->get('processed')->getValue();
+    $processed = is_scalar($processedValue) ? (string) $processedValue : '';
     $text = trim((string) preg_replace('/[\s\x{00A0}]+/u', ' ', Html::decodeEntities(strip_tags($processed))));
     if ($text === '') {
       return NULL;
