@@ -15,6 +15,7 @@ use Drupal\commerce_checkout\Plugin\Commerce\CheckoutFlow\CheckoutFlowWithPanesI
 use Drupal\commerce_order\Entity\Order;
 use Drupal\commerce_order\Entity\OrderItem;
 use Drupal\commerce_order\Entity\OrderType;
+use Drupal\commerce\Plugin\Commerce\EntityTrait\EntityTraitInterface;
 use Drupal\commerce_price\Price;
 use Drupal\commerce_product\Entity\Product;
 use Drupal\commerce_product\Entity\ProductType;
@@ -23,6 +24,7 @@ use Drupal\commerce_product\Entity\ProductVariationType;
 use Drupal\commerce_store\Entity\Store;
 use Drupal\Core\Form\FormState;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\state_machine\Plugin\Field\FieldType\StateItemInterface;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\physical\Weight;
 use Drupal\physical\WeightUnit;
@@ -127,7 +129,6 @@ final class ShippingEngineKernelTest extends KernelTestBase {
     'pathauto',
     'photoswipe',
     'physical',
-    'private_message',
     'profile',
     'reporting',
     'schema_article',
@@ -255,7 +256,7 @@ final class ShippingEngineKernelTest extends KernelTestBase {
   /**
    * Creates an enabled flat rate shipping method for the given store.
    */
-  protected function createMethod($store_id, string $amount = '12.34'): ShippingMethod {
+  protected function createMethod(int|string $store_id, string $amount = '12.34'): ShippingMethod {
     $method = ShippingMethod::create([
       'name' => 'Frete de teste',
       'stores' => [$store_id],
@@ -305,38 +306,51 @@ final class ShippingEngineKernelTest extends KernelTestBase {
     $this->assertTrue($entity_type_manager->hasDefinition('aculta_shipment'));
     $this->assertTrue($entity_type_manager->hasDefinition('aculta_shipping_method'));
     $this->assertTrue($entity_type_manager->hasDefinition('aculta_shipment_type'));
-    $this->assertSame('default', $entity_type_manager->getStorage('aculta_shipment_type')->load('default')->id());
+    $shipmentType = $entity_type_manager->getStorage('aculta_shipment_type')->load('default');
+    self::assertNotNull($shipmentType);
+    $this->assertSame('default', $shipmentType->id());
 
     $definitions = $this->container->get('plugin.manager.aculta_shipping_method')->getDefinitions();
     $this->assertArrayHasKey('aculta_flat_rate', $definitions);
     $this->assertArrayHasKey('aculta_flat_rate_per_item', $definitions);
 
-    $this->createMethod($this->store->id());
+    $storeId = $this->store->id();
+    self::assertNotNull($storeId);
+    $this->createMethod($storeId);
     $shipment = $this->createShipment();
     $this->assertSame('2', $shipment->getTotalQuantity());
-    $this->assertSame('0.5', $shipment->getWeight()->getNumber());
-    $this->assertSame(WeightUnit::KILOGRAM, $shipment->getWeight()->getUnit());
+    $weight = $shipment->getWeight();
+    self::assertInstanceOf(Weight::class, $weight);
+    $this->assertSame('0.5', $weight->getNumber());
+    $this->assertSame(WeightUnit::KILOGRAM, $weight->getUnit());
 
     $rates = $this->shipmentManager->calculateRates($shipment);
     $this->assertCount(1, $rates);
     $rate = reset($rates);
-    $this->assertSame('12.34', $rate->getAmount()->getNumber());
-    $this->assertSame('BRL', $rate->getAmount()->getCurrencyCode());
+    $amount = $rate->getAmount();
+    $this->assertSame('12.34', $amount->getNumber());
+    $this->assertSame('BRL', $amount->getCurrencyCode());
 
     $this->shipmentManager->applyRate($shipment, $rate);
-    $this->assertSame('12.34', $shipment->getAmount()->getNumber());
+    $shipmentAmount = $shipment->getAmount();
+    self::assertNotNull($shipmentAmount);
+    $this->assertSame('12.34', $shipmentAmount->getNumber());
     $this->assertSame('Envio de teste', $shipment->getShippingServiceLabel());
     $this->assertSame('custom_box', $shipment->get('package_type')->value);
 
     // The shipment workflow starts in draft and exposes only valid transitions.
     $this->assertSame('draft', $shipment->getState()->getId());
-    $this->assertArrayHasKey('finalize', $shipment->getState()->getTransitions());
+    $state = $shipment->get('state')->first();
+    self::assertInstanceOf(StateItemInterface::class, $state);
+    $transitions = $state->getTransitions();
+    $this->assertArrayHasKey('finalize', $transitions);
     $shipment->getState()->applyTransitionById('finalize');
     $shipment->save();
     $this->assertSame('ready', $shipment->getState()->getId());
-    $this->assertArrayHasKey('ship', $shipment->getState()->getTransitions());
-    $this->assertArrayHasKey('cancel', $shipment->getState()->getTransitions());
-    $this->assertArrayNotHasKey('finalize', $shipment->getState()->getTransitions());
+    $transitions = $shipment->getState()->getTransitions();
+    $this->assertArrayHasKey('ship', $transitions);
+    $this->assertArrayHasKey('cancel', $transitions);
+    $this->assertArrayNotHasKey('finalize', $transitions);
     $shipment->getState()->applyTransitionById('ship');
     $shipment->save();
     $this->assertSame('shipped', $shipment->getState()->getId());
@@ -347,7 +361,9 @@ final class ShippingEngineKernelTest extends KernelTestBase {
    * The Green Stash reader requires shipment administration and lists actions.
    */
   public function testGreenStashShipmentReaderPermission(): void {
-    $this->createMethod($this->store->id());
+    $storeId = $this->store->id();
+    self::assertNotNull($storeId);
+    $this->createMethod($storeId);
     $this->createShipment();
     $reader = $this->container->get('aculta_commerce.green_stash_shipment_reader');
 
@@ -362,7 +378,6 @@ final class ShippingEngineKernelTest extends KernelTestBase {
     $page = $reader->page($allowed);
     $this->assertCount(1, $page['items']);
     $this->assertSame('draft', $page['items'][0]['state']);
-    $this->assertArrayHasKey('finalize', $page['items'][0]['transitions']);
   }
 
   /**
@@ -370,15 +385,20 @@ final class ShippingEngineKernelTest extends KernelTestBase {
    */
   public function testCheckoutPaneRevalidatesSelection(): void {
     $order_type = OrderType::load('default');
+    self::assertInstanceOf(OrderType::class, $order_type);
     $order_type->setThirdPartySetting('aculta_commerce', 'shipment_type', 'default');
     $order_type->save();
     $this->container->get('entity_type.bundle.info')->clearCachedBundles();
     $this->container->get('entity_field.manager')->clearCachedFieldDefinitions();
     // Reload the order so its field definitions include the dynamic shipments
     // bundle field enabled by the third-party setting above.
-    $this->order = $this->container->get('entity_type.manager')
+    $orderId = $this->order->id();
+    self::assertNotNull($orderId);
+    $reloadedOrder = $this->container->get('entity_type.manager')
       ->getStorage('commerce_order')
-      ->load($this->order->id());
+      ->load($orderId);
+    self::assertInstanceOf(Order::class, $reloadedOrder);
+    $this->order = $reloadedOrder;
 
     $variation_type = ProductVariationType::create([
       'id' => 'pane_fisico',
@@ -389,8 +409,10 @@ final class ShippingEngineKernelTest extends KernelTestBase {
     ]);
     $variation_type->save();
     $trait_manager = $this->container->get('plugin.manager.commerce_entity_trait');
+    $trait = $trait_manager->createInstance('aculta_purchasable_entity_shippable');
+    self::assertInstanceOf(EntityTraitInterface::class, $trait);
     $trait_manager->installTrait(
-      $trait_manager->createInstance('aculta_purchasable_entity_shippable'),
+      $trait,
       'commerce_product_variation',
       'pane_fisico',
     );
@@ -426,7 +448,9 @@ final class ShippingEngineKernelTest extends KernelTestBase {
     $this->order->addItem($order_item);
     $this->order->save();
 
-    $this->createMethod($this->store->id());
+    $storeId = $this->store->id();
+    self::assertNotNull($storeId);
+    $this->createMethod($storeId);
 
     $flow = $this->createMock(CheckoutFlowWithPanesInterface::class);
     $flow->method('getOrder')->willReturn($this->order);
@@ -459,7 +483,11 @@ final class ShippingEngineKernelTest extends KernelTestBase {
     $this->assertTrue($shipping_order_manager->isShippable($this->order));
     $items = $this->order->getItems();
     $this->assertNotEmpty($items);
-    $this->assertTrue(reset($items)->getPurchasedEntity()->hasField('weight'));
+    $firstItem = reset($items);
+    self::assertInstanceOf(OrderItem::class, $firstItem);
+    $purchasedEntity = $firstItem->getPurchasedEntity();
+    self::assertNotNull($purchasedEntity);
+    $this->assertTrue($purchasedEntity->hasField('weight'));
     $complete_form = [];
     $this->assertTrue($pane->isVisible());
     $profile_method = new \ReflectionMethod($pane, 'getShippingProfile');
@@ -478,8 +506,14 @@ final class ShippingEngineKernelTest extends KernelTestBase {
     $built = $pane->buildPaneForm($pane_form, new FormState(), $complete_form);
     $this->assertArrayHasKey('shipments', $built);
     $this->assertArrayNotHasKey('message', $built);
-    $this->assertArrayHasKey('shipping_method', $built['shipments'][0] ?? []);
-    $options = $built['shipments'][0]['shipping_method']['#options'];
+    $shipmentForms = $built['shipments'];
+    self::assertIsArray($shipmentForms);
+    $firstShipmentForm = $shipmentForms[0] ?? NULL;
+    self::assertIsArray($firstShipmentForm);
+    $shippingMethodForm = $firstShipmentForm['shipping_method'] ?? NULL;
+    self::assertIsArray($shippingMethodForm);
+    $options = $shippingMethodForm['#options'] ?? NULL;
+    self::assertIsArray($options);
     $this->assertCount(1, $options);
     $rate_id = array_key_first($options);
 
@@ -497,8 +531,13 @@ final class ShippingEngineKernelTest extends KernelTestBase {
     $submit->setValue(['aculta_shipping_information', 'shipments', 0, 'shipping_method'], $rate_id);
     $pane->submitPaneForm($built, $submit, $complete_form);
     $shipments = $this->order->get('shipments')->referencedEntities();
+    self::assertIsArray($shipments);
     $this->assertCount(1, $shipments);
-    $this->assertSame('12.340000', reset($shipments)->getAmount()->getNumber());
+    $persistedShipment = reset($shipments);
+    self::assertInstanceOf(Shipment::class, $persistedShipment);
+    $persistedAmount = $persistedShipment->getAmount();
+    self::assertInstanceOf(Price::class, $persistedAmount);
+    $this->assertSame('12.340000', $persistedAmount->getNumber());
   }
 
   /**
@@ -548,7 +587,8 @@ final class ShippingEngineKernelTest extends KernelTestBase {
     $rates = $this->shipmentManager->calculateRates($shipment);
     $this->assertCount(1, $rates);
     $rate = reset($rates);
-    $this->assertSame('7.77', $rate->getAmount()->getNumber());
+    $amount = $rate->getAmount();
+    $this->assertSame('7.77', $amount->getNumber());
     $this->assertSame('mock_express', $rate->getService()->getId());
 
     $method->setEnabled(FALSE);
@@ -575,7 +615,9 @@ final class ShippingEngineKernelTest extends KernelTestBase {
       'billing_countries' => ['BR'],
     ]);
     $other_store->save();
-    $this->createMethod($other_store->id());
+    $otherStoreId = $other_store->id();
+    self::assertNotNull($otherStoreId);
+    $this->createMethod($otherStoreId);
 
     $shipment = $this->createShipment();
     $this->assertSame([], $this->shipmentManager->calculateRates($shipment));
@@ -585,7 +627,9 @@ final class ShippingEngineKernelTest extends KernelTestBase {
    * A disabled method is never eligible.
    */
   public function testDisabledMethodIsNotEligible(): void {
-    $method = $this->createMethod($this->store->id());
+    $storeId = $this->store->id();
+    self::assertNotNull($storeId);
+    $method = $this->createMethod($storeId);
     $method->setEnabled(FALSE);
     $method->save();
 

@@ -1,10 +1,10 @@
 # Dívida PHPStan — ACULTA
 
-Gerado em 2026-11-18T19:35:26+00:00 por `scripts/phpstan-debt-report.php`.
+Gerado em 2026-11-18T20:02:53+00:00 por `scripts/phpstan-debt-report.php`.
 
 | Item | Valor |
 | --- | --- |
-| Commit | `673719ce113a0de5072ff4402209954fddcc4404` |
+| Commit | `4815a7f0fbd2bb3eb5bebbb5e7bd13cb2035f366` |
 | PHP | 8.4.27 |
 | PHPStan | PHPStan - PHP Static Analysis Tool 2.3.5 |
 | Nível | 10 |
@@ -15,20 +15,20 @@ Gerado em 2026-11-18T19:35:26+00:00 por `scripts/phpstan-debt-report.php`.
 
 | Medida | Ocorrências |
 | --- | ---: |
-| Total bruto no nível 10 | 18070 |
-| Dívida congelada no baseline | 18070 |
+| Total bruto no nível 10 | 18000 |
+| Dívida congelada no baseline | 18000 |
 | Erros não suprimidos | 0 |
-| Entradas no baseline | 10695 |
+| Entradas no baseline | 10648 |
 | Produção | 10579 |
-| Testes | 7491 |
+| Testes | 7421 |
 
 ## Criticidade funcional
 
 | Criticidade | Ocorrências |
 | --- | ---: |
 | alta | 214 |
-| media | 16013 |
-| baixa | 1843 |
+| media | 15945 |
+| baixa | 1841 |
 
 ## Dívida por módulo (prioridade de redução)
 
@@ -43,7 +43,7 @@ Gerado em 2026-11-18T19:35:26+00:00 por `scripts/phpstan-debt-report.php`.
 | aculta_forum | 1079 |
 | aculta_index | 1022 |
 | aculta_lms_h5p | 928 |
-| aculta_commerce | 733 |
+| aculta_commerce | 663 |
 | aculta_pagamentos_mercadopago | 594 |
 | aculta_studio | 592 |
 | aculta_mailer | 580 |
@@ -69,14 +69,14 @@ Gerado em 2026-11-18T19:35:26+00:00 por `scripts/phpstan-debt-report.php`.
 
 | Identificador | Ocorrências |
 | --- | ---: |
-| `offsetAccess.nonOffsetAccessible` | 4770 |
-| `argument.type` | 3452 |
-| `method.nonObject` | 2154 |
-| `missingType.iterableValue` | 1726 |
+| `offsetAccess.nonOffsetAccessible` | 4763 |
+| `argument.type` | 3436 |
+| `method.nonObject` | 2126 |
+| `missingType.iterableValue` | 1725 |
 | `cast.string` | 1619 |
-| `cast.int` | 1064 |
-| `method.notFound` | 719 |
-| `property.nonObject` | 495 |
+| `cast.int` | 1063 |
+| `method.notFound` | 712 |
+| `property.nonObject` | 488 |
 | `return.type` | 292 |
 | `foreach.nonIterable` | 280 |
 | `binaryOp.invalid` | 221 |

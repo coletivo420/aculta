@@ -61,15 +61,26 @@
   "generation_command": "vendor/bin/phpstan analyse --configuration=<configuração sem include do baseline> --no-progress --memory-limit=2G --generate-baseline=<baseline candidato>; revisar e remover somente entradas cuja correção foi confirmada.",
   "post_freeze_reductions": {
     "date": "2026-11-18",
-    "entries_removed": 2433,
-    "occurrences_removed": 3895,
-    "current_entries": 10695,
-    "current_occurrences": 18070,
+    "entries_removed": 2480,
+    "occurrences_removed": 3965,
+    "current_entries": 10648,
+    "current_occurrences": 18000,
     "current_production": 10579,
-    "current_tests": 7491,
-    "current_baseline_sha256": "c1b38a77f24fed5a6ecd7ed528301508498d6dca7c0c8991af2e5132ea987efa",
+    "current_tests": 7421,
+    "current_baseline_sha256": "a664ec173f32d86074ca05ec9d90d9ea9bdaf946cae0070e90c4f2526b8c9eae",
     "reason": "Concilia a fotografia acumulada com o baseline nível 10 em dev; inclui redução confirmada de 26 entradas/30 ocorrências em três arquivos PHP do tema aculta420_v2, a tipagem do CspReportRequestGuardSubscriber e a remoção de 29 entradas/43 ocorrências nos testes Kernel corrigidos, sem diagnósticos não cobertos.",
     "latest_reduction": {
+      "date": "2026-11-18",
+      "entries_removed": 47,
+      "occurrences_removed": 70,
+      "paths": [
+        "web/modules/custom/aculta_portal/modules/aculta_commerce/tests/src/Kernel/ShippingCutoverKernelTest.php",
+        "web/modules/custom/aculta_portal/modules/aculta_commerce/tests/src/Kernel/ShippingEngineKernelTest.php"
+      ],
+      "phpstan_level": 10,
+      "uncovered_errors": 0
+    },
+    "previous_latest_reduction": {
       "date": "2026-11-18",
       "entries_removed": 29,
       "occurrences_removed": 43,
@@ -77,16 +88,6 @@
         "web/modules/custom/aculta_portal/modules/aculta_document_viewer/tests/src/Kernel/AcultaDocumentMediaEmbedTest.php",
         "web/modules/custom/aculta_portal/modules/aculta_document_viewer/tests/src/Kernel/CourseDocumentAccessTest.php",
         "web/modules/custom/aculta_portal/modules/aculta_forum/tests/src/Kernel/LmsDiscussionContextIsolationKernelTest.php"
-      ],
-      "phpstan_level": 10,
-      "uncovered_errors": 0
-    },
-    "previous_latest_reduction": {
-      "date": "2026-11-18",
-      "entries_removed": 1,
-      "occurrences_removed": 1,
-      "paths": [
-        "web/modules/custom/aculta_portal/modules/aculta_document_viewer/src/EventSubscriber/CspReportRequestGuardSubscriber.php"
       ],
       "phpstan_level": 10,
       "uncovered_errors": 0
