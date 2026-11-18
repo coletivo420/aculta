@@ -83,7 +83,7 @@ final class EventPermissionPolicy {
   /**
    * Retorna o AccessResult com cacheability para criação de eventos.
    */
-  public function createEventAccessResult(AccountInterface $account): AccessResultInterface {
+  public function createEventAccessResult(AccountInterface $account): AccessResult {
     return AccessResult::allowedIf($this->canCreateEvent($account))
       ->cachePerPermissions()
       ->addCacheContexts(['user.roles'])
