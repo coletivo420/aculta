@@ -1,13 +1,16 @@
 # Navegação SDC do ACULTA420 V2
 
-`navigation.py` valida a integração do componente `aculta420_v2:navigation-bar`
-na posição original do bloco de menu dentro do cabeçalho do domínio, usando Firefox ESR visível em
-`DISPLAY=:0`. A matriz cobre os dez purposes cujos hosts são resolvidos do
-`deploy.json`, nas larguras 320, 767, 768, 1024, 1099, 1100 e 1440 CSS px. A
-matriz verifica o breakpoint desktop de 1100 px, menu móvel, `aria-expanded`,
-foco, Escape, landmarks, logo do Domain Header carregado, marca sem duplicação
-e overflow. Uma segunda sessão desativa JavaScript e confirma que os links
-continuam visíveis e operáveis.
+`navigation.py` verifica o Domain Header em todos os dez purposes, usando
+Firefox ESR visível em `DISPLAY=:0`. A matriz cobre os hosts resolvidos de
+`deploy.json`, nas larguras 320, 767, 768, 1024, 1099, 1100 e 1440 CSS px,
+com nome/destino da marca, cabeçalho e Institution Bar únicos e sem overflow.
+O menu compartilhado responsivo, alvos móveis, `aria-expanded`, foco, Escape,
+landmarks e fallback sem JavaScript são verificados em MAIN, onde existe o
+render array do menu. Nos outros purposes, o runner confirma ausência de painel
+ou toggle vazio. Na Wiki, valida também o formulário de busca GET, o destino
+same-origin, o campo `q` associado a rótulo acessível e o botão de envio.
+Também verifica IDs distintos para busca e prévia quando os formulários do
+cabeçalho e do corpo aparecem juntos.
 
 Configure `SUITE_OUT` para um diretório persistente fora do repositório.
 Hosts de teste vêm da configuração de deploy; `NAVIGATION_DOMAIN_ENV` pode ser

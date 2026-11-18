@@ -1662,6 +1662,24 @@ final class PagePresentationHooks {
       return;
     }
 
+    $presentation = $variables['domain_presentation'] ?? NULL;
+    $layout = is_array($presentation) ? ($presentation['layout'] ?? NULL) : NULL;
+    $identity = $this->getDomainPresentationIdentity($variables);
+    $brandTitle = $identity['title'] ?? NULL;
+    $homeUrl = $identity['home_url'] ?? NULL;
+    $parsedHomeUrl = is_string($homeUrl) ? parse_url($homeUrl) : FALSE;
+    if (!is_array($layout)
+      || empty($layout['show_site_header'])
+      || !is_string($brandTitle)
+      || trim($brandTitle) === ''
+      || !is_string($homeUrl)
+      || !is_array($parsedHomeUrl)
+      || !in_array($parsedHomeUrl['scheme'] ?? NULL, ['http', 'https'], TRUE)
+      || !is_string($parsedHomeUrl['host'] ?? NULL)
+      || $parsedHomeUrl['host'] === '') {
+      return;
+    }
+
     $brand = NULL;
     $brand_key = NULL;
     $menu = NULL;
@@ -1720,7 +1738,6 @@ final class PagePresentationHooks {
     $brandMedia = $variables['domain_presentation']['regions']['brand_media'] ?? NULL;
     $brandProps = is_array($brandMedia) ? $this->buildBrandMediaProps($brandMedia, $variables) : NULL;
     if ($brandProps !== NULL) {
-      $brand = NULL;
       $brand_key = $brand_key ?? $menu_key;
       if ($brand_key !== NULL) {
         unset($variables['page']['header'][$brand_key]);
@@ -1728,11 +1745,8 @@ final class PagePresentationHooks {
     }
 
     $targetKey = $menu_key ?? $brand_key;
-    if ($targetKey === NULL && $brandProps !== NULL) {
+    if ($targetKey === NULL) {
       $targetKey = 'aculta_domain_header';
-    }
-    if ($targetKey === NULL || ($brand === NULL && $menu === NULL && $brandProps === NULL)) {
-      return;
     }
 
     if ($brand_key !== NULL && $brand_key !== $targetKey) {
@@ -1742,15 +1756,24 @@ final class PagePresentationHooks {
       unset($variables['page']['header'][$menu_key]);
     }
 
-    // Área da conta: a faixa de logo e menu do domínio é removida; permanece só a barra institucional.
-    if (!empty($variables['domain_presentation']['layout']['institution_bar_account'])) {
-      unset($variables['page']['header'][$targetKey]);
-      return;
-    }
-
     $slots = [];
-    if ($brand !== NULL) {
-      $slots['brand'] = $brand;
+    if ($brandProps === NULL) {
+      if ($brand !== NULL) {
+        $slots['brand'] = $brand;
+      }
+      else {
+        $slots['brand'] = [
+          '#type' => 'link',
+          '#title' => $brandTitle,
+          '#url' => Url::fromUri($homeUrl),
+          '#options' => [
+            'attributes' => [
+              'class' => ['navigation-bar__brand-link'],
+              'rel' => 'home',
+            ],
+          ],
+        ];
+      }
     }
     // Wiki: a busca fica no cabeçalho, entre a marca e o menu (como no aculta420 v1).
     $wikiSearch = $variables['domain_presentation']['regions']['wiki_search'] ?? NULL;
@@ -1786,8 +1809,35 @@ final class PagePresentationHooks {
   private function buildBrandMediaProps(array $brandMedia, array $variables): ?array {
     return (new WikiBrandMediaProps($this->themes))->build(
       $brandMedia,
-      $variables['domain_presentation']['identity'] ?? [],
+      $this->getDomainPresentationIdentity($variables),
     );
+  }
+
+  /**
+   * Reads the neutral identity without assuming optional theme variables.
+   *
+   * @param array<string, mixed> $variables
+   *   Page theme variables.
+   *
+   * @return array<string, mixed>
+   *   The Portal identity or an empty array when no contract was provided.
+   */
+  private function getDomainPresentationIdentity(array $variables): array {
+    $presentation = $variables['domain_presentation'] ?? NULL;
+    if (!is_array($presentation)) {
+      return [];
+    }
+    $identity = $presentation['identity'] ?? NULL;
+    if (!is_array($identity)) {
+      return [];
+    }
+    $stringKeyedIdentity = [];
+    foreach ($identity as $key => $value) {
+      if (is_string($key)) {
+        $stringKeyedIdentity[$key] = $value;
+      }
+    }
+    return $stringKeyedIdentity;
   }
 
   /**

@@ -19,6 +19,6 @@ interface WikiSearchFormBuilderInterface {
    * @return array<mixed>
    *   Dados retornados.
    */
-  public function build(): array;
+  public function build(string $instance = 'header'): array;
 
 }

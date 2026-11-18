@@ -1,12 +1,28 @@
 # ADR-057 - Consolidação final do ACULTA420 V2, UI Suite, qualidade visual e performance
 
-**Status:** EM EXECUÇÃO. F0 estático concluído; F1 em andamento.
-**Data:** 2026-11-17  
-**Branch de trabalho:** feat/adr057-f1-route-snapshots (derivada de origin/dev)
+**Status:** EM IMPLEMENTAÇÃO — PARCIAL (2026-11-18).
+**Data:** 2026-11-18
+**Branch alvo:** dev  
 **Baseline auditada:** 5c496047509f43831de2a6996cbc6ba95d867749  
 **Tema:** aculta420_v2, versão 1.5.0; versão 1.6.0 apenas como candidata de consolidação, sem alteração agora.  
 **Documentos predecessores:** ADR-054, ADR-055 e ADR-056.  
 **Auditoria vinculada:** [ACULTA420-V2-AUDITORIA-ADR057-2026-11-17.md](../architecture/ACULTA420-V2-AUDITORIA-ADR057-2026-11-17.md).
+
+### Estado da execução em 2026-11-18
+
+| Frente | Estado comprovado |
+| --- | --- |
+| P00 / F0 | Baseline estática e GET público passaram; Runtime Sync está BLOCKED por `RX`, drift e checkout sujo. |
+| P01 / F1 | PHPStan/Unit/qualidade passaram na PR #335. A suíte Kernel local integral recuperada terminou FAIL (1.168 testes, 23.856 assertions, 56 erros, 3 falhas); nova execução no estado de worktree também FAIL (1.168 testes, 23.895 assertions, 52 erros, 3 falhas). Correções focais de Eventos passaram, mas não confirmam suíte verde. P01 continua FAIL. Snapshots visuais divergiram. |
+| P02 / RN-05 | PARCIAL: contratos locais de `site_key` e GET nos dez hosts passaram; autenticação, ACL, sessão, cache e US-14 permanecem DEFERRED. |
+| P03 | Fase ainda não iniciada: preparada fundação de presets nomeados no `layout-grid` para documentos e catálogo Commerce; fluxo editorial completo, permissões, persistência/exportação, Runtime e homologação multidomínio continuam sem evidência. |
+| P04 | PARCIAL: packs/configuração alinhados; Brócolis duotone confirmado no asset/story e teste focal. Mapeamento aprovado aplicado ao Config Sync em `sidebar_first` (raised/compact/md), sem estilo global nas outras regiões; importação Runtime, prévia/revisão visual e fluxos editoriais autenticados continuam pendentes. |
+| P05 | BLOCKED_UPSTREAM: dependências sem cobertura de segurança/declaração Drupal 12; nenhum enable/import realizado. |
+| P06 | PARCIAL: smoke público multihost passou 700/700 verificações; comparação com snapshots falhou em 10/10. Runner de navegação passou 8/100 nos dez domínios: shells observados divergem das pré-condições do runner e MAIN falhou teclado Enter/Escape. Aceite humano, zoom e perfis autenticados pendentes. |
+| P07 | PARCIAL: baseline Firefox/Chromium em dez hosts, incluindo calendário MAIN, login Conta e catálogo Loja; CLS Chromium móvel excede `0,1` no MAIN. Controles causais em `/` e `/calendario` confirmam contribuição da classe tardia `navigation-bar.has-js`; bootstrap antecipado e fontes locais foram implementados na worktree e passaram gates estáticos, mas a validação no Runtime, budgets e dados de campo continuam pendentes. |
+| P08/P09 | Não iniciados; dependem dos gates anteriores e aceite final. |
+
+Relatórios e limites: [F0/F1](../operations/testing/ADR-057-F0-F1-2026-11-17.md), [triagem Kernel P01](../operations/testing/ADR-057-P01-KERNEL-TRIAGEM-2026-11-17.md), [P02/RN-05](../operations/testing/ADR-057-P02-RN05-2026-11-17.md), [preparação de presets P03](../operations/testing/ADR-057-P03-PRESETS-2026-11-17.md), [P04](../operations/testing/ADR-057-P04-2026-11-17.md), [P05](../operations/testing/ADR-057-P05-2026-11-17.md), [P06](../operations/testing/ADR-057-P06-2026-11-17.md) e [P07](../operations/testing/ADR-057-P07-2026-11-17.md). A ADR inteira continua PARCIAL; ADR-054/055 não estão encerradas e ADR-056 continua encerrada.
 
 ## 1. Contexto e decisão
 
@@ -219,19 +235,8 @@ ADR-057 só é IMPLEMENTED quando RN-05 e US-14 estão PASS, ADR-054/055 formalm
 
 Se Field Group estiver bloqueado por upstream, registrar a decisão e **não classificar a incorporação como entregue**. É permitido homologar os demais pacotes separadamente; a ADR como um todo continua PARTIAL/BLOCKED até revisão do escopo pelo responsável.
 
-## 9. Estado desta criação
+## 9. Histórico desta decisão
 
-Esta revisão foi apenas **auditoria estática GitHub, consulta a resultados existentes do CI e pesquisa documental upstream**. Não executou PHPStan, PHPUnit, Playwright nem Drush local, não acessou o Runtime vivo, não importou config, não instalou pacotes e não alterou arquivos de código. A publicação deste documento não implementa nenhum pacote.
+Na criação da decisão, foi feita somente **auditoria estática GitHub, consulta a resultados existentes do CI e pesquisa documental upstream**; nenhuma execução local/Runtime ou alteração de código ocorreu naquela revisão. A implementação posterior e as evidências desta etapa estão listadas em “Estado da execução” e nos relatórios vinculados.
 
 **Referências:** [ADR-054](ADR-054-refatoracao-aculta420-v2-sdc-layout-builder.md), [ADR-055](ADR-055-integracao-ui-icons-ui-styles-page-e-sistema-unificado-de-emojis.md), [ADR-056](ADR-056-ui-patterns-2-recomendacoes-e-corte-documentacao.md), [Gates V2](../../web/themes/custom/aculta420_v2/docs/gates.md), [TODO V2](../../web/themes/custom/aculta420_v2/TODO.md), [Auditoria ADR-057](../architecture/ACULTA420-V2-AUDITORIA-ADR057-2026-11-17.md).
-
-### Entrega adicional UI Suite — Color Mode Switcher
-
-Em complemento ao escopo da ADR-057, o tema publica o SDC
-`aculta420_v2:color-mode-switcher` com stories isoladas na UI Patterns Library.
-O Portal mantém a propriedade da preferência e do endpoint autenticado, e o
-tema resolve `auto` no navegador. O botão não foi colocado em consumer de
-produção. Testes automatizados e validadores focais estão registrados no commit
-de entrega; homologação visual de navegador/Runtime permanece independente e
-pendente. Esta entrega não altera o estado global da ADR-057 nem reabre a
-ADR-056.

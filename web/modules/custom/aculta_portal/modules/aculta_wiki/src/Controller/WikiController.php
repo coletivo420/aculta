@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_wiki\Controller;
 
+use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Database\Connection;
@@ -58,7 +59,7 @@ final class WikiController extends ControllerBase {
     $startUrl = $this->siteManager->routeUrl(SiteKey::Wiki, 'aculta_studio.we_sativa_start');
     if ($collaborationAccess->isAllowed() && $startUrl !== NULL) {
       $startAccess = $this->siteManager->runInSite(SiteKey::Wiki, fn () => $startUrl->access($this->account, TRUE));
-      if ($startAccess->isAllowed()) {
+      if ($startAccess instanceof AccessResultInterface && $startAccess->isAllowed()) {
         $collaborationUrl = $startUrl;
         $collaborationAccess = $collaborationAccess->andIf($startAccess);
       }
@@ -132,7 +133,7 @@ final class WikiController extends ControllerBase {
       'context_tabs' => $this->contextNavigation('aculta_portal.wiki_search'),
       // The Wiki search page owns a form so the route works without the
       // ACULTA420 header presentation.
-      'search_form' => $this->searchForm?->build() ?? [],
+      'search_form' => $this->searchForm?->build('page') ?? [],
     ];
     if ($term === '') {
       return $build;
