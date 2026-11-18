@@ -89,6 +89,7 @@ final class ClassDashboardKernelTest extends KernelTestBase {
     $this->prepareAcultaLmsClassRelationship();
     $this->installEntitySchema('user');
     $this->installSchema('user', ['users_data']);
+    $this->installSchema('comment', ['comment_entity_statistics']);
     $this->installSchema('file', ['file_usage']);
     $this->installSchema('entity_usage', ['entity_usage']);
     $this->installEntitySchema('group');

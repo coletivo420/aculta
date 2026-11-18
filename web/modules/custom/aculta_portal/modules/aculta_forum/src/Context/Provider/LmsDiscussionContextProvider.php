@@ -53,11 +53,17 @@ final class LmsDiscussionContextProvider implements DiscussionContextProviderInt
       return AccessResult::forbidden()->addCacheableDependency($group);
     }
 
-    // andIf() merges cacheable metadata, so the group dependency travels with
-    // the membership result without changing the access decision.
-    $groupDependency = AccessResult::neutral()->addCacheableDependency($group);
+    // Add the Group as cache metadata without combining a neutral access
+    // result: neutral AND allowed would make the result non-allowed.
+    $membershipAccess = $this->contextMembershipAccess($group, $account);
+    $contextAccess = $membershipAccess->isAllowed()
+      ? AccessResult::allowed()
+      : AccessResult::forbidden();
+    $contextAccess
+      ->addCacheableDependency($membershipAccess)
+      ->addCacheableDependency($group);
     return $group->access('view', $account, TRUE)
-      ->andIf($this->contextMembershipAccess($group, $account)->andIf($groupDependency))
+      ->andIf($contextAccess)
       ->andIf($this->educatorAccess($group, $account));
   }
 
