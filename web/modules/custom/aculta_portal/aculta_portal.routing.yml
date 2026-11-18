@@ -48,6 +48,17 @@ aculta_portal.my_data_other:
     _permission: access aculta portal
   options:
     no_cache: true
+
+aculta_portal.color_mode_preference.update:
+  path: /preferencias/modo-de-cor
+  defaults:
+    _controller: '\Drupal\aculta_portal\Controller\ColorModePreferenceController::update'
+    _format: json
+  methods: [POST]
+  requirements:
+    _user_is_logged_in: 'TRUE'
+    _csrf_request_header_token: 'TRUE'
+
 aculta_portal.connections:
   path: /conexoes
   defaults:

@@ -147,6 +147,20 @@ component-library-mode:
   dependencies:
     - core/drupal
 
+color-mode-runtime:
+  header: true
+  js:
+    js/color-mode-runtime.js: { preprocess: false }
+
+color-mode-switcher:
+  js:
+    components/color-mode-switcher/color-mode-switcher.js: { attributes: { defer: true } }
+  dependencies:
+    - core/drupal
+    - core/drupalSettings
+    - core/once
+    - aculta420_v2/color-mode-runtime
+
 ui-library-admin:
   css:
     theme:

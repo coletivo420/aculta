@@ -224,3 +224,14 @@ Se Field Group estiver bloqueado por upstream, registrar a decisão e **não cla
 Esta revisão foi apenas **auditoria estática GitHub, consulta a resultados existentes do CI e pesquisa documental upstream**. Não executou PHPStan, PHPUnit, Playwright nem Drush local, não acessou o Runtime vivo, não importou config, não instalou pacotes e não alterou arquivos de código. A publicação deste documento não implementa nenhum pacote.
 
 **Referências:** [ADR-054](ADR-054-refatoracao-aculta420-v2-sdc-layout-builder.md), [ADR-055](ADR-055-integracao-ui-icons-ui-styles-page-e-sistema-unificado-de-emojis.md), [ADR-056](ADR-056-ui-patterns-2-recomendacoes-e-corte-documentacao.md), [Gates V2](../../web/themes/custom/aculta420_v2/docs/gates.md), [TODO V2](../../web/themes/custom/aculta420_v2/TODO.md), [Auditoria ADR-057](../architecture/ACULTA420-V2-AUDITORIA-ADR057-2026-11-17.md).
+
+### Entrega adicional UI Suite — Color Mode Switcher
+
+Em complemento ao escopo da ADR-057, o tema publica o SDC
+`aculta420_v2:color-mode-switcher` com stories isoladas na UI Patterns Library.
+O Portal mantém a propriedade da preferência e do endpoint autenticado, e o
+tema resolve `auto` no navegador. O botão não foi colocado em consumer de
+produção. Testes automatizados e validadores focais estão registrados no commit
+de entrega; homologação visual de navegador/Runtime permanece independente e
+pendente. Esta entrega não altera o estado global da ADR-057 nem reabre a
+ADR-056.

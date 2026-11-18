@@ -1,0 +1,65 @@
+{% set mode = mode|default('auto') %}
+{% set context = context|default('demo') %}
+{% set appearance = appearance|default('auto') %}
+{% set alignment = alignment|default('end') %}
+{% set labels = { light: 'Claro'|t, auto: 'Automático'|t, dark: 'Escuro'|t } %}
+{% set icons = { light: 'sun', auto: 'circle-half', dark: 'moon' } %}
+{% set generated_id = instance_id|default('color-mode-' ~ random(1, 2147483647)) %}
+{% set popover_id = generated_id ~ '-options' %}
+{% set radio_name = generated_id ~ '-mode' %}
+{% set root_attributes = attributes
+  .addClass('color-mode-switcher')
+  .setAttribute('data-color-mode-switcher', '')
+  .setAttribute('data-mode', mode)
+  .setAttribute('data-context', context)
+  .setAttribute('data-appearance', appearance)
+  .setAttribute('data-alignment', alignment)
+  .setAttribute('data-initially-open', initial_open|default(false) ? 'true' : 'false')
+%}
+{% if context != 'site' and appearance != 'auto' %}
+  {% set root_attributes = root_attributes.setAttribute('data-theme', appearance) %}
+{% endif %}
+{% set trigger_attributes = create_attribute({
+  class: ['color-mode-switcher__trigger'],
+  'aria-controls': popover_id,
+  'aria-expanded': 'false',
+  'data-color-mode-trigger': '',
+  'data-label-prefix': aria_label|default('Modo de cor'|t),
+  'popovertarget': popover_id,
+}) %}
+
+<div{{ root_attributes }}>
+  {{ include('aculta420_v2:button', {
+    aria_label: aria_label|default('Modo de cor'|t) ~ ': ' ~ labels[mode],
+    variant: 'ghost',
+    icon_before: icons[mode],
+    disabled: disabled|default(false),
+    attributes: trigger_attributes,
+  }, with_context = false) }}
+
+  <span class="visually-hidden" role="status" aria-live="polite" data-color-mode-status></span>
+
+  <div class="color-mode-switcher__popover" id="{{ popover_id }}" popover="auto" data-color-mode-popover data-alignment="{{ alignment }}"{% if initial_open %} open{% endif %}>
+    <fieldset class="color-mode-switcher__options">
+      <legend class="visually-hidden">{{ 'Modo de cor'|t }}</legend>
+      {% for value, label in labels %}
+        <label class="color-mode-switcher__option">
+          <input class="visually-hidden" type="radio" name="{{ radio_name }}" value="{{ value }}"{% if mode == value %} checked{% endif %}{% if disabled %} disabled{% endif %} data-color-mode-option>
+          <span class="color-mode-switcher__option-content">
+            {{ include('aculta420_v2:icon', { name: icons[value], variant: 'regular', size: 'md' }, with_context = false) }}
+            <span>{{ label }}</span>
+            <span class="color-mode-switcher__selected-icon" aria-hidden="true">
+              {{ include('aculta420_v2:icon', { name: 'check', variant: 'regular', size: 'sm' }, with_context = false) }}
+            </span>
+          </span>
+        </label>
+      {% endfor %}
+    </fieldset>
+  </div>
+
+  <div class="visually-hidden" aria-hidden="true" data-color-mode-icon-templates>
+    {% for value, icon in icons %}
+      <template data-mode-icon="{{ value }}">{{ include('aculta420_v2:icon', { name: icon, variant: 'regular', size: 'md' }, with_context = false) }}</template>
+    {% endfor %}
+  </div>
+</div>

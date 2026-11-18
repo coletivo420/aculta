@@ -8,6 +8,7 @@ use Drupal\aculta_portal\Account\AccountPageTitle;
 use Drupal\aculta_portal\Appearance\ColorModePreference;
 use Drupal\aculta_portal\Appearance\DomainSkinResolver;
 use Drupal\aculta_portal\Domain\DomainSiteManagerInterface;
+use Drupal\Core\Routing\UrlGeneratorInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Session\AccountProxyInterface;
@@ -28,6 +29,8 @@ final class AppearanceHooks {
     private readonly DomainSiteManagerInterface $domainSiteManager,
     #[Autowire(service: 'aculta_portal.domain_skin_resolver')]
     private readonly DomainSkinResolver $skinResolver,
+    #[Autowire(service: 'url_generator')]
+    private readonly UrlGeneratorInterface $urlGenerator,
   ) {}
 
   /**
@@ -58,15 +61,33 @@ final class AppearanceHooks {
    */
   #[Hook('page_attachments')]
   public function pageAttachments(array &$attachments): void {
-    $attachments['#cache']['contexts'][] = 'user';
-    $attachments['#cache']['contexts'][] = 'domain';
-    $attachments['#cache']['tags'][] =
-      'config:aculta_portal.visual_skins';
-    $attachments['#cache']['tags'][] = 'config:aculta_portal.appearance';
+    $cache = is_array($attachments['#cache'] ?? NULL) ? $attachments['#cache'] : [];
+    $contexts = is_array($cache['contexts'] ?? NULL) ? $cache['contexts'] : [];
+    $contexts[] = 'user';
+    $contexts[] = 'domain';
+    $cache['contexts'] = $contexts;
+    $tags = is_array($cache['tags'] ?? NULL) ? $cache['tags'] : [];
+    $tags[] = 'config:aculta_portal.visual_skins';
+    $tags[] = 'config:aculta_portal.appearance';
     $uid = (int) $this->currentUser->id();
     if ($uid > 0) {
-      $attachments['#cache']['tags'][] = 'user:' . $uid;
+      $tags[] = 'user:' . $uid;
     }
+    $cache['tags'] = $tags;
+    $attachments['#cache'] = $cache;
+    $attached = is_array($attachments['#attached'] ?? NULL) ? $attachments['#attached'] : [];
+    $drupalSettings = is_array($attached['drupalSettings'] ?? NULL) ? $attached['drupalSettings'] : [];
+    $acultaPortal = is_array($drupalSettings['acultaPortal'] ?? NULL) ? $drupalSettings['acultaPortal'] : [];
+    $acultaPortal['colorMode'] = [
+      'authenticated' => $uid > 0,
+    ];
+    if ($uid > 0) {
+      $acultaPortal['colorMode']['updateUrl'] =
+        $this->urlGenerator->generateFromRoute('aculta_portal.color_mode_preference.update');
+    }
+    $drupalSettings['acultaPortal'] = $acultaPortal;
+    $attached['drupalSettings'] = $drupalSettings;
+    $attachments['#attached'] = $attached;
   }
 
   /**

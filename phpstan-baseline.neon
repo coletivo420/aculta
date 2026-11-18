@@ -63550,18 +63550,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/src/Hook/AppearanceHooks.php
 
 		-
-			rawMessage: Cannot access an offset on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 5
-			path: web/modules/custom/aculta_portal/src/Hook/AppearanceHooks.php
-
-		-
-			rawMessage: Cannot access offset 'contexts' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Hook/AppearanceHooks.php
-
-		-
 			rawMessage: Cannot access offset 'data' on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 2
@@ -63587,12 +63575,6 @@ parameters:
 
 		-
 			rawMessage: Cannot access offset 'preprocess' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Hook/AppearanceHooks.php
-
-		-
-			rawMessage: Cannot access offset 'tags' on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
 			path: web/modules/custom/aculta_portal/src/Hook/AppearanceHooks.php
@@ -67690,21 +67672,9 @@ parameters:
 			path: web/themes/custom/aculta420_v2/src/Hook/PortalUiHooks.php
 
 		-
-			rawMessage: Cannot access an offset on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 4
-			path: web/themes/custom/aculta420_v2/src/Hook/SurfaceSettingsHooks.php
-
-		-
 			rawMessage: Cannot access offset 'csp_nonce' on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
-			path: web/themes/custom/aculta420_v2/src/Hook/SurfaceSettingsHooks.php
-
-		-
-			rawMessage: Cannot access offset 'library' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 3
 			path: web/themes/custom/aculta420_v2/src/Hook/SurfaceSettingsHooks.php
 
 		-
@@ -67774,12 +67744,6 @@ parameters:
 			path: web/themes/custom/aculta420_v2/src/Hook/UiPatternsStoryHooks.php
 
 		-
-			rawMessage: Cannot access an offset on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/themes/custom/aculta420_v2/src/Hook/UiPatternsStoryHooks.php
-
-		-
 			rawMessage: Cannot access offset 'class' on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
@@ -67787,12 +67751,6 @@ parameters:
 
 		-
 			rawMessage: Cannot access offset 'id' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/themes/custom/aculta420_v2/src/Hook/UiPatternsStoryHooks.php
-
-		-
-			rawMessage: Cannot access offset 'library' on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
 			path: web/themes/custom/aculta420_v2/src/Hook/UiPatternsStoryHooks.php

@@ -1,0 +1,9 @@
+name: Painel aberto em superfície clara
+description: Painel aberto sobre superfície clara, com seleção e nome acessível.
+props:
+  mode: light
+  context: library
+  appearance: light
+  alignment: end
+  initial_open: true
+  instance_id: color-mode-open-light

@@ -1,0 +1,9 @@
+name: Estados e largura mobile
+description: Demonstra gatilho desativado; abra as stories interativas para validar hover, foco visível e seleção em 320 CSS px e desktop.
+props:
+  mode: auto
+  context: library
+  appearance: light
+  disabled: true
+  alignment: end
+  instance_id: color-mode-states

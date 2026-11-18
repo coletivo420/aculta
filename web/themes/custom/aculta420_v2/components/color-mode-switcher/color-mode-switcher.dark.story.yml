@@ -1,0 +1,8 @@
+name: Preferência escura
+description: Botão fechado em superfície escura com a preferência Escuro selecionada.
+props:
+  mode: dark
+  context: library
+  appearance: dark
+  alignment: end
+  instance_id: color-mode-dark
