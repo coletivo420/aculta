@@ -3,6 +3,50 @@
   gap: .75rem;
 }
 
+:root[data-scheduler-theme="terrace"] .calendar-interactive .dhx_cal_container {
+  --dhx-scheduler-base-colors-primary: var(--color-text-primary);
+  --dhx-scheduler-base-colors-primary-hover: var(--color-text-primary);
+  --dhx-scheduler-base-colors-primary-active: var(--color-text-primary);
+  --dhx-scheduler-btn-background: var(--color-text-primary);
+  --dhx-scheduler-btn-border-color: var(--color-text-primary);
+  --dhx-scheduler-btn-background-hover: var(--color-text-primary);
+  --dhx-scheduler-btn-border-hover: var(--color-text-primary);
+  --dhx-scheduler-btn-background-active: var(--color-text-primary);
+  --dhx-scheduler-btn-border-active: var(--color-text-primary);
+  --dhx-scheduler-btn-outline-color: var(--color-text-primary);
+  --dhx-scheduler-btn-outline-border-color: var(--color-text-primary);
+  --dhx-scheduler-btn-outline-color-hover: var(--color-text-primary);
+  --dhx-scheduler-btn-outline-border-hover: var(--color-text-primary);
+  --dhx-scheduler-btn-outline-background-hover: transparent;
+  --dhx-scheduler-btn-outline-color-active: var(--dhx-scheduler-base-colors-white);
+  --dhx-scheduler-btn-outline-background-active: var(--color-text-primary);
+  --dhx-scheduler-btn-outline-border-active: var(--color-text-primary);
+}
+
+:root[data-theme="dark"][data-scheduler-theme="terrace"] .calendar-interactive .dhx_cal_container {
+  --dhx-scheduler-base-colors-primary: var(--color-footer-link-surface);
+  --dhx-scheduler-base-colors-primary-hover: var(--color-footer-link-surface);
+  --dhx-scheduler-base-colors-primary-active: var(--color-footer-link-surface);
+  --dhx-scheduler-btn-background: var(--color-footer-link-surface);
+  --dhx-scheduler-btn-border-color: var(--color-footer-link-surface);
+  --dhx-scheduler-btn-background-hover: var(--color-footer-link-surface);
+  --dhx-scheduler-btn-border-hover: var(--color-footer-link-surface);
+  --dhx-scheduler-btn-background-active: var(--color-footer-link-surface);
+  --dhx-scheduler-btn-border-active: var(--color-footer-link-surface);
+  --dhx-scheduler-btn-outline-color: var(--color-footer-link-surface);
+  --dhx-scheduler-btn-outline-border-color: var(--color-footer-link-surface);
+  --dhx-scheduler-btn-outline-color-hover: var(--color-footer-link-surface);
+  --dhx-scheduler-btn-outline-border-hover: var(--color-footer-link-surface);
+  --dhx-scheduler-btn-outline-background-hover: transparent;
+  --dhx-scheduler-btn-outline-color-active: var(--dhx-scheduler-base-colors-white);
+  --dhx-scheduler-btn-outline-background-active: var(--color-footer-link-surface);
+  --dhx-scheduler-btn-outline-border-active: var(--color-footer-link-surface);
+}
+
+:root[data-scheduler-theme="terrace"] .calendar-interactive .dhx_month_head {
+  color: var(--dhx-scheduler-base-colors-text-light);
+}
+
 .calendar-interactive [data-portal-ui~="calendar-interactive-notice"] {
   color: var(--color-text-muted);
   font-size: .9375rem;
