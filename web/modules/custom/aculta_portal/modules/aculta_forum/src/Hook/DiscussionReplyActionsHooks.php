@@ -33,6 +33,9 @@ final class DiscussionReplyActionsHooks {
 
   /**
    * Implements hook_comment_links_alter().
+   *
+   * @param array<mixed> $links
+   * @param array<mixed> $context
    */
   #[Hook('comment_links_alter')]
   public function commentLinksAlter(array &$links, CommentInterface $comment, array &$context): void {
@@ -41,7 +44,12 @@ final class DiscussionReplyActionsHooks {
     }
     // O "Responder" de texto do core aponta para o formulário antigo de resposta (quebrado). A ação
     // de Responder do fórum é o botão com ícone, que abre o popup.
-    unset($links['#links']['comment-reply'], $links['comment']['#links']['comment-reply']);
+    if (isset($links['#links']) && is_array($links['#links'])) {
+      unset($links['#links']['comment-reply']);
+    }
+    if (isset($links['comment']) && is_array($links['comment']) && isset($links['comment']['#links']) && is_array($links['comment']['#links'])) {
+      unset($links['comment']['#links']['comment-reply']);
+    }
     if (!$comment->isPublished()) {
       return;
     }
@@ -72,17 +80,18 @@ final class DiscussionReplyActionsHooks {
       ],
     ]);
 
+    $commentIdStr = (string) $comment->id();
     $replyLink = [
       'title' => $this->translation->translate('Responder'),
       'url' => $fallbackUrl,
       'attributes' => [
         'class' => ['resposta-acao', 'resposta-acao--responder', 'use-htmx'],
         'data-action' => 'resposta-responder',
-        'data-parent-id' => (string) $comment->id(),
+        'data-parent-id' => $commentIdStr,
         'data-hx-get' => $endpointUrl->toString(),
         'data-hx-target' => '#' . $composerId,
         'data-hx-swap' => 'outerHTML',
-        'aria-label' => (string) $this->translation->translate('Responder ao comentário #@id', ['@id' => $comment->id()]),
+        'aria-label' => (string) $this->translation->translate('Responder ao comentário #@id', ['@id' => $commentIdStr]),
       ],
     ];
 
@@ -90,11 +99,17 @@ final class DiscussionReplyActionsHooks {
       ->addCacheableDependency($comment)
       ->addCacheableDependency($access);
 
-    if (isset($links['comment'])) {
+    if (isset($links['comment']) && is_array($links['comment'])) {
+      if (!isset($links['comment']['#links']) || !is_array($links['comment']['#links'])) {
+        $links['comment']['#links'] = [];
+      }
       $links['comment']['#links']['resposta-responder'] = $replyLink;
       $cacheability->applyTo($links['comment']);
     }
     else {
+      if (!isset($links['#links']) || !is_array($links['#links'])) {
+        $links['#links'] = [];
+      }
       $links['#links']['resposta-responder'] = $replyLink;
       $cacheability->applyTo($links);
     }
@@ -103,6 +118,8 @@ final class DiscussionReplyActionsHooks {
   /**
    * Comentário excluído pelo autor ou removido pela moderação: o autor não edita nem exclui mais.
    * Moderador (administer comments) mantém os controles para poder restaurar.
+   *
+   * @param array<mixed> $links
    */
   private function hideTombstonedActions(array &$links, CommentInterface $comment): void {
     $tombstone = $this->keyValue->get('aculta_forum_comment_tombstones')->get((string) $comment->id());
@@ -110,7 +127,12 @@ final class DiscussionReplyActionsHooks {
       return;
     }
     foreach (['comment-edit', 'comment-delete'] as $key) {
-      unset($links['comment']['#links'][$key], $links['#links'][$key]);
+      if (isset($links['comment']) && is_array($links['comment']) && isset($links['comment']['#links']) && is_array($links['comment']['#links'])) {
+        unset($links['comment']['#links'][$key]);
+      }
+      if (isset($links['#links']) && is_array($links['#links'])) {
+        unset($links['#links'][$key]);
+      }
     }
   }
 
@@ -119,6 +141,8 @@ final class DiscussionReplyActionsHooks {
    *
    * O link de edição do core continua no href (acesso sem JavaScript); o clique carrega o
    * formulário de edição no diálogo pelo endpoint do compositor com ?editar=CID.
+   *
+   * @param array<mixed> $links
    */
   private function markEditLink(array &$links, CommentInterface $comment, EntityInterface $host): void {
     $endpoint = Url::fromRoute('aculta_forum.discussion_composer', [
@@ -128,20 +152,29 @@ final class DiscussionReplyActionsHooks {
       'query' => ['editar' => (int) $comment->id()],
     ])->toString();
 
-    if (isset($links['comment']['#links']['comment-edit'])) {
-      $this->applyEditAttributes($links['comment']['#links']['comment-edit'], $endpoint);
+    if (isset($links['comment']) && is_array($links['comment']) && isset($links['comment']['#links']) && is_array($links['comment']['#links'])) {
+      $commentLinks = &$links['comment']['#links'];
+      if (isset($commentLinks['comment-edit']) && is_array($commentLinks['comment-edit'])) {
+        $this->applyEditAttributes($commentLinks['comment-edit'], $endpoint);
+      }
     }
-    if (isset($links['#links']['comment-edit'])) {
-      $this->applyEditAttributes($links['#links']['comment-edit'], $endpoint);
+    if (isset($links['#links']) && is_array($links['#links'])) {
+      $rootLinks = &$links['#links'];
+      if (isset($rootLinks['comment-edit']) && is_array($rootLinks['comment-edit'])) {
+        $this->applyEditAttributes($rootLinks['comment-edit'], $endpoint);
+      }
     }
   }
 
   /**
    * Acrescenta ao link de edição os atributos do popup.
+   *
+   * @param array<mixed> $link
    */
   private function applyEditAttributes(array &$link, string $endpoint): void {
-    $attributes = $link['attributes'] ?? [];
-    $attributes['class'] = array_merge((array) ($attributes['class'] ?? []), ['resposta-acao', 'resposta-acao--editar', 'use-htmx']);
+    $attributes = isset($link['attributes']) && is_array($link['attributes']) ? $link['attributes'] : [];
+    $existingClass = isset($attributes['class']) ? (array) $attributes['class'] : [];
+    $attributes['class'] = array_merge($existingClass, ['resposta-acao', 'resposta-acao--editar', 'use-htmx']);
     $attributes['data-action'] = 'resposta-editar';
     $attributes['data-hx-get'] = $endpoint;
     $link['attributes'] = $attributes;
