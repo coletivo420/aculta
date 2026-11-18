@@ -255,6 +255,30 @@ P01 global continua FAIL até reexecutar os shards completos.
 
 ## Próximos passos
 
+### Execução Kernel local e correção da fila editorial Wiki
+
+Uma execução local de `vendor/bin/phpunit --testsuite kernel` terminou com
+exit 2: **1.167 testes, 22.649 assertions, 88 erros, 8 falhas, 7 warnings, 4
+depreciações, 10 PHPUnit deprecations e 5 notices**. Os erros incluem a
+indisponibilidade repetida do módulo legado `private_message`; as falhas
+incluem Eventos, H5P, Maps e três casos de Wiki. O processo foi iniciado em
+uma worktree compartilhada antes de alterações locais posteriores e não
+preservou o SHA de origem; este resultado é diagnóstico, não comparação
+canônica com o CI nem prova de regressão no HEAD atual. P01 permanece **FAIL**.
+
+A execução local falhou em
+`WikiEditorialQueue::testEditorialQueuePaginatesAuthorizedRevisionsPastDeniedCandidates`.
+`QueryAggregate::execute()` devolve linhas associativas com
+`content_entity_revision_id`; a fila convertia a linha inteira
+em string, descartava os candidatos e produzia `Array to string conversion`.
+Corrigi a extração do VID e as guardas de tipo/cursor, removendo quatro
+entradas correspondentes de dívida PHPStan no mesmo diff. Reexecução Kernel
+focal: **1 teste, 119 assertions, PASS**, com uma depreciação. PHP lint,
+PHPCS, PHPStan nível 10 canônico e guards `check`/`diff --include-worktree`
+passaram. A alteração é **R2** porque mantém a fila de moderação sob
+revalidação de acesso; revisão independente ainda é necessária antes da
+publicação.
+
 1. Reexecutar todos os shards para quantificar os fixes locais de schema da View, descoberta SDC, avatar do Fórum, Calendar e o preprocess do bloco Messenger; reavaliar outros consumidores do SDC no shard 1/6.
 2. Corrigir as causas em lotes isolados e manter failures/skipped/cancelled distintos no relatório e na proteção de branch.
 3. Reexecutar todos os shards no HEAD atual depois das correções e exigir sucesso; o cancelamento do shard 2 nos dois runs não prova estabilidade.
