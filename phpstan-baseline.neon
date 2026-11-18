@@ -37618,12 +37618,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_lms_h5p/aculta_lms_h5p.install
 
 		-
-			rawMessage: 'Function aculta_lms_h5p_requirements() has an unused parameter $phase.'
-			identifier: function.unusedParameter
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms_h5p/aculta_lms_h5p.install
-
-		-
 			rawMessage: 'Function aculta_lms_h5p_requirements() return type has no value type specified in iterable type array.'
 			identifier: missingType.iterableValue
 			count: 1

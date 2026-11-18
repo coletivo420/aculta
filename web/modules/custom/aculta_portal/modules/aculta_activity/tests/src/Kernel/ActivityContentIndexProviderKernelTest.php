@@ -355,7 +355,8 @@ final class ActivityContentIndexProviderKernelTest extends KernelTestBase {
     self::assertSame('editorial_relations', $form['field_related_activity']['#group'] ?? NULL);
     self::assertSame('editorial_seo', $form['field_meta_tags']['#group'] ?? NULL);
     $authorTitle = $form['author']['#title'] ?? NULL;
-    self::assertSame('Conta responsável pelo cadastro', is_scalar($authorTitle) ? (string) $authorTitle : '');
+    self::assertInstanceOf(\Stringable::class, $authorTitle);
+    self::assertSame('Conta responsável pelo cadastro', (string) $authorTitle);
     $expectedValidate = ['aculta_activity.form_callbacks:validateActivity'];
     $actualValidate = (array) ($form['#validate'] ?? []);
     self::assertEquals($expectedValidate, $actualValidate);

@@ -314,6 +314,25 @@ bootstrap do conjunto, não PASS. A falha local focalizada H5P foi corrigida,
 mas o CI remoto e P01 permanecem **FAIL** até todos os shards serem
 executados com sucesso.
 
+Para satisfazer o gate de dívida por módulo no incremento de PHP, também
+renomeei o parâmetro legado não usado para `$_phase` e removi somente a
+ocorrência correspondente do `phpstan-baseline.neon`: dívida de
+`aculta_lms_h5p` reduzida em uma entrada. PHPStan canônico e os guards
+`check`/`diff` foram reexecutados após essa remoção e passaram.
+
+### Hook de formulário Activity
+
+A falha `ActivityContentIndexProviderKernelTest::testActivityFormHooksAreDispatchedByPortal`
+vinha de uma asserção que aceitava apenas valores escalares para o título do
+campo `author`. O hook corretamente retorna `TranslatableMarkup`, que
+implementa `Stringable`; o teste agora valida a interface e compara a
+representação textual traduzida. Nenhum código de produção foi alterado.
+
+A classe Kernel focal passou: **6 testes, 142 asserções**, com 72
+deprecações Core/contrib. PHP lint, descoberta PHPUnit, gate Drupal 12 do
+Portal (1.236 checks), PHPStan nível 10 global e guards `check`/`diff` passaram.
+P01 permanece **FAIL** até a execução integral aprovada dos shards remotos.
+
 1. Reexecutar todos os shards para quantificar os fixes locais de schema da View, descoberta SDC, avatar do Fórum, Calendar e o preprocess do bloco Messenger; reavaliar outros consumidores do SDC no shard 1/6.
 2. Corrigir as causas em lotes isolados e manter failures/skipped/cancelled distintos no relatório e na proteção de branch.
 3. Reexecutar todos os shards no HEAD atual depois das correções e exigir sucesso; o cancelamento do shard 2 nos dois runs não prova estabilidade.
