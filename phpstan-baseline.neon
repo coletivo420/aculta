@@ -30625,12 +30625,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Access/CourseAuthoringAccessCheck.php
 
 		-
-			rawMessage: 'Cannot call method getGroupModerationAccess() on Drupal\aculta_forum\Context\Provider\LmsDiscussionContextProvider|null.'
-			identifier: method.nonObject
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Access/LmsForumModerationManager.php
-
-		-
 			rawMessage: Cannot cast mixed to string.
 			identifier: cast.string
 			count: 2
@@ -30875,12 +30869,6 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Controller/XapiStatementsController.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_lms\CourseRoomBuilder::build() should return array<string, mixed> but returns array.'
-			identifier: return.type
-			count: 3
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/CourseRoomBuilder.php
 
 		-
 			rawMessage: Cannot cast mixed to string.
@@ -33283,33 +33271,9 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/ClassActivityDeadlineTest.php
 
 		-
-			rawMessage: Cannot access offset '#attributes' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/ClassDashboardKernelTest.php
-
-		-
-			rawMessage: Cannot access offset '#items' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/ClassDashboardKernelTest.php
-
-		-
 			rawMessage: Cannot access offset '#rows' on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 3
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/ClassDashboardKernelTest.php
-
-		-
-			rawMessage: Cannot access offset '#url' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/ClassDashboardKernelTest.php
-
-		-
-			rawMessage: Cannot access offset 'aria-current' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/ClassDashboardKernelTest.php
 
 		-
@@ -33319,27 +33283,9 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/ClassDashboardKernelTest.php
 
 		-
-			rawMessage: Cannot access offset 'dias' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/ClassDashboardKernelTest.php
-
-		-
 			rawMessage: Cannot access offset 'max-age' on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/ClassDashboardKernelTest.php
-
-		-
-			rawMessage: Cannot access offset 'options' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/ClassDashboardKernelTest.php
-
-		-
-			rawMessage: Cannot access offset 'period' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 2
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/ClassDashboardKernelTest.php
 
 		-
@@ -33357,7 +33303,7 @@ parameters:
 		-
 			rawMessage: Cannot access offset 1 on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 3
+			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/ClassDashboardKernelTest.php
 
 		-
@@ -33373,36 +33319,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/ClassDashboardKernelTest.php
 
 		-
-			rawMessage: 'Cannot call method getOption() on mixed.'
-			identifier: method.nonObject
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/ClassDashboardKernelTest.php
-
-		-
-			rawMessage: 'Cannot call method getRouteName() on mixed.'
-			identifier: method.nonObject
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/ClassDashboardKernelTest.php
-
-		-
-			rawMessage: Cannot cast mixed to int.
-			identifier: cast.int
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/ClassDashboardKernelTest.php
-
-		-
-			rawMessage: 'Parameter #1 $callback of function array_map expects (callable(mixed): mixed)|null, Closure(array): int given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/ClassDashboardKernelTest.php
-
-		-
-			rawMessage: 'Parameter #2 $array of function array_map expects array, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/ClassDashboardKernelTest.php
-
-		-
 			rawMessage: 'Parameter #2 $haystack of static method PHPUnit\Framework\Assert::assertContains() expects iterable, mixed given.'
 			identifier: argument.type
 			count: 2
@@ -33411,7 +33327,7 @@ parameters:
 		-
 			rawMessage: 'Parameter #2 $haystack of static method PHPUnit\Framework\Assert::assertCount() expects Countable|iterable, mixed given.'
 			identifier: argument.type
-			count: 2
+			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/ClassDashboardKernelTest.php
 
 		-
@@ -33451,57 +33367,9 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/ClassRosterVisibilityTest.php
 
 		-
-			rawMessage: Cannot access offset '#items' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/ClassRosterVisibilityTest.php
-
-		-
-			rawMessage: Cannot access offset '#size' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/ClassRosterVisibilityTest.php
-
-		-
-			rawMessage: Cannot access offset '#theme' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/ClassRosterVisibilityTest.php
-
-		-
-			rawMessage: Cannot access offset '#value' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/ClassRosterVisibilityTest.php
-
-		-
-			rawMessage: Cannot access offset '#variant' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/ClassRosterVisibilityTest.php
-
-		-
-			rawMessage: Cannot access offset 'members' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/ClassRosterVisibilityTest.php
-
-		-
 			rawMessage: Cannot access offset 'tags' on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/ClassRosterVisibilityTest.php
-
-		-
-			rawMessage: Cannot access offset 'title' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/ClassRosterVisibilityTest.php
-
-		-
-			rawMessage: Cannot access offset 0 on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 5
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/ClassRosterVisibilityTest.php
 
 		-
@@ -33565,12 +33433,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/ClassRosterVisibilityTest.php
 
 		-
-			rawMessage: 'Parameter #1 $callback of function array_map expects (callable(mixed): mixed)|null, Closure(array): string given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/ClassRosterVisibilityTest.php
-
-		-
 			rawMessage: 'Parameter #1 $course of method Drupal\aculta_lms\ClassRosterManager::build() expects Drupal\group\Entity\GroupInterface, Drupal\Core\Entity\EntityInterface|null given.'
 			identifier: argument.type
 			count: 2
@@ -33589,19 +33451,7 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/ClassRosterVisibilityTest.php
 
 		-
-			rawMessage: 'Parameter #2 $array of function array_map expects array, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/ClassRosterVisibilityTest.php
-
-		-
 			rawMessage: 'Parameter #2 $haystack of static method PHPUnit\Framework\Assert::assertContains() expects iterable, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/ClassRosterVisibilityTest.php
-
-		-
-			rawMessage: 'Parameter #2 $haystack of static method PHPUnit\Framework\Assert::assertCount() expects Countable|iterable, mixed given.'
 			identifier: argument.type
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/ClassRosterVisibilityTest.php
@@ -33995,12 +33845,6 @@ parameters:
 			identifier: argument.type
 			count: 2
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/LmsClosedDiscussionFieldKernelTest.php
-
-		-
-			rawMessage: Cannot access offset 'class_permission_mappings' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/LmsCommentModerationMatrixKernelTest.php
 
 		-
 			rawMessage: Cannot cast mixed to int.

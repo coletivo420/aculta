@@ -45,6 +45,11 @@ final class LmsForumModerationManager {
    * Returns route access for a specific course or class Group.
    */
   public function groupAccess(GroupInterface $group, AccountInterface $account): AccessResultInterface {
+    if ($this->contextProvider === NULL) {
+      return AccessResult::forbidden()
+        ->addCacheableDependency($group)
+        ->addCacheContexts(['user.group_permissions']);
+    }
     return $this->contextProvider->getGroupModerationAccess($group, $account);
   }
 
@@ -194,9 +199,9 @@ final class LmsForumModerationManager {
   /**
    * Gets the groups that the account may moderate and their cache metadata.
    *
-   * The Group entity query applies installed Group query access first. The
-   * contextual Educator permission is then checked again for every result.
-   * This keeps student memberships out of the returned list.
+   * Loads course and class groups, then applies the same explicit view,
+   * membership, and contextual Educator checks used by moderation routes.
+   * Group query access cannot represent every contextual permission in SQL.
    *
    * @return array{0: list<\Drupal\group\Entity\GroupInterface>, 1: \Drupal\Core\Cache\CacheableMetadata}
    *   Authorized groups and metadata for the result, including denied checks.
@@ -206,13 +211,16 @@ final class LmsForumModerationManager {
       ->setCacheContexts(['user', 'user.group_permissions'])
       ->setCacheTags(['group_list', 'group_relationship_list']);
 
-    if ($account->isAnonymous()) {
+    if ($account->isAnonymous() || $this->contextProvider === NULL) {
       return [[], $cacheability];
     }
 
     $storage = $this->entityTypeManager->getStorage('group');
     $ids = $storage->getQuery()
-      ->accessCheck(TRUE)
+      // Group query access only represents permissions that can be translated
+      // into SQL. Contextual Educator access is checked for each loaded group
+      // below by the same provider used by direct moderation routes.
+      ->accessCheck(FALSE)
       ->condition('type', ['lms_course', 'lms_class'], 'IN')
       ->sort('label')
       ->execute();

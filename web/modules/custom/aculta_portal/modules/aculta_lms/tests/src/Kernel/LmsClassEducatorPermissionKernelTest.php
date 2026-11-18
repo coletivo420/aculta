@@ -351,6 +351,10 @@ final class LmsClassEducatorPermissionKernelTest extends KernelTestBase {
     self::assertTrue($moderationManager->groupAccess($class, $educator)->isAllowed());
     self::assertTrue($moderationManager->groupAccess($class, $student)->isForbidden());
     self::assertTrue($moderationManager->groupAccess($class, $outsider)->isForbidden());
+    [$studentModerationGroups] = $moderationManager->getModerationGroups($student);
+    [$outsiderModerationGroups] = $moderationManager->getModerationGroups($outsider);
+    self::assertSame([], $studentModerationGroups);
+    self::assertSame([], $outsiderModerationGroups);
 
     $viewEntity = $this->container->get('entity_type.manager')->getStorage('view')->load('aculta_forum_lms_admin_comments');
     self::assertNotNull($viewEntity, 'The adapter installs its Group-scoped moderation View.');

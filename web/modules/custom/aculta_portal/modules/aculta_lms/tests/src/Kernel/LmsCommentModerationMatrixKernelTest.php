@@ -127,18 +127,6 @@ final class LmsCommentModerationMatrixKernelTest extends KernelTestBase {
       ->installDefaultConfig('module', 'aculta_lms');
     self::assertInstanceOf(NodeType::class, NodeType::load('aculta_lms_topic'));
 
-    FieldStorageConfig::create([
-      'entity_type' => 'comment',
-      'field_name' => 'field_aculta_rejected',
-      'type' => 'boolean',
-    ])->save();
-    FieldConfig::create([
-      'entity_type' => 'comment',
-      'bundle' => 'aculta_discussion_post',
-      'field_name' => 'field_aculta_rejected',
-      'label' => 'Rejected',
-    ])->save();
-
     $courseType = GroupType::load('lms_course');
     $classType = GroupType::load('lms_class');
     self::assertInstanceOf(GroupType::class, $courseType);
@@ -177,8 +165,11 @@ final class LmsCommentModerationMatrixKernelTest extends KernelTestBase {
     $syncPath = dirname(__DIR__, 9) . '/config/sync/aculta_lms.settings.yml';
     self::assertFileExists($syncPath);
     $syncConfig = Yaml::parseFile($syncPath);
+    self::assertIsArray($syncConfig);
+    $classPermissionMappings = $syncConfig['class_permission_mappings'] ?? NULL;
+    self::assertIsArray($classPermissionMappings);
     $this->config('aculta_lms.settings')
-      ->set('class_permission_mappings', $syncConfig['class_permission_mappings'])
+      ->set('class_permission_mappings', $classPermissionMappings)
       ->save();
   }
 

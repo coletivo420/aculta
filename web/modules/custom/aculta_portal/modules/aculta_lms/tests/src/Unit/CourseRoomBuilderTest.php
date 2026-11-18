@@ -65,7 +65,9 @@ final class CourseRoomBuilderTest extends UnitTestCase {
 
     $rosters = $this->createMock(ClassRosterManager::class);
     $rosters->expects(self::once())->method('build')->with($course, $account)->willReturn([
-      'classes' => ['class-1'],
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:layout-section',
+      '#slots' => ['content' => ['class-1']],
     ]);
 
     $builder = new CourseRoomBuilder(
@@ -76,9 +78,12 @@ final class CourseRoomBuilderTest extends UnitTestCase {
     );
     $build = $builder->build($course);
 
-    self::assertIsArray($build['participant_rosters'] ?? NULL);
-    self::assertIsArray($build['participant_rosters']['classes'] ?? NULL);
-    self::assertSame(['class-1'], $build['participant_rosters']['classes']);
+    $participantRosters = $build['participant_rosters'] ?? NULL;
+    self::assertIsArray($participantRosters);
+    self::assertSame('aculta420_v2:layout-section', $participantRosters['#component'] ?? NULL);
+    $slots = $participantRosters['#slots'] ?? NULL;
+    self::assertIsArray($slots);
+    self::assertSame(['class-1'], $slots['content'] ?? NULL);
     self::assertArrayNotHasKey('aculta_learning_journey', $build);
     self::assertIsArray($build['#cache'] ?? NULL);
     self::assertIsArray($build['#cache']['contexts'] ?? NULL);

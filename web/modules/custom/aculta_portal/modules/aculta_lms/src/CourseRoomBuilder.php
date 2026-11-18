@@ -28,7 +28,7 @@ final class CourseRoomBuilder {
   /**
    * Creates authorized enrollment and roster elements from Group state.
    *
-   * @return array<string,mixed>
+   * @return array<array-key, mixed>
    *   Render array containing enrollment or participant roster elements.
    */
   public function build(GroupInterface $course): array {
@@ -37,6 +37,7 @@ final class CourseRoomBuilder {
       ->addCacheableDependency($course)
       ->addCacheContexts(['user', 'user.group_permissions']);
 
+    /** @var array<array-key, mixed> $build */
     $build = [
       '#type' => 'container',
       '#cache' => [],
@@ -58,7 +59,7 @@ final class CourseRoomBuilder {
 
     // Studio adds the student-facing journey during entity view alteration.
     $rosters = $this->classRosters->build($course, $this->currentUser);
-    if (isset($rosters['classes'])) {
+    if (isset($rosters['#component'])) {
       $build['participant_rosters'] = $rosters;
     }
     $cacheability->addCacheableDependency(CacheableMetadata::createFromRenderArray($rosters));

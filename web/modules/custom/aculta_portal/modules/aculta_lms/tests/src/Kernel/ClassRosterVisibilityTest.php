@@ -182,12 +182,34 @@ final class ClassRosterVisibilityTest extends KernelTestBase {
     self::assertSame((string) $viewer->id(), (string) $viewerMembership->getEntity()->id());
     self::assertTrue($viewerMembership->getEntity()->isActive());
     $visible = $manager->build($course, $viewer);
-    self::assertCount(1, $visible['classes'], 'A student sees only classes where they are enrolled.');
-    self::assertSame('Turma A', $visible['classes'][0]['title']['#value']);
-    $items = $visible['classes'][0]['members']['#items'];
-    self::assertSame('aculta_user_author_card', $items[0]['#theme']);
-    self::assertSame('profile_compact', $items[0]['#variant']);
-    self::assertSame('sm', $items[0]['#size']);
+    $slots = $visible['#slots'] ?? NULL;
+    self::assertIsArray($slots);
+    $classLists = $slots['content'] ?? NULL;
+    self::assertIsArray($classLists);
+    $classListValues = [];
+    foreach ($classLists as $classList) {
+      self::assertIsArray($classList);
+      $classListValues[] = $classList;
+    }
+    self::assertCount(1, $classListValues, 'A student sees only classes where they are enrolled.');
+    $classList = $classListValues[0];
+    $title = $classList['title'] ?? NULL;
+    self::assertIsArray($title);
+    self::assertSame('Turma A', $title['#value'] ?? NULL);
+    $members = $classList['members'] ?? NULL;
+    self::assertIsArray($members);
+    $rosterItems = $members['#items'] ?? NULL;
+    self::assertIsArray($rosterItems);
+    $items = [];
+    foreach ($rosterItems as $item) {
+      self::assertIsArray($item);
+      $items[] = $item;
+    }
+    $firstItem = $items[0] ?? NULL;
+    self::assertIsArray($firstItem);
+    self::assertSame('aculta_user_author_card', $firstItem['#theme'] ?? NULL);
+    self::assertSame('profile_compact', $firstItem['#variant'] ?? NULL);
+    self::assertSame('sm', $firstItem['#size'] ?? NULL);
     $names = array_map(static fn (array $item): string => (string) $item['#display_name'], $items);
     self::assertEqualsCanonicalizing(['peer', 'viewer'], $names);
     self::assertNotContains('blocked', $names);

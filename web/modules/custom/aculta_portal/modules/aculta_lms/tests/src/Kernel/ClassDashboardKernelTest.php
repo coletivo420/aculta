@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_lms\Kernel;
 
 use Drupal\Core\Cache\Cache;
+use Drupal\Core\Url;
 use Drupal\aculta_lms\Access\ClassActivityDeadlineAccessCheck;
 use Drupal\aculta_lms\Access\ClassDashboardAccessCheck;
 use Drupal\aculta_lms\Certificate\CourseCertificateManager;
@@ -224,14 +225,38 @@ final class ClassDashboardKernelTest extends KernelTestBase {
     self::assertCount(14, $build['status_history']['table']['#rows']);
     self::assertSame(2, $build['status_history']['table']['#rows'][13][1]);
     self::assertSame(0, $build['status_history']['table']['#rows'][13][2]);
-    self::assertCount(3, $build['status_history']['period']['options']['#items']);
-    $periodLinks = $build['status_history']['period']['options']['#items'];
-    self::assertSame([7, 14, 30], array_map(
-      static fn(array $link): int => (int) $link['#url']->getOption('query')['dias'],
-      $periodLinks,
-    ));
-    self::assertSame('page', $periodLinks[1]['#attributes']['aria-current']);
-    self::assertSame('aculta_lms.class_dashboard', $periodLinks[1]['#url']->getRouteName());
+    $statusHistory = $build['status_history'] ?? NULL;
+    self::assertIsArray($statusHistory);
+    $period = $statusHistory['period'] ?? NULL;
+    self::assertIsArray($period);
+    $slots = $period['#slots'] ?? NULL;
+    self::assertIsArray($slots);
+    $items = $slots['items'] ?? NULL;
+    self::assertIsArray($items);
+    $periodLinkItems = $items['#items'] ?? NULL;
+    self::assertIsArray($periodLinkItems);
+    $periodLinks = [];
+    $periodDays = [];
+    foreach ($periodLinkItems as $periodLink) {
+      self::assertIsArray($periodLink);
+      $url = $periodLink['#url'] ?? NULL;
+      self::assertInstanceOf(Url::class, $url);
+      $query = $url->getOption('query');
+      self::assertIsArray($query);
+      $days = $query['dias'] ?? NULL;
+      self::assertIsNumeric($days);
+      $periodDays[] = (int) $days;
+      $periodLinks[] = $periodLink;
+    }
+    self::assertCount(3, $periodLinks);
+    self::assertSame([7, 14, 30], $periodDays);
+    $activePeriodLink = $periodLinks[1];
+    $activeAttributes = $activePeriodLink['#attributes'] ?? NULL;
+    self::assertIsArray($activeAttributes);
+    self::assertSame('page', $activeAttributes['aria-current'] ?? NULL);
+    $activeUrl = $activePeriodLink['#url'] ?? NULL;
+    self::assertInstanceOf(Url::class, $activeUrl);
+    self::assertSame('aculta_lms.class_dashboard', $activeUrl->getRouteName());
     self::assertSame(0, $build['#cache']['max-age']);
     self::assertContains('user', $build['#cache']['contexts']);
     self::assertContains('group_relationship_list:plugin:group_membership:group:' . $class->id(), $build['#cache']['tags']);
