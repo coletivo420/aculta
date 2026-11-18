@@ -461,6 +461,20 @@ grupos indicados acima precisam de triagem por harness/owner, e as falhas de
 Wiki/Mapa permanecem abertas. P01 continua **FAIL** até a resolução por owner
 e uma execução Kernel estável no estado publicável.
 
+Distribuição dos erros no log (antes da correção focal do harness de Eventos):
+
+| Grupo | Erros | Causa observada |
+| --- | ---: | --- |
+| Commerce / Melhor Envio | 29 | `private_message` indisponível no harness. |
+| LMS | 18 | 8 instalações sem plugin `ui_patterns`; 9 configs com dependência `ui_patterns_views` ausente; 1 caso sem o plugin Views. |
+| Eventos | 6 | 2 Views sem plugin `ui_patterns`; 2 assertions antigas de `#items`; 1 template SDC não descoberto; 1 processo de teste encerrado inesperadamente. |
+| Wiki | 3 | Schema de `aculta420_v2.settings` incompleto para `ui_styles_entity_status`. |
+
+Os quatro erros de contrato de `#items`/array e plugin Views em Eventos têm
+correções focais documentadas abaixo; elas não foram incluídas no total da
+execução integral. Os demais grupos não foram reclassificados como regressões
+da ADR sem comparação com seus owners.
+
 ## Harness das Views administrativas de Eventos — 2026-11-18
 
 O erro `EventRelatedViewsAccessKernelTest` do run integral vinha da ausência de
@@ -471,4 +485,8 @@ de acesso mínimo. A classe focal passou: **2 testes, 18 assertions, exit 0**,
 com duas depreciações PHPUnit. Log local:
 `/mnt/disco1/tmp/aculta-agent-logs/command-9qrzyd8l.log`. O run integral
 precedente não inclui esta correção; a redução no total só poderá ser
-confirmada por uma nova execução integral.
+confirmada por uma nova execução integral. Revisão independente R2:
+**aprovada, sem findings introduzidos**; confirmou que a mudança só completa o
+harness e preserva as assertions de não-admin e exposição mínima de campos.
+Nota de cobertura preexistente: o teste não verifica acesso positivo de
+administrador às Views.
