@@ -11,13 +11,15 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Uses the real account provider's authorized menu slots in the component library.
+ *
+ * @phpstan-import-type StudioMenuBuild from AccountExperienceProvider
  */
 final class StudioMenuStory extends StoryDefault implements ContainerFactoryPluginInterface {
 
   /**
    * Cached menu build shared by props() and slots().
    *
-   * @var array<string, mixed>|null
+   * @var StudioMenuBuild|null
    */
   protected ?array $menuBuild = NULL;
 
@@ -56,8 +58,7 @@ final class StudioMenuStory extends StoryDefault implements ContainerFactoryPlug
    *   Story props.
    */
   public function props(): array {
-    $props = $this->menu()['#props'] ?? [];
-    return is_array($props) ? $props : [];
+    return $this->menu()['#props'];
   }
 
   /**
@@ -67,30 +68,19 @@ final class StudioMenuStory extends StoryDefault implements ContainerFactoryPlug
    *   Story slots.
    */
   public function slots(): array {
-    $slots = $this->menu()['#slots'] ?? [];
-    return is_array($slots) ? $slots : [];
+    return $this->menu()['#slots'];
   }
 
   /**
    * Gets the real menu render array from the account provider.
    *
-   * @return array<string, mixed>
+   * @return StudioMenuBuild
    *   The studio-menu component build.
    */
   private function menu(): array {
     if ($this->menuBuild === NULL) {
       $build = $this->accountExperienceProvider->build();
-      $buildSlots = $build['#slots'] ?? NULL;
-      $menu = is_array($buildSlots) ? ($buildSlots['menu'] ?? NULL) : NULL;
-      $menuBuild = [];
-      if (is_array($menu)) {
-        foreach ($menu as $key => $value) {
-          if (is_string($key)) {
-            $menuBuild[$key] = $value;
-          }
-        }
-      }
-      $this->menuBuild = $menuBuild;
+      $this->menuBuild = $build['#slots']['menu'];
     }
     return $this->menuBuild;
   }
