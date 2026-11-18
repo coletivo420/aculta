@@ -24,6 +24,12 @@ final class SettingsTabs {
 
   /**
    * Monta a navegação em abas, com a aba ativa marcada (aria-current e is-active).
+   *
+   * @param string $active
+   *   Identificador da aba ativa.
+   *
+   * @return array<string, mixed>
+   *   Render array das abas.
    */
   public function build(string $active): array {
     $tabs = [
@@ -32,16 +38,26 @@ final class SettingsTabs {
     $this->moduleHandler->alter('aculta_portal_settings_tabs', $tabs);
 
     $links = [];
-    foreach ($tabs as $key => $tab) {
-      $link = PortalLinkElement::build($tab['title'], Url::fromRoute($tab['route']), [
-        'data-portal-account-data-link' => 'true',
-        'data-portal-ui' => 'account-data-link',
-      ]);
-      if ($key === $active) {
-        $link['#element_attributes']->setAttribute('aria-current', 'page');
-        $link['#element_attributes']->addClass('is-active');
+    if (is_iterable($tabs)) {
+      foreach ($tabs as $key => $tab) {
+        if (!is_array($tab) || !isset($tab['title'], $tab['route']) || !is_string($tab['route'])) {
+          continue;
+        }
+        $title = is_string($tab['title']) || $tab['title'] instanceof \Stringable ? (string) $tab['title'] : '';
+        $link = PortalLinkElement::build($title, Url::fromRoute($tab['route']), [
+          'data-portal-account-data-link' => 'true',
+          'data-portal-ui' => 'account-data-link',
+        ]);
+        if ($key === $active && isset($link['#element_attributes']) && is_object($link['#element_attributes'])) {
+          if (method_exists($link['#element_attributes'], 'setAttribute')) {
+            $link['#element_attributes']->setAttribute('aria-current', 'page');
+          }
+          if (method_exists($link['#element_attributes'], 'addClass')) {
+            $link['#element_attributes']->addClass('is-active');
+          }
+        }
+        $links[] = $link;
       }
-      $links[] = $link;
     }
 
     return [

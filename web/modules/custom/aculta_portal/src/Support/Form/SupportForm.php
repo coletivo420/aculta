@@ -13,6 +13,7 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Block\BlockManagerInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\commerce_payment\Entity\PaymentGatewayInterface;
 use Drupal\Component\Utility\Html;
 
 /**
@@ -50,26 +51,35 @@ final class SupportForm extends FormBase {
   /**
    * Monta o formulário de apoio institucional e verifica o gateway de pagamento.
    *
-   * @param array $form
+   * @param array<string, mixed> $form
    *   Estrutura do formulário.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   Estado atual do formulário.
    *
-   * @return array
+   * @return array<string, mixed>
    *   Estrutura do formulário renderizável.
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
-    $form['#cache']['max-age'] = 0;
-    $form['#attributes']['data-portal-ui'] = 'support-form';
+    $cache = isset($form['#cache']) && is_array($form['#cache']) ? $form['#cache'] : [];
+    $cache['max-age'] = 0;
+    $form['#cache'] = $cache;
+
+    $attributes = isset($form['#attributes']) && is_array($form['#attributes']) ? $form['#attributes'] : [];
+    $attributes['data-portal-ui'] = 'support-form';
+    $form['#attributes'] = $attributes;
+
+    $introConfig = $this->configs->get('aculta_portal.support')->get('intro');
+    $introText = is_string($introConfig) && $introConfig !== '' ? $introConfig : (string) $this->t('Sua contribuição ajuda a manter iniciativas culturais, comunicação, formação e ações de interesse coletivo.');
+
     $form['intro'] = [
       '#type' => 'html_tag',
       '#tag' => 'p',
-      '#value' => Html::escape((string) ($this->configs->get('aculta_portal.support')->get('intro') ?: $this->t('Sua contribuição ajuda a manter iniciativas culturais, comunicação, formação e ações de interesse coletivo.'))),
+      '#value' => Html::escape($introText),
       '#attributes' => ['data-portal-ui' => 'support-intro'],
     ];
     $gateway = $this->entities->getStorage('commerce_payment_gateway')->load('mercado_pago');
-    $gateway_configuration = $gateway ? $gateway->getPluginConfiguration() : [];
-    $gateway_ready = $gateway && $gateway->status()
+    $gateway_configuration = $gateway instanceof PaymentGatewayInterface ? $gateway->getPluginConfiguration() : [];
+    $gateway_ready = $gateway instanceof PaymentGatewayInterface && $gateway->status()
       && !empty($gateway_configuration['public_key_test'])
       && !empty($gateway_configuration['access_token_test']);
     // Os valores sugeridos ficam no bloco de doação rápida (aculta_donation), a única fonte da lista de valores.
@@ -105,6 +115,9 @@ final class SupportForm extends FormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $form
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     // There is intentionally no payment submission until the Commerce flow is

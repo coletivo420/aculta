@@ -7,6 +7,7 @@ namespace Drupal\aculta_portal\Form\Checkout;
 use Drupal\aculta_portal\Checkout\CheckoutContextRegistry;
 use Drupal\aculta_portal\Checkout\CheckoutPolicyManager;
 use Drupal\aculta_portal\Checkout\CheckoutSettings;
+use Drupal\commerce_payment\Entity\PaymentGatewayInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -79,6 +80,8 @@ final class CheckoutCommonForm extends ConfigFormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @return list<string>
    */
   protected function getEditableConfigNames(): array {
     return [CheckoutSettings::CONFIG];
@@ -86,6 +89,11 @@ final class CheckoutCommonForm extends ConfigFormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $form
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *
+   * @return array<string, mixed>
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $habilitado = (new CheckoutSettings($this->configFactory()))->commonCheckoutEnabled();
@@ -101,7 +109,7 @@ final class CheckoutCommonForm extends ConfigFormBase {
       ]),
     ];
     $linhas = [];
-    foreach ($this->registry->all() as $id => $provider) {
+    foreach ($this->registry->all() as $provider) {
       $c = $provider->configuration();
       $linhas[] = [
         (string) $provider->label(),
@@ -139,11 +147,16 @@ final class CheckoutCommonForm extends ConfigFormBase {
       '#rows' => $this->gatewayRows(),
       '#empty' => $this->t('Nenhum gateway configurado.'),
     ];
-    return parent::buildForm($form, $form_state);
+    /** @var array<string, mixed> $builtForm */
+    $builtForm = parent::buildForm($form, $form_state);
+    return $builtForm;
   }
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $form
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $novo = (bool) $form_state->getValue('common_checkout_enabled');
@@ -156,7 +169,6 @@ final class CheckoutCommonForm extends ConfigFormBase {
         '@uid' => $this->currentUser()->id(),
       ]);
     }
-    parent::submitForm($form, $form_state);
   }
 
   /**
@@ -171,6 +183,9 @@ final class CheckoutCommonForm extends ConfigFormBase {
     }
     $linhas = [];
     foreach ($this->entityTypeManager->getStorage('commerce_payment_gateway')->loadMultiple() as $gateway) {
+      if (!$gateway instanceof PaymentGatewayInterface) {
+        continue;
+      }
       $linhas[] = [
         (string) $gateway->label(),
         $gateway->getPluginId(),

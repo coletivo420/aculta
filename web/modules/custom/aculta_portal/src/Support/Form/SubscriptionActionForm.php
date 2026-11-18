@@ -94,6 +94,13 @@ final class SubscriptionActionForm extends ConfirmFormBase {
   /**
    * {@inheritdoc}
    *
+   * @param array<string, mixed> $form
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   * @param \Drupal\commerce_order\Entity\OrderInterface|null $commerce_order
+   * @param string $acao
+   *
+   * @return array<string, mixed>
+   *
    * @throws \Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException
    *   Pedido de outra conta, ou ação não permitida para o status atual.
    */
@@ -107,14 +114,23 @@ final class SubscriptionActionForm extends ConfirmFormBase {
     $this->acaoAtual = $acao;
     $form_state->set('pedido_id', (int) $commerce_order->id());
     $form_state->set('acao', $acao);
-    return parent::buildForm($form, $form_state);
+    /** @var array<string, mixed> $builtForm */
+    $builtForm = parent::buildForm($form, $form_state);
+    return $builtForm;
   }
 
   /**
    * Performs the submit form operation.
+   *
+   * @param array<string, mixed> $form
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
-    $pedido = $this->entidades->getStorage('commerce_order')->load((int) $form_state->get('pedido_id'));
+    $rawId = $form_state->get('pedido_id');
+    $pedidoId = is_numeric($rawId) ? (int) $rawId : 0;
+    $rawAcao = $form_state->get('acao');
+    $acaoStr = is_string($rawAcao) ? $rawAcao : '';
+    $pedido = $this->entidades->getStorage('commerce_order')->load($pedidoId);
     $gateway = $this->operacoesAssinatura === NULL
       ? NULL
       : $this->entidades->getStorage('commerce_payment_gateway')->load('mercado_pago');
@@ -123,7 +139,7 @@ final class SubscriptionActionForm extends ConfirmFormBase {
     }
     else {
       try {
-        $this->operacoesAssinatura->change($gateway, $pedido, (string) $form_state->get('acao'));
+        $this->operacoesAssinatura->change($gateway, $pedido, $acaoStr);
         $this->messenger()->addStatus($this->t('A assinatura foi atualizada.'));
       }
       catch (PaymentOperationException | \InvalidArgumentException) {
