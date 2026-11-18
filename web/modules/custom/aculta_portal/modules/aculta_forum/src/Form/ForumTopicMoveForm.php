@@ -43,6 +43,9 @@ final class ForumTopicMoveForm extends FormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<mixed> $form
+   * @return array<mixed>
    */
   public function buildForm(array $form, FormStateInterface $form_state, ?NodeInterface $node = NULL): array {
     if (!$node instanceof NodeInterface || !$this->mover->access($node, $this->account)->isAllowed()) {
@@ -50,22 +53,35 @@ final class ForumTopicMoveForm extends FormBase {
     }
 
     $form_state->set('topic_id', (int) $node->id());
-    $current_term_id = (int) ($node->get('field_aculta_categories')->getValue()[0]['target_id'] ?? 0);
+    $catItem = $node->get('field_aculta_categories')->first();
+    $catValues = $catItem?->getValue();
+    $current_term_id = is_array($catValues) && isset($catValues['target_id']) && is_numeric($catValues['target_id'])
+      ? (int) $catValues['target_id']
+      : 0;
+    /** @var list<mixed> $tree */
     $tree = $this->entityTypeManager->getStorage('taxonomy_term')->loadTree('aculta_forum_categories', 0, NULL, TRUE);
     $options = [];
     foreach ($tree as $term) {
-      if ((int) $term->id() !== $current_term_id && $term->access('view', $this->account)) {
-        $options[$term->id()] = str_repeat('— ', (int) $term->depth) . $term->label();
+      if (!$term instanceof \Drupal\taxonomy\TermInterface) {
+        continue;
+      }
+      $termId = (int) $term->id();
+      if ($termId !== $current_term_id && $term->access('view', $this->account)) {
+        $treeProperties = get_object_vars($term);
+        $depth = isset($treeProperties['depth']) && is_int($treeProperties['depth']) ? $treeProperties['depth'] : 0;
+        $label = (string) $term->label();
+        $options[$termId] = str_repeat('— ', $depth) . $label;
       }
     }
     if ($options === []) {
       throw new AccessDeniedHttpException('No public destination category is available.');
     }
 
+    $nodeLabel = (string) $node->label();
     $form['summary'] = [
       '#type' => 'item',
       '#title' => $this->t('Tópico'),
-      '#markup' => $this->t('O tópico “@title” continuará sendo o mesmo conteúdo; somente sua categoria será alterada.', ['@title' => $node->label()]),
+      '#markup' => $this->t('O tópico “@title” continuará sendo o mesmo conteúdo; somente sua categoria será alterada.', ['@title' => $nodeLabel]),
     ];
     $form['destination'] = [
       '#type' => 'select',
@@ -78,6 +94,9 @@ final class ForumTopicMoveForm extends FormBase {
       '#title' => $this->t('Confirmo mover este tópico para a categoria selecionada.'),
       '#required' => TRUE,
     ];
+    if (!isset($form['actions']) || !is_array($form['actions'])) {
+      $form['actions'] = [];
+    }
     $form['actions']['#type'] = 'actions';
     $form['actions']['submit'] = [
       '#type' => 'submit',
@@ -96,7 +115,10 @@ final class ForumTopicMoveForm extends FormBase {
   }
 
   /**
-   * {@inheritdoc} */
+   * {@inheritdoc}
+   *
+   * @param array<mixed> $form
+   */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
     $destination = filter_var($form_state->getValue('destination'), FILTER_VALIDATE_INT);
     if ($destination === FALSE || $destination <= 0 || !$form_state->getValue('confirm_move')) {
@@ -105,12 +127,23 @@ final class ForumTopicMoveForm extends FormBase {
   }
 
   /**
-   * {@inheritdoc} */
+   * {@inheritdoc}
+   *
+   * @param array<mixed> $form
+   */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     try {
-      $node = $this->mover->move((int) $form_state->get('topic_id'), (int) $form_state->getValue('destination'), $this->account);
-      $category = $this->entityTypeManager->getStorage('taxonomy_term')->load((int) $node->get('field_aculta_categories')->getValue()[0]['target_id']);
-      $this->messenger()->addStatus($this->t('O tópico foi movido para “@category”.', ['@category' => $category?->label() ?? '']));
+      $topicId = is_numeric($form_state->get('topic_id')) ? (int) $form_state->get('topic_id') : 0;
+      $dest = is_numeric($form_state->getValue('destination')) ? (int) $form_state->getValue('destination') : 0;
+      $node = $this->mover->move($topicId, $dest, $this->account);
+      $catItem = $node->get('field_aculta_categories')->first();
+      $catValues = $catItem?->getValue();
+      $targetId = is_array($catValues) && isset($catValues['target_id']) && is_numeric($catValues['target_id'])
+        ? (int) $catValues['target_id']
+        : 0;
+      $category = $this->entityTypeManager->getStorage('taxonomy_term')->load($targetId);
+      $catLabel = $category !== NULL ? (string) $category->label() : '';
+      $this->messenger()->addStatus($this->t('O tópico foi movido para “@category”.', ['@category' => $catLabel]));
       $form_state->setRedirect('aculta_forum.admin');
     }
     catch (\InvalidArgumentException) {

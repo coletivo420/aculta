@@ -34,6 +34,12 @@ final class TopicDeleteConfirmForm extends FormBase {
     return 'aculta_forum_topic_delete_confirm_form';
   }
 
+  /**
+   * {@inheritdoc}
+   *
+   * @param array<mixed> $form
+   * @return array<mixed>
+   */
   public function buildForm(array $form, FormStateInterface $form_state, ?NodeInterface $node = NULL): array {
     $this->topic = $node;
     if (!$node instanceof NodeInterface || $node->bundle() !== 'aculta_forum_topic') {
@@ -58,8 +64,15 @@ final class TopicDeleteConfirmForm extends FormBase {
     ]);
 
     $form['#action'] = $targetUrl->toString();
+    if (!isset($form['#attributes']) || !is_array($form['#attributes'])) {
+      $form['#attributes'] = [];
+    }
+    if (!isset($form['#attributes']['class']) || !is_array($form['#attributes']['class'])) {
+      $form['#attributes']['class'] = [];
+    }
     $form['#attributes']['class'][] = 'aculta-topic-delete-confirm';
     $form['#attributes']['id'] = 'aculta-topic-delete-form-' . $node->id();
+    $form['#attributes']['data-hx-select'] = '[data-discussion-reply-composer]';
 
     $htmx = new Htmx();
     $htmx->post($targetUrl)
@@ -67,15 +80,15 @@ final class TopicDeleteConfirmForm extends FormBase {
       ->swap('innerHTML')
       ->onlyMainContent()
       ->applyTo($form);
-    $form['#attributes']['data-hx-select'] = '[data-discussion-reply-composer]';
 
+    $topicLabel = (string) $node->label();
     $form['prompt'] = [
       '#markup' => '<div class="discussion-reply-target__warning" style="margin-block: var(--spacing-md); text-align: center;">'
         . '<h3 style="margin-block-end: var(--spacing-sm); color: var(--color-danger, #d32f2f); font-size: 1.25rem;">'
         . $this->t('Confirma a Exclusão do tópico')
         . '</h3>'
         . '<p style="color: var(--color-text-secondary);">'
-        . $this->t('Tem certeza de que deseja excluir o tópico «@title»? Esta ação removerá a publicação e suas respostas.', ['@title' => $node->label()])
+        . $this->t('Tem certeza de que deseja excluir o tópico «@title»? Esta ação removerá a publicação e suas respostas.', ['@title' => $topicLabel])
         . '</p>'
         . '</div>',
     ];
@@ -103,6 +116,11 @@ final class TopicDeleteConfirmForm extends FormBase {
     return $form;
   }
 
+  /**
+   * {@inheritdoc}
+   *
+   * @param array<mixed> $form
+   */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     if (!$this->topic instanceof NodeInterface) {
       return;
