@@ -84,7 +84,7 @@ final class EventOrganizationAccessControlHandler extends EntityAccessControlHan
         return AccessResult::forbidden('Somente organizações sem titular aceitam sugestões.')->addCacheableDependency($entity);
       }
       return $this->permissionPolicy->createEventAccessResult($account)
-        ->andIf(AccessResult::neutral()->addCacheableDependency($entity));
+        ->addCacheableDependency($entity);
     }
 
     if ($operation === 'delete') {
