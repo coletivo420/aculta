@@ -103,10 +103,24 @@ Na entrega 2 foram incorporados:
 
 ## 3. Modo de cor
 
-- `SurfaceSettingsHooks::preprocessHtml()` define `data-theme` no `<html>` a partir de `aculta_color_mode`. Valor diferente de `dark` vira `light`.
-- `src/styles/tokens.css` define `:root` (claro) e `:root[data-theme="dark"]`.
-- Não há detecção automática do sistema. Um valor legado `auto` resolve para claro até o contrato mudar.
-- Componentes não conhecem o modo. Eles usam tokens.
+O Portal mantém a preferência (`light`, `dark` ou `auto`) em `user.data`; o
+tema recebe esse valor neutro em `data-color-preference`. `data-theme` representa
+somente a aparência aplicada (`light` ou `dark`). No modo `auto`, a biblioteca
+`color-mode-runtime` resolve `prefers-color-scheme` antes de pintar a página e
+acompanha mudanças do sistema. UI Skins continua escopado por `data-theme`.
+O SDC `color-mode-switcher` é publicado na UI Patterns Library e pode ser
+composto futuramente em um consumer, mas não é posicionado em nenhuma página de
+produção nesta entrega.
+
+O endpoint autenticado de atualização é propriedade de `aculta_portal`; ele
+aceita apenas a preferência da conta atual, exige token CSRF de cabeçalho e
+reutiliza `ColorModePreference`. O formulário existente de Aparência continua
+usando o mesmo serviço e a mesma chave. Contextos `library` e `demo` só alteram
+a prévia; visitantes no contexto `site` podem guardar a escolha em `localStorage`
+por origem, sem sincronização entre subdomínios.
+
+Componentes consomem tokens semânticos e não consultam usuários, entidades ou
+configuração para resolver cores.
 
 `src/Hook/SurfaceSettingsHooks.php` aplica `data-theme`, `data-site-key` e
 `data-skin` no `<html>` e classes neutras no `<body>` derivadas

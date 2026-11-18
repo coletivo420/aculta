@@ -2,17 +2,19 @@ import base from './playwright.config.mjs';
 
 // Config da regressão visual. Herda o runner base e acrescenta:
 // - updateSnapshots 'none': snapshot faltante ou divergente falha; nunca é atualizado sozinho;
-// - referências e saídas em SUITE_OUT, fora do repositório, até revisão humana;
+// - saídas temporárias em SUITE_OUT; baselines aprovadas continuam versionadas;
+// - candidatas novas em SUITE_OUT somente no modo de baseline revisável;
 // - um único projeto de navegador para reduzir variação entre motores.
 const output = process.env.SUITE_OUT;
+const baselineMode = process.env.ACULTA_VISUAL_BASELINE === '1' && Boolean(output);
 
 export default {
   ...base,
   testMatch: /playwright\.visual\.spec\.mjs$/,
-  // 'missing' só com ACULTA_VISUAL_BASELINE=1, para gerar candidatas em SUITE_OUT para revisão.
-  // Nunca 'all': atualização de referência divergente exige revisão humana.
-  updateSnapshots: process.env.ACULTA_VISUAL_BASELINE === '1' && output ? 'missing' : 'none',
-  snapshotPathTemplate: output
+  // SUITE_OUT guarda artefatos; referências aprovadas só mudam de modo controlado.
+  // Candidatas ausentes vão para lá, sem substituir ou regravar snapshots existentes.
+  updateSnapshots: baselineMode ? 'missing' : 'none',
+  snapshotPathTemplate: baselineMode
     ? `${output}/snapshots/{testFilePath}/{arg}{ext}`
     : '{testDir}/__snapshots__/{testFilePath}/{arg}{ext}',
   outputDir: output ? `${output}/test-results-visual` : undefined,

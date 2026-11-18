@@ -94,6 +94,7 @@ Estão listadas abaixo as pastas reais, com o caminho completo. A convenção é
 | `tests/browser/aculta-qrcode/` | Validação visual do ACULTA QR Code |
 | `tests/browser/aculta-secrets-manager/` | Painel de credenciais (aculta_secrets_manager) |
 | `tests/browser/aculta-statistics/` | Revisão visual do painel de estatísticas |
+| `tests/browser/courses/aculta-courses-home/` | Raiz pública do domínio de cursos |
 | `tests/browser/courses/aculta-forum-lms/` | ACULTA Forum LMS — diálogo sob conteúdo H5P |
 | `tests/browser/courses/aculta-lms/` | Revisão visual do formulário de resposta com arquivo (LMS) |
 | `tests/browser/courses/aculta-lms-resources/` | Revisão visual do campo de vídeos do curso |
@@ -122,6 +123,7 @@ Estão listadas abaixo as pastas reais, com o caminho completo. A convenção é
 | `tests/browser/studio/marley/` | Studio · Marley |
 | `tests/browser/studio/we-sativa/` | Studio · WE SATIVA |
 | `tests/browser/support/aculta-faq/` | Revisão visual do ACULTA FAQ |
+| `tests/browser/support/aculta-support-home/` | Raiz pública do domínio de apoio |
 | `tests/browser/transversal/aculta-botoes-a11y/` | Leitor de tela (Orca) — botões em estados autenticados |
 | `tests/browser/transversal/aculta-content-admin/` | Revisão visual do Painel de conteúdo |
 | `tests/browser/transversal/aculta-contraste/` | ACULTA — contraste de UI Skins |
@@ -131,6 +133,7 @@ Estão listadas abaixo as pastas reais, com o caminho completo. A convenção é
 | `tests/browser/transversal/aculta-home-editorial-ui-patterns/` | Home editorial — UI Patterns Views |
 | `tests/browser/transversal/aculta-htmx-f1/` | ACULTA420 V2 — HTMX F1 (busca e login) |
 | `tests/browser/transversal/aculta-image-admin/` | Revisão visual das opções administrativas do ACULTA Image |
+| `tests/browser/transversal/aculta-papeis/` | Cobertura visual por papel |
 | `tests/browser/transversal/aculta-teclado-foco/` | ACULTA — teclado e foco visível |
 | `tests/browser/transversal/aculta-theme-mobile-first/` | ACULTA420 — SDC responsivos do tema |
 | `tests/browser/transversal/aculta-uploader/` | Smoke do aculta_file_uploader (navegador) |
@@ -143,6 +146,7 @@ Estão listadas abaixo as pastas reais, com o caminho completo. A convenção é
 | `tests/browser/transversal/aculta420-v2-empty-state/` | ACULTA420 V2 — Empty state |
 | `tests/browser/transversal/aculta420-v2-footer/` | ACULTA420 V2 — rodapé e regions do shell |
 | `tests/browser/transversal/aculta420-v2-navigation/` | Navegação SDC do ACULTA420 V2 |
+| `tests/browser/transversal/aculta420-v2-performance/` | Baseline laboratorial de performance do ACULTA420 V2 |
 | `tests/browser/transversal/ui-styles-block/` | UI Styles Block — bloco de Documentos institucionais |
 | `tests/browser/wiki/aculta-wiki/` | ACULTA Wiki — visual smoke test |
 | `tests/browser/wiki/aculta420-v2-wiki/` | ACULTA420 V2 — visual Wiki |
@@ -206,7 +210,11 @@ Frentes com `routes.json` que não têm referência: `aculta-theme-mobile-first`
 `GANJA_HOME`, `CALENDAR_HOST`).
 
 Regra: não usar `--update-snapshots`. Nova candidata exige `ACULTA_VISUAL_BASELINE=1`
-com `SUITE_OUT` novo e revisão humana antes de copiar.
+com `SUITE_OUT` novo e revisão humana antes de copiar. Com `SUITE_OUT`, a execução
+normal ainda compara as referências versionadas; só o modo de baseline grava
+candidatas ausentes na saída externa. O nome de cada referência inclui um
+identificador estável derivado de `purpose`, frente e caminho da rota, para
+impedir que duas rotas da mesma frente compartilhem o mesmo PNG.
 
 ## Autenticação de teste
 

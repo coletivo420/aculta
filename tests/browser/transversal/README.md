@@ -13,6 +13,7 @@ Cada frente tem o próprio `README.md` com URLs, pré-requisitos e critérios.
 - [`aculta-home-editorial-ui-patterns/`](./aculta-home-editorial-ui-patterns/README.md) — Home editorial — UI Patterns Views
 - [`aculta-htmx-f1/`](./aculta-htmx-f1/README.md) — ACULTA420 V2 — HTMX F1 (busca e login)
 - [`aculta-image-admin/`](./aculta-image-admin/README.md) — Revisão visual das opções administrativas do ACULTA Image
+- [`aculta-papeis/`](./aculta-papeis/README.md) — Cobertura visual por papel
 - [`aculta-teclado-foco/`](./aculta-teclado-foco/README.md) — ACULTA — teclado e foco visível
 - [`aculta-theme-mobile-first/`](./aculta-theme-mobile-first/README.md) — ACULTA420 — SDC responsivos do tema
 - [`aculta-uploader/`](./aculta-uploader/README.md) — Smoke do aculta_file_uploader (navegador)
@@ -25,4 +26,5 @@ Cada frente tem o próprio `README.md` com URLs, pré-requisitos e critérios.
 - [`aculta420-v2-empty-state/`](./aculta420-v2-empty-state/README.md) — ACULTA420 V2 — Empty state
 - [`aculta420-v2-footer/`](./aculta420-v2-footer/README.md) — ACULTA420 V2 — rodapé e regions do shell
 - [`aculta420-v2-navigation/`](./aculta420-v2-navigation/README.md) — Navegação SDC do ACULTA420 V2
+- [`aculta420-v2-performance/`](./aculta420-v2-performance/README.md) — Baseline laboratorial de performance do ACULTA420 V2
 - [`ui-styles-block/`](./ui-styles-block/README.md) — UI Styles Block — bloco de Documentos institucionais

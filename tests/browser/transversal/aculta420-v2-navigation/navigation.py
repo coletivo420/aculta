@@ -6,6 +6,7 @@ import os
 import sys
 import time
 from pathlib import Path
+from urllib.parse import urlparse
 
 from websockets.sync.client import connect
 
@@ -31,6 +32,18 @@ domain_ids = {
     "forum": "forum_aculta_org",
     "links": "links_aculta_org",
     "eventos": "eventos_aculta_org",
+}
+domain_brand_names = {
+    "main": {"aculta", "início"},
+    "account": {"minha conta", "conta"},
+    "support": {"apoio"},
+    "magazine": {"revista 420", "coletivo 420"},
+    "wiki": {"wiki420"},
+    "shop": {"loja"},
+    "courses": {"cursos"},
+    "forum": {"fórum"},
+    "links": {"redes sociais da aculta", "redes sociais"},
+    "eventos": {"eventos da aculta", "eventos"},
 }
 environment = os.environ.get("NAVIGATION_DOMAIN_ENV", "test")
 if environment not in ("test", "production"):
@@ -104,9 +117,16 @@ def inspect(driver, viewport, url, width):
       const panel=root?.querySelector('[data-aculta-navigation-panel]');
       const toggle=root?.querySelector('[data-aculta-navigation-toggle]');
       const link=panel?.querySelector('a[href]');
+      const brandLink=root?.querySelector('.navigation-bar__brand-link, .navigation-bar__brand a[href]');
+      const brandImage=root?.querySelector('.navigation-bar__brand img');
+      const wikiSearchForm=root?.querySelector('.navigation-bar__search form[role="search"]');
+      const wikiSearchInput=wikiSearchForm?.querySelector('input[type="search"]');
+      const wikiSearchLabel=wikiSearchInput?.labels?.[0]??null;
+      const wikiSearchPreviewId=wikiSearchInput?.dataset.previewTarget??null;
       const style=(element,property)=>element?getComputedStyle(element).getPropertyValue(property):null;
       return {
         root:!!root,
+        rootCount:document.querySelectorAll('.navigation-bar').length,
         panel:!!panel,
         toggle:!!toggle,
         toggleDisplay:style(toggle,'display'),
@@ -116,8 +136,26 @@ def inspect(driver, viewport, url, width):
         links:panel?.querySelectorAll('a[href]').length??0,
         linkHeight:link?Math.ceil(link.getBoundingClientRect().height):0,
         brandCount:root?.querySelectorAll('.navigation-bar__brand').length??0,
-        brandImage:!!root?.querySelector('.navigation-bar__brand img'),
-        brandImageLoaded:(root?.querySelector('.navigation-bar__brand img')?.naturalWidth??0)>0,
+        brandLink:!!brandLink,
+        brandHref:brandLink?.href??null,
+        brandName:(brandLink?.getAttribute('aria-label')||brandLink?.innerText||brandImage?.alt||'').trim(),
+        brandImage:!!brandImage,
+        brandImageLoaded:(brandImage?.naturalWidth??0)>0,
+        wikiSearchForm:!!wikiSearchForm,
+        wikiSearchMethod:wikiSearchForm?.method?.toUpperCase()??null,
+        wikiSearchActionOrigin:wikiSearchForm?new URL(wikiSearchForm.action,location.href).origin:null,
+        wikiSearchInputName:wikiSearchInput?.name??null,
+        wikiSearchInputId:wikiSearchInput?.id??null,
+        wikiSearchInputLabelled:!!wikiSearchInput?.labels?.length,
+        wikiSearchLabelFor:wikiSearchLabel?.htmlFor??null,
+        wikiSearchPreviewId,
+        wikiSearchIdsUnique:!!wikiSearchInput?.id && !!wikiSearchPreviewId
+          && wikiSearchLabel?.htmlFor===wikiSearchInput.id
+          && document.querySelectorAll(`[id="${wikiSearchInput.id}"]`).length===1
+          && document.querySelectorAll(`[id="${wikiSearchPreviewId}"]`).length===1,
+        wikiSearchPreviewTargetMatches:!!wikiSearchPreviewId
+          && Array.from(wikiSearchForm?.querySelectorAll('[id]')??[]).some((element)=>element.id===wikiSearchPreviewId),
+        wikiSearchSubmit:!!wikiSearchForm?.querySelector('button[type="submit"],input[type="submit"]'),
         navigationInDomainHeader:!!document.querySelector('.page__header')?.contains(root),
         institutionBars:document.querySelectorAll('.aculta-institution-bar').length,
         domainHeaders:document.querySelectorAll('.page__header').length,
@@ -141,26 +179,52 @@ try:
         for width in (320, 767, 768, 1024, 1099, 1100, 1440):
             metrics = inspect(driver, viewport, url, width)
             mobile = width < 1100
-            expected = (
-                metrics["root"] and metrics["panel"] and metrics["toggle"]
-                and metrics["links"] > 0
-                and metrics["toggleDisplay"] == ("flex" if mobile else "none")
-                and metrics["expanded"] == "false"
+            parsed_url = urlparse(url)
+            expected_origin = f"{parsed_url.scheme}://{parsed_url.netloc}"
+            wiki_search_ok = (
+                metrics["wikiSearchForm"]
+                and metrics["wikiSearchMethod"] == "GET"
+                and metrics["wikiSearchActionOrigin"] == expected_origin
+                and metrics["wikiSearchInputName"] == "q"
+                and metrics["wikiSearchInputLabelled"]
+                and metrics["wikiSearchIdsUnique"]
+                and metrics["wikiSearchPreviewTargetMatches"]
+                and metrics["wikiSearchSubmit"]
+            ) if purpose == "wiki" else not metrics["wikiSearchForm"]
+            header_ok = (
+                metrics["root"]
+                and metrics["rootCount"] == 1
                 and metrics["brandCount"] == 1
-                and metrics["brandImage"] is True
-                and metrics["brandImageLoaded"] is True
+                and metrics["brandLink"]
+                and metrics["brandName"].casefold() in domain_brand_names[purpose]
+                and metrics["brandHref"] == url
+                and wiki_search_ok
                 and metrics["navigationInDomainHeader"] is True
+                and metrics["domainHeaders"] == 1
                 and metrics["institutionBars"] == 1
-                and len(metrics["navigationLandmarks"]) == 2
-                and len({label.casefold() for label in metrics["navigationLandmarks"] if label}) == 2
                 and metrics["requestedWidth"] == width
                 and metrics["documentWidth"] <= width
-                and (metrics["linkHeight"] >= 44 if mobile else metrics["panelVisibility"] == "visible")
             )
-            check(f"{purpose} {width}px: SDC, landmarks e reflow", expected, metrics)
+            check(f"{purpose} {width}px: Domain Header e reflow", header_ok, metrics)
 
-        mobile = inspect(driver, viewport, url, 320)
-        if mobile["toggleDisplay"] != "none":
+            if purpose == "main":
+                menu_ok = (
+                    metrics["panel"] and metrics["toggle"]
+                    and metrics["links"] > 0
+                    and metrics["toggleDisplay"] == ("flex" if mobile else "none")
+                    and metrics["expanded"] == "false"
+                    and len(metrics["navigationLandmarks"]) == 2
+                    and len({label.casefold() for label in metrics["navigationLandmarks"] if label}) == 2
+                    and (metrics["linkHeight"] >= 44 if mobile else metrics["panelVisibility"] == "visible")
+                )
+                menu_label = "menu responsivo e landmarks"
+            else:
+                menu_ok = not metrics["panel"] and not metrics["toggle"]
+                menu_label = "sem menu compartilhado vazio"
+            check(f"{purpose} {width}px: {menu_label}", menu_ok, metrics)
+
+        if purpose == "main":
+            mobile = inspect(driver, viewport, url, 320)
             driver.js("document.querySelector('[data-aculta-navigation-toggle]')?.focus()")
             driver.req("POST", f"/session/{driver.session}/actions", {"actions": [{
                 "type": "key",
@@ -203,22 +267,24 @@ finally:
     viewport.close()
     driver.close()
 
-no_js = Driver(prefs={"javascript.enabled": False}, bidi=True, browser="firefox")
-no_js_viewport = Viewport(no_js)
-try:
-    for purpose, url in purposes:
-        metrics = inspect(no_js, no_js_viewport, url, 320)
-        passed = (
-            metrics["root"] and metrics["panel"] and metrics["links"] > 0
-            and metrics["toggleDisplay"] == "none"
-            and metrics["panelDisplay"] != "none"
-            and metrics["panelVisibility"] == "visible"
-            and metrics["documentWidth"] <= 320
-        )
-        check(f"{purpose} 320px: menu permanece operável sem JavaScript", passed, metrics)
-finally:
-    no_js_viewport.close()
-    no_js.close()
+main_pages = [(purpose, url) for purpose, url in purposes if purpose == "main"]
+if main_pages:
+    no_js = Driver(prefs={"javascript.enabled": False}, bidi=True, browser="firefox")
+    no_js_viewport = Viewport(no_js)
+    try:
+        for purpose, url in main_pages:
+            metrics = inspect(no_js, no_js_viewport, url, 320)
+            passed = (
+                metrics["root"] and metrics["panel"] and metrics["links"] > 0
+                and metrics["toggleDisplay"] == "none"
+                and metrics["panelDisplay"] != "none"
+                and metrics["panelVisibility"] == "visible"
+                and metrics["documentWidth"] <= 320
+            )
+            check(f"{purpose} 320px: menu permanece operável sem JavaScript", passed, metrics)
+    finally:
+        no_js_viewport.close()
+        no_js.close()
 
 (OUT / "results.json").write_text(json.dumps({
     "environment": environment,

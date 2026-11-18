@@ -86,12 +86,13 @@ final class DomainPresentationBuilderKernelTest extends KernelTestBase {
       $presentation = $builder->build($purpose);
       $this->assertNotNull($presentation, "O purpose $purpose deve ter apresentação.");
       $data = $presentation->toThemeArray();
-      $this->assertSame(
-        in_array($purpose, ['main', 'wiki'], TRUE),
-        $data['layout']['show_site_header'],
-        "Domain Header só no purpose principal e na Wiki (purpose $purpose).",
+      $layout = $data['layout'] ?? NULL;
+      $this->assertIsArray($layout);
+      $this->assertTrue(
+        $layout['show_site_header'],
+        "Domain Header deve aparecer no purpose $purpose.",
       );
-      $this->assertSame($purpose === 'main', $data['layout']['show_site_menu']);
+      $this->assertSame($purpose === 'main', $layout['show_site_menu']);
       $this->assertStringStartsWith(
         'https://' . $purpose . '.example.invalid/',
         $data['identity']['home_url'],
@@ -132,8 +133,10 @@ final class DomainPresentationBuilderKernelTest extends KernelTestBase {
 
     $links = $builder->build('links')?->toThemeArray();
     $this->assertNotNull($links);
-    $this->assertTrue($links['layout']['links_page']);
-    $this->assertFalse($links['layout']['show_site_header']);
+    $linksLayout = $links['layout'] ?? NULL;
+    $this->assertIsArray($linksLayout);
+    $this->assertTrue($linksLayout['links_page']);
+    $this->assertTrue($linksLayout['show_site_header']);
   }
 
   /**

@@ -28,16 +28,42 @@ if (!suiteOut || !path.isAbsolute(suiteOut)) {
 fs.mkdirSync(suiteOut, { recursive: true, mode: 0o700 });
 
 const LARGURAS = (process.env.PAPEIS_WIDTHS || '320,1440').split(',').map(Number);
-const LEGADO = ['text-muted', 'text-center', 'small', 'lead', 'list-unstyled', 'list-group', 'table-hover', 'label-default', 'link-primary', 'section-title', 'nav-tabs', 'pager-next', 'pager-prev', 'container-inline'];
+const environment = process.env.ACULTA_BROWSER_ENV || 'desenvolvimento';
+if (environment !== 'desenvolvimento') {
+  console.error('ACULTA_BROWSER_ENV=desenvolvimento é obrigatório.');
+  process.exit(2);
+}
+const hosts = {
+  wiki: process.env.WIKI_BASE,
+  courses: process.env.COURSES_HOST,
+};
+const missingHosts = Object.entries(hosts).filter(([, host]) => !host).map(([key]) => key);
+if (missingHosts.length) {
+  console.error(`Origens obrigatórias ausentes: ${missingHosts.join(', ')}.`);
+  process.exit(2);
+}
+for (const [key, host] of Object.entries(hosts)) {
+  let parsed;
+  try { parsed = new URL(host); } catch {
+    console.error(`Origem inválida para ${key}.`);
+    process.exit(2);
+  }
+  if (parsed.protocol !== 'https:' || !(parsed.hostname === 'aculta.toca.net.br' || parsed.hostname.endsWith('.aculta.toca.net.br'))) {
+    console.error(`Origem de desenvolvimento inválida para ${key}.`);
+    process.exit(2);
+  }
+}
+// `container-inline` é emitida pelo Drupal Core e mantém CSS em system/base.
+const LEGADO = ['text-muted', 'text-center', 'small', 'lead', 'list-unstyled', 'list-group', 'table-hover', 'label-default', 'link-primary', 'section-title', 'nav-tabs', 'pager-next', 'pager-prev'];
 const casos = [
   {
     conta: 'teste_wiki',
-    host: 'https://wiki420.aculta.toca.net.br',
+    host: hosts.wiki,
     rotas: ['/we-sativa', '/we-sativa/verbetes/novo'],
   },
   {
     conta: 'teste_educador',
-    host: 'https://cursos.aculta.toca.net.br',
+    host: hosts.courses,
     rotas: ['/ganjalab', '/ganjalab/educador'],
   },
 ];
@@ -46,7 +72,7 @@ const resultados = [];
 const browser = await firefox.launch({ headless: true });
 try {
   for (const caso of casos) {
-    const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+    const page = await browser.newPage({ viewport: { width: 1440, height: 900 }, reducedMotion: 'reduce' });
     try {
       await login(page, caso.host, caso.conta);
     } catch (erro) {

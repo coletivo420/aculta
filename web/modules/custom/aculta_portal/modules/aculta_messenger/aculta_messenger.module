@@ -278,7 +278,6 @@ function aculta_messenger_theme(): array {
         'new_items_count' => 0,
         'count_method' => 'threads',
       ],
-      'file' => 'private_message.theme.inc',
     ],
     'private_message_no_active_users_notice' => [
       'render element' => 'elements',

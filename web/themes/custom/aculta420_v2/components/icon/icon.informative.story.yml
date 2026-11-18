@@ -1,0 +1,9 @@
+name: Ícone informativo
+description: Ícone com nome acessível para transmitir significado sem texto adjacente.
+props:
+  icon:
+    pack_id: aculta_phosphor_regular
+    icon_id: star
+    settings: {}
+  size: md
+  label: Conteúdo em destaque

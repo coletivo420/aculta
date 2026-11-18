@@ -19,13 +19,33 @@ group: Elementos básicos
 props:
   type: object
   additionalProperties: false
-  required: [name]
+  anyOf:
+    - required: [name]
+    - required: [icon]
   properties:
     name:
       type: string
       title: Nome do ícone
-      description: Nome do arquivo de ícone Phosphor ou aculta-brocolis para a marca do tema.
+      description: Nome do arquivo local Phosphor ou aculta-brocolis. Use icon para selecionar uma definição UI Icons em UI Patterns.
       pattern: '^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$'
+    icon:
+      type: object
+      title: Ícone UI Icons
+      description: Ícone escolhido por UI Patterns; quando presente, substitui o nome de arquivo local.
+      additionalProperties: false
+      properties:
+        pack_id:
+          type: string
+          title: Pacote de ícones
+          enum: [aculta_phosphor_regular, aculta_phosphor_duotone, aculta_brocolis]
+        icon_id:
+          type: string
+          title: Ícone
+          minLength: 1
+        settings:
+          type: object
+          title: Configurações do pacote
+      required: [pack_id, icon_id]
     variant:
       type: string
       title: Peso visual
@@ -43,3 +63,9 @@ props:
       title: Token CSS ou cor hexadecimal
       description: Valor CSS permitido para a cor primária, como var(--token), hexadecimal ou currentColor.
       pattern: '^(var\(--[a-z][a-z0-9-]*\)|#[0-9A-Fa-f]{3,8}|currentColor)$'
+    label:
+      type: string
+      title: Nome acessível
+      description: Quando informado, o ícone é informativo e recebe role img e este nome. Sem label, permanece decorativo e oculto de tecnologia assistiva.
+      minLength: 1
+      maxLength: 128

@@ -16,6 +16,14 @@ removidos; SDCs publicados permanecem na UI Patterns Library mesmo sem consumer
 de produção confirmado. A busca confirma código/configuração do checkout, não o
 uso persistido ou a renderização atual no Runtime.
 
+## Color mode switcher — SDC publicado; sem consumer de produção
+
+O SDC oferece `light`, `auto` e `dark`, seis stories determinísticas e
+persistência autenticada pela infraestrutura existente do Portal. A preferência
+`auto` é resolvida no navegador por `prefers-color-scheme`. O componente está
+publicado na UI Patterns Library; nenhum placement de produção foi incluído.
+Validação de browser/Runtime e revisão visual permanecem pendentes nesta entrega.
+
 | Item histórico | Evidência no checkout atual | Situação e consequência para o plano |
 | --- | --- | --- |
 | `avatar` no menu da Conta | `components/account-menu/account-menu.twig`; também `forum-author-line`, `forum-quote`, `account-photo-editor` e Studio. | Consumer real no tema; manter. A foto é preparada pelo chamador e o SDC não consulta usuário. |

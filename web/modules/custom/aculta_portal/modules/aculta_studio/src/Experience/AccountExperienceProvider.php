@@ -7,6 +7,7 @@ namespace Drupal\aculta_studio\Experience;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Cache\CacheableMetadata;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
@@ -23,6 +24,16 @@ use Symfony\Component\Routing\Exception\RouteNotFoundException;
  *
  * This provider returns the account presentation as SDC render arrays while
  * keeping identity, links, cache, and authorization decisions in their owners.
+ *
+ * @phpstan-type StudioMenuBuild array{
+ *   '#type': 'component',
+ *   '#component': 'aculta420_v2:studio-menu',
+ *   '#props': array{title: string},
+ *   '#slots': array{
+ *     sidebar_items: array<int, array<string, mixed>>,
+ *     dialog_items: array<int, array<string, mixed>>
+ *   }
+ * }
  */
 final class AccountExperienceProvider implements StudioExperienceProviderInterface {
 
@@ -32,6 +43,7 @@ final class AccountExperienceProvider implements StudioExperienceProviderInterfa
     private readonly ?AuthorIdentityResolver $identityResolver = NULL,
     private readonly ?StudioDashboardCalendarComposer $calendarComposer = NULL,
     private readonly ?StudioDashboardConnectionsComposer $connectionsComposer = NULL,
+    private readonly ?ConfigFactoryInterface $configFactory = NULL,
   ) {}
 
   /**
@@ -80,6 +92,33 @@ final class AccountExperienceProvider implements StudioExperienceProviderInterfa
 
   /**
    * {@inheritdoc}
+   *
+   * @return array{
+   *   '#type': 'component',
+   *   '#component': 'aculta420_v2:account-experience-dashboard',
+   *   '#props': array{
+   *     show_identity: bool,
+   *     identity_name: string,
+   *     identity_email: mixed,
+   *     profile_url: mixed,
+   *     experiences_title: string,
+   *     experiences_description: string,
+   *     account_url: string,
+   *     account_link_title: string,
+   *     account_link_description: string,
+   *     account_link_label: string
+   *   },
+   *   '#slots': array{
+   *     menu: StudioMenuBuild,
+   *     avatar: mixed,
+   *     profile_link: array<string, mixed>,
+   *     calendar: array<string, mixed>,
+   *     connections: array<string, mixed>,
+   *     experiences: array{}
+   *   },
+   *   '#cache': array{contexts: list<string>, 'max-age': 0}
+   *   }
+   *   The component render array, including private owner-provided slots.
    */
   public function build(): array {
     $identity = $this->identity();
@@ -108,12 +147,12 @@ final class AccountExperienceProvider implements StudioExperienceProviderInterfa
         'identity_name' => (string) ($identity['name'] ?? ''),
         'identity_email' => $identity['email'] ?? NULL,
         'profile_url' => $identity['profile_url'] ?? NULL,
-        'experiences_title' => (string) new TranslatableMarkup('Suas experiências'),
-        'experiences_description' => (string) new TranslatableMarkup('Acesse as experiências da ACULTA e explore conteúdos, projetos e comunidades.'),
+        'experiences_title' => $this->presentationValue('experiences_title', (string) new TranslatableMarkup('Suas experiências')),
+        'experiences_description' => $this->presentationValue('experiences_description', (string) new TranslatableMarkup('Acesse as experiências da ACULTA e explore conteúdos, projetos e comunidades.')),
         'account_url' => Url::fromRoute('aculta_studio.account')->toString(),
-        'account_link_title' => (string) new TranslatableMarkup('Minha conta'),
-        'account_link_description' => (string) new TranslatableMarkup('Dados, segurança e preferências'),
-        'account_link_label' => (string) new TranslatableMarkup('Minha Conta'),
+        'account_link_title' => $this->presentationValue('account_link_title', (string) new TranslatableMarkup('Minha conta')),
+        'account_link_description' => $this->presentationValue('account_link_description', (string) new TranslatableMarkup('Dados, segurança e preferências')),
+        'account_link_label' => $this->presentationValue('account_link_label', (string) new TranslatableMarkup('Minha Conta')),
       ],
       '#slots' => [
         'menu' => [
@@ -138,6 +177,14 @@ final class AccountExperienceProvider implements StudioExperienceProviderInterfa
         'max-age' => 0,
       ],
     ];
+  }
+
+  /**
+   * Returns an editorial presentation value without exposing user-owned data.
+   */
+  private function presentationValue(string $key, string $default): string {
+    $value = $this->configFactory?->get('aculta_studio.account_presentation')->get($key);
+    return is_string($value) && trim($value) !== '' ? $value : $default;
   }
 
   /**
@@ -194,7 +241,7 @@ final class AccountExperienceProvider implements StudioExperienceProviderInterfa
     $identity = $this->identityResolver?->resolve($user, 'profile_full');
     if ($identity === NULL) {
       // A Drupal display name may be a private/legal name. Hide identity until
-      // the public identity owner is available instead of leaking that fallback.
+      // the public identity owner is available instead of leaking it.
       return [];
     }
     $identityValues = $identity->toArray();
@@ -219,7 +266,7 @@ final class AccountExperienceProvider implements StudioExperienceProviderInterfa
   }
 
   /**
-   * Items of the Studio side menu. Only routes the current user can open are listed.
+   * Returns Studio menu items available to the current account.
    *
    * @return array<int, array{title: string, url: string, current: bool, icon: string}>
    *   Menu items for the Studio menu.
@@ -243,7 +290,7 @@ final class AccountExperienceProvider implements StudioExperienceProviderInterfa
       catch (RouteNotFoundException) {
         continue;
       }
-      if ($this->currentUser === NULL || !$url->access($this->currentUser)) {
+      if (!$url->access($this->currentUser)) {
         continue;
       }
       $href = $url->toString();

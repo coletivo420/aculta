@@ -24,11 +24,18 @@ final class UiPatternsStoryHooks {
   ) {}
 
   /**
-   * Prepares overview page metadata and navigation anchors without eager story execution.
+   * Prepares overview metadata and anchors without executing stories eagerly.
+   *
+   * @param array $variables
+   *   UI Patterns Library page variables.
    */
   #[Hook('preprocess_ui_patterns_overview_page')]
   public function preprocessOverview(array &$variables): void {
-    $variables['#attached']['library'][] = 'aculta420_v2/ui-library-admin';
+    $this->attachLibrary($variables, 'aculta420_v2/ui-library-admin');
+    // Stories are fetched as HTML and inserted in Shadow DOM, so their script
+    // tags are not executed by the browser. Load the behavior on the Library
+    // document; ui-library-bulk-preview attaches it to each shadow root.
+    $this->attachLibrary($variables, 'aculta420_v2/color-mode-switcher');
     // Âncora de cada grupo: as abas de navegação levam ao cabeçalho do grupo.
     $variables['aculta_group_anchors'] = [];
     if (is_array($variables['groups'] ?? NULL)) {
@@ -43,7 +50,7 @@ final class UiPatternsStoryHooks {
     // Total de componentes para o contador da aba "Todos".
     $variables['aculta_total_components'] = array_sum(array_map('count', array_filter($variables['groups'], 'is_array')));
 
-    // Componentes em ordem alfabética (pelo nome exibido) dentro de cada grupo/aba.
+    // Componentes em ordem alfabética pelo nome exibido em cada grupo.
     $collator = class_exists(\Collator::class) ? new \Collator('pt_BR') : NULL;
     foreach ($variables['groups'] as $groupName => $items) {
       if (!is_array($items)) {
@@ -87,6 +94,22 @@ final class UiPatternsStoryHooks {
       $story['props'] = $plugin->props();
       $story['slots'] = $plugin->slots();
     }
+  }
+
+  /**
+   * Attaches a theme library while preserving other render attachments.
+   *
+   * @param array<mixed> $variables
+   *   UI Patterns Library page variables.
+   * @param string $library
+   *   Theme library identifier.
+   */
+  private function attachLibrary(array &$variables, string $library): void {
+    $attached = is_array($variables['#attached'] ?? NULL) ? $variables['#attached'] : [];
+    $libraries = is_array($attached['library'] ?? NULL) ? $attached['library'] : [];
+    $libraries[] = $library;
+    $attached['library'] = $libraries;
+    $variables['#attached'] = $attached;
   }
 
 }

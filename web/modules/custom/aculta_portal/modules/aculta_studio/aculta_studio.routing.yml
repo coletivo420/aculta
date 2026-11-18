@@ -1,5 +1,16 @@
 # Conta and Perfil stay separate; the legacy Portal dashboard remains at
 # /conta-legada and the account purpose root serves this Studio dashboard.
+aculta_studio.account_presentation:
+  path: '/painel-administrativo/aculta/conta-apresentacao'
+  defaults:
+    _form: '\Drupal\aculta_studio\Form\AccountPresentationSettingsForm'
+    _title: 'Apresentação da Conta'
+  requirements:
+    _permission: 'administer site configuration'
+  options:
+    _admin_route: TRUE
+    _aculta_site_key: main
+
 aculta_studio.dashboard:
   path: /aculta-studio-dashboard
   defaults:

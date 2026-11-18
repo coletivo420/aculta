@@ -1,0 +1,9 @@
+name: Painel aberto em superfície escura
+description: Painel aberto sobre superfície escura, alinhado ao início para testar reflow.
+props:
+  mode: dark
+  context: library
+  appearance: dark
+  alignment: start
+  initial_open: true
+  instance_id: color-mode-open-dark

@@ -70,6 +70,14 @@ views.field.aculta_forum_last_activity:
   type: views.field.date
   label: 'Última atividade do Fórum'
 
+ui_patterns_source.view_field_value:
+  type: mapping
+  label: 'Fonte: valor de campo da linha da View'
+  mapping:
+    ui_patterns_views_field:
+      type: string
+      label: 'Campo da linha'
+
 views.cache.aculta_forum_post_tag:
   type: views_cache
   label: 'Cache por tag de posts do Fórum'

@@ -59,19 +59,28 @@ final class SurfaceSettingsHooks implements ContainerInjectionInterface {
 
     // A theme may provide only one preprocess_html implementation. Keep the
     // Portal's explicit color mode and surface settings in this hook.
-    $mode = ($variables['aculta_color_mode'] ?? NULL) === 'dark' ? 'dark' : 'light';
+    $rawPreference = $variables['aculta_color_mode'] ?? NULL;
+    $preference = is_string($rawPreference) && in_array($rawPreference, ['light', 'dark', 'auto'], TRUE)
+      ? $rawPreference
+      : 'light';
+    $mode = $preference === 'dark' ? 'dark' : 'light';
     $siteKey = $variables['aculta_site_key'] ?? NULL;
     $skinId = $variables['aculta_skin_id'] ?? NULL;
     $isComponentLibrary = ComponentLibraryRoutes::isComponentLibraryRoute($this->currentRouteMatch->getRouteName());
     $htmlAttributes = $variables['html_attributes'] ?? NULL;
     if ($htmlAttributes instanceof Attribute) {
       $htmlAttributes->setAttribute('data-theme', $mode);
+      $htmlAttributes->setAttribute('data-color-preference', $preference);
       if (is_string($siteKey) && preg_match('/^[a-z][a-z0-9_]*$/', $siteKey)) {
         $htmlAttributes->setAttribute('data-site-key', $siteKey);
       }
       if (is_string($skinId) && preg_match('/^[a-z][a-z0-9-]*$/', $skinId)) {
         $htmlAttributes->setAttribute('data-skin', $skinId);
       }
+    }
+
+    if ($preference === 'auto') {
+      $this->attachLibrary($variables, 'aculta420_v2/color-mode-runtime');
     }
 
     // Core's html template renders `attributes` on <body>. `body_attributes`
@@ -110,14 +119,14 @@ final class SurfaceSettingsHooks implements ContainerInjectionInterface {
     ]);
     if ($isComponentLibrary) {
       $bodyAttributes->addClass('aculta-component-library-page');
-      $variables['#attached']['library'][] = 'aculta420_v2/component-library-mode';
+      $this->attachLibrary($variables, 'aculta420_v2/component-library-mode');
     }
     if ($siteKey === 'account') {
-      $variables['#attached']['library'][] = 'aculta420_v2/portal-account';
-      $variables['#attached']['library'][] = 'aculta420_v2/account-dialogs';
+      $this->attachLibrary($variables, 'aculta420_v2/portal-account');
+      $this->attachLibrary($variables, 'aculta420_v2/account-dialogs');
     }
     if ($siteKey === 'wiki') {
-      $variables['#attached']['library'][] = 'aculta420_v2/wiki';
+      $this->attachLibrary($variables, 'aculta420_v2/wiki');
     }
   }
 
@@ -137,6 +146,22 @@ final class SurfaceSettingsHooks implements ContainerInjectionInterface {
     $element['#attached']['placeholders'][$placeholder] = [
       '#lazy_builder' => ['csp.nonce_builder:renderNonce', []],
     ];
+  }
+
+  /**
+   * Attaches a theme library while preserving other render attachments.
+   *
+   * @param array<mixed> $variables
+   *   HTML template variables.
+   * @param string $library
+   *   Theme library identifier.
+   */
+  private function attachLibrary(array &$variables, string $library): void {
+    $attached = is_array($variables['#attached'] ?? NULL) ? $variables['#attached'] : [];
+    $libraries = is_array($attached['library'] ?? NULL) ? $attached['library'] : [];
+    $libraries[] = $library;
+    $attached['library'] = $libraries;
+    $variables['#attached'] = $attached;
   }
 
   /**

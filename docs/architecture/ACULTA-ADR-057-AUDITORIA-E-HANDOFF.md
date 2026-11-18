@@ -41,4 +41,16 @@ Playwright: consultar os arquivos routes.json e configurar as variáveis origin_
 - BLOCKED_UPSTREAM: adoção adicional de UI Patterns Field Group sem verificação de segurança e compatibilidade.
 - NÃO AUTORIZADO: drush cim global, updatedb, pm:uninstall, DROP, remoção de dados e implantação em produção.
 
-Continuar F1 com evidências reais e F2 em microcommits na dev, sempre verificando HEAD e concorrência. Não encerrar ADR-054/055/057 enquanto houver gates obrigatórios DEFERRED.
+## Atualização 2026-11-17 — execução F0/F1
+
+O estado acima descreve a auditoria inicial. Nesta continuação, foi executado
+o scanner no checkout completo, os validadores estáticos e o render isolado dos
+150 SDCs. Resultados atuais, limites da matriz visual e próximos passos estão em
+[`ADR-057-F0-F1-2026-11-17.md`](../operations/testing/ADR-057-F0-F1-2026-11-17.md).
+
+A branch de trabalho `feat/adr057-f1-route-snapshots` deriva de `origin/dev`.
+F0 estático PASS; F1 permanece em andamento. O doctor do Runtime retorna
+BLOCKED/RX por 17 divergências de Config Sync. Não fazer import, updatedb,
+limpeza de cache ou qualquer escrita para ultrapassar esse bloqueio. Repetir
+browser depois de uma reconciliação autorizada e baseline visual consistente;
+continuar F2–F5 em commits focados e preservar ADR-056 encerrada.

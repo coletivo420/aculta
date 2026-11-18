@@ -1,0 +1,10 @@
+{
+  "front": "aculta420-v2-performance",
+  "purpose": "transversal",
+  "routes": [
+    { "key": "main", "origin_env": "ACULTA_SITE_ORIGIN", "path": "/" },
+    { "key": "forum", "origin_env": "FORUM_BASE", "path": "/" },
+    { "key": "shop", "origin_env": "SHOP_HOST", "path": "/produtos" }
+  ],
+  "notes": "Amostra inicial de três rotas públicas, sem sessão autenticada. Não representa os dez domínios nem dados de campo."
+}

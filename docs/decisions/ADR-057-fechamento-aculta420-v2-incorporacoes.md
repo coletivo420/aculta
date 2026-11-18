@@ -20,6 +20,8 @@ Preservar a UI Patterns Library oficial como catálogo único, shell com cinco r
 | F5 - Field Group | Revalidar SHA/lock/Drupal 11 e 12/security advisory | BLOQUEADO para novos consumidores até gate upstream |
 | F6 - Aceite | US-14 e RN-05, dez domínios, rollback, perfis, cache cross-domain | PASS/FAIL/DEFERRED por evidência; revisão visual humana |
 
+Revalidação F5 de 2026-11-17: [evidências do Field Group](../operations/testing/ADR-057-F5-2026-11-17.md). O estado permanece `BLOCKED_UPSTREAM`; o relatório não autoriza habilitação nem alteração de dependências.
+
 ## Regras
 
 Esta ADR NÃO autoriza importação global de Config Sync, atualizações do banco, desinstalação, DROP, corte de entidades, remoção de permissões, troca de Domain IDs/URLs, deploy de produção ou modificação de checkout. Operações com Drupal Runtime dependem de autorização e snapshot/rollback próprios. Field Group permanece BLOCKED_UPSTREAM e não deve ter consumidores ampliados sem validação nova.

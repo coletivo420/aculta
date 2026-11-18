@@ -18,6 +18,17 @@ Core e de módulos contrib para as experiências de conta, conteúdo, Commerce,
 aprendizagem e domínios. Core/contrib continuam donos das entidades e regras que
 já fornecem.
 
+## Preferência de modo de cor
+
+`ColorModePreference` continua sendo a fonte de verdade das preferências
+`light`, `dark` ou `auto` em `user.data` (`aculta_portal:color_mode`). O
+endpoint `POST /preferencias/modo-de-cor` aceita apenas `{ "mode": ... }` da
+conta autenticada atual, exige token CSRF no cabeçalho `X-CSRF-Token` e
+invalida `user:<uid>`. O formulário de Aparência lê e grava a mesma chave.
+O SDC do tema só chama o endpoint no contexto `site`; prévias `library` e
+`demo` são isoladas. A resolução de `auto` em `data-theme` fica no navegador;
+`data-color-preference` preserva o valor escolhido.
+
 ## Situação vigente — Portal `0.4.1-dev.48` (2026-11-01)
 
 Unit: 343 testes / 1.154 assertions PASS. Kernel: 95 testes / 1.829 assertions

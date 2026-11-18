@@ -1,0 +1,62 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Seletor de modo de cor
+status: stable
+description: Controle isolado para escolher modo claro, automático ou escuro.
+group: Elementos básicos
+libraryOverrides:
+  dependencies:
+    - aculta420_v2/color-mode-switcher
+props:
+  type: object
+  additionalProperties: false
+  properties:
+    mode:
+      type: string
+      title: Preferência de modo
+      description: Preferência inicial selecionada pelo consumidor.
+      enum: [light, auto, dark]
+      default: auto
+    context:
+      type: string
+      title: Contexto de execução
+      description: site persiste; library e demo alteram apenas a demonstração.
+      enum: [site, library, demo]
+      default: demo
+    appearance:
+      type: string
+      title: Aparência da demonstração
+      description: Modo visual inicial local ao componente; auto herda o preview ou o sistema.
+      enum: [auto, light, dark]
+      default: auto
+    alignment:
+      type: string
+      title: Alinhamento do painel
+      description: Alinha a borda inicial ou final do painel ao gatilho.
+      enum: [start, end]
+      default: end
+    disabled:
+      type: boolean
+      title: Desativado
+      description: Desativa o gatilho e as opções.
+      default: false
+    aria_label:
+      type: string
+      title: Nome acessível
+      description: Nome base do controle; o modo selecionado é anunciado junto ao nome.
+      minLength: 1
+      default: Modo de cor
+    attributes:
+      type: Drupal\Core\Template\Attribute
+      title: Atributos HTML
+      description: Atributos adicionais no contêiner do componente.
+    instance_id:
+      type: [string, 'null']
+      title: Identificador da instância
+      description: Identificador opcional validado por padrão de letras, números, hífen e sublinhado.
+      pattern: '^[A-Za-z][A-Za-z0-9_-]{0,63}$'
+      default: null
+    initial_open:
+      type: boolean
+      title: Painel inicialmente aberto
+      description: Estado determinístico das stories abertas; não persiste preferência.
+      default: false

@@ -2,6 +2,17 @@ uuid: d43ef356-f3d9-41de-b678-c782a92290f4
 langcode: pt-br
 status: true
 dependencies: {  }
+third_party_settings:
+  ui_icons_menu:
+    icon_selector: icon_picker
+    result_format: grid
+    max_result: 20
+    icon_required: false
+    icon_position: true
+    allowed_icon_pack:
+      - aculta_phosphor_regular
+      - aculta_phosphor_duotone
+      - aculta_brocolis
 _core:
   default_config_hash: sapEi2YDGoI9yQIT_WgIV2vUdQ6DScH0V3fAyTadAL0
 id: admin

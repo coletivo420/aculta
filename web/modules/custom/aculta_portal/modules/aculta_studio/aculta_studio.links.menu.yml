@@ -1,0 +1,6 @@
+aculta_studio.account_presentation:
+  title: 'Apresentação da Conta'
+  description: 'Editar textos do painel de experiências sem alterar dados ou permissões da Conta.'
+  route_name: aculta_studio.account_presentation
+  parent: aculta_portal.admin
+  weight: 8

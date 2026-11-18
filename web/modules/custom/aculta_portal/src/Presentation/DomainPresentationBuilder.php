@@ -128,7 +128,7 @@ final class DomainPresentationBuilder {
         'navigation' => NULL,
         'actions' => NULL,
         'wiki_search' => $siteKey === 'wiki' && $this->wikiSearchFormBuilder !== NULL
-          ? $this->wikiSearchFormBuilder->build()
+          ? $this->wikiSearchFormBuilder->build('header')
           : NULL,
         'showcase' => $showcase,
       ],
@@ -137,9 +137,9 @@ final class DomainPresentationBuilder {
         'institution_bar_account' => $siteKey === 'account',
         'show_utility_bar' => $siteKey !== 'links',
         'links_page' => $siteKey === 'links',
-        // Domain Header (navigation-bar) só existe no site principal e na Wiki.
-        // O tema apenas renderiza estes flags e não resolve o site key.
-        'show_site_header' => in_array($siteKey, ['main', 'wiki'], TRUE),
+        // Domain Header acompanha todos os purposes. O tema apenas renderiza
+        // este contrato e não resolve host/site key.
+        'show_site_header' => TRUE,
         // Menu do purpose principal: só aparece no próprio cabeçalho principal.
         'show_site_menu' => $siteKey === 'main',
       ],

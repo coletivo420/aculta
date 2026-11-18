@@ -28,11 +28,16 @@ final class WikiSearchFormBuilder implements WikiSearchFormBuilderInterface {
    * @return array<mixed>
    *   Render array do formulário.
    */
-  public function build(): array {
+  public function build(string $instance = 'header'): array {
     // InputBag::get() throws on non-scalar values; read the raw bag so that
     // malformed queries (ex.: `q[]=x`) only leave the field empty.
     $term = $this->requestStack->getCurrentRequest()?->query->all()['q'] ?? '';
     $term = is_string($term) ? mb_substr(trim($term), 0, 100) : '';
+
+    $instance = in_array($instance, ['header', 'page'], TRUE) ? $instance : 'header';
+    $searchLabel = (string) $this->translation->translate('Pesquisar na Wiki420');
+    $searchInputId = 'aculta-wiki-search-' . $instance . '-q';
+    $searchPreviewId = 'aculta-wiki-search-' . $instance . '-preview';
 
     return [
       '#type' => 'form',
@@ -41,11 +46,18 @@ final class WikiSearchFormBuilder implements WikiSearchFormBuilderInterface {
       '#attributes' => ['role' => 'search'],
       '#cache' => ['contexts' => ['url.query_args:q']],
       '#attached' => ['library' => ['aculta_portal/search-preview']],
+      'q_label' => [
+        '#type' => 'html_tag',
+        '#tag' => 'label',
+        '#value' => $searchLabel,
+        '#attributes' => [
+          'for' => $searchInputId,
+          'class' => ['visually-hidden'],
+        ],
+      ],
       'q' => [
         '#type' => 'search',
         '#name' => 'q',
-        '#title' => (string) $this->translation->translate('Pesquisar na Wiki420'),
-        '#title_display' => 'invisible',
         // This is a plain render element, not a Form API build array.
         '#value' => $term,
         '#placeholder' => (string) $this->translation->translate('Pesquisar na Wiki420'),
@@ -53,10 +65,11 @@ final class WikiSearchFormBuilder implements WikiSearchFormBuilderInterface {
         '#maxlength' => SearchPageController::MAX_CHARS,
         '#required' => TRUE,
         '#attributes' => [
+          'id' => $searchInputId,
           'autocomplete' => 'off',
           'data-portal-ui' => 'search-preview-input',
           'data-preview-url' => Url::fromRoute('aculta_portal.wiki_search_preview')->toString(),
-          'data-preview-target' => 'aculta-wiki-search-preview',
+          'data-preview-target' => $searchPreviewId,
           'data-min-chars' => (string) SearchPageController::MIN_CHARS,
         ],
       ],
@@ -64,7 +77,7 @@ final class WikiSearchFormBuilder implements WikiSearchFormBuilderInterface {
         '#type' => 'component',
         '#component' => 'aculta420_v2:search-preview',
         '#props' => ['attributes' => new \Drupal\Core\Template\Attribute([
-          'id' => 'aculta-wiki-search-preview',
+          'id' => $searchPreviewId,
           'role' => 'region',
           'aria-label' => (string) $this->translation->translate('Prévia dos resultados da busca'),
           'aria-live' => 'polite',

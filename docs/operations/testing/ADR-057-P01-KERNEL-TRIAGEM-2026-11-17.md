@@ -449,6 +449,21 @@ Wiki. Os warnings incluem as duas assertions antigas de `#items` em
 teste Wiki. Esta execução precede a correção das assertions do bloco de Eventos
 e não mede exatamente o HEAD após ela.
 
+### Reexecução integral no estado local de 2026-11-18
+
+Uma segunda execução completa, com o banco verificado como
+`aculta_simpletest`, terminou após 1 h 51 min com exit 2: **1.168 testes,
+23.895 assertions, 52 erros, 3 falhas, 4 warnings, 4 depreciações, 10
+depreciações PHPUnit e 5 notices**. Log:
+`/mnt/disco1/tmp/aculta-agent-logs/command-v2_8e8md.log`. A execução ocorreu
+enquanto havia outras alterações na mesma worktree, portanto registra o estado
+de trabalho daquela rodada, não um gate de commit limpo.
+
+As 52 exceptions concentram-se em 51 inicializações com `private_message`
+indisponível e uma avaliação Twig sem `aculta420_v2:surface-panel`. As três
+falhas continuam em `MapControllerKernelTest` e nos dois fluxos de formulário
+Wiki já descritos. O gate Kernel permanece **FAIL**.
+
 Após a liberação do processo, executei a classe completa
 `EventDomainBoundaryKernelTest` com `SIMPLETEST_DB` verificado como
 `aculta_simpletest`: **10 testes, 397 assertions, exit 0**, com duas
