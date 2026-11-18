@@ -19111,15 +19111,9 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_events/tests/src/Kernel/EventDomainBoundaryKernelTest.php
 
 		-
-			rawMessage: Cannot access offset 'title' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/tests/src/Kernel/EventDomainBoundaryKernelTest.php
-
-		-
 			rawMessage: Cannot access offset 0 on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 10
+			count: 9
 			path: web/modules/custom/aculta_portal/modules/aculta_events/tests/src/Kernel/EventDomainBoundaryKernelTest.php
 
 		-
@@ -19137,13 +19131,7 @@ parameters:
 		-
 			rawMessage: Cannot cast mixed to string.
 			identifier: cast.string
-			count: 4
-			path: web/modules/custom/aculta_portal/modules/aculta_events/tests/src/Kernel/EventDomainBoundaryKernelTest.php
-
-		-
-			rawMessage: 'Parameter #1 $array of function array_column expects array, mixed given.'
-			identifier: argument.type
-			count: 1
+			count: 3
 			path: web/modules/custom/aculta_portal/modules/aculta_events/tests/src/Kernel/EventDomainBoundaryKernelTest.php
 
 		-
@@ -19185,7 +19173,7 @@ parameters:
 		-
 			rawMessage: 'Parameter #2 $haystack of static method PHPUnit\Framework\Assert::assertCount() expects Countable|iterable, mixed given.'
 			identifier: argument.type
-			count: 6
+			count: 5
 			path: web/modules/custom/aculta_portal/modules/aculta_events/tests/src/Kernel/EventDomainBoundaryKernelTest.php
 
 		-
