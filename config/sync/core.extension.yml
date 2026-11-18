@@ -248,7 +248,6 @@ module:
   standard: 1000
 theme:
   claro: 0
-  gin: 0
   aculta420_v2: 0
   default_admin: 0
 profile: standard
