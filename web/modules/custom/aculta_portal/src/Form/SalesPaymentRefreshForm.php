@@ -49,9 +49,12 @@ final class SalesPaymentRefreshForm extends FormBase {
 
   /**
    * Performs the build form operation.
+   *
+   * @param array<string, mixed> $form
+   * @return array<string, mixed>
    */
   public function buildForm(array $form, FormStateInterface $form_state, ?PaymentInterface $commerce_payment = NULL): array {
-    if ($this->pagamentos === NULL) {
+    if ($this->pagamentos === NULL || $commerce_payment === NULL) {
       throw new AccessDeniedHttpException();
     }
     $this->autorizar($commerce_payment);
@@ -64,9 +67,13 @@ final class SalesPaymentRefreshForm extends FormBase {
 
   /**
    * Performs the submit form operation.
+   *
+   * @param array<string, mixed> $form
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
-    $pagamento = $this->carregar((int) $form_state->get('pagamento_id'));
+    $rawId = $form_state->get('pagamento_id');
+    $pagamentoId = is_numeric($rawId) ? (int) $rawId : 0;
+    $pagamento = $this->carregar($pagamentoId);
     try {
       $status = $this->pagamentos?->refresh($pagamento) ?? '';
       $this->messenger()->addStatus($this->t('Status atualizado: @status.', ['@status' => $status]));

@@ -37,6 +37,11 @@ final class SearchPageForm extends FormBase implements ContainerInjectionInterfa
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $form
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *
+   * @return array<string, mixed>
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $term = mb_substr(trim((string) ($this->searchRequestStack->getCurrentRequest()?->query->get('q', '') ?? '')), 0, SearchPageController::MAX_CHARS);
@@ -60,9 +65,14 @@ final class SearchPageForm extends FormBase implements ContainerInjectionInterfa
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $form
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
-    $form_state->setRedirectUrl(Url::fromRoute('aculta_portal.search', [], ['query' => ['q' => trim((string) $form_state->getValue('q'))]]));
+    $rawQ = $form_state->getValue('q');
+    $q = is_string($rawQ) ? trim($rawQ) : '';
+    $form_state->setRedirectUrl(Url::fromRoute('aculta_portal.search', [], ['query' => ['q' => $q]]));
   }
 
 }

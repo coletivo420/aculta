@@ -1,4 +1,15 @@
-{% set min_item_width = min_item_width|default('16rem') %}
+{% set preset = preset|default('custom') %}
+{% set preset_widths = {
+  'cards-compact': '12rem',
+  'cards-standard': '16rem',
+  'cards-wide': '20rem'
+} %}
+{% if preset in preset_widths|keys %}
+  {% set min_item_width = preset_widths[preset] %}
+  {% set max_columns = 0 %}
+{% else %}
+  {% set min_item_width = min_item_width|default('16rem') %}
+{% endif %}
 {% if min_item_width not in ['12rem', '16rem', '20rem'] %}
   {% set min_item_width = '16rem' %}
 {% endif %}

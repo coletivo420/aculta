@@ -53,9 +53,10 @@ final class IcsController extends ControllerBase {
   public function periodo(): Response {
     $fuso = new \DateTimeZone('America/Sao_Paulo');
     $agora = (new \DateTimeImmutable('@' . $this->tempo->getCurrentTime()))->setTimezone($fuso);
-    $consulta = $this->pilha->getCurrentRequest()->query;
-    $de = $this->dataBr((string) $consulta->get('de'), $fuso) ?? $agora->setTime(0, 0);
-    $ate = $this->dataBr((string) $consulta->get('ate'), $fuso) ?? $de->modify('+30 days');
+    $request = $this->pilha->getCurrentRequest();
+    $consulta = $request?->query;
+    $de = $this->dataBr((string) ($consulta?->get('de') ?? ''), $fuso) ?? $agora->setTime(0, 0);
+    $ate = $this->dataBr((string) ($consulta?->get('ate') ?? ''), $fuso) ?? $de->modify('+30 days');
     if ($ate < $de) {
       return new Response('Período inválido: a data final é anterior à inicial.', 400, ['Content-Type' => 'text/plain; charset=UTF-8']);
     }
@@ -66,13 +67,13 @@ final class IcsController extends ControllerBase {
 
     $filtros = [];
     foreach (array_keys($this->fonte->filtros()) as $chave) {
-      $valor = $consulta->getInt($chave);
+      $valor = $consulta?->getInt($chave) ?? 0;
       if ($valor > 0) {
         $filtros[$chave] = $valor;
       }
     }
 
-    $host = $this->pilha->getCurrentRequest()->getHost();
+    $host = $request?->getHost() ?? '';
     $conteudo = $this->exportador->exportar(new CalendarQuery($de->setTime(0, 0), $ate->setTime(23, 59, 59), $agora, $filtros), $host);
     return new Response($conteudo, 200, [
       'Content-Type' => 'text/calendar; charset=UTF-8',

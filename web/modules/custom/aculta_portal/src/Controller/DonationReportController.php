@@ -61,9 +61,13 @@ final class DonationReportController implements ContainerInjectionInterface {
 
   /**
    * Página do relatório de doações.
+   *
+   * @return array<string, mixed>
    */
   public function report(Request $request): array {
-    $fuso = new \DateTimeZone($this->configFactory->get('system.date')->get('timezone.default') ?: self::FUSO_PADRAO);
+    $timezoneConfig = $this->configFactory->get('system.date')->get('timezone.default');
+    $timezoneName = is_string($timezoneConfig) && $timezoneConfig !== '' ? $timezoneConfig : self::FUSO_PADRAO;
+    $fuso = new \DateTimeZone($timezoneName);
     $filtros = SalesReportFilters::fromQuery($request->query->all(), $fuso, new \DateTimeImmutable('now', $fuso));
 
     if ($filtros->erros !== []) {
@@ -150,7 +154,13 @@ final class DonationReportController implements ContainerInjectionInterface {
    *   Filtros escalares da URL.
    */
   private function filtrosDaUrl(Request $request): array {
-    return array_filter($request->query->all(), static fn ($valor, $chave): bool => $chave !== 'pagina' && is_scalar($valor), ARRAY_FILTER_USE_BOTH);
+    $filtros = [];
+    foreach ($request->query->all() as $chave => $valor) {
+      if ($chave !== 'pagina' && is_scalar($valor)) {
+        $filtros[(string) $chave] = (string) $valor;
+      }
+    }
+    return $filtros;
   }
 
 }

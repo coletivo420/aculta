@@ -5,6 +5,7 @@ description: Cabeçalho de navegação responsivo e acessível por teclado.
 group: Navegação
 libraryOverrides:
   dependencies:
+    - aculta420_v2/navigation-bar-bootstrap
     - core/drupal
     - core/once
 props:

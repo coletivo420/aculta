@@ -311,13 +311,14 @@ final class EventStructuredDataKernelTest extends KernelTestBase {
     ]);
     $evento->save();
 
+    $now = $this->container->get('datetime.time')->getCurrentTime();
     $data = EventDate::create([
       'title' => 'Sessão de Abertura',
       'field_evento' => (int) $evento->id(),
       'field_local' => (int) $local->id(),
       'field_quando' => [
-        'value' => '2026-11-15T19:00:00',
-        'end_value' => '2026-11-15T21:30:00',
+        'value' => gmdate('Y-m-d\\TH:i:s', $now + 86400),
+        'end_value' => gmdate('Y-m-d\\TH:i:s', $now + 95400),
       ],
       'field_modo' => 'hibrido',
       'field_link_virtual' => 'https://aovivo.example.invalid/cinema',
@@ -405,12 +406,13 @@ final class EventStructuredDataKernelTest extends KernelTestBase {
       'field_organizador' => $owner->id(),
     ]);
     $event->save();
+    $now = $this->container->get('datetime.time')->getCurrentTime();
     EventDate::create([
       'title' => 'Sessão pública',
       'field_evento' => $event->id(),
       'field_quando' => [
-        'value' => '2026-11-15T19:00:00',
-        'end_value' => '2026-11-15T21:00:00',
+        'value' => gmdate('Y-m-d\\TH:i:s', $now + 86400),
+        'end_value' => gmdate('Y-m-d\\TH:i:s', $now + 93600),
       ],
     ])->save();
 
@@ -440,7 +442,18 @@ final class EventStructuredDataKernelTest extends KernelTestBase {
       if (isset($item[1]) && $item[1] === $key) {
         $raw = (string) ($item[0]['#value'] ?? '');
         if ($raw !== '') {
-          return json_decode($raw, TRUE);
+          $decoded = json_decode($raw, TRUE);
+          if (!is_array($decoded)) {
+            return NULL;
+          }
+          $result = [];
+          foreach ($decoded as $field => $value) {
+            if (!is_string($field)) {
+              return NULL;
+            }
+            $result[$field] = $value;
+          }
+          return $result;
         }
       }
     }

@@ -1,14 +1,3 @@
-# CI — evita duplicar varredura estática por SHA — 2026-11-13
-
-- **Objetivo:** evitar dois scans estáticos quando o mesmo commit dispara `push` e `pull_request`.
-- **Estado:** concorrência do workflow estático agora compartilha grupo pelo head SHA, mantendo um scan por conteúdo.
-- **Decisões e alternativas descartadas:** manter push, PR e workflow_dispatch; não cancelar checks de commits diferentes.
-- **Cuidados:** ação usa o SHA do head no PR e o SHA do commit no push; confirmar coalescência no GitHub.
-- **Commits e arquivos:** pendente; `.github/workflows/quality-static.yml` e este handoff.
-- **Verificações:** `git diff --check` pendente; actionlint local DEFERRED (binário ausente), validado no CI após push.
-- **Pendências e bloqueios:** confirmar um único scan por SHA, incluindo Semgrep; Kernel global segue pendente por shutdown sem JUnit.
-- **Próximo passo:** commit/push, acompanhar actionlint e verificar execução única.
-
 # PHPStan — acessibilidade da busca do Fórum — 2026-11-16
 
 - **Objetivo:** reduzir a dívida PHPStan do `ForumPostSearchAccess` em lote de pelo menos 30 ocorrências, preservando a segurança de grants.
@@ -28,3 +17,13 @@
 - **Gates:** análise canônica PHPStan 2.3.5, PHP 8.4.27, nível 10: PASS (exit 0, zero erros). Guards `check --analysis` e `diff --include-worktree=true --analysis`: PASS. PHP lint: PASS. Unit focal: PASS (3 testes, 79 assertions); PHPUnit reportou uma depreciação preexistente. O socket local do PHPStan funcionou com a execução autorizada fora do sandbox.
 - **Publicação:** PR #336 disparou o CI; `phpstan`, `PHPStan level 10 gate` e `phpunit-unit` concluíram SUCCESS no PR. O hook pre-push repetiu `check` e `diff`, ambos PASS. O push direto avançou `origin/dev` por fast-forward de `5c4960475` para `00454c61e`; o GitHub marcou o PR como merged automaticamente. Em execuções duplicadas após o push, PHPStan foi cancelado, o relatório não encontrou `artifacts/phpstan.json` e o gate reportou `result=cancelled`; isso não representa diagnóstico PHPStan nem PASS. Os jobs PHPUnit restantes tiveram estados pending/cancelled/skipped, sem convertê-los em PASS. Sem sincronização de Runtime: o diff só alterou teste e baseline.
 - **Próximo passo:** encerrar este lote. Retomar nova redução PHPStan apenas em novo pedido.
+
+# ADR-057 — baseline P07 e presets P03 — 2026-11-17
+
+- **Objetivo:** implementar progressivamente ADR-057; P07 continua parcial e ADR-054/055 seguem abertas.
+- **Estado:** commits locais `c183426fd`+ adicionam runner público P07 e triagem P01; commit R2 `de8740c46baa1d7575c4de742bb80bdb4212f766` adiciona a fundação de presets do `layout-grid`. PR #335 está merged; não criar PR nova sem pedido. A fase P03 permanece não iniciada até resolver dependências P01/P02. HEAD do Runtime não foi sincronizado; `origin/dev` registrado anteriormente em `4dadf3b72f9ff4c0c170497f4b95a21f90195315`.
+- **Evidências:** Firefox 142.0.1 e Chromium 141.0.7390.37, dez hosts × 390/1440 × claro/escuro × frio/quente, 80/80 HTTP 200 em cada engine. Firefox CLS 0 medido em todos; Chromium teve seis casos >0,1, todos MAIN, máximo 0,5803. JSONs: `/mnt/disco1/tmp/aculta-suite-out/adr057-p07-multidomain-20261117-v2/` e `/mnt/disco1/tmp/aculta-suite-out/adr057-p07-chromium-multidomain-20261117/`.
+- **Gates:** `node --check`, ESLint focal, gerador do índice e `git diff --check` PASS. `validate-browser-index.php` FAIL preexistente porque `tests/browser/transversal/aculta-papeis/` não tem README. O runner grava métricas `null` quando não suportadas. CLS do MAIN deve ter experimento causal antes de qualquer correção; rotas além da raiz e RUM/CrUX continuam DEFERRED.
+- **Estado das demais frentes:** F0/F1 com aceites pendentes; comparação dos runs `44065410069` (base `5c4960475`) e `44080680393` (PR `8ba1b03d9`) confirmou blocos de falhas idênticos nos cinco shards Kernel concluídos; shard 2 foi cancelado nos dois. P01 segue FAIL até corrigir o baseline e obter run estável; evidência em `docs/operations/testing/ADR-057-P01-KERNEL-TRIAGEM-2026-11-17.md`. P02/RN-05 parcial. Para P03, fundação de presets nomeados está registrada em `docs/operations/testing/ADR-057-P03-PRESETS-2026-11-17.md`; fluxo editorial, permissões, persistência, visual e Runtime continuam sem evidência. PHPStan global e guards passaram; 26 entradas de baseline removidas legitimamente e relatório temporário em `/mnt/disco1/tmp/aculta-adr057-phpstan-report.json`. P04 parcial; P05 BLOCKED_UPSTREAM; P06 parcial; P08/P09 não iniciados.
+- **Ambiente e preservação:** Runtime Sync continua BLOCKED por RX/drift segundo F0/F1. Permanecem intocados os deltas locais de `composer.json`, `composer.lock` e `web/libraries/*`; não stagear ou reverter.
+- **Próximo passo:** preservar os deltas locais de Composer/libraries e não publicar em nova PR sem pedido. Encaminhar grupos Kernel confirmados como preexistentes aos owners e corrigir em lotes isolados; completar P02/US-14 antes de iniciar fluxo P03. Manter P05 bloqueado até alternativa/upstream seguro. Executar experimento causal P07 conforme a ordem da ADR.

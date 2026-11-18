@@ -70,10 +70,10 @@ display:
               component_id: 'aculta420_v2:layout-grid'
               variant_id: null
               props:
-                min_item_width:
+                preset:
                   source_id: select
                   source:
-                    value: 20rem
+                    value: cards-wide
               slots:
                 content:
                   sources:

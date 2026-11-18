@@ -24,25 +24,25 @@
     <dl class="forum-topic-meta__stats">
       {% if posts is not null %}
         <div class="forum-topic-meta__stat">
-          <dt>{{ include('aculta420_v2:icon', { name: 'chat-circle', variant: 'regular', size: 'sm' }, with_context = false) }}</dt>
+          <dt><span class="visually-hidden">{{ 'posts'|t }}</span>{{ include('aculta420_v2:icon', { name: 'chat-circle', variant: 'regular', size: 'sm' }, with_context = false) }}</dt>
           <dd><strong>{{ posts }}</strong><span>{{ 'posts'|t }}</span></dd>
         </div>
       {% endif %}
       {% if participants is not null %}
         <div class="forum-topic-meta__stat">
-          <dt>{{ include('aculta420_v2:icon', { name: 'users-three', variant: 'regular', size: 'sm' }, with_context = false) }}</dt>
+          <dt><span class="visually-hidden">{{ 'participantes'|t }}</span>{{ include('aculta420_v2:icon', { name: 'users-three', variant: 'regular', size: 'sm' }, with_context = false) }}</dt>
           <dd><strong>{{ participants }}</strong><span>{{ 'participantes'|t }}</span></dd>
         </div>
       {% endif %}
       {% if views is not null %}
         <div class="forum-topic-meta__stat">
-          <dt>{{ include('aculta420_v2:icon', { name: 'eye', variant: 'regular', size: 'sm' }, with_context = false) }}</dt>
+          <dt><span class="visually-hidden">{{ 'visualizações'|t }}</span>{{ include('aculta420_v2:icon', { name: 'eye', variant: 'regular', size: 'sm' }, with_context = false) }}</dt>
           <dd><strong>{{ views }}</strong><span>{{ 'visualizações'|t }}</span></dd>
         </div>
       {% endif %}
       {% if last_activity %}
         <div class="forum-topic-meta__stat">
-          <dt>{{ include('aculta420_v2:icon', { name: 'calendar-blank', variant: 'regular', size: 'sm' }, with_context = false) }}</dt>
+          <dt><span class="visually-hidden">{{ 'última atividade'|t }}</span>{{ include('aculta420_v2:icon', { name: 'calendar-blank', variant: 'regular', size: 'sm' }, with_context = false) }}</dt>
           <dd><strong>{{ last_activity }}</strong><span>{{ 'última atividade'|t }}</span></dd>
         </div>
       {% endif %}

@@ -125,8 +125,10 @@ final class WikiEditorialQueue {
     $hasMore = count($items) > self::PAGE_SIZE;
     if ($hasMore) {
       $items = array_slice($items, 0, self::PAGE_SIZE);
-      $last = $items[array_key_last($items)];
-      $nextCursor = $last->get('created')->value . '-' . $last->id();
+      $last = $items[array_key_last($items)] ?? NULL;
+      $nextCursor = $last instanceof WikiProposal || $last instanceof Contribution
+        ? $this->createdTimestamp($last) . '-' . $last->id()
+        : NULL;
     }
     else {
       $nextCursor = NULL;
@@ -197,7 +199,7 @@ final class WikiEditorialQueue {
           $query->condition('content_entity_revision_id', $scanCursor, '<');
         }
 
-        $revisionIds = array_map('strval', array_values($query->execute()));
+        $revisionIds = $this->revisionIdsFromAggregateRows($query->execute());
         if ($revisionIds === []) {
           $hasMoreCandidates = FALSE;
           break;
@@ -208,8 +210,12 @@ final class WikiEditorialQueue {
           $scanCursor = (int) $revisionId;
           $candidateCount++;
           $revision = $revisions[$revisionId] ?? NULL;
-          if (!$revision instanceof NodeInterface
-            || (string) $storage->getLatestRevisionId($revision->id()) !== $revisionId
+          if (!$revision instanceof NodeInterface) {
+            continue;
+          }
+          $nodeId = $revision->id();
+          if ((!is_int($nodeId) && !is_string($nodeId))
+            || (string) $storage->getLatestRevisionId($nodeId) !== $revisionId
             || $revision->bundle() !== 'wiki_entry'
             || !$revision->hasField('field_domain_source')
             || $revision->get('field_domain_source')->target_id !== $wikiDomain->id()
@@ -243,8 +249,8 @@ final class WikiEditorialQueue {
 
       if ($hasExtraAuthorizedItem) {
         $items = array_slice($items, 0, self::PAGE_SIZE);
-        $last = $items[array_key_last($items)];
-        $nextCursor = (string) $last->getRevisionId();
+        $last = $items[array_key_last($items)] ?? NULL;
+        $nextCursor = $last instanceof NodeInterface ? (string) $last->getRevisionId() : NULL;
       }
       elseif ($hasMoreCandidates && $scanCursor !== NULL) {
         // A bounded scan can return fewer than PAGE_SIZE rows when access
@@ -267,7 +273,41 @@ final class WikiEditorialQueue {
    * Gets a created timestamp from a content entity candidate.
    */
   private function createdTimestamp(EntityInterface $entity): int {
-    return $entity instanceof ContentEntityInterface ? (int) $entity->get('created')->value : 0;
+    if (!$entity instanceof ContentEntityInterface || !$entity->hasField('created')) {
+      return 0;
+    }
+    $value = $entity->get('created')->value;
+    if (is_int($value)) {
+      return $value;
+    }
+    return is_string($value) && ctype_digit($value) ? (int) $value : 0;
+  }
+
+  /**
+   * Extracts revision IDs from Content Moderation aggregate query rows.
+   *
+   * @param mixed $rows
+   *   Rows returned by the aggregate entity query.
+   *
+   * @return list<string>
+   *   Revision IDs kept as strings for revision storage.
+   */
+  private function revisionIdsFromAggregateRows(mixed $rows): array {
+    if (!is_array($rows)) {
+      return [];
+    }
+
+    $revisionIds = [];
+    foreach ($rows as $row) {
+      if (!is_array($row)) {
+        continue;
+      }
+      $revisionId = $row['content_entity_revision_id'] ?? NULL;
+      if (is_int($revisionId) || is_string($revisionId)) {
+        $revisionIds[] = (string) $revisionId;
+      }
+    }
+    return $revisionIds;
   }
 
   /**

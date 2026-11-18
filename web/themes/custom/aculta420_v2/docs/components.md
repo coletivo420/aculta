@@ -429,9 +429,12 @@ partir de 60rem. Story: `layout-two-columns.default.story.yml`. Sem JavaScript.
 ### layout-grid
 
 Grade automática (`auto-fit` + `minmax`) no slot `content`; prop
-`min_item_width` (`12rem`, `16rem` ou `20rem`, padrão `16rem`) e `max_columns`
+`preset` (`custom`, `cards-compact`, `cards-standard` ou `cards-wide`, padrão
+`custom`). Os presets aplicam larguras mínimas de `12rem`, `16rem` e `20rem` e
+desativam o limite de colunas; `custom` mantém `min_item_width` e `max_columns`
 (`0` automático sem limite, `2`, `3` ou `4`). Sem estilo inline: largura mínima
-e limite viram classes. Story: `layout-grid.default.story.yml`.
+e limite viram classes. As Views de documentos e catálogo da loja usam
+`cards-wide` e `cards-standard`, respectivamente. Stories: `layout-grid.*.story.yml`.
 
 ### layout-narrow
 

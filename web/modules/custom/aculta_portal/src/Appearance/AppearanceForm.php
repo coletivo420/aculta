@@ -41,6 +41,11 @@ final class AppearanceForm extends FormBase implements ContainerInjectionInterfa
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $form
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *
+   * @return array<string, mixed>
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $uid = (int) $this->currentUser->id();
@@ -64,10 +69,15 @@ final class AppearanceForm extends FormBase implements ContainerInjectionInterfa
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $form
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $uid = (int) $this->currentUser->id();
-    $this->preference->save($uid, (string) $form_state->getValue('color_mode'));
+    $rawMode = $form_state->getValue('color_mode');
+    $colorMode = is_string($rawMode) ? $rawMode : '';
+    $this->preference->save($uid, $colorMode);
     // A página em cache desta pessoa carrega o modo anterior: invalida a tag do usuário.
     Cache::invalidateTags(['user:' . $uid]);
     $this->messenger()->addStatus($this->t('Modo de cor salvo.'));

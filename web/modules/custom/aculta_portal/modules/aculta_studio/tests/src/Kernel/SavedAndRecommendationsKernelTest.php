@@ -52,7 +52,7 @@ final class SavedAndRecommendationsKernelTest extends KernelTestBase {
     'taxonomy',
     'flag',
     'aculta_studio',
-      'aculta_calendar',
+    'aculta_calendar',
   ];
 
   /**
@@ -394,9 +394,10 @@ final class SavedAndRecommendationsKernelTest extends KernelTestBase {
     $this->container->get('request_stack')->push($request0);
 
     $build0 = $controller->page();
-    $this->assertNotEmpty($build0['content']['list']['#items']);
-    $this->assertCount(15, $build0['content']['list']['#items']);
-    $this->assertNotEmpty($build0['content']['pager']['links']);
+    $content0 = $this->getPageContentSlot($build0);
+    $this->assertNotEmpty($content0['list']['#items']);
+    $this->assertCount(15, $content0['list']['#items']);
+    $this->assertNotEmpty($content0['pager']['links']);
 
     // Page 1 (items 16 to 20).
     $request1 = Request::create('/salvos', 'GET', ['tab' => 'salvos', 'page' => '1']);
@@ -404,8 +405,87 @@ final class SavedAndRecommendationsKernelTest extends KernelTestBase {
     $this->container->get('request_stack')->push($request1);
 
     $build1 = $controller->page();
-    $this->assertNotEmpty($build1['content']['list']['#items']);
-    $this->assertCount(5, $build1['content']['list']['#items']);
+    $content1 = $this->getPageContentSlot($build1);
+    $this->assertNotEmpty($content1['list']['#items']);
+    $this->assertCount(5, $content1['list']['#items']);
+  }
+
+  /**
+   * Proves the legacy purpose query filters by the canonical site key.
+   */
+  public function testPurposeQueryFiltersBySiteKey(): void {
+    $wikiType = NodeType::create([
+      'type' => 'wiki_article',
+      'name' => 'Wiki article',
+    ]);
+    $wikiType->save();
+
+    Flag::create([
+      'id' => 'bookmark',
+      'label' => 'Wiki bookmark',
+      'entity_type' => 'node',
+      'flag_type' => 'entity:node',
+      'link_type' => 'reload',
+      'bundles' => ['wiki_article'],
+    ])->save();
+
+    $user = User::create(['name' => 'wiki_saved_user', 'status' => 1, 'roles' => ['member']]);
+    $user->save();
+    $wikiNode = Node::create([
+      'type' => 'wiki_article',
+      'title' => 'Artigo salvo da Wiki',
+      'status' => 1,
+    ]);
+    $wikiNode->save();
+    Flagging::create([
+      'flag_id' => 'bookmark',
+      'entity_type' => 'node',
+      'entity_id' => $wikiNode->id(),
+      'uid' => $user->id(),
+    ])->save();
+
+    $this->setCurrentUser($user);
+    $request = Request::create('/salvos', 'GET', [
+      'tab' => 'salvos',
+      'purpose' => 'wiki',
+    ]);
+    $request->setSession(new Session(new MockArraySessionStorage()));
+    $this->container->get('request_stack')->push($request);
+
+    $controller = $this->container->get('aculta_studio.saved_controller');
+    $build = $controller->page();
+    $content = $this->getPageContentSlot($build);
+
+    $list = $content['list'] ?? NULL;
+    if (!is_array($list)) {
+      throw new \UnexpectedValueException('A lista de salvos deve ser renderizável.');
+    }
+    $cards = $list['#items'] ?? NULL;
+    if (!is_array($cards)) {
+      throw new \UnexpectedValueException('O filtro deve devolver a lista de cartões.');
+    }
+    self::assertCount(1, $cards);
+    $card = $cards[0] ?? NULL;
+    if (!is_array($card)) {
+      throw new \UnexpectedValueException('O primeiro resultado deve ser um cartão.');
+    }
+    $meta = $card['meta'] ?? NULL;
+    if (!is_array($meta)) {
+      throw new \UnexpectedValueException('O cartão deve expor seus metadados.');
+    }
+    $markup = $meta['#markup'] ?? NULL;
+    self::assertIsString($markup);
+    self::assertStringContainsString(
+      'data-portal-ui="studio-saved-site-key">WIKI</span>',
+      $markup,
+    );
+
+    $request->query->set('purpose', 'forum');
+    $filteredBuild = $controller->page();
+    $filteredContent = $this->getPageContentSlot($filteredBuild);
+    $filteredList = $filteredContent['list'] ?? NULL;
+    self::assertIsArray($filteredList);
+    self::assertArrayHasKey('message', $filteredList);
   }
 
   /**
@@ -472,7 +552,36 @@ final class SavedAndRecommendationsKernelTest extends KernelTestBase {
     /** @var \Drupal\aculta_studio\Controller\SavedContentController $controller */
     $controller = $this->container->get('aculta_studio.saved_controller');
     $build = $controller->page();
-    $this->assertNotEmpty($build['content']['list']['message']);
+    $content = $this->getPageContentSlot($build);
+    $this->assertNotEmpty($content['list']['message']);
+  }
+
+  /**
+   * Returns and validates the content slot of the saved-content SDC.
+   *
+   * @param array<string, mixed> $build
+   *   Render array returned by SavedContentController::page().
+   *
+   * @return array<mixed, mixed>
+   *   Content slot render array.
+   */
+  private function getPageContentSlot(array $build): array {
+    self::assertSame('component', $build['#type'] ?? NULL);
+    self::assertSame('aculta420_v2:saved-content-page', $build['#component'] ?? NULL);
+    $componentSlots = $build['#slots'] ?? NULL;
+    if (!is_array($componentSlots)) {
+      throw new \UnexpectedValueException('A página de salvos deve expor slots.');
+    }
+    $slots = $componentSlots['content'] ?? NULL;
+    if (!is_array($slots)) {
+      throw new \UnexpectedValueException('A página de salvos deve expor o slot content.');
+    }
+    $content = $slots['content'] ?? NULL;
+    if (!is_array($content)) {
+      throw new \UnexpectedValueException('O slot content da página deve conter o conteúdo renderizável.');
+    }
+
+    return $content;
   }
 
 }

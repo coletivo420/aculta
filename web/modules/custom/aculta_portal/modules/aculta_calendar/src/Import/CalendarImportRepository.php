@@ -53,7 +53,8 @@ final class CalendarImportRepository {
     if ($items === []) {
       return NULL;
     }
-    return reset($items);
+    $first = reset($items);
+    return $first instanceof CalendarImportedItem ? $first : NULL;
   }
 
   /**
@@ -67,7 +68,11 @@ final class CalendarImportRepository {
     if (!$storage instanceof RevisionableStorageInterface) {
       return $current;
     }
-    $latestRevisionId = $storage->getLatestRevisionId($current->id());
+    $currentId = $current->id();
+    if ($currentId === NULL) {
+      return $current;
+    }
+    $latestRevisionId = $storage->getLatestRevisionId($currentId);
     if ($latestRevisionId === NULL) {
       return $current;
     }
@@ -76,10 +81,15 @@ final class CalendarImportRepository {
   }
 
   /**
-   * Loads all current items from a source, keyed by entity ID. */
+   * Loads all current items from a source, keyed by entity ID.
+   *
+   * @return array<int|string, \Drupal\aculta_calendar\Entity\CalendarImportedItem>
+   */
   public function itemsForSource(CalendarImportSource $source): array {
-    return $this->entityTypeManager->getStorage('aculta_calendar_imported_item')
+    /** @var array<int|string, \Drupal\aculta_calendar\Entity\CalendarImportedItem> $items */
+    $items = $this->entityTypeManager->getStorage('aculta_calendar_imported_item')
       ->loadByProperties(['source' => $source->id()]);
+    return $items;
   }
 
   /**

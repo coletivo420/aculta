@@ -49,21 +49,29 @@ final class EmailResendForm extends FormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $form
+   * @return array<string, mixed>
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $form['description'] = [
       '#type' => 'item',
       '#markup' => $this->translation->translate('Solicite um novo link de confirmação para o endereço da sua conta.'),
     ];
-    $form['actions']['submit'] = [
-      '#type' => 'submit',
-      '#value' => $this->translation->translate('Reenviar confirmação'),
+    $form['actions'] = [
+      '#type' => 'actions',
+      'submit' => [
+        '#type' => 'submit',
+        '#value' => $this->translation->translate('Reenviar confirmação'),
+      ],
     ];
     return $form;
   }
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $form
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $account = $this->entityTypeManager->getStorage('user')->load($this->currentUser->id());

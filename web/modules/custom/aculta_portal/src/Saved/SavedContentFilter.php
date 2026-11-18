@@ -27,8 +27,8 @@ final class SavedContentFilter {
    *   Optional entity type ID filter.
    * @param string|null $bundle
    *   Optional bundle filter.
-   * @param string|null $purpose
-   *   Optional canonical purpose filter.
+   * @param string|null $siteKey
+   *   Optional canonical site key filter.
    * @param int $limit
    *   Number of items per page.
    * @param int $offset
@@ -39,7 +39,7 @@ final class SavedContentFilter {
     private readonly ?string $category = NULL,
     private readonly ?string $entityTypeId = NULL,
     private readonly ?string $bundle = NULL,
-    private readonly ?string $purpose = NULL,
+    private readonly ?string $siteKey = NULL,
     private readonly int $limit = 20,
     private readonly int $offset = 0,
   ) {
@@ -82,8 +82,8 @@ final class SavedContentFilter {
   /**
    * Gets the purpose filter.
    */
-  public function getPurpose(): ?string {
-    return $this->purpose;
+  public function getSiteKey(): ?string {
+    return $this->siteKey;
   }
 
   /**

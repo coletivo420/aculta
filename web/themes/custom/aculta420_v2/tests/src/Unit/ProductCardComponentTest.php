@@ -51,6 +51,7 @@ final class ProductCardComponentTest extends UnitTestCase {
     $default = self::arrayAtPath($view, 'display', 'default', 'display_options');
     self::assertSame('ui_patterns', self::valueAtPath($default, 'style', 'type'));
     self::assertSame('aculta420_v2:layout-grid', self::valueAtPath($default, 'style', 'options', 'ui_patterns', 'ui_patterns', 'component_id'));
+    self::assertSame('cards-standard', self::valueAtPath($default, 'style', 'options', 'ui_patterns', 'ui_patterns', 'props', 'preset', 'source', 'value'));
     self::assertSame('entity:commerce_product', self::valueAtPath($default, 'row', 'type'));
     self::assertSame('catalog', self::valueAtPath($default, 'row', 'options', 'view_mode'));
     self::assertSame(12, self::valueAtPath($default, 'pager', 'options', 'items_per_page'));

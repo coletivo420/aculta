@@ -1,3 +1,11 @@
 .aculta-we-sativa__intent,
 .aculta-we-sativa__start,
 .aculta-we-sativa__workspace { display: grid; gap: 1.5rem; }
+
+.aculta-we-sativa__workspace {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.aculta-we-sativa__workspace > * {
+  min-inline-size: 0;
+}

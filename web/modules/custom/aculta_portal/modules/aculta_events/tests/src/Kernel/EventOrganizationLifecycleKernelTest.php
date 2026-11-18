@@ -73,6 +73,10 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
     'path_alias',
     'file',
     'image',
+    'block',
+    'views',
+    'ui_patterns',
+    'ui_patterns_views',
     'aculta_calendar',
     'aculta_maps',
     'aculta_user',
@@ -2096,11 +2100,13 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
   /**
    * Narrows entities returned by generic storage APIs to their expected class.
    *
-   * @template T of object
    * @param mixed $entity
    *   The entity returned by storage.
    * @param class-string<T> $class
    *   The entity class expected by this test.
+   *
+   * @template T of object
+   *
    * @return T
    *   The entity after runtime type validation.
    */
@@ -2117,15 +2123,27 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
    *
    * @param mixed $item
    *   The queue result, which can be false when no item was claimed.
-   * @return object{data: array<string, mixed>}
+   *
+   * @return object{item_id: int|string, data: array<string, mixed>}
    *   The validated queue item with its data payload.
    */
   private function queueItem(mixed $item): object {
     if (!is_object($item) || !property_exists($item, 'data') || !is_array($item->data)) {
       throw new \UnexpectedValueException('The queue did not return an item with an array payload.');
     }
+    $itemId = $item->item_id ?? NULL;
+    if (!is_int($itemId) && !is_string($itemId)) {
+      throw new \UnexpectedValueException('The queue item does not have a valid ID.');
+    }
 
-    return $item;
+    $data = [];
+    foreach ($item->data as $key => $value) {
+      if (!is_string($key)) {
+        throw new \UnexpectedValueException('The queue payload contains a non-string key.');
+      }
+      $data[$key] = $value;
+    }
+    return (object) ['item_id' => $itemId, 'data' => $data];
   }
 
 }

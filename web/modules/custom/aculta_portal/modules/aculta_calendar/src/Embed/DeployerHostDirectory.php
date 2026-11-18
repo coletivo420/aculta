@@ -62,14 +62,17 @@ final class DeployerHostDirectory {
    *   Valid, unambiguous entries sorted by domain ID.
    */
   public static function mappingsFromData(array $data): array {
-    $entries = $data['domain_transition']['entries'] ?? NULL;
+    $domainTransition = $data['domain_transition'] ?? NULL;
+    $entries = is_array($domainTransition) && isset($domainTransition['entries']) && is_array($domainTransition['entries'])
+      ? $domainTransition['entries']
+      : NULL;
     if (!is_array($entries)) {
       return [];
     }
 
     $counts = [];
     foreach ($entries as $entry) {
-      if (is_array($entry) && is_string($entry['domain_id'] ?? NULL)) {
+      if (is_array($entry) && isset($entry['domain_id']) && is_string($entry['domain_id'])) {
         $counts[$entry['domain_id']] = ($counts[$entry['domain_id']] ?? 0) + 1;
       }
     }
@@ -79,14 +82,16 @@ final class DeployerHostDirectory {
       if (!is_array($entry)) {
         continue;
       }
-      $domainId = $entry['domain_id'] ?? NULL;
-      $testHost = $entry['test_host'] ?? NULL;
-      $productionHost = $entry['production_host'] ?? NULL;
-      if (!is_string($domainId)
+      $domainId = isset($entry['domain_id']) && is_string($entry['domain_id']) ? $entry['domain_id'] : NULL;
+      $testHost = isset($entry['test_host']) && is_string($entry['test_host']) ? $entry['test_host'] : NULL;
+      $productionHost = isset($entry['production_host']) && is_string($entry['production_host']) ? $entry['production_host'] : NULL;
+      if ($domainId === NULL
         || preg_match('/^[a-z0-9_]+$/', $domainId) !== 1
         || ($counts[$domainId] ?? 0) !== 1
         || !self::isHost($testHost)
-        || !self::isHost($productionHost)) {
+        || !self::isHost($productionHost)
+        || $testHost === NULL
+        || $productionHost === NULL) {
         continue;
       }
       $mappings[] = [

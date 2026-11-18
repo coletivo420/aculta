@@ -1,42 +1,6 @@
 parameters:
 	ignoreErrors:
 		-
-			rawMessage: Cannot access offset 'bundle' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: scripts/audit-aculta420-layout-builder.php
-
-		-
-			rawMessage: Cannot access offset 'layout_builder' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: scripts/audit-aculta420-layout-builder.php
-
-		-
-			rawMessage: Cannot access offset 'mode' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: scripts/audit-aculta420-layout-builder.php
-
-		-
-			rawMessage: Cannot access offset 'targetEntityType' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: scripts/audit-aculta420-layout-builder.php
-
-		-
-			rawMessage: Cannot access offset 'third_party_settings' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: scripts/audit-aculta420-layout-builder.php
-
-		-
-			rawMessage: Cannot cast mixed to string.
-			identifier: cast.string
-			count: 3
-			path: scripts/audit-aculta420-layout-builder.php
-
-		-
 			rawMessage: 'Argument of an invalid type mixed supplied for foreach, only iterables are supported.'
 			identifier: foreach.nonIterable
 			count: 1
@@ -3827,6 +3791,12 @@ parameters:
 			path: scripts/validate-aculta420-ui-styles.php
 
 		-
+			rawMessage: 'Parameter #1 $string of function trim expects string, string|null given.'
+			identifier: argument.type
+			count: 1
+			path: scripts/validate-aculta420-v2-foundations.php
+
+		-
 			rawMessage: Cannot access offset 'component' on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 2
@@ -4515,6 +4485,204 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: scripts/validate-domain-front-paths.php
+
+		-
+			rawMessage: Binary operation "." between 'MAIN showcase…' and mixed results in an error.
+			identifier: binaryOp.invalid
+			count: 1
+			path: scripts/validate-domain-presentation-contract.php
+
+		-
+			rawMessage: Binary operation "." between 'Showcase URL is…' and mixed results in an error.
+			identifier: binaryOp.invalid
+			count: 1
+			path: scripts/validate-domain-presentation-contract.php
+
+		-
+			rawMessage: Cannot access offset '#title_display' on mixed.
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: scripts/validate-domain-presentation-contract.php
+
+		-
+			rawMessage: Cannot access offset 'actions' on mixed.
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: scripts/validate-domain-presentation-contract.php
+
+		-
+			rawMessage: Cannot access offset 'brand_media' on mixed.
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: scripts/validate-domain-presentation-contract.php
+
+		-
+			rawMessage: Cannot access offset 'contexts' on mixed.
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: scripts/validate-domain-presentation-contract.php
+
+		-
+			rawMessage: Cannot access offset 'home_url' on mixed.
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: scripts/validate-domain-presentation-contract.php
+
+		-
+			rawMessage: Cannot access offset 'institution_bar_account' on mixed.
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: scripts/validate-domain-presentation-contract.php
+
+		-
+			rawMessage: Cannot access offset 'links_page' on mixed.
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: scripts/validate-domain-presentation-contract.php
+
+		-
+			rawMessage: Cannot access offset 'logo_alt' on mixed.
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: scripts/validate-domain-presentation-contract.php
+
+		-
+			rawMessage: Cannot access offset 'navigation' on mixed.
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: scripts/validate-domain-presentation-contract.php
+
+		-
+			rawMessage: Cannot access offset 'purpose' on mixed.
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 5
+			path: scripts/validate-domain-presentation-contract.php
+
+		-
+			rawMessage: Cannot access offset 'role' on mixed.
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: scripts/validate-domain-presentation-contract.php
+
+		-
+			rawMessage: Cannot access offset 'short_title' on mixed.
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: scripts/validate-domain-presentation-contract.php
+
+		-
+			rawMessage: Cannot access offset 'show_site_header' on mixed.
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: scripts/validate-domain-presentation-contract.php
+
+		-
+			rawMessage: Cannot access offset 'show_utility_bar' on mixed.
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: scripts/validate-domain-presentation-contract.php
+
+		-
+			rawMessage: Cannot access offset 'showcase' on mixed.
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: scripts/validate-domain-presentation-contract.php
+
+		-
+			rawMessage: Cannot access offset 'title' on mixed.
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: scripts/validate-domain-presentation-contract.php
+
+		-
+			rawMessage: Cannot access offset 'url' on mixed.
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: scripts/validate-domain-presentation-contract.php
+
+		-
+			rawMessage: Cannot access offset 'wiki_search' on mixed.
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: scripts/validate-domain-presentation-contract.php
+
+		-
+			rawMessage: 'Cannot call method getCacheContexts() on Drupal\aculta_portal\Presentation\DomainPresentation|null.'
+			identifier: method.nonObject
+			count: 1
+			path: scripts/validate-domain-presentation-contract.php
+
+		-
+			rawMessage: 'Cannot call method getCacheTags() on Drupal\aculta_portal\Presentation\DomainPresentation|null.'
+			identifier: method.nonObject
+			count: 2
+			path: scripts/validate-domain-presentation-contract.php
+
+		-
+			rawMessage: 'Cannot call method getCacheTags() on Drupal\domain\DomainInterface|null.'
+			identifier: method.nonObject
+			count: 1
+			path: scripts/validate-domain-presentation-contract.php
+
+		-
+			rawMessage: 'Cannot call method toThemeArray() on Drupal\aculta_portal\Presentation\DomainPresentation|null.'
+			identifier: method.nonObject
+			count: 1
+			path: scripts/validate-domain-presentation-contract.php
+
+		-
+			rawMessage: Instanceof between Drupal\aculta_portal\Presentation\DomainPresentationBuilder and Drupal\aculta_portal\Presentation\DomainPresentationBuilder will always evaluate to true.
+			identifier: instanceof.alwaysTrue
+			count: 1
+			path: scripts/validate-domain-presentation-contract.php
+
+		-
+			rawMessage: 'Parameter #1 $array of function array_keys expects array, mixed given.'
+			identifier: argument.type
+			count: 3
+			path: scripts/validate-domain-presentation-contract.php
+
+		-
+			rawMessage: 'Parameter #1 $haystack of function str_contains expects string, string|false given.'
+			identifier: argument.type
+			count: 6
+			path: scripts/validate-domain-presentation-contract.php
+
+		-
+			rawMessage: 'Parameter #1 $siteKey of method Drupal\aculta_portal\Domain\DomainSiteManager::getDomain() expects Drupal\aculta_portal\Domain\SiteKey|string, mixed given.'
+			identifier: argument.type
+			count: 1
+			path: scripts/validate-domain-presentation-contract.php
+
+		-
+			rawMessage: 'Parameter #1 $siteKey of method Drupal\aculta_portal\Domain\DomainSiteManager::pathUrl() expects Drupal\aculta_portal\Domain\SiteKey|string, mixed given.'
+			identifier: argument.type
+			count: 1
+			path: scripts/validate-domain-presentation-contract.php
+
+		-
+			rawMessage: 'Parameter #2 $array of function array_key_exists expects array, mixed given.'
+			identifier: argument.type
+			count: 1
+			path: scripts/validate-domain-presentation-contract.php
+
+		-
+			rawMessage: 'Parameter #2 $callback of function array_filter expects (callable(mixed): bool)|null, Closure(array): bool given.'
+			identifier: argument.type
+			count: 1
+			path: scripts/validate-domain-presentation-contract.php
+
+		-
+			rawMessage: 'Parameter #2 $haystack of function in_array expects array, mixed given.'
+			identifier: argument.type
+			count: 1
+			path: scripts/validate-domain-presentation-contract.php
+
+		-
+			rawMessage: 'Parameter #2 $subject of function preg_match expects string, mixed given.'
+			identifier: argument.type
+			count: 1
+			path: scripts/validate-domain-presentation-contract.php
 
 		-
 			rawMessage: 'Cannot call method getFilename() on mixed.'
@@ -7097,18 +7265,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Controller/AgendaController.php
 
 		-
-			rawMessage: Cannot access property $query on Symfony\Component\HttpFoundation\Request|null.
-			identifier: property.nonObject
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Controller/IcsController.php
-
-		-
-			rawMessage: 'Cannot call method getHost() on Symfony\Component\HttpFoundation\Request|null.'
-			identifier: method.nonObject
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Controller/IcsController.php
-
-		-
 			rawMessage: 'Method Drupal\aculta_calendar\Controller\InteractiveController::dados() should return array{items: array<int, array<string, mixed>>, date: string} but returns array{items: array<int, array<string, mixed>>, date: mixed}.'
 			identifier: return.type
 			count: 1
@@ -7119,252 +7275,6 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Controller/InteractiveController.php
-
-		-
-			rawMessage: Cannot access offset 'entries' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Embed/DeployerHostDirectory.php
-
-		-
-			rawMessage: 'Parameter #1 $string of function strtolower expects string, mixed given.'
-			identifier: argument.type
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Embed/DeployerHostDirectory.php
-
-		-
-			rawMessage: 'Cannot access offset ''title'' on ''table''|array{0: Drupal\Core\StringTranslation\TranslatableMarkup, 1: Drupal\Core\StringTranslation\TranslatableMarkup, 2: Drupal\Core\StringTranslation\TranslatableMarkup, 3: Drupal\Core\StringTranslation\TranslatableMarkup, 4: Drupal\Core\StringTranslation\TranslatableMarkup, 5: Drupal\Core\StringTranslation\TranslatableMarkup, title?: array{''#plain_text'': mixed}, uid?: array{''#plain_text'': mixed}, ...}|array{title: array{''#plain_text'': mixed}, uid?: array{''#plain_text'': mixed}, start?: array{''#plain_text'': string}, state?: array{''#plain_text'': mixed}, presence?: array{''#plain_text'': mixed}, publish?: array{''#type'': ''submit'', ''#value'': Drupal\Core\StringTranslation\TranslatableMarkup, ''#name'': non-falsy-string, ''#submit'': array{'':…''|''::publishItem''}, ''#item_id'': string, ''#limit_validation_errors'': array{}}, keep_draft?: array{''#type'': ''submit'', ''#value'': Drupal\Core\StringTranslation\TranslatableMarkup, ''#name'': non-falsy-string, ''#submit'': array{''::keepDraft''}, ''#item_id'': string, ''#limit_validation_errors'': array{}}}|Drupal\Core\StringTranslation\TranslatableMarkup.'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Form/CalendarImportReviewForm.php
-
-		-
-			rawMessage: Cannot cast mixed to int.
-			identifier: cast.int
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Form/CalendarImportReviewForm.php
-
-		-
-			rawMessage: Cannot cast mixed to string.
-			identifier: cast.string
-			count: 3
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Form/CalendarImportReviewForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_calendar\Form\CalendarImportReviewForm::buildForm() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Form/CalendarImportReviewForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_calendar\Form\CalendarImportReviewForm::buildForm() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Form/CalendarImportReviewForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_calendar\Form\CalendarImportReviewForm::keepDraft() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Form/CalendarImportReviewForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_calendar\Form\CalendarImportReviewForm::publishCancellation() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Form/CalendarImportReviewForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_calendar\Form\CalendarImportReviewForm::publishItem() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Form/CalendarImportReviewForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_calendar\Form\CalendarImportReviewForm::submitForm() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Form/CalendarImportReviewForm.php
-
-		-
-			rawMessage: Offset '#item_id' might not exist on array|null.
-			identifier: offsetAccess.notFound
-			count: 3
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Form/CalendarImportReviewForm.php
-
-		-
-			rawMessage: 'Parameter #1 $source of method Drupal\aculta_calendar\Import\CalendarImportRepository::findLatest() expects Drupal\aculta_calendar\Entity\CalendarImportSource, Drupal\Core\Entity\EntityInterface|null given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Form/CalendarImportReviewForm.php
-
-		-
-			rawMessage: 'Parameter #2 $externalUid of method Drupal\aculta_calendar\Import\CalendarImportRepository::findLatest() expects string, mixed given.'
-			identifier: argument.type
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Form/CalendarImportReviewForm.php
-
-		-
-			rawMessage: 'Parameter #3 $repository of class Drupal\aculta_calendar\Form\CalendarImportReviewForm constructor expects Drupal\aculta_calendar\Import\CalendarImportRepository, object given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Form/CalendarImportReviewForm.php
-
-		-
-			rawMessage: 'Argument of an invalid type mixed supplied for foreach, only iterables are supported.'
-			identifier: foreach.nonIterable
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Ics/IcsEventBuilder.php
-
-		-
-			rawMessage: Cannot access offset 'fim' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Ics/IcsEventBuilder.php
-
-		-
-			rawMessage: Cannot access offset 'inicio' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Ics/IcsEventBuilder.php
-
-		-
-			rawMessage: Cannot access offset 'original' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Ics/IcsEventBuilder.php
-
-		-
-			rawMessage: 'Parameter #1 $key of method Drupal\aculta_calendar\Ics\IcsEventBuilder::uid() expects string, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Ics/IcsEventBuilder.php
-
-		-
-			rawMessage: 'Parameter #10 $excecoes of method Drupal\aculta_calendar\Ics\IcsEventBuilder::vevent() expects array<int, DateTimeImmutable>, array<DateTimeImmutable> given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Ics/IcsEventBuilder.php
-
-		-
-			rawMessage: 'Parameter #10 $excecoes of method Drupal\aculta_calendar\Ics\IcsEventBuilder::vevent() expects array<int, DateTimeImmutable>, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Ics/IcsEventBuilder.php
-
-		-
-			rawMessage: 'Parameter #2 $summary of method Drupal\aculta_calendar\Ics\IcsEventBuilder::vevent() expects string, mixed given.'
-			identifier: argument.type
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Ics/IcsEventBuilder.php
-
-		-
-			rawMessage: 'Parameter #3 $location of method Drupal\aculta_calendar\Ics\IcsEventBuilder::vevent() expects string, mixed given.'
-			identifier: argument.type
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Ics/IcsEventBuilder.php
-
-		-
-			rawMessage: 'Parameter #4 $start of method Drupal\aculta_calendar\Ics\IcsEventBuilder::vevent() expects DateTimeImmutable, DateTimeImmutable|null given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Ics/IcsEventBuilder.php
-
-		-
-			rawMessage: 'Parameter #4 $start of method Drupal\aculta_calendar\Ics\IcsEventBuilder::vevent() expects DateTimeImmutable, mixed given.'
-			identifier: argument.type
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Ics/IcsEventBuilder.php
-
-		-
-			rawMessage: 'Parameter #5 $end of method Drupal\aculta_calendar\Ics\IcsEventBuilder::vevent() expects DateTimeImmutable|null, mixed given.'
-			identifier: argument.type
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Ics/IcsEventBuilder.php
-
-		-
-			rawMessage: 'Parameter #6 $allDay of method Drupal\aculta_calendar\Ics\IcsEventBuilder::vevent() expects bool, mixed given.'
-			identifier: argument.type
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Ics/IcsEventBuilder.php
-
-		-
-			rawMessage: 'Parameter #7 $stamp of method Drupal\aculta_calendar\Ics\IcsEventBuilder::vevent() expects DateTimeImmutable, mixed given.'
-			identifier: argument.type
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Ics/IcsEventBuilder.php
-
-		-
-			rawMessage: 'Parameter #8 $recorrencia of method Drupal\aculta_calendar\Ics\IcsEventBuilder::vevent() expects DateTimeImmutable|null, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Ics/IcsEventBuilder.php
-
-		-
-			rawMessage: 'Parameter #9 $rrule of method Drupal\aculta_calendar\Ics\IcsEventBuilder::vevent() expects string|null, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Ics/IcsEventBuilder.php
-
-		-
-			rawMessage: Cannot access property $value on mixed.
-			identifier: property.nonObject
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Import/CalendarImportProcessor.php
-
-		-
-			rawMessage: 'Cannot call method get() on mixed.'
-			identifier: method.nonObject
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Import/CalendarImportProcessor.php
-
-		-
-			rawMessage: 'Cannot call method save() on mixed.'
-			identifier: method.nonObject
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Import/CalendarImportProcessor.php
-
-		-
-			rawMessage: 'Cannot call method set() on mixed.'
-			identifier: method.nonObject
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Import/CalendarImportProcessor.php
-
-		-
-			rawMessage: Cannot cast mixed to int.
-			identifier: cast.int
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Import/CalendarImportProcessor.php
-
-		-
-			rawMessage: Cannot cast mixed to string.
-			identifier: cast.string
-			count: 3
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Import/CalendarImportProcessor.php
-
-		-
-			rawMessage: Instanceof between Drupal\aculta_calendar\Import\NormalizedCalendarEvent and Drupal\aculta_calendar\Import\NormalizedCalendarEvent will always evaluate to true.
-			identifier: instanceof.alwaysTrue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Import/CalendarImportProcessor.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_calendar\Import\CalendarImportRepository::findCurrent() should return Drupal\aculta_calendar\Entity\CalendarImportedItem|null but returns Drupal\Core\Entity\EntityInterface.'
-			identifier: return.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Import/CalendarImportRepository.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_calendar\Import\CalendarImportRepository::itemsForSource() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Import/CalendarImportRepository.php
-
-		-
-			rawMessage: 'Parameter #1 $entity_id of method Drupal\Core\Entity\RevisionableStorageInterface::getLatestRevisionId() expects int|string, int|string|null given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Import/CalendarImportRepository.php
 
 		-
 			rawMessage: Binary operation "." between '@' and mixed results in an error.
@@ -7389,18 +7299,6 @@ parameters:
 			identifier: cast.string
 			count: 3
 			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Import/ImportedCalendarItemProvider.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_calendar\Import\NativeCalendarHostResolver::resolve() should return array<string> but returns list<mixed>.'
-			identifier: return.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Import/NativeCalendarHostResolver.php
-
-		-
-			rawMessage: 'Parameter #1 $array of function array_unique expects an array of values castable to string, list<mixed> given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Import/NativeCalendarHostResolver.php
 
 		-
 			rawMessage: 'Binary operation "." between ''BYDAY=''|''BYMONTHDAY=''|''COUNT=''|''FREQ=''|''INTERVAL='' and mixed results in an error.'
@@ -14962,17 +14860,7 @@ parameters:
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_events/src/Access/EventOrganizationAccessControlHandler.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_events\Access\EventOrganizationAccessControlHandler::checkCreateAccess() has parameter $context with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/src/Access/EventOrganizationAccessControlHandler.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_events\Access\EventPermissionPolicy::getAssignableRoles() should return array<string, string> but returns array<int|string, string>.'
-			identifier: return.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/src/Access/EventPermissionPolicy.php
 
 		-
 			rawMessage: 'Parameter #1 $array of function array_intersect expects an array of values castable to string, array<mixed, mixed> given.'
@@ -18953,15 +18841,9 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_events/tests/src/Kernel/EventDomainBoundaryKernelTest.php
 
 		-
-			rawMessage: Cannot access offset 'title' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/tests/src/Kernel/EventDomainBoundaryKernelTest.php
-
-		-
 			rawMessage: Cannot access offset 0 on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 10
+			count: 9
 			path: web/modules/custom/aculta_portal/modules/aculta_events/tests/src/Kernel/EventDomainBoundaryKernelTest.php
 
 		-
@@ -18979,13 +18861,7 @@ parameters:
 		-
 			rawMessage: Cannot cast mixed to string.
 			identifier: cast.string
-			count: 4
-			path: web/modules/custom/aculta_portal/modules/aculta_events/tests/src/Kernel/EventDomainBoundaryKernelTest.php
-
-		-
-			rawMessage: 'Parameter #1 $array of function array_column expects array, mixed given.'
-			identifier: argument.type
-			count: 1
+			count: 3
 			path: web/modules/custom/aculta_portal/modules/aculta_events/tests/src/Kernel/EventDomainBoundaryKernelTest.php
 
 		-
@@ -19027,7 +18903,7 @@ parameters:
 		-
 			rawMessage: 'Parameter #2 $haystack of static method PHPUnit\Framework\Assert::assertCount() expects Countable|iterable, mixed given.'
 			identifier: argument.type
-			count: 6
+			count: 5
 			path: web/modules/custom/aculta_portal/modules/aculta_events/tests/src/Kernel/EventDomainBoundaryKernelTest.php
 
 		-
@@ -19768,11 +19644,6 @@ parameters:
 			count: 9
 			path: web/modules/custom/aculta_portal/modules/aculta_events/tests/src/Kernel/EventOrganizationLifecycleKernelTest.php
 
-		-
-			rawMessage: 'Method Drupal\Tests\aculta_events\Kernel\EventOrganizationLifecycleKernelTest::queueItem() should return object{data: array<string, mixed>} but returns object.'
-			identifier: return.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/tests/src/Kernel/EventOrganizationLifecycleKernelTest.php
 
 		-
 			rawMessage: 'Parameter #1 $array of function array_filter expects array, mixed given.'
@@ -20108,12 +19979,6 @@ parameters:
 			rawMessage: Cannot cast mixed to string.
 			identifier: cast.string
 			count: 5
-			path: web/modules/custom/aculta_portal/modules/aculta_events/tests/src/Kernel/EventStructuredDataKernelTest.php
-
-		-
-			rawMessage: 'Method Drupal\Tests\aculta_events\Kernel\EventStructuredDataKernelTest::extractJsonLd() should return array<string, mixed>|null but returns mixed.'
-			identifier: return.type
-			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_events/tests/src/Kernel/EventStructuredDataKernelTest.php
 
 		-
@@ -37410,12 +37275,6 @@ parameters:
 		-
 			rawMessage: Cannot cast mixed to int.
 			identifier: cast.int
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms_h5p/aculta_lms_h5p.install
-
-		-
-			rawMessage: 'Function aculta_lms_h5p_requirements() has an unused parameter $phase.'
-			identifier: function.unusedParameter
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_lms_h5p/aculta_lms_h5p.install
 
@@ -55797,18 +55656,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/MarleyController.php
 
 		-
-			rawMessage: 'Parameter #1 $string of function htmlspecialchars expects string, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/SavedContentController.php
-
-		-
-			rawMessage: Value assigned to variable $itemsList is never read before being overwritten.
-			identifier: assign.overwritten
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/SavedContentController.php
-
-		-
 			rawMessage: Cannot access offset 'content' on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 2
@@ -55916,6 +55763,11 @@ parameters:
 			count: 2
 			path: web/modules/custom/aculta_portal/modules/aculta_studio/src/Experience/AccountExperienceProvider.php
 
+		-
+			rawMessage: 'Strict comparison using === between Drupal\Core\Session\AccountInterface and null will always evaluate to false.'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: web/modules/custom/aculta_portal/modules/aculta_studio/src/Experience/AccountExperienceProvider.php
 
 		-
 			rawMessage: 'Property Drupal\aculta_studio\Experience\SavedExperienceProvider::$savedContent is never read, only written.'
@@ -56464,12 +56316,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_studio/tests/src/Kernel/SavedAndRecommendationsKernelTest.php
 
 		-
-			rawMessage: Cannot access offset 'list' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 3
-			path: web/modules/custom/aculta_portal/modules/aculta_studio/tests/src/Kernel/SavedAndRecommendationsKernelTest.php
-
-		-
 			rawMessage: Cannot access offset 'max-age' on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
@@ -56477,12 +56323,6 @@ parameters:
 
 		-
 			rawMessage: Cannot access offset 'message' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_studio/tests/src/Kernel/SavedAndRecommendationsKernelTest.php
-
-		-
-			rawMessage: Cannot access offset 'pager' on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_studio/tests/src/Kernel/SavedAndRecommendationsKernelTest.php
@@ -56632,9 +56472,69 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_studio/tests/src/Unit/AccountExperienceProviderTest.php
 
 		-
-			rawMessage: 'Parameter #2 $haystack of static method PHPUnit\Framework\Assert::assertContains() expects iterable, mixed given.'
+			rawMessage: Cannot access offset '#props' on mixed.
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: web/modules/custom/aculta_portal/modules/aculta_studio/tests/src/Unit/AccountExperienceProviderTest.php
+
+		-
+			rawMessage: Cannot access offset '#slots' on mixed.
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: web/modules/custom/aculta_portal/modules/aculta_studio/tests/src/Unit/AccountExperienceProviderTest.php
+
+		-
+			rawMessage: Cannot access offset 'account_link_title' on mixed.
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: web/modules/custom/aculta_portal/modules/aculta_studio/tests/src/Unit/AccountExperienceProviderTest.php
+
+		-
+			rawMessage: Cannot access offset 'account_url' on mixed.
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: web/modules/custom/aculta_portal/modules/aculta_studio/tests/src/Unit/AccountExperienceProviderTest.php
+
+		-
+			rawMessage: Cannot access offset 'contexts' on mixed.
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: web/modules/custom/aculta_portal/modules/aculta_studio/tests/src/Unit/AccountExperienceProviderTest.php
+
+		-
+			rawMessage: Cannot access offset 'experiences' on mixed.
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: web/modules/custom/aculta_portal/modules/aculta_studio/tests/src/Unit/AccountExperienceProviderTest.php
+
+		-
+			rawMessage: Cannot access offset 'menu' on mixed.
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 3
+			path: web/modules/custom/aculta_portal/modules/aculta_studio/tests/src/Unit/AccountExperienceProviderTest.php
+
+		-
+			rawMessage: Cannot access offset 'profile_link' on mixed.
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: web/modules/custom/aculta_portal/modules/aculta_studio/tests/src/Unit/AccountExperienceProviderTest.php
+
+		-
+			rawMessage: Cannot access offset 'title' on mixed.
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: web/modules/custom/aculta_portal/modules/aculta_studio/tests/src/Unit/AccountExperienceProviderTest.php
+
+		-
+			rawMessage: 'Parameter #2 $array of static method PHPUnit\Framework\Assert::assertArrayNotHasKey() expects array<mixed>|ArrayAccess<(int|string), mixed>, mixed given.'
 			identifier: argument.type
 			count: 1
+			path: web/modules/custom/aculta_portal/modules/aculta_studio/tests/src/Unit/AccountExperienceProviderTest.php
+
+		-
+			rawMessage: 'Parameter #2 $haystack of static method PHPUnit\Framework\Assert::assertContains() expects iterable, mixed given.'
+			identifier: argument.type
+			count: 2
 			path: web/modules/custom/aculta_portal/modules/aculta_studio/tests/src/Unit/AccountExperienceProviderTest.php
 
 		-
@@ -57910,6 +57810,12 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_wiki/src/Controller/WikiContributionIntentController.php
 
 		-
+			rawMessage: 'Cannot call method isAllowed() on mixed.'
+			identifier: method.nonObject
+			count: 1
+			path: web/modules/custom/aculta_portal/modules/aculta_wiki/src/Controller/WikiController.php
+
+		-
 			rawMessage: 'Method Drupal\aculta_wiki\Controller\WikiController::contextNavigation() return type has no value type specified in iterable type array.'
 			identifier: missingType.iterableValue
 			count: 1
@@ -57942,6 +57848,12 @@ parameters:
 		-
 			rawMessage: 'Method Drupal\aculta_wiki\Controller\WikiController::viewBlock() return type has no value type specified in iterable type array.'
 			identifier: missingType.iterableValue
+			count: 1
+			path: web/modules/custom/aculta_portal/modules/aculta_wiki/src/Controller/WikiController.php
+
+		-
+			rawMessage: 'Parameter #1 $other of method Drupal\Core\Access\AccessResultInterface::andIf() expects Drupal\Core\Access\AccessResultInterface, mixed given.'
+			identifier: argument.type
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_wiki/src/Controller/WikiController.php
 
@@ -58982,30 +58894,6 @@ parameters:
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_wiki/src/Service/WikiEditorialEventQueue.php
-
-		-
-			rawMessage: Binary operation "." between mixed and '-' results in an error.
-			identifier: binaryOp.invalid
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_wiki/src/Service/WikiEditorialQueue.php
-
-		-
-			rawMessage: Cannot cast mixed to int.
-			identifier: cast.int
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_wiki/src/Service/WikiEditorialQueue.php
-
-		-
-			rawMessage: 'Offset int<0, max>|null might not exist on list<Drupal\node\NodeInterface>.'
-			identifier: offsetAccess.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_wiki/src/Service/WikiEditorialQueue.php
-
-		-
-			rawMessage: 'Parameter #1 $entity_id of method Drupal\Core\Entity\ContentEntityStorageBase::getLatestRevisionId() expects int|string, int|string|null given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_wiki/src/Service/WikiEditorialQueue.php
 
 		-
 			rawMessage: 'Argument of an invalid type mixed supplied for foreach, only iterables are supported.'
@@ -61054,7 +60942,25 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_wiki/tests/src/Unit/WikiSearchFormBuilderTest.php
 
 		-
+			rawMessage: Cannot access offset '#attributes' on mixed.
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 3
+			path: web/modules/custom/aculta_portal/modules/aculta_wiki/tests/src/Unit/WikiSearchFormBuilderTest.php
+
+		-
 			rawMessage: Cannot access offset '#component' on mixed.
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: web/modules/custom/aculta_portal/modules/aculta_wiki/tests/src/Unit/WikiSearchFormBuilderTest.php
+
+		-
+			rawMessage: Cannot access offset '#maxlength' on mixed.
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: web/modules/custom/aculta_portal/modules/aculta_wiki/tests/src/Unit/WikiSearchFormBuilderTest.php
+
+		-
+			rawMessage: Cannot access offset '#name' on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_wiki/tests/src/Unit/WikiSearchFormBuilderTest.php
@@ -61074,7 +60980,7 @@ parameters:
 		-
 			rawMessage: Cannot access offset '#value' on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 3
+			count: 4
 			path: web/modules/custom/aculta_portal/modules/aculta_wiki/tests/src/Unit/WikiSearchFormBuilderTest.php
 
 		-
@@ -61103,6 +61009,24 @@ parameters:
 
 		-
 			rawMessage: Cannot access offset 'contexts' on mixed.
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: web/modules/custom/aculta_portal/modules/aculta_wiki/tests/src/Unit/WikiSearchFormBuilderTest.php
+
+		-
+			rawMessage: Cannot access offset 'data-min-chars' on mixed.
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: web/modules/custom/aculta_portal/modules/aculta_wiki/tests/src/Unit/WikiSearchFormBuilderTest.php
+
+		-
+			rawMessage: Cannot access offset 'data-portal-ui' on mixed.
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: web/modules/custom/aculta_portal/modules/aculta_wiki/tests/src/Unit/WikiSearchFormBuilderTest.php
+
+		-
+			rawMessage: Cannot access offset 'data-preview-url' on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_wiki/tests/src/Unit/WikiSearchFormBuilderTest.php
@@ -61726,126 +61650,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/src/AccountShellBuilder.php
 
 		-
-			rawMessage: Cannot cast mixed to string.
-			identifier: cast.string
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Appearance/AppearanceForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Appearance\AppearanceForm::buildForm() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Appearance/AppearanceForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Appearance\AppearanceForm::buildForm() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Appearance/AppearanceForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Appearance\AppearanceForm::submitForm() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Appearance/AppearanceForm.php
-
-		-
-			rawMessage: Cannot cast mixed to string.
-			identifier: cast.string
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Appearance/SettingsForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Appearance\SettingsForm::buildForm() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Appearance/SettingsForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Appearance\SettingsForm::buildForm() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Appearance/SettingsForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Appearance\SettingsForm::getEditableConfigNames() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Appearance/SettingsForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Appearance\SettingsForm::submitForm() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Appearance/SettingsForm.php
-
-		-
-			rawMessage: 'Argument of an invalid type mixed supplied for foreach, only iterables are supported.'
-			identifier: foreach.nonIterable
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Appearance/SettingsTabs.php
-
-		-
-			rawMessage: Cannot access offset 'route' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Appearance/SettingsTabs.php
-
-		-
-			rawMessage: Cannot access offset 'title' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Appearance/SettingsTabs.php
-
-		-
-			rawMessage: 'Cannot call method addClass() on mixed.'
-			identifier: method.nonObject
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Appearance/SettingsTabs.php
-
-		-
-			rawMessage: 'Cannot call method setAttribute() on mixed.'
-			identifier: method.nonObject
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Appearance/SettingsTabs.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Appearance\SettingsTabs::build() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Appearance/SettingsTabs.php
-
-		-
-			rawMessage: 'Parameter #1 $route_name of static method Drupal\Core\Url::fromRoute() expects string, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Appearance/SettingsTabs.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Captcha\Form\TurnstileSettingsForm::buildForm() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Captcha/Form/TurnstileSettingsForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Captcha\Form\TurnstileSettingsForm::buildForm() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Captcha/Form/TurnstileSettingsForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Captcha\Form\TurnstileSettingsForm::submitForm() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Captcha/Form/TurnstileSettingsForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Captcha\Form\TurnstileSettingsForm::validateForm() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Captcha/Form/TurnstileSettingsForm.php
-
-		-
 			rawMessage: 'Parameter #1 $form_id of static method Drupal\aculta_portal\Captcha\TurnstileToggle::isCommercePurchaseForm() expects string, int|string|null given.'
 			identifier: argument.type
 			count: 1
@@ -61994,84 +61798,6 @@ parameters:
 			identifier: missingType.generics
 			count: 1
 			path: web/modules/custom/aculta_portal/src/Commerce/MercadoPago/BillingAddressAliasItemList.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Controller\DonationReportController::filtrosDaUrl() should return array<string, string> but returns array<string, bool|float|int|string>.'
-			identifier: return.type
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Controller/DonationReportController.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Controller\DonationReportController::report() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Controller/DonationReportController.php
-
-		-
-			rawMessage: 'Parameter #1 $timezone of class DateTimeZone constructor expects string, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Controller/DonationReportController.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Controller\SalesReportController::filtrosDaUrl() should return array<string, string> but returns array<string, bool|float|int|string>.'
-			identifier: return.type
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Controller/SalesReportController.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Controller\SalesReportController::report() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Controller/SalesReportController.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Controller\SalesReportController::secao() has parameter $conteudo with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Controller/SalesReportController.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Controller\SalesReportController::tabelaPorPeriodo() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Controller/SalesReportController.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Controller\SalesReportController::tabelaPorVariacao() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Controller/SalesReportController.php
-
-		-
-			rawMessage: 'Parameter #1 $timezone of class DateTimeZone constructor expects string, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Controller/SalesReportController.php
-
-		-
-			rawMessage: 'Parameter #2 $num2 of function bcadd expects numeric-string, string given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Controller/SalesReportController.php
-
-		-
-			rawMessage: Cannot access an offset on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Controller/SimplifiedAccountPasswordController.php
-
-		-
-			rawMessage: Cannot access offset 'library' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Controller/SimplifiedAccountPasswordController.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Controller\SimplifiedAccountPasswordController::page() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Controller/SimplifiedAccountPasswordController.php
 
 		-
 			rawMessage: 'Argument of an invalid type mixed supplied for foreach, only iterables are supported.'
@@ -62608,270 +62334,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/src/EventSubscriber/SocialAuthUserCreatedSubscriber.php
 
 		-
-			rawMessage: 'Cannot call method save() on Drupal\aculta_portal\Account\AccountDocumentInterface|null.'
-			identifier: method.nonObject
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Form/AccountOtherDataForm.php
-
-		-
-			rawMessage: Cannot cast mixed to string.
-			identifier: cast.string
-			count: 2
-			path: web/modules/custom/aculta_portal/src/Form/AccountOtherDataForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Form\AccountOtherDataForm::buildForm() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Form/AccountOtherDataForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Form\AccountOtherDataForm::buildForm() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Form/AccountOtherDataForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Form\AccountOtherDataForm::submitForm() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Form/AccountOtherDataForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Form\AccountOtherDataForm::unavailableForm() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Form/AccountOtherDataForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Form\AccountOtherDataForm::unavailableForm() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Form/AccountOtherDataForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Form\AccountOtherDataForm::user() should return Drupal\user\UserInterface but returns Drupal\user\Entity\User|null.'
-			identifier: return.type
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Form/AccountOtherDataForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Form\AccountOtherDataForm::validateForm() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Form/AccountOtherDataForm.php
-
-		-
-			rawMessage: Cannot cast mixed to string.
-			identifier: cast.string
-			count: 2
-			path: web/modules/custom/aculta_portal/src/Form/AccountPasswordCreateForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Form\AccountPasswordCreateForm::buildForm() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Form/AccountPasswordCreateForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Form\AccountPasswordCreateForm::buildForm() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Form/AccountPasswordCreateForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Form\AccountPasswordCreateForm::submitForm() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Form/AccountPasswordCreateForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Form\AccountPasswordCreateForm::validateForm() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Form/AccountPasswordCreateForm.php
-
-		-
-			rawMessage: 'Parameter #2 $uid of method Drupal\user\UserDataInterface::delete() expects array|int|null, int|string|null given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Form/AccountPasswordCreateForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Form\AcultaUserAgreementAcceptForm::buildForm() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Form/AcultaUserAgreementAcceptForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Form\AcultaUserAgreementAcceptForm::buildForm() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Form/AcultaUserAgreementAcceptForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Form\AcultaUserAgreementAcceptForm::documentLink() has parameter $label with no type specified.'
-			identifier: missingType.parameter
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Form/AcultaUserAgreementAcceptForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Form\AcultaUserAgreementAcceptForm::documentLink() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Form/AcultaUserAgreementAcceptForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Form\AcultaUserAgreementAcceptForm::submitForm() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Form/AcultaUserAgreementAcceptForm.php
-
-		-
-			rawMessage: Cannot cast mixed to int.
-			identifier: cast.int
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Form/AdminEmailConfirmForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Form\AdminEmailConfirmForm::buildForm() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Form/AdminEmailConfirmForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Form\AdminEmailConfirmForm::buildForm() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Form/AdminEmailConfirmForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Form\AdminEmailConfirmForm::entityUser() should return Drupal\Core\Session\AccountInterface but returns Drupal\user\Entity\User|null.'
-			identifier: return.type
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Form/AdminEmailConfirmForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Form\AdminEmailConfirmForm::submitForm() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Form/AdminEmailConfirmForm.php
-
-		-
-			rawMessage: 'Parameter #2 $args of method Drupal\Core\Form\FormBase::t() expects array<string, bool|float|int|string|Stringable>, array<string, int|string|null> given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Form/AdminEmailConfirmForm.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::getPluginId().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Form/Checkout/CheckoutCommonForm.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::status().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Form/Checkout/CheckoutCommonForm.php
-
-		-
-			rawMessage: Foreach key variable $id is never read.
-			identifier: foreach.unusedKey
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Form/Checkout/CheckoutCommonForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Form\Checkout\CheckoutCommonForm::buildForm() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Form/Checkout/CheckoutCommonForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Form\Checkout\CheckoutCommonForm::buildForm() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Form/Checkout/CheckoutCommonForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Form\Checkout\CheckoutCommonForm::getEditableConfigNames() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Form/Checkout/CheckoutCommonForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Form\Checkout\CheckoutCommonForm::submitForm() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Form/Checkout/CheckoutCommonForm.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::setThirdPartySetting().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Form/Checkout/OrderTypeMappingFormBase.php
-
-		-
-			rawMessage: Cannot cast mixed to string.
-			identifier: cast.string
-			count: 5
-			path: web/modules/custom/aculta_portal/src/Form/Checkout/OrderTypeMappingFormBase.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Form\Checkout\OrderTypeMappingFormBase::buildForm() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Form/Checkout/OrderTypeMappingFormBase.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Form\Checkout\OrderTypeMappingFormBase::buildForm() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Form/Checkout/OrderTypeMappingFormBase.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Form\Checkout\OrderTypeMappingFormBase::getEditableConfigNames() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Form/Checkout/OrderTypeMappingFormBase.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Form\Checkout\OrderTypeMappingFormBase::submitForm() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Form/Checkout/OrderTypeMappingFormBase.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Form\Checkout\OrderTypeMappingFormBase::validateForm() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Form/Checkout/OrderTypeMappingFormBase.php
-
-		-
-			rawMessage: Cannot access offset 'submit' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Form/EmailResendForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Form\EmailResendForm::buildForm() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Form/EmailResendForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Form\EmailResendForm::buildForm() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Form/EmailResendForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Form\EmailResendForm::submitForm() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Form/EmailResendForm.php
-
-		-
 			rawMessage: Cannot access an offset on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
@@ -63118,192 +62580,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/src/Form/RegisterPopupForm.php
 
 		-
-			rawMessage: 'Cannot call method id() on Drupal\commerce_payment\Entity\PaymentInterface|null.'
-			identifier: method.nonObject
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Form/SalesPaymentCancelForm.php
-
-		-
-			rawMessage: Cannot cast mixed to int.
-			identifier: cast.int
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Form/SalesPaymentCancelForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Form\SalesPaymentCancelForm::buildForm() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Form/SalesPaymentCancelForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Form\SalesPaymentCancelForm::buildForm() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Form/SalesPaymentCancelForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Form\SalesPaymentCancelForm::submitForm() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Form/SalesPaymentCancelForm.php
-
-		-
-			rawMessage: 'Cannot call method id() on Drupal\commerce_payment\Entity\PaymentInterface|null.'
-			identifier: method.nonObject
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Form/SalesPaymentRefreshForm.php
-
-		-
-			rawMessage: Cannot cast mixed to int.
-			identifier: cast.int
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Form/SalesPaymentRefreshForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Form\SalesPaymentRefreshForm::buildForm() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Form/SalesPaymentRefreshForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Form\SalesPaymentRefreshForm::buildForm() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Form/SalesPaymentRefreshForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Form\SalesPaymentRefreshForm::submitForm() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Form/SalesPaymentRefreshForm.php
-
-		-
-			rawMessage: Cannot cast mixed to string.
-			identifier: cast.string
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Form/SimplifiedAccountPasswordForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Form\SimplifiedAccountPasswordForm::buildForm() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Form/SimplifiedAccountPasswordForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Form\SimplifiedAccountPasswordForm::buildForm() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Form/SimplifiedAccountPasswordForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Form\SimplifiedAccountPasswordForm::submitForm() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Form/SimplifiedAccountPasswordForm.php
-
-		-
-			rawMessage: Cannot cast mixed to int.
-			identifier: cast.int
-			count: 2
-			path: web/modules/custom/aculta_portal/src/Form/SimplifiedAccountSettingsForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Form\SimplifiedAccountSettingsForm::buildForm() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Form/SimplifiedAccountSettingsForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Form\SimplifiedAccountSettingsForm::buildForm() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Form/SimplifiedAccountSettingsForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Form\SimplifiedAccountSettingsForm::getEditableConfigNames() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Form/SimplifiedAccountSettingsForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Form\SimplifiedAccountSettingsForm::submitForm() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Form/SimplifiedAccountSettingsForm.php
-
-		-
-			rawMessage: Cannot access offset 'allowed_extensions' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Form/UserUploadSettingsForm.php
-
-		-
-			rawMessage: Cannot access offset 'inherit_global' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Form/UserUploadSettingsForm.php
-
-		-
-			rawMessage: Cannot access offset 'max_size_mb' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Form/UserUploadSettingsForm.php
-
-		-
-			rawMessage: Cannot cast mixed to int.
-			identifier: cast.int
-			count: 2
-			path: web/modules/custom/aculta_portal/src/Form/UserUploadSettingsForm.php
-
-		-
-			rawMessage: Cannot cast mixed to string.
-			identifier: cast.string
-			count: 3
-			path: web/modules/custom/aculta_portal/src/Form/UserUploadSettingsForm.php
-
-		-
-			rawMessage: 'Match expression does not handle remaining value: string'
-			identifier: match.unhandled
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Form/UserUploadSettingsForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Form\UserUploadSettingsForm::buildForm() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Form/UserUploadSettingsForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Form\UserUploadSettingsForm::buildForm() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Form/UserUploadSettingsForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Form\UserUploadSettingsForm::consumerLabel() never returns string so it can be removed from the return type.'
-			identifier: return.unusedType
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Form/UserUploadSettingsForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Form\UserUploadSettingsForm::getEditableConfigNames() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Form/UserUploadSettingsForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Form\UserUploadSettingsForm::submitForm() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Form/UserUploadSettingsForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Form\UserUploadSettingsForm::validateForm() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Form/UserUploadSettingsForm.php
-
-		-
 			rawMessage: Access to an undefined property Drupal\Core\Field\FieldItemInterface::$country_code.
 			identifier: property.notFound
 			count: 1
@@ -63478,6 +62754,18 @@ parameters:
 			path: web/modules/custom/aculta_portal/src/Hook/AppearanceHooks.php
 
 		-
+			rawMessage: Cannot access an offset on mixed.
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 5
+			path: web/modules/custom/aculta_portal/src/Hook/AppearanceHooks.php
+
+		-
+			rawMessage: Cannot access offset 'contexts' on mixed.
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: web/modules/custom/aculta_portal/src/Hook/AppearanceHooks.php
+
+		-
 			rawMessage: Cannot access offset 'data' on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 2
@@ -63503,6 +62791,12 @@ parameters:
 
 		-
 			rawMessage: Cannot access offset 'preprocess' on mixed.
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: web/modules/custom/aculta_portal/src/Hook/AppearanceHooks.php
+
+		-
+			rawMessage: Cannot access offset 'tags' on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
 			path: web/modules/custom/aculta_portal/src/Hook/AppearanceHooks.php
@@ -64402,84 +63696,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/src/Render/AccountAjaxMainContentRenderer.php
 
 		-
-			rawMessage: 'Argument of an invalid type mixed supplied for foreach, only iterables are supported.'
-			identifier: foreach.nonIterable
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Role/Form/RoleHierarchyForm.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityListBuilderInterface::buildOperations().'
-			identifier: method.notFound
-			count: 2
-			path: web/modules/custom/aculta_portal/src/Role/Form/RoleHierarchyForm.php
-
-		-
-			rawMessage: Cannot access an offset on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Role/Form/RoleHierarchyForm.php
-
-		-
-			rawMessage: Cannot access offset 'library' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Role/Form/RoleHierarchyForm.php
-
-		-
-			rawMessage: Cannot cast mixed to int.
-			identifier: cast.int
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Role/Form/RoleHierarchyForm.php
-
-		-
-			rawMessage: Cannot cast mixed to string.
-			identifier: cast.string
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Role/Form/RoleHierarchyForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Role\Form\RoleHierarchyForm::buildForm() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Role/Form/RoleHierarchyForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Role\Form\RoleHierarchyForm::buildForm() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Role/Form/RoleHierarchyForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Role\Form\RoleHierarchyForm::getEditableConfigNames() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Role/Form/RoleHierarchyForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Role\Form\RoleHierarchyForm::submitForm() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Role/Form/RoleHierarchyForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Role\Form\RoleHierarchyForm::tiposDePerfil() should return array<string, string> but returns array<string>.'
-			identifier: return.type
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Role/Form/RoleHierarchyForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Role\Form\RoleHierarchyForm::validateForm() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Role/Form/RoleHierarchyForm.php
-
-		-
-			rawMessage: 'Parameter #1 $cadeia of static method Drupal\aculta_portal\Role\RoleHierarchy::completar() expects array<string>, array<mixed> given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Role/Form/RoleHierarchyForm.php
-
-		-
 			rawMessage: 'Offset string on array<string, array<string>> on left side of ?? always exists and is not nullable.'
 			identifier: nullCoalesce.offset
 			count: 1
@@ -64636,84 +63852,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/src/Sales/SalesReportQuery.php
 
 		-
-			rawMessage: Cannot access property $created on mixed.
-			identifier: property.nonObject
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Saved/SavedContentQuery.php
-
-		-
-			rawMessage: Cannot access property $entity_id on mixed.
-			identifier: property.nonObject
-			count: 2
-			path: web/modules/custom/aculta_portal/src/Saved/SavedContentQuery.php
-
-		-
-			rawMessage: Cannot access property $entity_type on mixed.
-			identifier: property.nonObject
-			count: 2
-			path: web/modules/custom/aculta_portal/src/Saved/SavedContentQuery.php
-
-		-
-			rawMessage: Cannot access property $flag_id on mixed.
-			identifier: property.nonObject
-			count: 2
-			path: web/modules/custom/aculta_portal/src/Saved/SavedContentQuery.php
-
-		-
-			rawMessage: 'Cannot call method fetchAll() on Drupal\Core\Database\StatementInterface|null.'
-			identifier: method.nonObject
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Saved/SavedContentQuery.php
-
-		-
-			rawMessage: 'Cannot call method fetchField() on Drupal\Core\Database\StatementInterface|null.'
-			identifier: method.nonObject
-			count: 3
-			path: web/modules/custom/aculta_portal/src/Saved/SavedContentQuery.php
-
-		-
-			rawMessage: Cannot cast mixed to int.
-			identifier: cast.int
-			count: 4
-			path: web/modules/custom/aculta_portal/src/Saved/SavedContentQuery.php
-
-		-
-			rawMessage: Instanceof between Drupal\Core\Entity\EntityInterface and Drupal\Core\Entity\EntityInterface will always evaluate to true.
-			identifier: instanceof.alwaysTrue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Saved/SavedContentQuery.php
-
-		-
-			rawMessage: 'Parameter #1 $entityTypeId of class Drupal\aculta_portal\Saved\SavedContentItem constructor expects string, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Saved/SavedContentQuery.php
-
-		-
-			rawMessage: 'Parameter #1 $ids of method Drupal\Core\Entity\EntityStorageInterface::loadMultiple() expects array<int|string>|null, list given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Saved/SavedContentQuery.php
-
-		-
-			rawMessage: 'Parameter #2 $entityId of class Drupal\aculta_portal\Saved\SavedContentItem constructor expects int|string, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Saved/SavedContentQuery.php
-
-		-
-			rawMessage: 'Parameter #4 $flagId of class Drupal\aculta_portal\Saved\SavedContentItem constructor expects string, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Saved/SavedContentQuery.php
-
-		-
-			rawMessage: Possibly invalid array key type mixed.
-			identifier: offsetAccess.invalidOffset
-			count: 5
-			path: web/modules/custom/aculta_portal/src/Saved/SavedContentQuery.php
-
-		-
 			rawMessage: 'Method Drupal\aculta_portal\Saved\SavedContentQueryResult::getCacheContexts() should return list<string> but returns array<string>.'
 			identifier: return.type
 			count: 1
@@ -64724,60 +63862,6 @@ parameters:
 			identifier: return.type
 			count: 1
 			path: web/modules/custom/aculta_portal/src/Saved/SavedContentQueryResult.php
-
-		-
-			rawMessage: Cannot cast mixed to string.
-			identifier: cast.string
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Search/Form/SearchPageForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Search\Form\SearchPageForm::buildForm() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Search/Form/SearchPageForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Search\Form\SearchPageForm::buildForm() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Search/Form/SearchPageForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Search\Form\SearchPageForm::submitForm() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Search/Form/SearchPageForm.php
-
-		-
-			rawMessage: Cannot access an offset on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Search/Form/SearchPopupForm.php
-
-		-
-			rawMessage: Cannot access offset 'library' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Search/Form/SearchPopupForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Search\Form\SearchPopupForm::buildForm() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Search/Form/SearchPopupForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Search\Form\SearchPopupForm::buildForm() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Search/Form/SearchPopupForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Search\Form\SearchPopupForm::submitForm() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Search/Form/SearchPopupForm.php
 
 		-
 			rawMessage: 'Parameter #1 $elements of method Drupal\Core\Render\RendererInterface::renderInIsolation() is passed by reference, so it expects variables only.'
@@ -64880,264 +63964,6 @@ parameters:
 			identifier: return.type
 			count: 1
 			path: web/modules/custom/aculta_portal/src/Secrets/SecretsManager.php
-
-		-
-			rawMessage: 'Argument of an invalid type mixed supplied for foreach, only iterables are supported.'
-			identifier: foreach.nonIterable
-			count: 2
-			path: web/modules/custom/aculta_portal/src/Status/PhpExtensionRequirements.php
-
-		-
-			rawMessage: Cannot access offset 'modules' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Status/PhpExtensionRequirements.php
-
-		-
-			rawMessage: Cannot access offset 'name' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Status/PhpExtensionRequirements.php
-
-		-
-			rawMessage: Cannot access offset 'package' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Status/PhpExtensionRequirements.php
-
-		-
-			rawMessage: Cannot access offset 'packages' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Status/PhpExtensionRequirements.php
-
-		-
-			rawMessage: Cannot access offset 'related_package' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Status/PhpExtensionRequirements.php
-
-		-
-			rawMessage: Cannot access offset 'require' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Status/PhpExtensionRequirements.php
-
-		-
-			rawMessage: Cannot access offset 'scan_all' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Status/PhpExtensionRequirements.php
-
-		-
-			rawMessage: Cannot access offset string on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Status/PhpExtensionRequirements.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Status\PhpExtensionRequirements::build() has parameter $packages with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Status/PhpExtensionRequirements.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Status\PhpExtensionRequirements::build() has parameter $requirements with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Status/PhpExtensionRequirements.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Status\PhpExtensionRequirements::build() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Status/PhpExtensionRequirements.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Status\PhpExtensionRequirements::collect() has parameter $extensions with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Status/PhpExtensionRequirements.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Status\PhpExtensionRequirements::collect() has parameter $packageMap with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Status/PhpExtensionRequirements.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Status\PhpExtensionRequirements::collect() has parameter $visited with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Status/PhpExtensionRequirements.php
-
-		-
-			rawMessage: 'Offset ''packages'' might not exist on array{integrations: non-empty-array<true>, modules?: non-empty-array<true>, packages?: non-empty-array<int|string, true>}.'
-			identifier: offsetAccess.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Status/PhpExtensionRequirements.php
-
-		-
-			rawMessage: 'Parameter #1 $array of function array_filter expects array, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Status/PhpExtensionRequirements.php
-
-		-
-			rawMessage: 'Parameter #1 $array of function array_keys expects array, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Status/PhpExtensionRequirements.php
-
-		-
-			rawMessage: 'Parameter #1 $haystack of function str_starts_with expects string, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Status/PhpExtensionRequirements.php
-
-		-
-			rawMessage: 'Parameter #1 $name of static method Drupal\aculta_portal\Status\PhpExtensionRequirements::collect() expects string, mixed given.'
-			identifier: argument.type
-			count: 2
-			path: web/modules/custom/aculta_portal/src/Status/PhpExtensionRequirements.php
-
-		-
-			rawMessage: Possibly invalid array key type mixed.
-			identifier: offsetAccess.invalidOffset
-			count: 4
-			path: web/modules/custom/aculta_portal/src/Status/PhpExtensionRequirements.php
-
-		-
-			rawMessage: Cannot cast mixed to string.
-			identifier: cast.string
-			count: 3
-			path: web/modules/custom/aculta_portal/src/Support/Form/SettingsForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Support\Form\SettingsForm::buildForm() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Support/Form/SettingsForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Support\Form\SettingsForm::buildForm() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Support/Form/SettingsForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Support\Form\SettingsForm::getEditableConfigNames() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Support/Form/SettingsForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Support\Form\SettingsForm::submitForm() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Support/Form/SettingsForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Support\Form\SettingsForm::validateForm() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Support/Form/SettingsForm.php
-
-		-
-			rawMessage: 'Parameter #2 $array of function implode expects array, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Support/Form/SettingsForm.php
-
-		-
-			rawMessage: Cannot cast mixed to int.
-			identifier: cast.int
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Support/Form/SubscriptionActionForm.php
-
-		-
-			rawMessage: Cannot cast mixed to string.
-			identifier: cast.string
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Support/Form/SubscriptionActionForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Support\Form\SubscriptionActionForm::buildForm() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Support/Form/SubscriptionActionForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Support\Form\SubscriptionActionForm::buildForm() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Support/Form/SubscriptionActionForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Support\Form\SubscriptionActionForm::submitForm() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Support/Form/SubscriptionActionForm.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::getPluginConfiguration().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Support/Form/SupportForm.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::status().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Support/Form/SupportForm.php
-
-		-
-			rawMessage: Cannot access offset 'access_token_test' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Support/Form/SupportForm.php
-
-		-
-			rawMessage: Cannot access offset 'data-portal-ui' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Support/Form/SupportForm.php
-
-		-
-			rawMessage: Cannot access offset 'max-age' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Support/Form/SupportForm.php
-
-		-
-			rawMessage: Cannot access offset 'public_key_test' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Support/Form/SupportForm.php
-
-		-
-			rawMessage: Cannot cast mixed to string.
-			identifier: cast.string
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Support/Form/SupportForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Support\Form\SupportForm::buildForm() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Support/Form/SupportForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Support\Form\SupportForm::buildForm() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Support/Form/SupportForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_portal\Support\Form\SupportForm::submitForm() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Support/Form/SupportForm.php
 
 		-
 			rawMessage: Cannot access an offset on mixed.
@@ -65567,6 +64393,24 @@ parameters:
 
 		-
 			rawMessage: Cannot access offset 'home_url' on mixed.
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: web/modules/custom/aculta_portal/tests/src/Kernel/DomainPresentationBuilderKernelTest.php
+
+		-
+			rawMessage: Cannot access offset 'links_page' on mixed.
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: web/modules/custom/aculta_portal/tests/src/Kernel/DomainPresentationBuilderKernelTest.php
+
+		-
+			rawMessage: Cannot access offset 'show_site_header' on mixed.
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: web/modules/custom/aculta_portal/tests/src/Kernel/DomainPresentationBuilderKernelTest.php
+
+		-
+			rawMessage: Cannot access offset 'show_site_menu' on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
 			path: web/modules/custom/aculta_portal/tests/src/Kernel/DomainPresentationBuilderKernelTest.php
@@ -66826,6 +65670,24 @@ parameters:
 			path: web/modules/custom/aculta_portal/tests/src/Unit/Domain/SurfaceConfigReaderTest.php
 
 		-
+			rawMessage: 'Argument of an invalid type mixed supplied for foreach, only iterables are supported.'
+			identifier: foreach.nonIterable
+			count: 1
+			path: web/modules/custom/aculta_portal/tests/src/Unit/DomainPresentationContractTest.php
+
+		-
+			rawMessage: 'Method Drupal\Tests\aculta_portal\Unit\DomainPresentationContractTest::containsObject() has parameter $data with no value type specified in iterable type array.'
+			identifier: missingType.iterableValue
+			count: 1
+			path: web/modules/custom/aculta_portal/tests/src/Unit/DomainPresentationContractTest.php
+
+		-
+			rawMessage: 'Parameter #1 $array of function array_keys expects array, mixed given.'
+			identifier: argument.type
+			count: 1
+			path: web/modules/custom/aculta_portal/tests/src/Unit/DomainPresentationContractTest.php
+
+		-
 			rawMessage: 'Call to method PHPUnit\Framework\Assert::assertSame() with array{''account_password…'', ''account_register'', ''account_register…''} and array{''account_password…'', ''account_register'', ''account_register…''} will always evaluate to true.'
 			identifier: method.alreadyNarrowedType
 			count: 1
@@ -67156,12 +66018,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/tests/src/Unit/Status/PhpExtensionRequirementsTest.php
 
 		-
-			rawMessage: 'Function aculta420_v2_preprocess() has parameter $variables with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/themes/custom/aculta420_v2/aculta420_v2.theme
-
-		-
 			rawMessage: Cannot cast mixed to string.
 			identifier: cast.string
 			count: 1
@@ -67248,7 +66104,7 @@ parameters:
 		-
 			rawMessage: Cannot access offset 'header' on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 11
+			count: 12
 			path: web/themes/custom/aculta420_v2/src/Hook/PagePresentationHooks.php
 
 		-
@@ -67258,9 +66114,21 @@ parameters:
 			path: web/themes/custom/aculta420_v2/src/Hook/PagePresentationHooks.php
 
 		-
-			rawMessage: Cannot access offset 'layout' on mixed.
+			rawMessage: Cannot access offset 'identity' on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
+			path: web/themes/custom/aculta420_v2/src/Hook/PagePresentationHooks.php
+
+		-
+			rawMessage: Cannot access offset 'institution_bar_account' on mixed.
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: web/themes/custom/aculta420_v2/src/Hook/PagePresentationHooks.php
+
+		-
+			rawMessage: Cannot access offset 'layout' on mixed.
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
 			path: web/themes/custom/aculta420_v2/src/Hook/PagePresentationHooks.php
 
 		-
@@ -67308,7 +66176,7 @@ parameters:
 		-
 			rawMessage: Cannot access offset mixed on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 17
+			count: 18
 			path: web/themes/custom/aculta420_v2/src/Hook/PagePresentationHooks.php
 
 		-
@@ -67516,6 +66384,12 @@ parameters:
 			path: web/themes/custom/aculta420_v2/src/Hook/PagePresentationHooks.php
 
 		-
+			rawMessage: 'Parameter #2 $identity of method Drupal\aculta420_v2\Presentation\WikiBrandMediaProps::build() expects array<string, mixed>, mixed given.'
+			identifier: argument.type
+			count: 1
+			path: web/themes/custom/aculta420_v2/src/Hook/PagePresentationHooks.php
+
+		-
 			rawMessage: 'Parameter #3 $avatar of method Drupal\aculta420_v2\Hook\PagePresentationHooks::buildAccountMenuComponent() expects array<string, mixed>|null, mixed given.'
 			identifier: argument.type
 			count: 1
@@ -67534,39 +66408,21 @@ parameters:
 			path: web/themes/custom/aculta420_v2/src/Hook/PagePresentationHooks.php
 
 		-
-			rawMessage: 'Cannot call method value() on Drupal\Core\Template\AttributeValueBase|null.'
-			identifier: method.nonObject
-			count: 1
-			path: web/themes/custom/aculta420_v2/src/Hook/PortalUiHooks.php
-
-		-
-			rawMessage: Cannot cast mixed to string.
-			identifier: cast.string
-			count: 1
-			path: web/themes/custom/aculta420_v2/src/Hook/PortalUiHooks.php
-
-		-
-			rawMessage: 'Method Drupal\aculta420_v2\Hook\PortalUiHooks::applyVariableAttributes() has parameter $variables with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/themes/custom/aculta420_v2/src/Hook/PortalUiHooks.php
-
-		-
-			rawMessage: 'Method Drupal\aculta420_v2\Hook\PortalUiHooks::preprocessContainer() has parameter $variables with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/themes/custom/aculta420_v2/src/Hook/PortalUiHooks.php
-
-		-
-			rawMessage: 'Method Drupal\aculta420_v2\Hook\PortalUiHooks::preprocessVariables() has parameter $variables with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/themes/custom/aculta420_v2/src/Hook/PortalUiHooks.php
+			rawMessage: Cannot access an offset on mixed.
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 4
+			path: web/themes/custom/aculta420_v2/src/Hook/SurfaceSettingsHooks.php
 
 		-
 			rawMessage: Cannot access offset 'csp_nonce' on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
+			path: web/themes/custom/aculta420_v2/src/Hook/SurfaceSettingsHooks.php
+
+		-
+			rawMessage: Cannot access offset 'library' on mixed.
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 3
 			path: web/themes/custom/aculta420_v2/src/Hook/SurfaceSettingsHooks.php
 
 		-
@@ -67636,6 +66492,12 @@ parameters:
 			path: web/themes/custom/aculta420_v2/src/Hook/UiPatternsStoryHooks.php
 
 		-
+			rawMessage: Cannot access an offset on mixed.
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: web/themes/custom/aculta420_v2/src/Hook/UiPatternsStoryHooks.php
+
+		-
 			rawMessage: Cannot access offset 'class' on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
@@ -67643,6 +66505,12 @@ parameters:
 
 		-
 			rawMessage: Cannot access offset 'id' on mixed.
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: web/themes/custom/aculta420_v2/src/Hook/UiPatternsStoryHooks.php
+
+		-
+			rawMessage: Cannot access offset 'library' on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
 			path: web/themes/custom/aculta420_v2/src/Hook/UiPatternsStoryHooks.php
@@ -67822,6 +66690,12 @@ parameters:
 			path: web/themes/custom/aculta420_v2/src/Story/NavigationBarWikiStory.php
 
 		-
+			rawMessage: Cannot access offset 'menu' on mixed.
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: web/themes/custom/aculta420_v2/src/Story/StudioMenuStory.php
+
+		-
 			rawMessage: 'Method Drupal\aculta420_v2\Story\StudioMenuStory::__construct() has parameter $configuration with no value type specified in iterable type array.'
 			identifier: missingType.iterableValue
 			count: 1
@@ -67834,8 +66708,20 @@ parameters:
 			path: web/themes/custom/aculta420_v2/src/Story/StudioMenuStory.php
 
 		-
+			rawMessage: 'Method Drupal\aculta420_v2\Story\StudioMenuStory::menu() should return array<string, mixed> but returns array<mixed>.'
+			identifier: return.type
+			count: 1
+			path: web/themes/custom/aculta420_v2/src/Story/StudioMenuStory.php
+
+		-
 			rawMessage: 'Method Drupal\aculta420_v2\Story\StudioMenuStory::props() return type has no value type specified in iterable type array.'
 			identifier: missingType.iterableValue
+			count: 1
+			path: web/themes/custom/aculta420_v2/src/Story/StudioMenuStory.php
+
+		-
+			rawMessage: 'Method Drupal\aculta420_v2\Story\StudioMenuStory::props() should return array but returns mixed.'
+			identifier: return.type
 			count: 1
 			path: web/themes/custom/aculta420_v2/src/Story/StudioMenuStory.php
 
@@ -67846,124 +66732,16 @@ parameters:
 			path: web/themes/custom/aculta420_v2/src/Story/StudioMenuStory.php
 
 		-
-			rawMessage: Cannot access offset 'additionalProperties' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
+			rawMessage: 'Method Drupal\aculta420_v2\Story\StudioMenuStory::slots() should return array but returns mixed.'
+			identifier: return.type
 			count: 1
-			path: web/themes/custom/aculta420_v2/tests/src/Unit/DocumentCardComponentTest.php
+			path: web/themes/custom/aculta420_v2/src/Story/StudioMenuStory.php
 
 		-
-			rawMessage: Cannot access offset 'component_id' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
+			rawMessage: 'Property Drupal\aculta420_v2\Story\StudioMenuStory::$menuBuild (array<string, mixed>|null) does not accept array<mixed>.'
+			identifier: assign.propertyType
 			count: 1
-			path: web/themes/custom/aculta420_v2/tests/src/Unit/DocumentCardComponentTest.php
-
-		-
-			rawMessage: Cannot access offset 'content' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/themes/custom/aculta420_v2/tests/src/Unit/DocumentCardComponentTest.php
-
-		-
-			rawMessage: Cannot access offset 'css_class' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/themes/custom/aculta420_v2/tests/src/Unit/DocumentCardComponentTest.php
-
-		-
-			rawMessage: Cannot access offset 'default' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/themes/custom/aculta420_v2/tests/src/Unit/DocumentCardComponentTest.php
-
-		-
-			rawMessage: Cannot access offset 'display' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/themes/custom/aculta420_v2/tests/src/Unit/DocumentCardComponentTest.php
-
-		-
-			rawMessage: Cannot access offset 'display_options' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/themes/custom/aculta420_v2/tests/src/Unit/DocumentCardComponentTest.php
-
-		-
-			rawMessage: Cannot access offset 'options' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 3
-			path: web/themes/custom/aculta420_v2/tests/src/Unit/DocumentCardComponentTest.php
-
-		-
-			rawMessage: Cannot access offset 'props' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 2
-			path: web/themes/custom/aculta420_v2/tests/src/Unit/DocumentCardComponentTest.php
-
-		-
-			rawMessage: Cannot access offset 'required' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/themes/custom/aculta420_v2/tests/src/Unit/DocumentCardComponentTest.php
-
-		-
-			rawMessage: Cannot access offset 'row' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 2
-			path: web/themes/custom/aculta420_v2/tests/src/Unit/DocumentCardComponentTest.php
-
-		-
-			rawMessage: Cannot access offset 'slots' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 2
-			path: web/themes/custom/aculta420_v2/tests/src/Unit/DocumentCardComponentTest.php
-
-		-
-			rawMessage: Cannot access offset 'source_id' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/themes/custom/aculta420_v2/tests/src/Unit/DocumentCardComponentTest.php
-
-		-
-			rawMessage: Cannot access offset 'sources' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/themes/custom/aculta420_v2/tests/src/Unit/DocumentCardComponentTest.php
-
-		-
-			rawMessage: Cannot access offset 'style' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 3
-			path: web/themes/custom/aculta420_v2/tests/src/Unit/DocumentCardComponentTest.php
-
-		-
-			rawMessage: Cannot access offset 'type' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 2
-			path: web/themes/custom/aculta420_v2/tests/src/Unit/DocumentCardComponentTest.php
-
-		-
-			rawMessage: Cannot access offset 'ui_patterns' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 4
-			path: web/themes/custom/aculta420_v2/tests/src/Unit/DocumentCardComponentTest.php
-
-		-
-			rawMessage: Cannot access offset 'view_mode' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/themes/custom/aculta420_v2/tests/src/Unit/DocumentCardComponentTest.php
-
-		-
-			rawMessage: Cannot access offset 0 on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/themes/custom/aculta420_v2/tests/src/Unit/DocumentCardComponentTest.php
-
-		-
-			rawMessage: 'Parameter #2 $array of static method PHPUnit\Framework\Assert::assertArrayHasKey() expects array<mixed>|ArrayAccess<(int|string), mixed>, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/themes/custom/aculta420_v2/tests/src/Unit/DocumentCardComponentTest.php
+			path: web/themes/custom/aculta420_v2/src/Story/StudioMenuStory.php
 
 		-
 			rawMessage: 'Avoid calling Symfony\Component\Yaml\Yaml::parse() directly. Use \Drupal\Component\Serialization\Yaml::decode() instead, which handles exceptions consistently and applies the correct parse flags.'
@@ -68361,20 +67139,89 @@ parameters:
 			count: 8
 			path: web/themes/custom/aculta420_v2/tests/src/Unit/SurfaceSdcComponentsTest.php
 
+		-
+			rawMessage: 'Avoid calling Symfony\Component\Yaml\Yaml::parse() directly. Use \Drupal\Component\Serialization\Yaml::decode() instead, which handles exceptions consistently and applies the correct parse flags.'
+			identifier: drupal.symfonyYamlParse
+			count: 1
+			path: web/themes/custom/aculta420_v2/tests/src/Unit/UiIconsPackTest.php
 
+		-
+			rawMessage: Cannot access offset 'allowed_icon_pack' on mixed.
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: web/themes/custom/aculta420_v2/tests/src/Unit/UiIconsPackTest.php
 
+		-
+			rawMessage: Cannot access offset 'config' on mixed.
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: web/themes/custom/aculta420_v2/tests/src/Unit/UiIconsPackTest.php
 
+		-
+			rawMessage: Cannot access offset 'enabled' on mixed.
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: web/themes/custom/aculta420_v2/tests/src/Unit/UiIconsPackTest.php
 
+		-
+			rawMessage: Cannot access offset 'extractor' on mixed.
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: web/themes/custom/aculta420_v2/tests/src/Unit/UiIconsPackTest.php
 
+		-
+			rawMessage: Cannot access offset 'icon_required' on mixed.
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: web/themes/custom/aculta420_v2/tests/src/Unit/UiIconsPackTest.php
 
+		-
+			rawMessage: Cannot access offset 'icon_selector' on mixed.
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: web/themes/custom/aculta420_v2/tests/src/Unit/UiIconsPackTest.php
 
+		-
+			rawMessage: Cannot access offset 'label' on mixed.
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: web/themes/custom/aculta420_v2/tests/src/Unit/UiIconsPackTest.php
 
+		-
+			rawMessage: Cannot access offset 'module' on mixed.
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: web/themes/custom/aculta420_v2/tests/src/Unit/UiIconsPackTest.php
 
+		-
+			rawMessage: Cannot access offset 'sources' on mixed.
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: web/themes/custom/aculta420_v2/tests/src/Unit/UiIconsPackTest.php
 
+		-
+			rawMessage: Cannot access offset 'template' on mixed.
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: web/themes/custom/aculta420_v2/tests/src/Unit/UiIconsPackTest.php
 
+		-
+			rawMessage: Cannot access offset 'third_party_settings' on mixed.
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 3
+			path: web/themes/custom/aculta420_v2/tests/src/Unit/UiIconsPackTest.php
 
+		-
+			rawMessage: Cannot access offset 'ui_icons_menu' on mixed.
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 3
+			path: web/themes/custom/aculta420_v2/tests/src/Unit/UiIconsPackTest.php
 
-
+		-
+			rawMessage: 'Parameter #2 $array of static method PHPUnit\Framework\Assert::assertArrayHasKey() expects array<mixed>|ArrayAccess<(int|string), mixed>, mixed given.'
+			identifier: argument.type
+			count: 1
+			path: web/themes/custom/aculta420_v2/tests/src/Unit/UiIconsPackTest.php
 
 
 		-
@@ -68399,3 +67246,4 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: web/themes/custom/aculta420_v2/theme-settings.php
+

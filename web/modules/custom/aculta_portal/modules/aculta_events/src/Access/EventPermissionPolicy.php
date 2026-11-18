@@ -72,8 +72,9 @@ final class EventPermissionPolicy {
     $roles = $this->entityTypeManager->getStorage('user_role')->loadMultiple();
     $options = [];
     foreach ($roles as $role) {
-      if ($role->id() !== RoleInterface::ANONYMOUS_ID) {
-        $options[$role->id()] = (string) $role->label();
+      $roleId = $role->id();
+      if (is_string($roleId) && $roleId !== RoleInterface::ANONYMOUS_ID) {
+        $options[$roleId] = (string) $role->label();
       }
     }
 
@@ -83,7 +84,7 @@ final class EventPermissionPolicy {
   /**
    * Retorna o AccessResult com cacheability para criação de eventos.
    */
-  public function createEventAccessResult(AccountInterface $account): AccessResultInterface {
+  public function createEventAccessResult(AccountInterface $account): AccessResult {
     return AccessResult::allowedIf($this->canCreateEvent($account))
       ->cachePerPermissions()
       ->addCacheContexts(['user.roles'])

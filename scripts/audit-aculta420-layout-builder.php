@@ -31,10 +31,35 @@ $adapterModes = ['teaser', 'compact', 'forum_search_result', 'cart', 'summary'];
 $rows = [];
 foreach (glob($root . '/config/sync/core.entity_view_display.*.yml') ?: [] as $file) {
   $data = Yaml::parseFile($file);
-  $entity = (string) ($data['targetEntityType'] ?? '');
-  $bundle = (string) ($data['bundle'] ?? '');
-  $mode = (string) ($data['mode'] ?? '');
-  $lb = (array) ($data['third_party_settings']['layout_builder'] ?? []);
+  if (!is_array($data)) {
+    throw new RuntimeException(sprintf('Display de Layout Builder inválido: %s', basename($file)));
+  }
+  $entityValue = $data['targetEntityType'] ?? '';
+  $bundleValue = $data['bundle'] ?? '';
+  $modeValue = $data['mode'] ?? '';
+  if (!is_string($entityValue) || $entityValue === ''
+    || !is_string($bundleValue) || $bundleValue === ''
+    || !is_string($modeValue) || $modeValue === '') {
+    throw new RuntimeException(sprintf('Identidade do display inválida: %s', basename($file)));
+  }
+  $entity = $entityValue;
+  $bundle = $bundleValue;
+  $mode = $modeValue;
+  $thirdPartySettings = [];
+  if (array_key_exists('third_party_settings', $data)) {
+    $thirdPartySettings = $data['third_party_settings'];
+    if (!is_array($thirdPartySettings)) {
+      throw new RuntimeException(sprintf('third_party_settings inválido no display: %s', basename($file)));
+    }
+  }
+  $layoutBuilder = [];
+  if (array_key_exists('layout_builder', $thirdPartySettings)) {
+    $layoutBuilder = $thirdPartySettings['layout_builder'];
+    if (!is_array($layoutBuilder)) {
+      throw new RuntimeException(sprintf('layout_builder inválido no display: %s', basename($file)));
+    }
+  }
+  $lb = $layoutBuilder;
 
   if (in_array($entity, $incompatibleEntities, TRUE) || in_array($mode, $incompatibleModes, TRUE)) {
     $class = 'INCOMPATÍVEL';

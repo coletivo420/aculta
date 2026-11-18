@@ -23,7 +23,7 @@ final class EventRelatedViewsAccessKernelTest extends KernelTestBase {
   protected static $modules = [
     'system', 'user', 'key', 'options', 'link', 'text', 'filter', 'taxonomy',
     'datetime', 'datetime_range', 'address', 'geofield', 'views',
-    'aculta_calendar', 'aculta_events',
+    'ui_patterns', 'ui_patterns_views', 'aculta_calendar', 'aculta_events',
   ];
 
   /**
@@ -59,7 +59,7 @@ final class EventRelatedViewsAccessKernelTest extends KernelTestBase {
       $this->assertIsArray($defaultDisplay);
       $displayOptions = $defaultDisplay['display_options'] ?? NULL;
       $this->assertIsArray($displayOptions);
-      $fields = $displayOptions['fields'] ?? NULL;
+      $fields = $displayOptions['fields'] ?? [];
       $this->assertIsArray($fields);
       $this->assertSame($allowedFields, array_keys($fields), "$id only exposes approved fields.");
 
