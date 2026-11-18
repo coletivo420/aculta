@@ -19997,24 +19997,6 @@ parameters:
 			rawMessage: Cannot access offset 'status' on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Context/Provider/LmsDiscussionContextProvider.php
-
-		-
-			rawMessage: Cannot access offset 0 on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Context/Provider/LmsDiscussionContextProvider.php
-
-		-
-			rawMessage: Cannot cast mixed to int.
-			identifier: cast.int
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Context/Provider/LmsDiscussionContextProvider.php
-
-		-
-			rawMessage: Cannot access offset 'status' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Context/Provider/PublicationContextProvider.php
 
 		-

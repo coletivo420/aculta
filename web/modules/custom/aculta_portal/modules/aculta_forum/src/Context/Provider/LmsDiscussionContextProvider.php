@@ -151,8 +151,14 @@ final class LmsDiscussionContextProvider implements DiscussionContextProviderInt
     $commentField = $entity->hasField('field_aculta_discussion')
       ? $entity->get('field_aculta_discussion')
       : NULL;
-    $commentStatus = $commentField?->getValue()[0]['status'] ?? 0;
-    $commentStatusAccess = (int) $commentStatus === 2
+    $commentFieldValues = $commentField?->getValue();
+    $firstCommentFieldValue = is_array($commentFieldValues)
+      ? ($commentFieldValues[0] ?? NULL)
+      : NULL;
+    $commentStatus = is_array($firstCommentFieldValue)
+      ? ($firstCommentFieldValue['status'] ?? 0)
+      : 0;
+    $commentStatusAccess = in_array($commentStatus, [2, '2'], TRUE)
       ? AccessResult::allowed()
       : AccessResult::forbidden();
     $commentStatusAccess->addCacheableDependency($entity);
@@ -233,7 +239,7 @@ final class LmsDiscussionContextProvider implements DiscussionContextProviderInt
    * Checks the account's real Group membership without legacy wrappers.
    */
   private function membershipAccess(GroupInterface $group, AccountInterface $account): AccessResultInterface {
-    $uid = (int) $account->id();
+    $uid = filter_var($account->id(), FILTER_VALIDATE_INT);
     if ($uid < 1) {
       return AccessResult::forbidden()
         ->addCacheContexts(['user'])
