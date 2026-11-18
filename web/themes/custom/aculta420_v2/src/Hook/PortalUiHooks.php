@@ -6,18 +6,20 @@ namespace Drupal\aculta420_v2\Hook;
 
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Template\Attribute;
+use Drupal\Core\Template\AttributeString;
 
 /**
  * Traduz data-portal-ui em classes do ACULTA420 V2.
  *
  * O módulo marca o elemento com data-portal-ui="token" e não escreve classe de
- * apresentação. Este hook troca cada token pelas classes correspondentes e remove
- * o atributo. Token desconhecido não gera classe.
+ * apresentação. Este hook troca cada token pelas classes correspondentes e
+ * remove o atributo. Token desconhecido não gera classe.
  *
- * Usa hook_preprocess genérico: vale para todo theme hook que recebe um Attribute
- * (attributes, wrapper_attributes, title_attributes, content_attributes etc.), não só
- * para links. Mapa: só os tokens migrados para o V2. Os demais continuam no mapa do
- * V1 (web/themes/custom/aculta420/src/Hook/PortalUiHooks.php) até a migração,
+ * Usa hook_preprocess genérico: vale para todo theme hook que recebe um
+ * Attribute (attributes, wrapper_attributes, title_attributes,
+ * content_attributes etc.), não só para links. Mapa: só os tokens migrados
+ * para o V2. Os demais continuam no mapa do V1
+ * (web/themes/custom/aculta420/src/Hook/PortalUiHooks.php) até a migração,
  * registrada em docs/architecture.md, seção 7.
  */
 final class PortalUiHooks {
@@ -39,7 +41,8 @@ final class PortalUiHooks {
     'studio-course-educator' => [],
     'studio-mercadopago-plans' => [],
     'map-popup' => [],
-    // Copiados do mapa do V1 (referência) em 2026-11-05. Classes sem CSS no V2 ainda não têm estilo (DEFERRED: portar CSS e capturar).
+    // Copiados do mapa V1 em 2026-11-05. Classes sem CSS ainda estão
+    // DEFERRED: portar CSS e capturar.
     'account-avatar' => ['portal-account__avatar'],
     'account-bio-actions' => ['portal-account-bio__actions'],
     'account-bio-card' => [],
@@ -401,7 +404,7 @@ final class PortalUiHooks {
     'studio-saved-pager-next' => [],
     'studio-saved-pager-prev' => [],
     'studio-saved-pagination' => ['studio-saved-pagination'],
-    'studio-saved-purpose' => ['badge', 'badge-purpose'],
+    'studio-saved-site-key' => ['badge', 'badge-purpose'],
     'studio-saved-tabs' => ['studio-saved-tabs'],
     'studio-section-header' => ['studio__section-header'],
     'studio-shell' => ['studio'],
@@ -426,7 +429,8 @@ final class PortalUiHooks {
     'wiki-search-results' => ['aculta-wiki-search-results'],
     'wiki-title-suggestions' => ['aculta-wiki-title-suggestions'],
     'wiki-workspace-return' => ['aculta-wiki-workspace__return'],
-    // Prefixos e tokens concatenados encontrados pelo gate de fronteira (2026-11-05).
+    // Prefixos e tokens concatenados encontrados pelo gate de fronteira
+    // (2026-11-05).
     'messenger-state' => ['aculta-messenger-state'],
     'messenger-state-empty' => ['aculta-messenger-state--empty'],
     'notice-summary' => ['aculta-messenger-sender', 'aculta-notice-summary'],
@@ -448,10 +452,13 @@ final class PortalUiHooks {
    * Chamado pelo preprocess genérico do tema (aculta420_v2.theme): o hook
    * genérico `preprocess` não é um `preprocess_*` e o gate de fronteira só
    * aceita hooks de apresentação nomeados por theme hook.
+   *
+   * @param array<string, mixed> $variables
+   *   Variables supplied by the theme hook.
    */
   public static function preprocessVariables(array &$variables): void {
     foreach ($variables as $key => $value) {
-      if (is_string($key) && str_ends_with($key, 'attributes')) {
+      if (str_ends_with($key, 'attributes')) {
         self::applyVariableAttributes($variables, $key);
       }
     }
@@ -459,6 +466,9 @@ final class PortalUiHooks {
 
   /**
    * Applies mapped presentation classes after Core builds container attributes.
+   *
+   * @param array<string, mixed> $variables
+   *   Variables supplied by the container theme hook.
    */
   #[Hook('preprocess_container')]
   public function preprocessContainer(array &$variables): void {
@@ -467,6 +477,11 @@ final class PortalUiHooks {
 
   /**
    * Maps attributes represented as arrays or Attribute objects.
+   *
+   * @param array<string, mixed> $variables
+   *   Variables supplied by a theme hook.
+   * @param string $key
+   *   Attribute variable key to inspect.
    */
   private static function applyVariableAttributes(array &$variables, string $key): void {
     $value = $variables[$key] ?? NULL;
@@ -488,8 +503,13 @@ final class PortalUiHooks {
     if (!$attributes->offsetExists(self::ATTRIBUTE)) {
       return;
     }
-    $tokens = preg_split('/\s+/', trim((string) $attributes[self::ATTRIBUTE]->value())) ?: [];
-    // O atributo permanece no DOM: o CSS do V2 seleciona por [data-portal-ui~="token"] (events.css, lms-lesson-page.css).
+    $portalUi = $attributes[self::ATTRIBUTE];
+    if (!$portalUi instanceof AttributeString) {
+      return;
+    }
+    $tokens = preg_split('/\s+/', trim((string) $portalUi)) ?: [];
+    // O atributo permanece no DOM: o CSS do V2 seleciona por
+    // [data-portal-ui~="token"] (events.css, lms-lesson-page.css).
     foreach ($tokens as $token) {
       foreach (self::TOKENS[$token] ?? [] as $class) {
         $attributes->addClass($class);
