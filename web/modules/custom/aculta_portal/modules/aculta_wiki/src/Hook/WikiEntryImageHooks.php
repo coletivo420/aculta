@@ -59,6 +59,8 @@ final class WikiEntryImageHooks {
 
   /**
    * Adds the "Imagem de destaque" tab to the wiki_entry node form.
+   *
+   * @param array<mixed> $form
    */
   #[Hook('form_node_wiki_entry_form_alter')]
   #[Hook('form_node_wiki_entry_edit_form_alter')]
@@ -76,12 +78,24 @@ final class WikiEntryImageHooks {
         '#type' => 'hidden',
         '#value' => (int) $node->getRevisionId(),
       ];
+      if (!isset($form['#validate']) || !is_array($form['#validate'])) {
+        $form['#validate'] = [];
+      }
       $form['#validate'][] = 'aculta_wiki.wiki_lead_image_uploader:validateExpectedRevision';
     }
 
     // Serialize updates to the current Wiki revision and preserve Core's
     // EntityForm save behavior even when image upload controls are unavailable.
-    $submitHandlers = $form['actions']['submit']['#submit'] ?? [];
+    $rawSubmitHandlers = [];
+    if (isset($form['actions']) && is_array($form['actions']) && isset($form['actions']['submit']) && is_array($form['actions']['submit'])) {
+      if (isset($form['actions']['submit']['#submit']) && is_array($form['actions']['submit']['#submit'])) {
+        $rawSubmitHandlers = $form['actions']['submit']['#submit'];
+      }
+    }
+    $submitHandlers = [];
+    foreach ($rawSubmitHandlers as $k => $handler) {
+      $submitHandlers[$k] = $handler;
+    }
     $saveHandler = array_search('::save', $submitHandlers, TRUE);
     if ($saveHandler !== FALSE) {
       $submitHandlers[$saveHandler] = 'aculta_wiki.wiki_lead_image_uploader:saveNode';
@@ -91,7 +105,7 @@ final class WikiEntryImageHooks {
     $this->prepareAuthoringForm($form, $node);
 
     $field = WikiLeadImageUploader::FIELD;
-    if (!isset($form[$field])) {
+    if (!isset($form[$field]) || !is_array($form[$field])) {
       $this->addReviewAction($form, $node);
       return;
     }
@@ -108,19 +122,16 @@ final class WikiEntryImageHooks {
       return;
     }
 
-    $submitHandlers = $form['actions']['submit']['#submit'] ?? [];
     if (!in_array('::save', $submitHandlers, TRUE)
       && !in_array('aculta_wiki.wiki_lead_image_uploader:saveNode', $submitHandlers, TRUE)) {
       $this->addReviewAction($form, $node);
       return;
     }
 
-    $form_object = $form_state->getFormObject();
-    $node = $form_object instanceof ContentEntityFormInterface ? $form_object->getEntity() : NULL;
-    $current = $node instanceof NodeInterface ? $this->currentImage($node) : NULL;
+    $current = $this->currentImage($node);
 
     $form[$field]['#access'] = FALSE;
-    if (!isset($form['advanced'])) {
+    if (!isset($form['advanced']) || !is_array($form['advanced'])) {
       $form['advanced'] = [
         '#type' => 'vertical_tabs',
         '#weight' => 99,
@@ -141,23 +152,28 @@ final class WikiEntryImageHooks {
       '#markup' => $this->t('A imagem de destaque aparece no card da listagem e no topo do verbete. Tamanho e formatos seguem a política de upload da Wiki.'),
     ];
     if ($current !== NULL) {
+      $currentName = (string) $current['name'];
+      $currentAlt = (string) $current['alt'];
+      $currentText = $currentAlt === ''
+        ? $this->t('@name (sem descrição)', ['@name' => $currentName])
+        : $this->t('@name — descrição: @alt', ['@name' => $currentName, '@alt' => $currentAlt]);
       $form[$tab]['current'] = [
         '#type' => 'item',
         '#title' => $this->t('Imagem atual'),
-        '#markup' => $current['alt'] === ''
-          ? $this->t('@name (sem descrição)', ['@name' => $current['name']])
-          : $this->t('@name — descrição: @alt', ['@name' => $current['name'], '@alt' => $current['alt']]),
+        '#plain_text' => (string) $currentText,
       ];
       // Ponto focal da imagem atual: vale para a imagem já salva, não para um envio novo.
-      if ($current['fid'] > 0) {
+      $currentFid = $current['fid'];
+      if ($currentFid > 0) {
+        $previewElement = $current['media']->hasField('field_media_image')
+          ? $this->previewMarkup($current['media'], $currentAlt)
+          : ['#markup' => ''];
         $form[$tab]['focal'] = [
           '#type' => 'container',
           '#attributes' => ['data-aculta-focal' => ''],
           '#attached' => ['library' => ['aculta_file_uploader/focal-point']],
           // Prévia da imagem atual, com a permissão de quem edita o verbete.
-          'preview' => $current['media'] instanceof MediaInterface && $current['media']->hasField('field_media_image')
-            ? $this->previewMarkup($current['media'], (string) $current['alt'])
-            : ['#markup' => ''],
+          'preview' => $previewElement,
           'marker' => [
             '#type' => 'html_tag',
             '#tag' => 'span',
@@ -165,7 +181,7 @@ final class WikiEntryImageHooks {
           ],
           'focal_x' => ['#type' => 'hidden', '#default_value' => '50', '#attributes' => ['data-focal-x' => '']],
           'focal_y' => ['#type' => 'hidden', '#default_value' => '50', '#attributes' => ['data-focal-y' => '']],
-          'focal_fid' => ['#type' => 'hidden', '#value' => (string) $current['fid']],
+          'focal_fid' => ['#type' => 'hidden', '#value' => (string) $currentFid],
         ];
         $form[$tab]['focal']['#title'] = $this->t('Ponto focal da imagem atual');
       }
@@ -183,7 +199,9 @@ final class WikiEntryImageHooks {
         '#description' => $this->t('Só vale se nenhum arquivo novo for enviado acima.'),
       ];
     }
-    $form[$tab][WikiLeadImageUploader::FILE]['#title'] = $this->t('Nova imagem de destaque');
+    if (isset($form[$tab][WikiLeadImageUploader::FILE]) && is_array($form[$tab][WikiLeadImageUploader::FILE])) {
+      $form[$tab][WikiLeadImageUploader::FILE]['#title'] = $this->t('Nova imagem de destaque');
+    }
     $form[$tab][WikiLeadImageUploader::ALT] = [
       '#type' => 'textfield',
       '#title' => $this->t('Descrição da imagem'),
@@ -198,11 +216,14 @@ final class WikiEntryImageHooks {
       ];
     }
 
+    if (!isset($form['#validate']) || !is_array($form['#validate'])) {
+      $form['#validate'] = [];
+    }
     $form['#validate'][] = 'aculta_wiki.wiki_lead_image_uploader:validateUpload';
     // The save button defines its own #submit list, which replaces the
     // form-level list. Keep Core's submitForm, align Media publication after
     // the submitted revision is built, and wrap Node::save in a transaction.
-    if (isset($form['actions']['submit'])) {
+    if (isset($form['actions']) && is_array($form['actions']) && isset($form['actions']['submit']) && is_array($form['actions']['submit'])) {
       $submitHandlers = array_merge([
         'aculta_wiki.wiki_lead_image_uploader:applyUpload',
       ], $submitHandlers);
@@ -212,33 +233,31 @@ final class WikiEntryImageHooks {
       }
       $saveHandler = array_search('aculta_wiki.wiki_lead_image_uploader:saveNode', $submitHandlers, TRUE);
       if ($saveHandler !== FALSE) {
-        array_splice($submitHandlers, $saveHandler, 0, [
+        $offset = is_int($saveHandler) ? $saveHandler : 0;
+        array_splice($submitHandlers, $offset, 0, [
           'aculta_wiki.wiki_lead_image_uploader:prepareNodeSave',
         ]);
       }
       $form['actions']['submit']['#submit'] = $submitHandlers;
     }
-    if ($node instanceof NodeInterface) {
-      $this->addReviewAction($form, $node);
-    }
+    $this->addReviewAction($form, $node);
   }
-
-  /**
-   * Orders core fields and adds concise guidance for a new Wiki entry.
-   */
 
   /**
    * Monta a prévia da imagem atual com a URL de query do core para arquivos privados.
    *
    * A forma de caminho /system/files/{arquivo} responde 404 neste core (o processador de
    * caminho reescreve para /system/files sem rota exata). A forma ?file= é a usada pelo projeto.
+   *
+   * @return array<string, mixed>
    */
   private function previewMarkup(MediaInterface $media, string $alt): array {
-    $file = $media->get('field_media_image')->entity;
+    $fieldMedia = $media->get('field_media_image');
+    $file = $fieldMedia->entity;
     if (!$file instanceof FileInterface) {
       return ['#markup' => ''];
     }
-    $uri = $file->getFileUri();
+    $uri = (string) $file->getFileUri();
     $relative = self::privateFileQueryPath($uri);
     if ($relative !== NULL) {
       $src = Url::fromRoute('system.files', ['scheme' => 'private'], ['query' => ['file' => $relative]])->toString();
@@ -263,7 +282,7 @@ final class WikiEntryImageHooks {
   /**
    * Ajusta os pesos dos campos do formulário de autoria.
    *
-   * @param array $form
+   * @param array<mixed> $form
    *   Estrutura do formulário, alterada no lugar.
    * @param \Drupal\node\NodeInterface $node
    *   Nó em edição.
@@ -279,48 +298,64 @@ final class WikiEntryImageHooks {
       'moderation_state' => 7,
     ];
     foreach ($weights as $fieldName => $weight) {
-      if (isset($form[$fieldName])) {
+      if (isset($form[$fieldName]) && is_array($form[$fieldName])) {
         $form[$fieldName]['#weight'] = $weight;
       }
     }
     if (!$node->isNew()) {
       return;
     }
-    if (isset($form['title'])) {
+    if (isset($form['title']) && is_array($form['title'])) {
       $form['title']['#description'] = $this->t('Use um título simples e específico para o verbete.');
     }
-    if (isset($form['field_wiki_summary'])) {
+    if (isset($form['field_wiki_summary']) && is_array($form['field_wiki_summary'])) {
       $form['field_wiki_summary']['#description'] = $this->t('Resuma o tema em poucas frases. Essa síntese ajuda a pessoa leitora a decidir se abre o verbete.');
     }
-    if (isset($form['body'])) {
+    if (isset($form['body']) && is_array($form['body'])) {
       $form['body']['#description'] = $this->t('Explique o tema com linguagem clara. Inclua fontes verificáveis no campo Referências.');
     }
   }
 
   /**
    * Adds a separate review action only when Core exposes that transition.
+   *
+   * @param array<mixed> $form
    */
   private function addReviewAction(array &$form, NodeInterface $node): void {
-    if (!isset($form['actions']['submit'])) {
+    if (!isset($form['actions']) || !is_array($form['actions']) || !isset($form['actions']['submit']) || !is_array($form['actions']['submit'])) {
       return;
     }
-    $widget = $form['moderation_state']['widget'][0]['state'] ?? NULL;
-    $options = is_array($widget) ? ($widget['#options'] ?? []) : [];
-    if ($node->isNew() && is_array($options) && isset($options['draft'])) {
+    $widget = null;
+    if (isset($form['moderation_state']) && is_array($form['moderation_state'])) {
+      $modState = &$form['moderation_state'];
+      if (isset($modState['widget']) && is_array($modState['widget']) && isset($modState['widget'][0]) && is_array($modState['widget'][0])) {
+        $firstMod = &$modState['widget'][0];
+        if (isset($firstMod['state']) && is_array($firstMod['state'])) {
+          $widget = $firstMod['state'];
+        }
+      }
+    }
+    $options = is_array($widget) && isset($widget['#options']) && is_array($widget['#options']) ? $widget['#options'] : [];
+    if ($node->isNew() && isset($options['draft'])) {
       $form['actions']['submit']['#value'] = $this->t('Salvar rascunho');
     }
-    if (!is_array($options) || !isset($options['review'])) {
+    if (!isset($options['review'])) {
       return;
     }
     $review = $form['actions']['submit'];
     $review['#value'] = $this->t('Enviar para revisão');
-    $submitHandlers = $review['#submit'] ?? [];
+    $rawSubmitHandlers = isset($review['#submit']) && is_array($review['#submit']) ? $review['#submit'] : [];
+    $submitHandlers = [];
+    foreach ($rawSubmitHandlers as $k => $handler) {
+      $submitHandlers[$k] = $handler;
+    }
     $entitySubmitHandler = array_search('::submitForm', $submitHandlers, TRUE);
     if ($entitySubmitHandler === FALSE) {
       array_unshift($submitHandlers, WikiEntryFormActions::class . '::submitForReview');
     }
     else {
-      array_splice($submitHandlers, $entitySubmitHandler + 1, 0, [WikiEntryFormActions::class . '::submitForReview']);
+      $offset = is_int($entitySubmitHandler) ? $entitySubmitHandler + 1 : 1;
+      array_splice($submitHandlers, $offset, 0, [WikiEntryFormActions::class . '::submitForReview']);
     }
     $review['#submit'] = $submitHandlers;
     $form['actions']['submit_review'] = $review;
@@ -367,6 +402,8 @@ final class WikiEntryImageHooks {
 
   /**
    * Returns the label and alt text of the image currently referenced.
+   *
+   * @return array{name: string, alt: string, fid: int, media: \Drupal\media\MediaInterface}|null
    */
   private function currentImage(NodeInterface $node): ?array {
     if (!$node->hasField(WikiLeadImageUploader::FIELD) || $node->get(WikiLeadImageUploader::FIELD)->isEmpty()) {
@@ -379,7 +416,9 @@ final class WikiEntryImageHooks {
     }
     $alt = '';
     if ($media->hasField('field_media_image')) {
-      $alt = (string) ($media->get('field_media_image')->first()?->get('alt')->getValue() ?? '');
+      $altItem = $media->get('field_media_image')->first();
+      $altVal = $altItem !== NULL ? $altItem->get('alt')->getValue() : '';
+      $alt = is_scalar($altVal) ? (string) $altVal : '';
     }
     $fid = $media->hasField('field_media_image') ? (int) ($media->get('field_media_image')->target_id ?? 0) : 0;
     return ['name' => (string) $media->label(), 'alt' => $alt, 'fid' => $fid, 'media' => $media];
@@ -399,6 +438,8 @@ final class WikiEntryImageHooks {
 
   /**
    * Adds a return link when the optional Studio destination is available.
+   *
+   * @param array<mixed> $form
    */
   private function addWorkspaceReturnLink(array &$form): void {
     try {
@@ -426,8 +467,25 @@ final class WikiEntryImageHooks {
       '#attributes' => ['data-portal-ui' => 'wiki-workspace-return'],
     ];
     $accessMetadata = CacheableMetadata::createFromObject($access);
-    $form['#cache']['contexts'] = Cache::mergeContexts($form['#cache']['contexts'] ?? [], $accessMetadata->getCacheContexts());
-    $form['#cache']['tags'] = Cache::mergeTags($form['#cache']['tags'] ?? [], $accessMetadata->getCacheTags());
+    if (!isset($form['#cache']) || !is_array($form['#cache'])) {
+      $form['#cache'] = [];
+    }
+    $contexts = isset($form['#cache']['contexts']) && is_array($form['#cache']['contexts']) ? $form['#cache']['contexts'] : [];
+    $validContexts = [];
+    foreach ($contexts as $ctx) {
+      if (is_string($ctx)) {
+        $validContexts[] = $ctx;
+      }
+    }
+    $tags = isset($form['#cache']['tags']) && is_array($form['#cache']['tags']) ? $form['#cache']['tags'] : [];
+    $validTags = [];
+    foreach ($tags as $t) {
+      if (is_string($t)) {
+        $validTags[] = $t;
+      }
+    }
+    $form['#cache']['contexts'] = Cache::mergeContexts($validContexts, $accessMetadata->getCacheContexts());
+    $form['#cache']['tags'] = Cache::mergeTags($validTags, $accessMetadata->getCacheTags());
   }
 
 }
