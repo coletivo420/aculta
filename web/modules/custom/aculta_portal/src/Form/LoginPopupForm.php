@@ -93,10 +93,13 @@ final class LoginPopupForm extends UserLoginForm {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<mixed> $form
+   * @return array<mixed>
    */
-  public function buildForm(array $form, FormStateInterface $form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state): array {
     $form = parent::buildForm($form, $form_state);
-    $validators = $form['#validate'] ?? [];
+    $validators = isset($form['#validate']) && is_array($form['#validate']) ? $form['#validate'] : [];
     $authentication_wrapper = 'aculta_portal.form_callbacks:validateLoginAuthentication';
     $authentication_validators = array_values(array_filter(
       $validators,
@@ -110,13 +113,35 @@ final class LoginPopupForm extends UserLoginForm {
       $authentication_validators[$authentication_index] = $authentication_wrapper;
     }
     $form['#validate'] = $authentication_validators;
-    $form['name']['#title'] = $this->t('Nome de usuário, e-mail ou CPF');
-    $form['pass']['#title'] = $this->t('Senha');
-    $form['actions']['submit']['#value'] = $this->t('Entrar');
-    $form['actions']['submit']['#attributes']['data-portal-ui'] = 'button-primary';
+    if (isset($form['name']) && is_array($form['name'])) {
+      $form['name']['#title'] = $this->t('Nome de usuário, e-mail ou CPF');
+    }
+    if (isset($form['pass']) && is_array($form['pass'])) {
+      $form['pass']['#title'] = $this->t('Senha');
+    }
+    if (isset($form['actions']) && is_array($form['actions'])) {
+      $actions = &$form['actions'];
+      if (isset($actions['submit']) && is_array($actions['submit'])) {
+        $submit = &$actions['submit'];
+        $submit['#value'] = $this->t('Entrar');
+        if (!isset($submit['#attributes']) || !is_array($submit['#attributes'])) {
+          $submit['#attributes'] = [];
+        }
+        $submit['#attributes']['data-portal-ui'] = 'button-primary';
+      }
+    }
     $form['#prefix'] = '<div id="' . self::WRAPPER_ID . '">';
     $form['#suffix'] = '</div>';
+    if (!isset($form['#attributes']) || !is_array($form['#attributes'])) {
+      $form['#attributes'] = [];
+    }
     $form['#attributes']['data-portal-ui'] = 'login-popup';
+    if (!isset($form['#cache']) || !is_array($form['#cache'])) {
+      $form['#cache'] = [];
+    }
+    if (!isset($form['#cache']['contexts']) || !is_array($form['#cache']['contexts'])) {
+      $form['#cache']['contexts'] = [];
+    }
     $form['#cache']['contexts'][] = 'domain';
     $form['destination'] = [
       '#type' => 'hidden',
@@ -152,7 +177,8 @@ final class LoginPopupForm extends UserLoginForm {
     // da conta, onde as URIs de retorno estão cadastradas; o retorno volta ao
     // host de origem pelo site_key capturado no destino.
     if ($this->moduleHandler->moduleExists('social_auth') && $this->authIntegration->isGoogleConfigured()) {
-      $google = $this->googleButton($form['destination']['#value']);
+      $destinationValue = $form['destination']['#value'];
+      $google = $this->googleButton($destinationValue);
       if ($google !== NULL) {
         $form['social_auth'] = $google;
         $form['social_auth_divider'] = [
@@ -167,8 +193,10 @@ final class LoginPopupForm extends UserLoginForm {
     // Entrar logo após a senha e os links depois dele. O contêiner não é
     // "form-actions": assim o Core não copia o botão para o rodapé do diálogo
     // (dialog.jquery-ui.js, prepareDialogButtons).
-    $form['actions']['#type'] = 'container';
-    $form['actions']['#weight'] = 5;
+    if (isset($form['actions']) && is_array($form['actions'])) {
+      $form['actions']['#type'] = 'container';
+      $form['actions']['#weight'] = 5;
+    }
     $form['links']['#weight'] = 10;
     if ($this->isHtmxRequest()) {
       (new Htmx())
@@ -181,17 +209,21 @@ final class LoginPopupForm extends UserLoginForm {
     }
     else {
       // Keep the pre-HTMX contract for the V1 theme while V2 uses HTMX.
-      $form['actions']['submit']['#ajax'] = [
-        'callback' => '::ajaxSubmit',
-        'wrapper' => self::WRAPPER_ID,
-        'progress' => ['type' => 'throbber'],
-      ];
+      if (isset($form['actions']) && is_array($form['actions']) && isset($form['actions']['submit']) && is_array($form['actions']['submit'])) {
+        $form['actions']['submit']['#ajax'] = [
+          'callback' => '::ajaxSubmit',
+          'wrapper' => self::WRAPPER_ID,
+          'progress' => ['type' => 'throbber'],
+        ];
+      }
     }
     return $form;
   }
 
   /**
    * Returns the popup's Google sign-in link when its route exists.
+   *
+   * @return array<string, mixed>|null
    */
   private function googleButton(string $destination): ?array {
     $url = $this->domainSiteManager->routeUrl(SiteKey::Account, 'social_auth.network.redirect', ['network' => 'google']);
@@ -219,22 +251,31 @@ final class LoginPopupForm extends UserLoginForm {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<mixed> $form
    */
-  public function validateFinal(array &$form, FormStateInterface $form_state) {
+  public function validateFinal(array &$form, FormStateInterface $form_state): void {
     if ($form_state->get('uid')) {
       parent::validateFinal($form, $form_state);
       return;
     }
     $flood_config = $this->config('user.flood');
-    $this->userFloodControl->register('user.failed_login_ip', $flood_config->get('ip_window'));
-    if ($identifier = $form_state->get('flood_control_user_identifier')) {
-      $this->userFloodControl->register('user.failed_login_user', $flood_config->get('user_window'), $identifier);
+    $rawIp = $flood_config->get('ip_window');
+    $rawUser = $flood_config->get('user_window');
+    $rawLimit = $flood_config->get('user_limit');
+    $ipWindow = is_numeric($rawIp) ? (int) $rawIp : 3600;
+    $userWindow = is_numeric($rawUser) ? (int) $rawUser : 21600;
+    $userLimit = is_numeric($rawLimit) ? (int) $rawLimit : 5;
+    $this->userFloodControl->register('user.failed_login_ip', $ipWindow);
+    $identifier = $form_state->get('flood_control_user_identifier');
+    if (is_string($identifier) && $identifier !== '') {
+      $this->userFloodControl->register('user.failed_login_user', $userWindow, $identifier);
     }
     $passwordUrl = $this->domainSiteManager->routeUrl(SiteKey::Account, 'user.pass')?->toString() ?? '#';
     $triggered = $form_state->get('flood_control_triggered');
     if ($triggered === 'user') {
       $form_state->setErrorByName('name', $this->formatPlural(
-        $flood_config->get('user_limit'),
+        $userLimit,
         'There has been more than one failed login attempt for this account. It is temporarily blocked. Try again later or <a href=":url">request a new password</a>.',
         'There have been more than @count failed login attempts for this account. It is temporarily blocked. Try again later or <a href=":url">request a new password</a>.',
         [':url' => $passwordUrl],
@@ -256,10 +297,12 @@ final class LoginPopupForm extends UserLoginForm {
    * {@inheritdoc}
    *
    * Preserves the safe return path for native and HTMX submissions.
+   *
+   * @param array<string, mixed> $form
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
     $uid = $form_state->get('uid');
-    if (empty($uid)) {
+    if (empty($uid) || (!is_int($uid) && !is_string($uid))) {
       return;
     }
     $account = $this->userStorage->load($uid);
@@ -277,6 +320,9 @@ final class LoginPopupForm extends UserLoginForm {
 
   /**
    * Keeps the legacy non-HTMX popup response for ACULTA420 V1.
+   *
+   * @param array<string, mixed> $form
+   * @return array<string, mixed>|AjaxResponse
    */
   public function ajaxSubmit(array &$form, FormStateInterface $form_state): array|AjaxResponse {
     if ($form_state->hasAnyErrors()) {
