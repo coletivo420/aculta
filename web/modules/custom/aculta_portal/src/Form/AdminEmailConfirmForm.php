@@ -72,13 +72,22 @@ final class AdminEmailConfirmForm extends ConfirmFormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<mixed> $form
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   * @param \Drupal\user\UserInterface|null $user
+   *
+   * @return array<mixed>
    */
   public function buildForm(array $form, FormStateInterface $form_state, ?UserInterface $user = NULL): array {
-    $form_state->set('uid', (int) $user?->id());
+    $uid = $user?->id();
+    $form_state->set('uid', is_numeric($uid) ? (int) $uid : 0);
+    $accountName = (string) ($user?->getAccountName() ?? '');
+    $uidStr = is_scalar($uid) ? (string) $uid : '';
     $form['conta'] = [
       '#markup' => '<p>' . $this->t('Conta: @nome (uid @uid)', [
-        '@nome' => $user?->getAccountName(),
-        '@uid' => $user?->id(),
+        '@nome' => $accountName,
+        '@uid' => $uidStr,
       ]) . '</p>',
     ];
     return parent::buildForm($form, $form_state);
@@ -86,28 +95,34 @@ final class AdminEmailConfirmForm extends ConfirmFormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<mixed> $form
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
-    $uid = (int) $form_state->get('uid');
-    if ($uid <= 0 || $this->policy->isConfirmed($this->entityUser($uid))) {
+    $rawUid = $form_state->get('uid');
+    $uid = is_numeric($rawUid) ? (int) $rawUid : 0;
+    $user = $this->entityUser($uid);
+    if ($uid <= 0 || $user === NULL || $this->policy->isConfirmed($user)) {
       $this->messenger()->addStatus($this->t('Este e-mail já estava confirmado.'));
       $form_state->setRedirect('aculta_portal.email_confirmacao_pendentes');
       return;
     }
     $this->policy->markConfirmed($uid);
     $this->logger->notice('Confirmação manual de e-mail: conta @conta confirmada pela administração (uid @admin).', [
-      '@conta' => $uid,
-      '@admin' => $this->currentUser->id(),
+      '@conta' => (string) $uid,
+      '@admin' => (string) $this->currentUser->id(),
     ]);
-    $this->messenger()->addStatus($this->t('E-mail confirmado para a conta @uid.', ['@uid' => $uid]));
+    $this->messenger()->addStatus($this->t('E-mail confirmado para a conta @uid.', ['@uid' => (string) $uid]));
     $form_state->setRedirect('aculta_portal.email_confirmacao_pendentes');
   }
 
   /**
    * Conta carregada pelo uid (a política lê o estado por uid).
    */
-  private function entityUser(int $uid): AccountInterface {
-    return $this->entityTypeManagerService->getStorage('user')->load($uid);
+  private function entityUser(int $uid): ?AccountInterface {
+    $account = $this->entityTypeManagerService->getStorage('user')->load($uid);
+    return $account instanceof AccountInterface ? $account : NULL;
   }
 
 }

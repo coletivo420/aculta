@@ -44,6 +44,11 @@ final class AcultaUserAgreementAcceptForm extends FormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<mixed> $form
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *
+   * @return array<mixed>
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $form['#action'] = Url::fromRoute('aculta_portal.aculta_user_agreement.accept', [], [
@@ -80,6 +85,9 @@ final class AcultaUserAgreementAcceptForm extends FormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<mixed> $form
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $this->policy->record($this->currentUser());
@@ -104,8 +112,14 @@ final class AcultaUserAgreementAcceptForm extends FormBase {
   }
 
   /**
-   * Link para o documento no host principal, em nova aba (o popup continua aberto). */
-  private function documentLink(string $path, $label): array {
+   * Link para o documento no host principal, em nova aba (o popup continua aberto).
+   *
+   * @param string $path
+   * @param string|\Stringable $label
+   *
+   * @return array<string, mixed>
+   */
+  private function documentLink(string $path, string|\Stringable $label): array {
     $url = $this->siteManager->pathUrl(SiteKey::Main, $path) ?? Url::fromUserInput($path);
     return [
       '#type' => 'link',
