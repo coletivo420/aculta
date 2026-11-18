@@ -1,10 +1,10 @@
 # Dívida PHPStan — ACULTA
 
-Gerado em 2026-11-18T22:24:01+00:00 por `scripts/phpstan-debt-report.php`.
+Gerado em 2026-11-18T23:16:04+00:00 por `scripts/phpstan-debt-report.php`.
 
 | Item | Valor |
 | --- | --- |
-| Commit | `01f1a121d17bf8a915292c21ac32962417e87064` |
+| Commit | `3375b5fc3` |
 | PHP | 8.4.27 |
 | PHPStan | PHPStan - PHP Static Analysis Tool 2.3.5 |
 | Nível | 10 |
@@ -15,19 +15,19 @@ Gerado em 2026-11-18T22:24:01+00:00 por `scripts/phpstan-debt-report.php`.
 
 | Medida | Ocorrências |
 | --- | ---: |
-| Total bruto no nível 10 | 17745 |
-| Dívida congelada no baseline | 17745 |
+| Total bruto no nível 10 | 17706 |
+| Dívida congelada no baseline | 17706 |
 | Erros não suprimidos | 0 |
-| Entradas no baseline | 10474 |
-| Produção | 10578 |
-| Testes | 7167 |
+| Entradas no baseline | 10448 |
+| Produção | 10573 |
+| Testes | 7133 |
 
 ## Criticidade funcional
 
 | Criticidade | Ocorrências |
 | --- | ---: |
 | alta | 212 |
-| media | 15692 |
+| media | 15653 |
 | baixa | 1841 |
 
 ## Dívida por módulo (prioridade de redução)
@@ -40,7 +40,7 @@ Gerado em 2026-11-18T22:24:01+00:00 por `scripts/phpstan-debt-report.php`.
 | aculta_wiki | 1368 |
 | aculta_portal | 1152 |
 | aculta_forum | 1079 |
-| aculta_lms | 1070 |
+| aculta_lms | 1031 |
 | aculta_lms_h5p | 928 |
 | aculta_index | 915 |
 | aculta_commerce | 623 |
@@ -69,15 +69,15 @@ Gerado em 2026-11-18T22:24:01+00:00 por `scripts/phpstan-debt-report.php`.
 
 | Identificador | Ocorrências |
 | --- | ---: |
-| `offsetAccess.nonOffsetAccessible` | 4650 |
-| `argument.type` | 3376 |
-| `method.nonObject` | 2086 |
+| `offsetAccess.nonOffsetAccessible` | 4625 |
+| `argument.type` | 3370 |
+| `method.nonObject` | 2082 |
 | `missingType.iterableValue` | 1725 |
 | `cast.string` | 1605 |
-| `cast.int` | 1052 |
+| `cast.int` | 1051 |
 | `method.notFound` | 709 |
 | `property.nonObject` | 487 |
-| `return.type` | 292 |
+| `return.type` | 289 |
 | `foreach.nonIterable` | 278 |
 | `binaryOp.invalid` | 218 |
 | `offsetAccess.invalidOffset` | 127 |
