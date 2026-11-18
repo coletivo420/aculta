@@ -48,6 +48,7 @@ final class UiIconsPackTest extends UnitTestCase {
     self::assertGreaterThanOrEqual(1000, count($duotoneFiles));
 
     $brocolisFiles = glob($themeDir . '/assets/icons/aculta-brocolis/*.svg');
+    self::assertIsArray($brocolisFiles);
     self::assertCount(6, $brocolisFiles, 'ACULTA Brócolis deve ter seis variantes.');
     foreach (['aculta-brocolis.svg', 'aculta-brocolis-thin.svg', 'aculta-brocolis-light.svg', 'aculta-brocolis-bold.svg', 'aculta-brocolis-fill.svg', 'aculta-brocolis-duotone.svg'] as $filename) {
       $svg = (string) file_get_contents($themeDir . '/assets/icons/aculta-brocolis/' . $filename);

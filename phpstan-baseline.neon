@@ -68744,12 +68744,6 @@ parameters:
 			count: 1
 			path: web/themes/custom/aculta420_v2/tests/src/Unit/UiIconsPackTest.php
 
-		-
-			rawMessage: 'Parameter #2 $haystack of static method PHPUnit\Framework\Assert::assertCount() expects Countable|iterable, list<string>|false given.'
-			identifier: argument.type
-			count: 1
-			path: web/themes/custom/aculta420_v2/tests/src/Unit/UiIconsPackTest.php
-
 
 		-
 			rawMessage: '''
