@@ -307,18 +307,17 @@ Reexecução da classe focal: **3 testes, 156 asserções, PASS**, com 7
 deprecações upstream/Core. PHP lint, descoberta PHPUnit (252 Kernel/693 Unit)
 e gate Drupal 12 do Portal (1.236 checks) passaram. PHPStan nível 10 canônico
 retornou exit 0; guards `check` e `diff --changed-files --analysis` passaram.
-A suíte Unit global não iniciou: PHPUnit não encontrou
-`Drupal\Tests\feeds\Unit\Feeds\Target\FieldTargetTestBase`,
-requerida por teste contrib de `fraction`; portanto esse gate é FAIL de
-bootstrap do conjunto, não PASS. A falha local focalizada H5P foi corrigida,
-mas o CI remoto e P01 permanecem **FAIL** até todos os shards serem
+A primeira tentativa da suíte Unit usou por engano a configuração Core, que
+varre um teste contrib opcional de `fraction` sem instalar Feeds; essa
+execução não corresponde ao gate do projeto. Reexecutei o gate oficial com
+`vendor/bin/phpunit --testsuite unit`: **3.329 testes, 19.203 asserções, PASS**,
+com 4 deprecações PHPUnit. Para satisfazer o gate de dívida por módulo no
+incremento PHP, também renomeei o parâmetro legado não usado para `$_phase` e
+removi somente sua ocorrência do `phpstan-baseline.neon`: dívida de
+`aculta_lms_h5p` reduzida em uma entrada. PHPStan canônico e guards `check` e
+`diff` foram reexecutados após essa remoção e passaram. A falha local H5P foi
+corrigida, mas CI remoto e P01 permanecem **FAIL** até todos os shards serem
 executados com sucesso.
-
-Para satisfazer o gate de dívida por módulo no incremento de PHP, também
-renomeei o parâmetro legado não usado para `$_phase` e removi somente a
-ocorrência correspondente do `phpstan-baseline.neon`: dívida de
-`aculta_lms_h5p` reduzida em uma entrada. PHPStan canônico e os guards
-`check`/`diff` foram reexecutados após essa remoção e passaram.
 
 ### Hook de formulário Activity
 
