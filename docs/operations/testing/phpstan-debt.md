@@ -1,10 +1,10 @@
 # Dívida PHPStan — ACULTA
 
-Gerado em 2026-11-18T20:02:53+00:00 por `scripts/phpstan-debt-report.php`.
+Gerado em 2026-11-18T20:37:10+00:00 por `scripts/phpstan-debt-report.php`.
 
 | Item | Valor |
 | --- | --- |
-| Commit | `4815a7f0fbd2bb3eb5bebbb5e7bd13cb2035f366` |
+| Commit | `bd4c3f85cc1be78824f83f12598d4012d920d0b1` |
 | PHP | 8.4.27 |
 | PHPStan | PHPStan - PHP Static Analysis Tool 2.3.5 |
 | Nível | 10 |
@@ -15,19 +15,19 @@ Gerado em 2026-11-18T20:02:53+00:00 por `scripts/phpstan-debt-report.php`.
 
 | Medida | Ocorrências |
 | --- | ---: |
-| Total bruto no nível 10 | 18000 |
-| Dívida congelada no baseline | 18000 |
+| Total bruto no nível 10 | 17809 |
+| Dívida congelada no baseline | 17809 |
 | Erros não suprimidos | 0 |
-| Entradas no baseline | 10648 |
-| Produção | 10579 |
-| Testes | 7421 |
+| Entradas no baseline | 10526 |
+| Produção | 10578 |
+| Testes | 7231 |
 
 ## Criticidade funcional
 
 | Criticidade | Ocorrências |
 | --- | ---: |
-| alta | 214 |
-| media | 15945 |
+| alta | 213 |
+| media | 15755 |
 | baixa | 1841 |
 
 ## Dívida por módulo (prioridade de redução)
@@ -39,11 +39,11 @@ Gerado em 2026-11-18T20:02:53+00:00 por `scripts/phpstan-debt-report.php`.
 | aculta_messenger | 1737 |
 | aculta_wiki | 1368 |
 | aculta_portal | 1152 |
-| aculta_lms | 1147 |
+| aculta_lms | 1125 |
 | aculta_forum | 1079 |
-| aculta_index | 1022 |
 | aculta_lms_h5p | 928 |
-| aculta_commerce | 663 |
+| aculta_index | 915 |
+| aculta_commerce | 623 |
 | aculta_pagamentos_mercadopago | 594 |
 | aculta_studio | 592 |
 | aculta_mailer | 580 |
@@ -54,8 +54,8 @@ Gerado em 2026-11-18T20:02:53+00:00 por `scripts/phpstan-debt-report.php`.
 | aculta_document_viewer | 295 |
 | aculta_calendar | 249 |
 | aculta_mail_confirmer | 241 |
-| aculta_cgu | 238 |
 | aculta_image | 229 |
+| aculta_cgu | 216 |
 | aculta_file_uploader | 153 |
 | aculta_magazine | 149 |
 | aculta_game | 142 |
@@ -69,25 +69,25 @@ Gerado em 2026-11-18T20:02:53+00:00 por `scripts/phpstan-debt-report.php`.
 
 | Identificador | Ocorrências |
 | --- | ---: |
-| `offsetAccess.nonOffsetAccessible` | 4763 |
-| `argument.type` | 3436 |
-| `method.nonObject` | 2126 |
+| `offsetAccess.nonOffsetAccessible` | 4686 |
+| `argument.type` | 3396 |
+| `method.nonObject` | 2091 |
 | `missingType.iterableValue` | 1725 |
-| `cast.string` | 1619 |
-| `cast.int` | 1063 |
-| `method.notFound` | 712 |
-| `property.nonObject` | 488 |
+| `cast.string` | 1606 |
+| `cast.int` | 1054 |
+| `method.notFound` | 709 |
+| `property.nonObject` | 487 |
 | `return.type` | 292 |
-| `foreach.nonIterable` | 280 |
-| `binaryOp.invalid` | 221 |
+| `foreach.nonIterable` | 278 |
+| `binaryOp.invalid` | 218 |
 | `offsetAccess.invalidOffset` | 127 |
-| `property.notFound` | 105 |
+| `property.notFound` | 104 |
 | `encapsedStringPart.nonString` | 88 |
 | `missingType.return` | 82 |
-| `staticMethod.alreadyNarrowedType` | 71 |
-| `offsetAccess.notFound` | 70 |
+| `staticMethod.alreadyNarrowedType` | 70 |
+| `offsetAccess.notFound` | 68 |
 | `nullCoalesce.offset` | 67 |
-| `method.alreadyNarrowedType` | 62 |
+| `method.alreadyNarrowedType` | 61 |
 | `missingType.generics` | 45 |
 
 ## Arquivos com mais dívida

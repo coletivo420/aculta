@@ -52,6 +52,18 @@ use Symfony\Component\DependencyInjection\Reference;
 trait AcultaLmsDependencyHarnessTrait {
 
   /**
+   * Adds View plugins required by the real LMS default configuration.
+   */
+  public static function setUpBeforeClass(): void {
+    parent::setUpBeforeClass();
+    foreach (['ui_patterns', 'ui_patterns_views'] as $module) {
+      if (!in_array($module, static::$modules, TRUE)) {
+        static::$modules[] = $module;
+      }
+    }
+  }
+
+  /**
    * Installs ACULTA course/class Group types without any LMS contrib modules.
    *
    * The schemas are installed here because the membership role field is a

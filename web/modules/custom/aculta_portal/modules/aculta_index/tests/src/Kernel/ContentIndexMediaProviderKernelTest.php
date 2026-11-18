@@ -6,12 +6,14 @@ namespace Drupal\Tests\aculta_index\Kernel;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
+use Drupal\Core\Database\StatementInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\aculta_index\Queue\ContentIndexWorkManager;
 use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\domain\DomainNegotiatorInterface;
 use Drupal\file\Entity\File;
+use Drupal\file\FileInterface;
 use Drupal\media\Entity\Media;
 use Drupal\media\Entity\MediaType;
 use Drupal\Tests\media\Traits\MediaTypeCreationTrait;
@@ -83,14 +85,27 @@ final class ContentIndexMediaProviderKernelTest extends KernelTestBase {
       ],
     ];
     foreach ($ownerServices as $ownerService) {
-      $serviceMap = Yaml::parseFile(
+      $serviceFileData = Yaml::parseFile(
         dirname(__DIR__, 5) . $ownerService['file'],
         Yaml::PARSE_CUSTOM_TAGS,
-      )['services'];
-      $service = $serviceMap[$ownerService['id']];
-      $definition = (new Definition($service['class'], $service['arguments']))->setPublic(TRUE);
-      foreach ($service['tags'] as $tag) {
-        $definition->addTag($tag['name'], array_diff_key($tag, ['name' => TRUE]));
+      );
+      self::assertIsArray($serviceFileData);
+      $serviceMap = $serviceFileData['services'] ?? NULL;
+      self::assertIsArray($serviceMap);
+      $service = $serviceMap[$ownerService['id']] ?? NULL;
+      self::assertIsArray($service);
+      $class = $service['class'] ?? NULL;
+      self::assertIsString($class);
+      $arguments = $service['arguments'] ?? NULL;
+      self::assertIsArray($arguments);
+      $definition = (new Definition($class, $arguments))->setPublic(TRUE);
+      $tags = $service['tags'] ?? NULL;
+      self::assertIsArray($tags);
+      foreach ($tags as $tag) {
+        self::assertIsArray($tag);
+        $tagName = $tag['name'] ?? NULL;
+        self::assertIsString($tagName);
+        $definition->addTag($tagName, array_diff_key($tag, ['name' => TRUE]));
       }
       $container->setDefinition($ownerService['id'], $definition);
     }
@@ -151,14 +166,7 @@ final class ContentIndexMediaProviderKernelTest extends KernelTestBase {
 
     $media->delete();
     $this->processImageWork();
-    self::assertSame(0, (int) $this->container->get('database')->select('aculta_index_entry', 'entry')
-      ->condition('generation_id', $generationId)
-      ->condition('provider_id', 'image')
-      ->condition('entity_type', 'media')
-      ->condition('entity_id', (string) $media->id())
-      ->countQuery()
-      ->execute()
-      ->fetchField());
+    self::assertSame(0, $this->indexEntryCount($generationId, 'image', (string) $media->id()));
   }
 
   /**
@@ -180,14 +188,7 @@ final class ContentIndexMediaProviderKernelTest extends KernelTestBase {
 
     $media->delete();
     $this->processProviderWork('document');
-    self::assertSame(0, (int) $this->container->get('database')->select('aculta_index_entry', 'entry')
-      ->condition('generation_id', $generationId)
-      ->condition('provider_id', 'document')
-      ->condition('entity_type', 'media')
-      ->condition('entity_id', (string) $media->id())
-      ->countQuery()
-      ->execute()
-      ->fetchField());
+    self::assertSame(0, $this->indexEntryCount($generationId, 'document', (string) $media->id()));
   }
 
   /**
@@ -209,13 +210,14 @@ final class ContentIndexMediaProviderKernelTest extends KernelTestBase {
 
     $generationId = $this->buildAndActivateGeneration();
     self::assertSame('Remote lecture', $this->entryLabel($generationId, (string) $media->id(), 'remote_video'));
-    $projectionRow = $this->container->get('database')->select('aculta_index_entry', 'entry')
+    $projectionStatement = $this->container->get('database')->select('aculta_index_entry', 'entry')
       ->fields('entry')
       ->condition('generation_id', $generationId)
       ->condition('provider_id', 'remote_video')
       ->condition('entity_id', (string) $media->id())
-      ->execute()
-      ->fetchAssoc();
+      ->execute();
+    self::assertInstanceOf(StatementInterface::class, $projectionStatement);
+    $projectionRow = $projectionStatement->fetchAssoc();
     self::assertIsArray($projectionRow);
     self::assertStringNotContainsString($videoUrl, serialize($projectionRow));
 
@@ -226,14 +228,7 @@ final class ContentIndexMediaProviderKernelTest extends KernelTestBase {
 
     $media->delete();
     $this->processProviderWork('remote_video');
-    self::assertSame(0, (int) $this->container->get('database')->select('aculta_index_entry', 'entry')
-      ->condition('generation_id', $generationId)
-      ->condition('provider_id', 'remote_video')
-      ->condition('entity_type', 'media')
-      ->condition('entity_id', (string) $media->id())
-      ->countQuery()
-      ->execute()
-      ->fetchField());
+    self::assertSame(0, $this->indexEntryCount($generationId, 'remote_video', (string) $media->id()));
   }
 
   /**
@@ -243,8 +238,15 @@ final class ContentIndexMediaProviderKernelTest extends KernelTestBase {
     $media = $this->createDocumentMedia('Course reading', 'course_document');
     self::assertFalse($media->isPublished());
     $mediaType = MediaType::load('course_document');
-    $sourceField = $mediaType->getSource()->getSourceFieldDefinition($mediaType)->getName();
-    self::assertSame('private', parse_url($media->get($sourceField)->entity->getFileUri(), PHP_URL_SCHEME));
+    self::assertInstanceOf(MediaType::class, $mediaType);
+    $sourceFieldDefinition = $mediaType->getSource()->getSourceFieldDefinition($mediaType);
+    self::assertNotNull($sourceFieldDefinition);
+    $sourceField = $sourceFieldDefinition->getName();
+    $sourceFile = $media->get($sourceField)->entity;
+    self::assertInstanceOf(FileInterface::class, $sourceFile);
+    $sourceUri = $sourceFile->getFileUri();
+    self::assertIsString($sourceUri);
+    self::assertSame('private', parse_url($sourceUri, PHP_URL_SCHEME));
 
     $registry = $this->container->get('aculta_index.provider_registry');
     self::assertSame('course_document', $registry->findProviderIdForBundle('media', 'course_document'));
@@ -260,14 +262,7 @@ final class ContentIndexMediaProviderKernelTest extends KernelTestBase {
 
     $media->delete();
     $this->processProviderWork('course_document');
-    self::assertSame(0, (int) $this->container->get('database')->select('aculta_index_entry', 'entry')
-      ->condition('generation_id', $generationId)
-      ->condition('provider_id', 'course_document')
-      ->condition('entity_type', 'media')
-      ->condition('entity_id', (string) $media->id())
-      ->countQuery()
-      ->execute()
-      ->fetchField());
+    self::assertSame(0, $this->indexEntryCount($generationId, 'course_document', (string) $media->id()));
   }
 
   /**
@@ -277,8 +272,15 @@ final class ContentIndexMediaProviderKernelTest extends KernelTestBase {
     $media = $this->createDocumentMedia('Forum attachment', 'forum_attachment');
     self::assertFalse($media->isPublished());
     $mediaType = MediaType::load('forum_attachment');
-    $sourceField = $mediaType->getSource()->getSourceFieldDefinition($mediaType)->getName();
-    self::assertSame('private', parse_url($media->get($sourceField)->entity->getFileUri(), PHP_URL_SCHEME));
+    self::assertInstanceOf(MediaType::class, $mediaType);
+    $sourceFieldDefinition = $mediaType->getSource()->getSourceFieldDefinition($mediaType);
+    self::assertNotNull($sourceFieldDefinition);
+    $sourceField = $sourceFieldDefinition->getName();
+    $sourceFile = $media->get($sourceField)->entity;
+    self::assertInstanceOf(FileInterface::class, $sourceFile);
+    $sourceUri = $sourceFile->getFileUri();
+    self::assertIsString($sourceUri);
+    self::assertSame('private', parse_url($sourceUri, PHP_URL_SCHEME));
 
     $registry = $this->container->get('aculta_index.provider_registry');
     self::assertSame('forum_attachment', $registry->findProviderIdForBundle('media', 'forum_attachment'));
@@ -294,14 +296,7 @@ final class ContentIndexMediaProviderKernelTest extends KernelTestBase {
 
     $media->delete();
     $this->processProviderWork('forum_attachment');
-    self::assertSame(0, (int) $this->container->get('database')->select('aculta_index_entry', 'entry')
-      ->condition('generation_id', $generationId)
-      ->condition('provider_id', 'forum_attachment')
-      ->condition('entity_type', 'media')
-      ->condition('entity_id', (string) $media->id())
-      ->countQuery()
-      ->execute()
-      ->fetchField());
+    self::assertSame(0, $this->indexEntryCount($generationId, 'forum_attachment', (string) $media->id()));
   }
 
   /**
@@ -317,7 +312,10 @@ final class ContentIndexMediaProviderKernelTest extends KernelTestBase {
     $file->save();
 
     $mediaType = MediaType::load('image');
-    $sourceField = $mediaType->getSource()->getSourceFieldDefinition($mediaType)->getName();
+    self::assertInstanceOf(MediaType::class, $mediaType);
+    $sourceFieldDefinition = $mediaType->getSource()->getSourceFieldDefinition($mediaType);
+    self::assertNotNull($sourceFieldDefinition);
+    $sourceField = $sourceFieldDefinition->getName();
     $media = Media::create([
       'bundle' => 'image',
       'name' => $name,
@@ -342,7 +340,10 @@ final class ContentIndexMediaProviderKernelTest extends KernelTestBase {
     $file->save();
 
     $mediaType = MediaType::load($bundle);
-    $sourceField = $mediaType->getSource()->getSourceFieldDefinition($mediaType)->getName();
+    self::assertInstanceOf(MediaType::class, $mediaType);
+    $sourceFieldDefinition = $mediaType->getSource()->getSourceFieldDefinition($mediaType);
+    self::assertNotNull($sourceFieldDefinition);
+    $sourceField = $sourceFieldDefinition->getName();
     $media = Media::create([
       'bundle' => $bundle,
       'name' => $name,
@@ -364,11 +365,7 @@ final class ContentIndexMediaProviderKernelTest extends KernelTestBase {
       $complete = $rebuilder->processNextBatch($generationId, 50)['complete'];
     }
     self::assertTrue($complete, 'Media provider backfill should complete.');
-    $this->processProviderWork('image');
-    $this->processProviderWork('document');
-    $this->processProviderWork('course_document');
-    $this->processProviderWork('forum_attachment');
-    $this->processProviderWork('remote_video');
+    $this->processProviderWork();
     $rebuilder->validate($generationId);
     $this->container->get('aculta_index.generation_manager')->activate($generationId);
     return $generationId;
@@ -384,39 +381,63 @@ final class ContentIndexMediaProviderKernelTest extends KernelTestBase {
   /**
    * Processes queued work belonging to one Media provider.
    */
-  private function processProviderWork(string $providerId): void {
+  private function processProviderWork(?string $providerId = NULL): void {
     $database = $this->container->get('database');
     $worker = $this->container->get('plugin.manager.queue_worker')
       ->createInstance(ContentIndexWorkManager::QUEUE_ID);
     for ($pass = 0; $pass < 20; $pass++) {
-      $ids = $database->select('aculta_index_work', 'work')
+      $query = $database->select('aculta_index_work', 'work')
         ->fields('work', ['work_id'])
-        ->condition('provider_id', $providerId)
-        ->condition('status', 'queued')
-        ->execute()
-        ->fetchCol();
+        ->condition('status', 'queued');
+      if ($providerId !== NULL) {
+        $query->condition('provider_id', $providerId);
+      }
+      $statement = $query->execute();
+      self::assertInstanceOf(StatementInterface::class, $statement);
+      $ids = $statement->fetchCol();
       if ($ids === []) {
         return;
       }
       foreach ($ids as $id) {
+        self::assertIsNumeric($id);
         $worker->processItem(['work_id' => (int) $id]);
       }
     }
-    self::fail(sprintf('Index work for provider %s did not drain after 20 passes.', $providerId));
+    self::fail(sprintf('Index work%s did not drain after 20 passes.', $providerId !== NULL ? ' for provider ' . $providerId : ''));
   }
 
   /**
    * Returns one image projection's label.
    */
   private function entryLabel(string $generationId, string $entityId, string $providerId = 'image'): string {
-    return (string) $this->container->get('database')->select('aculta_index_entry', 'entry')
+    $statement = $this->container->get('database')->select('aculta_index_entry', 'entry')
       ->fields('entry', ['label'])
       ->condition('generation_id', $generationId)
       ->condition('provider_id', $providerId)
       ->condition('entity_type', 'media')
       ->condition('entity_id', $entityId)
-      ->execute()
-      ->fetchField();
+      ->execute();
+    self::assertInstanceOf(StatementInterface::class, $statement);
+    $label = $statement->fetchField();
+    self::assertIsString($label);
+    return $label;
+  }
+
+  /**
+   * Counts indexed entries for one source identity.
+   */
+  private function indexEntryCount(string $generationId, string $providerId, string $entityId): int {
+    $statement = $this->container->get('database')->select('aculta_index_entry', 'entry')
+      ->condition('generation_id', $generationId)
+      ->condition('provider_id', $providerId)
+      ->condition('entity_type', 'media')
+      ->condition('entity_id', $entityId)
+      ->countQuery()
+      ->execute();
+    self::assertInstanceOf(StatementInterface::class, $statement);
+    $count = $statement->fetchField();
+    self::assertIsNumeric($count);
+    return (int) $count;
   }
 
 }

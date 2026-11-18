@@ -7,6 +7,7 @@ namespace Drupal\Tests\aculta_cgu\Kernel;
 use Drupal\domain\DomainNegotiator;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\aculta_user\Associado\ActiveAssociateInterface;
+use Drupal\aculta_user\Avatar\AvatarResolver;
 use Drupal\aculta_user\Identity\AuthorCardBuilder;
 use Drupal\aculta_user\ParticipationRules;
 use Drupal\aculta_image\FileRemover;
@@ -19,6 +20,7 @@ use Drupal\aculta_cgu\Entity\CguRecipientConfig;
 use Drupal\aculta_cgu\ModerationScope;
 use Drupal\aculta_cgu\Service\ModerationNotifier;
 use Drupal\aculta_cgu\Service\CguReportQueue;
+use Drupal\aculta_cgu\Entity\CguReport;
 use Drupal\aculta_user\Controller\ReportQueueController;
 use Drupal\flag\Entity\Flag;
 use Drupal\flag\Entity\Flagging;
@@ -30,6 +32,7 @@ use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Composer\Autoload\ClassLoader;
 
 /**
  * Valida a integração operacional entre Fórum e moderação UGC (ARQ-06F).
@@ -102,6 +105,7 @@ final class ForumCguIntegrationKernelTest extends KernelTestBase {
     parent::register($container);
     $root = dirname(DRUPAL_ROOT);
     $loader = require $root . '/vendor/autoload.php';
+    self::assertInstanceOf(ClassLoader::class, $loader);
     $loader->addPsr4('Drupal\\aculta_cgu\\', dirname(__DIR__, 3) . '/src', TRUE);
     $loader->addPsr4('Drupal\\aculta_portal\\', $root . '/web/modules/custom/aculta_portal/src', TRUE);
     $loader->addPsr4('Drupal\\aculta_forum\\', $root . '/web/modules/custom/aculta_portal/modules/aculta_forum/src', TRUE);
@@ -129,6 +133,11 @@ final class ForumCguIntegrationKernelTest extends KernelTestBase {
     $container->register('aculta_user.author_card_builder', AuthorCardBuilder::class)
       ->setFactory([self::class, 'createDummyAuthorCardBuilder']);
 
+    // ForumThemeHooks is compiled in this partial Kernel but the public-avatar
+    // services are outside its installed dependency graph.
+    $container->register('aculta_user.avatar_resolver', AvatarResolver::class)
+      ->setFactory([self::class, 'createDummyAvatarResolver']);
+
     $container->register('aculta_user.active_associate', ForumCguTestActiveAssociate::class);
 
     foreach ([
@@ -150,6 +159,14 @@ final class ForumCguIntegrationKernelTest extends KernelTestBase {
    */
   public static function createDummyAuthorCardBuilder(): AuthorCardBuilder {
     $ref = new \ReflectionClass(AuthorCardBuilder::class);
+    return $ref->newInstanceWithoutConstructor();
+  }
+
+  /**
+   * Cria AvatarResolver sem dependências, não exercitadas neste teste.
+   */
+  public static function createDummyAvatarResolver(): AvatarResolver {
+    $ref = new \ReflectionClass(AvatarResolver::class);
     return $ref->newInstanceWithoutConstructor();
   }
 
@@ -281,11 +298,15 @@ final class ForumCguIntegrationKernelTest extends KernelTestBase {
     ]);
     $this->assertCount(1, $reports);
 
-    /** @var \Drupal\aculta_cgu\Entity\CguReport $report */
     $report = reset($reports);
+    self::assertInstanceOf(CguReport::class, $report);
+    $topicId = $topic->id();
+    self::assertNotNull($topicId);
     $this->assertSame('forum', $report->get('purpose')->value);
     $this->assertSame('node', $report->get('target_type')->value);
-    $this->assertSame((int) $topic->id(), (int) $report->get('target_id')->value);
+    $reportTopicId = $report->get('target_id')->value;
+    self::assertIsNumeric($reportTopicId);
+    $this->assertSame((int) $topicId, (int) $reportTopicId);
     $this->assertSame('pendente', $report->get('status')->value);
 
     // Verifies the moderation notice preserves reporter privacy.
@@ -395,10 +416,18 @@ final class ForumCguIntegrationKernelTest extends KernelTestBase {
     $build = $controller->view($request);
 
     $this->assertIsArray($build);
-    $this->assertSame('table', $build['table']['#type']);
-    $this->assertCount(1, $build['table']['#rows']);
+    $table = $build['table'] ?? NULL;
+    self::assertIsArray($table);
+    $this->assertSame('table', $table['#type'] ?? NULL);
+    $rows = $table['#rows'] ?? NULL;
+    self::assertIsArray($rows);
+    $this->assertCount(1, $rows);
     $this->assertArrayHasKey('#cache', $build);
-    $this->assertContains('aculta_cgu_report_list', $build['table']['#rows'] ? $build['#cache']['tags'] : []);
+    $cache = $build['#cache'];
+    self::assertIsArray($cache);
+    $tags = $cache['tags'] ?? NULL;
+    self::assertIsArray($tags);
+    $this->assertContains('aculta_cgu_report_list', $tags);
 
     // Usuário comum sem permissão recebe 403.
     $this->container->get('current_user')->setAccount($this->outsider);
@@ -407,7 +436,7 @@ final class ForumCguIntegrationKernelTest extends KernelTestBase {
       $this->fail('Usuário comum acessou painel de moderação.');
     }
     catch (AccessDeniedHttpException) {
-      $this->assertTrue(TRUE);
+      // The expected denial is the assertion.
     }
   }
 
@@ -506,15 +535,15 @@ final class ForumCguIntegrationKernelTest extends KernelTestBase {
     $reports = $reportStorage->loadByProperties(['legacy_flag_id' => (int) $flagging->id()]);
     $this->assertCount(1, $reports);
 
-    /** @var \Drupal\aculta_cgu\Entity\CguReport $report */
     $report = reset($reports);
+    self::assertInstanceOf(CguReport::class, $report);
     $report->set('status', 'em_analise')->save();
 
     // Exclui a flag: a denúncia em análise deve permanecer intacta.
     $flagging->delete();
 
     $reloaded = $reportStorage->load((int) $report->id());
-    $this->assertNotNull($reloaded);
+    self::assertInstanceOf(CguReport::class, $reloaded);
     $this->assertSame('em_analise', $reloaded->get('status')->value);
   }
 
@@ -545,7 +574,19 @@ final class ForumCguIntegrationKernelTest extends KernelTestBase {
     $build = $controller->view($request);
 
     $this->assertIsArray($build);
-    $cellMarkup = (string) ($build['table']['#rows'][0][0]['data']['#plain_text'] ?? '');
+    $table = $build['table'] ?? NULL;
+    self::assertIsArray($table);
+    $rows = $table['#rows'] ?? NULL;
+    self::assertIsArray($rows);
+    $firstRow = $rows[0] ?? NULL;
+    self::assertIsArray($firstRow);
+    $firstCell = $firstRow[0] ?? NULL;
+    self::assertIsArray($firstCell);
+    $data = $firstCell['data'] ?? NULL;
+    self::assertIsArray($data);
+    $plainText = $data['#plain_text'] ?? NULL;
+    self::assertIsString($plainText);
+    $cellMarkup = $plainText;
     // O moderador sem view access do node não vê o título nem recebe link.
     $this->assertStringContainsString('Conteúdo restrito', $cellMarkup);
     $this->assertStringNotContainsString('Segredo Privado Não Publicado', $cellMarkup);

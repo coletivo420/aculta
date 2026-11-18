@@ -13,11 +13,11 @@ use Drupal\aculta_events\Controller\EventPageController;
 use Drupal\aculta_lms\Entity\ActivityEntity;
 use Drupal\aculta_lms\Entity\LessonEntity;
 use Drupal\aculta_lms\Hook\EventAccessHooks;
+use Drupal\Core\Block\BlockPluginInterface;
 use Drupal\group\Entity\Group;
 use Drupal\group\Entity\GroupRole;
 use Drupal\group\PermissionScopeInterface;
 use Drupal\simple_sitemap\Entity\SimpleSitemapInterface;
-use Drupal\Tests\aculta_lms\Kernel\AcultaLmsDependencyHarnessTrait;
 use Drupal\Tests\user\Traits\UserCreationTrait;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\Component\Serialization\Yaml;
@@ -80,16 +80,23 @@ final class AgendaEntriesProviderKernelTest extends KernelTestBase {
       'core.entity_view_display.group_relationship.lms_class-lms_class_activity_due.default',
     ] as $config_id) {
       $path = DRUPAL_ROOT . '/../config/sync/' . $config_id . '.yml';
-      $data = Yaml::decode(file_get_contents($path));
+      $raw = file_get_contents($path);
+      self::assertIsString($raw);
+      $data = Yaml::decode($raw);
+      self::assertIsArray($data);
       if (str_starts_with($config_id, 'group.type.')) {
         $storage = $this->container->get('entity_type.manager')->getStorage('group_type');
-        if (!$storage->load($data['id'])) {
+        $id = $data['id'] ?? NULL;
+        self::assertIsString($id);
+        if (!$storage->load($id)) {
           $storage->create($data)->save();
         }
       }
       elseif (str_starts_with($config_id, 'group.relationship_type.')) {
         $storage = $this->container->get('entity_type.manager')->getStorage('group_relationship_type');
-        if (!$storage->load($data['id'])) {
+        $id = $data['id'] ?? NULL;
+        self::assertIsString($id);
+        if (!$storage->load($id)) {
           $storage->create($data)->save();
         }
       }
@@ -256,8 +263,12 @@ final class AgendaEntriesProviderKernelTest extends KernelTestBase {
 
     $routeAccess = $this->container->get('aculta_lms_agenda.event_route_access');
     $this->setCurrentUser($aluno);
-    $this->assertTrue($routeAccess->access((string) $evento->get('field_slug')->value)->isAllowed());
-    $this->assertFalse($routeAccess->access((string) $eventoDaOutraTurma->get('field_slug')->value)->isAllowed());
+    $eventSlug = $evento->get('field_slug')->value;
+    self::assertIsString($eventSlug);
+    $otherEventSlug = $eventoDaOutraTurma->get('field_slug')->value;
+    self::assertIsString($otherEventSlug);
+    $this->assertTrue($routeAccess->access($eventSlug)->isAllowed());
+    $this->assertFalse($routeAccess->access($otherEventSlug)->isAllowed());
     $this->assertFalse($routeAccess->access('evento-inexistente')->isAllowed());
     $routeProvider = $this->container->get('router.route_provider');
     $this->assertSame(
@@ -275,13 +286,24 @@ final class AgendaEntriesProviderKernelTest extends KernelTestBase {
     $draftPreview->save();
     $editor = $this->createUser(['view aculta event drafts']);
     $this->setCurrentUser($editor);
-    $this->assertTrue($routeAccess->access((string) $draftPreview->get('field_slug')->value)->isAllowed());
+    $draftSlug = $draftPreview->get('field_slug')->value;
+    self::assertIsString($draftSlug);
+    $this->assertTrue($routeAccess->access($draftSlug)->isAllowed());
 
     $this->setCurrentUser($aluno);
-    $this->assertSame('Roda de conversa', EventPageController::create($this->container)->page((string) $evento->get('field_slug')->value)['#titulo']);
+    $page = EventPageController::create($this->container)->page($eventSlug);
+    $slots = $page['#slots'] ?? NULL;
+    self::assertIsArray($slots);
+    $titleSlot = $slots['title'] ?? NULL;
+    self::assertIsArray($titleSlot);
+    $heading = $titleSlot['heading'] ?? NULL;
+    self::assertIsArray($heading);
+    $headingValue = $heading['#value'] ?? NULL;
+    self::assertIsString($headingValue);
+    $this->assertSame('Roda de conversa', $headingValue);
     $deniedPage = FALSE;
     try {
-      EventPageController::create($this->container)->page((string) $eventoDaOutraTurma->get('field_slug')->value);
+      EventPageController::create($this->container)->page($otherEventSlug);
     }
     catch (NotFoundHttpException) {
       $deniedPage = TRUE;
@@ -304,10 +326,12 @@ final class AgendaEntriesProviderKernelTest extends KernelTestBase {
       'field_status' => 'publicado',
     ]);
     $eventoPublico->save();
+    $publicEventSlug = $eventoPublico->get('field_slug')->value;
+    self::assertIsString($publicEventSlug);
     $linksSitemap = [
-      'turma-a' => ['meta' => ['path' => 'eventos/' . $evento->get('field_slug')->value]],
-      'turma-b' => ['meta' => ['path' => 'eventos/' . $eventoDaOutraTurma->get('field_slug')->value]],
-      'publico' => ['meta' => ['path' => 'eventos/' . $eventoPublico->get('field_slug')->value]],
+      'turma-a' => ['meta' => ['path' => 'eventos/' . $eventSlug]],
+      'turma-b' => ['meta' => ['path' => 'eventos/' . $otherEventSlug]],
+      'publico' => ['meta' => ['path' => 'eventos/' . $publicEventSlug]],
       'agenda' => ['meta' => ['path' => 'calendario']],
     ];
     aculta_lms_simple_sitemap_links_alter(
@@ -319,7 +343,11 @@ final class AgendaEntriesProviderKernelTest extends KernelTestBase {
     $pilha = $this->container->get('request_stack');
     $pilha->push(Request::create('/eventos'));
     $catalogoRenderizado = EventCatalogueController::create($this->container)->page();
-    $this->assertContains('user', $catalogoRenderizado['#cache']['contexts']);
+    $catalogoCache = $catalogoRenderizado['#cache'] ?? NULL;
+    self::assertIsArray($catalogoCache);
+    $catalogoContexts = $catalogoCache['contexts'] ?? NULL;
+    self::assertIsArray($catalogoContexts);
+    $this->assertContains('user', $catalogoContexts);
     $pilha->pop();
 
     $de = new \DateTimeImmutable('2026-11-01 00:00:00', new \DateTimeZone('America/Sao_Paulo'));
@@ -392,6 +420,7 @@ final class AgendaEntriesProviderKernelTest extends KernelTestBase {
     $aluno = $this->createUser();
     $turma->addMember($aluno);
     $bloco = $this->container->get('plugin.manager.block')->createInstance('aculta_lms_agenda_proximos', []);
+    self::assertInstanceOf(BlockPluginInterface::class, $bloco);
 
     $this->setCurrentUser($aluno);
     $renderizado = $bloco->build();
@@ -448,9 +477,7 @@ final class AgendaEntriesProviderKernelTest extends KernelTestBase {
     ]);
     $turma->save();
     $fila = $this->container->get('queue')->get('aculta_lms_agenda_evento_turma');
-    if (method_exists($fila, 'createQueue')) {
-      $fila->createQueue();
-    }
+    $fila->createQueue();
 
     $evento = Event::create([
       'title' => 'Encontro da turma',

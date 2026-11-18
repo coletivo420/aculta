@@ -245,31 +245,50 @@ final class RelatedContentBlockKernelTest extends KernelTestBase {
     $this->assertNotEmpty($build);
     $this->assertSame('component', $build['#type']);
     $this->assertSame('aculta420_v2:related-content', $build['#component']);
-    $this->assertSame('item_list', $build['#slots']['content']['#theme']);
-    $this->assertSame('Locais do Festival', (string) $build['#slots']['content']['#title']);
-    $this->assertCount(2, $build['#slots']['content']['#items']);
+    $content = $this->contentSlot($build);
+    $this->assertSame('item_list', $content['#theme'] ?? NULL);
+    $contentTitle = $content['#title'] ?? NULL;
+    self::assertIsString($contentTitle);
+    $this->assertSame('Locais do Festival', $contentTitle);
+    $items = $this->contentItems($build);
+    $this->assertCount(2, $items);
     $this->assertArrayNotHasKey('#attached', $build);
 
     // Check rendered item attributes and sub-elements.
-    $firstItem = $build['#slots']['content']['#items'][0];
+    $firstItem = $items[0] ?? NULL;
+    self::assertIsArray($firstItem);
     $this->assertSame('container', $firstItem['#type']);
-    $this->assertSame('related-content-item', $firstItem['#attributes']['data-portal-ui']);
-    $this->assertSame('aculta_event_location', $firstItem['#attributes']['data-entity-type']);
+    $attributes = $firstItem['#attributes'] ?? NULL;
+    self::assertIsArray($attributes);
+    $this->assertSame('related-content-item', $attributes['data-portal-ui'] ?? NULL);
+    $this->assertSame('aculta_event_location', $attributes['data-entity-type'] ?? NULL);
     $this->assertArrayHasKey('title', $firstItem);
     $this->assertArrayHasKey('badge', $firstItem);
     $this->assertArrayHasKey('summary', $firstItem);
-    $this->assertSame('related-content-link', $firstItem['title']['#attributes']['data-portal-ui']);
-    $this->assertSame('related-content-badge', $firstItem['badge']['#attributes']['data-portal-ui']);
-    $this->assertSame('related-content-summary', $firstItem['summary']['#attributes']['data-portal-ui']);
+    foreach ([
+      'title' => 'related-content-link',
+      'badge' => 'related-content-badge',
+      'summary' => 'related-content-summary',
+    ] as $key => $expected) {
+      $element = $firstItem[$key] ?? NULL;
+      self::assertIsArray($element);
+      $elementAttributes = $element['#attributes'] ?? NULL;
+      self::assertIsArray($elementAttributes);
+      $this->assertSame($expected, $elementAttributes['data-portal-ui'] ?? NULL);
+    }
 
     // Verify cache tags include source event and both location entities.
-    $cacheTags = $build['#cache']['tags'];
+    $cache = $build['#cache'] ?? NULL;
+    self::assertIsArray($cache);
+    $cacheTags = $cache['tags'] ?? NULL;
+    self::assertIsArray($cacheTags);
     $this->assertContains('aculta_event:' . $event->id(), $cacheTags);
     $this->assertContains('aculta_event_location:' . $loc1->id(), $cacheTags);
     $this->assertContains('aculta_event_location:' . $loc2->id(), $cacheTags);
 
     // Verify cache contexts include languages and user permissions.
-    $cacheContexts = $build['#cache']['contexts'];
+    $cacheContexts = $cache['contexts'] ?? NULL;
+    self::assertIsArray($cacheContexts);
     $this->assertContains('languages:language_interface', $cacheContexts);
     $this->assertContains('user.permissions', $cacheContexts);
   }
@@ -320,8 +339,15 @@ final class RelatedContentBlockKernelTest extends KernelTestBase {
 
     $build = $block->build();
     $this->assertNotEmpty($build);
-    $this->assertCount(1, $build['#items']);
-    $this->assertSame('Casa de Cultura', (string) $build['#items'][0]['title']['#title']);
+    $items = $this->contentItems($build);
+    $this->assertCount(1, $items);
+    $firstItem = $items[0] ?? NULL;
+    self::assertIsArray($firstItem);
+    $title = $firstItem['title'] ?? NULL;
+    self::assertIsArray($title);
+    $titleValue = $title['#title'] ?? NULL;
+    self::assertIsString($titleValue);
+    $this->assertSame('Casa de Cultura', $titleValue);
   }
 
   /**
@@ -364,7 +390,7 @@ final class RelatedContentBlockKernelTest extends KernelTestBase {
 
     $build = $block->build();
     $this->assertNotEmpty($build);
-    $this->assertCount(1, $build['#items']);
+    $this->assertCount(1, $this->contentItems($build));
   }
 
   /**
@@ -409,8 +435,15 @@ final class RelatedContentBlockKernelTest extends KernelTestBase {
 
     $build = $block->build();
     $this->assertNotEmpty($build);
-    $this->assertCount(1, $build['#items']);
-    $this->assertSame('Praça Pública', (string) $build['#items'][0]['title']['#title']);
+    $items = $this->contentItems($build);
+    $this->assertCount(1, $items);
+    $firstItem = $items[0] ?? NULL;
+    self::assertIsArray($firstItem);
+    $title = $firstItem['title'] ?? NULL;
+    self::assertIsArray($title);
+    $titleValue = $title['#title'] ?? NULL;
+    self::assertIsString($titleValue);
+    $this->assertSame('Praça Pública', $titleValue);
 
     // Make first location private as well.
     $locPublic->set('field_status', 'privado');
@@ -420,7 +453,7 @@ final class RelatedContentBlockKernelTest extends KernelTestBase {
     // All targets private => block fails closed and returns empty renderable.
     $this->assertTrue(Element::isEmpty($buildAllPrivate));
     $this->assertArrayNotHasKey('#theme', $buildAllPrivate);
-    $this->assertArrayNotHasKey('#items', $buildAllPrivate);
+    $this->assertArrayNotHasKey('#slots', $buildAllPrivate);
   }
 
   /**
@@ -452,9 +485,44 @@ final class RelatedContentBlockKernelTest extends KernelTestBase {
       if (!is_object($item)) {
         break;
       }
-      $worker->processItem($item->data);
+      $data = get_object_vars($item)['data'] ?? NULL;
+      $worker->processItem($data);
       $queue->deleteItem($item);
     }
+  }
+
+  /**
+   * Gets the component's content slot after validating its render-array shape.
+   *
+   * @param mixed $build
+   *   Block render array.
+   *
+   * @return array<mixed>
+   *   Content slot values.
+   */
+  private function contentSlot(mixed $build): array {
+    self::assertIsArray($build);
+    $slots = $build['#slots'] ?? NULL;
+    self::assertIsArray($slots);
+    $content = $slots['content'] ?? NULL;
+    self::assertIsArray($content);
+    return $content;
+  }
+
+  /**
+   * Gets the items from the related-content render slot.
+   *
+   * @param mixed $build
+   *   Block render array.
+   *
+   * @return array<mixed>
+   *   Render items.
+   */
+  private function contentItems(mixed $build): array {
+    $content = $this->contentSlot($build);
+    $items = $content['#items'] ?? NULL;
+    self::assertIsArray($items);
+    return $items;
   }
 
 }

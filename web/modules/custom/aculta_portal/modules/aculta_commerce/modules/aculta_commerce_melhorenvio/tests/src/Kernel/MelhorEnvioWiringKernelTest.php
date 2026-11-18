@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_commerce_melhorenvio\Kernel;
 
-use Drupal\aculta_commerce_melhorenvio\Http\MelhorEnvioClient;
 use Drupal\aculta_commerce_melhorenvio\Http\MelhorEnvioEnvironment;
 use Drupal\aculta_commerce_melhorenvio\Http\MelhorEnvioException;
 use Drupal\aculta_commerce_melhorenvio\Quote\QuotePackage;
+use Psr\Http\Message\RequestInterface;
 use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
@@ -118,7 +118,6 @@ final class MelhorEnvioWiringKernelTest extends KernelTestBase {
     'pathauto',
     'photoswipe',
     'physical',
-    'private_message',
     'profile',
     'reporting',
     'schema_article',
@@ -215,8 +214,11 @@ final class MelhorEnvioWiringKernelTest extends KernelTestBase {
       ->save();
     self::assertStringContainsString('Normalized 2', aculta_commerce_melhorenvio_update_8001());
     $keys = $this->config('aculta_commerce_melhorenvio.settings')->get('keys');
-    self::assertSame('melhorenvio_sandbox_client_id', $keys['sandbox']['client_id']);
-    self::assertSame('melhorenvio_sandbox_client_secret', $keys['sandbox']['client_secret']);
+    self::assertIsArray($keys);
+    $sandboxKeys = $keys['sandbox'] ?? NULL;
+    self::assertIsArray($sandboxKeys);
+    self::assertSame('melhorenvio_sandbox_client_id', $sandboxKeys['client_id'] ?? NULL);
+    self::assertSame('melhorenvio_sandbox_client_secret', $sandboxKeys['client_secret'] ?? NULL);
     self::assertStringContainsString('Normalized 0', aculta_commerce_melhorenvio_update_8001());
   }
 
@@ -261,8 +263,11 @@ final class MelhorEnvioWiringKernelTest extends KernelTestBase {
 
     self::assertStringContainsString('Encrypted 1', aculta_commerce_melhorenvio_update_8002());
     $stored = $state->get('aculta_commerce_melhorenvio.tokens.sandbox');
+    self::assertIsArray($stored);
     self::assertSame('encrypted_v1', $stored['format']);
-    self::assertStringNotContainsString('token-ficticio', (string) $stored['payload']);
+    $payload = $stored['payload'] ?? NULL;
+    self::assertIsString($payload);
+    self::assertStringNotContainsString('token-ficticio', $payload);
     self::assertSame($legacy, $this->container->get('aculta_commerce_melhorenvio.token_store')->load(MelhorEnvioEnvironment::Sandbox));
     self::assertStringContainsString('Encrypted 0', aculta_commerce_melhorenvio_update_8002());
   }
@@ -272,7 +277,6 @@ final class MelhorEnvioWiringKernelTest extends KernelTestBase {
    */
   public function testAuthorizationUrlUsesKeyCredentialsOnSandbox(): void {
     $client = $this->container->get('aculta_commerce_melhorenvio.client');
-    self::assertInstanceOf(MelhorEnvioClient::class, $client);
     $url = $client->authorizationUrl('estado-teste');
     self::assertStringStartsWith('https://sandbox.melhorenvio.com.br/oauth/authorize?', $url);
     self::assertStringContainsString('client_id=cid-sandbox-fixture', $url);
@@ -293,13 +297,18 @@ final class MelhorEnvioWiringKernelTest extends KernelTestBase {
   public function testOauthRoutesAreNeverCached(): void {
     $path = $this->container->get('extension.list.module')->getPath('aculta_commerce_melhorenvio');
     $routes = Yaml::parseFile(DRUPAL_ROOT . '/' . $path . '/aculta_commerce_melhorenvio.routing.yml');
+    self::assertIsArray($routes);
     $oauthRoutes = [
       'aculta_commerce_melhorenvio.status',
       'aculta_commerce_melhorenvio.oauth_authorize',
       'aculta_commerce_melhorenvio.oauth_callback',
     ];
     foreach ($oauthRoutes as $name) {
-      self::assertTrue((bool) ($routes[$name]['options']['no_cache'] ?? FALSE), $name);
+      $route = $routes[$name] ?? NULL;
+      self::assertIsArray($route);
+      $options = $route['options'] ?? NULL;
+      self::assertIsArray($options);
+      self::assertTrue((bool) ($options['no_cache'] ?? FALSE), $name);
     }
   }
 
@@ -401,15 +410,26 @@ final class MelhorEnvioWiringKernelTest extends KernelTestBase {
     $this->container->get('router.builder')->rebuild();
     $build = $this->container->get('aculta_commerce_melhorenvio.status_controller')->page();
     // Renderiza só a tabela de status: o botão é um SDC e o tema V2 não está ativo neste teste.
-    $html = (string) $this->container->get('renderer')->renderInIsolation($build['status']);
+    $status = $build['status'] ?? NULL;
+    self::assertIsArray($status);
+    $html = (string) $this->container->get('renderer')->renderInIsolation($status);
     self::assertStringContainsString('Sandbox (testes)', $html);
     self::assertStringContainsString('Não conectada', $html);
     $connect = $build['connect'];
+    self::assertIsArray($connect);
+    $props = $connect['#props'] ?? NULL;
+    self::assertIsArray($props);
+    $attributes = $connect['#attributes'] ?? NULL;
+    self::assertIsArray($attributes);
+    $cache = $build['#cache'] ?? NULL;
+    self::assertIsArray($cache);
     self::assertSame('aculta_portal_button', $connect['#type']);
-    self::assertSame('primary', $connect['#props']['variant']);
-    self::assertSame('melhorenvio_autorizacao', $connect['#attributes']['data-aculta-popup']);
-    self::assertStringContainsString('/integracoes/melhorenvio/autorizar', $connect['#props']['url']);
-    self::assertSame(0, $build['#cache']['max-age']);
+    self::assertSame('primary', $props['variant'] ?? NULL);
+    self::assertSame('melhorenvio_autorizacao', $attributes['data-aculta-popup'] ?? NULL);
+    $url = $props['url'] ?? NULL;
+    self::assertIsString($url);
+    self::assertStringContainsString('/integracoes/melhorenvio/autorizar', $url);
+    self::assertSame(0, $cache['max-age'] ?? NULL);
   }
 
   /**
@@ -417,7 +437,10 @@ final class MelhorEnvioWiringKernelTest extends KernelTestBase {
    */
   public function testShippingMethodPluginIsDiscovered(): void {
     $definition = $this->container->get('plugin.manager.aculta_shipping_method')->getDefinition('aculta_melhorenvio');
-    self::assertSame(['1', '2', '3', '4', '17'], array_map('strval', array_keys($definition['services'])));
+    self::assertIsArray($definition);
+    $services = $definition['services'] ?? NULL;
+    self::assertIsArray($services);
+    self::assertSame(['1', '2', '3', '4', '17'], array_map('strval', array_keys($services)));
   }
 
   /**
@@ -445,19 +468,34 @@ final class MelhorEnvioWiringKernelTest extends KernelTestBase {
     $package = new QuotePackage(16, 12, 24, 0.8, 120);
 
     self::assertSame([], $quoter->quote(['country_code' => 'BR', 'postal_code' => '123'], $package));
+    self::assertIsArray($history);
     self::assertCount(0, $history);
 
     $options = $quoter->quote(['country_code' => 'BR', 'postal_code' => '01310-100'], $package);
     self::assertSame(['1', '2'], array_map(static fn($o) => $o->serviceId, $options));
     self::assertCount(1, $history);
-    $request = $history[0]['request'];
+    $firstHistory = $history[0];
+    self::assertIsArray($firstHistory);
+    $request = $firstHistory['request'] ?? NULL;
+    self::assertInstanceOf(RequestInterface::class, $request);
     self::assertSame('POST', $request->getMethod());
     self::assertSame('/api/v2/me/shipment/calculate', $request->getUri()->getPath());
     self::assertSame('Bearer token-fixture', $request->getHeaderLine('Authorization'));
     $body = json_decode((string) $request->getBody(), TRUE);
-    self::assertSame('74003010', $body['from']['postal_code']);
-    self::assertSame('01310100', $body['to']['postal_code']);
-    self::assertSame(120.0, (float) $body['products'][0]['insurance_value']);
+    self::assertIsArray($body);
+    $from = $body['from'] ?? NULL;
+    self::assertIsArray($from);
+    $to = $body['to'] ?? NULL;
+    self::assertIsArray($to);
+    $products = $body['products'] ?? NULL;
+    self::assertIsArray($products);
+    $firstProduct = $products[0] ?? NULL;
+    self::assertIsArray($firstProduct);
+    $insuranceValue = $firstProduct['insurance_value'] ?? NULL;
+    self::assertIsNumeric($insuranceValue);
+    self::assertSame('74003010', $from['postal_code'] ?? NULL);
+    self::assertSame('01310100', $to['postal_code'] ?? NULL);
+    self::assertSame(120.0, (float) $insuranceValue);
   }
 
   /**

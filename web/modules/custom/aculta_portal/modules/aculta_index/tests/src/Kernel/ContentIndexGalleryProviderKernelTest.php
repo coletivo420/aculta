@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_index\Kernel;
 
 use Drupal\Core\DependencyInjection\ContainerBuilder;
+use Drupal\Core\Database\StatementInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\domain\DomainInterface;
 use Drupal\aculta_index\Queue\ContentIndexWorkManager;
-use Drupal\aculta_portal\ContentIndex\ContentIndexProviderInterface;
 use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\domain\Entity\Domain;
 use Drupal\file\Entity\File;
@@ -73,10 +75,24 @@ final class ContentIndexGalleryProviderKernelTest extends KernelTestBase {
       'aculta_image' => 'aculta_image.content_index_provider',
     ] as $owner => $serviceId) {
       $servicesFile = DRUPAL_ROOT . '/modules/custom/aculta_portal/modules/' . $owner . '/' . $owner . '.services.yml';
-      $service = Yaml::parseFile($servicesFile, Yaml::PARSE_CUSTOM_TAGS)['services'][$serviceId];
-      $definition = (new Definition($service['class'], $service['arguments'] ?? []))->setPublic(TRUE);
-      foreach ($service['tags'] ?? [] as $tag) {
-        $definition->addTag($tag['name'], array_diff_key($tag, ['name' => TRUE]));
+      $serviceFileData = Yaml::parseFile($servicesFile, Yaml::PARSE_CUSTOM_TAGS);
+      self::assertIsArray($serviceFileData);
+      $services = $serviceFileData['services'] ?? NULL;
+      self::assertIsArray($services);
+      $service = $services[$serviceId] ?? NULL;
+      self::assertIsArray($service);
+      $class = $service['class'] ?? NULL;
+      self::assertIsString($class);
+      $arguments = $service['arguments'] ?? [];
+      self::assertIsArray($arguments);
+      $definition = (new Definition($class, $arguments))->setPublic(TRUE);
+      $tags = $service['tags'] ?? [];
+      self::assertIsArray($tags);
+      foreach ($tags as $tag) {
+        self::assertIsArray($tag);
+        $tagName = $tag['name'] ?? NULL;
+        self::assertIsString($tagName);
+        $definition->addTag($tagName, array_diff_key($tag, ['name' => TRUE]));
       }
       $container->setDefinition($serviceId, $definition);
     }
@@ -152,7 +168,9 @@ final class ContentIndexGalleryProviderKernelTest extends KernelTestBase {
     // canonical Magazine purpose, while the image stays under its own policy.
     $negotiator = $this->container->get('domain.negotiator');
     $negotiator->getActiveDomain();
-    $negotiator->getContext()->setDomain(Domain::load('aculta_org'));
+    $mainDomain = Domain::load('aculta_org');
+    self::assertInstanceOf(DomainInterface::class, $mainDomain);
+    $negotiator->getContext()->setDomain($mainDomain);
     $result = $this->container->get('aculta_index.relation_query')->queryOutgoing(
       'media_gallery',
       (string) $gallery->id(),
@@ -161,11 +179,11 @@ final class ContentIndexGalleryProviderKernelTest extends KernelTestBase {
       $reader,
     );
     $this->assertSame([(string) $image->id()], array_map(
-      static fn (Media $entity): string => (string) $entity->id(),
+      static fn (ContentEntityInterface $entity): string => (string) $entity->id(),
       $result->entities,
     ));
     $this->assertNotContains((string) $unpublishedImage->id(), array_map(
-      static fn (Media $entity): string => (string) $entity->id(),
+      static fn (ContentEntityInterface $entity): string => (string) $entity->id(),
       $result->entities,
     ), 'A linked unpublished image is omitted when the account cannot view it.');
     $this->assertSame('aculta_org', $negotiator->getActiveDomain()?->id());
@@ -180,13 +198,16 @@ final class ContentIndexGalleryProviderKernelTest extends KernelTestBase {
 
     $gallery->delete();
     $this->processProviderWork('gallery');
-    $this->assertSame(0, (int) $this->container->get('database')->select('aculta_index_entry', 'entry')
+    $countResult = $this->container->get('database')->select('aculta_index_entry', 'entry')
       ->condition('generation_id', $generationId)
       ->condition('provider_id', 'gallery')
       ->condition('entity_id', (string) $gallery->id())
       ->countQuery()
-      ->execute()
-      ->fetchField());
+      ->execute();
+    self::assertInstanceOf(StatementInterface::class, $countResult);
+    $count = $countResult->fetchField();
+    self::assertIsNumeric($count);
+    $this->assertSame(0, (int) $count);
   }
 
   /**
@@ -244,7 +265,9 @@ final class ContentIndexGalleryProviderKernelTest extends KernelTestBase {
     $this->assertCount(1, $result->entities);
     $this->assertSame((string) $published->id(), (string) $result->entities[0]->id());
     $this->assertSame('main', $this->container->get('aculta_portal.domain_site')->getCurrentSiteKey()?->value);
-    $this->assertSame('aculta_org', $negotiator->getActiveDomain()?->id());
+    $activeDomain = $negotiator->getActiveDomain();
+    self::assertInstanceOf(DomainInterface::class, $activeDomain);
+    $this->assertSame('aculta_org', $activeDomain->id());
 
     $magazineDomain = Domain::load('revista420_aculta_org');
     self::assertInstanceOf(Domain::class, $magazineDomain);
@@ -266,7 +289,10 @@ final class ContentIndexGalleryProviderKernelTest extends KernelTestBase {
     ]);
     $file->save();
     $mediaType = MediaType::load('image');
-    $sourceField = $mediaType->getSource()->getSourceFieldDefinition($mediaType)->getName();
+    self::assertInstanceOf(MediaType::class, $mediaType);
+    $sourceFieldDefinition = $mediaType->getSource()->getSourceFieldDefinition($mediaType);
+    self::assertNotNull($sourceFieldDefinition);
+    $sourceField = $sourceFieldDefinition->getName();
     $image = Media::create([
       'bundle' => 'image',
       'name' => $name,
@@ -305,8 +331,7 @@ final class ContentIndexGalleryProviderKernelTest extends KernelTestBase {
       $complete = $rebuilder->processNextBatch($generationId, 50)['complete'];
     }
     $this->assertTrue($complete, 'Gallery provider backfill should complete.');
-    $this->processProviderWork('gallery');
-    $this->processProviderWork('image');
+    $this->processProviderWork();
     $rebuilder->validate($generationId);
     $this->container->get('aculta_index.generation_manager')->activate($generationId);
     return $generationId;
@@ -315,38 +340,45 @@ final class ContentIndexGalleryProviderKernelTest extends KernelTestBase {
   /**
    * Processes queued work for one provider using the production worker.
    */
-  private function processProviderWork(string $providerId): void {
+  private function processProviderWork(?string $providerId = NULL): void {
     $database = $this->container->get('database');
     $worker = $this->container->get('plugin.manager.queue_worker')
       ->createInstance(ContentIndexWorkManager::QUEUE_ID);
     for ($pass = 0; $pass < 20; $pass++) {
-      $workIds = $database->select('aculta_index_work', 'work')
+      $query = $database->select('aculta_index_work', 'work')
         ->fields('work', ['work_id'])
-        ->condition('provider_id', $providerId)
-        ->condition('status', 'queued')
-        ->execute()
-        ->fetchCol();
+        ->condition('status', 'queued');
+      if ($providerId !== NULL) {
+        $query->condition('provider_id', $providerId);
+      }
+      $workStatement = $query->execute();
+      self::assertInstanceOf(StatementInterface::class, $workStatement);
+      $workIds = $workStatement->fetchCol();
       if ($workIds === []) {
         return;
       }
       foreach ($workIds as $workId) {
+        self::assertIsNumeric($workId);
         $worker->processItem(['work_id' => (int) $workId]);
       }
     }
-    self::fail(sprintf('Index work for provider %s did not drain after 20 passes.', $providerId));
+    self::fail(sprintf('Index work%s did not drain after 20 passes.', $providerId !== NULL ? ' for provider ' . $providerId : ''));
   }
 
   /**
    * Returns a projected Gallery label.
    */
   private function entryLabel(string $generationId, string $entityId, string $providerId): string {
-    return (string) $this->container->get('database')->select('aculta_index_entry', 'entry')
+    $statement = $this->container->get('database')->select('aculta_index_entry', 'entry')
       ->fields('entry', ['label'])
       ->condition('generation_id', $generationId)
       ->condition('provider_id', $providerId)
       ->condition('entity_id', $entityId)
-      ->execute()
-      ->fetchField();
+      ->execute();
+    self::assertInstanceOf(StatementInterface::class, $statement);
+    $label = $statement->fetchField();
+    self::assertIsString($label);
+    return $label;
   }
 
   /**
@@ -356,14 +388,21 @@ final class ContentIndexGalleryProviderKernelTest extends KernelTestBase {
    *   Related Media IDs.
    */
   private function galleryImageTargets(string $generationId, string $galleryId): array {
-    return array_map('strval', $this->container->get('database')->select('aculta_index_relation', 'relation')
+    $statement = $this->container->get('database')->select('aculta_index_relation', 'relation')
       ->fields('relation', ['target_entity_id'])
       ->condition('generation_id', $generationId)
       ->condition('provider_id', 'gallery')
       ->condition('source_entity_id', $galleryId)
       ->condition('relation_type', 'gallery_image')
-      ->execute()
-      ->fetchCol());
+      ->execute();
+    self::assertInstanceOf(StatementInterface::class, $statement);
+    $targetIds = $statement->fetchCol();
+    $normalizedIds = [];
+    foreach ($targetIds as $targetId) {
+      self::assertIsScalar($targetId);
+      $normalizedIds[] = (string) $targetId;
+    }
+    return $normalizedIds;
   }
 
 }
