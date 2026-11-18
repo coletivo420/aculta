@@ -54,7 +54,13 @@ final class EventRelatedViewsAccessKernelTest extends KernelTestBase {
       $view = View::load($id);
       $this->assertNotNull($view, "$id is installed.");
       $displays = $view->get('display');
-      $fields = $displays['default']['display_options']['fields'] ?? [];
+      $this->assertIsArray($displays);
+      $defaultDisplay = $displays['default'] ?? NULL;
+      $this->assertIsArray($defaultDisplay);
+      $displayOptions = $defaultDisplay['display_options'] ?? NULL;
+      $this->assertIsArray($displayOptions);
+      $fields = $displayOptions['fields'] ?? NULL;
+      $this->assertIsArray($fields);
       $this->assertSame($allowedFields, array_keys($fields), "$id only exposes approved fields.");
 
       $serialized = serialize($view->toArray());

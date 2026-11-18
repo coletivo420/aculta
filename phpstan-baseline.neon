@@ -19865,30 +19865,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_events/tests/src/Kernel/EventProposalEditorialApprovalKernelTest.php
 
 		-
-			rawMessage: Cannot access offset 'default' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/tests/src/Kernel/EventRelatedViewsAccessKernelTest.php
-
-		-
-			rawMessage: Cannot access offset 'display_options' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/tests/src/Kernel/EventRelatedViewsAccessKernelTest.php
-
-		-
-			rawMessage: Cannot access offset 'fields' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/tests/src/Kernel/EventRelatedViewsAccessKernelTest.php
-
-		-
-			rawMessage: 'Parameter #1 $array of function array_keys expects array, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/tests/src/Kernel/EventRelatedViewsAccessKernelTest.php
-
-		-
 			rawMessage: 'Cannot call method get() on Drupal\aculta_events\Entity\EventDate|null.'
 			identifier: method.nonObject
 			count: 1
