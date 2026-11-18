@@ -82,7 +82,7 @@
   min-inline-size: var(--tap-target-min);
 }
 
-.navigation-bar.has-js .navigation-bar__toggle {
+html.aculta-navigation-js .navigation-bar .navigation-bar__toggle {
   display: inline-flex;
 }
 
@@ -119,7 +119,7 @@
   padding-block: var(--spacing-sm);
 }
 
-.navigation-bar.has-js .navigation-bar__panel {
+html.aculta-navigation-js .navigation-bar .navigation-bar__panel {
   position: fixed;
   z-index: 30;
   display: block;
@@ -139,12 +139,12 @@
   overscroll-behavior: contain;
 }
 
-.navigation-bar.has-js .navigation-bar__panel.is-open {
+html.aculta-navigation-js .navigation-bar .navigation-bar__panel.is-open {
   visibility: visible;
   transform: translateX(0);
 }
 
-.navigation-bar.has-js .navigation-bar__close {
+html.aculta-navigation-js .navigation-bar .navigation-bar__close {
   display: inline-flex;
   margin-block-end: var(--spacing-base);
 }
@@ -193,7 +193,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .navigation-bar.has-js .navigation-bar__panel {
+  html.aculta-navigation-js .navigation-bar .navigation-bar__panel {
     transition: none;
   }
 }
@@ -211,13 +211,13 @@
   }
 
   .navigation-bar__toggle,
-  .navigation-bar.has-js .navigation-bar__toggle,
-  .navigation-bar.has-js .navigation-bar__close {
+  html.aculta-navigation-js .navigation-bar .navigation-bar__toggle,
+  html.aculta-navigation-js .navigation-bar .navigation-bar__close {
     display: none;
   }
 
   .navigation-bar__panel,
-  .navigation-bar.has-js .navigation-bar__panel {
+  html.aculta-navigation-js .navigation-bar .navigation-bar__panel {
     position: static;
     z-index: auto;
     display: flex;
@@ -254,17 +254,17 @@
     min-block-size: 0;
   }
 
-  [dir="rtl"] .navigation-bar.has-js .navigation-bar__panel,
-  [dir="rtl"] .navigation-bar.has-js .navigation-bar__panel.is-open {
+  html.aculta-navigation-js[dir="rtl"] .navigation-bar .navigation-bar__panel,
+  html.aculta-navigation-js[dir="rtl"] .navigation-bar .navigation-bar__panel.is-open {
     transform: none;
   }
 }
 
-[dir="rtl"] .navigation-bar.has-js .navigation-bar__panel {
+html.aculta-navigation-js[dir="rtl"] .navigation-bar .navigation-bar__panel {
   transform: translateX(-100%);
 }
 
-[dir="rtl"] .navigation-bar.has-js .navigation-bar__panel.is-open {
+html.aculta-navigation-js[dir="rtl"] .navigation-bar .navigation-bar__panel.is-open {
   transform: translateX(0);
 }
 
