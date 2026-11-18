@@ -460,3 +460,15 @@ Os 56 erros não devem ser interpretados como 56 regressões da ADR-057. Os
 grupos indicados acima precisam de triagem por harness/owner, e as falhas de
 Wiki/Mapa permanecem abertas. P01 continua **FAIL** até a resolução por owner
 e uma execução Kernel estável no estado publicável.
+
+## Harness das Views administrativas de Eventos — 2026-11-18
+
+O erro `EventRelatedViewsAccessKernelTest` do run integral vinha da ausência de
+`ui_patterns`/`ui_patterns_views` na lista de módulos do harness, embora a
+configuração de `aculta_events` instale Views com esse plugin. Declarei ambas
+as dependências no teste, sem alterar o módulo de produção nem as assertions
+de acesso mínimo. A classe focal passou: **2 testes, 18 assertions, exit 0**,
+com duas depreciações PHPUnit. Log local:
+`/mnt/disco1/tmp/aculta-agent-logs/command-9qrzyd8l.log`. O run integral
+precedente não inclui esta correção; a redução no total só poderá ser
+confirmada por uma nova execução integral.
