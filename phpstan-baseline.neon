@@ -7265,18 +7265,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Controller/AgendaController.php
 
 		-
-			rawMessage: Cannot access property $query on Symfony\Component\HttpFoundation\Request|null.
-			identifier: property.nonObject
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Controller/IcsController.php
-
-		-
-			rawMessage: 'Cannot call method getHost() on Symfony\Component\HttpFoundation\Request|null.'
-			identifier: method.nonObject
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Controller/IcsController.php
-
-		-
 			rawMessage: 'Method Drupal\aculta_calendar\Controller\InteractiveController::dados() should return array{items: array<int, array<string, mixed>>, date: string} but returns array{items: array<int, array<string, mixed>>, date: mixed}.'
 			identifier: return.type
 			count: 1
@@ -7287,252 +7275,6 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Controller/InteractiveController.php
-
-		-
-			rawMessage: Cannot access offset 'entries' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Embed/DeployerHostDirectory.php
-
-		-
-			rawMessage: 'Parameter #1 $string of function strtolower expects string, mixed given.'
-			identifier: argument.type
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Embed/DeployerHostDirectory.php
-
-		-
-			rawMessage: 'Cannot access offset ''title'' on ''table''|array{0: Drupal\Core\StringTranslation\TranslatableMarkup, 1: Drupal\Core\StringTranslation\TranslatableMarkup, 2: Drupal\Core\StringTranslation\TranslatableMarkup, 3: Drupal\Core\StringTranslation\TranslatableMarkup, 4: Drupal\Core\StringTranslation\TranslatableMarkup, 5: Drupal\Core\StringTranslation\TranslatableMarkup, title?: array{''#plain_text'': mixed}, uid?: array{''#plain_text'': mixed}, ...}|array{title: array{''#plain_text'': mixed}, uid?: array{''#plain_text'': mixed}, start?: array{''#plain_text'': string}, state?: array{''#plain_text'': mixed}, presence?: array{''#plain_text'': mixed}, publish?: array{''#type'': ''submit'', ''#value'': Drupal\Core\StringTranslation\TranslatableMarkup, ''#name'': non-falsy-string, ''#submit'': array{'':…''|''::publishItem''}, ''#item_id'': string, ''#limit_validation_errors'': array{}}, keep_draft?: array{''#type'': ''submit'', ''#value'': Drupal\Core\StringTranslation\TranslatableMarkup, ''#name'': non-falsy-string, ''#submit'': array{''::keepDraft''}, ''#item_id'': string, ''#limit_validation_errors'': array{}}}|Drupal\Core\StringTranslation\TranslatableMarkup.'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Form/CalendarImportReviewForm.php
-
-		-
-			rawMessage: Cannot cast mixed to int.
-			identifier: cast.int
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Form/CalendarImportReviewForm.php
-
-		-
-			rawMessage: Cannot cast mixed to string.
-			identifier: cast.string
-			count: 3
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Form/CalendarImportReviewForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_calendar\Form\CalendarImportReviewForm::buildForm() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Form/CalendarImportReviewForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_calendar\Form\CalendarImportReviewForm::buildForm() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Form/CalendarImportReviewForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_calendar\Form\CalendarImportReviewForm::keepDraft() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Form/CalendarImportReviewForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_calendar\Form\CalendarImportReviewForm::publishCancellation() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Form/CalendarImportReviewForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_calendar\Form\CalendarImportReviewForm::publishItem() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Form/CalendarImportReviewForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_calendar\Form\CalendarImportReviewForm::submitForm() has parameter $form with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Form/CalendarImportReviewForm.php
-
-		-
-			rawMessage: Offset '#item_id' might not exist on array|null.
-			identifier: offsetAccess.notFound
-			count: 3
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Form/CalendarImportReviewForm.php
-
-		-
-			rawMessage: 'Parameter #1 $source of method Drupal\aculta_calendar\Import\CalendarImportRepository::findLatest() expects Drupal\aculta_calendar\Entity\CalendarImportSource, Drupal\Core\Entity\EntityInterface|null given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Form/CalendarImportReviewForm.php
-
-		-
-			rawMessage: 'Parameter #2 $externalUid of method Drupal\aculta_calendar\Import\CalendarImportRepository::findLatest() expects string, mixed given.'
-			identifier: argument.type
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Form/CalendarImportReviewForm.php
-
-		-
-			rawMessage: 'Parameter #3 $repository of class Drupal\aculta_calendar\Form\CalendarImportReviewForm constructor expects Drupal\aculta_calendar\Import\CalendarImportRepository, object given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Form/CalendarImportReviewForm.php
-
-		-
-			rawMessage: 'Argument of an invalid type mixed supplied for foreach, only iterables are supported.'
-			identifier: foreach.nonIterable
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Ics/IcsEventBuilder.php
-
-		-
-			rawMessage: Cannot access offset 'fim' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Ics/IcsEventBuilder.php
-
-		-
-			rawMessage: Cannot access offset 'inicio' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Ics/IcsEventBuilder.php
-
-		-
-			rawMessage: Cannot access offset 'original' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Ics/IcsEventBuilder.php
-
-		-
-			rawMessage: 'Parameter #1 $key of method Drupal\aculta_calendar\Ics\IcsEventBuilder::uid() expects string, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Ics/IcsEventBuilder.php
-
-		-
-			rawMessage: 'Parameter #10 $excecoes of method Drupal\aculta_calendar\Ics\IcsEventBuilder::vevent() expects array<int, DateTimeImmutable>, array<DateTimeImmutable> given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Ics/IcsEventBuilder.php
-
-		-
-			rawMessage: 'Parameter #10 $excecoes of method Drupal\aculta_calendar\Ics\IcsEventBuilder::vevent() expects array<int, DateTimeImmutable>, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Ics/IcsEventBuilder.php
-
-		-
-			rawMessage: 'Parameter #2 $summary of method Drupal\aculta_calendar\Ics\IcsEventBuilder::vevent() expects string, mixed given.'
-			identifier: argument.type
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Ics/IcsEventBuilder.php
-
-		-
-			rawMessage: 'Parameter #3 $location of method Drupal\aculta_calendar\Ics\IcsEventBuilder::vevent() expects string, mixed given.'
-			identifier: argument.type
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Ics/IcsEventBuilder.php
-
-		-
-			rawMessage: 'Parameter #4 $start of method Drupal\aculta_calendar\Ics\IcsEventBuilder::vevent() expects DateTimeImmutable, DateTimeImmutable|null given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Ics/IcsEventBuilder.php
-
-		-
-			rawMessage: 'Parameter #4 $start of method Drupal\aculta_calendar\Ics\IcsEventBuilder::vevent() expects DateTimeImmutable, mixed given.'
-			identifier: argument.type
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Ics/IcsEventBuilder.php
-
-		-
-			rawMessage: 'Parameter #5 $end of method Drupal\aculta_calendar\Ics\IcsEventBuilder::vevent() expects DateTimeImmutable|null, mixed given.'
-			identifier: argument.type
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Ics/IcsEventBuilder.php
-
-		-
-			rawMessage: 'Parameter #6 $allDay of method Drupal\aculta_calendar\Ics\IcsEventBuilder::vevent() expects bool, mixed given.'
-			identifier: argument.type
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Ics/IcsEventBuilder.php
-
-		-
-			rawMessage: 'Parameter #7 $stamp of method Drupal\aculta_calendar\Ics\IcsEventBuilder::vevent() expects DateTimeImmutable, mixed given.'
-			identifier: argument.type
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Ics/IcsEventBuilder.php
-
-		-
-			rawMessage: 'Parameter #8 $recorrencia of method Drupal\aculta_calendar\Ics\IcsEventBuilder::vevent() expects DateTimeImmutable|null, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Ics/IcsEventBuilder.php
-
-		-
-			rawMessage: 'Parameter #9 $rrule of method Drupal\aculta_calendar\Ics\IcsEventBuilder::vevent() expects string|null, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Ics/IcsEventBuilder.php
-
-		-
-			rawMessage: Cannot access property $value on mixed.
-			identifier: property.nonObject
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Import/CalendarImportProcessor.php
-
-		-
-			rawMessage: 'Cannot call method get() on mixed.'
-			identifier: method.nonObject
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Import/CalendarImportProcessor.php
-
-		-
-			rawMessage: 'Cannot call method save() on mixed.'
-			identifier: method.nonObject
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Import/CalendarImportProcessor.php
-
-		-
-			rawMessage: 'Cannot call method set() on mixed.'
-			identifier: method.nonObject
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Import/CalendarImportProcessor.php
-
-		-
-			rawMessage: Cannot cast mixed to int.
-			identifier: cast.int
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Import/CalendarImportProcessor.php
-
-		-
-			rawMessage: Cannot cast mixed to string.
-			identifier: cast.string
-			count: 3
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Import/CalendarImportProcessor.php
-
-		-
-			rawMessage: Instanceof between Drupal\aculta_calendar\Import\NormalizedCalendarEvent and Drupal\aculta_calendar\Import\NormalizedCalendarEvent will always evaluate to true.
-			identifier: instanceof.alwaysTrue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Import/CalendarImportProcessor.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_calendar\Import\CalendarImportRepository::findCurrent() should return Drupal\aculta_calendar\Entity\CalendarImportedItem|null but returns Drupal\Core\Entity\EntityInterface.'
-			identifier: return.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Import/CalendarImportRepository.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_calendar\Import\CalendarImportRepository::itemsForSource() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Import/CalendarImportRepository.php
-
-		-
-			rawMessage: 'Parameter #1 $entity_id of method Drupal\Core\Entity\RevisionableStorageInterface::getLatestRevisionId() expects int|string, int|string|null given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Import/CalendarImportRepository.php
 
 		-
 			rawMessage: Binary operation "." between '@' and mixed results in an error.
@@ -7557,18 +7299,6 @@ parameters:
 			identifier: cast.string
 			count: 3
 			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Import/ImportedCalendarItemProvider.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_calendar\Import\NativeCalendarHostResolver::resolve() should return array<string> but returns list<mixed>.'
-			identifier: return.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Import/NativeCalendarHostResolver.php
-
-		-
-			rawMessage: 'Parameter #1 $array of function array_unique expects an array of values castable to string, list<mixed> given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/src/Import/NativeCalendarHostResolver.php
 
 		-
 			rawMessage: 'Binary operation "." between ''BYDAY=''|''BYMONTHDAY=''|''COUNT=''|''FREQ=''|''INTERVAL='' and mixed results in an error.'
@@ -58080,12 +57810,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_wiki/src/Controller/WikiContributionIntentController.php
 
 		-
-			rawMessage: 'Cannot call method isAllowed() on mixed.'
-			identifier: method.nonObject
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_wiki/src/Controller/WikiController.php
-
-		-
 			rawMessage: 'Method Drupal\aculta_wiki\Controller\WikiController::contextNavigation() return type has no value type specified in iterable type array.'
 			identifier: missingType.iterableValue
 			count: 1
@@ -58118,12 +57842,6 @@ parameters:
 		-
 			rawMessage: 'Method Drupal\aculta_wiki\Controller\WikiController::viewBlock() return type has no value type specified in iterable type array.'
 			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_wiki/src/Controller/WikiController.php
-
-		-
-			rawMessage: 'Parameter #1 $other of method Drupal\Core\Access\AccessResultInterface::andIf() expects Drupal\Core\Access\AccessResultInterface, mixed given.'
-			identifier: argument.type
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_wiki/src/Controller/WikiController.php
 
@@ -61212,25 +60930,7 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_wiki/tests/src/Unit/WikiSearchFormBuilderTest.php
 
 		-
-			rawMessage: Cannot access offset '#attributes' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 3
-			path: web/modules/custom/aculta_portal/modules/aculta_wiki/tests/src/Unit/WikiSearchFormBuilderTest.php
-
-		-
 			rawMessage: Cannot access offset '#component' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_wiki/tests/src/Unit/WikiSearchFormBuilderTest.php
-
-		-
-			rawMessage: Cannot access offset '#maxlength' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_wiki/tests/src/Unit/WikiSearchFormBuilderTest.php
-
-		-
-			rawMessage: Cannot access offset '#name' on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_wiki/tests/src/Unit/WikiSearchFormBuilderTest.php
@@ -61279,24 +60979,6 @@ parameters:
 
 		-
 			rawMessage: Cannot access offset 'contexts' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_wiki/tests/src/Unit/WikiSearchFormBuilderTest.php
-
-		-
-			rawMessage: Cannot access offset 'data-min-chars' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_wiki/tests/src/Unit/WikiSearchFormBuilderTest.php
-
-		-
-			rawMessage: Cannot access offset 'data-portal-ui' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_wiki/tests/src/Unit/WikiSearchFormBuilderTest.php
-
-		-
-			rawMessage: Cannot access offset 'data-preview-url' on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_wiki/tests/src/Unit/WikiSearchFormBuilderTest.php
@@ -64668,24 +64350,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/tests/src/Kernel/DomainPresentationBuilderKernelTest.php
 
 		-
-			rawMessage: Cannot access offset 'links_page' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/tests/src/Kernel/DomainPresentationBuilderKernelTest.php
-
-		-
-			rawMessage: Cannot access offset 'show_site_header' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 2
-			path: web/modules/custom/aculta_portal/tests/src/Kernel/DomainPresentationBuilderKernelTest.php
-
-		-
-			rawMessage: Cannot access offset 'show_site_menu' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/tests/src/Kernel/DomainPresentationBuilderKernelTest.php
-
-		-
 			rawMessage: Cannot access offset 'showcase' on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
@@ -66384,18 +66048,6 @@ parameters:
 			path: web/themes/custom/aculta420_v2/src/Hook/PagePresentationHooks.php
 
 		-
-			rawMessage: Cannot access offset 'identity' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/themes/custom/aculta420_v2/src/Hook/PagePresentationHooks.php
-
-		-
-			rawMessage: Cannot access offset 'institution_bar_account' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/themes/custom/aculta420_v2/src/Hook/PagePresentationHooks.php
-
-		-
 			rawMessage: Cannot access offset 'layout' on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
@@ -66649,12 +66301,6 @@ parameters:
 
 		-
 			rawMessage: 'Parameter #2 $callback of function array_filter expects (callable(mixed): bool)|null, Closure(string): bool given.'
-			identifier: argument.type
-			count: 1
-			path: web/themes/custom/aculta420_v2/src/Hook/PagePresentationHooks.php
-
-		-
-			rawMessage: 'Parameter #2 $identity of method Drupal\aculta420_v2\Presentation\WikiBrandMediaProps::build() expects array<string, mixed>, mixed given.'
 			identifier: argument.type
 			count: 1
 			path: web/themes/custom/aculta420_v2/src/Hook/PagePresentationHooks.php

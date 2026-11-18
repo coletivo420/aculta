@@ -10,6 +10,8 @@ final class NativeCalendarHostResolver implements CalendarHostResolverInterface 
 
   /**
    * Resolves an approved calendar hostname to its IP addresses.
+   *
+   * @return array<string>
    */
   public function resolve(string $hostname): array {
     $records = @dns_get_record($hostname, DNS_A | DNS_AAAA);
@@ -18,10 +20,10 @@ final class NativeCalendarHostResolver implements CalendarHostResolverInterface 
     }
     $addresses = [];
     foreach ($records as $record) {
-      if (isset($record['ip'])) {
+      if (isset($record['ip']) && is_string($record['ip'])) {
         $addresses[] = $record['ip'];
       }
-      if (isset($record['ipv6'])) {
+      if (isset($record['ipv6']) && is_string($record['ipv6'])) {
         $addresses[] = $record['ipv6'];
       }
     }
