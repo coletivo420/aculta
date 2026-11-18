@@ -102,6 +102,13 @@ final class EventOrganizationAccessControlHandler extends EntityAccessControlHan
 
   /**
    * {@inheritdoc}
+   *
+   * @param \Drupal\Core\Session\AccountInterface $account
+   *   The account requesting access.
+   * @param array<string, mixed> $context
+   *   Additional context provided for the create access check.
+   * @param string|null $entity_bundle
+   *   The bundle to check create access for.
    */
   protected function checkCreateAccess(AccountInterface $account, array $context, $entity_bundle = NULL): AccessResultInterface {
     return $this->permissionPolicy->createEventAccessResult($account);
