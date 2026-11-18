@@ -27,15 +27,32 @@ final class InteractiveControllerKernelTest extends KernelTestBase {
   public function testPaginaTemContainerElibrary(): void {
     $build = InteractiveController::create($this->container)->page();
 
-    $this->assertArrayHasKey('componente', $build);
-    $this->assertSame('aculta-calendar-interactive', $build['componente']['#attributes']['id']);
-    $this->assertSame('calendar-interactive', $build['componente']['#attributes']['data-portal-ui']);
-    $this->assertSame(['aculta_calendar/dhtmlx'], $build['#attached']['library']);
-    $this->assertArrayHasKey('acultaCalendar', $build['#attached']['drupalSettings']);
-    $this->assertArrayHasKey('items', $build['#attached']['drupalSettings']['acultaCalendar']);
-    $this->assertArrayHasKey('date', $build['#attached']['drupalSettings']['acultaCalendar']);
-    $this->assertArrayHasKey('agenda', $build, 'a agenda em HTML é a alternativa em telas menores');
-    $this->assertFalse($build['alternativa']['#access'], 'sem rota de agenda informada, não há link');
+    $this->assertArrayHasKey('#slots', $build);
+    $slots = $build['#slots'];
+    $this->assertIsArray($slots);
+    $this->assertArrayHasKey('content', $slots);
+    $content = $slots['content'];
+    $this->assertIsArray($content);
+    $this->assertArrayHasKey('componente', $content);
+    $component = $content['componente'];
+    $this->assertIsArray($component);
+    $attributes = $component['#attributes'] ?? NULL;
+    $this->assertIsArray($attributes);
+    $this->assertSame('aculta-calendar-interactive', $attributes['id'] ?? NULL);
+    $this->assertSame('calendar-interactive', $attributes['data-portal-ui'] ?? NULL);
+    $attached = $content['#attached'] ?? NULL;
+    $this->assertIsArray($attached);
+    $this->assertSame(['aculta_calendar/dhtmlx'], $attached['library'] ?? NULL);
+    $drupalSettings = $attached['drupalSettings'] ?? NULL;
+    $this->assertIsArray($drupalSettings);
+    $calendarSettings = $drupalSettings['acultaCalendar'] ?? NULL;
+    $this->assertIsArray($calendarSettings);
+    $this->assertArrayHasKey('items', $calendarSettings);
+    $this->assertArrayHasKey('date', $calendarSettings);
+    $this->assertArrayHasKey('agenda', $content, 'a agenda em HTML é a alternativa em telas menores');
+    $alternative = $content['alternativa'] ?? NULL;
+    $this->assertIsArray($alternative);
+    $this->assertFalse($alternative['#access'] ?? NULL, 'sem rota de agenda informada, não há link');
   }
 
 }

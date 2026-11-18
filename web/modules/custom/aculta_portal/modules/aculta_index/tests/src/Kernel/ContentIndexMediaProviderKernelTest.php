@@ -154,7 +154,7 @@ final class ContentIndexMediaProviderKernelTest extends KernelTestBase {
       $complete = $rebuilder->processNextBatch($generationId, 50)['complete'];
     }
     self::assertTrue($complete, 'Image provider backfill should complete.');
-    $this->processImageWork();
+    $this->processProviderWork();
     $rebuilder->validate($generationId);
     $this->container->get('aculta_index.generation_manager')->activate($generationId);
     self::assertSame('First image name', $this->entryLabel($generationId, (string) $media->id()));

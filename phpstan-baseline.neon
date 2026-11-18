@@ -7547,48 +7547,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_calendar/tests/src/Kernel/ImportedCalendarItemProviderKernelTest.php
 
 		-
-			rawMessage: Cannot access offset '#access' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/tests/src/Kernel/InteractiveControllerKernelTest.php
-
-		-
-			rawMessage: Cannot access offset '#attributes' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/tests/src/Kernel/InteractiveControllerKernelTest.php
-
-		-
-			rawMessage: Cannot access offset 'data-portal-ui' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/tests/src/Kernel/InteractiveControllerKernelTest.php
-
-		-
-			rawMessage: Cannot access offset 'drupalSettings' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/tests/src/Kernel/InteractiveControllerKernelTest.php
-
-		-
-			rawMessage: Cannot access offset 'id' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/tests/src/Kernel/InteractiveControllerKernelTest.php
-
-		-
-			rawMessage: Cannot access offset 'library' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/tests/src/Kernel/InteractiveControllerKernelTest.php
-
-		-
-			rawMessage: 'Parameter #2 $array of method PHPUnit\Framework\Assert::assertArrayHasKey() expects array<mixed>|ArrayAccess<(int|string), mixed>, mixed given.'
-			identifier: argument.type
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_calendar/tests/src/Kernel/InteractiveControllerKernelTest.php
-
-		-
 			rawMessage: Cannot access offset 'allow_redirects' on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
@@ -33985,204 +33943,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/LmsActivityDiscussionResolverKernelTest.php
 
 		-
-			rawMessage: Cannot access offset '#arguments' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/LmsClassEducatorPermissionKernelTest.php
-
-		-
-			rawMessage: Cannot access offset '#display_id' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/LmsClassEducatorPermissionKernelTest.php
-
-		-
-			rawMessage: Cannot access offset '#items' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 3
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/LmsClassEducatorPermissionKernelTest.php
-
-		-
-			rawMessage: Cannot access offset '#name' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/LmsClassEducatorPermissionKernelTest.php
-
-		-
-			rawMessage: Cannot access offset '#title' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/LmsClassEducatorPermissionKernelTest.php
-
-		-
-			rawMessage: Cannot access offset '#type' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/LmsClassEducatorPermissionKernelTest.php
-
-		-
-			rawMessage: Cannot access offset 'arguments' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/LmsClassEducatorPermissionKernelTest.php
-
-		-
-			rawMessage: Cannot access offset 'class_permission_mappings' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/LmsClassEducatorPermissionKernelTest.php
-
-		-
-			rawMessage: Cannot access offset 'creator_wizard' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/LmsClassEducatorPermissionKernelTest.php
-
-		-
-			rawMessage: Cannot access offset 'default_action' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/LmsClassEducatorPermissionKernelTest.php
-
-		-
-			rawMessage: Cannot access offset 'display_options' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 3
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/LmsClassEducatorPermissionKernelTest.php
-
-		-
-			rawMessage: Cannot access offset 'gid' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/LmsClassEducatorPermissionKernelTest.php
-
-		-
-			rawMessage: Cannot access offset 'group_relation_plugins' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/LmsClassEducatorPermissionKernelTest.php
-
-		-
-			rawMessage: Cannot access offset 'group_relationship' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/LmsClassEducatorPermissionKernelTest.php
-
-		-
-			rawMessage: Cannot access offset 'groups' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/LmsClassEducatorPermissionKernelTest.php
-
-		-
-			rawMessage: Cannot access offset 'plugin_id' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/LmsClassEducatorPermissionKernelTest.php
-
-		-
-			rawMessage: Cannot access offset 'relationships' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/LmsClassEducatorPermissionKernelTest.php
-
-		-
-			rawMessage: Cannot access offset 'tags' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/LmsClassEducatorPermissionKernelTest.php
-
-		-
-			rawMessage: Cannot access offset 0 on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/LmsClassEducatorPermissionKernelTest.php
-
-		-
-			rawMessage: 'Cannot call method get() on Drupal\comment\Entity\Comment|null.'
-			identifier: method.nonObject
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/LmsClassEducatorPermissionKernelTest.php
-
-		-
-			rawMessage: 'Cannot call method id() on Drupal\comment\Entity\Comment|null.'
-			identifier: method.nonObject
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/LmsClassEducatorPermissionKernelTest.php
-
-		-
-			rawMessage: 'Cannot call method isPublished() on Drupal\comment\Entity\Comment|null.'
-			identifier: method.nonObject
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/LmsClassEducatorPermissionKernelTest.php
-
-		-
-			rawMessage: Cannot cast mixed to int.
-			identifier: cast.int
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/LmsClassEducatorPermissionKernelTest.php
-
-		-
-			rawMessage: Cannot cast mixed to string.
-			identifier: cast.string
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/LmsClassEducatorPermissionKernelTest.php
-
-		-
-			rawMessage: 'Parameter #1 $array of function array_intersect_key expects array, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/LmsClassEducatorPermissionKernelTest.php
-
-		-
-			rawMessage: 'Parameter #1 $array of function array_keys expects array, array|ArrayAccess given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/LmsClassEducatorPermissionKernelTest.php
-
-		-
-			rawMessage: 'Parameter #1 $data of method Drupal\Core\Config\Config::setData() expects array, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/LmsClassEducatorPermissionKernelTest.php
-
-		-
-			rawMessage: 'Parameter #1 $group_type of method Drupal\group\Plugin\Group\Relation\GroupRelationTypeManager::installEnforced() expects Drupal\group\Entity\GroupTypeInterface|null, Drupal\Core\Entity\EntityInterface|null given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/LmsClassEducatorPermissionKernelTest.php
-
-		-
-			rawMessage: 'Parameter #1 $id of method Drupal\Core\Entity\EntityStorageBase::load() expects int|string, int|string|null given.'
-			identifier: argument.type
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/LmsClassEducatorPermissionKernelTest.php
-
-		-
-			rawMessage: 'Parameter #1 $id of method Drupal\Core\Entity\EntityStorageInterface::load() expects int|string, int|string|null given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/LmsClassEducatorPermissionKernelTest.php
-
-		-
-			rawMessage: 'Parameter #2 $array of static method PHPUnit\Framework\Assert::assertArrayHasKey() expects array<mixed>|ArrayAccess<(int|string), mixed>, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/LmsClassEducatorPermissionKernelTest.php
-
-		-
-			rawMessage: 'Parameter #2 $haystack of static method PHPUnit\Framework\Assert::assertContains() expects iterable, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/LmsClassEducatorPermissionKernelTest.php
-
-		-
-			rawMessage: 'Parameter #2 $haystack of static method PHPUnit\Framework\Assert::assertCount() expects Countable|iterable, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/LmsClassEducatorPermissionKernelTest.php
-
-		-
 			rawMessage: 'Call to an undefined method Drupal\Core\Access\AccessResultInterface::getCacheContexts().'
 			identifier: method.notFound
 			count: 1
@@ -34191,12 +33951,6 @@ parameters:
 		-
 			rawMessage: 'Call to an undefined method Drupal\Core\Access\AccessResultInterface::getCacheTags().'
 			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/LmsClosedDiscussionFieldKernelTest.php
-
-		-
-			rawMessage: Cannot access offset 'creator_wizard' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/LmsClosedDiscussionFieldKernelTest.php
 
@@ -34225,19 +33979,7 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/LmsClosedDiscussionFieldKernelTest.php
 
 		-
-			rawMessage: 'Parameter #1 $data of method Drupal\Core\Config\Config::setData() expects array, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/LmsClosedDiscussionFieldKernelTest.php
-
-		-
 			rawMessage: 'Parameter #1 $group_type of method Drupal\group\Entity\Storage\GroupRelationshipTypeStorageInterface::createFromPlugin() expects Drupal\group\Entity\GroupTypeInterface, Drupal\Core\Entity\EntityInterface given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/LmsClosedDiscussionFieldKernelTest.php
-
-		-
-			rawMessage: 'Parameter #1 $group_type of method Drupal\group\Plugin\Group\Relation\GroupRelationTypeManager::installEnforced() expects Drupal\group\Entity\GroupTypeInterface|null, Drupal\Core\Entity\EntityInterface|null given.'
 			identifier: argument.type
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/LmsClosedDiscussionFieldKernelTest.php
@@ -34261,12 +34003,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/LmsCommentModerationMatrixKernelTest.php
 
 		-
-			rawMessage: Cannot access offset 'creator_wizard' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/LmsCommentModerationMatrixKernelTest.php
-
-		-
 			rawMessage: Cannot cast mixed to int.
 			identifier: cast.int
 			count: 4
@@ -34274,18 +34010,6 @@ parameters:
 
 		-
 			rawMessage: 'Parameter #1 $array of function array_intersect_key expects array, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/LmsCommentModerationMatrixKernelTest.php
-
-		-
-			rawMessage: 'Parameter #1 $data of method Drupal\Core\Config\Config::setData() expects array, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/LmsCommentModerationMatrixKernelTest.php
-
-		-
-			rawMessage: 'Parameter #1 $group_type of method Drupal\group\Plugin\Group\Relation\GroupRelationTypeManager::installEnforced() expects Drupal\group\Entity\GroupTypeInterface|null, Drupal\Core\Entity\EntityInterface|null given.'
 			identifier: argument.type
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/LmsCommentModerationMatrixKernelTest.php
@@ -34471,12 +34195,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/LmsRolePermissionsConfigSyncKernelTest.php
 
 		-
-			rawMessage: Cannot access offset 'creator_wizard' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/LmsRolePermissionsConfigSyncKernelTest.php
-
-		-
 			rawMessage: 'Cannot call method getPermissions() on Drupal\group\Entity\GroupRole|null.'
 			identifier: method.nonObject
 			count: 1
@@ -34501,18 +34219,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/LmsRolePermissionsConfigSyncKernelTest.php
 
 		-
-			rawMessage: 'Parameter #1 $data of method Drupal\Core\Config\Config::setData() expects array, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/LmsRolePermissionsConfigSyncKernelTest.php
-
-		-
-			rawMessage: 'Parameter #1 $group_type of method Drupal\group\Plugin\Group\Relation\GroupRelationTypeManager::installEnforced() expects Drupal\group\Entity\GroupTypeInterface|null, Drupal\Core\Entity\EntityInterface|null given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/LmsRolePermissionsConfigSyncKernelTest.php
-
-		-
 			rawMessage: 'Parameter #1 $id of method Drupal\Core\Entity\EntityStorageInterface::load() expects int|string, int|string|null given.'
 			identifier: argument.type
 			count: 1
@@ -34531,26 +34237,8 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/LmsTopicBundleInstallKernelTest.php
 
 		-
-			rawMessage: Cannot access offset 'creator_wizard' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/LmsTopicBundleInstallKernelTest.php
-
-		-
 			rawMessage: Cannot access offset 'status' on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/LmsTopicBundleInstallKernelTest.php
-
-		-
-			rawMessage: 'Parameter #1 $data of method Drupal\Core\Config\Config::setData() expects array, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/LmsTopicBundleInstallKernelTest.php
-
-		-
-			rawMessage: 'Parameter #1 $group_type of method Drupal\group\Plugin\Group\Relation\GroupRelationTypeManager::installEnforced() expects Drupal\group\Entity\GroupTypeInterface|null, Drupal\Core\Entity\EntityInterface|null given.'
-			identifier: argument.type
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/LmsTopicBundleInstallKernelTest.php
 

@@ -1,10 +1,10 @@
 # Dívida PHPStan — ACULTA
 
-Gerado em 2026-11-18T20:37:10+00:00 por `scripts/phpstan-debt-report.php`.
+Gerado em 2026-11-18T22:24:01+00:00 por `scripts/phpstan-debt-report.php`.
 
 | Item | Valor |
 | --- | --- |
-| Commit | `bd4c3f85cc1be78824f83f12598d4012d920d0b1` |
+| Commit | `01f1a121d17bf8a915292c21ac32962417e87064` |
 | PHP | 8.4.27 |
 | PHPStan | PHPStan - PHP Static Analysis Tool 2.3.5 |
 | Nível | 10 |
@@ -15,19 +15,19 @@ Gerado em 2026-11-18T20:37:10+00:00 por `scripts/phpstan-debt-report.php`.
 
 | Medida | Ocorrências |
 | --- | ---: |
-| Total bruto no nível 10 | 17809 |
-| Dívida congelada no baseline | 17809 |
+| Total bruto no nível 10 | 17745 |
+| Dívida congelada no baseline | 17745 |
 | Erros não suprimidos | 0 |
-| Entradas no baseline | 10526 |
+| Entradas no baseline | 10474 |
 | Produção | 10578 |
-| Testes | 7231 |
+| Testes | 7167 |
 
 ## Criticidade funcional
 
 | Criticidade | Ocorrências |
 | --- | ---: |
-| alta | 213 |
-| media | 15755 |
+| alta | 212 |
+| media | 15692 |
 | baixa | 1841 |
 
 ## Dívida por módulo (prioridade de redução)
@@ -39,8 +39,8 @@ Gerado em 2026-11-18T20:37:10+00:00 por `scripts/phpstan-debt-report.php`.
 | aculta_messenger | 1737 |
 | aculta_wiki | 1368 |
 | aculta_portal | 1152 |
-| aculta_lms | 1125 |
 | aculta_forum | 1079 |
+| aculta_lms | 1070 |
 | aculta_lms_h5p | 928 |
 | aculta_index | 915 |
 | aculta_commerce | 623 |
@@ -52,8 +52,8 @@ Gerado em 2026-11-18T20:37:10+00:00 por `scripts/phpstan-debt-report.php`.
 | aculta_deployer | 339 |
 | aculta420_v2 | 339 |
 | aculta_document_viewer | 295 |
-| aculta_calendar | 249 |
 | aculta_mail_confirmer | 241 |
+| aculta_calendar | 240 |
 | aculta_image | 229 |
 | aculta_cgu | 216 |
 | aculta_file_uploader | 153 |
@@ -69,12 +69,12 @@ Gerado em 2026-11-18T20:37:10+00:00 por `scripts/phpstan-debt-report.php`.
 
 | Identificador | Ocorrências |
 | --- | ---: |
-| `offsetAccess.nonOffsetAccessible` | 4686 |
-| `argument.type` | 3396 |
-| `method.nonObject` | 2091 |
+| `offsetAccess.nonOffsetAccessible` | 4650 |
+| `argument.type` | 3376 |
+| `method.nonObject` | 2086 |
 | `missingType.iterableValue` | 1725 |
-| `cast.string` | 1606 |
-| `cast.int` | 1054 |
+| `cast.string` | 1605 |
+| `cast.int` | 1052 |
 | `method.notFound` | 709 |
 | `property.nonObject` | 487 |
 | `return.type` | 292 |

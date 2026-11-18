@@ -34,7 +34,6 @@ use Drupal\KernelTests\KernelTestBase;
 use Drupal\node\Entity\NodeType;
 use Drupal\user\Entity\User;
 use Drupal\user\Entity\Role;
-use Drupal\views\ViewExecutableFactory;
 use PHPUnit\Framework\Attributes\Group as TestGroup;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Symfony\Component\Routing\Route;
@@ -137,18 +136,6 @@ final class LmsClassEducatorPermissionKernelTest extends KernelTestBase {
       $this->config('core.entity_view_display.node.aculta_lms_topic.full')
         ->get('content.field_aculta_discussion.type'),
     );
-    FieldStorageConfig::create([
-      'entity_type' => 'comment',
-      'field_name' => 'field_aculta_rejected',
-      'type' => 'boolean',
-    ])->save();
-    FieldConfig::create([
-      'entity_type' => 'comment',
-      'bundle' => 'aculta_discussion_post',
-      'field_name' => 'field_aculta_rejected',
-      'label' => 'Rejected',
-    ])->save();
-
     $courseType = GroupType::load('lms_course');
     self::assertInstanceOf(GroupType::class, $courseType);
     $classType = GroupType::load('lms_class');
@@ -162,7 +149,9 @@ final class LmsClassEducatorPermissionKernelTest extends KernelTestBase {
       [$classType, 'group_node:aculta_lms_topic'],
     ] as [$groupType, $pluginId]) {
       $relationshipType = $relationshipTypeStorage->createFromPlugin($groupType, $pluginId);
-      if ($relationshipTypeStorage->load($relationshipType->id()) === NULL) {
+      $relationshipTypeId = $relationshipType->id();
+      self::assertNotNull($relationshipTypeId);
+      if ($relationshipTypeStorage->load($relationshipTypeId) === NULL) {
         $relationshipTypeStorage->save($relationshipType);
       }
     }
@@ -183,8 +172,11 @@ final class LmsClassEducatorPermissionKernelTest extends KernelTestBase {
     $syncPath = dirname(__DIR__, 9) . '/config/sync/aculta_lms.settings.yml';
     self::assertFileExists($syncPath);
     $syncConfig = Yaml::parseFile($syncPath);
+    self::assertIsArray($syncConfig);
+    $classPermissionMappings = $syncConfig['class_permission_mappings'] ?? NULL;
+    self::assertIsArray($classPermissionMappings);
     $this->config('aculta_lms.settings')
-      ->set('class_permission_mappings', $syncConfig['class_permission_mappings'])
+      ->set('class_permission_mappings', $classPermissionMappings)
       ->save();
   }
 
@@ -362,12 +354,19 @@ final class LmsClassEducatorPermissionKernelTest extends KernelTestBase {
 
     $viewEntity = $this->container->get('entity_type.manager')->getStorage('view')->load('aculta_forum_lms_admin_comments');
     self::assertNotNull($viewEntity, 'The adapter installs its Group-scoped moderation View.');
-    self::assertArrayHasKey('lms_published', $viewEntity->get('display'));
     $viewDisplays = $viewEntity->get('display');
+    self::assertIsArray($viewDisplays);
+    self::assertArrayHasKey('lms_published', $viewDisplays);
     self::assertEqualsCanonicalizing(['default', 'lms_published', 'lms_rejected', 'lms_pending'], array_keys($viewDisplays));
-    self::assertSame('group_relationship_to_entity_reverse', $viewDisplays['default']['display_options']['relationships']['group_relationship']['plugin_id']);
-    self::assertSame('empty', $viewDisplays['default']['display_options']['arguments']['gid']['default_action']);
-    self::assertSame(['group_node:aculta_lms_topic' => 'group_node:aculta_lms_topic'], $viewDisplays['default']['display_options']['relationships']['group_relationship']['group_relation_plugins']);
+    $defaultDisplay = $this->arrayOffset($viewDisplays, 'default');
+    $displayOptions = $this->arrayOffset($defaultDisplay, 'display_options');
+    $relationships = $this->arrayOffset($displayOptions, 'relationships');
+    $groupRelationship = $this->arrayOffset($relationships, 'group_relationship');
+    self::assertSame('group_relationship_to_entity_reverse', $groupRelationship['plugin_id'] ?? NULL);
+    $arguments = $this->arrayOffset($displayOptions, 'arguments');
+    $groupArgument = $this->arrayOffset($arguments, 'gid');
+    self::assertSame('empty', $groupArgument['default_action'] ?? NULL);
+    self::assertSame(['group_node:aculta_lms_topic' => 'group_node:aculta_lms_topic'], $groupRelationship['group_relation_plugins'] ?? NULL);
     $viewFactory = $this->container->get('views.executable');
     $moderationController = new LmsForumModerationController(
       $moderationManager,
@@ -377,15 +376,24 @@ final class LmsClassEducatorPermissionKernelTest extends KernelTestBase {
       $this->container->get('string_translation'),
     );
     $forumOverview = $moderationController->overview();
-    self::assertSame('Fóruns por curso', (string) $forumOverview['contexts']['#title']);
-    self::assertCount(1, $forumOverview['contexts']['#items']);
-    self::assertNotEmpty($forumOverview['contexts']['#items'][0]['groups']['#items']);
+    $contexts = $this->arrayOffset($forumOverview, 'contexts');
+    $contextTitle = $contexts['#title'] ?? NULL;
+    self::assertIsString($contextTitle);
+    self::assertSame('Fóruns por curso', $contextTitle);
+    $contextItems = $this->arrayOffset($contexts, '#items');
+    self::assertCount(1, $contextItems);
+    $firstContext = $contextItems[0] ?? NULL;
+    self::assertIsArray($firstContext);
+    $groups = $this->arrayOffset($firstContext, 'groups');
+    self::assertNotEmpty($this->arrayOffset($groups, '#items'));
     $pendingQueue = $moderationController->comments($class, $course, 'pending');
-    self::assertSame('view', $pendingQueue['view']['#type']);
-    self::assertSame('aculta_forum_lms_admin_comments', $pendingQueue['view']['#name']);
-    self::assertSame('lms_pending', $pendingQueue['view']['#display_id']);
-    self::assertSame([(string) $class->id()], $pendingQueue['view']['#arguments']);
-    self::assertContains('group:' . $class->id(), $pendingQueue['#cache']['tags']);
+    $viewBuild = $this->arrayOffset($pendingQueue, 'view');
+    self::assertSame('view', $viewBuild['#type'] ?? NULL);
+    self::assertSame('aculta_forum_lms_admin_comments', $viewBuild['#name'] ?? NULL);
+    self::assertSame('lms_pending', $viewBuild['#display_id'] ?? NULL);
+    self::assertSame([(string) $class->id()], $viewBuild['#arguments'] ?? NULL);
+    $cache = $this->arrayOffset($pendingQueue, '#cache');
+    self::assertContains('group:' . $class->id(), $this->arrayOffset($cache, 'tags'));
     foreach ([
       'lms_published' => 1,
       'lms_pending' => 1,
@@ -499,16 +507,20 @@ final class LmsClassEducatorPermissionKernelTest extends KernelTestBase {
     self::assertArrayHasKey('confirm', $rejectForm);
     $rejectState->setValue('confirm', TRUE);
     $moderationForm->submitForm($rejectForm, $rejectState);
-    $pendingComment = $this->container->get('entity_type.manager')->getStorage('comment')->load($pendingComment->id());
+    $pendingComment = $this->reloadComment($pendingComment);
     self::assertFalse($pendingComment->isPublished());
-    self::assertSame(1, (int) $pendingComment->get('field_aculta_rejected')->value);
+    $rejectedValue = $pendingComment->get('field_aculta_rejected')->value;
+    self::assertIsNumeric($rejectedValue);
+    self::assertSame(1, (int) $rejectedValue);
     $approveState = new FormState();
     $approveForm = $moderationForm->buildForm([], $approveState, $course, $class, $pendingComment, 'approve');
     $approveState->setValue('confirm', TRUE);
     $moderationForm->submitForm($approveForm, $approveState);
-    $pendingComment = $this->container->get('entity_type.manager')->getStorage('comment')->load($pendingComment->id());
+    $pendingComment = $this->reloadComment($pendingComment);
     self::assertTrue($pendingComment->isPublished());
-    self::assertSame(0, (int) $pendingComment->get('field_aculta_rejected')->value);
+    $rejectedValue = $pendingComment->get('field_aculta_rejected')->value;
+    self::assertIsNumeric($rejectedValue);
+    self::assertSame(0, (int) $rejectedValue);
 
     $resolver = new DiscussionContextResolver([$provider]);
     $commentAccessHook = new LmsCommentModerationAccessHooks($resolver);
@@ -534,6 +546,7 @@ final class LmsClassEducatorPermissionKernelTest extends KernelTestBase {
     $configPath = dirname(__DIR__, 9) . '/config/sync/' . $configName . '.yml';
     self::assertFileExists($configPath);
     $config = Yaml::parseFile($configPath);
+    self::assertIsArray($config);
     $role = array_intersect_key($config, array_flip([
       'id',
       'label',
@@ -545,6 +558,34 @@ final class LmsClassEducatorPermissionKernelTest extends KernelTestBase {
       'permissions',
     ]));
     GroupRole::create($role)->save();
+  }
+
+  /**
+   * Returns a nested array value after asserting its runtime type.
+   *
+   * @param array<mixed> $values
+   *   Parent values.
+   * @param string $key
+   *   Offset to read.
+   *
+   * @return array<mixed>
+   *   The nested array.
+   */
+  private function arrayOffset(array $values, string $key): array {
+    $value = $values[$key] ?? NULL;
+    self::assertIsArray($value);
+    return $value;
+  }
+
+  /**
+   * Reloads a saved comment and verifies the entity still exists.
+   */
+  private function reloadComment(Comment $comment): Comment {
+    $id = $comment->id();
+    self::assertNotNull($id);
+    $reloaded = $this->container->get('entity_type.manager')->getStorage('comment')->load($id);
+    self::assertInstanceOf(Comment::class, $reloaded);
+    return $reloaded;
   }
 
 }

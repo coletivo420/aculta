@@ -56,7 +56,7 @@ trait AcultaLmsDependencyHarnessTrait {
    */
   public static function setUpBeforeClass(): void {
     parent::setUpBeforeClass();
-    foreach (['ui_patterns', 'ui_patterns_views'] as $module) {
+    foreach (['ui_patterns', 'ui_patterns_views', 'text_with_summary', 'editor', 'ckeditor5'] as $module) {
       if (!in_array($module, static::$modules, TRUE)) {
         static::$modules[] = $module;
       }
