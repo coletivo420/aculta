@@ -293,6 +293,27 @@ passaram. A alteração é **R2** porque mantém a fila de moderação sob
 revalidação de acesso; revisão independente ainda é necessária antes da
 publicação.
 
+### Integração de reprodução H5P e documentos
+
+A falha `testPlaybackRequiresCurrentCourseMembershipAndFieldReference` foi
+reproduzida isoladamente no Kernel local. A causa estava no próprio teste:
+ele criava o formatter antes de substituir o serviço
+`aculta_document_viewer.pdf_builder`; por isso a instância mantinha o mock
+padrão vazio injetado anteriormente, embora a expectativa fosse configurada
+em outro mock. Reordenei a configuração para instalar o mock antes da criação
+do formatter. O código de produção e o contrato de acesso não mudaram.
+
+Reexecução da classe focal: **3 testes, 156 asserções, PASS**, com 7
+deprecações upstream/Core. PHP lint, descoberta PHPUnit (252 Kernel/693 Unit)
+e gate Drupal 12 do Portal (1.236 checks) passaram. PHPStan nível 10 canônico
+retornou exit 0; guards `check` e `diff --changed-files --analysis` passaram.
+A suíte Unit global não iniciou: PHPUnit não encontrou
+`Drupal\Tests\feeds\Unit\Feeds\Target\FieldTargetTestBase`,
+requerida por teste contrib de `fraction`; portanto esse gate é FAIL de
+bootstrap do conjunto, não PASS. A falha local focalizada H5P foi corrigida,
+mas o CI remoto e P01 permanecem **FAIL** até todos os shards serem
+executados com sucesso.
+
 1. Reexecutar todos os shards para quantificar os fixes locais de schema da View, descoberta SDC, avatar do Fórum, Calendar e o preprocess do bloco Messenger; reavaliar outros consumidores do SDC no shard 1/6.
 2. Corrigir as causas em lotes isolados e manter failures/skipped/cancelled distintos no relatório e na proteção de branch.
 3. Reexecutar todos os shards no HEAD atual depois das correções e exigir sucesso; o cancelamento do shard 2 nos dois runs não prova estabilidade.
