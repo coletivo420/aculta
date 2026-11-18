@@ -442,7 +442,18 @@ final class EventStructuredDataKernelTest extends KernelTestBase {
       if (isset($item[1]) && $item[1] === $key) {
         $raw = (string) ($item[0]['#value'] ?? '');
         if ($raw !== '') {
-          return json_decode($raw, TRUE);
+          $decoded = json_decode($raw, TRUE);
+          if (!is_array($decoded)) {
+            return NULL;
+          }
+          $result = [];
+          foreach ($decoded as $field => $value) {
+            if (!is_string($field)) {
+              return NULL;
+            }
+            $result[$field] = $value;
+          }
+          return $result;
         }
       }
     }
