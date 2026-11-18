@@ -44,7 +44,7 @@
 /* Categoria é texto: `--color-brand-secondary` sobre superfície clara fica em
    3,59:1. O verde permanece nas bordas decorativas do cartão. */
 .revista-teaser__category { letter-spacing: .04em; text-transform: uppercase; color: var(--color-text-secondary); font-size: var(--font-size-xs); font-weight: 700; }
-.revista-teaser__category a { text-decoration: none; color: inherit; }
+.revista-teaser__category a { display: inline-flex; align-items: center; min-block-size: var(--tap-target-min); padding-inline: var(--spacing-xs); text-decoration: none; color: inherit; }
 .revista-teaser .aculta-heading a { display: block; min-block-size: var(--tap-target-min); padding-block: var(--spacing-xs); }
 .revista-teaser__body { align-self: start; padding-block: var(--spacing-xs) var(--spacing-sm); }
 .revista-teaser__subtitle { margin-block-end: var(--spacing-sm); color: var(--color-text-primary); font-weight: 600; line-height: 1.45; }
