@@ -45,18 +45,28 @@ final class ContributionAccessControlHandler extends EntityAccessControlHandler 
     }
 
     try {
-      $adapter = $this->adapters->get((string) $entity->get('source')->value);
+      $sourceVal = $entity->get('source')->value;
+      $sourceStr = is_scalar($sourceVal) ? (string) $sourceVal : '';
+      $adapter = $this->adapters->get($sourceStr);
     }
     catch (\InvalidArgumentException) {
       return AccessResult::forbidden()->cachePerUser()->cachePerPermissions();
     }
-    return $adapter->entityAccess($account, $entity, (string) $operation)
-      ->addCacheableDependency($entity)
-      ->addCacheContexts(['user', 'user.permissions']);
+    $op = (string) $operation;
+    $result = $adapter->entityAccess($account, $entity, $op);
+    if ($result instanceof AccessResult) {
+      return $result
+        ->addCacheableDependency($entity)
+        ->addCacheContexts(['user', 'user.permissions']);
+    }
+    return $result;
   }
 
   /**
-   * {@inheritdoc} */
+   * {@inheritdoc}
+   *
+   * @param array<string, mixed> $context
+   */
   protected function checkCreateAccess(AccountInterface $account, array $context, $entity_bundle = NULL): AccessResultInterface {
     return AccessResult::allowedIfHasPermission($account, 'administer aculta contributions')
       ->cachePerPermissions();
