@@ -412,8 +412,9 @@ simultânea. Na reexecução canônica após a normalização do helper JSON-LD,
 PHPStan nível 10 passou com JSON válido e zero erros não suprimidos; os guards
 `check` e `diff --include-worktree --analysis` passaram. A dívida congelada do
 arquivo `EventStructuredDataKernelTest.php` foi reduzida de 104 para 103
-ocorrências, removendo somente a entrada `return.type` corrigida. P01 continua
-**FAIL** porque falta um resumo recuperável da suíte Kernel completa atual.
+ocorrências, removendo somente a entrada `return.type` corrigida. Naquele
+momento, P01 permanecia **FAIL** por falta de resumo integral; a execução
+recuperada posteriormente está registrada abaixo.
 
 ## Contrato do bloco de próximos Eventos — 2026-11-18
 
