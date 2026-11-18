@@ -56643,12 +56643,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_studio/tests/src/Kernel/SavedAndRecommendationsKernelTest.php
 
 		-
-			rawMessage: Cannot access offset 'list' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 3
-			path: web/modules/custom/aculta_portal/modules/aculta_studio/tests/src/Kernel/SavedAndRecommendationsKernelTest.php
-
-		-
 			rawMessage: Cannot access offset 'max-age' on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
@@ -56656,12 +56650,6 @@ parameters:
 
 		-
 			rawMessage: Cannot access offset 'message' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_studio/tests/src/Kernel/SavedAndRecommendationsKernelTest.php
-
-		-
-			rawMessage: Cannot access offset 'pager' on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_studio/tests/src/Kernel/SavedAndRecommendationsKernelTest.php
