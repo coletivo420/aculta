@@ -99,7 +99,7 @@ final class UiIconsPackTest extends UnitTestCase {
       self::assertSame('icon_picker', $menuIconSettings['icon_selector'] ?? NULL);
       self::assertSame($allowed_packs, $menuIconSettings['allowed_icon_pack'] ?? NULL);
       self::assertFalse($menuIconSettings['icon_required'] ?? NULL);
-      self::assertTrue($menuIconSettings['icon_position'] ?? NULL);
+      self::assertSame($menu === 'admin', $menuIconSettings['icon_position'] ?? NULL);
     }
 
     $formDisplay = $this->parseYamlFile($root . '/config/sync/core.entity_form_display.node.wiki_entry.default.yml');

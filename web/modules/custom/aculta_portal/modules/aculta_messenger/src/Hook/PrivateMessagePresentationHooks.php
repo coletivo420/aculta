@@ -84,7 +84,11 @@ final class PrivateMessagePresentationHooks {
    */
   #[Hook('preprocess_private_message')]
   public function preprocessPrivateMessage(array &$variables): void {
-    $message = $variables['private_message'] ?? $variables['elements']['#private_message'] ?? NULL;
+    $message = $variables['private_message'] ?? NULL;
+    if (!$message instanceof PrivateMessageInterface) {
+      $elements = $variables['elements'] ?? NULL;
+      $message = is_array($elements) ? ($elements['#private_message'] ?? NULL) : NULL;
+    }
     if (!$message instanceof PrivateMessageInterface) {
       return;
     }
