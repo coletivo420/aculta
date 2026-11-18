@@ -261,6 +261,12 @@ No checkout local atual, os harnesses dessas duas frentes foram ajustados em arq
 
 **Status P01: FAIL.** O único run remoto mais recente continua com shards falhos/cancelados. As correções locais não foram submetidas a uma execução CI completa porque a PR #335 já foi merged; requerem o fluxo subsequente de revisão/publicação e uma nova execução completa dos shards.
 
+## Correção focal local — asserção Maps (2026-11-18)
+
+O shard 4 do run `44092787085` falhou porque `MapSettingsFormKernelTest` aceitava apenas valores escalares em `credential_status.#markup`. O formulário retorna `TranslatableMarkup`, que implementa `Stringable`; a guarda antiga convertia o status válido `Ausente` em string vazia. A asserção agora converte explicitamente valores `Stringable`, sem alterar o formulário ou o armazenamento de credenciais.
+
+Reexecução Kernel focal: **3 testes, 6 asserções, PASS**. PHP lint, gate Drupal 12 do Portal (**1.236 checks**), PHPStan nível 10 global (JSON canônico, exit 0), `phpstan-debt-guard check` e `diff --changed-files --analysis` passaram. O módulo `aculta_maps` não tinha entrada no baseline a reduzir. A falha fica corrigida no checkout local; o CI remoto segue **FAIL** até executar todos os shards no fluxo de revisão subsequente.
+
 ## Próximos passos
 
 ### Execução Kernel local e correção da fila editorial Wiki

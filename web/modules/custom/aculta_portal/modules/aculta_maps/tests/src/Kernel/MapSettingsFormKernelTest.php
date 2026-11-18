@@ -75,7 +75,8 @@ final class MapSettingsFormKernelTest extends KernelTestBase {
     $this->assertArrayNotHasKey('google_maps_api_key', $raw);
     $this->assertStringNotContainsString('google_maps_api_key', $export);
     $credentialStatus = is_array($form['credential_status'] ?? NULL) ? $form['credential_status'] : [];
-    $this->assertSame('Ausente', is_scalar($credentialStatus['#markup'] ?? NULL) ? (string) $credentialStatus['#markup'] : '');
+    $credentialStatusMarkup = $credentialStatus['#markup'] ?? NULL;
+    $this->assertSame('Ausente', $credentialStatusMarkup instanceof \Stringable ? (string) $credentialStatusMarkup : '');
   }
 
   /**
