@@ -76,6 +76,8 @@ final class LmsDiscussionContextIsolationKernelTest extends KernelTestBase {
     'profile',
     'aculta_user',
     'aculta_forum',
+    'ui_patterns',
+    'ui_patterns_views',
     'aculta_lms',
     'key',
     'file',
@@ -153,18 +155,21 @@ final class LmsDiscussionContextIsolationKernelTest extends KernelTestBase {
     ] as $config_id) {
       $path = dirname(__DIR__, 9) . '/config/sync/' . $config_id . '.yml';
       self::assertFileExists($path);
-      $data = Yaml::parseFile($path);
+      $data = $this->parseConfigFile($path);
       // creator_wizard belonged to the removed contrib LMS schema.
       unset($data['creator_wizard']);
       $this->container->get('config.factory')->getEditable($config_id)
         ->setData($data)
         ->save();
     }
-    $this->installConfig(['system', 'user', 'node', 'comment', 'image', 'media', 'media_library', 'photoswipe', 'media_gallery', 'path_alias', 'profile']);
+    $this->installConfig([
+      'system', 'user', 'node', 'comment', 'image', 'media', 'media_library',
+      'photoswipe', 'media_gallery', 'path_alias', 'profile',
+    ]);
     $configDir = dirname(__DIR__, 9) . '/config/sync/';
-    ProfileType::create(Yaml::parseFile($configDir . 'profile.type.authenticated.yml'))->save();
-    FieldStorageConfig::create(Yaml::parseFile($configDir . 'field.storage.profile.field_nickname.yml'))->save();
-    FieldConfig::create(Yaml::parseFile($configDir . 'field.field.profile.authenticated.field_nickname.yml'))->save();
+    ProfileType::create($this->parseConfigFile($configDir . 'profile.type.authenticated.yml'))->save();
+    FieldStorageConfig::create($this->parseConfigFile($configDir . 'field.storage.profile.field_nickname.yml'))->save();
+    FieldConfig::create($this->parseConfigFile($configDir . 'field.field.profile.authenticated.field_nickname.yml'))->save();
     CommentType::create([
       'id' => 'aculta_discussion_post',
       'label' => 'Discussion post',
@@ -195,7 +200,7 @@ final class LmsDiscussionContextIsolationKernelTest extends KernelTestBase {
       'field.field.group_relationship.lms_course-group_membership.group_roles',
       'field.field.group_relationship.lms_class-group_membership.group_roles',
     ] as $config_id) {
-      FieldConfig::create(Yaml::parseFile(dirname(__DIR__, 9) . '/config/sync/' . $config_id . '.yml'))->save();
+      FieldConfig::create($this->parseConfigFile(dirname(__DIR__, 9) . '/config/sync/' . $config_id . '.yml'))->save();
     }
 
     $this->container->get('config.installer')
@@ -234,7 +239,9 @@ final class LmsDiscussionContextIsolationKernelTest extends KernelTestBase {
       [$containerType, 'group_membership'],
     ] as [$groupType, $pluginId]) {
       $relationshipType = $relationshipTypeStorage->createFromPlugin($groupType, $pluginId);
-      if ($relationshipTypeStorage->load($relationshipType->id()) === NULL) {
+      $relationshipTypeId = $relationshipType->id();
+      self::assertNotNull($relationshipTypeId);
+      if ($relationshipTypeStorage->load($relationshipTypeId) === NULL) {
         $relationshipTypeStorage->save($relationshipType);
       }
     }
@@ -337,12 +344,15 @@ final class LmsDiscussionContextIsolationKernelTest extends KernelTestBase {
 
     // A second relationship makes the context ambiguous, so it fails closed.
     $secondCourse->addRelationship($topic, 'group_node:aculta_lms_topic')->save();
-    $topic = Node::load($topic->id());
+    $topic_id = $topic->id();
+    self::assertNotNull($topic_id);
+    $topic = Node::load($topic_id);
+    self::assertInstanceOf(Node::class, $topic);
+    $relationships = $this->container->get('entity_type.manager')->getStorage('group_relationship');
+    self::assertInstanceOf(GroupRelationshipStorageInterface::class, $relationships);
     self::assertCount(
       2,
-      $this->container->get('entity_type.manager')
-        ->getStorage('group_relationship')
-        ->loadByEntity($topic, 'group_node:aculta_lms_topic'),
+      $relationships->loadByEntity($topic, 'group_node:aculta_lms_topic'),
     );
     self::assertTrue($this->provider->getGroupRelationshipAccess($topic)->isForbidden());
     $this->assertContextForbidden($topic, $member);
@@ -596,7 +606,7 @@ final class LmsDiscussionContextIsolationKernelTest extends KernelTestBase {
   private function createGroupRoleFromSync(string $configName): void {
     $configPath = dirname(__DIR__, 9) . '/config/sync/' . $configName . '.yml';
     self::assertFileExists($configPath);
-    $config = Yaml::parseFile($configPath);
+    $config = $this->parseConfigFile($configPath);
     $role = array_intersect_key($config, array_flip([
       'id',
       'label',
@@ -608,6 +618,18 @@ final class LmsDiscussionContextIsolationKernelTest extends KernelTestBase {
       'permissions',
     ]));
     GroupRole::create($role)->save();
+  }
+
+  /**
+   * Parses an exported configuration file and validates its root shape.
+   *
+   * @return array<mixed>
+   *   The parsed configuration.
+   */
+  private function parseConfigFile(string $path): array {
+    $data = Yaml::parseFile($path);
+    self::assertIsArray($data);
+    return $data;
   }
 
 }

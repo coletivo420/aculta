@@ -489,7 +489,7 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
     self::assertConfigSame($view, $sync);
     self::assertContains('history', self::configArray($view, 'dependencies', 'module'));
     self::assertContains('drupal:history', self::configArray($module_info, 'dependencies'));
-    self::assertSame('^1.0', self::configValue($composer, 'require', 'drupal/history'));
+    self::assertSame('*@dev', self::configValue($composer, 'require', 'drupal/history'));
 
     $options = self::configValue($view, 'display', 'default', 'display_options');
     self::assertSame('role', self::configValue($options, 'access', 'type'));

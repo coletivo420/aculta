@@ -1,10 +1,10 @@
 # Dívida PHPStan — ACULTA
 
-Gerado em 2026-11-18T19:05:48+00:00 por `scripts/phpstan-debt-report.php`.
+Gerado em 2026-11-18T19:35:26+00:00 por `scripts/phpstan-debt-report.php`.
 
 | Item | Valor |
 | --- | --- |
-| Commit | `1dedf93b13b815bf3e344738597a02512284c6b4` |
+| Commit | `673719ce113a0de5072ff4402209954fddcc4404` |
 | PHP | 8.4.27 |
 | PHPStan | PHPStan - PHP Static Analysis Tool 2.3.5 |
 | Nível | 10 |
@@ -15,20 +15,20 @@ Gerado em 2026-11-18T19:05:48+00:00 por `scripts/phpstan-debt-report.php`.
 
 | Medida | Ocorrências |
 | --- | ---: |
-| Total bruto no nível 10 | 18234 |
-| Dívida congelada no baseline | 18234 |
+| Total bruto no nível 10 | 18070 |
+| Dívida congelada no baseline | 18070 |
 | Erros não suprimidos | 0 |
-| Entradas no baseline | 10797 |
-| Produção | 10700 |
-| Testes | 7534 |
+| Entradas no baseline | 10695 |
+| Produção | 10579 |
+| Testes | 7491 |
 
 ## Criticidade funcional
 
 | Criticidade | Ocorrências |
 | --- | ---: |
 | alta | 214 |
-| media | 16165 |
-| baixa | 1855 |
+| media | 16013 |
+| baixa | 1843 |
 
 ## Dívida por módulo (prioridade de redução)
 
@@ -38,9 +38,9 @@ Gerado em 2026-11-18T19:05:48+00:00 por `scripts/phpstan-debt-report.php`.
 | aculta_events | 1770 |
 | aculta_messenger | 1737 |
 | aculta_wiki | 1368 |
-| aculta_portal | 1206 |
+| aculta_portal | 1152 |
 | aculta_lms | 1147 |
-| aculta_forum | 1094 |
+| aculta_forum | 1079 |
 | aculta_index | 1022 |
 | aculta_lms_h5p | 928 |
 | aculta_commerce | 733 |
@@ -51,14 +51,14 @@ Gerado em 2026-11-18T19:05:48+00:00 por `scripts/phpstan-debt-report.php`.
 | aculta_statistics | 351 |
 | aculta_deployer | 339 |
 | aculta420_v2 | 339 |
-| aculta_document_viewer | 323 |
+| aculta_document_viewer | 295 |
 | aculta_calendar | 249 |
 | aculta_mail_confirmer | 241 |
 | aculta_cgu | 238 |
 | aculta_image | 229 |
-| aculta_game | 209 |
 | aculta_file_uploader | 153 |
 | aculta_magazine | 149 |
+| aculta_game | 142 |
 | aculta_patcher | 101 |
 | aculta_gallery | 95 |
 | aculta_editor | 86 |
@@ -69,18 +69,18 @@ Gerado em 2026-11-18T19:05:48+00:00 por `scripts/phpstan-debt-report.php`.
 
 | Identificador | Ocorrências |
 | --- | ---: |
-| `offsetAccess.nonOffsetAccessible` | 4842 |
-| `argument.type` | 3496 |
-| `method.nonObject` | 2161 |
-| `missingType.iterableValue` | 1738 |
-| `cast.string` | 1636 |
-| `cast.int` | 1068 |
-| `method.notFound` | 720 |
+| `offsetAccess.nonOffsetAccessible` | 4770 |
+| `argument.type` | 3452 |
+| `method.nonObject` | 2154 |
+| `missingType.iterableValue` | 1726 |
+| `cast.string` | 1619 |
+| `cast.int` | 1064 |
+| `method.notFound` | 719 |
 | `property.nonObject` | 495 |
-| `return.type` | 294 |
-| `foreach.nonIterable` | 281 |
+| `return.type` | 292 |
+| `foreach.nonIterable` | 280 |
 | `binaryOp.invalid` | 221 |
-| `offsetAccess.invalidOffset` | 129 |
+| `offsetAccess.invalidOffset` | 127 |
 | `property.notFound` | 105 |
 | `encapsedStringPart.nonString` | 88 |
 | `missingType.return` | 82 |

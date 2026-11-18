@@ -11,6 +11,7 @@ use Drupal\KernelTests\KernelTestBase;
 use Drupal\group\Entity\Group;
 use Drupal\group\Entity\GroupRole;
 use Drupal\group\Entity\GroupType;
+use Drupal\group\Entity\GroupTypeInterface;
 use Drupal\group\Entity\Storage\GroupRelationshipTypeStorageInterface;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\media\Entity\Media;
@@ -21,6 +22,8 @@ use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Yaml\Yaml;
 
+require_once __DIR__ . '/AcultaV2ThemeKernelTestTrait.php';
+
 /**
  * Verifies private course PDFs follow Group membership at the Core endpoint.
  */
@@ -29,6 +32,7 @@ use Symfony\Component\Yaml\Yaml;
 final class CourseDocumentAccessTest extends KernelTestBase {
 
   use UserCreationTrait;
+  use AcultaV2ThemeKernelTestTrait;
 
   /**
    * {@inheritdoc}
@@ -42,7 +46,7 @@ final class CourseDocumentAccessTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['aculta_file_uploader', 'group', 'flexible_permissions' ];
+  protected static $modules = ['aculta_file_uploader', 'group', 'flexible_permissions'];
 
   /**
    * {@inheritdoc}
@@ -74,6 +78,7 @@ final class CourseDocumentAccessTest extends KernelTestBase {
    */
   protected function setUp(): void {
     parent::setUp();
+    $this->activateAcultaV2ThemeForSdcRendering();
     $this->installSchema('user', ['users_data']);
     $this->installSchema('aculta_user', ['aculta_user_agreement', 'aculta_user_nickname']);
     $this->installSchema('file', ['file_usage']);
@@ -131,8 +136,10 @@ final class CourseDocumentAccessTest extends KernelTestBase {
       'aculta_document_viewer:course_document',
     );
     if (!$relationship_types->load($relationship_id)) {
+      $group_type = GroupType::load('lms_course');
+      self::assertInstanceOf(GroupTypeInterface::class, $group_type);
       $relationship_types->createFromPlugin(
-        GroupType::load('lms_course'),
+        $group_type,
         'aculta_document_viewer:course_document',
       )->save();
     }
@@ -183,7 +190,14 @@ final class CourseDocumentAccessTest extends KernelTestBase {
 
       $visiting[$module] = TRUE;
       $info = Yaml::parseFile(DRUPAL_ROOT . '/' . $extensions[$module]->getPathname());
-      foreach ($info['dependencies'] ?? [] as $dependency) {
+      if (!is_array($info)) {
+        throw new \UnexpectedValueException(sprintf('Module info for %s is not an array.', $module));
+      }
+      $dependencies = $info['dependencies'] ?? [];
+      if (!is_array($dependencies)) {
+        throw new \UnexpectedValueException(sprintf('Dependencies for %s are not an array.', $module));
+      }
+      foreach ($dependencies as $dependency) {
         if (!is_string($dependency)) {
           continue;
         }
@@ -238,7 +252,9 @@ final class CourseDocumentAccessTest extends KernelTestBase {
     $media->setOwner($teacher);
     $media->save();
     $this->assertFalse($media->isPublished(), 'Course documents are forced unpublished.');
-    $this->assertSame('private', parse_url($file->getFileUri(), PHP_URL_SCHEME));
+    $file_uri = $file->getFileUri();
+    self::assertIsString($file_uri);
+    $this->assertSame('private', parse_url($file_uri, PHP_URL_SCHEME));
 
     $group = Group::create([
       'type' => 'lms_course',
@@ -252,6 +268,13 @@ final class CourseDocumentAccessTest extends KernelTestBase {
 
     $this->container->get('current_user')->setAccount($member);
     $build = $this->container->get('aculta_document_viewer.pdf_builder')->build($media, 'field_media_course_document');
+    self::assertArrayHasKey('#attributes', $build);
+    self::assertIsArray($build['#attributes']);
+    self::assertArrayHasKey('data-aculta-pdf-url', $build['#attributes']);
+    self::assertIsString($build['#attributes']['data-aculta-pdf-url']);
+    self::assertArrayHasKey('#cache', $build);
+    self::assertIsArray($build['#cache']);
+    self::assertArrayHasKey('max-age', $build['#cache']);
     $private_url = $build['#attributes']['data-aculta-pdf-url'];
     $this->assertSame('/system/files?file=course-pdf/membership-fixture.pdf', $private_url);
     $this->assertSame(0, $build['#cache']['max-age']);

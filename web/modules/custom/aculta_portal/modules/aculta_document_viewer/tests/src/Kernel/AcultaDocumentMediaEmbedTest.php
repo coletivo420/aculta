@@ -9,6 +9,7 @@ use Drupal\node\Entity\Node;
 use Drupal\node\Entity\NodeType;
 use Drupal\Core\Entity\Entity\EntityViewDisplay;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
+use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\File\FileExists;
 use Drupal\Core\Render\RenderContext;
 use Drupal\Core\DrupalKernel;
@@ -17,16 +18,19 @@ use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\file\Entity\File;
 use Drupal\filter\Entity\FilterFormat;
 use Drupal\filter\FilterPluginCollection;
+use Drupal\filter\FilterProcessResult;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\media\Entity\Media;
 use Drupal\media\Entity\MediaType;
 use Drupal\Tests\user\Traits\UserCreationTrait;
 use Drupal\user\Entity\Role;
+use Drupal\user\UserInterface;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Symfony\Component\HttpFoundation\Request;
 
 require_once __DIR__ . '/DocumentViewerKernelClosureTrait.php';
+require_once __DIR__ . '/AcultaV2ThemeKernelTestTrait.php';
 
 /**
  * Tests the CKEditor Media Embed to shared PDF viewer rendering path.
@@ -37,6 +41,7 @@ final class AcultaDocumentMediaEmbedTest extends KernelTestBase {
 
   use UserCreationTrait;
   use DocumentViewerKernelClosureTrait;
+  use AcultaV2ThemeKernelTestTrait;
 
   /**
    * {@inheritdoc}
@@ -57,6 +62,7 @@ final class AcultaDocumentMediaEmbedTest extends KernelTestBase {
    */
   protected function setUp(): void {
     parent::setUp();
+    $this->activateAcultaV2ThemeForSdcRendering();
     $this->installEntitySchema('group_relationship');
 
     $this->installConfig([
@@ -270,9 +276,10 @@ final class AcultaDocumentMediaEmbedTest extends KernelTestBase {
     $render = $this->container->get('entity_type.manager')->getViewBuilder('node')->view($node);
     $context = new RenderContext();
     $markup = $this->container->get('renderer')->executeInRenderContext($context, fn () => $this->container->get('renderer')->renderRoot($render));
+    self::assertIsString($markup);
 
-    $this->assertStringContainsString('data-aculta-pdf-viewer="true"', (string) $markup);
-    $this->assertStringContainsString('aculta-pdf-institutional-fixture.pdf', (string) $markup);
+    $this->assertStringContainsString('data-aculta-pdf-viewer="true"', $markup);
+    $this->assertStringContainsString('aculta-pdf-institutional-fixture.pdf', $markup);
   }
 
   /**
@@ -285,6 +292,7 @@ final class AcultaDocumentMediaEmbedTest extends KernelTestBase {
       FileExists::Replace,
     );
     $user = $this->container->get('current_user')->getAccount();
+    self::assertInstanceOf(UserInterface::class, $user);
     $file = File::create([
       'uri' => $file_uri,
       'filename' => 'aculta-pdf-viewer-fixture.pdf',
@@ -304,9 +312,11 @@ final class AcultaDocumentMediaEmbedTest extends KernelTestBase {
     $media->save();
 
     $this->assertTrue($media->hasField('field_media_document'));
+    $display = EntityViewDisplay::load('media.document.default');
+    self::assertInstanceOf(EntityViewDisplay::class, $display);
     $this->assertSame(
       'aculta_document_viewer_pdf',
-      EntityViewDisplay::load('media.document.default')->getComponent('field_media_document')['type'] ?? NULL,
+      $display->getComponent('field_media_document')['type'] ?? NULL,
     );
 
     $markup = sprintf(
@@ -331,8 +341,11 @@ final class AcultaDocumentMediaEmbedTest extends KernelTestBase {
     $result = $this->container->get('renderer')->executeInRenderContext($render_context, function () use ($filter, $markup) {
       return $filter->process($markup, 'en');
     });
+    self::assertInstanceOf(FilterProcessResult::class, $result);
     if (!$render_context->isEmpty()) {
-      $result = $result->merge($render_context->pop());
+      $metadata = $render_context->pop();
+      self::assertInstanceOf(CacheableMetadata::class, $metadata);
+      $result = $result->merge($metadata);
     }
 
     $processed = $result->getProcessedText();
@@ -343,7 +356,11 @@ final class AcultaDocumentMediaEmbedTest extends KernelTestBase {
     $this->assertStringContainsString('data-aculta-pdf-control="zoom-reset"', $processed);
     $this->assertStringContainsString('data-aculta-pdf-control="search-input"', $processed);
     $this->assertStringContainsString('data-aculta-pdf-control="fullscreen"', $processed);
-    $this->assertContains('aculta_document_viewer/aculta_document_viewer_pdf', $result->getAttachments()['library'] ?? []);
+    $libraries = $result->getAttachments()['library'] ?? [];
+    if (!is_array($libraries)) {
+      throw new \UnexpectedValueException('Filter attachments library list is not an array.');
+    }
+    $this->assertContains('aculta_document_viewer/aculta_document_viewer_pdf', $libraries);
     $this->assertContains('media:' . $media->id(), $result->getCacheTags());
   }
 
@@ -357,6 +374,7 @@ final class AcultaDocumentMediaEmbedTest extends KernelTestBase {
       FileExists::Replace,
     );
     $user = $this->container->get('current_user')->getAccount();
+    self::assertInstanceOf(UserInterface::class, $user);
     $file = File::create([
       'uri' => $file_uri,
       'filename' => 'aculta-pdf-wiki-fixture.pdf',
@@ -435,6 +453,7 @@ final class AcultaDocumentMediaEmbedTest extends KernelTestBase {
     file_put_contents($private_path, "%PDF-1.4\n% private test fixture\n");
 
     $user = $this->container->get('current_user')->getAccount();
+    self::assertInstanceOf(UserInterface::class, $user);
     $file = File::create([
       'uri' => 'private://pdf-viewer/aculta-private-fixture.pdf',
       'filename' => 'aculta-private-fixture.pdf',
@@ -453,6 +472,13 @@ final class AcultaDocumentMediaEmbedTest extends KernelTestBase {
     $media->save();
 
     $build = $this->container->get('aculta_document_viewer.pdf_builder')->build($media, 'field_media_forum_attachment');
+    self::assertArrayHasKey('#attributes', $build);
+    self::assertIsArray($build['#attributes']);
+    self::assertArrayHasKey('data-aculta-pdf-url', $build['#attributes']);
+    self::assertIsString($build['#attributes']['data-aculta-pdf-url']);
+    self::assertArrayHasKey('#cache', $build);
+    self::assertIsArray($build['#cache']);
+    self::assertArrayHasKey('max-age', $build['#cache']);
     $private_url = $build['#attributes']['data-aculta-pdf-url'];
     $this->assertSame('/system/files?file=pdf-viewer/aculta-private-fixture.pdf', $private_url);
     $this->assertSame(0, $build['#cache']['max-age']);
