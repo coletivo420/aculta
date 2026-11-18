@@ -36,6 +36,11 @@ final class TurnstileSettingsForm extends FormBase implements ContainerInjection
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $form
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *
+   * @return array<string, mixed>
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $keyText = $this->toggle->keyConfigured()
@@ -65,6 +70,9 @@ final class TurnstileSettingsForm extends FormBase implements ContainerInjection
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $form
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
    */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
     $enabled = (bool) $form_state->getValue('enabled');
@@ -78,6 +86,9 @@ final class TurnstileSettingsForm extends FormBase implements ContainerInjection
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $form
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $enabled = (bool) $form_state->getValue('enabled');

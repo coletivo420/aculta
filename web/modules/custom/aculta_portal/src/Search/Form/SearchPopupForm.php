@@ -45,6 +45,11 @@ final class SearchPopupForm extends FormBase implements ContainerInjectionInterf
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $form
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *
+   * @return array<string, mixed>
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $onMain = $this->siteManager->getCurrentSiteKey()?->value === 'main';
@@ -84,7 +89,11 @@ final class SearchPopupForm extends FormBase implements ContainerInjectionInterf
     }
     else {
       // V1 keeps the Fetch-based preview script.
-      $form['#attached']['library'][] = 'aculta_portal/search-preview';
+      $attached = isset($form['#attached']) && is_array($form['#attached']) ? $form['#attached'] : [];
+      $library = isset($attached['library']) && is_array($attached['library']) ? $attached['library'] : [];
+      $library[] = 'aculta_portal/search-preview';
+      $attached['library'] = $library;
+      $form['#attached'] = $attached;
     }
     $form['preview'] = [
       '#type' => 'component',
@@ -110,6 +119,9 @@ final class SearchPopupForm extends FormBase implements ContainerInjectionInterf
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $form
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     // GET: o navegador envia direto para a busca central; nada a processar no servidor.

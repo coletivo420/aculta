@@ -7,6 +7,7 @@ namespace Drupal\aculta_portal\Role\Form;
 use Drupal\aculta_portal\Role\RoleHierarchy;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Config\TypedConfigManagerInterface;
+use Drupal\Core\Entity\EntityListBuilder;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -58,6 +59,8 @@ final class RoleHierarchyForm extends ConfigFormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @return list<string>
    */
   protected function getEditableConfigNames(): array {
     return [self::ESTADO];
@@ -65,6 +68,11 @@ final class RoleHierarchyForm extends ConfigFormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $form
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *
+   * @return array<string, mixed>
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $papeis = $this->papeis();
@@ -72,9 +80,19 @@ final class RoleHierarchyForm extends ConfigFormBase {
     $mapa = RoleHierarchy::derivarMapa($cadeia, array_keys($papeis));
     $entidades = $this->entityTypeManager->getStorage('user_role')->loadMultiple();
     $lista = $this->entityTypeManager->getListBuilder('user_role');
+    $buildOps = static function (mixed $builder, mixed $entity): array {
+      if ($builder instanceof EntityListBuilder && is_object($entity)) {
+        /** @var \Drupal\Core\Entity\EntityInterface $entity */
+        return $builder->buildOperations($entity);
+      }
+      return [];
+    };
 
-    // Menu de operações (dropbutton do Core) precisa do próprio script; a lista do Core anexava isso, a nossa não.
-    $form['#attached']['library'][] = 'core/drupal.dropbutton';
+    $attached = isset($form['#attached']) && is_array($form['#attached']) ? $form['#attached'] : [];
+    $library = isset($attached['library']) && is_array($attached['library']) ? $attached['library'] : [];
+    $library[] = 'core/drupal.dropbutton';
+    $attached['library'] = $library;
+    $form['#attached'] = $attached;
     $form['intro'] = [
       '#markup' => '<p>' . $this->t('Cadeia de papéis: quem está mais alto herda do papel imediatamente abaixo, e o administrador herda de todos. Arraste as linhas pelas setas para reordenar.') . '</p>',
     ];
@@ -106,7 +124,7 @@ final class RoleHierarchyForm extends ConfigFormBase {
           '#delta' => max(20, count($cadeia)),
           '#attributes' => ['class' => ['role-weight']],
         ],
-        'operacoes' => $lista->buildOperations($entidades[$papel]),
+        'operacoes' => $buildOps($lista, $entidades[$papel] ?? NULL),
       ];
     }
 
@@ -121,7 +139,7 @@ final class RoleHierarchyForm extends ConfigFormBase {
       foreach ($fora as $papel) {
         $form['fora'][$papel] = [
           'papel' => ['#plain_text' => $papeis[$papel]],
-          'operacoes' => $lista->buildOperations($entidades[$papel]),
+          'operacoes' => $buildOps($lista, $entidades[$papel] ?? NULL),
         ];
       }
     }
@@ -142,14 +160,18 @@ final class RoleHierarchyForm extends ConfigFormBase {
       '#empty' => $this->t('Nenhum tipo de perfil.'),
     ];
 
-    return parent::buildForm($form, $form_state);
+    /** @var array<string, mixed> $builtForm */
+    $builtForm = parent::buildForm($form, $form_state);
+    return $builtForm;
   }
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $form
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
    */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
-    parent::validateForm($form, $form_state);
     $papeis = $this->papeis();
     $cadeia = $this->ordemDoEnvio($form_state);
     if (RoleHierarchy::temCiclo(RoleHierarchy::derivarMapa($cadeia, array_keys($papeis)))) {
@@ -159,11 +181,13 @@ final class RoleHierarchyForm extends ConfigFormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $form
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $this->config(self::ESTADO)->set('cadeia', $this->ordemDoEnvio($form_state))->save();
     $this->messenger()->addStatus($this->t('Hierarquia de papéis salva.'));
-    parent::submitForm($form, $form_state);
   }
 
   /**
@@ -173,11 +197,15 @@ final class RoleHierarchyForm extends ConfigFormBase {
    *   Papéis da cadeia ordenados por peso.
    */
   private function ordemDoEnvio(FormStateInterface $form_state): array {
-    $linhas = $form_state->getValue('cadeia') ?? [];
+    $linhas = $form_state->getValue('cadeia');
     $ordem = [];
-    foreach ($linhas as $papel => $linha) {
-      if (is_array($linha) && isset($linha['peso'])) {
-        $ordem[] = ['papel' => (string) $papel, 'peso' => (int) $linha['peso']];
+    if (is_iterable($linhas)) {
+      foreach ($linhas as $papel => $linha) {
+        if (is_array($linha) && isset($linha['peso'])) {
+          $papelStr = is_string($papel) || is_int($papel) ? (string) $papel : '';
+          $pesoInt = is_numeric($linha['peso']) ? (int) $linha['peso'] : 0;
+          $ordem[] = ['papel' => $papelStr, 'peso' => $pesoInt];
+        }
       }
     }
     usort($ordem, fn (array $a, array $b): int => $a['peso'] <=> $b['peso']);
@@ -195,7 +223,17 @@ final class RoleHierarchyForm extends ConfigFormBase {
    */
   private function cadeiaAtual(array $papeis): array {
     $salva = $this->config(self::ESTADO)->get('cadeia');
-    $cadeia = is_array($salva) ? $salva : self::CADEIA_PADRAO;
+    $cadeia = [];
+    if (is_iterable($salva)) {
+      foreach ($salva as $v) {
+        if (is_string($v)) {
+          $cadeia[] = $v;
+        }
+      }
+    }
+    if ($cadeia === []) {
+      $cadeia = self::CADEIA_PADRAO;
+    }
     return RoleHierarchy::completar($cadeia, array_values(array_diff(array_keys($papeis), RoleHierarchy::FORA_DA_CADEIA)));
   }
 
@@ -208,7 +246,7 @@ final class RoleHierarchyForm extends ConfigFormBase {
   private function papeis(): array {
     $papeis = [];
     foreach ($this->entityTypeManager->getStorage('user_role')->loadMultiple() as $id => $papel) {
-      $papeis[$id] = (string) $papel->label();
+      $papeis[(string) $id] = (string) $papel->label();
     }
     return $papeis;
   }
@@ -222,7 +260,7 @@ final class RoleHierarchyForm extends ConfigFormBase {
   private function tiposDePerfil(): array {
     $tipos = [];
     foreach ($this->entityTypeManager->getStorage('profile_type')->loadMultiple() as $id => $tipo) {
-      $tipos[$id] = (string) $tipo->label();
+      $tipos[(string) $id] = (string) $tipo->label();
     }
     return $tipos;
   }
