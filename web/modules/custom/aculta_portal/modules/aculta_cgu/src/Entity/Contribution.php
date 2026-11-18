@@ -75,7 +75,15 @@ final class Contribution extends RevisionableContentEntityBase implements Entity
   public function getPayload(): array {
     $item = $this->get('payload')->first();
     $value = $item?->getValue() ?? [];
-    return is_array($value) ? $value : [];
+    if (!is_array($value)) {
+      return [];
+    }
+    /** @var array<string, mixed> $result */
+    $result = [];
+    foreach ($value as $k => $v) {
+      $result[(string) $k] = $v;
+    }
+    return $result;
   }
 
   /**
@@ -87,7 +95,15 @@ final class Contribution extends RevisionableContentEntityBase implements Entity
   public function getSourceData(): array {
     $item = $this->get('source_data')->first();
     $value = $item?->getValue() ?? [];
-    return is_array($value) ? $value : [];
+    if (!is_array($value)) {
+      return [];
+    }
+    /** @var array<string, mixed> $result */
+    $result = [];
+    foreach ($value as $k => $v) {
+      $result[(string) $k] = $v;
+    }
+    return $result;
   }
 
   /**
@@ -99,15 +115,28 @@ final class Contribution extends RevisionableContentEntityBase implements Entity
   public function getDecisionData(): array {
     $item = $this->get('decision_data')->first();
     $value = $item?->getValue() ?? [];
-    return is_array($value) ? $value : [];
+    if (!is_array($value)) {
+      return [];
+    }
+    /** @var array<string, mixed> $result */
+    $result = [];
+    foreach ($value as $k => $v) {
+      $result[(string) $k] = $v;
+    }
+    return $result;
   }
 
   /**
-   * {@inheritdoc} */
+   * {@inheritdoc}
+   */
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type): array {
     $fields = parent::baseFieldDefinitions($entity_type);
-    $fields += static::ownerBaseFieldDefinitions($entity_type);
-    $fields['uid']->setRequired(TRUE)->setRevisionable(TRUE);
+    /** @var array<string, \Drupal\Core\Field\BaseFieldDefinition> $ownerFields */
+    $ownerFields = static::ownerBaseFieldDefinitions($entity_type);
+    $fields += $ownerFields;
+    if (isset($fields['uid']) && $fields['uid'] instanceof BaseFieldDefinition) {
+      $fields['uid']->setRequired(TRUE)->setRevisionable(TRUE);
+    }
     $fields['subject'] = BaseFieldDefinition::create('string')
       ->setLabel(new TranslatableMarkup('Summary'))
       ->setSetting('max_length', 255)->setRequired(TRUE)->setRevisionable(TRUE)->setTranslatable(TRUE);

@@ -40,10 +40,14 @@ final class ModerationNotifier {
    * Preserva a privacidade estrita: nenhum dado do denunciante é transmitido.
    */
   public function notifyNewReport(CguReport $report): void {
-    $purpose = (string) $report->get('purpose')->value;
-    $targetType = (string) $report->get('target_type')->value;
-    $targetId = (int) $report->get('target_id')->value;
-    $motivo = (string) $report->get('motivo')->value;
+    $purposeVal = $report->get('purpose')->value;
+    $purpose = is_scalar($purposeVal) ? (string) $purposeVal : '';
+    $targetTypeVal = $report->get('target_type')->value;
+    $targetType = is_scalar($targetTypeVal) ? (string) $targetTypeVal : '';
+    $targetIdVal = $report->get('target_id')->value;
+    $targetId = is_numeric($targetIdVal) ? (int) $targetIdVal : 0;
+    $motivoVal = $report->get('motivo')->value;
+    $motivo = is_scalar($motivoVal) ? (string) $motivoVal : '';
     $reportUuid = (string) $report->uuid();
 
     $recipients = $this->getRecipientsForPurpose($purpose);
@@ -109,7 +113,11 @@ final class ModerationNotifier {
         $context,
         $correlationId,
       );
-      $result = $this->mailer->deliver($message);
+      $mailer = $this->mailer;
+      if ($mailer === null) {
+        return;
+      }
+      $result = $mailer->deliver($message);
       if (!$result->sent) {
         $this->logger->error('Falha de entrega do aviso de denúncia (@correlation).', [
           '@correlation' => $correlationId,
