@@ -118,6 +118,7 @@ por padrão).
   há tópico público automático para publicação ou verbete.
 - LMS tem adapter opcional e acesso revalidado por Group/membership e Entity Access.
 - `aculta_user` é dono da identidade e dos cartões de usuários atuais. O adapter de autoria do acervo, seus dados e a apresentação histórica pertencem a `aculta_forum_legacy`; sua presença é opcional em projetos que não instalam o arquivo.
+- `aculta_forum_legacy` é o addon/importador opcional do acervo. Código, configuração, rotas, campos, ferramentas e integrações específicas do legado ficam nele. O motor e o Portal não dependem do addon nem carregam sua configuração; expõem contratos genéricos que o addon pode implementar. A dependência é somente do addon para as APIs genéricas necessárias.
 - Nas listagens públicas, a última atividade compara mudança do Node, Comment Core e ForumPost publicado. A identidade de usuários atuais usa o `aculta_user.author_card_builder`; autoria histórica, quando o addon está instalado, é apresentada somente nos tópicos e comentários do acervo, respeitando o perfil legado e sem criar página individual.
 - ACULTA420 é o dono visual; `aculta_forum` entrega contrato neutro, acesso e cache.
 - Core/contrib permanecem fonte de verdade para Node, Taxonomy, Views, Search
