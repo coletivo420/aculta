@@ -1,13 +1,9 @@
-/* Menu lateral do Studio Dashboard: botão de três linhas no desktop e diálogo pela esquerda. */
+/* Menu lateral do Studio Dashboard: botão de três linhas e diálogo pela esquerda no mobile. */
 .aculta-studio-topbar {
   display: flex;
   align-items: center;
   margin: 0;
   gap: var(--spacing-sm);
-}
-
-.aculta-studio-topbar__title {
-  margin: 0;
 }
 
 .aculta-studio-topbar .aculta-studio-menu__trigger {
@@ -38,24 +34,13 @@
   outline-offset: 2px;
 }
 
-/* Desktop: o título fica acima da linha dos blocos (menu, perfil, calendário), com a borda esquerda
-   alinhada à do menu. Os blocos mantêm o topo em 138 px; o título não entra na área do menu. */
 @media (min-width: 60rem) {
   .aculta-studio-topbar {
-    height: 0;
-    margin-block-start: 5.125rem;
-    /* Compensa o espaçamento entre as partes do painel, para o perfil começar em 138 px. */
-    margin-block-end: calc(var(--spacing-lg) * -1);
-  }
-  .aculta-studio-topbar__title {
-    inset-block-start: 3.25rem;
-    inset-inline-start: 0;
-    position: absolute;
-    white-space: nowrap;
+    display: none;
   }
 }
 
-/* Somente no celular: o botão aparece ao lado do título. No desktop fica oculto. */
+/* Somente no celular: o botão aparece. No desktop fica oculto. */
 @media (max-width: 59.9375rem) {
   .aculta-studio-topbar .aculta-studio-menu__trigger {
     display: inline-flex;
