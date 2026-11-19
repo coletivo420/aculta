@@ -1,5 +1,8 @@
 # ACULTA CGU (Conteúdo Gerado por Usuários)
 
+> **Contrato de integração com Fórum (2026-11-19):** [Fórum / CGU / Discourse](docs/CONTRATO-INTEGRACAO-FORUM-CGU-2026-11-19.md). O CGU centraliza denúncias e casos de moderação do motor universal aculta_forum, respeitando acesso contextual de LMS, Wiki e Revista. Planejado, sem alterações funcionais nesta entrega.
+
+
 Módulo transversal para gestão e consolidação de Conteúdo Gerado por Usuários no portal ACULTA.
 Resulta da fusão e consolidação dos antigos módulos `aculta_contributions` e `aculta_ugc`, eliminando duplicações estruturais e centralizando tanto as propostas comunitárias quanto o sistema de moderação e denúncias.
 
