@@ -17,6 +17,7 @@ use Drupal\domain\DomainNegotiationContext;
 use Drupal\node\NodeInterface;
 use Drupal\Tests\UnitTestCase;
 use Drupal\user\UserInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\Attributes\Group;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -68,6 +69,9 @@ final class ForumNoticeAccessPolicyTest extends UnitTestCase {
 
   /**
    * Creates the Forum domain, active recipient, and topic fixtures.
+   *
+   * @return array{ForumNoticeAccessPolicy, NodeInterface&MockObject, UserInterface}
+   *   Policy, topic, and recipient fixtures.
    */
   private function fixture(string $assignedDomain, AccessResult $access, bool $active = TRUE): array {
     $domain = $this->createMock(DomainInterface::class);
