@@ -63,8 +63,12 @@ final class AnswerReviewWorkflowKernelTest extends KernelTestBase {
    * {@inheritdoc}
    */
   protected function setUpFilesystem(): void {
-    mkdir($this->siteDirectory, 0775);
-    mkdir($this->siteDirectory . '/files', 0775);
+    if (!is_dir($this->siteDirectory)) {
+      mkdir($this->siteDirectory, 0775, TRUE);
+    }
+    if (!is_dir($this->siteDirectory . '/files')) {
+      mkdir($this->siteDirectory . '/files', 0775, TRUE);
+    }
     mkdir($this->siteDirectory . '/private/lms/answers', 0775, TRUE);
     mkdir($this->siteDirectory . '/files/config/sync', 0775, TRUE);
     $this->setSetting('file_public_path', $this->siteDirectory . '/files');
@@ -89,7 +93,15 @@ final class AnswerReviewWorkflowKernelTest extends KernelTestBase {
     foreach ($entityTypes as $entityType) {
       $this->installEntitySchema($entityType);
     }
-    $this->installConfig(['system', 'node', 'node_storage_body_field', 'group', 'comment', 'file', 'aculta_file_uploader']);
+    $this->installConfig([
+      'system',
+      'node',
+      'node_storage_body_field',
+      'group',
+      'comment',
+      'file',
+      'aculta_file_uploader',
+    ]);
     // O storage field_aculta_discussion pertence ao aculta_forum; criar aqui
     // evita habilitar o fórum inteiro só para instalar a config do LMS.
     FieldStorageConfig::create([
