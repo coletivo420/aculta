@@ -139,6 +139,45 @@ orientar a extração e a revisão:
 | Autoria e UI | `aculta_user::DiscussionCommentAuthorHooks` renderiza cartão legado sempre que um Comment `aculta_discussion_post` tem `field_autor_legado`; em hosts diferentes de `author_forum`, chama `buildLegacy()`. `aculta_magazine/docs/README.md` descreve autoria vinculada ao acervo no Comment editorial `revista`. O hook também renderiza `legacy_author` em `aculta_forum_post`, entidade de publicação corrente, embora ForumPost não seja conteúdo histórico autorizado por F-D44. Isso pode expor autoria Growroom fora de tópicos/comentários do arquivo. `AuthorCardBuilder` e o SDC `author-card` declaram o cartão/variante históricos no User/tema. | Mover classificação, nome de exibição e decisão de renderizar autoria histórica ao addon. Exibir o cartão somente quando tópico/comentário for classificado `ARCHIVE` dentro do Fórum legado; um marker isolado em Wiki, Revista, LMS, ForumPost ou host desconhecido não pode expor `LegacyAuthor`. ForumPosts correntes usam identidade de User. Qualquer `legacy_author` persistido em ForumPost é candidato de refatoração somente se a provenance da migration o provar. Manter o SDC e a variante visual reutilizáveis, mas sem política de origem no tema. Atualizar `aculta_magazine/docs/README.md` e cobrir testes de host cruzado para que F-D44 só se aplique a tópicos e comentários do arquivo. |
 | Dependências e testes de ownership | Não há manifesto do addon para auditar. `aculta_forum.info.yml` declara `aculta_user` como dependência obrigatória, além de serviços atuais de identidade/participação; `aculta_user` guarda hoje entity/schema/rota históricos, embora seu `.info.yml` não declare dependência do Fórum. `AcultaUserInstallRollbackKernelTest` lista `aculta_legado_autor` como tabela/entity de User e espera que uninstall de `aculta_user` a remova. | Não remover em bloco a integração de identidade ACULTA corrente. Separar no census dependências correntes necessárias de serviços/fields legados; substituir apenas a parte corrente por adapter opcional quando requerido por portabilidade e mover ownership histórico para addon. Rever o teste de rollback de User para enumerar só o storage que continuar pertencendo a User. Definir o modelo de autoria após o censo e testar o caminho escolhido: transferência de provider/tabela sem perda de IDs, linhas ou referências, ou cópia inline de nomes/IDs de origem com comparação por tópico e comentário antes de retirar a entidade. Em ambos, testar bloqueio de uninstall enquanto dados/config/arquivos dependerem do addon e a matriz com/sem `aculta_user` e com/sem addon onde aplicável. Manifestos e service containers dos módulos principais não podem exigir o addon. |
 
+### Census de fixtures e testes acoplados — HEAD publicado `65c1f8145`
+
+Uma busca textual versionada por `aculta_legado_autor`, `field_autor_legado`,
+`legacy_author`, hooks de fila/Flagging histórica e `legacy_flag_id` encontrou
+28 fixtures/testes em cinco módulos. É um inventário de arquivos candidatos a
+revisão, não uma decisão de mover cada suíte inteira:
+
+- **`aculta_forum` (14):** fixture `tests/modules/aculta_forum_post_test/aculta_forum_post_test.module`;
+  Kernel `ForumCommentMigrationBatchKernelTest`,
+  `ForumCommentMigrationDestinationKernelTest`,
+  `ForumCommentMigrationSourceKernelTest`, `ForumCommentMoverKernelTest`,
+  `ForumPostParticipationPolicyKernelTest`, `ForumTopicMoverKernelTest`,
+  `PublicForumLastActivityAuthorKernelTest`; Unit `DiscussionReplyAccessTest`,
+  `ForumHistoricModerationQueueHooksTest`, `ForumTopicDisplayConfigTest`,
+  `ForumTopicMoverTest`, `HistoricForumFlagAccessHooksTest` e
+  `Hook/ForumPostMigrationFieldHooksTest`.
+- **`aculta_cgu` (2):** `CguNotifierAndQueueKernelTest` e
+  `ForumCguIntegrationKernelTest`.
+- **`aculta_game` (3):** `BadgeEvaluationForumPostKernelTest`,
+  `BadgeEvaluationHooksTest` e `ForumParticipationPolicyTest`.
+- **`aculta_messenger` (1):** `AvisoRulesTest`.
+- **`aculta_user` (8):** Kernel `AcultaUserInstallRollbackKernelTest`,
+  `ParticipationRulesCharacterizationKernelTest`,
+  `PublicDiscussionModerationKernelTest` e
+  `SharedParticipationIsolationKernelTest`; Unit `ForumModerationHooksTest`,
+  `Moderation/ReportQueueTest`, `ParticipationRulesTest` e
+  `PublicForumTopicAuthorHooksTest`.
+
+No FDC-11.2, separar os testes de importação, autoria histórica, fila/Flagging
+histórica e classificação de arquivo para `aculta_forum_legacy`. Os módulos
+correntes mantêm testes de Game, Messenger, User e CGU para seus contratos
+próprios, mas substituem fixtures que escrevem `field_autor_legado`,
+`legacy_author`, IDs de entidade ou tabelas de autoria por providers/classifiers
+genéricos de teste (`CURRENT`, `CONTEXTUAL`, `ARCHIVE`, `UNKNOWN`). Os testes do
+CGU preservam cobertura de denúncias/casos genéricos; cobertura de backfill e
+reconciliação de Flagging histórico pertence ao adapter do addon. A matriz deve
+provar os consumers sem addon e com addon, sem depender de tabela/field legado
+nos testes do motor ou dos módulos correntes.
+
 A integração CGU precisa preservar a fronteira de ownership da F-D48: o
 `aculta_cgu` conserva denúncia, caso, decisão, auditoria e ACL genéricos; o
 backfill, a deduplicação e o rollback do antigo Flagging ficam em adapter ou
