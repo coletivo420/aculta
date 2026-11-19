@@ -1,3 +1,5 @@
+> **POLÍTICA VIGENTE (2026-11-19):** [acervo histórico Growroom](POLITICA-ACERVO-HISTORICO-GROWROOM-2026-11-19.md). Comentários históricos **não são comentários padrão** e **não serão migrados** para ForumPost. Coexistência técnica não autoriza conversão, mesclagem, recontagem como atividade corrente ou moderação pela fila comum. A separação física requer inventário e homologação; alterações desta PR são apenas guardas iniciais.
+
 > Nota de 2026-11-02: os caminhos `/studio/we-sativa`, `/studio/green-stash`, `/wesativa`, `/greenstash`, `/wiki/busca`, `/wiki/verbetes` e `/wiki/propostas` citados abaixo foram substituídos por `/we-sativa`, `/green-stash`, `/busca-wiki`, `/verbetes` e `/propostas`. Registro histórico preservado; veja a retificação no ADR-038.
 
 # Roadmap — ACULTA Forum

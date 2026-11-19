@@ -1,9 +1,11 @@
+> **POLÍTICA VIGENTE (2026-11-19):** [acervo histórico Growroom](POLITICA-ACERVO-HISTORICO-GROWROOM-2026-11-19.md). Comentários históricos **não são comentários padrão** e **não serão migrados** para ForumPost. Coexistência técnica não autoriza conversão, mesclagem, recontagem como atividade corrente ou moderação pela fila comum. A separação física requer inventário e homologação; alterações desta PR são apenas guardas iniciais.
+
 # Ownership — discussão, identidade e apresentação
 
 | Capacidade/dado | Fonte/dono | Integração permitida | Proibido |
 | --- | --- | --- | --- |
 | Nodes de tópico e publicação | Node/Core e `aculta_forum` para política de discussão | Entity API, Views, Access API | storage paralelo de tópico |
-| Respostas públicas do Growroom | Entity `aculta_forum_post` revisionável; Comments Core existentes ficam legados até migração validada | Entity/Revision/Workflow APIs, resposta pai e acesso no tópico | criar Comments novos no Growroom ou remover dados sem migração comprovada |
+| Respostas públicas do Growroom | Entity `aculta_forum_post` revisionável para novas respostas; arquivo Growroom histórico permanece read-only e separado para sempre, sem conversão de Comment | Entity/Revision/Workflow APIs, resposta pai e acesso no tópico | criar Comments novos no Growroom ou remover dados sem migração comprovada |
 | Contagem/atividade nas listas de tópicos | `comment_entity_statistics` do Core para Comments legados; `ForumPublicPostStatistics` agrega ForumPosts publicados | Plugins Views combinam contagem/timestamps; cache da lista invalida por `aculta_forum_post_list`; filtros Node access e Domain ficam fixos | escrever no agregado Core ou contar posts não publicados/idiomas não padrão |
 | Comments em Publicações, LMS e Wiki | Comment/Core | Field e API de contexto da entidade hospedeira | mover esses contextos para o storage do ForumPost público |
 | Categorias públicas | Taxonomy/Core e `aculta_forum` | vocabulário e Views; `PublicForumListViewHooks` prepara rótulos/URLs e totais públicos com EntityQuery access-checked e cache tags/contexts | categoria paralela; consulta de conteúdo no tema |

@@ -1,3 +1,5 @@
+> **POLÍTICA VIGENTE (2026-11-19):** [acervo histórico Growroom](POLITICA-ACERVO-HISTORICO-GROWROOM-2026-11-19.md). Comentários históricos **não são comentários padrão** e **não serão migrados** para ForumPost. Coexistência técnica não autoriza conversão, mesclagem, recontagem como atividade corrente ou moderação pela fila comum. A separação física requer inventário e homologação; alterações desta PR são apenas guardas iniciais.
+
 # Política ACULTA Forum: clone funcional Drupal do Discourse
 
 Decisão de produto aprovada em 2026-11-19. **Paridade funcional e de experiência com Discourse**, implementação nativa sobre Drupal 11/12, identidade ACULTA e UI Suite/SDC como arquitetura visual obrigatória. O `aculta_forum` é o **motor único de discussões e comentários de todos os módulos do site**. Isso **não** significa transformar qualquer comentário editorial, pedagógico ou restrito em tópico público; cada host preserva entidade, acesso, workflow e propósito. A moderação de denúncias e os casos usam `aculta_cgu` como dono, com adapters de ações por contexto.
@@ -32,6 +34,9 @@ Legenda: I = teste a implementar; V = teste histórico a reexecutar no HEAD; sem
 | T-22 | UI Patterns Views/Layouts/Field Group | Config Kernel + render/browser | Styles ativos conforme Config Sync, slots, campos, pager, filters, access/cache iguais |
 | T-23 | Teclado/leitor de tela/zoom e sem-JS | Browser a11y | Tab/foco/aria/announce no popup, timeline acessível, link/citação funcional sem JS |
 | T-24 | Desempenho thread 100/1k/10k posts | Benchmark | Registrar query count/p50/p95/memória, estabelecer SLO antes de RC; sem N+1 explosivo |
+| T-26 | Histórico Growroom vs Comments padrão | Kernel/Functional | Acesso e URLs históricos preservados; nenhum writer/quote/feedback trata arquivo como corrente |
+| T-27 | Index/Statistics/CGU em históricos | Kernel + reconciliação | Não contar histórico como novo, nem expor no índice/fila correntes; descoberta própria preservada |
+| T-28 | Composer novo Growroom | Kernel + browser | Cria apenas ForumPost, jamais Comment Core; fluxo sem JS permanece funcional |
 | T-25 | Segurança de UI Patterns | Composer lock + security audit | Confirmar release instalada corrigida para SA-CONTRIB-2026-075 e ausência de configuração insegura |
 
 ## Política de status
