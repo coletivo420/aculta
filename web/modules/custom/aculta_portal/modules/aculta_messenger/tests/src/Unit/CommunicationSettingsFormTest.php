@@ -8,6 +8,7 @@ use Drupal\aculta_messenger\Aviso\AvisoPreferencias;
 use Drupal\aculta_messenger\Form\CommunicationSettingsForm;
 use Drupal\aculta_portal\Appearance\SettingsTabs;
 use Drupal\Core\GeneratedUrl;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Routing\UrlGeneratorInterface;
 use Drupal\Core\Form\FormState;
@@ -70,7 +71,8 @@ final class CommunicationSettingsFormTest extends UnitTestCase {
    */
   public function testBuildOffersSupportedModesAndExplainsPrivacy(): void {
     $form = $this->form(new AvisoPreferencias($this->createMock(UserDataInterface::class)));
-    $build = $form->buildForm([], new FormState());
+    $build = self::assertArray($form->buildForm([], new FormState()));
+    $emailModes = self::arrayAt($build, 'email_modes');
 
     foreach (AvisoPreferencias::EMAIL_CATEGORIES as $category) {
       $expected = match ($category) {
@@ -78,10 +80,12 @@ final class CommunicationSettingsFormTest extends UnitTestCase {
         AvisoPreferencias::EMAIL_EVENTS_CONTRIBUTIONS => [AvisoPreferencias::EMAIL_OFF],
         default => [AvisoPreferencias::EMAIL_OFF, AvisoPreferencias::EMAIL_DIGEST, AvisoPreferencias::EMAIL_IMMEDIATE],
       };
-      self::assertSame($expected, array_keys($build['email_modes'][$category]['#options']), $category);
+      self::assertSame($expected, array_keys(self::arrayAt(self::arrayAt($emailModes, $category), '#options')), $category);
     }
-    self::assertStringContainsString('nunca é enviado', $build['intro']['#plain_text']->getUntranslatedString());
-    self::assertSame(0, $build['#cache']['max-age']);
+    $intro = self::arrayAt($build, 'intro');
+    self::assertInstanceOf(TranslatableMarkup::class, $intro['#plain_text']);
+    self::assertStringContainsString('nunca é enviado', $intro['#plain_text']->getUntranslatedString());
+    self::assertSame(0, self::arrayAt($build, '#cache')['max-age']);
   }
 
   /**
@@ -99,10 +103,11 @@ final class CommunicationSettingsFormTest extends UnitTestCase {
         ],
       ]),
     );
-    $build = $this->form($preferences)->buildForm([], new FormState());
+    $build = self::assertArray($this->form($preferences)->buildForm([], new FormState()));
+    $emailModes = self::arrayAt($build, 'email_modes');
 
-    self::assertSame([AvisoPreferencias::EMAIL_OFF, AvisoPreferencias::EMAIL_DIGEST], array_keys($build['email_modes'][AvisoPreferencias::EMAIL_PRIVATE_MESSAGES]['#options']));
-    self::assertSame([AvisoPreferencias::EMAIL_OFF, AvisoPreferencias::EMAIL_IMMEDIATE], array_keys($build['email_modes']['wiki']['#options']));
+    self::assertSame([AvisoPreferencias::EMAIL_OFF, AvisoPreferencias::EMAIL_DIGEST], array_keys(self::arrayAt(self::arrayAt($emailModes, AvisoPreferencias::EMAIL_PRIVATE_MESSAGES), '#options')));
+    self::assertSame([AvisoPreferencias::EMAIL_OFF, AvisoPreferencias::EMAIL_IMMEDIATE], array_keys(self::arrayAt(self::arrayAt($emailModes, 'wiki'), '#options')));
   }
 
   /**
@@ -124,7 +129,8 @@ final class CommunicationSettingsFormTest extends UnitTestCase {
     $status->expects(self::once())
       ->method('addStatus')
       ->with(self::callback(
-        static fn(mixed $message): bool => (string) $message === 'Preferências de e-mail salvas.',
+        static fn(mixed $message): bool => $message instanceof TranslatableMarkup
+          && $message->getUntranslatedString() === 'Preferências de e-mail salvas.',
       ));
     $form->setMessenger($status);
     $formState = new FormState();
@@ -139,7 +145,9 @@ final class CommunicationSettingsFormTest extends UnitTestCase {
     self::assertSame(AvisoPreferencias::EMAIL_DIGEST, $saved['avisos_email_mode_' . AvisoPreferencias::EMAIL_PRIVATE_MESSAGES]);
     self::assertSame(AvisoPreferencias::EMAIL_IMMEDIATE, $saved['avisos_email_mode_wiki']);
     self::assertCount(count(AvisoPreferencias::EMAIL_CATEGORIES), $saved);
-    self::assertSame('aculta_messenger.communication_settings', $formState->getRedirect()->getRouteName());
+    $redirect = $formState->getRedirect();
+    self::assertInstanceOf(\Drupal\Core\Url::class, $redirect);
+    self::assertSame('aculta_messenger.communication_settings', $redirect->getRouteName());
   }
 
   /**
@@ -152,6 +160,32 @@ final class CommunicationSettingsFormTest extends UnitTestCase {
     $form = new CommunicationSettingsForm($account, $preferences, $tabs);
     $form->setStringTranslation($this->getStringTranslationStub());
     return $form;
+  }
+
+  /**
+   * Validates an untyped Form API result before its fields are inspected.
+   *
+   * @return array<mixed>
+   *   The form render array.
+   */
+  private static function assertArray(mixed $value): array {
+    self::assertIsArray($value);
+    return $value;
+  }
+
+  /**
+   * Returns a nested form array after validating its runtime type.
+   *
+   * @param array<mixed> $parent
+   *   The form or render element containing the requested child.
+   *
+   * @return array<mixed>
+   *   The requested form or render element.
+   */
+  private static function arrayAt(array $parent, string $key): array {
+    self::assertArrayHasKey($key, $parent);
+    self::assertIsArray($parent[$key]);
+    return $parent[$key];
   }
 
 }
