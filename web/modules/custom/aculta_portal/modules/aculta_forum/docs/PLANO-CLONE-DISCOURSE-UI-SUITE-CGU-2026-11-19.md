@@ -354,6 +354,27 @@ desfaz e-mails já enviados. Não classificar denúncia como dado da refatoraç�
 por motivo, data ou alvo apenas. Bloquear a ponte/notificação durante qualquer
 importação futura até o teste provar zero efeitos externos.
 
+### Fase condicional: limpeza de artefatos comprovados da refatoração
+
+Esta é uma fase separada do FDC-11.0 (census) e do FDC-11.3 (transferência de
+ownership); nenhum dos dois autoriza exclusão. Depois do census, identificar
+IDs exatos de ForumPosts, relações pai/filho e Flagging criados pelas migrations
+e denúncias CGU relacionadas por `legacy_flag_id`. Em clone restaurável,
+inspecionar revisões, filhos, reações, referências, casos/decisões, filas e
+efeitos já entregues; criar prévia e plano reversível por conjunto de IDs. A
+validação deve provar que Comments, tópicos, autores, relações, URLs e arquivos
+preexistentes permanecem intactos. Não executar rollback em lote; e-mails e
+eventos externos já entregues não são apagáveis por rollback, e a auditoria de
+denúncias que avançaram de estado precisa de tratamento próprio.
+
+Somente artefatos cuja origem na refatoração esteja demonstrada por mapas e
+proveniência podem entrar na proposta de limpeza. Registros sem evidência
+suficiente permanecem intocados. A tabela/base canônica `aculta_legado_autor`
+e os autores/tópicos/comentários anteriores à refatoração são preservados; uma
+tabela temporária criada pela refatoração não precisa ser retida depois que sua
+proveniência e dependências forem verificadas. Qualquer exclusão persistente
+aguarda autorização operacional específica para a lista e o método revisados.
+
 ### Pipeline de coleta e curadoria do acervo
 
 O censo da branch também encontrou ferramentas legadas fora dos módulos
