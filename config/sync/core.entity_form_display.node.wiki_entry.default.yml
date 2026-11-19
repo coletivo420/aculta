@@ -86,12 +86,12 @@ content:
         - aculta_phosphor_regular
         - aculta_phosphor_duotone
         - aculta_brocolis
+      show_settings: false
+      icon_required: false
+      icon_position: false
       icon_selector: icon_popover
       result_format: grid
       max_result: 20
-      icon_required: false
-      icon_position: false
-      show_settings: false
     third_party_settings: {  }
   field_wiki_related:
     type: entity_reference_autocomplete
@@ -169,3 +169,4 @@ hidden:
   field_aculta_discussion: true
   promote: true
   sticky: true
+
