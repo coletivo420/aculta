@@ -2487,7 +2487,6 @@ parameters:
 			count: 4
 			path: scripts/validate-aculta-portal-drupal12.php
 
-
 		-
 			rawMessage: Cannot access offset 'permissions' on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
@@ -13288,8 +13287,6 @@ parameters:
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_events/src/Access/EventOrganizationAccessControlHandler.php
 
-
-
 		-
 			rawMessage: 'Parameter #1 $array of function array_intersect expects an array of values castable to string, array<mixed, mixed> given.'
 			identifier: argument.type
@@ -18072,7 +18069,6 @@ parameters:
 			count: 9
 			path: web/modules/custom/aculta_portal/modules/aculta_events/tests/src/Kernel/EventOrganizationLifecycleKernelTest.php
 
-
 		-
 			rawMessage: 'Parameter #1 $array of function array_filter expects array, mixed given.'
 			identifier: argument.type
@@ -20076,59 +20072,6 @@ parameters:
 			identifier: method.nonObject
 			count: 2
 			path: web/modules/custom/aculta_portal/modules/aculta_game/tests/src/Unit/ForumParticipationPolicyTest.php
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 		-
 			rawMessage: 'Function aculta_image_schema() return type has no value type specified in iterable type array.'
@@ -37314,69 +37257,6 @@ parameters:
 			count: 3
 			path: web/modules/custom/aculta_portal/modules/aculta_mailer/tests/src/Unit/MonitorParsersTest.php
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 		-
 			rawMessage: 'Argument of an invalid type mixed supplied for foreach, only iterables are supported.'
 			identifier: foreach.nonIterable
@@ -40954,144 +40834,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Integration/Lms/Kernel/LearningNoticePersistenceKernelTest.php
 
 		-
-			rawMessage: 'Call to an undefined method Drupal\user\UserDataInterface::method().'
-			identifier: method.notFound
-			count: 3
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Integration/Lms/Unit/LearningNoticeDigestIntegrationTest.php
-
-		-
-			rawMessage: 'Call to function array_key_exists() with string|null and array{} will always evaluate to false.'
-			identifier: function.impossibleType
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Integration/Lms/Unit/LearningNoticeDigestIntegrationTest.php
-
-		-
-			rawMessage: 'Call to static method PHPUnit\Framework\Assert::assertNull() with mixed and ''Successful recovery…'' will always evaluate to false.'
-			identifier: staticMethod.impossibleType
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Integration/Lms/Unit/LearningNoticeDigestIntegrationTest.php
-
-		-
-			rawMessage: Cannot access offset 'accepted_at' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Integration/Lms/Unit/LearningNoticeDigestIntegrationTest.php
-
-		-
-			rawMessage: Cannot access offset 'delivery_ids' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Integration/Lms/Unit/LearningNoticeDigestIntegrationTest.php
-
-		-
-			rawMessage: Cannot access offset 'provider_id' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Integration/Lms/Unit/LearningNoticeDigestIntegrationTest.php
-
-		-
-			rawMessage: Cannot access offset 'providers' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Integration/Lms/Unit/LearningNoticeDigestIntegrationTest.php
-
-		-
-			rawMessage: Cannot access offset 0 on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Integration/Lms/Unit/LearningNoticeDigestIntegrationTest.php
-
-		-
-			rawMessage: Cannot access offset int on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Integration/Lms/Unit/LearningNoticeDigestIntegrationTest.php
-
-		-
-			rawMessage: 'Cannot call method willReturnCallback() on mixed.'
-			identifier: method.nonObject
-			count: 3
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Integration/Lms/Unit/LearningNoticeDigestIntegrationTest.php
-
-		-
-			rawMessage: 'Match expression does not handle remaining value: int<4, max>'
-			identifier: match.unhandled
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Integration/Lms/Unit/LearningNoticeDigestIntegrationTest.php
-
-		-
-			rawMessage: 'Method Drupal\Tests\aculta_messenger\Integration\Lms\Unit\LearningNoticeDigestIntegrationTest::createSummary() has parameter $provider with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Integration/Lms/Unit/LearningNoticeDigestIntegrationTest.php
-
-		-
-			rawMessage: 'Method Drupal\Tests\aculta_messenger\Integration\Lms\Unit\LegacyTestLearningDigestProvider::__construct() has parameter $recipients with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Integration/Lms/Unit/LearningNoticeDigestIntegrationTest.php
-
-		-
-			rawMessage: 'Method Drupal\Tests\aculta_messenger\Integration\Lms\Unit\MalformedTestLearningDigestProvider::digestRowsFor() should return array<int, array{tipo: string, titulo: string, quantidade: int, delivery_id: int, delivery_ids?: list<int>}> but returns array{array{titulo: ''Aviso sem categoria'', quantidade: 1, delivery_id: 901}}.'
-			identifier: return.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Integration/Lms/Unit/LearningNoticeDigestIntegrationTest.php
-
-		-
-			rawMessage: 'Method Drupal\Tests\aculta_messenger\Integration\Lms\Unit\TestLearningDigestProvider::digestRowsFor() should return array<int, array{tipo: string, titulo: string, quantidade: int, delivery_id: int, delivery_ids?: list<int>}> but returns non-empty-array<array{tipo: string, titulo: string, quantidade: int, delivery_id?: int}>.'
-			identifier: return.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Integration/Lms/Unit/LearningNoticeDigestIntegrationTest.php
-
-		-
-			rawMessage: 'Offset string does not exist on array{}.'
-			identifier: offsetAccess.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Integration/Lms/Unit/LearningNoticeDigestIntegrationTest.php
-
-		-
-			rawMessage: 'Offset string on array{} on left side of ?? does not exist.'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Integration/Lms/Unit/LearningNoticeDigestIntegrationTest.php
-
-		-
-			rawMessage: 'Parameter #1 $haystack of function substr_count expects string, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Integration/Lms/Unit/LearningNoticeDigestIntegrationTest.php
-
-		-
-			rawMessage: 'Parameter #1 $key of function array_key_exists expects int|string, string|null given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Integration/Lms/Unit/LearningNoticeDigestIntegrationTest.php
-
-		-
-			rawMessage: 'Parameter #1 $recipients of class Drupal\Tests\aculta_messenger\Integration\Lms\Unit\TestLearningDigestProvider constructor expects array<int>, array given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Integration/Lms/Unit/LearningNoticeDigestIntegrationTest.php
-
-		-
-			rawMessage: 'Parameter #2 $array of static method PHPUnit\Framework\Assert::assertArrayNotHasKey() expects array<mixed>|ArrayAccess<(int|string), mixed>, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Integration/Lms/Unit/LearningNoticeDigestIntegrationTest.php
-
-		-
-			rawMessage: 'Parameter #2 $string of function explode expects string, mixed given.'
-			identifier: argument.type
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Integration/Lms/Unit/LearningNoticeDigestIntegrationTest.php
-
-		-
-			rawMessage: 'Strict comparison using === between null and null will always evaluate to true.'
-			identifier: identical.alwaysTrue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Integration/Lms/Unit/LearningNoticeDigestIntegrationTest.php
-
-		-
 			rawMessage: 'Method Drupal\Tests\aculta_messenger\Integration\Lms\Unit\LearningNoticeEventSubscriberTest::event() has parameter $metadata with no value type specified in iterable type array.'
 			identifier: missingType.iterableValue
 			count: 1
@@ -41342,108 +41084,6 @@ parameters:
 			identifier: argument.type
 			count: 3
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Integration/Wiki/Unit/WikiNoticeManagerTest.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::get().'
-			identifier: method.notFound
-			count: 5
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Kernel/AvisosResumoMailerKernelTest.php
-
-		-
-			rawMessage: 'Call to function is_int() with int will always evaluate to true.'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Kernel/AvisosResumoMailerKernelTest.php
-
-		-
-			rawMessage: 'Call to static method PHPUnit\Framework\Assert::assertSame() with 1800000181 and 0 will always evaluate to false.'
-			identifier: staticMethod.impossibleType
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Kernel/AvisosResumoMailerKernelTest.php
-
-		-
-			rawMessage: Cannot access offset 'body' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Kernel/AvisosResumoMailerKernelTest.php
-
-		-
-			rawMessage: Cannot access offset 'default' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 3
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Kernel/AvisosResumoMailerKernelTest.php
-
-		-
-			rawMessage: Cannot access offset 'interface' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 3
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Kernel/AvisosResumoMailerKernelTest.php
-
-		-
-			rawMessage: Cannot access offset 'subject' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Kernel/AvisosResumoMailerKernelTest.php
-
-		-
-			rawMessage: Cannot access offset 'system.mail' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 3
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Kernel/AvisosResumoMailerKernelTest.php
-
-		-
-			rawMessage: Cannot access offset 'to' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Kernel/AvisosResumoMailerKernelTest.php
-
-		-
-			rawMessage: Cannot access offset 0 on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Kernel/AvisosResumoMailerKernelTest.php
-
-		-
-			rawMessage: Cannot access offset 1 on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Kernel/AvisosResumoMailerKernelTest.php
-
-		-
-			rawMessage: Cannot access property $value on mixed.
-			identifier: property.nonObject
-			count: 5
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Kernel/AvisosResumoMailerKernelTest.php
-
-		-
-			rawMessage: 'Cannot call method fetchField() on Drupal\Core\Database\StatementInterface|null.'
-			identifier: method.nonObject
-			count: 9
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Kernel/AvisosResumoMailerKernelTest.php
-
-		-
-			rawMessage: Cannot cast mixed to int.
-			identifier: cast.int
-			count: 10
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Kernel/AvisosResumoMailerKernelTest.php
-
-		-
-			rawMessage: Cannot cast mixed to string.
-			identifier: cast.string
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Kernel/AvisosResumoMailerKernelTest.php
-
-		-
-			rawMessage: 'Parameter #2 $haystack of static method PHPUnit\Framework\Assert::assertCount() expects Countable|iterable, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Kernel/AvisosResumoMailerKernelTest.php
-
-		-
-			rawMessage: Value assigned to variable $exitCode is never read.
-			identifier: assign.unused
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Kernel/AvisosResumoMailerKernelTest.php
 
 		-
 			rawMessage: 'Call to function is_int() with int will always evaluate to true.'
@@ -41804,7 +41444,6 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Unit/AvisoPreferenciasTest.php
-
 
 		-
 			rawMessage: 'Call to an undefined method Drupal\Core\Entity\ContentEntityInterface::expects().'
@@ -45405,85 +45044,6 @@ parameters:
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_patcher/tests/src/Unit/PatchManifestExporterTest.php
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 		-
 			rawMessage: 'Argument of an invalid type mixed supplied for foreach, only iterables are supported.'
