@@ -223,11 +223,17 @@ final class ClassDashboardKernelTest extends KernelTestBase {
       $requestStack,
     );
     $build = $controller->class($class, $course);
-    self::assertCount(14, $build['status_history']['table']['#rows']);
-    self::assertSame(2, $build['status_history']['table']['#rows'][13][1]);
-    self::assertSame(0, $build['status_history']['table']['#rows'][13][2]);
     $statusHistory = $build['status_history'] ?? NULL;
     self::assertIsArray($statusHistory);
+    $table = $statusHistory['table'] ?? NULL;
+    self::assertIsArray($table);
+    $rows = $table['#rows'] ?? NULL;
+    self::assertIsArray($rows);
+    self::assertCount(14, $rows);
+    $lastRow = $rows[13] ?? NULL;
+    self::assertIsArray($lastRow);
+    self::assertSame(2, $lastRow[1] ?? NULL);
+    self::assertSame(0, $lastRow[2] ?? NULL);
     $period = $statusHistory['period'] ?? NULL;
     self::assertIsArray($period);
     $slots = $period['#slots'] ?? NULL;
@@ -258,9 +264,15 @@ final class ClassDashboardKernelTest extends KernelTestBase {
     $activeUrl = $activePeriodLink['#url'] ?? NULL;
     self::assertInstanceOf(Url::class, $activeUrl);
     self::assertSame('aculta_lms.class_dashboard', $activeUrl->getRouteName());
-    self::assertSame(0, $build['#cache']['max-age']);
-    self::assertContains('user', $build['#cache']['contexts']);
-    self::assertContains('group_relationship_list:plugin:group_membership:group:' . $class->id(), $build['#cache']['tags']);
+    $cacheBuild = $build['#cache'] ?? NULL;
+    self::assertIsArray($cacheBuild);
+    self::assertSame(0, $cacheBuild['max-age'] ?? NULL);
+    $cacheContexts = $cacheBuild['contexts'] ?? NULL;
+    self::assertIsArray($cacheContexts);
+    self::assertContains('user', $cacheContexts);
+    $cacheTags = $cacheBuild['tags'] ?? NULL;
+    self::assertIsArray($cacheTags);
+    self::assertContains('group_relationship_list:plugin:group_membership:group:' . $class->id(), $cacheTags);
 
     $classCourseRelationships = $entityTypeManager->getStorage('group_relationship')->loadByProperties([
       'entity_id' => $class->id(),

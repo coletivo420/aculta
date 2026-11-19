@@ -380,11 +380,13 @@ final class LmsClassEducatorPermissionKernelTest extends KernelTestBase {
       $this->container->get('string_translation'),
     );
     $forumOverview = $moderationController->overview();
-    $contexts = $this->arrayOffset($forumOverview, 'contexts');
-    $contextTitle = $contexts['#title'] ?? NULL;
+    $slots = $this->arrayOffset($forumOverview, '#slots');
+    $header = $this->arrayOffset($slots, 'header');
+    $contextTitle = $header['#plain_text'] ?? NULL;
     self::assertIsString($contextTitle);
     self::assertSame('Fóruns por curso', $contextTitle);
-    $contextItems = $this->arrayOffset($contexts, '#items');
+    $content = $this->arrayOffset($slots, 'content');
+    $contextItems = $this->arrayOffset($content, '#items');
     self::assertCount(1, $contextItems);
     $firstContext = $contextItems[0] ?? NULL;
     self::assertIsArray($firstContext);
