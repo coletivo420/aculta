@@ -169,15 +169,20 @@ correlacionar a proveniência das migrations antes de propor limpeza:
 
 | Migration | Evidência de proveniência | Possível efeito da refatoração |
 | --- | --- | --- |
-| `aculta_forum_comment_posts` | Map/message tables do Migrate: cada CID de origem mapeado para ID de destino `aculta_forum_post`; conferir CID de origem, ID de destino e existência/estado sem expor corpo ou autoria. | Cria ou atualiza ForumPosts a partir de Comments, incluindo dados `legacy_author`; somente destinos provados pelo map desta migration podem ser candidatos a limpeza. |
-| `aculta_forum_comment_parents` | Mapa da migration e IDs de destino; compara `parent` atual com a relação derivada dos CIDs de origem/pai. | Atualiza a hierarquia dos ForumPosts destino; não apaga o Comment origem. Reverter somente o efeito nos ForumPosts provadamente gerados pela migration. |
-| `aculta_forum_comment_flaggings` | Map/message tables próprios e campo `entity_type/entity_id` dos flaggings mapeados, cruzados com lookup da migration de posts. | Cria flaggings contra ForumPosts destino; somente flaggings comprovadamente gerados e ligados a esses destinos podem ser candidatos a limpeza. |
+| `aculta_forum_comment_posts` | Map/message tables do Migrate: cada CID de origem mapeado para ID de destino `aculta_forum_post`; conferir CID de origem, ID de destino e existência/estado sem expor corpo ou autoria. | Cria ou atualiza ForumPosts a partir de Comments, incluindo dados `legacy_author`. O destination define explicitamente `ROLLBACK_DELETE`; teste Kernel confirma que rollback exclui ForumPosts importados e preserva os Comments origem. |
+| `aculta_forum_comment_parents` | Mapa da migration e IDs de destino; compara `parent` atual com a relação derivada dos CIDs de origem/pai. | Atualiza a hierarquia via destination `entity:aculta_forum_post`; o rollback padrão de EntityContentBase também pode excluir destinos mapeados, não apenas limpar `parent`. |
+| `aculta_forum_comment_flaggings` | Map/message tables próprios e campo `entity_type/entity_id` dos flaggings mapeados, cruzados com lookup da migration de posts. | Cria flaggings contra ForumPosts destino; destination custom delega ao `EntityContentBase`, cujo rollback padrão exclui destinos mapeados. |
 
 Mapas ausentes, incompletos ou incompatíveis não autorizam inferir origem por
 UID, data, texto ou semelhança do conteúdo. Nesses casos, manter os registros
 e exigir evidência de clone/backup e revisão antes de qualquer plano reversível.
-Os Comments, autores, tópicos, referências e arquivos preexistentes nunca são
-alvos dessa limpeza.
+Não executar `drush migrate:rollback` em lote como atalho: destinos do Migrate
+usam `ROLLBACK_DELETE`, e o rollback pode excluir ForumPosts que hoje tenham
+edições, filhos ou relações posteriores. Primeiro inventariar revisões,
+respostas, flaggings, reações, referências e eventos ligados aos IDs de destino;
+provar o comportamento na versão Core efetiva e em clone restaurável. Os
+Comments, autores, tópicos, referências e arquivos preexistentes nunca são
+alvos dessa limpeza. Core: [EntityContentBase no Drupal 11](https://api.drupal.org/api/drupal/core%21modules%21migrate%21src%21Plugin%21migrate%21destination%21EntityContentBase.php/11.x).
 
 ### Inventário a migrar para o addon
 
