@@ -123,7 +123,9 @@ final class FriendshipNoticePipelineKernelTest extends KernelTestBase {
     self::assertCount(1, $queue->messageIds, 'Replaying a pending request does not produce another notice.');
     $requestNotice = $this->loadNotice($this->entityId($recipient), 'requested');
     self::assertNotNull($requestNotice);
-    self::assertSame('1', $this->fieldValue($requestNotice, 'field_aculta_mailer_managed'));
+    $requestManaged = $this->fieldValue($requestNotice, 'field_aculta_mailer_managed');
+    self::assertIsNumeric($requestManaged);
+    self::assertSame(1, (int) $requestManaged);
 
     // Changed timestamps use second precision. With the same timestamp, a
     // withdrawn and re-sent request is a new transition and must not collide
@@ -161,7 +163,9 @@ final class FriendshipNoticePipelineKernelTest extends KernelTestBase {
     self::assertCount(3, $queue->messageIds);
     $acceptanceNotice = $this->loadNotice($this->entityId($requester), 'accepted');
     self::assertNotNull($acceptanceNotice);
-    self::assertSame('1', $this->fieldValue($acceptanceNotice, 'field_aculta_mailer_managed'));
+    $acceptanceManaged = $this->fieldValue($acceptanceNotice, 'field_aculta_mailer_managed');
+    self::assertIsNumeric($acceptanceManaged);
+    self::assertSame(1, (int) $acceptanceManaged);
 
     self::assertSame(
       3,
