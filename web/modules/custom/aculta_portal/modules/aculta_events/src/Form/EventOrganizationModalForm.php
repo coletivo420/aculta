@@ -104,13 +104,19 @@ final class EventOrganizationModalForm extends FormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<array-key, mixed> $form
+   *   Form elements and metadata.
+   *
+   * @return array<array-key, mixed>
+   *   Built form elements.
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $request = $this->getRequest();
-    $fieldName = (string) ($form_state->get('field_name') ?? $request->query->get('field_name') ?? 'field_organizacao');
-    $isMultiple = (bool) ($form_state->get('is_multiple') ?? (int) $request->query->get('is_multiple', 0));
+    $fieldName = $this->formString($form_state->get('field_name') ?? $request->query->get('field_name'), 'field_organizacao');
+    $isMultiple = $this->formBoolean($form_state->get('is_multiple') ?? $request->query->get('is_multiple', 0));
     $defaultWrapper = 'field-' . str_replace('_', '-', $fieldName) . '-wrapper';
-    $wrapperId = (string) ($form_state->get('wrapper_id') ?? $request->query->get('wrapper_id') ?? $defaultWrapper);
+    $wrapperId = $this->formString($form_state->get('wrapper_id') ?? $request->query->get('wrapper_id'), $defaultWrapper);
 
     $form_state->set('field_name', $fieldName);
     $form_state->set('is_multiple', $isMultiple);
@@ -121,9 +127,9 @@ final class EventOrganizationModalForm extends FormBase {
       'wrapper_id' => $wrapperId,
       'is_multiple' => $isMultiple ? 1 : 0,
     ];
-    $targetId = $form_state->get('target_id') ?? $request->query->get('target_id');
-    if ($targetId !== NULL && (int) $targetId > 0) {
-      $query['target_id'] = (int) $targetId;
+    $targetId = $this->positiveInteger($form_state->get('target_id') ?? $request->query->get('target_id'));
+    if ($targetId !== NULL) {
+      $query['target_id'] = $targetId;
     }
     $this->htmxUrl = Url::fromRoute(
       $this->eventRouteContext->route('aculta_events.organization_modal', 'aculta_events.organizer_organization_modal'),
@@ -131,10 +137,10 @@ final class EventOrganizationModalForm extends FormBase {
       ['query' => $query],
     );
     if ($targetId !== NULL) {
-      $form_state->set('target_id', (int) $targetId);
+      $form_state->set('target_id', $targetId);
     }
 
-    $mode = (string) ($form_state->get('mode') ?? 'search');
+    $mode = $this->formString($form_state->get('mode'), 'search');
 
     $form['#prefix'] = '<div id="aculta-organization-modal-form-wrapper">';
     $form['#suffix'] = '</div>';
@@ -156,9 +162,12 @@ final class EventOrganizationModalForm extends FormBase {
 
   /**
    * Constrói o passo de busca e seleção de organizações existentes.
+   *
+   * @param array<array-key, mixed> $form
+   *   Form elements and metadata, modified in place.
    */
   private function buildSearchStep(array &$form, FormStateInterface $form_state): void {
-    $isMultiple = (bool) $form_state->get('is_multiple');
+    $isMultiple = $this->formBoolean($form_state->get('is_multiple'));
     $heading = $isMultiple
       ? $this->t('Selecionar coorganizadora')
       : $this->t('Selecionar organização principal');
@@ -178,7 +187,7 @@ final class EventOrganizationModalForm extends FormBase {
         '#title' => $this->t('Buscar organização'),
         '#title_display' => 'invisible',
         '#placeholder' => (string) $this->t('Buscar por nome ou cidade...'),
-        '#default_value' => (string) ($form_state->get('termo') ?? ''),
+        '#default_value' => $this->formString($form_state->get('termo')),
         '#size' => 30,
       ],
       'submit_search' => [
@@ -199,7 +208,7 @@ final class EventOrganizationModalForm extends FormBase {
     $this->applyHtmx($form['search_box']['switch_create']);
 
     // Consulta de organizações existentes.
-    $termo = trim((string) ($form_state->get('termo') ?? ''));
+    $termo = trim($this->formString($form_state->get('termo')));
     $storage = $this->entityTypeManager->getStorage('aculta_event_organization');
     $query = $storage->getQuery()
       ->accessCheck(TRUE)
@@ -242,7 +251,10 @@ final class EventOrganizationModalForm extends FormBase {
           $localidadeStr = (string) $this->t('Ocultada');
         }
         elseif (!empty($org->get('localidade')->value) || !empty($org->get('uf')->value)) {
-          $parts = array_filter([(string) $org->get('localidade')->value, (string) $org->get('uf')->value]);
+          $parts = array_filter([
+            $this->formString($org->get('localidade')->value),
+            $this->formString($org->get('uf')->value),
+          ]);
           $localidadeStr = implode(' - ', $parts);
         }
 
@@ -285,6 +297,9 @@ final class EventOrganizationModalForm extends FormBase {
 
   /**
    * Botão "Selecionar" de uma organização, com o envelope HTMX.
+   *
+   * @return array<array-key, mixed>
+   *   The submit button render array.
    */
   private function selectButton(int $orgId, string $namePrefix = 'select_org_', ?string $label = NULL): array {
     $button = [
@@ -301,6 +316,9 @@ final class EventOrganizationModalForm extends FormBase {
 
   /**
    * Constrói o passo de criação de nova organização.
+   *
+   * @param array<array-key, mixed> $form
+   *   Form elements and metadata, modified in place.
    */
   private function buildCreateStep(array &$form, FormStateInterface $form_state): void {
     $form['create_intro'] = [
@@ -312,9 +330,10 @@ final class EventOrganizationModalForm extends FormBase {
 
     // Se houver candidatos semelhantes detectados na validação.
     $candidates = $form_state->get('duplicate_candidates');
-    if (!empty($candidates)) {
+    $candidateIds = $this->entityIds($candidates);
+    if ($candidateIds !== []) {
       $storage = $this->entityTypeManager->getStorage('aculta_event_organization');
-      $dups = $storage->loadMultiple($candidates);
+      $dups = $storage->loadMultiple($candidateIds);
 
       $form['duplicate_warning'] = [
         '#component' => 'aculta420_v2:status-messages',
@@ -348,14 +367,14 @@ final class EventOrganizationModalForm extends FormBase {
       '#title' => $this->t('Nome da organização'),
       '#required' => TRUE,
       '#size' => 40,
-      '#default_value' => (string) ($form_state->getValue('novo_nome') ?? ''),
+      '#default_value' => $this->formString($form_state->getValue('novo_nome')),
     ];
 
     $form['novo_body'] = [
       '#type' => 'textarea',
       '#title' => $this->t('Descrição ou apresentação institucional'),
       '#rows' => 3,
-      '#default_value' => (string) ($form_state->getValue('novo_body') ?? ''),
+      '#default_value' => $this->formString($form_state->getValue('novo_body')),
     ];
 
     $form['novo_links'] = [
@@ -363,7 +382,7 @@ final class EventOrganizationModalForm extends FormBase {
       '#title' => $this->t('Links oficiais (sites, redes sociais)'),
       '#description' => $this->t('Um link por linha.'),
       '#rows' => 2,
-      '#default_value' => (string) ($form_state->getValue('novo_links') ?? ''),
+      '#default_value' => $this->formString($form_state->getValue('novo_links')),
     ];
 
     $form['loc_container'] = [
@@ -373,21 +392,21 @@ final class EventOrganizationModalForm extends FormBase {
         '#type' => 'textfield',
         '#title' => $this->t('Cidade'),
         '#size' => 25,
-        '#default_value' => (string) ($form_state->getValue('novo_localidade') ?? ''),
+        '#default_value' => $this->formString($form_state->getValue('novo_localidade')),
       ],
       'novo_uf' => [
         '#type' => 'textfield',
         '#title' => $this->t('UF'),
         '#size' => 4,
         '#maxlength' => 2,
-        '#default_value' => (string) ($form_state->getValue('novo_uf') ?? ''),
+        '#default_value' => $this->formString($form_state->getValue('novo_uf')),
       ],
     ];
 
     $form['novo_ocultar_localidade'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Ocultar cidade e UF do perfil público e das buscas'),
-      '#default_value' => (bool) ($form_state->getValue('novo_ocultar_localidade') ?? FALSE),
+      '#default_value' => $this->formBoolean($form_state->getValue('novo_ocultar_localidade')),
     ];
 
     $isAdmin = $this->currentUser()->hasPermission('administer aculta events');
@@ -408,7 +427,7 @@ final class EventOrganizationModalForm extends FormBase {
       '#type' => 'radios',
       '#title' => $this->t('Tipo de cadastro da organização'),
       '#options' => $claimOptions,
-      '#default_value' => (string) ($form_state->getValue('is_claimed_choice') ?? 'unclaimed'),
+      '#default_value' => $this->formString($form_state->getValue('is_claimed_choice'), 'unclaimed'),
     ];
 
     if (!$isAdmin) {
@@ -422,7 +441,7 @@ final class EventOrganizationModalForm extends FormBase {
         '#description' => $this->t('Esta justificativa ficará privada para a equipe revisora.'),
         '#required' => TRUE,
         '#maxlength' => 5000,
-        '#default_value' => (string) ($form_state->getValue('contribution_rationale') ?? ''),
+        '#default_value' => $this->formString($form_state->getValue('contribution_rationale')),
       ];
       if (!$form_state->has('organization_contribution_token')) {
         $form_state->set('organization_contribution_token', bin2hex(random_bytes(32)));
@@ -438,7 +457,7 @@ final class EventOrganizationModalForm extends FormBase {
       '#title' => $this->t('Justificativa da solicitação de titularidade'),
       '#description' => $this->t('Explique seu vínculo ou representação oficial da organização para análise da moderação.'),
       '#rows' => 3,
-      '#default_value' => (string) ($form_state->getValue('justificativa_reivindicacao') ?? ''),
+      '#default_value' => $this->formString($form_state->getValue('justificativa_reivindicacao')),
       '#states' => [
         'visible' => [
           ':input[name="is_claimed_choice"]' => ['value' => 'request_claim'],
@@ -453,7 +472,7 @@ final class EventOrganizationModalForm extends FormBase {
       '#type' => 'textfield',
       '#title' => $this->t('Contato institucional / Comprovação (opcional)'),
       '#description' => $this->t('Link oficial, e-mail institucional ou telefone para confirmação.'),
-      '#default_value' => (string) ($form_state->getValue('contato_reivindicacao') ?? ''),
+      '#default_value' => $this->formString($form_state->getValue('contato_reivindicacao')),
       '#states' => [
         'visible' => [
           ':input[name="is_claimed_choice"]' => ['value' => 'request_claim'],
@@ -465,7 +484,7 @@ final class EventOrganizationModalForm extends FormBase {
       '#type' => 'actions',
       'submit_create' => [
         '#type' => 'submit',
-        '#value' => !empty($candidates) ? $this->t('Confirmar cadastro mesmo assim') : $this->t('Cadastrar e selecionar'),
+        '#value' => $candidateIds !== [] ? $this->t('Confirmar cadastro mesmo assim') : $this->t('Cadastrar e selecionar'),
         '#name' => 'op_create_save',
         '#submit' => ['::submitCreateOrganization'],
         '#attributes' => ['data-portal-ui' => 'event-organization-add-action'],
@@ -484,14 +503,20 @@ final class EventOrganizationModalForm extends FormBase {
 
   /**
    * Submissão do filtro de busca.
+   *
+   * @param array<array-key, mixed> $form
+   *   Form elements and metadata.
    */
   public function submitSearch(array &$form, FormStateInterface $form_state): void {
-    $form_state->set('termo', trim((string) $form_state->getValue('termo')));
+    $form_state->set('termo', trim($this->formString($form_state->getValue('termo'))));
     $form_state->setRebuild(TRUE);
   }
 
   /**
    * Alterna para a etapa de criação.
+   *
+   * @param array<array-key, mixed> $form
+   *   Form elements and metadata.
    */
   public function switchToCreate(array &$form, FormStateInterface $form_state): void {
     $form_state->set('mode', 'create');
@@ -501,6 +526,9 @@ final class EventOrganizationModalForm extends FormBase {
 
   /**
    * Alterna de volta para a busca.
+   *
+   * @param array<array-key, mixed> $form
+   *   Form elements and metadata.
    */
   public function switchToSearch(array &$form, FormStateInterface $form_state): void {
     $form_state->set('mode', 'search');
@@ -510,17 +538,20 @@ final class EventOrganizationModalForm extends FormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<array-key, mixed> $form
+   *   Form elements and metadata.
    */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
-    $triggering = (string) ($form_state->getTriggeringElement()['#name'] ?? '');
+    $triggering = $this->formString($form_state->getTriggeringElement()['#name'] ?? NULL);
     if ($triggering === 'op_create_save') {
-      $nome = trim((string) $form_state->getValue('novo_nome'));
+      $nome = trim($this->formString($form_state->getValue('novo_nome')));
       if ($nome === '') {
         $form_state->setErrorByName('novo_nome', (string) $this->t('Informe o nome da organização.'));
         return;
       }
 
-      $choice = (string) $form_state->getValue('is_claimed_choice', 'unclaimed');
+      $choice = $this->formString($form_state->getValue('is_claimed_choice', 'unclaimed'), 'unclaimed');
       $isAdmin = $this->currentUser()->hasPermission('administer aculta events');
       if ($choice === 'claimed' && !$isAdmin) {
         $form_state->setErrorByName('is_claimed_choice', (string) $this->t('Apenas administradores podem conceder titularidade imediata no cadastro. Solicite a titularidade para análise da moderação.'));
@@ -529,7 +560,7 @@ final class EventOrganizationModalForm extends FormBase {
         if (!$isAdmin) {
           $form_state->setErrorByName('is_claimed_choice', (string) $this->t('A titularidade deve ser solicitada pelo fluxo próprio após a aprovação da criação.'));
         }
-        $justificativa = trim((string) $form_state->getValue('justificativa_reivindicacao'));
+        $justificativa = trim($this->formString($form_state->getValue('justificativa_reivindicacao')));
         if ($justificativa === '') {
           $form_state->setErrorByName('justificativa_reivindicacao', (string) $this->t('Informe a justificativa da solicitação de titularidade para análise da moderação.'));
         }
@@ -537,11 +568,11 @@ final class EventOrganizationModalForm extends FormBase {
       if (!$isAdmin && $choice !== 'unclaimed') {
         $form_state->setErrorByName('is_claimed_choice', (string) $this->t('A proposta deve ser de uma organização não reivindicada.'));
       }
-      if (!$isAdmin && trim((string) $form_state->getValue('contribution_rationale')) === '') {
+      if (!$isAdmin && trim($this->formString($form_state->getValue('contribution_rationale'))) === '') {
         $form_state->setErrorByName('contribution_rationale', (string) $this->t('Informe por que esta organização deve ser cadastrada.'));
       }
 
-      $duplicateConfirmed = (bool) $form_state->get('duplicate_confirmed');
+      $duplicateConfirmed = $this->formBoolean($form_state->get('duplicate_confirmed'));
       if (!$duplicateConfirmed) {
         $storage = $this->entityTypeManager->getStorage('aculta_event_organization');
         $dups = $storage->getQuery()
@@ -562,11 +593,14 @@ final class EventOrganizationModalForm extends FormBase {
 
   /**
    * Submissão de seleção de organização existente com validação estrita.
+   *
+   * @param array<array-key, mixed> $form
+   *   Form elements and metadata.
    */
   public function submitSelectOrganization(array &$form, FormStateInterface $form_state): void {
     $triggering = $form_state->getTriggeringElement();
-    $orgId = (int) ($triggering['#org_id'] ?? 0);
-    if ($orgId > 0) {
+    $orgId = $this->positiveInteger($triggering['#org_id'] ?? NULL);
+    if ($orgId !== NULL) {
       $org = $this->entityTypeManager->getStorage('aculta_event_organization')->load($orgId);
       if (!$org instanceof EventOrganization) {
         $form_state->setErrorByName('', (string) $this->t('Organização não encontrada.'));
@@ -591,9 +625,9 @@ final class EventOrganizationModalForm extends FormBase {
       if ($this->isHtmxRequest()) {
         $form_state->setResponse($this->htmxUpdateParentResponse(
           $orgId,
-          (string) $form_state->get('field_name'),
-          (string) $form_state->get('wrapper_id'),
-          (bool) $form_state->get('is_multiple'),
+          $this->formString($form_state->get('field_name'), 'field_organizacao'),
+          $this->formString($form_state->get('wrapper_id'), 'field-organizacao-wrapper'),
+          $this->formBoolean($form_state->get('is_multiple')),
         ));
       }
     }
@@ -601,15 +635,18 @@ final class EventOrganizationModalForm extends FormBase {
 
   /**
    * Submissão de criação e seleção de nova organização.
+   *
+   * @param array<array-key, mixed> $form
+   *   Form elements and metadata.
    */
   public function submitCreateOrganization(array &$form, FormStateInterface $form_state): void {
-    $nome = trim((string) $form_state->getValue('novo_nome'));
-    $body = trim((string) $form_state->getValue('novo_body'));
-    $links = trim((string) $form_state->getValue('novo_links'));
-    $cidade = trim((string) $form_state->getValue('novo_localidade'));
-    $uf = strtoupper(trim((string) $form_state->getValue('novo_uf')));
-    $ocultarLoc = (bool) $form_state->getValue('novo_ocultar_localidade');
-    $choice = (string) $form_state->getValue('is_claimed_choice', 'unclaimed');
+    $nome = trim($this->formString($form_state->getValue('novo_nome')));
+    $body = trim($this->formString($form_state->getValue('novo_body')));
+    $links = trim($this->formString($form_state->getValue('novo_links')));
+    $cidade = trim($this->formString($form_state->getValue('novo_localidade')));
+    $uf = strtoupper(trim($this->formString($form_state->getValue('novo_uf'))));
+    $ocultarLoc = $this->formBoolean($form_state->getValue('novo_ocultar_localidade'));
+    $choice = $this->formString($form_state->getValue('is_claimed_choice', 'unclaimed'), 'unclaimed');
     $currentUid = (int) $this->currentUser()->id();
 
     $isAdmin = $this->currentUser()->hasPermission('administer aculta events');
@@ -630,9 +667,9 @@ final class EventOrganizationModalForm extends FormBase {
         'organization_create',
         NULL,
         (string) $this->t('Criação da organização @name', ['@name' => $nome]),
-        (string) $form_state->getValue('contribution_rationale'),
+        $this->formString($form_state->getValue('contribution_rationale')),
         $payload,
-        (string) $form_state->getValue('contribution_submission_token'),
+        $this->formString($form_state->getValue('contribution_submission_token')),
       );
       $this->messenger()->addStatus($this->t('Sua proposta foi enviada. A organização só será criada após a aprovação e não foi vinculada ao Evento.'));
       $form_state->set('proposal_submitted', TRUE);
@@ -666,8 +703,8 @@ final class EventOrganizationModalForm extends FormBase {
       $this->membershipManager->addMembership($currentUid, (string) $org->id(), 'owner', 'approved', TRUE, TRUE);
     }
     elseif ($isPendingClaim && $currentUid > 0) {
-      $justificativa = trim((string) $form_state->getValue('justificativa_reivindicacao'));
-      $contato = trim((string) $form_state->getValue('contato_reivindicacao'));
+      $justificativa = trim($this->formString($form_state->getValue('justificativa_reivindicacao')));
+      $contato = trim($this->formString($form_state->getValue('contato_reivindicacao')));
       if ($this->claimService !== NULL) {
         $this->claimService->submitClaim($org, $this->currentUser(), $justificativa, $contato !== '' ? $contato : NULL);
       }
@@ -678,15 +715,18 @@ final class EventOrganizationModalForm extends FormBase {
     if ($this->isHtmxRequest()) {
       $form_state->setResponse($this->htmxUpdateParentResponse(
         (int) $org->id(),
-        (string) $form_state->get('field_name'),
-        (string) $form_state->get('wrapper_id'),
-        (bool) $form_state->get('is_multiple'),
+        $this->formString($form_state->get('field_name'), 'field_organizacao'),
+        $this->formString($form_state->get('wrapper_id'), 'field-organizacao-wrapper'),
+        $this->formBoolean($form_state->get('is_multiple')),
       ));
     }
   }
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<array-key, mixed> $form
+   *   Form elements and metadata.
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     // Processado pelos submits específicos.
@@ -694,6 +734,9 @@ final class EventOrganizationModalForm extends FormBase {
 
   /**
    * Aplica HTMX a um botão do modal: recorta e troca o wrapper do formulário.
+   *
+   * @param array<array-key, mixed> $button
+   *   Button render array, modified in place.
    */
   private function applyHtmx(array &$button): void {
     (new Htmx())
@@ -730,6 +773,62 @@ final class EventOrganizationModalForm extends FormBase {
         'HX-Trigger' => 'aculta:close-dialog',
       ],
     );
+  }
+
+  /**
+   * Narrows submitted and persisted scalar values before string use.
+   */
+  private function formString(mixed $value, string $default = ''): string {
+    if (is_string($value)) {
+      return $value;
+    }
+    if (is_int($value) || is_float($value) || is_bool($value)) {
+      return (string) $value;
+    }
+    return $default;
+  }
+
+  /**
+   * Converts only a valid positive integer identifier.
+   */
+  private function positiveInteger(mixed $value): ?int {
+    if (is_int($value)) {
+      return $value > 0 ? $value : NULL;
+    }
+    if (!is_string($value) || preg_match('/^[1-9][0-9]*$/D', $value) !== 1) {
+      return NULL;
+    }
+    $identifier = filter_var($value, FILTER_VALIDATE_INT);
+    return is_int($identifier) && $identifier > 0 ? $identifier : NULL;
+  }
+
+  /**
+   * Converts a Form API checkbox value without treating malformed arrays as true.
+   */
+  private function formBoolean(mixed $value): bool {
+    return $value === TRUE || $value === 1 || $value === '1';
+  }
+
+  /**
+   * Filters duplicate candidate identifiers to values accepted by EntityStorage.
+   *
+   * @param mixed $value
+   *   Candidate IDs from form state.
+   *
+   * @return list<int|string>
+   *   Valid entity identifiers.
+   */
+  private function entityIds(mixed $value): array {
+    if (!is_array($value)) {
+      return [];
+    }
+    $ids = [];
+    foreach ($value as $id) {
+      if (is_int($id) || (is_string($id) && $id !== '')) {
+        $ids[] = $id;
+      }
+    }
+    return $ids;
   }
 
 }
