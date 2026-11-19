@@ -140,8 +140,8 @@
 @media (min-width: 60rem) {
   /* Menu lateral em fluxo natural dentro de sua coluna no layout do dashboard. */
   .aculta-studio-sidebar {
-    display: block;
     position: static;
+    display: block;
     padding: var(--spacing-md);
     border: 1px solid var(--color-border);
     border-block-start: 4px solid var(--studio-stripe);

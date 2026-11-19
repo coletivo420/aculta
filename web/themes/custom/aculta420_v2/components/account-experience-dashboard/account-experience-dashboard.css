@@ -59,9 +59,9 @@
    cards de experiências com ícone, faixa do Green Stash e "Minha conta" no fim. Mobile-first. */
 .aculta-account-entry {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   min-width: 0;
   gap: var(--spacing-lg);
-  grid-template-columns: minmax(0, 1fr);
 }
 
 .aculta-account-entry__menu,
