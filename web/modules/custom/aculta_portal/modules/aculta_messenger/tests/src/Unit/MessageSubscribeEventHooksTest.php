@@ -105,7 +105,10 @@ final class MessageSubscribeEventHooksTest extends UnitTestCase {
   }
 
   /**
-   * Creates a public Forum topic entity double.
+   * Creates a mutable mock topic.
+   *
+   * @return \Drupal\node\NodeInterface&\PHPUnit\Framework\MockObject\MockObject
+   *   A mocked Forum topic.
    */
   private function topic(int $id, int $revisionId, bool $published): NodeInterface {
     $node = $this->createMock(NodeInterface::class);

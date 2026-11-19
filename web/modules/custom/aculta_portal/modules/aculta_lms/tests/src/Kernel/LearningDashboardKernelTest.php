@@ -6,6 +6,8 @@ namespace Drupal\Tests\aculta_lms\Kernel;
 
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\Core\Url;
 use Drupal\aculta_lms\Access\AnswerSubmissionAccessCheck;
 use Drupal\aculta_lms\Access\LessonViewAccessCheck;
 use Drupal\aculta_lms\LearningDashboardManager;
@@ -211,7 +213,9 @@ final class LearningDashboardKernelTest extends KernelTestBase {
     self::assertSame(0, $dashboard['courses'][0]['progress_percent']);
     self::assertCount(1, $dashboard['certificates']);
     $visible_certificates = array_values($dashboard['certificates']);
-    self::assertSame((string) $student->id(), (string) $visible_certificates[0]->get('uid')->value);
+    $certificateOwnerId = $visible_certificates[0]->get('uid')->value;
+    self::assertIsNumeric($certificateOwnerId);
+    self::assertSame((int) $student->id(), (int) $certificateOwnerId);
     self::assertSame(str_repeat('D', 43), $visible_certificates[0]->get('verification_code')->value);
     self::assertContains('aculta_lms_certificate:' . $own_certificate->id(), $dashboard['cache']->getCacheTags());
     self::assertContains('user', $dashboard['cache']->getCacheContexts());
@@ -221,20 +225,33 @@ final class LearningDashboardKernelTest extends KernelTestBase {
     $journey = $manager->courseJourney($course, $student);
     self::assertCount(1, $journey->lessons);
     self::assertSame(1, $journey->lessons[0]->delta);
-    self::assertSame('aculta_lms.lesson_view', $journey->lessons[0]->url?->getRouteName());
-    self::assertSame((string) $course->id(), (string) $journey->lessons[0]->url?->getRouteParameters()['group']);
+    $lessonUrl = $journey->lessons[0]->url;
+    self::assertInstanceOf(Url::class, $lessonUrl);
+    self::assertSame('aculta_lms.lesson_view', $lessonUrl->getRouteName());
+    $routeParameters = $lessonUrl->getRouteParameters();
+    self::assertSame((string) $course->id(), $routeParameters['group'] ?? NULL);
 
     $lesson_page = $this->container->get('aculta_lms.course_lesson_controller')
       ->view($course, $journey->lessons[0]->delta);
-    self::assertSame('Aula visível', $lesson_page['title']['#value']);
-    self::assertSame('Esta aula ainda não tem atividades.', (string) $lesson_page['activities']['#empty']);
-    self::assertContains('aculta_lms_lesson_list', $lesson_page['#cache']['tags']);
-    self::assertContains('aculta_lms_activity_list', $lesson_page['#cache']['tags']);
+    self::assertIsArray($lesson_page['title'] ?? NULL);
+    $title = $lesson_page['title'];
+    self::assertSame('Aula visível', $title['#value'] ?? NULL);
+    self::assertIsArray($lesson_page['activities'] ?? NULL);
+    $activities = $lesson_page['activities'];
+    $emptyText = $activities['#empty'] ?? NULL;
+    self::assertInstanceOf(TranslatableMarkup::class, $emptyText);
+    self::assertSame('Esta aula ainda não tem atividades.', $emptyText->render());
+    self::assertIsArray($lesson_page['#cache'] ?? NULL);
+    $cache = $lesson_page['#cache'];
+    self::assertIsArray($cache['tags'] ?? NULL);
+    $lessonPageCacheTags = $cache['tags'];
+    self::assertContains('aculta_lms_lesson_list', $lessonPageCacheTags);
+    self::assertContains('aculta_lms_activity_list', $lessonPageCacheTags);
 
-    $cache = $this->container->get('cache.default');
+    $cacheBackend = $this->container->get('cache.default');
     $cache_key = 'aculta_lms_test_activity_list_invalidation';
-    $cache->set($cache_key, 'cached', Cache::PERMANENT, $lesson_page['#cache']['tags']);
-    self::assertNotFalse($cache->get($cache_key));
+    $cacheBackend->set($cache_key, 'cached', Cache::PERMANENT, $lessonPageCacheTags);
+    self::assertNotFalse($cacheBackend->get($cache_key));
     $activity = $this->container->get('entity_type.manager')
       ->getStorage('aculta_lms_activity')
       ->create([
@@ -245,12 +262,14 @@ final class LearningDashboardKernelTest extends KernelTestBase {
         'answer_config' => '{"question":"Atividade criada no Kernel"}',
       ]);
     $activity->save();
-    self::assertFalse($cache->get($cache_key));
+    self::assertFalse($cacheBackend->get($cache_key));
 
     $updated_lesson_page = $this->container->get('aculta_lms.course_lesson_controller')
       ->view($course, $journey->lessons[0]->delta);
     self::assertIsArray($updated_lesson_page['activities']);
-    self::assertCount(1, $updated_lesson_page['activities']['#rows']);
+    $updatedActivities = $updated_lesson_page['activities'];
+    self::assertIsArray($updatedActivities['#rows'] ?? NULL);
+    self::assertCount(1, $updatedActivities['#rows']);
 
     $current_user = $this->createMock(AccountProxyInterface::class);
     $current_user->method('isAuthenticated')->willReturn(TRUE);

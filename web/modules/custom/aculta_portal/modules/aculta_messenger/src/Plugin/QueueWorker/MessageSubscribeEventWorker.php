@@ -36,6 +36,30 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 )]
 final class MessageSubscribeEventWorker extends QueueWorkerBase implements ContainerFactoryPluginInterface {
 
+  /**
+   * Creates the queue worker.
+   *
+   * @param array<string, mixed> $configuration
+   *   The plugin configuration.
+   * @param string $plugin_id
+   *   The plugin ID.
+   * @param mixed $plugin_definition
+   *   The plugin definition.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
+   *   The entity type manager.
+   * @param \Drupal\aculta_messenger\Aviso\ForumNoticeEventProducerInterface $events
+   *   The event producer.
+   * @param \Drupal\path_alias\AliasManagerInterface $aliasManager
+   *   The path alias manager.
+   * @param \Drupal\Component\Datetime\TimeInterface $time
+   *   The time service.
+   * @param \Drupal\Core\Lock\LockBackendInterface $lock
+   *   The lock backend.
+   * @param \Drupal\Core\Logger\LoggerChannelFactoryInterface $loggerFactory
+   *   The logger factory.
+   * @param \Drupal\aculta_messenger\Aviso\ForumNoticeAccessPolicy $noticeAccessPolicy
+   *   The notice access policy.
+   */
   public function __construct(
     array $configuration,
     string $plugin_id,
@@ -53,6 +77,15 @@ final class MessageSubscribeEventWorker extends QueueWorkerBase implements Conta
 
   /**
    * {@inheritdoc}
+   *
+   * @param \Symfony\Component\DependencyInjection\ContainerInterface $container
+   *   The service container.
+   * @param array<string, mixed> $configuration
+   *   The plugin configuration.
+   * @param string $plugin_id
+   *   The plugin ID.
+   * @param mixed $plugin_definition
+   *   The plugin definition.
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): static {
     return new static(

@@ -145,6 +145,9 @@ final class PersistentNoticeAccessTest extends UnitTestCase {
 
   /**
    * Creates a mocked account with the requested roles.
+   *
+   * @param list<string> $roles
+   *   Roles assigned to the account.
    */
   private function account(array $roles): AccountInterface {
     $account = $this->createMock(AccountInterface::class);
@@ -155,6 +158,13 @@ final class PersistentNoticeAccessTest extends UnitTestCase {
 
   /**
    * Creates a notice entity double with the supplied fields.
+   *
+   * @param list<string> $roles
+   *   Audience role IDs.
+   * @param bool $published
+   *   Whether the notice is published.
+   * @param array<string, string> $dates
+   *   Date field values keyed by field name.
    */
   private function notice(array $roles, bool $published = TRUE, array $dates = []): NodeInterface {
     $node = $this->createMock(NodeInterface::class);

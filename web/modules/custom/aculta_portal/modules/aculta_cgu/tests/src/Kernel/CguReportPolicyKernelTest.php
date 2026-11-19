@@ -7,7 +7,6 @@ namespace Drupal\Tests\aculta_cgu\Kernel;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\comment\CommentInterface;
 use Drupal\KernelTests\KernelTestBase;
-use Drupal\aculta_cgu\Entity\CguReport;
 use Drupal\aculta_cgu\Exception\ReportNotAllowedException;
 use Drupal\aculta_cgu\ModerationScope;
 use Drupal\aculta_cgu\Service\ReportService;
@@ -15,6 +14,7 @@ use Drupal\node\Entity\Node;
 use Drupal\node\Entity\NodeType;
 use Drupal\user\Entity\Role;
 use Drupal\user\Entity\User;
+use Composer\Autoload\ClassLoader;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -80,6 +80,9 @@ final class CguReportPolicyKernelTest extends KernelTestBase {
   public function register(ContainerBuilder $container): void {
     parent::register($container);
     $loader = require dirname(DRUPAL_ROOT) . '/vendor/autoload.php';
+    if (!$loader instanceof ClassLoader) {
+      throw new \LogicException('O autoloader Composer não está disponível no Kernel.');
+    }
     $loader->addPsr4('Drupal\\aculta_cgu\\', dirname(__DIR__, 3) . '/src', TRUE);
   }
 
@@ -195,7 +198,7 @@ final class CguReportPolicyKernelTest extends KernelTestBase {
         $this->fail('Motivo inválido aceito: ' . $invalid);
       }
       catch (ReportNotAllowedException) {
-        $this->assertTrue(TRUE);
+        // The exception is the expected result for this invalid reason.
       }
     }
     $report = $this->service->createReport($node, $this->reporter, '  SPAM ');
@@ -212,7 +215,7 @@ final class CguReportPolicyKernelTest extends KernelTestBase {
       $this->fail('Purpose forjado aceito.');
     }
     catch (ReportNotAllowedException) {
-      $this->assertTrue(TRUE);
+      // A mismatched caller-supplied purpose must be rejected.
     }
     $this->assertSame([], $this->container->get('entity_type.manager')->getStorage('aculta_cgu_report')->loadMultiple());
 
@@ -302,7 +305,7 @@ final class CguReportPolicyKernelTest extends KernelTestBase {
       $this->fail('Conta sem permissão decidiu.');
     }
     catch (AccessDeniedHttpException) {
-      $this->assertTrue(TRUE);
+      // An account outside the moderation scope cannot decide the report.
     }
 
     $this->service->decideReport($portalReport, $this->portalModerator, 'procedente', 'ok');
@@ -344,7 +347,11 @@ final class CguReportPolicyKernelTest extends KernelTestBase {
 
     $this->service->decideReport($report, $this->globalModerator, 'procedente', 'Confirmada');
     $this->assertNotEmpty($report->get('decided_at')->value);
-    $this->assertSame((int) $this->globalModerator->id(), (int) $report->get('decided_by')->value);
+    $moderatorId = $this->globalModerator->id();
+    $decidedBy = $report->get('decided_by')->value;
+    self::assertIsNumeric($moderatorId);
+    self::assertIsNumeric($decidedBy);
+    self::assertSame((int) $moderatorId, (int) $decidedBy);
 
     // Decisão final não é reaberta nem trocada.
     foreach (['em_analise', 'improcedente', 'procedente'] as $next) {
@@ -373,7 +380,6 @@ final class CguReportPolicyKernelTest extends KernelTestBase {
    */
   public function testEntityAccessHandlerScoping(): void {
     $forumReport = $this->service->createReport($this->makeNode('aculta_forum_topic'), $this->reporter, 'spam');
-    $this->assertInstanceOf(CguReport::class, $forumReport);
 
     $this->assertTrue($forumReport->access('view', $this->forumModerator));
     $this->assertTrue($forumReport->access('update', $this->forumModerator));
@@ -395,8 +401,9 @@ final class CguReportPolicyKernelTest extends KernelTestBase {
     $permissions = $this->container->get('user.permissions')->getPermissions();
     $this->assertArrayHasKey(ModerationScope::GLOBAL_PERMISSION, $permissions);
     foreach (ModerationScope::PURPOSES as $purpose) {
-      $this->assertArrayHasKey(ModerationScope::permissionFor($purpose), $permissions);
-      $this->assertTrue($permissions[ModerationScope::permissionFor($purpose)]['restrict access']);
+      $permission = $permissions[ModerationScope::permissionFor($purpose)] ?? NULL;
+      self::assertIsArray($permission);
+      self::assertTrue($permission['restrict access'] ?? FALSE);
     }
   }
 
