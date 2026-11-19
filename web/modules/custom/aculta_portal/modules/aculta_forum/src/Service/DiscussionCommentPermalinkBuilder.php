@@ -30,17 +30,24 @@ final class DiscussionCommentPermalinkBuilder implements DiscussionCommentPermal
     if (!$host instanceof FieldableEntityInterface) {
       return 0;
     }
-    $perPage = (int) $host->getFieldDefinition($comment->getFieldName())->getSetting('per_page');
+    $fieldDef = $host->getFieldDefinition($comment->getFieldName());
+    if ($fieldDef === NULL) {
+      return 0;
+    }
+    $perPageSetting = $fieldDef->getSetting('per_page');
+    $perPage = is_numeric($perPageSetting) ? (int) $perPageSetting : 0;
     if ($perPage <= 0) {
       return 0;
     }
+    $threadVal = $comment->get('thread')->value;
+    $thread = is_scalar($threadVal) ? (string) $threadVal : '';
     $position = (int) $this->entityTypeManager->getStorage('comment')->getQuery()
       ->accessCheck(FALSE)
       ->condition('entity_type', $host->getEntityTypeId())
       ->condition('entity_id', $host->id())
       ->condition('field_name', $comment->getFieldName())
       ->condition('status', CommentInterface::PUBLISHED)
-      ->condition('thread', $comment->get('thread')->value, '<')
+      ->condition('thread', $thread, '<')
       ->count()
       ->execute();
     return intdiv($position, $perPage);
@@ -74,7 +81,8 @@ final class DiscussionCommentPermalinkBuilder implements DiscussionCommentPermal
     // (um envio por POST sempre chega à página 0).
     $page = $this->commentPage($comment, $host);
     if ($page > 0) {
-      $options['query'] = array_merge($options['query'] ?? [], ['page' => (string) $page]);
+      $currentQuery = isset($options['query']) && is_array($options['query']) ? $options['query'] : [];
+      $options['query'] = array_merge($currentQuery, ['page' => (string) $page]);
     }
 
     $url->setOptions($options);

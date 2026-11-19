@@ -43,17 +43,22 @@ final class ForumTopicMover {
     }
 
     $forum_domain = $this->siteManager->getDomain(SiteKey::Forum);
-    $source_category_id = (int) ($node->get('field_aculta_categories')->getValue()[0]['target_id'] ?? 0);
+    $catValues = $node->get('field_aculta_categories')->getValue();
+    $catTarget = is_array($catValues) && isset($catValues[0]) && is_array($catValues[0]) ? ($catValues[0]['target_id'] ?? 0) : $node->get('field_aculta_categories')->target_id;
+    $source_category_id = is_numeric($catTarget) ? (int) $catTarget : 0;
     $source_category = $source_category_id > 0
       ? $this->entityTypeManager->getStorage('taxonomy_term')->load($source_category_id)
       : NULL;
+    $domainValues = $node->get('field_domain_source')->getValue();
+    $domainTarget = is_array($domainValues) && isset($domainValues[0]) && is_array($domainValues[0]) ? ($domainValues[0]['target_id'] ?? '') : $node->get('field_domain_source')->target_id;
+    $domainSourceId = is_scalar($domainTarget) ? (string) $domainTarget : '';
     $allowed = $forum_domain !== NULL
       && $account->hasPermission('move aculta forum topics')
       && $node->get('field_autor_legado')->isEmpty()
       && $source_category instanceof TermInterface
       && $source_category->bundle() === 'aculta_forum_categories'
       && $source_category->access('view', $account)
-      && (string) ($node->get('field_domain_source')->getValue()[0]['target_id'] ?? '') === (string) $forum_domain->id();
+      && $domainSourceId === (string) $forum_domain->id();
 
     $result = ($allowed ? AccessResult::allowed() : AccessResult::forbidden())
       ->addCacheContexts(['user.permissions'])
@@ -87,11 +92,16 @@ final class ForumTopicMover {
   public function move(int $nodeId, int $destinationId, AccountInterface $account): NodeInterface {
     $node = $this->entityTypeManager->getStorage('node')->load($nodeId);
     $term = $this->entityTypeManager->getStorage('taxonomy_term')->load($destinationId);
-    if (!$node instanceof NodeInterface || !$term instanceof TermInterface
-      || !$this->access($node, $account)->isAllowed()
+    if (!$node instanceof NodeInterface || !$term instanceof TermInterface) {
+      throw new \InvalidArgumentException('The Forum topic move is not available for this source or destination.');
+    }
+    $currentCatValues = $node->get('field_aculta_categories')->getValue();
+    $currentCatTarget = is_array($currentCatValues) && isset($currentCatValues[0]) && is_array($currentCatValues[0]) ? ($currentCatValues[0]['target_id'] ?? 0) : $node->get('field_aculta_categories')->target_id;
+    $currentCatId = is_numeric($currentCatTarget) ? (int) $currentCatTarget : 0;
+    if (!$this->access($node, $account)->isAllowed()
       || $term->bundle() !== 'aculta_forum_categories'
       || !$term->access('view', $account)
-      || (int) ($node->get('field_aculta_categories')->getValue()[0]['target_id'] ?? 0) === (int) $term->id()) {
+      || $currentCatId === (int) $term->id()) {
       throw new \InvalidArgumentException('The Forum topic move is not available for this source or destination.');
     }
 
