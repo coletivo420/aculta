@@ -6,8 +6,8 @@ namespace Drupal\aculta_lms;
 
 use Drupal\aculta_lms\Certificate\CourseCertificateManagerInterface;
 use Drupal\aculta_lms\Entity\CourseCertificate;
-use Drupal\aculta_lms\Learning\AccountCourseSummary;
-use Drupal\aculta_lms\Learning\AccountCoursesReaderInterface;
+use Drupal\aculta_portal\Learning\AccountCourseSummary;
+use Drupal\aculta_portal\Learning\AccountCoursesReaderInterface;
 use Drupal\aculta_lms\Learning\CourseJourney;
 use Drupal\aculta_lms\Learning\CourseJourneyLesson;
 use Drupal\aculta_lms\Learning\CourseJourneyReaderInterface;

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Drupal\aculta_learning_contracts\Learning;
+namespace Drupal\aculta_portal\Learning;
 
 use Drupal\Core\Url;
 
@@ -11,7 +11,7 @@ use Drupal\Core\Url;
  *
  * Providers return this neutral DTO (or a subclass) with normalized status.
  */
-readonly class AccountCourseSummary {
+final readonly class AccountCourseSummary {
 
   public const STATUS_NOT_STARTED = 'not_started';
 

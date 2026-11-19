@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Presentation;
 
-use Drupal\aculta_lms\Learning\AccountCourseSummary;
+use Drupal\aculta_portal\Learning\AccountCourseSummary;
 use Drupal\aculta_portal\AccountCoursesManager;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
