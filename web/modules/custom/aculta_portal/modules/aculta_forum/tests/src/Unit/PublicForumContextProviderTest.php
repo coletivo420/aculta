@@ -9,6 +9,7 @@ use Drupal\aculta_forum\Analytics\ForumAnalyticsScopeResolver;
 use Drupal\aculta_forum\Context\Provider\PublicForumContextProvider;
 use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Cache\CacheableDependencyInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -63,8 +64,12 @@ final class PublicForumContextProviderTest extends TestCase {
 
     $this->assertSame('public_forum', $context->getType());
     $this->assertSame('public_forum:node:topic-uuid', $context->getStableId());
-    $this->assertTrue($context->getReadAccess()->isAllowed());
-    $this->assertContains('domain', $context->getReadAccess()->getCacheContexts());
+    $readAccess = $context->getReadAccess();
+    $this->assertTrue($readAccess->isAllowed());
+    $this->assertInstanceOf(CacheableDependencyInterface::class, $readAccess);
+    /** @var list<string> $readContexts */
+    $readContexts = $readAccess->getCacheContexts();
+    $this->assertContains('domain', $readContexts);
     $this->assertTrue($context->getWriteAccess()->isNeutral());
     $this->assertTrue($context->getModerationAccess()->isNeutral());
     $this->assertContains('node:topic', $context->getCacheTags());
@@ -101,8 +106,12 @@ final class PublicForumContextProviderTest extends TestCase {
     $context = (new PublicForumContextProvider($this->siteManager('magazine_aculta_org'), $this->scopeResolver()))
       ->getContext($topic, $this->createMock(AccountInterface::class));
 
-    $this->assertFalse($context->getReadAccess()->isAllowed());
-    $this->assertContains('domain', $context->getReadAccess()->getCacheContexts());
+    $readAccess = $context->getReadAccess();
+    $this->assertFalse($readAccess->isAllowed());
+    $this->assertInstanceOf(CacheableDependencyInterface::class, $readAccess);
+    /** @var list<string> $readContexts */
+    $readContexts = $readAccess->getCacheContexts();
+    $this->assertContains('domain', $readContexts);
   }
 
   /**

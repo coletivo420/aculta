@@ -6,8 +6,10 @@ namespace Drupal\Tests\aculta_forum\Unit;
 
 use Drupal\comment\CommentInterface;
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Cache\CacheableDependencyInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Field\FieldItemInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -17,6 +19,7 @@ use Drupal\flag\FlaggingInterface;
 use Drupal\node\NodeInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 /**
@@ -262,8 +265,11 @@ final class HistoricForumFlagAccessHooksTest extends UnitTestCase {
 
   /**
    * Creates a field item list reporting the requested emptiness state.
+   *
+   * @return FieldItemListInterface<FieldItemInterface>&MockObject
    */
-  private function marker(bool $populated): FieldItemListInterface {
+  private function marker(bool $populated): FieldItemListInterface&MockObject {
+    /** @var FieldItemListInterface<FieldItemInterface>&MockObject $marker */
     $marker = $this->createMock(FieldItemListInterface::class);
     $marker->method('isEmpty')->willReturn(!$populated);
     return $marker;
@@ -271,6 +277,8 @@ final class HistoricForumFlagAccessHooksTest extends UnitTestCase {
 
   /**
    * Gives a mocked entity cacheability metadata.
+   *
+   * @param (CacheableDependencyInterface&MockObject)|(object&MockObject) $entity
    */
   private function cacheable(object $entity): void {
     $entity->method('getCacheTags')->willReturn([]);

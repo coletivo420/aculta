@@ -34,15 +34,16 @@ final class DiscussionReplyUrlBuilderTest extends UnitTestCase {
     $host = $this->createMock(EntityInterface::class);
     $url = $this->createMock(Url::class);
 
-    $matcher = $this->exactly(2);
-    $url->expects($matcher)
+    $invocations = 0;
+    $url->expects($this->exactly(2))
       ->method('setOption')
-      ->willReturnCallback(function ($key, $val) use ($matcher) {
-        if ($matcher->numberOfInvocations() === 1) {
+      ->willReturnCallback(function ($key, $val) use (&$invocations) {
+        $invocations++;
+        if ($invocations === 1) {
           $this->assertSame('query', $key);
           $this->assertSame(['resposta' => 42, 'modo' => 'citar'], $val);
         }
-        elseif ($matcher->numberOfInvocations() === 2) {
+        elseif ($invocations === 2) {
           $this->assertSame('fragment', $key);
           $this->assertSame('comentario-resposta-42', $val);
         }

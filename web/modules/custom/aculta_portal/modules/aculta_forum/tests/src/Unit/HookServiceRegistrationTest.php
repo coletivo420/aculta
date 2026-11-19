@@ -22,13 +22,19 @@ final class HookServiceRegistrationTest extends UnitTestCase {
    */
   public function testEveryAttributeHookClassIsRegisteredAsService(): void {
     $module_dir = dirname(__DIR__, 3);
-    $services = Yaml::parseFile($module_dir . '/aculta_forum.services.yml', Yaml::PARSE_CUSTOM_TAGS)['services'];
+    $parsed = Yaml::parseFile($module_dir . '/aculta_forum.services.yml', Yaml::PARSE_CUSTOM_TAGS);
+    $services = is_array($parsed) && isset($parsed['services']) && is_array($parsed['services'])
+      ? $parsed['services']
+      : [];
 
     $registered = [];
     foreach ($services as $key => $definition) {
       $registered[] = (string) $key;
       if (is_array($definition) && isset($definition['class'])) {
-        $registered[] = (string) $definition['class'];
+        $className = $definition['class'];
+        if (is_scalar($className) || $className instanceof \Stringable) {
+          $registered[] = (string) $className;
+        }
       }
     }
 

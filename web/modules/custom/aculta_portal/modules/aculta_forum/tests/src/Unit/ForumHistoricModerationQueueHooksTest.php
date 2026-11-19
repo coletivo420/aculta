@@ -8,6 +8,7 @@ use Drupal\aculta_forum\Hook\ForumHistoricModerationQueueHooks;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Database\Schema;
 use Drupal\Tests\UnitTestCase;
+use Drupal\views\Plugin\views\relationship\RelationshipPluginBase;
 use Drupal\views\Plugin\views\query\Sql;
 use Drupal\views\ViewExecutable;
 use PHPUnit\Framework\Attributes\Group;
@@ -138,7 +139,9 @@ final class ForumHistoricModerationQueueHooksTest extends UnitTestCase {
     $view = $this->createMock(ViewExecutable::class);
     $view->method('id')->willReturn($id);
     $view->current_display = $display;
-    $view->relationship = ['node' => (object) ['alias' => 'node_field_data_comment_field_data']];
+    $rel = $this->createMock(RelationshipPluginBase::class);
+    $rel->alias = 'node_field_data_comment_field_data';
+    $view->relationship = ['node' => $rel];
     return $view;
   }
 

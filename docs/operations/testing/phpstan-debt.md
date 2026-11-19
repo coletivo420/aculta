@@ -1,10 +1,10 @@
 # Dívida PHPStan — ACULTA
 
-Gerado em 2026-11-19T03:13:25+00:00 por `scripts/phpstan-debt-report.php`.
+Gerado em 2026-11-19T03:40:09+00:00 por `scripts/phpstan-debt-report.php`.
 
 | Item | Valor |
 | --- | --- |
-| Commit | `e385982f8dc612ee851232aeb2385cf3c91c7516` |
+| Commit | `76585ddf6f701f583294a23786e463c66d545317` |
 | PHP | 8.4.27 |
 | PHPStan | PHPStan - PHP Static Analysis Tool 2.3.5 |
 | Nível | 10 |
@@ -15,20 +15,20 @@ Gerado em 2026-11-19T03:13:25+00:00 por `scripts/phpstan-debt-report.php`.
 
 | Medida | Ocorrências |
 | --- | ---: |
-| Total bruto no nível 10 | 17028 |
-| Dívida congelada no baseline | 17028 |
+| Total bruto no nível 10 | 16906 |
+| Dívida congelada no baseline | 16906 |
 | Erros não suprimidos | 0 |
-| Entradas no baseline | 9977 |
+| Entradas no baseline | 9889 |
 | Produção | 9989 |
-| Testes | 7039 |
+| Testes | 6917 |
 
 ## Criticidade funcional
 
 | Criticidade | Ocorrências |
 | --- | ---: |
 | alta | 212 |
-| media | 15105 |
-| baixa | 1711 |
+| media | 15000 |
+| baixa | 1694 |
 
 ## Dívida por módulo (prioridade de redução)
 
@@ -46,11 +46,11 @@ Gerado em 2026-11-19T03:13:25+00:00 por `scripts/phpstan-debt-report.php`.
 | aculta_pagamentos_mercadopago | 594 |
 | aculta_studio | 592 |
 | aculta_mailer | 580 |
-| aculta_forum | 418 |
 | aculta_linkweed | 377 |
 | aculta_statistics | 351 |
 | aculta_deployer | 339 |
 | aculta420_v2 | 339 |
+| aculta_forum | 296 |
 | aculta_document_viewer | 295 |
 | aculta_mail_confirmer | 241 |
 | aculta_calendar | 240 |
@@ -69,26 +69,26 @@ Gerado em 2026-11-19T03:13:25+00:00 por `scripts/phpstan-debt-report.php`.
 
 | Identificador | Ocorrências |
 | --- | ---: |
-| `offsetAccess.nonOffsetAccessible` | 4464 |
-| `argument.type` | 3257 |
-| `method.nonObject` | 2030 |
-| `missingType.iterableValue` | 1601 |
-| `cast.string` | 1550 |
+| `offsetAccess.nonOffsetAccessible` | 4433 |
+| `argument.type` | 3237 |
+| `method.nonObject` | 2010 |
+| `missingType.iterableValue` | 1591 |
+| `cast.string` | 1545 |
 | `cast.int` | 962 |
-| `method.notFound` | 686 |
+| `method.notFound` | 667 |
 | `property.nonObject` | 462 |
 | `return.type` | 286 |
-| `foreach.nonIterable` | 261 |
-| `binaryOp.invalid` | 217 |
-| `offsetAccess.invalidOffset` | 126 |
+| `foreach.nonIterable` | 259 |
+| `binaryOp.invalid` | 216 |
+| `offsetAccess.invalidOffset` | 125 |
 | `property.notFound` | 100 |
-| `encapsedStringPart.nonString` | 86 |
+| `encapsedStringPart.nonString` | 85 |
 | `missingType.return` | 82 |
-| `staticMethod.alreadyNarrowedType` | 70 |
+| `staticMethod.alreadyNarrowedType` | 69 |
 | `offsetAccess.notFound` | 68 |
 | `nullCoalesce.offset` | 67 |
 | `method.alreadyNarrowedType` | 61 |
-| `missingType.generics` | 39 |
+| `instanceof.alwaysTrue` | 36 |
 
 ## Arquivos com mais dívida
 

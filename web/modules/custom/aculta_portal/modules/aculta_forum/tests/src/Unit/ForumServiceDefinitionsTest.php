@@ -24,15 +24,19 @@ final class ForumServiceDefinitionsTest extends UnitTestCase {
    */
   public function testServiceArgumentsMatchConstructors(): void {
     $module = dirname(__DIR__, 3);
-    $definitions = Yaml::decode((string) file_get_contents($module . '/aculta_forum.services.yml'));
+    $decoded = Yaml::decode((string) file_get_contents($module . '/aculta_forum.services.yml'));
+    $definitions = is_array($decoded) ? $decoded : [];
     self::assertIsArray($definitions['services'] ?? NULL);
+    /** @var array<string, mixed> $services */
+    $services = $definitions['services'];
 
     $checked = 0;
-    foreach ($definitions['services'] as $id => $definition) {
+    foreach ($services as $id => $definition) {
       if (!is_array($definition) || !isset($definition['arguments'])) {
         continue;
       }
-      $class = $definition['class'] ?? (str_contains($id, '\\') ? $id : NULL);
+      $rawClass = $definition['class'] ?? (str_contains($id, '\\') ? $id : NULL);
+      $class = is_string($rawClass) ? $rawClass : NULL;
       // Parent definitions (for example a logger channel) inherit their class.
       if ($class === NULL || isset($definition['parent']) || isset($definition['factory'])) {
         continue;

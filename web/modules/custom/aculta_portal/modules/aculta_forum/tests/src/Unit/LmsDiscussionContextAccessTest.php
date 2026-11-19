@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_forum\Unit;
 
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Cache\CacheableDependencyInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\Core\Field\FieldItemInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
@@ -18,6 +20,7 @@ use Drupal\node\NodeInterface;
 use Drupal\Tests\UnitTestCase;
 use Drupal\user\UserInterface;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Tests role and comment access decisions for a course discussion.
@@ -168,6 +171,8 @@ final class LmsDiscussionContextAccessTest extends UnitTestCase {
 
   /**
    * Creates a persisted topic with cacheable view access and canonical URL.
+   *
+   * @param FieldItemListInterface<FieldItemInterface> $commentField
    */
   private function createTopic(FieldItemListInterface $commentField): NodeInterface {
     $topic = $this->createMock(NodeInterface::class);
@@ -185,8 +190,11 @@ final class LmsDiscussionContextAccessTest extends UnitTestCase {
 
   /**
    * Creates the shared discussion field's status value.
+   *
+   * @return FieldItemListInterface<FieldItemInterface>&MockObject
    */
-  private function createCommentField(int $status): FieldItemListInterface {
+  private function createCommentField(int $status): FieldItemListInterface&MockObject {
+    /** @var FieldItemListInterface<FieldItemInterface>&MockObject $field */
     $field = $this->createMock(FieldItemListInterface::class);
     $field->method('getValue')->willReturn([['status' => $status]]);
     return $field;
@@ -223,6 +231,8 @@ final class LmsDiscussionContextAccessTest extends UnitTestCase {
 
   /**
    * Provides cacheability metadata on a mocked entity or field list.
+   *
+   * @param (CacheableDependencyInterface&MockObject)|(object&MockObject) $object
    */
   private function addCacheability(object $object): void {
     $object->method('getCacheContexts')->willReturn([]);

@@ -12,6 +12,7 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Config\Config;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\FieldableEntityInterface;
+use Drupal\Core\Field\FieldItemInterface;
 use Drupal\Core\Field\FieldItemList;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\user\EntityOwnerInterface;
@@ -76,6 +77,8 @@ final class ParticipationEditWindowTest extends TestCase {
 
   /**
    * Builds the edit policy with a configured consumer window and clock.
+   *
+   * @param iterable<\Drupal\aculta_user\EditWindowExemptionInterface> $exemptions
    */
   private function window(?int $minutes, int $now, iterable $exemptions = []): ParticipationEditWindow {
     $config = new class($minutes) extends Config {
@@ -175,6 +178,8 @@ final class ParticipationEditWindowTest extends TestCase {
 
 /**
  * Minimal field list exposing a first-publication timestamp.
+ *
+ * @extends FieldItemList<FieldItemInterface>
  */
 final class ParticipationEditWindowFieldList extends FieldItemList {
 
@@ -182,6 +187,8 @@ final class ParticipationEditWindowFieldList extends FieldItemList {
 
   /**
    * {@inheritdoc}
+   *
+   * @param string $property_name
    */
   public function __get($property_name): mixed {
     return $property_name === 'value' ? $this->timestamp : parent::__get($property_name);

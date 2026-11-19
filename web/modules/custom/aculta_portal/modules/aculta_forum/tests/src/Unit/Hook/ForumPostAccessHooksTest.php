@@ -11,6 +11,8 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
+use Drupal\Core\Cache\CacheableDependencyInterface;
+use Drupal\Core\Field\FieldItemInterface;
 use Drupal\Core\Field\FieldItemList;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\domain\DomainInterface;
@@ -95,12 +97,17 @@ final class ForumPostAccessHooksTest extends TestCase {
     foreach (['view', 'update', 'delete', 'view label'] as $operation) {
       $mainAccess = (new ForumPostAccessHooks($this->siteManager('aculta_org')))
         ->entityAccess($post, $operation, $administrator);
-      self::assertTrue($mainAccess?->isNeutral(), $operation . ' remains governed by the entity admin permission in MAIN.');
-      self::assertContains('domain', $mainAccess?->getCacheContexts());
+      self::assertNotNull($mainAccess);
+      self::assertTrue($mainAccess->isNeutral(), $operation . ' remains governed by the entity admin permission in MAIN.');
+      self::assertInstanceOf(CacheableDependencyInterface::class, $mainAccess);
+      /** @var list<string> $contexts */
+      $contexts = $mainAccess->getCacheContexts();
+      self::assertContains('domain', $contexts);
 
       $withoutPurpose = (new ForumPostAccessHooks($this->siteManager(NULL)))
         ->entityAccess($post, $operation, $administrator);
-      self::assertTrue($withoutPurpose?->isNeutral(), $operation . ' keeps the admin grant without a purpose (CLI, cron).');
+      self::assertNotNull($withoutPurpose);
+      self::assertTrue($withoutPurpose->isNeutral(), $operation . ' keeps the admin grant without a purpose (CLI, cron).');
     }
 
     $forum = new ForumPostAccessHooks($this->siteManager('forum_aculta_org'));
@@ -176,6 +183,8 @@ final class ForumPostAccessHooksTest extends TestCase {
 
 /**
  * Field item list stand-in exposing a target entity or ID.
+ *
+ * @extends FieldItemList<FieldItemInterface>
  */
 final class ForumPostAccessFieldList extends FieldItemList {
 
@@ -183,6 +192,8 @@ final class ForumPostAccessFieldList extends FieldItemList {
 
   /**
    * {@inheritdoc}
+   *
+   * @param string $property_name
    */
   public function __get($property_name): mixed {
     if ($property_name === 'entity' || $property_name === 'target_id') {

@@ -155,6 +155,9 @@ final class RestrictedForumAccessHooksTest extends TestCase {
 
   /**
    * Builds the hooks object with stubbed collaborators.
+   *
+   * @param array<int, GroupInterface> $groups
+   * @param list<int>|null $groupIds
    */
   private function hooks(
     ?RestrictedForumGroupResolverInterface $resolver = NULL,
@@ -176,6 +179,9 @@ final class RestrictedForumAccessHooksTest extends TestCase {
 
   /**
    * Returns a resolver yielding the given groups or topic group ids.
+   *
+   * @param list<int> $groupIds
+   * @param array<int, GroupInterface> $groups
    */
   private function resolver(array $groupIds = [], array $groups = []): RestrictedForumGroupResolverInterface {
     $resolver = $this->createMock(RestrictedForumGroupResolverInterface::class);

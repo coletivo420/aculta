@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_forum\Unit;
 
+use Drupal\Core\Cache\CacheableDependencyInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\aculta_forum\Context\Provider\LmsDiscussionContextProvider;
 use Drupal\aculta_forum\Hook\LmsDiscussionEntityAccessHooks;
@@ -14,6 +15,7 @@ use Drupal\group\Entity\Storage\GroupRelationshipStorageInterface;
 use Drupal\node\NodeInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Tests direct Node access for LMS topics.
@@ -99,6 +101,8 @@ final class LmsDiscussionEntityAccessHooksTest extends UnitTestCase {
 
   /**
    * Provides cacheability metadata on an entity mock.
+   *
+   * @param (CacheableDependencyInterface&MockObject)|(object&MockObject) $entity
    */
   private function addCacheability(object $entity): void {
     $entity->method('getCacheContexts')->willReturn([]);

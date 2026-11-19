@@ -15,6 +15,7 @@ use Drupal\search_api\Event\QueryPreExecuteEvent;
 use Drupal\search_api\IndexInterface;
 use Drupal\search_api\Query\QueryInterface;
 use Drupal\Tests\UnitTestCase;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\HttpFoundation\RequestStack;
 use PHPUnit\Framework\Attributes\Group;
 
@@ -80,8 +81,10 @@ final class ForumSearchQuerySubscriberTest extends UnitTestCase {
 
   /**
    * Creates a mock query for the Forum index.
+   *
+   * @return QueryInterface&MockObject
    */
-  private function forumQuery(): QueryInterface {
+  private function forumQuery(): QueryInterface&MockObject {
     $index = $this->createMock(IndexInterface::class);
     $index->method('id')->willReturn('aculta_forum');
     $query = $this->createMock(QueryInterface::class);

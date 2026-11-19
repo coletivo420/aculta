@@ -59,8 +59,12 @@ final class PublicForumListViewHooksTest extends UnitTestCase {
     self::assertSame([], $variables['forum_categories']);
     self::assertSame(17, $variables['forum_total_topics']);
     self::assertSame([['type', 'aculta_forum_topic'], ['status', 1]], $conditions);
-    self::assertContains('user.node_grants:view', $variables['forum_list_cache_metadata']['#cache']['contexts']);
-    self::assertContains('node_list:aculta_forum_topic', $variables['forum_list_cache_metadata']['#cache']['tags']);
+    /** @var array<string, mixed> $metadata */
+    $metadata = $variables['forum_list_cache_metadata'];
+    /** @var array{contexts: list<string>, tags: list<string>} $metadataCache */
+    $metadataCache = $metadata['#cache'];
+    self::assertContains('user.node_grants:view', $metadataCache['contexts']);
+    self::assertContains('node_list:aculta_forum_topic', $metadataCache['tags']);
   }
 
   /**
@@ -108,6 +112,9 @@ final class PublicForumListTestEntityStorage extends EntityStorageBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $values
+   * @return array<int|string, EntityInterface>
    */
   public function loadByProperties(array $values = []) {
     return [];
@@ -115,6 +122,9 @@ final class PublicForumListTestEntityStorage extends EntityStorageBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<int|string>|null $ids
+   * @return array<int|string, EntityInterface>
    */
   protected function doLoadMultiple(?array $ids = NULL) {
     return [];

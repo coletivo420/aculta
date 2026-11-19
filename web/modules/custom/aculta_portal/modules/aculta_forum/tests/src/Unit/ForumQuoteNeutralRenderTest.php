@@ -118,15 +118,26 @@ final class ForumQuoteNeutralRenderTest extends UnitTestCase {
 
     // Verifies action structure: must not instantiate SDC directly in module
     self::assertArrayNotHasKey('#component', $links);
-    self::assertTrue(isset($links['comment']['#links']['resposta-citar']) || isset($links['#links']['resposta-citar']));
+    $commentLinks = is_array($links['comment'] ?? NULL) ? $links['comment'] : [];
+    $commentInnerLinks = is_array($commentLinks['#links'] ?? NULL) ? $commentLinks['#links'] : [];
+    $rootLinks = is_array($links['#links'] ?? NULL) ? $links['#links'] : [];
+    self::assertTrue(isset($commentInnerLinks['resposta-citar']) || isset($rootLinks['resposta-citar']));
 
     // Call Link::preRenderLinks to verify Core collecting
     $rendered = Link::preRenderLinks($links);
     self::assertArrayHasKey('#links', $rendered);
-    self::assertArrayHasKey('resposta-citar', $rendered['#links']);
-    self::assertSame('Citar', (string) $rendered['#links']['resposta-citar']['title']);
-    self::assertSame('resposta-citar', $rendered['#links']['resposta-citar']['attributes']['data-action']);
-    self::assertSame('10', (string) $rendered['#links']['resposta-citar']['attributes']['data-quote-id']);
+    /** @var array<string, mixed> $renderedLinks */
+    $renderedLinks = $rendered['#links'];
+    self::assertArrayHasKey('resposta-citar', $renderedLinks);
+    /** @var array<string, mixed> $quoteLink */
+    $quoteLink = $renderedLinks['resposta-citar'];
+    $title = $quoteLink['title'];
+    self::assertSame('Citar', is_scalar($title) || $title instanceof \Stringable ? (string) $title : '');
+    /** @var array<string, mixed> $attributes */
+    $attributes = $quoteLink['attributes'];
+    self::assertSame('resposta-citar', $attributes['data-action']);
+    $quoteId = $attributes['data-quote-id'];
+    self::assertSame('10', is_scalar($quoteId) || $quoteId instanceof \Stringable ? (string) $quoteId : '');
   }
 
 }

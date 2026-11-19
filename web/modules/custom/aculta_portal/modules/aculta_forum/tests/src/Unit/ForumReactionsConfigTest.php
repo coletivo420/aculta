@@ -27,12 +27,15 @@ final class ForumReactionsConfigTest extends UnitTestCase {
     $syncConfig = Yaml::parseFile($repositoryRoot . '/config/sync/' . $settingsFile);
 
     self::assertSame($installConfig, $syncConfig);
+    self::assertIsArray($installConfig);
     self::assertArrayHasKey('reactions_enabled', $installConfig);
     self::assertTrue($installConfig['reactions_enabled']);
     self::assertSame('broccoli', $installConfig['default_reaction']);
     self::assertIsArray($installConfig['allowed_reactions']);
 
-    $reactionIds = array_column($installConfig['allowed_reactions'], 'id');
+    /** @var list<array<string, mixed>> $allowedReactions */
+    $allowedReactions = $installConfig['allowed_reactions'];
+    $reactionIds = array_column($allowedReactions, 'id');
     self::assertContains('broccoli', $reactionIds);
     self::assertContains('thumbs_up', $reactionIds);
     self::assertContains('seedling', $reactionIds);
@@ -50,12 +53,18 @@ final class ForumReactionsConfigTest extends UnitTestCase {
     $root = dirname(__DIR__, 3);
     $permissions = Yaml::parseFile($root . '/aculta_forum.permissions.yml');
 
+    self::assertIsArray($permissions);
     self::assertArrayHasKey('react to aculta discussions', $permissions);
-    self::assertSame('Reagir a comentários e publicações de discussões', $permissions['react to aculta discussions']['title']);
+    /** @var array<string, mixed> $permissionItem */
+    $permissionItem = $permissions['react to aculta discussions'];
+    self::assertSame('Reagir a comentários e publicações de discussões', $permissionItem['title']);
 
     $repositoryRoot = dirname($root, 6);
     $roleConfig = Yaml::parseFile($repositoryRoot . '/config/sync/user.role.email_confirmed.yml');
-    self::assertContains('react to aculta discussions', $roleConfig['permissions']);
+    self::assertIsArray($roleConfig);
+    /** @var list<string> $rolePermissions */
+    $rolePermissions = $roleConfig['permissions'] ?? [];
+    self::assertContains('react to aculta discussions', $rolePermissions);
   }
 
 }

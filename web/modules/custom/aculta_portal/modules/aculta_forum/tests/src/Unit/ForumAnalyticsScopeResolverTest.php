@@ -17,6 +17,8 @@ use Drupal\domain\DomainNegotiatorInterface;
 use Drupal\node\NodeInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -142,10 +144,10 @@ final class ForumAnalyticsScopeResolverTest extends UnitTestCase {
    *
    * @param int[] $groupIds
    *   Group IDs returned for the topic.
-   * @param \Drupal\aculta_forum\RestrictedForum\RestrictedForumGroupResolverInterface|null $groupResolver
+   * @param (RestrictedForumGroupResolverInterface&MockObject)|null $groupResolver
    *   Optional preconfigured resolver for failure scenarios.
    */
-  private function resolver(array $groupIds, ?RestrictedForumGroupResolverInterface $groupResolver = NULL): ForumAnalyticsScopeResolver {
+  private function resolver(array $groupIds, (RestrictedForumGroupResolverInterface&MockObject)|null $groupResolver = NULL): ForumAnalyticsScopeResolver {
     $groupResolver ??= $this->createMock(RestrictedForumGroupResolverInterface::class);
     $groupResolver->method('configuredGroupType')->willReturn('restricted_forum');
     $groupResolver->method('groupIdsForTopic')->willReturn($groupIds);

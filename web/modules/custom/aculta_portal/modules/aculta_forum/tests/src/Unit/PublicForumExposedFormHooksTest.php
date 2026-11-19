@@ -38,7 +38,9 @@ final class PublicForumExposedFormHooksTest extends UnitTestCase {
       $this->hook()->formViewsExposedFormAlter($form, $form_state, 'views_exposed_form');
 
       self::assertArrayNotHasKey('captcha', $form, $display);
-      self::assertSame('select', $form['categoria']['#type']);
+      /** @var array<string, mixed> $categoriaField */
+      $categoriaField = $form['categoria'];
+      self::assertSame('select', $categoriaField['#type']);
     }
   }
 
@@ -82,11 +84,15 @@ final class PublicForumExposedFormHooksTest extends UnitTestCase {
     $this->hook($entityTypeManager, $entityRepository)->formViewsExposedFormAlter($form, $form_state, 'views_exposed_form');
 
     self::assertArrayNotHasKey('captcha', $form);
-    self::assertSame('select', $form['categoria']['#type']);
-    self::assertSame(['76' => 'Cultivo indoor'], $form['categoria']['#options']);
-    self::assertInstanceOf(TranslatableMarkup::class, $form['categoria']['#empty_option']);
-    self::assertSame('Todas as categorias', $form['categoria']['#empty_option']->getUntranslatedString());
-    self::assertContains('taxonomy_term_list', $form['categoria']['#cache']['tags']);
+    /** @var array<string, mixed> $categoria */
+    $categoria = $form['categoria'];
+    self::assertSame('select', $categoria['#type']);
+    self::assertSame(['76' => 'Cultivo indoor'], $categoria['#options']);
+    self::assertInstanceOf(TranslatableMarkup::class, $categoria['#empty_option']);
+    self::assertSame('Todas as categorias', $categoria['#empty_option']->getUntranslatedString());
+    /** @var array{tags: list<string>} $categoriaCache */
+    $categoriaCache = $categoria['#cache'];
+    self::assertContains('taxonomy_term_list', $categoriaCache['tags']);
   }
 
   /**

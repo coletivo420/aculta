@@ -62,10 +62,16 @@ final class DiscussionProgressHooksTest extends UnitTestCase {
     );
     $hooks->entityViewAlter($build, $node, $this->createMock(EntityViewDisplayInterface::class));
 
-    self::assertSame('', $build['field_aculta_discussion']['#attributes']['data-aculta-discussion-thread']);
+    /** @var array<string, mixed> $fieldBuild */
+    $fieldBuild = $build['field_aculta_discussion'];
+    /** @var array<string, mixed> $attributes */
+    $attributes = $fieldBuild['#attributes'];
+    self::assertSame('', $attributes['data-aculta-discussion-thread']);
+    /** @var array{library: list<string>} $attached */
+    $attached = $fieldBuild['#attached'];
     self::assertSame(
       ['aculta_forum/discussion-reply-popup', 'aculta_forum/discussion-side'],
-      $build['field_aculta_discussion']['#attached']['library'],
+      $attached['library'],
     );
   }
 
