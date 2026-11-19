@@ -2,6 +2,13 @@
 
 Data: 2026-11-19. Decisão do responsável: **comentários legados do Growroom permanecem separados dos comentários padrão**, do motor de novas respostas e dos comentários da Revista, Wiki e LMS. O objetivo de clone funcional Drupal do Discourse não elimina esta divisão.
 
+**Estado de execução no Runtime alvo, informado pelo responsável em 2026-11-19:**
+a importação histórica ainda não foi feita e não existem autores, tópicos ou
+comentários do acervo importados no Runtime. Esta política descreve como esses
+dados deverão ser classificados e tratados quando forem importados; não afirma
+que já estejam presentes no banco atual. Corpus e manifests de origem ficam
+fora do Runtime e não são alvo de limpeza de dados da refatoração.
+
 ## Três trilhas não intercambiáveis
 
 | Trilha | Entidades e proveniência | Escrita | Destino |
