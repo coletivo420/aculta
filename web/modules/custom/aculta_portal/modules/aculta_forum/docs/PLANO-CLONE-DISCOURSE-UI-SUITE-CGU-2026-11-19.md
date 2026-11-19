@@ -157,6 +157,16 @@ Statistics, User, Messenger, Game, Index, CGU e no próprio Fórum são integra�
 com o host atual e devem ser avaliadas por contrato/origem; não devem ser
 movidas automaticamente para o addon apenas por conter “forum” no nome.
 
+O censo de interface/configuração também separou infraestrutura corrente de
+semântica de arquivo: o domínio e alias do Fórum, a página inicial de
+categorias, Views/Search API e o cabeçalho visual do Growroom continuam com o
+motor/tema do fórum atual. A missão `Primeira contribuição no Growroom420` em
+`aculta_game.missions.yml` descreve uma resposta atual publicada; permanece no
+Game. A proteção contra import/replay histórico deve chegar por contrato
+genérico de origem, sem mover a missão ou tornar Game dependente do addon.
+Strings genéricas como “histórico do Game” também não são acoplamento ao acervo
+Growroom sem evidência de fluxo ou dado compartilhado.
+
 No tema V2, o SDC compartilhado `author-card` declara a variante visual
 `author_growroom_historico`; templates, stories e `PagePresentationHooks`
 também contêm apresentação do Growroom por rota/bundle. Esses são pontos de
