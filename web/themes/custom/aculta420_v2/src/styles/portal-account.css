@@ -45,5 +45,11 @@ html[data-site-key="account"] :is(.layout-page > *, .aculta-account-entry) {
 html[data-site-key="account"] .aculta-account-entry {
   grid-template-columns: minmax(0, 1fr);
 }
+
+@media (min-width: 60rem) {
+  html[data-site-key="account"] .aculta-account-entry {
+    grid-template-columns: 15rem minmax(0, 1fr) 20rem;
+  }
+}
 .portal-account__google-auth { display: inline-flex; align-items: center; gap: .5rem; min-block-size: 2.75rem; }
 .portal-account__google-auth-status { color: var(--color-text-muted); }

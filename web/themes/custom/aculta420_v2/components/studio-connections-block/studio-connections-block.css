@@ -117,22 +117,11 @@
   inline-size: 100%;
 }
 
-/* Responsividade e posicionamento */
-/* Celular: o bloco Conexões aparece depois de "Suas experiências" */
-@media (max-width: 59.9375rem) {
-  .aculta-studio-connections-block {
-    order: 10;
-    margin-block-start: var(--spacing-xl);
-  }
-}
-
-/* Desktop: coluna direita, abaixo do calendário */
+/* Responsividade e posicionamento em fluxo normal */
 @media (min-width: 60rem) {
   .aculta-studio-connections-block {
-    inline-size: 20rem;
-    inset-block-start: 38rem;
-    inset-inline-end: 0;
-    position: absolute;
-    z-index: 5;
+    position: static;
+    inline-size: 100%;
+    max-inline-size: 100%;
   }
 }
