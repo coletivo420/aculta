@@ -6,6 +6,7 @@ namespace Drupal\Tests\aculta_messenger\Unit;
 
 use Drupal\aculta_messenger\Service\NoticeOriginGrouper;
 use Drupal\aculta_messenger\Service\NoticeListFilter;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
@@ -45,14 +46,14 @@ final class NoticeOriginGrouperTest extends UnitTestCase {
     $groups = NoticeOriginGrouper::group([$forumOlder, $wikiRecent, $forumRecent]);
 
     self::assertCount(2, $groups);
-    self::assertSame('wiki', $groups[0]['#attributes']['data-aculta-notice-origin-section']);
-    self::assertSame('wiki-recent', $groups[0]['items']['#items'][0]['id']);
-    self::assertArrayNotHasKey('separator', $groups[0]);
-    self::assertSame('forum', $groups[1]['#attributes']['data-aculta-notice-origin-section']);
-    self::assertSame('Fórum', $groups[1]['heading']['#value']->getUntranslatedString());
-    self::assertSame('forum-recent', $groups[1]['items']['#items'][0]['id']);
-    self::assertSame('forum-older', $groups[1]['items']['#items'][1]['id']);
-    self::assertSame('hr', $groups[1]['separator']['#tag']);
+    self::assertSame('wiki', self::sectionOrigin($groups, 0));
+    self::assertSame('wiki-recent', self::itemId($groups, 0, 0));
+    self::assertArrayNotHasKey('separator', self::section($groups, 0));
+    self::assertSame('forum', self::sectionOrigin($groups, 1));
+    self::assertSame('Fórum', self::sectionLabel($groups, 1)->getUntranslatedString());
+    self::assertSame('forum-recent', self::itemId($groups, 1, 0));
+    self::assertSame('forum-older', self::itemId($groups, 1, 1));
+    self::assertSame('hr', self::separatorTag($groups, 1));
   }
 
   /**
@@ -62,8 +63,8 @@ final class NoticeOriginGrouperTest extends UnitTestCase {
     $groups = NoticeOriginGrouper::group([['#plain_text' => 'aviso legado sem origem']]);
 
     self::assertCount(1, $groups);
-    self::assertSame('outros', $groups[0]['#attributes']['data-aculta-notice-origin-section']);
-    self::assertSame('aviso legado sem origem', $groups[0]['items']['#items'][0]['#plain_text']);
+    self::assertSame('outros', self::sectionOrigin($groups, 0));
+    self::assertSame('aviso legado sem origem', self::itemText($groups, 0, 0));
   }
 
   /**
@@ -75,9 +76,9 @@ final class NoticeOriginGrouperTest extends UnitTestCase {
     $groups = NoticeOriginGrouper::group([$item]);
 
     self::assertCount(1, $groups);
-    self::assertSame('amizade', $groups[0]['#attributes']['data-aculta-notice-origin-section']);
-    self::assertSame('Amizades', $groups[0]['heading']['#value']->getUntranslatedString());
-    self::assertSame([$item], $groups[0]['items']['#items']);
+    self::assertSame('amizade', self::sectionOrigin($groups, 0));
+    self::assertSame('Amizades', self::sectionLabel($groups, 0)->getUntranslatedString());
+    self::assertSame([$item], self::sectionItems($groups, 0));
   }
 
   /**
@@ -92,9 +93,9 @@ final class NoticeOriginGrouperTest extends UnitTestCase {
     $groups = NoticeOriginGrouper::group([$item]);
 
     self::assertCount(1, $groups);
-    self::assertSame('conquistas', $groups[0]['#attributes']['data-aculta-notice-origin-section']);
-    self::assertSame('Conquistas', $groups[0]['heading']['#value']->getUntranslatedString());
-    self::assertSame([$item], $groups[0]['items']['#items']);
+    self::assertSame('conquistas', self::sectionOrigin($groups, 0));
+    self::assertSame('Conquistas', self::sectionLabel($groups, 0)->getUntranslatedString());
+    self::assertSame([$item], self::sectionItems($groups, 0));
   }
 
   /**
@@ -109,9 +110,9 @@ final class NoticeOriginGrouperTest extends UnitTestCase {
     $groups = NoticeOriginGrouper::group([$item]);
 
     self::assertCount(1, $groups);
-    self::assertSame('revista', $groups[0]['#attributes']['data-aculta-notice-origin-section']);
-    self::assertSame('Revista', $groups[0]['heading']['#value']->getUntranslatedString());
-    self::assertSame([$item], $groups[0]['items']['#items']);
+    self::assertSame('revista', self::sectionOrigin($groups, 0));
+    self::assertSame('Revista', self::sectionLabel($groups, 0)->getUntranslatedString());
+    self::assertSame([$item], self::sectionItems($groups, 0));
   }
 
   /**
@@ -126,8 +127,117 @@ final class NoticeOriginGrouperTest extends UnitTestCase {
     $groups = NoticeOriginGrouper::group($items);
 
     self::assertCount(1, $groups);
-    self::assertSame('outros', $groups[0]['#attributes']['data-aculta-notice-origin-section']);
-    self::assertSame($items, $groups[0]['items']['#items']);
+    self::assertSame('outros', self::sectionOrigin($groups, 0));
+    self::assertSame($items, self::sectionItems($groups, 0));
+  }
+
+  /**
+   * Returns a grouped section after proving its runtime shape.
+   *
+   * @param array<mixed> $groups
+   *   Grouping result from the service under test.
+   *
+   * @return array<mixed>
+   *   One render array section.
+   */
+  private static function section(array $groups, int $index): array {
+    self::assertArrayHasKey($index, $groups);
+    $section = $groups[$index];
+    self::assertIsArray($section);
+    return $section;
+  }
+
+  /**
+   * Reads the section's origin marker.
+   *
+   * @param array<mixed> $groups
+   *   Grouping result from the service under test.
+   */
+  private static function sectionOrigin(array $groups, int $index): string {
+    $section = self::section($groups, $index);
+    self::assertArrayHasKey('#attributes', $section);
+    self::assertIsArray($section['#attributes']);
+    self::assertArrayHasKey('data-aculta-notice-origin-section', $section['#attributes']);
+    self::assertIsString($section['#attributes']['data-aculta-notice-origin-section']);
+    return $section['#attributes']['data-aculta-notice-origin-section'];
+  }
+
+  /**
+   * Reads the section heading after validating its render value.
+   *
+   * @param array<mixed> $groups
+   *   Grouping result from the service under test.
+   */
+  private static function sectionLabel(array $groups, int $index): TranslatableMarkup {
+    $section = self::section($groups, $index);
+    self::assertArrayHasKey('heading', $section);
+    self::assertIsArray($section['heading']);
+    self::assertArrayHasKey('#value', $section['heading']);
+    self::assertInstanceOf(TranslatableMarkup::class, $section['heading']['#value']);
+    return $section['heading']['#value'];
+  }
+
+  /**
+   * Returns the notices preserved in one section.
+   *
+   * @param array<mixed> $groups
+   *   Grouping result from the service under test.
+   *
+   * @return array<mixed>
+   *   Notices assigned to the section.
+   */
+  private static function sectionItems(array $groups, int $index): array {
+    $section = self::section($groups, $index);
+    self::assertArrayHasKey('items', $section);
+    self::assertIsArray($section['items']);
+    self::assertArrayHasKey('#items', $section['items']);
+    self::assertIsArray($section['items']['#items']);
+    return $section['items']['#items'];
+  }
+
+  /**
+   * Reads a string ID from an item in the section.
+   *
+   * @param array<mixed> $groups
+   *   Grouping result from the service under test.
+   */
+  private static function itemId(array $groups, int $sectionIndex, int $itemIndex): string {
+    $items = self::sectionItems($groups, $sectionIndex);
+    self::assertArrayHasKey($itemIndex, $items);
+    self::assertIsArray($items[$itemIndex]);
+    self::assertArrayHasKey('id', $items[$itemIndex]);
+    self::assertIsString($items[$itemIndex]['id']);
+    return $items[$itemIndex]['id'];
+  }
+
+  /**
+   * Reads the plain text from a legacy notice item.
+   *
+   * @param array<mixed> $groups
+   *   Grouping result from the service under test.
+   */
+  private static function itemText(array $groups, int $sectionIndex, int $itemIndex): string {
+    $items = self::sectionItems($groups, $sectionIndex);
+    self::assertArrayHasKey($itemIndex, $items);
+    self::assertIsArray($items[$itemIndex]);
+    self::assertArrayHasKey('#plain_text', $items[$itemIndex]);
+    self::assertIsString($items[$itemIndex]['#plain_text']);
+    return $items[$itemIndex]['#plain_text'];
+  }
+
+  /**
+   * Reads the optional separator tag.
+   *
+   * @param array<mixed> $groups
+   *   Grouping result from the service under test.
+   */
+  private static function separatorTag(array $groups, int $index): string {
+    $section = self::section($groups, $index);
+    self::assertArrayHasKey('separator', $section);
+    self::assertIsArray($section['separator']);
+    self::assertArrayHasKey('#tag', $section['separator']);
+    self::assertIsString($section['separator']['#tag']);
+    return $section['separator']['#tag'];
   }
 
 }
