@@ -249,6 +249,32 @@ provar o comportamento na versão Core efetiva e em clone restaurável. Os
 Comments, autores, tópicos, referências e arquivos preexistentes nunca são
 alvos dessa limpeza. Core: [EntityContentBase no Drupal 11](https://api.drupal.org/api/drupal/core%21modules%21migrate%21src%21Plugin%21migrate%21destination%21EntityContentBase.php/11.x).
 
+### Pipeline de coleta e curadoria do acervo
+
+O censo da branch também encontrou ferramentas legadas fora dos módulos
+Drupal, em `scripts/growroom/`: `wayback_fetch.py` obtém capturas CDX;
+`build_mapping.py` seleciona tópicos e mapeia fórum/autoria/origem estável;
+`marcar_comercial.py` identifica conteúdo comercial para triagem;
+`mapear_links.py` classifica destinos internos, imagens, anúncios e links
+legados; `gerar_imagem_padrao.py` cria o placeholder de imagem ausente; e
+`verificar_importacao.py` valida hashes, manifestos, links, seleção, privacidade
+e autoria. `tests/scripts/test_growroom_origin_ids.py` testa parte da chave
+estável dos autores. Esse código e seus contratos de seleção/validação são
+específicos da importação histórica e devem ter ownership em
+`aculta_forum_legacy`, não no motor de discussões.
+
+Os scripts atuais usam caminhos privados fixos sob `/home/aculta/private/` e
+produzem manifests/mapas derivados fora do Git. Na extração, tornar os caminhos
+argumentos/configuração explícitos e manter o corpus bruto, CDX, HTML/assets e
+saídas de curadoria fora do pacote público do módulo; não copiar dados privados
+para o repositório. Preservar manifests e resultados de seleção que dão
+proveniência à importação. Eles e o corpus histórico não são “dados criados pela
+refatoração”; não os remover por nome, data ou por serem derivados. São
+distintos dos ForumPosts/Flaggings que uma migration Comment→ForumPost pode ter
+criado no Drupal e que só podem ser limpos por proveniência de migration. A
+opção de testar links no site vivo exige execução externa explícita e fica fora
+do census/leitura local.
+
 ### Inventário a migrar para o addon
 
 - **Dados e autoria:** entidade existente `aculta_legado_autor`, manager/upsert por ID de origem, `field_autor_legado` e referências legadas, configuração de storage/form/display e a propriedade desses contratos. Autores continuam sem conta User/login; `uid=0` e as chaves, IDs, referências e relações existentes devem ser preservados conforme plano aprovado. Os arquivos de autoria são inventariados e preservados, sem mudar seu armazenamento nesta fase. A localização atual em `aculta_user` não torna `aculta_user` dono futuro do legado.
