@@ -152,6 +152,18 @@ legada. A portabilidade de `aculta_forum` requer testar a ausência de
 User: o primeiro caso é obrigatório para F-D48; o segundo é uma etapa de
 portabilidade adicional, não condição para redefinir a propriedade do legado.
 
+A leitura estática dos manifests confirma que `aculta_messenger` depende de
+`aculta_user` e `aculta_forum`; `aculta_magazine`, `aculta_wiki` e `aculta_lms`
+também declaram dependências dos módulos correntes `aculta_user` e
+`aculta_forum`. Esses vínculos atendem identidade corrente, avisos e Comments
+contextuais e devem ser mantidos até que contratos genéricos provem outra
+composição. Nenhum desses módulos pode passar a declarar dependência de
+`aculta_forum_legacy`; em contrapartida, as matrizes FDC-11.1/11.6 devem instalar
+e exercitar esses consumidores com o addon ausente, além do cenário com addon
+instalado. A eventual instalação do addon pela configuração do projeto ACULTA
+é escolha do projeto e não deve ser codificada como dependência de seus
+consumidores.
+
 O census estático ampliado de PHP e YAML de produção (excluídos testes e
 documentação) encontrou referências específicas ao acervo em `aculta_forum`
 (respostas, citações, fila/flag, autoria, movers, auditoria e migrations), em
