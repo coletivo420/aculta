@@ -40217,12 +40217,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/modules/aculta_messenger_wiki_cron_test/src/Plugin/QueueWorker/WikiEmailCronQueueWorker.php
 
 		-
-			rawMessage: 'Method Drupal\Tests\aculta_messenger\Integration\Commerce\Kernel\CommerceOrderNoticePersistenceKernelTest::installField() has parameter $settings with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Integration/Commerce/Kernel/CommerceOrderNoticePersistenceKernelTest.php
-
-		-
 			rawMessage: 'Parameter #1 $id of method Drupal\Core\Entity\EntityStorageInterface::load() expects int|string, int|string|null given.'
 			identifier: argument.type
 			count: 3

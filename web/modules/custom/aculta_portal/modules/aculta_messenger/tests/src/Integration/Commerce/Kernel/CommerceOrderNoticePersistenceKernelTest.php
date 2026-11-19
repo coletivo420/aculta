@@ -93,7 +93,7 @@ final class CommerceOrderNoticePersistenceKernelTest extends KernelTestBase {
     $ids = $storage->getQuery()->accessCheck(FALSE)->execute();
     $message = $storage->load(reset($ids));
     self::assertInstanceOf(MessageInterface::class, $message);
-    self::assertSame(1, $message->get('field_aculta_commerce_digest')->value);
+    self::assertEquals(1, $message->get('field_aculta_commerce_digest')->value);
     self::assertSame('sent', $message->get('field_aculta_msg_delivery')->value);
   }
 
@@ -118,7 +118,7 @@ final class CommerceOrderNoticePersistenceKernelTest extends KernelTestBase {
     $ids = $storage->getQuery()->accessCheck(FALSE)->execute();
     $message = $storage->load(reset($ids));
     self::assertInstanceOf(MessageInterface::class, $message);
-    self::assertSame(1, $message->get('field_aculta_commerce_digest')->value);
+    self::assertEquals(1, $message->get('field_aculta_commerce_digest')->value);
     self::assertSame('pending', $message->get('field_aculta_msg_delivery')->value);
   }
 
@@ -182,17 +182,17 @@ final class CommerceOrderNoticePersistenceKernelTest extends KernelTestBase {
     self::assertTrue($manager->setRead($message, $user, TRUE));
     $storedMessage = $storage->load($message->id());
     self::assertInstanceOf(MessageInterface::class, $storedMessage);
-    self::assertSame(1, $storedMessage->get('field_aculta_commerce_read')->value);
+    self::assertEquals(1, $storedMessage->get('field_aculta_commerce_read')->value);
 
     $other = $this->createUser('another_store_reader');
     self::assertFalse($manager->setRead($message, $other, FALSE));
     $storedMessage = $storage->load($message->id());
     self::assertInstanceOf(MessageInterface::class, $storedMessage);
-    self::assertSame(1, $storedMessage->get('field_aculta_commerce_read')->value);
+    self::assertEquals(1, $storedMessage->get('field_aculta_commerce_read')->value);
     self::assertTrue($manager->setRead($message, $user, FALSE));
     $storedMessage = $storage->load($message->id());
     self::assertInstanceOf(MessageInterface::class, $storedMessage);
-    self::assertSame(0, $storedMessage->get('field_aculta_commerce_read')->value);
+    self::assertEquals(0, $storedMessage->get('field_aculta_commerce_read')->value);
   }
 
   /**
@@ -295,6 +295,9 @@ final class CommerceOrderNoticePersistenceKernelTest extends KernelTestBase {
 
   /**
    * Creates one field storage/config pair for the fixture bundle.
+   *
+   * @param array<string, mixed> $settings
+   *   Storage settings for the field.
    */
   private function installField(string $name, string $type, array $settings = []): void {
     FieldStorageConfig::create([
