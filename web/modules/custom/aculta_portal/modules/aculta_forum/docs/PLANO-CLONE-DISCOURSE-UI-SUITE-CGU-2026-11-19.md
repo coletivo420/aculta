@@ -152,6 +152,29 @@ arquivo devem ter `aculta_forum_legacy` como documento dono. O Fórum pode
 referenciar um contrato genérico de origem e uma página de integração, sem
 armazenar regras, campos, nomes de rota ou decisões específicas do acervo.
 
+### Contrato mínimo do classificador de origem
+
+O resolver genérico deve aceitar entidade e contexto/host e devolver origem
+estável com metadados de cacheabilidade. Providers registrados por contrato
+podem reconhecer origens; somente o addon conhece fields, classes, rotas e
+proveniência exclusivos do acervo. O Fórum mantém os providers correntes e
+contextuais necessários para continuar funcionando sem o addon. Conflitos
+entre providers ou resultado sem prova suficiente viram `UNKNOWN`.
+
+| Caso de entrada | Classificação exigida |
+| --- | --- |
+| Tópico Growroom cuja proveniência histórica está comprovada pelo addon | `ARCHIVE`; somente leitura histórica, sem resposta, citação comum, reação, mover, fila ordinária CGU ou eventos de participação/notificação. |
+| Tópico Growroom comprovadamente corrente | `CURRENT`; novas respostas são ForumPosts. Ausência do marcador histórico, por si só, não prova que um tópico antigo seja corrente. |
+| ForumPost proveniente da migration Comment→ForumPost | Se a origem mapeada for histórica, `ARCHIVE` e artefato de refatoração sob auditoria; se source/map/proveniência faltarem ou a origem for outra não aprovada, `UNKNOWN`. Em ambos os casos, restringir ações/eventos e não apresentá-lo como publicação corrente validada. |
+| Comment de Wiki, Revista ou LMS com host/contexto reconhecido | `CONTEXTUAL`; manter ACL/política do host, sem entrar no arquivo Growroom ou na busca pública do Fórum. |
+| Comment com host desconhecido, inacessível, divergente ou conflitante com a origem própria | `UNKNOWN`; negar escrita, reação, projeção/contagem ampliada e eventos; não inferir pelo UID, data, texto ou bundle isolado. |
+
+O census precisa comprovar qual sinal permite distinguir tópicos históricos
+sem `field_autor_legado` e tópicos correntes antes de habilitar o provider de
+arquivo. A integração é aceita somente quando core sem addon continua servindo
+discussões novas/contextuais, addon com arquivo classifica a origem histórica,
+e todos os consumidores consultam o resolver em vez de ler markers diretamente.
+
 ### Regra para dados preexistentes e dados produzidos pela refatoração
 
 Autores, tópicos, comentários, relações, URLs e arquivos que pertencem ao
