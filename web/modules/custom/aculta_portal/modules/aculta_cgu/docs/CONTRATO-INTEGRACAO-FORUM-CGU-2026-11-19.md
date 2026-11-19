@@ -18,6 +18,26 @@ Decisão de produto aprovada em 2026-11-19. **Paridade funcional e de experiênc
 - `ForumModerationMetricsProvider` já registra métricas agregadas pelo Statistics; não criar outro catálogo no Fórum.
 - `LmsForumModerationManager` autoriza decisões para Educadores/Group e `EditorialCommentModerationForm` respeita `EditorialCapability`; integrar como comandos adapters e não remover proteção própria.
 
+### Fronteira planejada com `aculta_forum_legacy` — F-D48
+
+Os itens acima descrevem o baseline que ainda está no código desta branch. O
+backfill/reconciliação/rollback de Flagging legado e sua chave específica
+`legacy_flag_id`/motivo `sinalizacao_legada_forum` não são ownership definitivo
+do CGU: pertencem à integração opcional `aculta_forum_legacy`. O CGU continua
+dono de `CguReport`, casos, decisões, auditoria, fila genérica e ACL, sem
+dependência ou leitura direta de fields/classes do addon.
+
+Para denúncias correntes, o Fórum e os hosts contextuais usam a API genérica do
+CGU e fornecem origem/contexto por contrato. `ARCHIVE` fica fora da fila
+ordinária; qualquer medida excepcional segue trilha separada e autorizada.
+`UNKNOWN` falha fechado; `CURRENT` e `CONTEXTUAL` respeitam ACL e autoridade do
+host. Se a idempotência exigir um identificador de entrada, avaliar um vínculo
+neutro provider/source ID, sem termos Growroom/Flagging no modelo do CGU. A
+transição deve preservar denúncias, decisões e auditoria existentes em clone;
+retirar `legacy_flag_id`, mudar storage ou reconciliar registros exige census,
+plano reversível e autorização própria. Esta atualização é apenas planejamento:
+não executa backfill, rollback, migração nem exclusão.
+
 ### Modelo proposto: denúncia != caso != ação
 
 1. `CguReport`: entrada individual sigilosa por usuário/alvo/motivo, preserva tombstone, link com flagging migrado e timestamp.
@@ -40,7 +60,7 @@ Fila em MAIN: `/painel-administrativo/moderacao/denuncias` (recorte `purpose=for
 ### Sequência de implementação e aceite
 
 1. Corrigir `resolvePurpose` via provider/host; Unit+Kernel de Comment em revista/wiki/lms, ForumPost, tópico, publicação sem host e Group privado.
-2. Inventariar dados e migração Flagging → CGU. Dry-run contagens/chaves, matriz de legado, backfill idempotente e rollback; não apagar tabelas sem autorização estrutural.
+2. Inventariar dados e migração Flagging → CGU. Separar a compatibilidade histórica para `aculta_forum_legacy`; dry-run de contagens/chaves, matriz de origem e backfill/rollback idempotentes somente no escopo autorizado, sem apagar tabelas ou denúncias sem plano próprio.
 3. Extrair registry de `ModerationTargetAdapterInterface` para integrar regras Forum/LMS/Revista/Wiki. Serviços opcionais não criam dependência circular.
 4. Modelar caso/notes/timeline; acesso de campo e cache privado.
 5. Vincular decisão à ação explícita; simular rollback de falha, concorrência e repetição. Proibir mutações GET/HEAD.
