@@ -30,7 +30,14 @@ jobs:
         REPOSITORY: ${{ github.repository }}
         COMMIT_SHA: ${{ github.sha }}
         EVENT_NAME: ${{ github.event_name }}
+        PR_HEAD_REF: ${{ github.event.pull_request.head.ref }}
+        PR_BASE_REF: ${{ github.event.pull_request.base.ref }}
       run: |
+        if [ "$EVENT_NAME" = "pull_request" ] && [ "$PR_HEAD_REF" = "dev" ] && [ "$PR_BASE_REF" = "main" ]; then
+          echo "PR de integração semanal dev->main: a validação é executada nos pushes a dev; pulando a suíte duplicada."
+          echo "should_run=false" >> "$GITHUB_OUTPUT"
+          exit 0
+        fi
         if [ "$EVENT_NAME" != "push" ]; then
           echo "should_run=true" >> "$GITHUB_OUTPUT"
           exit 0
