@@ -423,6 +423,26 @@ desfaz e-mails já enviados. Não classificar denúncia como dado da refatoraç�
 por motivo, data ou alvo apenas. Bloquear a ponte/notificação durante qualquer
 importação futura até o teste provar zero efeitos externos.
 
+O escopo do census de proveniência não termina nas três migrations. A
+refatoração pode ter produzido efeitos persistidos por hooks, workers ou
+projeções; a tabela abaixo define domínios a verificar, não afirma que existam
+registros deles no Runtime:
+
+| Domínio a verificar | Evidência para atribuir à refatoração | Tratamento planejado |
+| --- | --- | --- |
+| Revisões, relações pai/filho, reações e referências em ForumPosts de destino | ID de destino ligado ao CID e à migration; revisar histórico/revisões e relações atuais; reações e referências só entram se ligadas ao ID exato | Identificar registros dependentes e alterações posteriores antes de qualquer proposta de limpeza; não usar rollback em lote. |
+| Eventos de atividade/participação, contagens ou concessões do Game | Ledger/event ID ou referência explícita ao ID de destino/importação; comparar hooks e regras de supressão efetivamente vigentes na versão executada | Distinguir projeções reconstruíveis de concessões/participações persistidas. Não remover por janela de tempo, UID ou similaridade; qualquer correção exige plano próprio e reconciliação. |
+| Filas, avisos, subscriptions e mensagens do Messenger | Item de fila com entidade/source ID, logs de worker ou vínculo explícito com operação de importação; auditar também itens já consumidos | Itens pendentes identificados podem ser avaliados na limpeza; mensagens/notificações já entregues são efeitos externos e não são desfeitos pelo rollback. |
+| Documentos de Search API/Index e métricas/projeções de Statistics | IDs de entidade de destino nos trackers/índices ou chaves de origem no ledger de métricas; snapshots agregados antes/depois sem exportar conteúdo pessoal | Remover ou reconstruir somente após provar a origem e obter autorização operacional específica; nunca executar rebuild durante esta fase. Isolar métricas históricas das correntes. |
+| Cache, estado temporário e logs de execução | Chaves namespaced pela migration/entidade e retenção documentada; logs sem copiar PII para o relatório | Registrar como estado operacional, não como acervo. Não limpar globalmente nem tratar cache/log como prova única da origem de conteúdo. |
+
+Em todos esses domínios, IDs e vínculos explícitos são evidência; horário,
+autor, texto, bundle ou coincidência de contagem não bastam. O census deve
+anotar também efeitos que não possam ser revertidos (e-mail ou mensagem já
+entregues) para que a remoção do registro de origem não seja descrita como
+reversão total. Artefatos reconstruíveis só serão reindexados/reconciliados em
+etapa operacional própria, autorizada e com comparação de baseline.
+
 ### Fase condicional: limpeza de artefatos comprovados da refatoração
 
 Esta é uma fase separada do FDC-11.0 (census) e do FDC-11.3 (transferência de
@@ -430,15 +450,16 @@ ownership); nenhum dos dois autoriza exclusão. Ela ocorre depois do FDC-11.0 e
 antes de desativar ou retirar em FDC-11.2 as definições/plugins necessários à
 proveniência. Manter mapas e definições de migration disponíveis até a decisão
 documentada de limpeza; não os apagar para simplificar a extração. Depois do
-census, identificar IDs exatos de ForumPosts, relações pai/filho e Flagging
-criados pelas migrations e denúncias CGU relacionadas por `legacy_flag_id`.
-Em clone restaurável,
-inspecionar revisões, filhos, reações, referências, casos/decisões, filas e
-efeitos já entregues; criar prévia e plano reversível por conjunto de IDs. A
-validação deve provar que Comments, tópicos, autores, relações, URLs e arquivos
-preexistentes permanecem intactos. Não executar rollback em lote; e-mails e
-eventos externos já entregues não são apagáveis por rollback, e a auditoria de
-denúncias que avançaram de estado precisa de tratamento próprio.
+census, identificar IDs exatos dos registros criados pela refatoração em todos
+os domínios acima, começando pelos ForumPosts, relações pai/filho e Flaggings
+das migrations e denúncias CGU relacionadas por `legacy_flag_id`. Em clone
+restaurável, inspecionar revisões, filhos, reações, referências,
+casos/decisões, filas, eventos de atividade/participação, mensageria,
+projeções e efeitos já entregues; criar prévia e plano reversível por conjunto
+de IDs. A validação deve provar que Comments, tópicos, autores, relações, URLs
+e arquivos preexistentes permanecem intactos. Não executar rollback em lote;
+e-mails e eventos externos já entregues não são apagáveis por rollback, e a
+auditoria de denúncias que avançaram de estado precisa de tratamento próprio.
 
 Somente artefatos cuja origem na refatoração esteja demonstrada por mapas e
 proveniência podem entrar na proposta de limpeza. Registros sem evidência
@@ -501,7 +522,7 @@ O requisito “portável a outros projetos” exige auditoria adicional do manif
 
 ### Sequência planejada e critérios de aceite
 
-1. **FDC-11.0 — Census somente leitura:** inventariar tipos/bundles/fields/rotas/Views/config, tabelas, referências de autoria, flags, Search API, eventos/consumidores e caches; incluir IDs/histórico de execução das migrations, map tables, ForumPosts, flaggings e denúncias CGU vinculadas por `legacy_flag_id` com provenance agregada; conferir filas/logs do Mailer sem exportar PII; reportar contagens agregadas. Distinguir registros anteriores à refatoração de registros que ela eventualmente criou. Mapear cada referência em `aculta_forum`, `aculta_portal`, `aculta_user`, CGU, Index, Statistics, Messenger, Game e outros consumidores. Para cada integração, registrar owner atual, contrato de destino e arquivo futuro no addon. Não executar rebuild, import, sync, update, uninstall ou limpeza.
+1. **FDC-11.0 — Census somente leitura:** inventariar tipos/bundles/fields/rotas/Views/config, tabelas, referências de autoria, flags, Search API, eventos/consumidores, filas, projeções e caches; incluir IDs/histórico de execução das migrations, map tables, ForumPosts, revisões, relações, reações, flaggings, denúncias CGU ligadas por `legacy_flag_id`, métricas e efeitos de Messenger/Game com provenance agregada; conferir filas/logs do Mailer sem exportar PII; reportar contagens agregadas. Distinguir registros anteriores à refatoração de registros que ela eventualmente criou. Mapear cada referência em `aculta_forum`, `aculta_portal`, `aculta_user`, CGU, Index, Statistics, Messenger, Game e outros consumidores. Para cada integração, registrar owner atual, contrato de destino e arquivo futuro no addon. Não executar rebuild, import, sync, update, uninstall ou limpeza.
 2. **FDC-11.1 — Contratos e matriz de instalação:** definir interfaces/providers genéricos e testar os módulos principais sem o addon, o addon instalado e consumidores opcionais ausentes. Provar que os módulos principais não carregam código/config do addon e que o manifesto só declara a dependência unidirecional do addon para as APIs necessárias. Provar que novas respostas Growroom usam ForumPost; Wiki/Revista/LMS preservam Comment contextual e seus grants; origem desconhecida falha fechada; arquivo fora das filas ordinárias do CGU e exceção somente por protocolo autorizado/auditável; arquivo e importações/reconstruções não geram aviso, assinatura, XP, participação ou perfil corrente; autoria histórica continua fora de contas/perfis `aculta_user`.
 3. **FDC-11.2 — Extração de código/config:** criar o módulo opcional e mover para ele toda semântica, configuração, rotas, ferramentas read-only, projeções e providers específicos do acervo. Remover/substituir referências diretas nos principais a `aculta_legado_autor`, `field_autor_legado`, `legacy_author`, classes, IDs de config/rotas e equivalentes. Corrigir o escopo das migrations para que Comment `ARCHIVE` nunca entre em ForumPost/parent/flagging; qualquer migração de Comments correntes exige escopo e autorização próprios. Módulos consumidores integram-se pelo resolver genérico, sem depender do addon. Nenhum comportamento histórico pode depender de `aculta_user` nem tornar addon obrigatório para `aculta_forum`/`aculta_portal`.
 4. **FDC-11.3 — Dados e ownership:** primeiro reproduzir a extração em clone restaurável, comparar contagens, entity IDs, UUIDs, source IDs, chaves, autoria, árvore/ordem, URLs, timestamps, idiomas, avatares (quantidade, checksums, paths, referências e render) antes/depois; verificar acesso anônimo/autenticado/moderador. Preservar conteúdo e bytes. Preservar o ID `aculta_legado_autor`, a tabela/base storage, os nomes, IDs de origem, referências por conteúdo e arquivos de autoria, conforme F-D44. Manter entity type ID e nome da tabela, por si só, **não** prova transferência segura: Drupal registra definições instaladas e provider de entity/field storage, e o Core desinstala entity types/field storages cujo provider ainda seja o módulo removido. A lista de mudanças do `EntityDefinitionUpdateManager` detecta mudanças de schema, mas documenta que ainda não cobre todas as mudanças sem impacto de schema. O `ConfigManager::uninstall()` também remove ou atualiza configurações dependentes do módulo; mover YAMLs de `config/install` não transfere automaticamente UUIDs/dependências da configuração ativa. O caminho de upgrade também precisa ser desenhado em etapas: instalar um addon com defaults de configuração que já existem na configuração ativa pode provocar colisão de configuração (`PreExistingConfigException`); não presumir que uma instalação nova do addon ou um único `config:import` resolva a transferência. Provar em clones restauráveis tanto o caminho de instalação limpa quanto o upgrade do site que já tem esses fields/config, com uma sequência que não crie janela sem provider nem acione uninstall/purge. O clone precisa validar explicitamente a transferência de provider da entidade e dos fields/config (`field_autor_legado`) sem recriar/remover tabelas, purgar fields, apagar config dependente nem alterar UUIDs; conferir definições instaladas e uninstall validator antes/depois. A mudança de módulo dono de entity/field/config e a cópia de arquivos são operações estruturais: requerem clone restaurável, plano de reversão, backup, análise das definições e autorização operacional específica. Nunca desinstalar `aculta_user` para “transferir” storage. Referências do Core: [ModuleInstaller 11.x](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Extension%21ModuleInstaller.php/class/ModuleInstaller/11.x), [EntityDefinitionUpdateManager::getChangeList 11.x](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Entity%21EntityDefinitionUpdateManager.php/function/EntityDefinitionUpdateManager%3A%3AgetChangeList/11.x), [ConfigManager::uninstall 11.x](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Config%21ConfigManager.php/function/ConfigManager%3A%3Auninstall/11.x) e [ConfigInstaller::installDefaultConfig 11.x](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Config%21ConfigInstaller.php/function/ConfigInstaller%3A%3AinstallDefaultConfig/11.x).
