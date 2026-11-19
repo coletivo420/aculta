@@ -58,7 +58,8 @@ final class ForumAttachmentCleanup {
       $cutoff = $requestTime - self::RETENTION;
       $removed = $this->cleanupOrphanMedia($cutoff);
       if ($removed < self::LIMIT) {
-        $temporaryAge = (int) $this->configFactory->get('system.file')->get('temporary_maximum_age');
+        $rawTempAge = $this->configFactory->get('system.file')->get('temporary_maximum_age');
+        $temporaryAge = is_numeric($rawTempAge) ? (int) $rawTempAge : 0;
         if ($temporaryAge > 0) {
           $removed += $this->cleanupTemporaryFiles(
             $requestTime - $temporaryAge,
@@ -157,19 +158,20 @@ final class ForumAttachmentCleanup {
 
     // Query comment text directly as well as Entity Usage: cleanup must remain
     // safe if contrib tracking is delayed or a usage record was not created.
+    $mediaUuid = (string) $media->uuid();
     $comment_ids = $this->entityTypeManager->getStorage('comment')->getQuery()
       ->accessCheck(FALSE)
       ->condition('comment_type', 'aculta_discussion_post')
       ->condition('entity_type', 'node')
       ->condition('field_name', 'field_aculta_discussion')
-      ->condition('comment_body.value', '%' . $this->database->escapeLike($media->uuid()) . '%', 'LIKE')
+      ->condition('comment_body.value', '%' . $this->database->escapeLike($mediaUuid) . '%', 'LIKE')
       ->execute();
     foreach ($this->entityTypeManager->getStorage('comment')->loadMultiple($comment_ids) as $comment) {
-      if ($this->commentEmbeds($comment, $media->uuid())) {
+      if ($this->commentEmbeds($comment, $mediaUuid)) {
         return TRUE;
       }
     }
-    if ($this->hasForumPostMediaReference($media->uuid())) {
+    if ($this->hasForumPostMediaReference($mediaUuid)) {
       return TRUE;
     }
 
@@ -192,7 +194,7 @@ final class ForumAttachmentCleanup {
       if (!$comment instanceof CommentInterface || !$this->isForumComment($comment)) {
         continue;
       }
-      if ($this->commentEmbeds($comment, $media->uuid())) {
+      if ($this->commentEmbeds($comment, $mediaUuid)) {
         return TRUE;
       }
     }
@@ -226,11 +228,16 @@ final class ForumAttachmentCleanup {
       if (!$post instanceof ContentEntityInterface || !$post->hasField('body') || $post->get('body')->isEmpty()) {
         continue;
       }
-      $document = Html::load((string) $post->get('body')->value);
+      $bodyValue = $post->get('body')->value;
+      $rawHtml = is_scalar($bodyValue) ? (string) $bodyValue : '';
+      $document = Html::load($rawHtml);
       $xpath = new \DOMXPath($document);
-      foreach ($xpath->query('//drupal-media[@data-entity-type="media"][@data-entity-uuid]') as $element) {
-        if ($element instanceof \DOMElement && $element->getAttribute('data-entity-uuid') === $uuid) {
-          return TRUE;
+      $nodes = $xpath->query('//drupal-media[@data-entity-type="media"][@data-entity-uuid]');
+      if ($nodes instanceof \DOMNodeList) {
+        foreach ($nodes as $element) {
+          if ($element instanceof \DOMElement && $element->getAttribute('data-entity-uuid') === $uuid) {
+            return TRUE;
+          }
         }
       }
     }
@@ -253,11 +260,16 @@ final class ForumAttachmentCleanup {
     if (!$comment->hasField('comment_body') || $comment->get('comment_body')->isEmpty()) {
       return FALSE;
     }
-    $document = Html::load((string) $comment->get('comment_body')->value);
+    $bodyValue = $comment->get('comment_body')->value;
+    $rawHtml = is_scalar($bodyValue) ? (string) $bodyValue : '';
+    $document = Html::load($rawHtml);
     $xpath = new \DOMXPath($document);
-    foreach ($xpath->query('//drupal-media[@data-entity-type="media"][@data-entity-uuid]') as $element) {
-      if ($element instanceof \DOMElement && $element->getAttribute('data-entity-uuid') === $uuid) {
-        return TRUE;
+    $nodes = $xpath->query('//drupal-media[@data-entity-type="media"][@data-entity-uuid]');
+    if ($nodes instanceof \DOMNodeList) {
+      foreach ($nodes as $element) {
+        if ($element instanceof \DOMElement && $element->getAttribute('data-entity-uuid') === $uuid) {
+          return TRUE;
+        }
       }
     }
     return FALSE;

@@ -147,8 +147,14 @@ class ForumAnalyticsScopeResolver {
     $topicRelationships->fields('gr', ['entity_id']);
     $topicRelationships->condition('gr.plugin_id', RestrictedForumGroupResolver::TOPIC_PLUGIN);
     $topicRelationships->condition('g.type', $groupType);
-    foreach ($topicRelationships->execute()->fetchCol() as $id) {
-      $topicIds[(int) $id] = (int) $id;
+    $queryResult = $topicRelationships->execute();
+    if ($queryResult) {
+      foreach ($queryResult->fetchCol() as $id) {
+        $intId = filter_var($id, FILTER_VALIDATE_INT);
+        if ($intId !== FALSE) {
+          $topicIds[(int) $intId] = (int) $intId;
+        }
+      }
     }
 
     $categoryIds = $this->restrictedCategoryIds();
@@ -159,8 +165,14 @@ class ForumAnalyticsScopeResolver {
       $byCategory = $this->database->select('node__field_aculta_categories', 'nc');
       $byCategory->fields('nc', ['entity_id']);
       $byCategory->condition('nc.field_aculta_categories_target_id', $categoryIds, 'IN');
-      foreach ($byCategory->execute()->fetchCol() as $id) {
-        $topicIds[(int) $id] = (int) $id;
+      $catResult = $byCategory->execute();
+      if ($catResult) {
+        foreach ($catResult->fetchCol() as $id) {
+          $intId = filter_var($id, FILTER_VALIDATE_INT);
+          if ($intId !== FALSE) {
+            $topicIds[(int) $intId] = (int) $intId;
+          }
+        }
       }
     }
 
@@ -188,7 +200,16 @@ class ForumAnalyticsScopeResolver {
     $query->fields('cgr', ['entity_id']);
     $query->condition('cgr.plugin_id', RestrictedForumGroupResolver::CATEGORY_PLUGIN);
     $query->condition('cg.type', $groupType);
-    $ids = array_map('intval', $query->execute()->fetchCol());
+    $queryResult = $query->execute();
+    $ids = [];
+    if ($queryResult) {
+      foreach ($queryResult->fetchCol() as $id) {
+        $intId = filter_var($id, FILTER_VALIDATE_INT);
+        if ($intId !== FALSE) {
+          $ids[] = (int) $intId;
+        }
+      }
+    }
     sort($ids);
     return array_values(array_unique($ids));
   }
@@ -258,7 +279,8 @@ class ForumAnalyticsScopeResolver {
       return NULL;
     }
     $value = $field->getValue();
-    $domainId = (string) ($value[0]['target_id'] ?? '');
+    $rawDomainId = is_array($value) && isset($value[0]) && is_array($value[0]) && isset($value[0]['target_id']) ? $value[0]['target_id'] : '';
+    $domainId = is_scalar($rawDomainId) ? (string) $rawDomainId : '';
     if ($domainId === '') {
       return NULL;
     }

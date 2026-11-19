@@ -1,6 +1,6 @@
 {
-    "generated_at": "2026-11-19T02:04:07+00:00",
-    "sha": "011fa2fbd145f6972bef45e400afd2720e116f27",
+    "generated_at": "2026-11-19T02:22:28+00:00",
+    "sha": "37b300c93e6ff34cda1536c90f3723e88a0cf3af",
     "php": "8.4.27",
     "phpstan": "PHPStan - PHP Static Analysis Tool 2.3.5",
     "scope": "web/modules/custom, web/themes/custom, scripts",
@@ -9,19 +9,19 @@
     "baseline": "phpstan-baseline.neon",
     "reference_baseline": null,
     "totals": {
-        "gross": 17398,
-        "frozen": 17398,
+        "gross": 17287,
+        "frozen": 17287,
         "uncovered": 0
     },
-    "baseline_entries": 10221,
+    "baseline_entries": 10160,
     "production_tests": {
-        "producao": 10282,
+        "producao": 10171,
         "testes": 7116
     },
     "criticality": {
         "alta": 212,
-        "media": 15405,
-        "baixa": 1781
+        "media": 15299,
+        "baixa": 1776
     },
     "by_module": {
         "scripts": 1931,
@@ -32,7 +32,7 @@
         "aculta_lms": 1014,
         "aculta_lms_h5p": 928,
         "aculta_index": 915,
-        "aculta_forum": 788,
+        "aculta_forum": 677,
         "aculta_commerce": 623,
         "aculta_pagamentos_mercadopago": 594,
         "aculta_studio": 592,
@@ -57,16 +57,16 @@
         "aculta_mcp_client": 1
     },
     "by_identifier": {
-        "offsetAccess.nonOffsetAccessible": 4541,
-        "argument.type": 3327,
-        "method.nonObject": 2049,
-        "missingType.iterableValue": 1665,
-        "cast.string": 1586,
-        "cast.int": 1011,
+        "offsetAccess.nonOffsetAccessible": 4520,
+        "argument.type": 3303,
+        "method.nonObject": 2044,
+        "missingType.iterableValue": 1660,
+        "cast.string": 1566,
+        "cast.int": 995,
         "method.notFound": 706,
-        "property.nonObject": 474,
+        "property.nonObject": 464,
         "return.type": 288,
-        "foreach.nonIterable": 274,
+        "foreach.nonIterable": 264,
         "binaryOp.invalid": 218,
         "offsetAccess.invalidOffset": 126,
         "property.notFound": 100,

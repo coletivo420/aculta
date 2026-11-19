@@ -66,8 +66,14 @@ final class ForumFlaggingMigrationContext {
     $target = $flagging->getFlaggable();
     $target_topic = $target instanceof ForumPost ? $target->get('topic')->entity : NULL;
     $mapped_posts = $this->migrateLookup->lookup('aculta_forum_comment_posts', ['cid' => $source_comment_id]);
-    $post_id_key = $this->entityTypeManager->getDefinition('aculta_forum_post')->getKey('id');
-    $mapped_post_id = $mapped_posts[0][$post_id_key] ?? NULL;
+    $post_id_key = (string) $this->entityTypeManager->getDefinition('aculta_forum_post')->getKey('id');
+    $firstRow = isset($mapped_posts[0]) && is_array($mapped_posts[0]) ? $mapped_posts[0] : [];
+    $rawMappedId = $firstRow[$post_id_key] ?? NULL;
+    $mapped_post_id = is_scalar($rawMappedId) ? (string) $rawMappedId : NULL;
+
+    $domainTargetId = ($source_topic instanceof NodeInterface && $source_topic->hasField('field_domain_source') && !$source_topic->get('field_domain_source')->isEmpty())
+      ? (string) $source_topic->get('field_domain_source')->target_id
+      : '';
 
     if (!$source instanceof FlaggingInterface
       || $source->getFlagId() !== 'sinalizar_comentario'
@@ -78,21 +84,22 @@ final class ForumFlaggingMigrationContext {
       || $source_comment->getFieldName() !== 'field_aculta_discussion'
       || !$source_topic instanceof NodeInterface
       || $source_topic->bundle() !== 'aculta_forum_topic'
-      || !$source_topic->hasField('field_domain_source')
-      || $source_topic->get('field_domain_source')->isEmpty()
-      || $this->siteManager->getSiteKeyValueForDomainId((string) $source_topic->get('field_domain_source')->target_id) !== 'forum') {
+      || $domainTargetId === ''
+      || $this->siteManager->getSiteKeyValueForDomainId($domainTargetId) !== 'forum') {
       throw new MigrateException(sprintf('Flagging de origem %d não pertence a um Comment migrável do Fórum.', $source_flagging_id));
     }
 
+    $sourceSession = is_scalar($source->get('session_id')->value) ? (string) $source->get('session_id')->value : '';
+    $flaggingSession = is_scalar($flagging->get('session_id')->value) ? (string) $flagging->get('session_id')->value : '';
     if ((int) $source->getOwnerId() !== (int) $flagging->getOwnerId()
-      || (string) $source->get('session_id')->value !== (string) $flagging->get('session_id')->value
+      || $sourceSession !== $flaggingSession
       || (bool) $source->get('global')->value
       || (int) $source->getCreatedTime() <= 0
       || (int) $source->getCreatedTime() !== (int) $flagging->getCreatedTime()) {
       throw new MigrateException(sprintf('Flagging de origem %d tem dono, escopo ou timestamp incompatível com a configuração de destino.', $source_flagging_id));
     }
 
-    if ((int) ($source->getOwnerId() ?? 0) === 0 && trim((string) $source->get('session_id')->value) === '') {
+    if ((int) ($source->getOwnerId() ?? 0) === 0 && trim($sourceSession) === '') {
       throw new MigrateException(sprintf('Flagging anônimo de origem %d não tem sessão identificável.', $source_flagging_id));
     }
 
@@ -140,7 +147,8 @@ final class ForumFlaggingMigrationContext {
       ->condition('entity_id', $target->id())
       ->condition('uid', (int) ($flagging->getOwnerId() ?? 0));
     if ((int) ($flagging->getOwnerId() ?? 0) === 0) {
-      $query->condition('session_id', (string) $flagging->get('session_id')->value);
+      $flaggingSession = is_scalar($flagging->get('session_id')->value) ? (string) $flagging->get('session_id')->value : '';
+      $query->condition('session_id', $flaggingSession);
     }
     $existing_ids = $query->execute();
     $current_id = $flagging->id();

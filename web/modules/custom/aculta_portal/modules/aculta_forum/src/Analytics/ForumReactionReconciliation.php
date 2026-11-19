@@ -99,21 +99,27 @@ final class ForumReactionReconciliation {
         if ($remaining < 1) {
           break;
         }
-        $rows = $this->database->select(DiscussionReactionManager::TABLE_REACTIONS, 'r')
+        $queryResult = $this->database->select(DiscussionReactionManager::TABLE_REACTIONS, 'r')
           ->fields('r', ['id', 'entity_type', 'entity_id', 'context_id', 'is_public_context'])
           ->condition('id', $cursor, '>')
           ->orderBy('id')
           ->range(0, $remaining)
-          ->execute()
-          ->fetchAll();
+          ->execute();
+        $rows = $queryResult ? $queryResult->fetchAll() : [];
         if ($rows === []) {
           break;
         }
 
         foreach ($rows as $row) {
-          $cursor = (int) $row->id;
+          if (!is_object($row)) {
+            continue;
+          }
+          $rowId = isset($row->id) && is_numeric($row->id) ? (int) $row->id : 0;
+          $cursor = $rowId;
           $report['scanned']++;
-          $entity = $this->loadTarget((string) $row->entity_type, (int) $row->entity_id, $storage);
+          $entityType = isset($row->entity_type) && is_scalar($row->entity_type) ? (string) $row->entity_type : '';
+          $entityId = isset($row->entity_id) && is_numeric($row->entity_id) ? (int) $row->entity_id : 0;
+          $entity = $this->loadTarget($entityType, $entityId, $storage);
           if ($entity === NULL) {
             $report['unresolved']++;
             continue;
@@ -124,17 +130,19 @@ final class ForumReactionReconciliation {
           }
           $resolvedPublic = $scope->isPublicForum();
           $resolvedPublic ? $report['public']++ : $report['restricted']++;
-          $storedPublic = (int) $row->is_public_context === 1;
-          $scopeChanged = (string) $row->context_id !== $scope->scope;
+          $isPublicVal = isset($row->is_public_context) && is_numeric($row->is_public_context) ? (int) $row->is_public_context : 0;
+          $storedPublic = $isPublicVal === 1;
+          $contextIdVal = isset($row->context_id) && is_scalar($row->context_id) ? (string) $row->context_id : '';
+          $scopeChanged = $contextIdVal !== $scope->scope;
           if ($resolvedPublic !== $storedPublic || $scopeChanged) {
             $report['divergences']++;
-            if ($apply) {
+            if ($apply && $rowId > 0) {
               $this->database->update(DiscussionReactionManager::TABLE_REACTIONS)
                 ->fields([
                   'context_id' => $scope->scope,
                   'is_public_context' => $resolvedPublic ? 1 : 0,
                 ])
-                ->condition('id', $row->id)
+                ->condition('id', $rowId)
                 ->execute();
               $report['updated']++;
             }
@@ -194,8 +202,13 @@ final class ForumReactionReconciliation {
       ->condition('uid', 0, '>')
       ->groupBy('uid');
     $result->addExpression('COUNT(id)', 'total');
-    foreach ($result->execute() as $row) {
-      $given[(int) $row->uid] = (int) $row->total;
+    $queryResult = $result->execute();
+    if ($queryResult) {
+      foreach ($queryResult as $row) {
+        if (is_object($row) && isset($row->uid, $row->total) && is_numeric($row->uid) && is_numeric($row->total)) {
+          $given[(int) $row->uid] = (int) $row->total;
+        }
+      }
     }
 
     $received = [];
@@ -206,8 +219,13 @@ final class ForumReactionReconciliation {
     $result->where('author_uid <> uid');
     $result->groupBy('author_uid');
     $result->addExpression('COUNT(id)', 'total');
-    foreach ($result->execute() as $row) {
-      $received[(int) $row->author_uid] = (int) $row->total;
+    $queryResult = $result->execute();
+    if ($queryResult) {
+      foreach ($queryResult as $row) {
+        if (is_object($row) && isset($row->author_uid, $row->total) && is_numeric($row->author_uid) && is_numeric($row->total)) {
+          $received[(int) $row->author_uid] = (int) $row->total;
+        }
+      }
     }
 
     $uids = array_unique(array_merge(array_keys($given), array_keys($received)));

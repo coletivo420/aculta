@@ -36,6 +36,8 @@ class DiscussionReplyController extends ControllerBase {
 
   /**
    * Returns the discussion reply composer render array.
+   *
+   * @return array<mixed>
    */
   public function composer(string $entity_type, string $entity_id, Request $request): array {
     $storage = $this->forumEntityTypeManager->getStorage($entity_type);
@@ -71,7 +73,7 @@ class DiscussionReplyController extends ControllerBase {
     }
 
     $editId = $request->query->get('editar');
-    if ($editId !== NULL && ctype_digit((string) $editId)) {
+    if ($editId !== NULL && ctype_digit($editId)) {
       $editComment = $this->forumEntityTypeManager->getStorage('comment')->load((int) $editId);
       $tombstoned = $editComment instanceof CommentInterface && (bool) $this->forumKeyValue->get('aculta_forum_comment_tombstones')->get((string) $editComment->id());
       // Resposta excluída pelo autor não pode mais ser editada, nem pelo administrador.
@@ -84,23 +86,26 @@ class DiscussionReplyController extends ControllerBase {
       throw new NotFoundHttpException();
     }
 
-    $parentId = $request->query->get('resposta');
-    $parentId = ($parentId !== NULL && $parentId !== '' && ctype_digit((string) $parentId)) ? (int) $parentId : NULL;
+    $parentIdRaw = $request->query->get('resposta');
+    $parentId = ($parentIdRaw !== NULL && $parentIdRaw !== '' && ctype_digit($parentIdRaw)) ? (int) $parentIdRaw : NULL;
 
     $quote = NULL;
     if ($host instanceof NodeInterface && $request->query->get('citar_topico') && $host->hasField('body') && !$host->get('body')->isEmpty()) {
       $bodyItem = $host->get('body')->first();
-      $rawBody = (string) ($bodyItem->get('value')->getValue() ?? '');
-      $quote = $this->quoteBuilder->build($rawBody, $host->getOwner()->getDisplayName());
+      $rawVal = $bodyItem !== NULL ? $bodyItem->get('value')->getValue() : NULL;
+      $rawBody = is_scalar($rawVal) ? (string) $rawVal : '';
+      $quote = $this->quoteBuilder->build($rawBody, (string) $host->getOwner()->getDisplayName());
     }
 
     $quoteId = $request->query->get('citar') ?? $request->query->get('citacao');
-    if ($quoteId !== NULL && ctype_digit((string) $quoteId)) {
+    if ($quoteId !== NULL && ctype_digit($quoteId)) {
       $quoteComment = $this->forumEntityTypeManager->getStorage('comment')->load((int) $quoteId);
       if ($quoteComment instanceof CommentInterface && $quoteComment->isPublished() && $quoteComment->hasField('comment_body')) {
         $bodyItem = $quoteComment->get('comment_body')->get(0);
         if ($bodyItem !== NULL) {
-          $quote = $this->quoteBuilder->build((string) $bodyItem->get('processed')->getValue(), $quoteComment->getAuthorName());
+          $rawProcessed = $bodyItem->get('processed')->getValue();
+          $processedText = is_scalar($rawProcessed) ? (string) $rawProcessed : '';
+          $quote = $this->quoteBuilder->build($processedText, (string) $quoteComment->getAuthorName());
         }
       }
     }

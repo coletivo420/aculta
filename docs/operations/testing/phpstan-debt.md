@@ -1,10 +1,10 @@
 # Dívida PHPStan — ACULTA
 
-Gerado em 2026-11-19T02:04:07+00:00 por `scripts/phpstan-debt-report.php`.
+Gerado em 2026-11-19T02:22:28+00:00 por `scripts/phpstan-debt-report.php`.
 
 | Item | Valor |
 | --- | --- |
-| Commit | `011fa2fbd145f6972bef45e400afd2720e116f27` |
+| Commit | `37b300c93e6ff34cda1536c90f3723e88a0cf3af` |
 | PHP | 8.4.27 |
 | PHPStan | PHPStan - PHP Static Analysis Tool 2.3.5 |
 | Nível | 10 |
@@ -15,11 +15,11 @@ Gerado em 2026-11-19T02:04:07+00:00 por `scripts/phpstan-debt-report.php`.
 
 | Medida | Ocorrências |
 | --- | ---: |
-| Total bruto no nível 10 | 17398 |
-| Dívida congelada no baseline | 17398 |
+| Total bruto no nível 10 | 17287 |
+| Dívida congelada no baseline | 17287 |
 | Erros não suprimidos | 0 |
-| Entradas no baseline | 10221 |
-| Produção | 10282 |
+| Entradas no baseline | 10160 |
+| Produção | 10171 |
 | Testes | 7116 |
 
 ## Criticidade funcional
@@ -27,8 +27,8 @@ Gerado em 2026-11-19T02:04:07+00:00 por `scripts/phpstan-debt-report.php`.
 | Criticidade | Ocorrências |
 | --- | ---: |
 | alta | 212 |
-| media | 15405 |
-| baixa | 1781 |
+| media | 15299 |
+| baixa | 1776 |
 
 ## Dívida por módulo (prioridade de redução)
 
@@ -42,7 +42,7 @@ Gerado em 2026-11-19T02:04:07+00:00 por `scripts/phpstan-debt-report.php`.
 | aculta_lms | 1014 |
 | aculta_lms_h5p | 928 |
 | aculta_index | 915 |
-| aculta_forum | 788 |
+| aculta_forum | 677 |
 | aculta_commerce | 623 |
 | aculta_pagamentos_mercadopago | 594 |
 | aculta_studio | 592 |
@@ -69,16 +69,16 @@ Gerado em 2026-11-19T02:04:07+00:00 por `scripts/phpstan-debt-report.php`.
 
 | Identificador | Ocorrências |
 | --- | ---: |
-| `offsetAccess.nonOffsetAccessible` | 4541 |
-| `argument.type` | 3327 |
-| `method.nonObject` | 2049 |
-| `missingType.iterableValue` | 1665 |
-| `cast.string` | 1586 |
-| `cast.int` | 1011 |
+| `offsetAccess.nonOffsetAccessible` | 4520 |
+| `argument.type` | 3303 |
+| `method.nonObject` | 2044 |
+| `missingType.iterableValue` | 1660 |
+| `cast.string` | 1566 |
+| `cast.int` | 995 |
 | `method.notFound` | 706 |
-| `property.nonObject` | 474 |
+| `property.nonObject` | 464 |
 | `return.type` | 288 |
-| `foreach.nonIterable` | 274 |
+| `foreach.nonIterable` | 264 |
 | `binaryOp.invalid` | 218 |
 | `offsetAccess.invalidOffset` | 126 |
 | `property.notFound` | 100 |

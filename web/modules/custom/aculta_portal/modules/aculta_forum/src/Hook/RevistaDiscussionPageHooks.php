@@ -32,11 +32,22 @@ final class RevistaDiscussionPageHooks {
   /**
    * Anexa as bibliotecas da discussão nas páginas com o campo.
    */
+  /**
+   * Implements hook_page_attachments().
+   *
+   * @param array<string, mixed> $attachments
+   */
   #[Hook('page_attachments')]
   public function pageAttachments(array &$attachments): void {
     $node = $this->discussionNode();
     if ($node === NULL) {
       return;
+    }
+    if (!isset($attachments['#attached']) || !is_array($attachments['#attached'])) {
+      $attachments['#attached'] = [];
+    }
+    if (!isset($attachments['#attached']['library']) || !is_array($attachments['#attached']['library'])) {
+      $attachments['#attached']['library'] = [];
     }
     if (in_array($node->bundle(), self::LAYOUT_BUNDLES, TRUE)) {
       $attachments['#attached']['library'][] = 'aculta_forum/discussion-reply-popup';
@@ -49,6 +60,8 @@ final class RevistaDiscussionPageHooks {
 
   /**
    * Renderiza os popups da discussão uma vez por página.
+   *
+   * @param array<string, mixed> $page
    */
   #[Hook('page_bottom')]
   public function pageBottom(array &$page): void {
