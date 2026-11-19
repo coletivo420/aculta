@@ -149,7 +149,8 @@ aculta_forum.topic_deletion_queue:
 aculta_forum.topic_deletion_approve:
   path: '/painel-administrativo/forum/exclusoes-topicos/{id}/aprovar'
   defaults:
-    _controller: '\Drupal\aculta_forum\Controller\TopicDeletionQueueController::approve'
+    _form: '\Drupal\aculta_forum\Form\TopicDeletionDecisionForm'
+    _title: 'Confirmar exclusão do tópico'
   requirements:
     _permission: 'moderate aculta forum topic deletions,administer nodes'
     id: '\d+'
@@ -160,7 +161,8 @@ aculta_forum.topic_deletion_approve:
 aculta_forum.topic_deletion_reject:
   path: '/painel-administrativo/forum/exclusoes-topicos/{id}/rejeitar'
   defaults:
-    _controller: '\Drupal\aculta_forum\Controller\TopicDeletionQueueController::reject'
+    _form: '\Drupal\aculta_forum\Form\TopicDeletionDecisionForm'
+    _title: 'Confirmar restauração do tópico'
   requirements:
     _permission: 'moderate aculta forum topic deletions,administer nodes'
     id: '\d+'
