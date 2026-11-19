@@ -27348,23 +27348,11 @@ parameters:
 		-
 			rawMessage: Cannot access property $value on mixed.
 			identifier: property.nonObject
-			count: 4
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/AnswerReviewWorkflowKernelTest.php
-
-		-
-			rawMessage: 'Cannot call method fileId() on mixed.'
-			identifier: method.nonObject
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/AnswerReviewWorkflowKernelTest.php
 
 		-
-			rawMessage: 'Cannot call method get() on Drupal\Core\Entity\EntityInterface|null.'
-			identifier: method.nonObject
-			count: 3
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/AnswerReviewWorkflowKernelTest.php
-
-		-
-			rawMessage: 'Cannot call method isPermanent() on Drupal\file\Entity\File|null.'
+			rawMessage: 'Cannot call method fileId() on mixed.'
 			identifier: method.nonObject
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/AnswerReviewWorkflowKernelTest.php
@@ -27375,23 +27363,6 @@ parameters:
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/AnswerReviewWorkflowKernelTest.php
 
-		-
-			rawMessage: 'Parameter #1 $file of method Drupal\file\FileUsage\DatabaseFileUsageBackend::listUsage() expects Drupal\file\FileInterface, Drupal\file\Entity\File|null given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/AnswerReviewWorkflowKernelTest.php
-
-		-
-			rawMessage: 'Parameter #1 $id of method Drupal\Core\Entity\EntityStorageBase::load() expects int|string, int|string|null given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/AnswerReviewWorkflowKernelTest.php
-
-		-
-			rawMessage: 'Parameter #1 $id of method Drupal\Core\Entity\EntityStorageInterface::load() expects int|string, int|string|null given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/AnswerReviewWorkflowKernelTest.php
 
 		-
 			rawMessage: 'Parameter #2 $array of static method PHPUnit\Framework\Assert::assertArrayNotHasKey() expects array<mixed>|ArrayAccess<(int|string), mixed>, mixed given.'
@@ -28693,12 +28664,6 @@ parameters:
 			rawMessage: 'Call to static method PHPUnit\Framework\Assert::assertInstanceOf() with ''Drupal\\aculta_lms\\Controller\\XapiStatementsController'' and Drupal\aculta_lms\Controller\XapiStatementsController will always evaluate to true.'
 			identifier: staticMethod.alreadyNarrowedType
 			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/XapiRetentionKernelTest.php
-
-		-
-			rawMessage: 'Parameter #1 $id of method Drupal\Core\Entity\EntityStorageInterface::load() expects int|string, int|string|null given.'
-			identifier: argument.type
-			count: 5
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/XapiRetentionKernelTest.php
 
 		-
@@ -50923,12 +50888,6 @@ parameters:
 			rawMessage: Cannot access offset 'account'|'courses'|'eventos'|'forum'|'links'|'magazine'|'main'|'shop'|'support'|'wiki' on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
-			path: web/modules/custom/aculta_portal/src/Domain/SurfaceConfigReader.php
-
-		-
-			rawMessage: Cannot cast mixed to string.
-			identifier: cast.string
-			count: 3
 			path: web/modules/custom/aculta_portal/src/Domain/SurfaceConfigReader.php
 
 		-

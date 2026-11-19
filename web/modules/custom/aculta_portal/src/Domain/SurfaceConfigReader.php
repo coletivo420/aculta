@@ -121,12 +121,12 @@ final class SurfaceConfigReader {
     $saida = [];
     foreach (array_keys(DomainSurfaceMap::DOMAIN_IDS) as $purpose) {
       $linha = is_array($gravado[$purpose] ?? NULL) ? $gravado[$purpose] : [];
-      $modo = (string) ($linha['modo'] ?? 'subdominio');
+      $modo = is_string($linha['modo'] ?? NULL) ? $linha['modo'] : 'subdominio';
       $saida[$purpose] = [
         'modo' => in_array($modo, self::MODOS, TRUE) ? $modo : 'subdominio',
         'ativa' => (bool) ($linha['ativa'] ?? TRUE),
-        'slug' => (string) ($linha['slug'] ?? ''),
-        'titulo' => (string) ($linha['titulo'] ?? ''),
+        'slug' => is_string($linha['slug'] ?? NULL) ? $linha['slug'] : '',
+        'titulo' => is_string($linha['titulo'] ?? NULL) ? $linha['titulo'] : '',
       ];
     }
     return $saida;

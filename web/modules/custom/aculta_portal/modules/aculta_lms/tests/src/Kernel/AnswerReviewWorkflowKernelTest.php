@@ -209,7 +209,10 @@ final class AnswerReviewWorkflowKernelTest extends KernelTestBase {
     self::assertFalse($formState->hasAnyErrors());
     $form->submitForm($formArray, $formState);
 
-    $graded = $this->container->get('entity_type.manager')->getStorage('aculta_lms_answer')->load($answer->id());
+    $answer_id = $answer->id();
+    self::assertNotNull($answer_id);
+    $graded = $this->container->get('entity_type.manager')->getStorage('aculta_lms_answer')->load($answer_id);
+    self::assertInstanceOf(AnswerEntity::class, $graded);
     self::assertSame('graded', $graded->get('state')->value);
     self::assertSame(87.5, (float) $graded->get('score')->value);
     self::assertSame('Boa análise; desenvolva mais a conclusão.', $graded->get('feedback')->value);
@@ -300,7 +303,10 @@ final class AnswerReviewWorkflowKernelTest extends KernelTestBase {
     $answer = reset($answers);
     self::assertSame('submitted', $answer->get('state')->value);
     self::assertSame((int) $file->id(), $answer->getAnswerPayload()->fileId());
-    $saved_file = $this->container->get('entity_type.manager')->getStorage('file')->load($file->id());
+    $file_id = $file->id();
+    self::assertNotNull($file_id);
+    $saved_file = $this->container->get('entity_type.manager')->getStorage('file')->load($file_id);
+    self::assertInstanceOf(File::class, $saved_file);
     self::assertTrue($saved_file->isPermanent());
     self::assertNotEmpty($this->container->get('file.usage')->listUsage($saved_file));
   }
