@@ -32,6 +32,7 @@ use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupMembership;
 use Drupal\group\Entity\GroupRelationshipInterface;
 use Drupal\KernelTests\KernelTestBase;
+use Drupal\message\Entity\Message;
 use Drupal\message\Entity\MessageTemplate;
 use Drupal\user\Entity\User;
 use PHPUnit\Framework\Attributes\Group;
@@ -161,7 +162,7 @@ final class LearningNoticePersistenceKernelTest extends KernelTestBase {
     $queue = $this->createMock(QueueInterface::class);
     $queue->expects(self::once())
       ->method('createItem')
-      ->with(self::callback(static fn(array $item): bool => (int) ($item['message_id'] ?? 0) > 0))
+      ->with(self::callback(static fn(array $item): bool => is_numeric($item['message_id'] ?? NULL) && (int) $item['message_id'] > 0))
       ->willReturn(1);
     $queueFactory = $this->createMock(QueueFactory::class);
     $queueFactory->expects(self::once())
@@ -226,8 +227,8 @@ final class LearningNoticePersistenceKernelTest extends KernelTestBase {
     self::assertNotNull($message);
 
     self::assertFalse($manager->setRead($message, $other, TRUE));
-    $persisted = $this->container->get('entity_type.manager')->getStorage('message')->load($message->id());
-    self::assertSame(0, (int) $persisted->get('field_aculta_lms_read')->value);
+    $persisted = $this->loadMessage($message->id());
+    self::assertSame(0, $this->integerField($persisted, 'field_aculta_lms_read'));
   }
 
   /**
@@ -250,12 +251,15 @@ final class LearningNoticePersistenceKernelTest extends KernelTestBase {
     $course->method('bundle')->willReturn('lms_course');
     $course->method('label')->willReturn('Curso aberto');
     $course->method('hasPermission')->willReturnCallback(
-      static fn(string $permission, $account): bool => $permission === 'take course'
-        && (int) $account->id() === (int) $learner->id(),
+      fn(string $permission, \Drupal\Core\Session\AccountInterface $account): bool => $permission === 'take course'
+        && $account->id() === $learner->id(),
     );
-    $courseAccessible = TRUE;
-    $course->method('access')->willReturnCallback(function () use (&$courseAccessible): AccessResult {
-      return $courseAccessible ? AccessResult::allowed() : AccessResult::forbidden();
+    $courseAccess = new \ArrayObject(['allowed' => TRUE]);
+    $course->method('access')->willReturnCallback(function () use ($courseAccess): AccessResult {
+      if ($courseAccess['allowed'] === TRUE) {
+        return AccessResult::allowed();
+      }
+      return AccessResult::forbidden();
     });
     $membership = $this->createMock(GroupMembership::class);
     $membership->method('id')->willReturn('membership-24');
@@ -299,7 +303,7 @@ final class LearningNoticePersistenceKernelTest extends KernelTestBase {
     $queue = $this->createMock(QueueInterface::class);
     $queue->expects(self::once())
       ->method('createItem')
-      ->with(self::callback(static fn(array $item): bool => (int) ($item['message_id'] ?? 0) > 0))
+      ->with(self::callback(static fn(array $item): bool => is_numeric($item['message_id'] ?? NULL) && (int) $item['message_id'] > 0))
       ->willReturn(1);
     $queueFactory = $this->createMock(QueueFactory::class);
     $queueFactory->expects(self::once())->method('get')->with('aculta_lms_messenger_email')->willReturn($queue);
@@ -333,20 +337,19 @@ final class LearningNoticePersistenceKernelTest extends KernelTestBase {
       ->condition('template', LearningNoticeManager::TEMPLATE)
       ->condition('uid', (int) $learner->id())
       ->execute();
-    $message = $storage->load(reset($messageIds));
-    self::assertNotNull($message);
-    self::assertSame(0, (int) $message->get('field_aculta_lms_read')->value);
+    $message = $this->loadMessage(reset($messageIds));
+    self::assertSame(0, $this->integerField($message, 'field_aculta_lms_read'));
 
     $central = new NoticeReadStateManager(
       $realEntityTypeManager,
       ['lms' => $manager],
     );
     self::assertTrue($central->setRead((int) $message->id(), $learner, TRUE));
-    self::assertSame(1, (int) $storage->load($message->id())->get('field_aculta_lms_read')->value);
+    self::assertSame(1, $this->integerField($this->loadMessage($message->id()), 'field_aculta_lms_read'));
 
-    $courseAccessible = FALSE;
+    $courseAccess['allowed'] = FALSE;
     self::assertFalse($central->setRead((int) $message->id(), $learner, FALSE));
-    self::assertSame(1, (int) $storage->load($message->id())->get('field_aculta_lms_read')->value);
+    self::assertSame(1, $this->integerField($this->loadMessage($message->id()), 'field_aculta_lms_read'));
 
     // The queued direct email rechecks the same course access at delivery.
     $this->container->get('user.data')->set('aculta_portal', (int) $learner->id(), 'email_confirmed', TRUE);
@@ -372,10 +375,10 @@ final class LearningNoticePersistenceKernelTest extends KernelTestBase {
     );
     $worker->processItem(['message_id' => (int) $message->id()]);
 
-    self::assertSame('cancelled', $storage->load($message->id())->get('field_aculta_msg_delivery')->value);
-    self::assertSame(1, (int) $storage->load($message->id())->get('field_aculta_lms_read')->value, 'The required site notice remains stored when current course access is revoked.');
+    self::assertSame('cancelled', $this->loadMessage($message->id())->get('field_aculta_msg_delivery')->value);
+    self::assertSame(1, $this->integerField($this->loadMessage($message->id()), 'field_aculta_lms_read'), 'The required site notice remains stored when current course access is revoked.');
     (new LearningNoticeEventSubscriber($manager, $preferences, new NullLogger()))->consume($event);
-    self::assertSame('cancelled', $storage->load($message->id())->get('field_aculta_msg_delivery')->value, 'Replaying the source event does not revive the cancelled direct email.');
+    self::assertSame('cancelled', $this->loadMessage($message->id())->get('field_aculta_msg_delivery')->value, 'Replaying the source event does not revive the cancelled direct email.');
   }
 
   /**
@@ -402,6 +405,20 @@ final class LearningNoticePersistenceKernelTest extends KernelTestBase {
       'field_name' => $name,
       'label' => $name,
     ])->save();
+  }
+
+  private function loadMessage(int|string|false|null $id): Message {
+    self::assertNotFalse($id);
+    self::assertNotNull($id);
+    $message = Message::load($id);
+    self::assertNotNull($message);
+    return $message;
+  }
+
+  private function integerField(Message $message, string $field): int {
+    $value = $message->get($field)->value;
+    self::assertIsNumeric($value);
+    return (int) $value;
   }
 
 }
