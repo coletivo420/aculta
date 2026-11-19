@@ -295,6 +295,9 @@ final class CommerceOrderNoticePersistenceKernelTest extends KernelTestBase {
 
   /**
    * Creates one field storage/config pair for the fixture bundle.
+   *
+   * @param array<string, mixed> $settings
+   *   Storage settings for the field.
    */
   private function installField(string $name, string $type, array $settings = []): void {
     FieldStorageConfig::create([
