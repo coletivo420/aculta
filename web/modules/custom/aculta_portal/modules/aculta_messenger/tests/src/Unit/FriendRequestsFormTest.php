@@ -38,10 +38,12 @@ final class FriendRequestsFormTest extends UnitTestCase {
 
     $built = $form->buildForm([], $this->createMock(FormStateInterface::class));
 
-    self::assertSame('Pessoa solicitante', $built['member_7']['name']['#plain_text']);
-    self::assertSame('accept_7', $built['member_7']['actions']['accept']['#name']);
-    self::assertSame('decline_7', $built['member_7']['actions']['decline']['#name']);
-    self::assertContains('user', $built['#cache']['contexts']);
+    $member = self::arrayAt($built, 'member_7');
+    self::assertSame('Pessoa solicitante', self::arrayAt($member, 'name')['#plain_text']);
+    $actions = self::arrayAt($member, 'actions');
+    self::assertSame('accept_7', self::arrayAt($actions, 'accept')['#name']);
+    self::assertSame('decline_7', self::arrayAt($actions, 'decline')['#name']);
+    self::assertContains('user', self::arrayAt(self::arrayAt($built, '#cache'), 'contexts'));
   }
 
   /**
@@ -71,7 +73,7 @@ final class FriendRequestsFormTest extends UnitTestCase {
 
     $built = $form->buildForm([], $formState, [$request]);
 
-    self::assertSame('Pessoa solicitante', $built['member_7']['name']['#plain_text']);
+    self::assertSame('Pessoa solicitante', self::arrayAt(self::arrayAt($built, 'member_7'), 'name')['#plain_text']);
   }
 
   /**
@@ -104,7 +106,7 @@ final class FriendRequestsFormTest extends UnitTestCase {
     $built = $form->buildForm([], $formState, [$staleRequest]);
 
     self::assertArrayNotHasKey('member_7', $built);
-    self::assertSame('Pessoa atual', $built['member_8']['name']['#plain_text']);
+    self::assertSame('Pessoa atual', self::arrayAt(self::arrayAt($built, 'member_8'), 'name')['#plain_text']);
   }
 
   /**
@@ -155,6 +157,21 @@ final class FriendRequestsFormTest extends UnitTestCase {
     $form = new FriendRequestsForm($friendships, $entityManager, $account);
     $form->setStringTranslation($this->getStringTranslationStub());
     return $form;
+  }
+
+  /**
+   * Validates and returns one form render element.
+   *
+   * @param array<mixed> $parent
+   *   Form or render element.
+   *
+   * @return array<mixed>
+   *   Requested nested element.
+   */
+  private static function arrayAt(array $parent, int|string $key): array {
+    self::assertArrayHasKey($key, $parent);
+    self::assertIsArray($parent[$key]);
+    return $parent[$key];
   }
 
 }

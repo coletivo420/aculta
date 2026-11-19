@@ -12,6 +12,7 @@ use Drupal\user\Entity\Role;
 use Drupal\user\Entity\User;
 use Drupal\Core\Routing\RouteMatch;
 use Drupal\Core\Session\AnonymousUserSession;
+use Drupal\Core\Access\CheckProviderInterface;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Symfony\Component\HttpFoundation\Request;
@@ -176,8 +177,8 @@ final class PrivateMessageRouteAccessKernelTest extends KernelTestBase {
     $thread->addMessage($message);
     $thread->save();
 
-    [$routeName, $route, $path] = $this->productionReplyRoute((int) $thread->id());
-    /** @var \Symfony\Component\Routing\Route $route */
+    $threadId = $this->threadId($thread);
+    [$routeName, $route, $path] = $this->productionReplyRoute($threadId);
     self::assertSame(['POST'], $route->getMethods());
     $routeMatch = new RouteMatch(
       $routeName,
@@ -211,25 +212,20 @@ final class PrivateMessageRouteAccessKernelTest extends KernelTestBase {
   /**
    * Loads the production route and runs Drupal's tagged access checks.
    *
-   * @param int $threadId
-   *   O valor informado para $threadId.
-   *
-   * @return array<array-key, mixed>
+   * @return array{string, Route, string}
    *   Route name, route object, and path with its thread parameter replaced.
    */
   private function productionReplyRoute(int $threadId): array {
-    $routeFile = dirname(__DIR__, 3) . '/aculta_messenger.routing.yml';
-    $definitions = Yaml::decode(file_get_contents($routeFile));
     $name = 'aculta_messenger.drawer_reply';
-    $definition = $definitions[$name];
+    $definition = $this->routeDefinition($name);
     $route = new Route(
       $definition['path'],
-      $definition['defaults'] ?? [],
-      $definition['requirements'] ?? [],
-      $definition['options'] ?? [],
+      $definition['defaults'],
+      $definition['requirements'],
+      $definition['options'],
       '',
       [],
-      $definition['methods'] ?? [],
+      $definition['methods'],
     );
     $collection = new RouteCollection();
     $collection->add($name, $route);
@@ -237,8 +233,11 @@ final class PrivateMessageRouteAccessKernelTest extends KernelTestBase {
     // containers. Use the instance owned by the public AccessManager service.
     $accessManager = $this->container->get('access_manager');
     $providerProperty = new \ReflectionProperty($accessManager, 'checkProvider');
-    $providerProperty->getValue($accessManager)->setChecks($collection);
+    $checkProvider = $providerProperty->getValue($accessManager);
+    self::assertInstanceOf(CheckProviderInterface::class, $checkProvider);
+    $checkProvider->setChecks($collection);
     $route = $collection->get($name);
+    self::assertInstanceOf(Route::class, $route);
     $path = str_replace('{private_message_thread}', (string) $threadId, ltrim($definition['path'], '/'));
     return [$name, $route, $path];
   }
@@ -250,25 +249,74 @@ final class PrivateMessageRouteAccessKernelTest extends KernelTestBase {
    *   Route name and route definition.
    */
   private function productionEmailPreferencesRoute(): array {
-    $routeFile = dirname(__DIR__, 3) . '/aculta_messenger.routing.yml';
-    $definitions = Yaml::decode(file_get_contents($routeFile));
     $name = 'aculta_messenger.communication_settings';
-    $definition = $definitions[$name];
+    $definition = $this->routeDefinition($name);
     $route = new Route(
       $definition['path'],
-      $definition['defaults'] ?? [],
-      $definition['requirements'] ?? [],
-      $definition['options'] ?? [],
+      $definition['defaults'],
+      $definition['requirements'],
+      $definition['options'],
       '',
       [],
-      $definition['methods'] ?? [],
+      $definition['methods'],
     );
     $collection = new RouteCollection();
     $collection->add($name, $route);
     $accessManager = $this->container->get('access_manager');
     $providerProperty = new \ReflectionProperty($accessManager, 'checkProvider');
-    $providerProperty->getValue($accessManager)->setChecks($collection);
-    return [$name, $collection->get($name)];
+    $checkProvider = $providerProperty->getValue($accessManager);
+    self::assertInstanceOf(CheckProviderInterface::class, $checkProvider);
+    $checkProvider->setChecks($collection);
+    $route = $collection->get($name);
+    self::assertInstanceOf(Route::class, $route);
+    return [$name, $route];
+  }
+
+  /**
+   * Reads and validates one production route definition from module YAML.
+   *
+   * @return array{path: string, defaults: array<mixed>, requirements: array<string, string>, options: array<mixed>, methods: list<string>}
+   *   A route definition accepted by Symfony's Route constructor.
+   */
+  private function routeDefinition(string $routeName): array {
+    $routeFile = dirname(__DIR__, 3) . '/aculta_messenger.routing.yml';
+    $contents = file_get_contents($routeFile);
+    self::assertIsString($contents);
+    $definitions = Yaml::decode($contents);
+    self::assertIsArray($definitions);
+    $definition = $definitions[$routeName] ?? NULL;
+    self::assertIsArray($definition);
+
+    $path = $definition['path'] ?? NULL;
+    self::assertIsString($path);
+    $defaults = $definition['defaults'] ?? [];
+    self::assertIsArray($defaults);
+    $requirements = $definition['requirements'] ?? [];
+    self::assertIsArray($requirements);
+    $validatedRequirements = [];
+    foreach ($requirements as $key => $requirement) {
+      self::assertIsString($key);
+      self::assertIsString($requirement);
+      $validatedRequirements[$key] = $requirement;
+    }
+    $options = $definition['options'] ?? [];
+    self::assertIsArray($options);
+    $methods = $definition['methods'] ?? [];
+    self::assertIsArray($methods);
+    self::assertTrue(array_is_list($methods));
+    $validatedMethods = [];
+    foreach ($methods as $method) {
+      self::assertIsString($method);
+      $validatedMethods[] = $method;
+    }
+
+    return [
+      'path' => $path,
+      'defaults' => $defaults,
+      'requirements' => $validatedRequirements,
+      'options' => $options,
+      'methods' => $validatedMethods,
+    ];
   }
 
   /**
@@ -276,6 +324,7 @@ final class PrivateMessageRouteAccessKernelTest extends KernelTestBase {
    */
   private function grantMessagingPermissions(): void {
     $role = Role::load(Role::AUTHENTICATED_ID);
+    self::assertInstanceOf(Role::class, $role);
     $role->grantPermission('use private messaging system');
     $role->grantPermission('access user profiles');
     $role->save();
@@ -292,6 +341,16 @@ final class PrivateMessageRouteAccessKernelTest extends KernelTestBase {
     ]);
     $account->save();
     return $account;
+  }
+
+  /**
+   * Gets a persisted thread ID as an integer for the route parameter.
+   */
+  private function threadId(PrivateMessageThread $thread): int {
+    $id = $thread->id();
+    self::assertNotNull($id);
+    self::assertIsNumeric($id);
+    return (int) $id;
   }
 
 }

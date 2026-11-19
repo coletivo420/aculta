@@ -313,9 +313,13 @@ final class EventsContributionNoticeManager implements EventsContributionNoticeM
         $message->set(self::DIGEST_FIELD, 1)->save();
         continue;
       }
+      $summary = $notice['email_summary'] ?? NULL;
+      if (!is_string($summary)) {
+        continue;
+      }
       $rows[] = [
         'tipo' => 'eventos_contribuicoes',
-        'titulo' => $notice['email_summary'],
+        'titulo' => $summary,
         'quantidade' => 1,
         'delivery_id' => (int) $message->id(),
       ];

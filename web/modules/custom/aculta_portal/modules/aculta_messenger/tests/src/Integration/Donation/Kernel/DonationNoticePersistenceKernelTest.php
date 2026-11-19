@@ -107,18 +107,18 @@ final class DonationNoticePersistenceKernelTest extends KernelTestBase {
       ->sort('created')
       ->execute();
     self::assertCount(3, $ids);
-    $messages = array_values($storage->loadMultiple($ids));
+    $messages = array_values(Message::loadMultiple($ids));
     self::assertSame([
       'donation.order_placed',
       'donation.payment_approved',
       'donation.payment_approved',
-    ], array_map(static fn ($message): string => $message->get('field_aculta_don_event')->value, $messages));
+    ], array_map(fn (Message $message): string => $this->stringField($message, 'field_aculta_don_event'), $messages));
     self::assertSame(['order-1', 'payment-1', 'payment-2'], array_map(
-      static fn ($message): string => $message->get('field_aculta_don_src_uuid')->value,
+      fn (Message $message): string => $this->stringField($message, 'field_aculta_don_src_uuid'),
       $messages,
     ));
     self::assertSame([1, 1, 1], array_map(
-      static fn ($message): int => (int) $message->get('field_aculta_don_digest')->value,
+      fn (Message $message): int => $this->integerField($message, 'field_aculta_don_digest'),
       $messages,
     ));
   }
@@ -275,9 +275,10 @@ final class DonationNoticePersistenceKernelTest extends KernelTestBase {
     );
 
     $storage = $this->container->get('entity_type.manager')->getStorage('message');
-    $message = $storage->load(reset($storage->getQuery()->accessCheck(FALSE)->execute()));
+    $messageIds = $storage->getQuery()->accessCheck(FALSE)->execute();
+    $message = $this->loadMessage(reset($messageIds));
     self::assertTrue($manager->setRead($message, $user, TRUE));
-    self::assertSame(1, (int) $storage->load($message->id())->get('field_aculta_don_read')->value);
+    self::assertSame(1, $this->integerField($this->loadMessage($message->id()), 'field_aculta_don_read'));
 
     $other = User::create([
       'name' => 'other_donation_reader',
@@ -286,9 +287,9 @@ final class DonationNoticePersistenceKernelTest extends KernelTestBase {
     ]);
     $other->save();
     self::assertFalse($manager->setRead($message, $other, FALSE));
-    self::assertSame(1, (int) $storage->load($message->id())->get('field_aculta_don_read')->value);
+    self::assertSame(1, $this->integerField($this->loadMessage($message->id()), 'field_aculta_don_read'));
     self::assertTrue($manager->setRead($message, $user, FALSE));
-    self::assertSame(0, (int) $storage->load($message->id())->get('field_aculta_don_read')->value);
+    self::assertSame(0, $this->integerField($this->loadMessage($message->id()), 'field_aculta_don_read'));
   }
 
   /**
@@ -381,7 +382,11 @@ final class DonationNoticePersistenceKernelTest extends KernelTestBase {
   }
 
   /**
-   * Installs one Message field on the Donation fixture template. */
+   * Installs one Message field on the Donation fixture template.
+   *
+   * @param array<string, mixed> $settings
+   *   Field-type settings.
+   */
   private function installField(string $name, string $type, array $settings = []): void {
     FieldStorageConfig::create([
       'entity_type' => 'message',
@@ -396,6 +401,26 @@ final class DonationNoticePersistenceKernelTest extends KernelTestBase {
       'field_name' => $name,
       'label' => $name,
     ])->save();
+  }
+
+  private function loadMessage(int|string|false|null $id): Message {
+    self::assertNotFalse($id);
+    self::assertNotNull($id);
+    $message = Message::load($id);
+    self::assertNotNull($message);
+    return $message;
+  }
+
+  private function integerField(Message $message, string $field): int {
+    $value = $message->get($field)->value;
+    self::assertIsNumeric($value);
+    return (int) $value;
+  }
+
+  private function stringField(Message $message, string $field): string {
+    $value = $message->get($field)->value;
+    self::assertIsString($value);
+    return $value;
   }
 
 }
