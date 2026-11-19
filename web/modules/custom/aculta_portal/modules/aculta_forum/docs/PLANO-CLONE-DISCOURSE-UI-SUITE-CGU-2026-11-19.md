@@ -395,18 +395,22 @@ acervo legado preexistente devem continuar existindo. A extração de ownership
 para `aculta_forum_legacy` não autoriza apagar nem recriar esses registros.
 “Limpar dados da refatoração” significa identificar somente registros ou
 artefatos persistidos que foram criados pela própria refatoração; antes de
-qualquer remoção, provar sua origem e separá-los do acervo anterior.
-Nenhuma exclusão persistente será executada nesta fase de planejamento, e
-a extração não exige manter tabelas temporárias/paralelas comprovadamente
-criadas pela refatoração. F-D44 determina preservar `aculta_legado_autor`, seus
-registros de autoria e os vínculos existentes; o FDC-11.0 verificará a
-proveniência e completude das linhas sem transformar a entidade canônica em
-alvo de limpeza. Artefatos de conteúdo criados pelas migrations, como
-ForumPosts/Flaggings duplicados, continuam sujeitos à limpeza condicional
-descrita acima. Não exportar dados pessoais.
+qualquer remoção, provar sua origem e separá-los do acervo anterior. Uma vez
+comprovado que o registro foi criado pela refatoração, removê-lo é o resultado
+esperado da fase de limpeza, não apenas uma possibilidade a considerar. A
+extração de ownership e essa limpeza são operações distintas. Nenhuma exclusão
+persistente será executada nesta fase de planejamento; a operação futura
+precisa de lista exata, método reversível e validação em clone. A extração não
+exige manter tabelas temporárias/paralelas comprovadamente criadas pela
+refatoração. F-D44 determina preservar `aculta_legado_autor`, seus registros de
+autoria e os vínculos existentes; o FDC-11.0 verificará a proveniência e
+completude das linhas sem transformar a entidade canônica em alvo de limpeza.
+ForumPosts/Flaggings duplicados e demais registros persistentes comprovados
+como efeitos da refatoração serão removidos na fase de limpeza. Não exportar
+dados pessoais.
 
 Para identificar dados eventualmente criados pela refatoração, o census deve
-correlacionar a proveniência das migrations antes de propor limpeza:
+correlacionar a proveniência das migrations antes de definir a limpeza:
 
 | Migration | Evidência de proveniência | Possível efeito da refatoração |
 | --- | --- | --- |
@@ -441,10 +445,10 @@ registros deles no Runtime:
 
 | Domínio a verificar | Evidência para atribuir à refatoração | Tratamento planejado |
 | --- | --- | --- |
-| Revisões, relações pai/filho, reações e referências em ForumPosts de destino | ID de destino ligado ao CID e à migration; revisar histórico/revisões e relações atuais; reações e referências só entram se ligadas ao ID exato | Identificar registros dependentes e alterações posteriores antes de qualquer proposta de limpeza; não usar rollback em lote. |
-| Eventos de atividade/participação, contagens ou concessões do Game | Ledger/event ID ou referência explícita ao ID de destino/importação; comparar hooks e regras de supressão efetivamente vigentes na versão executada | Distinguir projeções reconstruíveis de concessões/participações persistidas. Não remover por janela de tempo, UID ou similaridade; qualquer correção exige plano próprio e reconciliação. |
-| Filas, avisos, subscriptions e mensagens do Messenger | Item de fila com entidade/source ID, logs de worker ou vínculo explícito com operação de importação; auditar também itens já consumidos | Itens pendentes identificados podem ser avaliados na limpeza; mensagens/notificações já entregues são efeitos externos e não são desfeitos pelo rollback. |
-| Documentos de Search API/Index e métricas/projeções de Statistics | IDs de entidade de destino nos trackers/índices ou chaves de origem no ledger de métricas; snapshots agregados antes/depois sem exportar conteúdo pessoal | Remover ou reconstruir somente após provar a origem e obter autorização operacional específica; nunca executar rebuild durante esta fase. Isolar métricas históricas das correntes. |
+| Revisões, relações pai/filho, reações e referências em ForumPosts de destino | ID de destino ligado ao CID e à migration; revisar histórico/revisões e relações atuais; reações e referências só entram se ligadas ao ID exato | Remover os registros comprovados e tratar alterações posteriores dependentes no plano reversível; não usar rollback em lote. |
+| Eventos de atividade/participação, contagens ou concessões do Game | Ledger/event ID ou referência explícita ao ID de destino/importação; comparar hooks e regras de supressão efetivamente vigentes na versão executada | Apagar eventos/registros comprovados da refatoração; separar projeções reconstruíveis de concessões/participações persistidas e reconciliar saldos sem remover por janela de tempo, UID ou similaridade. |
+| Filas, avisos, subscriptions e mensagens do Messenger | Item de fila com entidade/source ID, logs de worker ou vínculo explícito com operação de importação; auditar também itens já consumidos | Remover itens e registros pendentes comprovados; mensagens/notificações já entregues são efeitos externos e não são desfeitos pelo rollback, portanto registrar como não reversíveis. |
+| Documentos de Search API/Index e métricas/projeções de Statistics | IDs de entidade de destino nos trackers/índices ou chaves de origem no ledger de métricas; snapshots agregados antes/depois sem exportar conteúdo pessoal | Remover projeções comprovadas e reconstruir somente após plano operacional próprio com comparação de baseline; nunca executar rebuild durante esta fase. Isolar métricas históricas das correntes. |
 | Cache, estado temporário e logs de execução | Chaves namespaced pela migration/entidade e retenção documentada; logs sem copiar PII para o relatório | Registrar como estado operacional, não como acervo. Não limpar globalmente nem tratar cache/log como prova única da origem de conteúdo. |
 
 Em todos esses domínios, IDs e vínculos explícitos são evidência; horário,
@@ -454,32 +458,36 @@ entregues) para que a remoção do registro de origem não seja descrita como
 reversão total. Artefatos reconstruíveis só serão reindexados/reconciliados em
 etapa operacional própria, autorizada e com comparação de baseline.
 
-### Fase condicional: limpeza de artefatos comprovados da refatoração
+### Fase planejada: remoção de dados comprovadamente produzidos pela refatoração
 
 Esta é uma fase separada do FDC-11.0 (census) e do FDC-11.3 (transferência de
-ownership); nenhum dos dois autoriza exclusão. Ela ocorre depois do FDC-11.0 e
-antes de desativar ou retirar em FDC-11.2 as definições/plugins necessários à
-proveniência. Manter mapas e definições de migration disponíveis até a decisão
-documentada de limpeza; não os apagar para simplificar a extração. Depois do
-census, identificar IDs exatos dos registros criados pela refatoração em todos
-os domínios acima, começando pelos ForumPosts, relações pai/filho e Flaggings
-das migrations e denúncias CGU relacionadas por `legacy_flag_id`. Em clone
-restaurável, inspecionar revisões, filhos, reações, referências,
-casos/decisões, filas, eventos de atividade/participação, mensageria,
-projeções e efeitos já entregues; criar prévia e plano reversível por conjunto
-de IDs. A validação deve provar que Comments, tópicos, autores, relações, URLs
-e arquivos preexistentes permanecem intactos. Não executar rollback em lote;
-e-mails e eventos externos já entregues não são apagáveis por rollback, e a
-auditoria de denúncias que avançaram de estado precisa de tratamento próprio.
+ownership). O censo prova proveniência; a transferência não apaga dados; a fase
+de limpeza remove os registros persistidos da refatoração, caso existam. Ela
+ocorre depois do FDC-11.0 e antes de desativar ou retirar em FDC-11.2 as
+definições/plugins necessários à proveniência. Manter mapas e definições de
+migration até concluir a limpeza; não os apagar para simplificar a extração.
+Depois do censo, identificar IDs exatos dos registros criados pela refatoração
+em todos os domínios acima, começando pelos ForumPosts, relações pai/filho e
+Flaggings das migrations e denúncias CGU relacionadas por
+`legacy_flag_id`. Em clone restaurável, inspecionar revisões, filhos, reações,
+referências, casos/decisões, filas, eventos de atividade/participação,
+mensageria, projeções e efeitos já entregues; produzir prévia, método
+reversível e comparação antes/depois por conjunto de IDs. A validação deve
+provar que Comments, tópicos, autores, relações, URLs e arquivos preexistentes
+permanecem intactos. Não executar rollback em lote; e-mails e eventos externos
+já entregues não são apagáveis por rollback, e denúncias que avançaram de
+estado precisam de tratamento próprio.
 
-Somente artefatos cuja origem na refatoração esteja demonstrada por mapas e
-proveniência podem entrar na proposta de limpeza. Registros sem evidência
-suficiente permanecem intocados. F-D44 determina preservar a entidade/tabela
-`aculta_legado_autor`, seus autores e atribuições, além dos tópicos e comentários
-originais. Tabelas ou registros de conteúdo duplicados criados pelas migrations
-podem ser candidatos à limpeza após verificação das dependências; não confundir
-esses artefatos com a storage canônica de autoria. Qualquer exclusão persistente
-aguarda autorização operacional específica para a lista e o método revisados.
+Todos os registros cuja origem na refatoração esteja demonstrada por mapas e
+proveniência são alvo de remoção, depois de resolvidas suas dependências e
+preparados backup, reversão e autorização operacional da execução concreta.
+Registros sem evidência suficiente permanecem intocados até nova prova. F-D44
+determina preservar a entidade/tabela `aculta_legado_autor`, seus autores e
+atribuições, além dos tópicos e comentários originais. Não confundir registros
+duplicados criados pelas migrations com a storage canônica de autoria. Se o
+censo comprovar que não há dados persistidos da refatoração, esta fase registra
+resultado sem exclusão; não cria nem mantém tabela paralela para satisfazer o
+plano.
 
 ### Pipeline de coleta e curadoria do acervo
 
@@ -509,10 +517,12 @@ saídas de curadoria fora do pacote público do módulo; não copiar dados priva
 para o repositório. Preservar manifests e resultados de seleção que dão
 proveniência à importação. Eles e o corpus histórico não são “dados criados pela
 refatoração”; não os remover por nome, data ou por serem derivados. São
-distintos dos ForumPosts/Flaggings que uma migration Comment→ForumPost pode ter
-criado no Drupal e que só podem ser limpos por proveniência de migration. A
-opção de testar links no site vivo exige execução externa explícita e fica fora
-do census/leitura local.
+distintos dos dados persistidos que a refatoração possa ter criado no Drupal.
+Estes últimos — ForumPosts/Flaggings migrados, efeitos vinculados em CGU,
+Game/Messenger, projeções e índices — têm remoção como resultado esperado
+quando sua proveniência estiver comprovada por mapa, ID de origem ou vínculo
+explícito, conforme a fase de limpeza acima. A opção de testar links no site
+vivo exige execução externa explícita e fica fora do census/leitura local.
 
 ### Inventário a migrar para o addon
 
