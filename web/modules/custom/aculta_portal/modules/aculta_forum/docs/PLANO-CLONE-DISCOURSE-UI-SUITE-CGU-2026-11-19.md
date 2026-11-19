@@ -164,13 +164,19 @@ agora descreve `ARCHIVE`, registra o field direto apenas como implementação
 atual e data o estado antigo de Runtime; após a extração deve remover também
 essa referência de implementação. `ACULTA-USER-PLAN.md`, `SOURCE-OF-TRUTH.md`,
 `docs/architecture/aculta_forum.md` e `docs/architecture/avatar.md` ainda
-descrevem autoria, campos e ownership em User/Forum; `ROUTES-SITEMAP.md` e
+descrevem autoria, campos e ownership em User/Forum. `docs/modules/PERFIL-PUBLICO-E-CARTAO-DE-AUTOR.md`
+delimita o contrato de perfis User, remete a apresentação histórica em
+tópicos/comentários à F-D44 e ao addon, e deixa proveniência/imagens históricas
+sob responsabilidade do addon, sem autorizar ingestão ou associação a contas.
+`ROUTES-SITEMAP.md` e
 `FRIENDLY-PORTUGUESE-SLUGS.md` registram a rota e reserva do memorial; e
 `FORUM-GAME-PESQUISA-VALIDACAO.md` resume regras de integração. No FDC-11.2,
 mover a política detalhada para os documentos do addon e deixar nesses
 documentos transversais apenas contratos atuais e links para o dono normativo.
-Preservar rota e reserva por provider genérico. `RUNTIME-WINDOW-PLAN-2026-11-12.md`
-é evidência operacional datada: não executá-lo como autorização atual nem
+O contrato de perfil User deve continuar sem regras de imagem/autoria próprias
+do acervo; referenciar a política do addon quando aplicável. Preservar rota e
+reserva por provider genérico. `RUNTIME-WINDOW-PLAN-2026-11-12.md` é evidência
+operacional datada: não executá-lo como autorização atual nem
 apagar seu histórico; se a migração de ownership tornar seus passos obsoletos,
 marcá-los como supersedidos por este plano.
 
