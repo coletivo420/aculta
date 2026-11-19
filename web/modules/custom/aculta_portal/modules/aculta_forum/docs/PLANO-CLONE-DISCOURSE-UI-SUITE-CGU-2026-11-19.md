@@ -145,6 +145,20 @@ consumo de avisos/assinaturas) e `aculta_cgu` (ponte Flagging→denúncia e
 prova ausência de acoplamento indireto: eventos e contratos genéricos ainda
 precisam ser auditados pelos efeitos que produzem.
 
+Uma varredura separada dos testes encontrou fixtures e expectativas legadas em
+`aculta_forum`, `aculta_user`, `aculta_game`, `aculta_messenger` e
+`aculta_cgu`; por exemplo, `ForumCguIntegrationKernelTest` instala o schema de
+`aculta_legado_autor`, testes de Forum/User/Game criam fields históricos, e
+testes de migração do Fórum registram o target type e os maps legados. Embora
+isso não seja dependência carregada em runtime, esses testes hoje mantêm a
+semântica específica espalhada e podem exigir a extensão opcional para rodar.
+No FDC-11.2, mover cenários cuja finalidade é testar autoria, classificação,
+memorial, imutabilidade e efeitos do arquivo para testes do addon/integrados;
+nos módulos principais manter testes de contrato neutro (`ARCHIVE`,
+`CURRENT`, `CONTEXTUAL`, `UNKNOWN`) usando providers/fixtures genéricos, sem
+instalar entidade, field, rota ou schema exclusivo do legado. A suíte sem addon
+deve continuar instalável e provar as políticas genéricas de fail-closed.
+
 O census também separou referências genéricas ao Fórum de referências ao
 acervo. `aculta_statistics` consome eventos correntes de atividade sem
 classificar proveniência no subscriber; sua integração deve ser validada para
