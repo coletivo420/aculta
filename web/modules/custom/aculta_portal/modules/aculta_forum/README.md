@@ -117,8 +117,8 @@ por padrão).
 - Publicações, LMS e Wiki usam comentários no contexto da entidade original; não
   há tópico público automático para publicação ou verbete.
 - LMS tem adapter opcional e acesso revalidado por Group/membership e Entity Access.
-- `aculta_user` é o dono único de identidade e cartões de autor/participante/perfil. Variantes distinguem `author_forum`, `author_comment`, `author_editorial`, `author_lms`, `author_wiki` e `author_growroom_historico`; autoria histórica não passa pelo resolver de User.
-- Nas listagens públicas, a última atividade compara mudança do Node, Comment Core e ForumPost publicado. A identidade User/histórica usa o `aculta_user.author_card_builder` e é carregada em lotes; o nome de login nunca é exibido.
+- `aculta_user` é dono da identidade e dos cartões de usuários atuais. O adapter de autoria do acervo, seus dados e a apresentação histórica pertencem a `aculta_forum_legacy`; sua presença é opcional em projetos que não instalam o arquivo.
+- Nas listagens públicas, a última atividade compara mudança do Node, Comment Core e ForumPost publicado. A identidade de usuários atuais usa o `aculta_user.author_card_builder`; autoria histórica, quando o addon está instalado, é apresentada somente nos tópicos e comentários do acervo, respeitando o perfil legado e sem criar página individual.
 - ACULTA420 é o dono visual; `aculta_forum` entrega contrato neutro, acesso e cache.
 - Core/contrib permanecem fonte de verdade para Node, Taxonomy, Views, Search
   API, History, Flag e workflow/revisão. A entidade `aculta_forum_post` passa a

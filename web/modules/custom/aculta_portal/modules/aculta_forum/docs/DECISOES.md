@@ -89,6 +89,7 @@ A rota legada `/comment/{cid}` deve responder 404. Comentários permanecem acess
 | F-D44 | Autores Growroom permanecem `aculta_legado_autor`, sem User/Profile nem rota individual `/u/`. O memorial coletivo `/u/lendashistoricas` é a única página pública de memória e mantém os nomes sem sufixo. `-gr` aparece apenas no nome de exibição do cartão de autoria em conteúdo do Fórum. | Determinado pelo responsável em 2026-10-26. `aculta_user 0.4.0-dev.80` aplica o sufixo somente nos adapters de conteúdo Fórum; nenhuma página individual ou nova identidade é criada. |
 | F-D45 | Para autores Growroom sem ID de perfil/origem na captura, usar `origem_id` determinístico derivado de SHA-256 do nome normalizado; IDs IPS4/THW disponíveis permanecem prioritários. Nomes normalizados iguais compartilham a chave, com risco conhecido de agrupar homônimos. Registros sem nome normalizável permanecem pendentes e não podem ser importados. | Determinado pelo responsável em 2026-10-26. O gerador versionado produz o manifesto e o gate verifica unicidade/formato, referências e pendências; não realiza importação Drupal. |
 | F-D46 | Tópicos de vida interna do fórum (incluindo os 616 identificados) e tópicos marcados `revisar` (17 no levantamento atual) ficam excluídos por padrão da importação do acervo. | Determinado pelo responsável em 2026-10-26. A inclusão exige seleção manual explícita; o classificador e o gate devem manter o comportamento fail-closed. A regra não apaga nem altera o acervo privado de origem. |
+| F-D47 | **Inválida; não usar como regra de produto ou de implementação.** A redação anterior tentou resumir e ampliar F-D44 e introduziu uma interpretação incorreta. F-D44 permanece vigente e suficiente: memorial coletivo, sem perfis individuais, e apresentação do autor nos tópicos e comentários do fórum legado conforme o perfil legado. A extração técnica para `aculta_forum_legacy` é um plano de arquitetura em andamento, não decisão de produto registrada por F-D47. | Correção determinada pelo responsável em 2026-11-19. Não altera nem substitui F-D44. |
 
 "Memorial" significa memória da comunidade; não afirma falecimento das pessoas.
 O bloqueio é técnico e não constitui punição, expulsão ou avaliação da pessoa.
@@ -123,8 +124,9 @@ acesso a conteúdo reservado. Importação não concede conquistas contemporâne
 - Usar Migrate API, identificadores estáveis de origem e importação repetível.
 - Reservar `lendashistoricas` antes da resolução genérica `/u/{apelido}` e impedir
   que o cadastro comum ocupe esse apelido. Inspecionar colisões antes de alterar dados.
-- Fazer todos os links públicos de autor legado apontarem à mesma rota do memorial,
-  preservando o nome individual como texto, inclusive nos comentários e nas Views.
+- Preservar o nome individual somente como apresentação nos tópicos e comentários
+  históricos, segundo F-D44. O memorial coletivo continua sendo a única página
+  pública; não criar perfil, rota ou listagem por autor.
 - Reutilizar a pilha Message para novas respostas, com um único dono da entrega.
 
 ## Decisões posteriores, sem bloqueio da documentação
