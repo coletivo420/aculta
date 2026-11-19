@@ -360,7 +360,8 @@ Drupal, em `scripts/growroom/`: `wayback_fetch.py` obtém capturas CDX;
 legados; `gerar_imagem_padrao.py` cria o placeholder de imagem ausente; e
 `verificar_importacao.py` valida hashes, manifestos, links, seleção, privacidade
 e autoria. `tests/scripts/test_growroom_origin_ids.py` testa parte da chave
-estável dos autores. Esse código e seus contratos de seleção/validação são
+estável dos autores, e `tests/scripts/README.md` descreve a execução dessas
+verificações. Scripts, testes e instruções de seleção/validação são
 específicos da importação histórica e devem ter ownership em
 `aculta_forum_legacy`, não no motor de discussões.
 
