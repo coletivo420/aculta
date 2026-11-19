@@ -76,7 +76,7 @@ final class SharedDiscussionFieldKernelTest extends KernelTestBase {
         ->load("node.$bundle.field_aculta_discussion");
 
       self::assertNotNull($field, sprintf('Comment field is attached to the %s bundle.', $bundle));
-      self::assertSame($storage->id(), $field->getFieldStorageDefinition()->id());
+      self::assertSame($storage->id(), $field->getFieldStorageDefinition()->getName());
     }
   }
 

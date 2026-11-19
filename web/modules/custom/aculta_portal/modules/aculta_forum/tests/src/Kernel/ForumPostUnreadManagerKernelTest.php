@@ -124,7 +124,9 @@ final class ForumPostUnreadManagerKernelTest extends KernelTestBase {
     self::assertSame(1, $result[(int) $this->topic->id()]['count']);
     self::assertSame((int) $unread->id(), $result[(int) $this->topic->id()]['post_id']);
     self::assertSame(0, $result[(int) $this->topic->id()]['page']);
-    self::assertLessThan((int) $unread->get('first_published')->value, (int) $read->get('first_published')->value);
+    $unreadPublished = is_numeric($unread->get('first_published')->value) ? (int) $unread->get('first_published')->value : 0;
+    $readPublished = is_numeric($read->get('first_published')->value) ? (int) $read->get('first_published')->value : 0;
+    self::assertLessThan($unreadPublished, $readPublished);
   }
 
   /**

@@ -12,6 +12,8 @@ use Drupal\node\Entity\NodeType;
 use Drupal\search_api\Entity\Index;
 use Drupal\search_api\Entity\Server;
 use Drupal\search_api\IndexInterface;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\search_api\Item\ItemInterface;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\taxonomy\Entity\Vocabulary;
 use PHPUnit\Framework\Attributes\Group;
@@ -165,7 +167,7 @@ final class ForumCategorySearchKernelTest extends KernelTestBase {
 
     self::assertCount(1, $items);
     $item = reset($items);
-    self::assertSame((int) $matching->id(), (int) $item->getOriginalObject()->getValue()->id());
+    self::assertSame((int) $matching->id(), $this->extractNodeId($item));
   }
 
   /**
@@ -188,7 +190,7 @@ final class ForumCategorySearchKernelTest extends KernelTestBase {
       ->execute()
       ->getResultItems();
     $combinedIds = array_map(
-      static fn ($item): int => (int) $item->getOriginalObject()->getValue()->id(),
+      fn (ItemInterface $item): int => $this->extractNodeId($item),
       array_values($combined),
     );
     sort($combinedIds);
@@ -198,9 +200,10 @@ final class ForumCategorySearchKernelTest extends KernelTestBase {
 
     $unfiltered = $this->index->query()->keys('medicinal')->execute()->getResultItems();
     $first = reset($unfiltered);
+    self::assertNotFalse($first);
     $scores = [];
     foreach ($unfiltered as $item) {
-      $nodeId = (int) $item->getOriginalObject()->getValue()->id();
+      $nodeId = $this->extractNodeId($item);
       $scores[$nodeId] = $item->getScore();
     }
     self::assertGreaterThan(
@@ -209,10 +212,26 @@ final class ForumCategorySearchKernelTest extends KernelTestBase {
       'A title match with its configured boost scores above a body-only match.',
     );
     self::assertContains(
-      (int) $first->getOriginalObject()->getValue()->id(),
+      $this->extractNodeId($first),
       [(int) $titleMatch->id(), (int) $otherCategoryMatch->id()],
       'The default relevance order puts a title match ahead of the body-only result.',
     );
+  }
+
+  /**
+   * Extracts the node ID from an indexed item.
+   *
+   * @param \Drupal\search_api\Item\ItemInterface<mixed> $item
+   */
+  private function extractNodeId(ItemInterface $item): int {
+    $object = $item->getOriginalObject();
+    if ($object !== NULL) {
+      $value = $object->getValue();
+      if ($value instanceof EntityInterface) {
+        return (int) $value->id();
+      }
+    }
+    return 0;
   }
 
   /**

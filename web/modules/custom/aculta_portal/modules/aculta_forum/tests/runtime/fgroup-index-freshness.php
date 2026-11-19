@@ -12,6 +12,8 @@
 declare(strict_types=1);
 
 use Drupal\Core\Session\AnonymousUserSession;
+use Drupal\group\Entity\GroupInterface;
+use Drupal\node\NodeInterface;
 use Drupal\search_api\Entity\Index;
 
 // Fixture constants stay local to these drush scripts, not autoloaded classes.
@@ -21,15 +23,25 @@ const FGROUP_PREFIX = 'fgroup_teste_';
 
 $entity_type_manager = \Drupal::entityTypeManager();
 $index = Index::load('aculta_forum');
+if (!$index instanceof Index) {
+  throw new \RuntimeException('Índice aculta_forum não encontrado.');
+}
 $purpose = \Drupal::service('aculta_portal.domain_site');
 $topic_ids = $entity_type_manager->getStorage('node')->getQuery()
   ->accessCheck(FALSE)
   ->condition('type', 'aculta_forum_topic')
   ->condition('title', '[TESTE F-GROUP] Tópico restrito')
   ->execute();
-$topic = $entity_type_manager->getStorage('node')->load(reset($topic_ids));
+$first_topic_id = reset($topic_ids);
+$topic = $first_topic_id !== FALSE ? $entity_type_manager->getStorage('node')->load($first_topic_id) : NULL;
+if (!$topic instanceof NodeInterface) {
+  throw new \RuntimeException('Tópico de teste não encontrado.');
+}
 $groups = $entity_type_manager->getStorage('group')->loadByProperties(['type' => 'forum_associados']);
 $group = reset($groups);
+if (!$group instanceof GroupInterface) {
+  throw new \RuntimeException('Grupo de teste não encontrado.');
+}
 $users = $entity_type_manager->getStorage('user')->loadByProperties(['name' => FGROUP_PREFIX . 'ativo_membro']);
 $member = reset($users);
 
@@ -40,7 +52,9 @@ $visible = static function () use ($index, $purpose, $accounts): array {
     foreach ($accounts as $label => $account) {
       $query = $index->query();
       $query->keys('fgroup');
-      $query->setOption('search_api_access_account', $account);
+      if ($account instanceof \Drupal\Core\Session\AccountInterface) {
+        $query->setOption('search_api_access_account', $account);
+      }
       $query->range(0, 10);
       $query_result = $query->execute();
       $result[$label] = [
@@ -76,9 +90,11 @@ $relationship_storage->delete($relationship_storage->loadMultiple($relationship_
 $index->indexItems(100);
 $out['public_before_reindex'] = $visible();
 
-$group->addRelationship($topic, 'group_node:aculta_forum_topic')->save();
+$rel = $group->addRelationship($topic, 'group_node:aculta_forum_topic');
+$rel->save();
 $out['restricted_before_reindex'] = $visible();
-$out['remaining_after_restrict'] = $index->getTrackerInstance()->getRemainingItems();
+$tracker = $index->getTrackerInstance();
+$out['remaining_after_restrict'] = $tracker->getRemainingItems();
 $index->indexItems(100);
 $out['restricted_after_reindex'] = $visible();
 

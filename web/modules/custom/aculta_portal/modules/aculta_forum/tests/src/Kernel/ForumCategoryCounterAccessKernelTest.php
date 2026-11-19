@@ -23,6 +23,7 @@ use Drupal\user\RoleInterface;
 use Drupal\user\Entity\User;
 use Drupal\views\Entity\View;
 use Drupal\views\ResultRow;
+use Drupal\views\ViewExecutable;
 use Drupal\views\Views;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
@@ -88,8 +89,13 @@ final class ForumCategoryCounterAccessKernelTest extends KernelTestBase {
     $this->installSchema('node', ['node_access']);
     $this->installConfig(['system', 'user', 'node', 'taxonomy', 'field', 'filter', 'text']);
 
-    Role::load(RoleInterface::ANONYMOUS_ID)->grantPermission('access content')->save();
-    Role::load(RoleInterface::AUTHENTICATED_ID)
+    $anonRole = Role::load(RoleInterface::ANONYMOUS_ID);
+    self::assertInstanceOf(Role::class, $anonRole);
+    $anonRole->grantPermission('access content')->save();
+
+    $authRole = Role::load(RoleInterface::AUTHENTICATED_ID);
+    self::assertInstanceOf(Role::class, $authRole);
+    $authRole
       ->grantPermission('access content')
       ->grantPermission('view restricted forum counter topics')
       ->save();
@@ -227,7 +233,6 @@ final class ForumCategoryCounterAccessKernelTest extends KernelTestBase {
     ]);
     $node->save();
     $database = $this->container->get('database');
-    self::assertInstanceOf(Connection::class, $database);
     // Core records a default all:0 grant on insert; replace it with the grant
     // this scenario needs so anonymous access is decided only by the realm.
     $database->delete('node_access')->condition('nid', $node->id())->execute();
@@ -339,13 +344,17 @@ final class ForumCategoryCounterAccessKernelTest extends KernelTestBase {
     );
     $method = new \ReflectionMethod($field, 'countByTerm');
     $raw = $method->invoke($field, [(int) $this->publicCategory->id(), (int) $this->restrictedCategory->id()]);
+    self::assertIsArray($raw);
     $names = [
       (int) $this->publicCategory->id() => 'Pública',
       (int) $this->restrictedCategory->id() => 'Restrita',
     ];
     $counts = [];
     foreach ($raw as $tid => $count) {
-      $counts[$names[$tid]] = $count;
+      $intTid = is_numeric($tid) ? (int) $tid : 0;
+      if (isset($names[$intTid])) {
+        $counts[$names[$intTid]] = is_numeric($count) ? (int) $count : 0;
+      }
     }
     ksort($counts);
     return array_filter($counts);
@@ -360,13 +369,16 @@ final class ForumCategoryCounterAccessKernelTest extends KernelTestBase {
   private function counts(AccountInterface $account): array {
     $this->container->get('current_user')->setAccount($account);
     $view = Views::getView('test_forum_category_counter');
-    self::assertNotFalse($view);
+    self::assertInstanceOf(ViewExecutable::class, $view);
     $view->execute();
     $counts = [];
     foreach ($view->result as $row) {
       // Views derives aliases from table and field, not from the config key.
-      $counts[(string) $row->taxonomy_term_field_data_name]
-        = (int) $row->field_aculta_categories_taxonomy_term_field_data_nid;
+      $name = is_scalar($row->taxonomy_term_field_data_name ?? NULL) ? (string) $row->taxonomy_term_field_data_name : '';
+      $count = is_numeric($row->field_aculta_categories_taxonomy_term_field_data_nid ?? NULL)
+        ? (int) $row->field_aculta_categories_taxonomy_term_field_data_nid
+        : 0;
+      $counts[$name] = $count;
     }
     ksort($counts);
     return $counts;

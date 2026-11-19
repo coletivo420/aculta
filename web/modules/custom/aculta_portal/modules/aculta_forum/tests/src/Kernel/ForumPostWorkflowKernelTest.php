@@ -8,6 +8,8 @@ use Drupal\aculta_forum\Entity\ForumPost;
 use Drupal\aculta_forum\Hook\ForumPublicationTimeHooks;
 use Drupal\aculta_user\ParticipationEditWindow;
 use Drupal\aculta_user\ParticipationRules;
+use Drupal\content_moderation\Plugin\WorkflowType\ContentModerationInterface;
+use Drupal\Core\Entity\ContentEntityTypeInterface;
 use Drupal\Core\Entity\RevisionableStorageInterface;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\node\Entity\Node;
@@ -96,15 +98,20 @@ final class ForumPostWorkflowKernelTest extends KernelTestBase {
    */
   public function testPostEntityUsesRevisionStorageAndWorkflow(): void {
     $definition = $this->container->get('entity_type.manager')->getDefinition('aculta_forum_post');
+    self::assertInstanceOf(ContentEntityTypeInterface::class, $definition);
     self::assertTrue($definition->isRevisionable());
     self::assertSame('aculta_forum_post_revision', $definition->getRevisionTable());
-    self::assertArrayHasKey('aculta_forum_post', $this->container->get('entity_type.bundle.info')->getBundleInfo('aculta_forum_post'));
-    self::assertSame('aculta_forum_post', $this->container->get('entity_type.bundle.info')->getBundleInfo('aculta_forum_post')['aculta_forum_post']['workflow'] ?? NULL);
+    /** @var array<string, array<string, mixed>> $bundleInfo */
+    $bundleInfo = $this->container->get('entity_type.bundle.info')->getBundleInfo('aculta_forum_post');
+    self::assertArrayHasKey('aculta_forum_post', $bundleInfo);
+    self::assertSame('aculta_forum_post', $bundleInfo['aculta_forum_post']['workflow'] ?? NULL);
     self::assertArrayHasKey('moderation_state', $this->container->get('entity_field.manager')->getBaseFieldDefinitions('aculta_forum_post'));
 
     $workflow = $this->container->get('entity_type.manager')->getStorage('workflow')->load('aculta_forum_post');
     self::assertNotNull($workflow);
-    self::assertTrue($workflow->getTypePlugin()->appliesToEntityTypeAndBundle('aculta_forum_post', 'aculta_forum_post'));
+    $typePlugin = $workflow->getTypePlugin();
+    self::assertInstanceOf(ContentModerationInterface::class, $typePlugin);
+    self::assertTrue($typePlugin->appliesToEntityTypeAndBundle('aculta_forum_post', 'aculta_forum_post'));
 
     $this->container->get('config.factory')->getEditable('aculta_user.settings')
       ->set('primeiro_comentario_discussao_moderado', TRUE)
@@ -144,11 +151,14 @@ final class ForumPostWorkflowKernelTest extends KernelTestBase {
     $published->save();
     self::assertSame('published', $published->get('moderation_state')->value);
     self::assertTrue($published->isPublished());
-    self::assertGreaterThan(0, (int) $published->get('first_published')->value);
+    $firstVal = $published->get('first_published')->value;
+    $first_published = is_numeric($firstVal) ? (int) $firstVal : 0;
+    self::assertGreaterThan(0, $first_published);
 
-    $first_published = (int) $published->get('first_published')->value;
     $publication_hooks->entityPresave($published);
-    self::assertSame($first_published, (int) $published->get('first_published')->value, 'Editing must not reset the first-publication timestamp.');
+    $savedVal = $published->get('first_published')->value;
+    $saved_first_published = is_numeric($savedVal) ? (int) $savedVal : 0;
+    self::assertSame($first_published, $saved_first_published, 'Editing must not reset the first-publication timestamp.');
     $edit_window = new ParticipationEditWindow($this->container->get('config.factory'), $this->container->get('datetime.time'));
     self::assertTrue($edit_window->access($published, 'update', $author)->isNeutral(), 'The window policy must not grant access denied by the entity access handler.');
     $published->set('first_published', NULL);
@@ -159,13 +169,19 @@ final class ForumPostWorkflowKernelTest extends KernelTestBase {
     $storage = $this->container->get('entity_type.manager')->getStorage('aculta_forum_post');
     self::assertInstanceOf(RevisionableStorageInterface::class, $storage);
     $previous_revision_id = $published->getRevisionId();
+    self::assertNotNull($previous_revision_id);
     $published->setNewRevision(TRUE);
     $published->set('body', ['value' => 'Texto corrigido dentro do prazo', 'format' => 'plain_text']);
     $published->save();
 
     self::assertNotSame($previous_revision_id, $published->getRevisionId());
-    self::assertSame('Texto publicado', $storage->loadRevision($previous_revision_id)->get('body')->value);
-    self::assertSame('Texto corrigido dentro do prazo', $storage->load($published->id())->get('body')->value);
+    $prevRevision = $storage->loadRevision($previous_revision_id);
+    self::assertInstanceOf(ForumPost::class, $prevRevision);
+    self::assertSame('Texto publicado', $prevRevision->get('body')->value);
+    /** @var \Drupal\aculta_forum\Entity\ForumPost|null $currentPost */
+    $currentPost = $storage->load((int) $published->id());
+    self::assertInstanceOf(ForumPost::class, $currentPost);
+    self::assertSame('Texto corrigido dentro do prazo', $currentPost->get('body')->value);
   }
 
 }

@@ -55,8 +55,6 @@ Gerado em 2026-11-19T03:40:09+00:00 por `scripts/phpstan-debt-report.php`.
 | aculta_calendar | 240 |
 | aculta_image | 229 |
 | aculta_cgu | 216 |
-| aculta_forum | 186 |
-| aculta_cgu | 216 |
 | aculta_file_uploader | 153 |
 | aculta_magazine | 149 |
 | aculta_game | 142 |
@@ -65,6 +63,7 @@ Gerado em 2026-11-19T03:40:09+00:00 por `scripts/phpstan-debt-report.php`.
 | aculta_editor | 86 |
 | aculta_mcp | 42 |
 | aculta_user | 10 |
+| aculta_forum | 0 |
 
 ## Identificadores mais frequentes
 

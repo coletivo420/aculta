@@ -200,7 +200,10 @@ final class ForumFlaggingMigrationContextKernelTest extends KernelTestBase {
       },
     );
 
-    self::assertGreaterThan(0, (int) reset($saved));
+    self::assertIsArray($saved);
+    $firstSaved = reset($saved);
+    self::assertIsInt($firstSaved);
+    self::assertGreaterThan(0, $firstSaved);
     self::assertFalse($context->authorizes($flagging));
     $stored = $this->container->get('entity_type.manager')
       ->getStorage('flagging')

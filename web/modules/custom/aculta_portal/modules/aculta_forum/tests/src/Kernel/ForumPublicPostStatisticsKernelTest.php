@@ -147,7 +147,8 @@ final class ForumPublicPostStatisticsKernelTest extends KernelTestBase {
     $values = [new ResultRow(['nid' => (int) $topic->id(), 'comment_count' => 2])];
     $plugin->preRender($values);
 
-    self::assertSame(4, $values[0]->reply_total);
+    $replyTotal = property_exists($values[0], 'reply_total') ? $values[0]->reply_total : NULL;
+    self::assertSame(4, $replyTotal);
   }
 
   /**

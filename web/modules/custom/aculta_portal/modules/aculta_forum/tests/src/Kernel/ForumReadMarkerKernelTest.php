@@ -106,8 +106,10 @@ final class ForumReadMarkerKernelTest extends KernelTestBase {
     $this->createTopic((string) $forumDomain->id(), FALSE);
 
     $activeDomain = Domain::load('aculta_org');
+    self::assertInstanceOf(Domain::class, $activeDomain);
     $negotiator = $this->createMock(DomainNegotiatorInterface::class);
     $negotiator->method('getActiveDomain')->willReturnCallback(static function () use (&$activeDomain): Domain {
+      /** @var \Drupal\domain\Entity\Domain $activeDomain */
       return $activeDomain;
     });
     $context = $this->createMock(DomainNegotiationContext::class);
@@ -131,19 +133,24 @@ final class ForumReadMarkerKernelTest extends KernelTestBase {
 
     self::assertSame(0, $marker->countEligibleTopics(), 'The central Batch purpose cannot discover Forum topics directly.');
     self::assertSame(1, $siteManager->runInSite('forum', static fn(): int => $marker->countEligibleTopics()));
-    self::assertSame('main', $siteManager->getCurrentSiteKey()->value, 'Purpose context is restored after eligibility checks.');
+    $siteKey = $siteManager->getCurrentSiteKey();
+    self::assertNotNull($siteKey);
+    self::assertSame('main', $siteKey->value, 'Purpose context is restored after eligibility checks.');
     $context = [];
     while (($context['finished'] ?? 0) < 1) {
       $marker->markBatch((int) $account->id(), 1, $context);
     }
-    self::assertSame('main', $siteManager->getCurrentSiteKey()->value, 'Purpose context is restored after the Batch callback.');
-    $rows = $this->container->get('database')->select('history', 'h')
+    $afterBatchKey = $siteManager->getCurrentSiteKey();
+    self::assertNotNull($afterBatchKey);
+    self::assertSame('main', $afterBatchKey->value, 'Purpose context is restored after the Batch callback.');
+    $statement = $this->container->get('database')->select('history', 'h')
       ->fields('h', ['uid', 'nid'])
-      ->execute()
-      ->fetchAllKeyed();
+      ->execute();
+    self::assertNotNull($statement);
+    $rows = $statement->fetchAllKeyed();
     self::assertSame(
       [(int) $account->id() => (int) $publicTopic->id()],
-      array_map('intval', $rows),
+      array_map(static fn(mixed $val): int => is_numeric($val) ? (int) $val : 0, $rows),
     );
   }
 

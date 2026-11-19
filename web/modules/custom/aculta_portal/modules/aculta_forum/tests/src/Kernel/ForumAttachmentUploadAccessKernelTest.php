@@ -6,6 +6,8 @@ namespace Drupal\Tests\aculta_forum\Kernel;
 
 use Drupal\aculta_forum\Access\ForumAttachmentUploadAccess;
 use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Session\AnonymousUserSession;
 use Drupal\domain\Entity\Domain;
 use Drupal\filter\Entity\FilterFormat;
@@ -110,21 +112,25 @@ final class ForumAttachmentUploadAccessKernelTest extends KernelTestBase {
    * Member with the Forum format inside the Forum purpose is allowed.
    */
   public function testMemberWithForumFormatIsAllowed(): void {
+    /** @var \Drupal\Core\Access\AccessResult $result */
     $result = $this->purpose->runInSite('forum', fn () => $this->access->access(
       $this->forumFormat,
       $this->member,
     ));
 
     self::assertTrue($result->isAllowed());
-    self::assertContains('domain', $result->getCacheContexts());
-    self::assertContains('user.roles:authenticated', $result->getCacheContexts());
-    self::assertContains('config:filter.format.forum', $result->getCacheTags());
+    $contexts = $result->getCacheContexts();
+    self::assertContains('domain', $contexts);
+    self::assertContains('user.roles:authenticated', $contexts);
+    $tags = $result->getCacheTags();
+    self::assertContains('config:filter.format.forum', $tags);
   }
 
   /**
    * Anonymous, other formats and other purposes are refused.
    */
   public function testOtherContextsAreRefused(): void {
+    /** @var \Drupal\Core\Access\AccessResultInterface $anonymous */
     $anonymous = $this->purpose->runInSite('forum', fn () => $this->access->access(
       $this->forumFormat,
       new AnonymousUserSession(),
@@ -132,12 +138,14 @@ final class ForumAttachmentUploadAccessKernelTest extends KernelTestBase {
     self::assertFalse($anonymous->isAllowed());
     self::assertTrue($anonymous->isNeutral());
 
+    /** @var \Drupal\Core\Access\AccessResultInterface $otherFormat */
     $otherFormat = $this->purpose->runInSite('forum', fn () => $this->access->access(
       $this->otherFormat,
       $this->member,
     ));
     self::assertFalse($otherFormat->isAllowed());
 
+    /** @var \Drupal\Core\Access\AccessResultInterface $main */
     $main = $this->purpose->runInSite('main', fn () => $this->access->access(
       $this->forumFormat,
       $this->member,

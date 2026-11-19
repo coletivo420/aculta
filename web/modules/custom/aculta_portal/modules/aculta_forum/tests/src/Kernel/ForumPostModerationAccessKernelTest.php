@@ -6,6 +6,7 @@ namespace Drupal\Tests\aculta_forum\Kernel;
 
 use Drupal\aculta_forum\Access\ForumPostModerationAccess;
 use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\Core\Access\AccessResultInterface;
 use Drupal\domain\Entity\Domain;
 use Drupal\KernelTests\KernelTestBase;
 use PHPUnit\Framework\Attributes\Group;
@@ -78,9 +79,11 @@ final class ForumPostModerationAccessKernelTest extends KernelTestBase {
     );
 
     $main = $this->purpose->runInSite('main', fn () => $access->queueAccess());
+    self::assertInstanceOf(AccessResultInterface::class, $main);
     self::assertTrue($main->isAllowed(), 'No purpose main a fila é permitida.');
 
     $forum = $this->purpose->runInSite('forum', fn () => $access->queueAccess());
+    self::assertInstanceOf(AccessResultInterface::class, $forum);
     self::assertFalse($forum->isAllowed(), 'No purpose forum a fila não é liberada.');
 
   }

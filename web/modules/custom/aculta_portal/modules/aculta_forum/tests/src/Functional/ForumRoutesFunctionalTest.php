@@ -90,7 +90,7 @@ final class ForumRoutesFunctionalTest extends BrowserTestBase {
   /**
    * Adds the single-host seam to the test site settings before installation.
    */
-  protected function prepareSettings() {
+  protected function prepareSettings(): void {
     parent::prepareSettings();
     $file = DRUPAL_ROOT . '/' . $this->siteDirectory . '/settings.php';
     file_put_contents($file, "\n\$settings['aculta_site_key_test_relaxed'] = TRUE;\n", FILE_APPEND);
@@ -153,12 +153,17 @@ final class ForumRoutesFunctionalTest extends BrowserTestBase {
     $page = $this->getSession()->getPage();
     $page->fillField('title[0][value]', 'Tópico funcional');
     $page->fillField('body[0][value]', 'Corpo do tópico criado pelo teste funcional.');
-    $term = reset($this->container->get('entity_type.manager')->getStorage('taxonomy_term')
-      ->loadByProperties(['vid' => 'aculta_forum_categories']));
+    $termStorage = $this->container->get('entity_type.manager')->getStorage('taxonomy_term');
+    $terms = $termStorage->loadByProperties(['vid' => 'aculta_forum_categories']);
+    $term = reset($terms);
+    self::assertInstanceOf(\Drupal\taxonomy\Entity\Term::class, $term);
     $select = $page->findField('field_aculta_categories[]')
       ?: $page->findField('field_aculta_categories');
+    self::assertNotNull($select);
     $select->selectOption((string) $term->id());
-    $page->find('css', '#edit-submit')->click();
+    $submitButton = $page->find('css', '#edit-submit');
+    self::assertNotNull($submitButton);
+    $submitButton->click();
     $node = $this->container->get('entity_type.manager')->getStorage('node')
       ->loadByProperties(['title' => 'Tópico funcional']);
     $text = mb_substr($this->getSession()->getPage()->getText(), 0, 700);
@@ -219,15 +224,18 @@ final class ForumRoutesFunctionalTest extends BrowserTestBase {
     }
     $detail = 'sem log';
     try {
-      $log = $this->container->get('database')->select('watchdog', 'w')
+      $database = $this->container->get('database');
+      $statement = $database->select('watchdog', 'w')
         ->fields('w', ['message', 'variables'])
         ->condition('severity', 3)
         ->orderBy('wid', 'DESC')
         ->range(0, 1)
-        ->execute()
-        ->fetch();
-      if ($log) {
-        $detail = (string) $log->message . ' ' . (string) $log->variables;
+        ->execute();
+      $log = $statement ? $statement->fetchObject() : NULL;
+      if (is_object($log) && isset($log->message, $log->variables)) {
+        $msg = is_scalar($log->message) ? (string) $log->message : '';
+        $vars = is_scalar($log->variables) ? (string) $log->variables : '';
+        $detail = $msg . ' ' . $vars;
       }
     }
     catch (\Throwable) {
@@ -244,8 +252,13 @@ final class ForumRoutesFunctionalTest extends BrowserTestBase {
     $this->drupalGet(Url::fromRoute('user.login'));
     $page = $this->getSession()->getPage();
     $page->fillField('name', $account->getAccountName());
-    $page->fillField('pass', $account->passRaw);
-    $page->find('css', 'input[type="submit"], button[type="submit"]')->click();
+    $vars = get_object_vars($account);
+    $rawVal = $vars['passRaw'] ?? '';
+    $passRaw = is_string($rawVal) ? $rawVal : '';
+    $page->fillField('pass', $passRaw);
+    $submitBtn = $page->find('css', 'input[type="submit"], button[type="submit"]');
+    self::assertNotNull($submitBtn);
+    $submitBtn->click();
     $this->loggedInUser = $account;
     $this->container->get('current_user')->setAccount($account);
     $url = $this->getSession()->getCurrentUrl();

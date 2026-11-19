@@ -8,6 +8,7 @@ use Drupal\aculta_forum\Entity\ForumPost;
 use Drupal\aculta_game\ForumParticipationPolicy;
 use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\Core\Entity\RevisionableStorageInterface;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\KernelTests\KernelTestBase;
@@ -133,9 +134,9 @@ final class ForumPostParticipationPolicyKernelTest extends KernelTestBase {
     $post->save();
 
     $storage = $this->container->get('entity_type.manager')->getStorage('aculta_forum_post');
-    self::assertInstanceOf(EntityStorageInterface::class, $storage);
-    $old = $storage->loadRevision($first_revision);
-    self::assertNotNull($old);
+    self::assertInstanceOf(RevisionableStorageInterface::class, $storage);
+    $old = $storage->loadRevision((int) $first_revision);
+    self::assertInstanceOf(ForumPost::class, $old);
     self::assertFalse($old->isDefaultRevision());
     self::assertFalse($this->policy->isEligiblePost($old));
   }
