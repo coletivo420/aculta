@@ -8,10 +8,14 @@ use Drupal\aculta_forum\Context\DiscussionContext;
 use Drupal\aculta_forum\Context\DiscussionContextProviderInterface;
 use Drupal\aculta_forum\Context\DiscussionContextResolver;
 use Drupal\aculta_forum\Hook\ForumQuoteHooks;
+use Drupal\aculta_forum\Origin\DiscussionOrigin;
+use Drupal\aculta_forum\Origin\DiscussionOriginClassification;
+use Drupal\aculta_forum\Origin\DiscussionOriginResolverInterface;
 use Drupal\aculta_forum\Service\ForumQuoteBuilder;
 use Drupal\comment\CommentInterface;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Cache\CacheableDependencyInterface;
+use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityFormInterface;
 use Drupal\Core\Field\FieldItemInterface;
@@ -325,7 +329,17 @@ final class ForumQuoteHooksTest extends UnitTestCase {
       new ForumQuoteBuilder(),
       $requestStack ?? new RequestStack(),
       $translation,
+      $this->originResolver(),
     );
+  }
+
+  /**
+   * Creates an origin resolver fixture.
+   */
+  private function originResolver(): DiscussionOriginResolverInterface {
+    $resolver = $this->createMock(DiscussionOriginResolverInterface::class);
+    $resolver->method('classify')->willReturn(DiscussionOriginClassification::from(DiscussionOrigin::CONTEXTUAL, new CacheableMetadata()));
+    return $resolver;
   }
 
   /**

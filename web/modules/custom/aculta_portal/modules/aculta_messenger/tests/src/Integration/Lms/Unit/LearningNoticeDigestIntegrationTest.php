@@ -6,6 +6,7 @@ namespace Drupal\Tests\aculta_messenger\Integration\Lms\Unit;
 
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
@@ -26,6 +27,9 @@ use Drupal\aculta_messenger\Aviso\AvisoDigestProviderInterface;
 use Drupal\aculta_messenger\Aviso\AvisoPreferencias;
 use Drupal\aculta_messenger\Aviso\AvisoService;
 use Drupal\aculta_messenger\Aviso\ForumNoticeAccessPolicy;
+use Drupal\aculta_forum\Origin\DiscussionOrigin;
+use Drupal\aculta_forum\Origin\DiscussionOriginClassification;
+use Drupal\aculta_forum\Origin\DiscussionOriginResolverInterface;
 use Drupal\aculta_messenger\Aviso\AvisosResumo;
 use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
 use Drupal\user\UserDataInterface;
@@ -869,6 +873,7 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
             $this->createMock(ConfigFactoryInterface::class),
             new RequestStack(),
           ),
+          $this->currentOriginResolver(),
         ),
       ),
       new Settings(['hash_salt' => 'unit-test-hash-salt']),
@@ -876,6 +881,17 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
       $lock ?? $this->createConfiguredMock(LockBackendInterface::class, ['acquire' => TRUE]),
       is_array($provider) ? $provider : [$provider],
     );
+  }
+
+  /**
+   * Creates the currentOriginResolver fixture.
+   */
+  private function currentOriginResolver(): DiscussionOriginResolverInterface {
+    $resolver = $this->createMock(DiscussionOriginResolverInterface::class);
+    $resolver->method('classify')->willReturn(
+      DiscussionOriginClassification::from(DiscussionOrigin::CURRENT, new CacheableMetadata()),
+    );
+    return $resolver;
   }
 
   /**

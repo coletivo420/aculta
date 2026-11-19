@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_messenger\Hook;
 
+use Drupal\aculta_messenger\Aviso\ForumNoticeAccessPolicy;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
@@ -17,15 +18,14 @@ final class MessageSubscribeEventHooks {
   public function __construct(
     private readonly QueueFactory $queueFactory,
     private readonly LoggerChannelFactoryInterface $loggerFactory,
+    private readonly ForumNoticeAccessPolicy $noticeAccessPolicy,
   ) {}
 
   /**
  * Enqueues an initially published forum topic. */
   #[Hook('entity_insert')]
   public function entityInsert(EntityInterface $entity): void {
-    if ($entity instanceof NodeInterface && $entity->bundle() === 'aculta_forum_topic' && $entity->isPublished()
-      && !$entity->isSyncing()
-      && (!$entity->hasField('field_autor_legado') || $entity->get('field_autor_legado')->isEmpty())) {
+    if ($entity instanceof NodeInterface && $entity->isPublished() && $this->noticeAccessPolicy->supportsTopic($entity)) {
       $this->enqueue($entity);
     }
   }
@@ -34,9 +34,7 @@ final class MessageSubscribeEventHooks {
  * Enqueues publication and subsequent published revisions. */
   #[Hook('entity_update')]
   public function entityUpdate(EntityInterface $entity): void {
-    if (!$entity instanceof NodeInterface || $entity->bundle() !== 'aculta_forum_topic' || !$entity->isPublished()
-      || $entity->isSyncing()
-      || ($entity->hasField('field_autor_legado') && !$entity->get('field_autor_legado')->isEmpty())) {
+    if (!$entity instanceof NodeInterface || !$entity->isPublished() || !$this->noticeAccessPolicy->supportsTopic($entity)) {
       return;
     }
 

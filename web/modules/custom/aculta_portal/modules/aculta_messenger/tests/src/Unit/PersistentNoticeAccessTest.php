@@ -6,6 +6,10 @@ namespace Drupal\Tests\aculta_messenger\Unit;
 
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\aculta_forum\Origin\DiscussionOrigin;
+use Drupal\aculta_forum\Origin\DiscussionOriginClassification;
+use Drupal\aculta_forum\Origin\DiscussionOriginResolverInterface;
+use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\domain\DomainNegotiatorInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -122,9 +126,21 @@ final class PersistentNoticeAccessTest extends UnitTestCase {
             $this->createMock(ConfigFactoryInterface::class),
             new RequestStack(),
           ),
+          $this->currentOriginResolver(),
         ),
       ),
     );
+  }
+
+  /**
+   * Creates the currentOriginResolver fixture.
+   */
+  private function currentOriginResolver(): DiscussionOriginResolverInterface {
+    $resolver = $this->createMock(DiscussionOriginResolverInterface::class);
+    $resolver->method('classify')->willReturn(
+      DiscussionOriginClassification::from(DiscussionOrigin::CURRENT, new CacheableMetadata()),
+    );
+    return $resolver;
   }
 
   /**

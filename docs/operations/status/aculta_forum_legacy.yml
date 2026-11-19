@@ -1,0 +1,10 @@
+# Fonte do índice de status do README raiz.
+version: 0.1.0-dev.2
+state: Dev
+progress_note: >-
+  Dev.2: contrato de origem neutro e addon opcional ARCHIVE conectados; Game e
+  Messenger consultam o resolver. Respostas a tópicos correntes usam ForumPost;
+  Kernel valida pai, tópico e revisão. Extração de autoria, memorial,
+  importadores, moderação e demais acoplamentos ainda não concluída. A
+  importação histórica não foi executada.
+next_phase: 'Extrair para o addon autoria, memorial, migrations/auditoria, marcadores, UI e política histórica ainda acoplados a aculta_forum/aculta_user; cobrir addon ausente/presente e manter a importação sem execução.'

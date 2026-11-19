@@ -4,15 +4,19 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_forum\Service;
 
+use Drupal\aculta_forum\Analytics\ForumAnalyticsScope;
 use Drupal\aculta_forum\Analytics\ForumAnalyticsScopeResolver;
 use Drupal\aculta_forum\Entity\ForumPost;
 use Drupal\aculta_forum\Event\ForumReactionEvent;
+use Drupal\aculta_forum\Origin\DiscussionOrigin;
+use Drupal\aculta_forum\Origin\DiscussionOriginResolverInterface;
 use Drupal\comment\CommentInterface;
 use Drupal\Core\Cache\Cache;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\node\NodeInterface;
 use Drupal\user\EntityOwnerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -31,12 +35,15 @@ class DiscussionReactionManager {
     protected readonly ForumAnalyticsScopeResolver $scopeResolver,
     protected readonly EventDispatcherInterface $dispatcher,
     protected readonly TimeInterface $time,
+    protected readonly EntityTypeManagerInterface $entityTypeManager,
+    protected readonly DiscussionOriginResolverInterface $originResolver,
   ) {}
 
   /**
    * Retrieves the catalog of allowed reactions from configuration.
    *
    * @return array<string, array{id: string, icon: string, label: string, enabled: bool}>
+   *   Enabled reaction definitions keyed by reaction ID.
    */
   public function getAllowedReactions(): array {
     $config = $this->configFactory->get('aculta_forum.settings');
@@ -78,16 +85,24 @@ class DiscussionReactionManager {
    * @return array{
    *   total_count: int,
    *   user_reaction: ?string,
-   *   reactions: array<string, array{id: string, count: int, user_reacted: bool}>
-   * }
+   *   reactions: array<
+   *     string,
+   *     array{id: string, count: int, user_reacted: bool}
+   *   >
+   *   }
    */
   public function loadReactions(string $entityType, int $entityId, ?int $currentUid = NULL): array {
+    $target = $this->loadReactionTarget($entityType, $entityId);
+    if ($target === NULL) {
+      return $this->emptyReactionSummary();
+    }
+    $origin = $this->originResolver->classify($target);
+    if (!in_array($origin->origin, [DiscussionOrigin::CURRENT, DiscussionOrigin::CONTEXTUAL], TRUE)) {
+      return $this->emptyReactionSummary();
+    }
+
     $allowed = $this->getAllowedReactions();
-    $result = [
-      'total_count' => 0,
-      'user_reaction' => NULL,
-      'reactions' => [],
-    ];
+    $result = $this->emptyReactionSummary();
 
     if (empty($allowed)) {
       return $result;
@@ -134,6 +149,31 @@ class DiscussionReactionManager {
   }
 
   /**
+   * Loads only supported entity types before exposing their reaction summary.
+   */
+  private function loadReactionTarget(string $entityType, int $entityId): ?EntityInterface {
+    if ($entityId <= 0 || !in_array($entityType, ['comment', 'aculta_forum_post', 'node'], TRUE)) {
+      return NULL;
+    }
+    $target = $this->entityTypeManager->getStorage($entityType)->load($entityId);
+    return $target instanceof EntityInterface ? $target : NULL;
+  }
+
+  /**
+   * Returns an empty summary without leaking rows from an unsupported origin.
+   *
+   * @return array{total_count: int, user_reaction: ?string, reactions: array<string, array{id: string, count: int, user_reacted: bool}>}
+   *   Empty reaction summary.
+   */
+  private function emptyReactionSummary(): array {
+    return [
+      'total_count' => 0,
+      'user_reaction' => NULL,
+      'reactions' => [],
+    ];
+  }
+
+  /**
    * Toggles, changes, or removes a user's reaction.
    *
    * @param EntityInterface $entity
@@ -147,7 +187,7 @@ class DiscussionReactionManager {
    *   action: string,
    *   previous_reaction: ?string,
    *   current_reaction: ?string,
-   * }
+   *   }
    */
   public function toggleReaction(EntityInterface $entity, int $uid, string $reactionId): array {
     $allowed = $this->getAllowedReactions();
@@ -164,8 +204,8 @@ class DiscussionReactionManager {
     $scope = $this->scopeResolver->resolve($entity);
     $host = $scope->host ?? $this->resolveHost($entity);
     $contextId = $scope->scope;
-    // Reações em publicações da Revista contam para o contador geral de recebidas do autor, como no fórum público.
-    $isPublic = $scope->isPublicForum() || $scope->scope === \Drupal\aculta_forum\Analytics\ForumAnalyticsScope::PUBLICATION;
+    // Reações da Revista contam no total de recebidas, como no fórum público.
+    $isPublic = $scope->isPublicForum() || $scope->scope === ForumAnalyticsScope::PUBLICATION;
 
     $existing = $this->database->select(self::TABLE_REACTIONS, 'r')
       ->fields('r', ['id', 'reaction', 'is_public_context'])
@@ -276,7 +316,7 @@ class DiscussionReactionManager {
   }
 
   /**
-   * Resolves the host discussion entity for a Comment, ForumPost, or Topic Node.
+   * Resolves the host entity for a Comment, ForumPost or topic.
    */
   public function resolveHost(EntityInterface $entity): ?EntityInterface {
     if ($entity instanceof CommentInterface) {
@@ -373,6 +413,7 @@ class DiscussionReactionManager {
    *   The user ID.
    *
    * @return array{reactions_received: int, reactions_given: int}
+   *   Reaction totals received and given by the user.
    */
   public function getUserStats(int $uid): array {
     if ($uid <= 0) {

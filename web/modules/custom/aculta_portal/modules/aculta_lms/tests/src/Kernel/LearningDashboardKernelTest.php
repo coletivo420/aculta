@@ -14,7 +14,6 @@ use Drupal\aculta_lms\Learning\CourseProgressReaderInterface;
 use Drupal\aculta_lms\Learning\CourseProgress;
 use Drupal\aculta_lms\Notice\LearningEligibilityInterface;
 use Drupal\aculta_lms\Learning\AccountCourseSummary;
-use Drupal\aculta_lms\Learning\AccountCoursesReaderInterface;
 use Drupal\group\Entity\Group;
 use Drupal\group\Entity\GroupRole;
 use Drupal\group\Entity\GroupRelationshipType;
@@ -193,8 +192,9 @@ final class LearningDashboardKernelTest extends KernelTestBase {
     ]);
     $other_certificate->save();
 
+    $accountCourses = $this->container->get('aculta_lms.account_courses_reader');
     $manager = new LearningDashboardManager(
-      $this->container->get(AccountCoursesReaderInterface::class),
+      $accountCourses,
       $this->container->get('aculta_lms.course_certificate_manager'),
       $this->container->get('entity_type.manager'),
       $this->container->get(CourseProgressReaderInterface::class),

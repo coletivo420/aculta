@@ -20059,23 +20059,8 @@ parameters:
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_game/src/Plugin/QueueWorker/AchievementEmailWorker.php
 
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\FieldableEntityInterface::method().'
-			identifier: method.notFound
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_game/tests/src/Unit/ForumParticipationPolicyTest.php
 
-		-
-			rawMessage: 'Cannot call method willReturn() on mixed.'
-			identifier: method.nonObject
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_game/tests/src/Unit/ForumParticipationPolicyTest.php
 
-		-
-			rawMessage: 'Cannot call method with() on mixed.'
-			identifier: method.nonObject
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_game/tests/src/Unit/ForumParticipationPolicyTest.php
 
 
 

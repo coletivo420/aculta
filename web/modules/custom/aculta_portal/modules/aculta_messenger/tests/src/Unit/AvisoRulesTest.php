@@ -7,10 +7,13 @@ namespace Drupal\Tests\aculta_messenger\Unit;
 use Drupal\aculta_messenger\Aviso\AvisoService;
 use Drupal\aculta_messenger\Aviso\ForumNoticeAccessPolicy;
 use Drupal\aculta_messenger\Aviso\AvisosResumo;
+use Drupal\aculta_forum\Origin\DiscussionOrigin;
+use Drupal\aculta_forum\Origin\DiscussionOriginClassification;
+use Drupal\aculta_forum\Origin\DiscussionOriginResolverInterface;
 use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\domain\DomainNegotiatorInterface;
 use Drupal\node\NodeInterface;
 use Drupal\Tests\UnitTestCase;
@@ -56,18 +59,9 @@ class AvisoRulesTest extends UnitTestCase {
    * Only current ACULTA public topics are eligible for follow notices.
    */
   public function testOnlyCurrentPublicForumBundleIsSupported(): void {
-    $policy = new ForumNoticeAccessPolicy(
-      $this->createMock(EntityTypeManagerInterface::class),
-      new DomainSiteManager(
-        $this->createMock(EntityTypeManagerInterface::class),
-        $this->createMock(DomainNegotiatorInterface::class),
-        $this->createMock(ConfigFactoryInterface::class),
-        new RequestStack(),
-      ),
-    );
+    $policy = $this->policy();
     $topic = $this->createMock(NodeInterface::class);
     $topic->method('bundle')->willReturn('aculta_forum_topic');
-    $topic->method('hasField')->willReturn(FALSE);
     $this->assertTrue($policy->supportsTopic($topic));
 
     $legacy = $this->createMock(NodeInterface::class);
@@ -79,23 +73,28 @@ class AvisoRulesTest extends UnitTestCase {
    * Historical Growroom authors on an ACULTA topic do not receive notices.
    */
   public function testHistoricalAuthorTopicIsNotSupported(): void {
-    $policy = new ForumNoticeAccessPolicy(
-      $this->createMock(EntityTypeManagerInterface::class),
-      new DomainSiteManager(
-        $this->createMock(EntityTypeManagerInterface::class),
-        $this->createMock(DomainNegotiatorInterface::class),
-        $this->createMock(ConfigFactoryInterface::class),
-        new RequestStack(),
-      ),
-    );
+    $policy = $this->policy(DiscussionOrigin::ARCHIVE);
     $topic = $this->createMock(NodeInterface::class);
     $topic->method('bundle')->willReturn('aculta_forum_topic');
-    $topic->method('hasField')->with('field_autor_legado')->willReturn(TRUE);
-    $legacyAuthor = $this->createMock(FieldItemListInterface::class);
-    $legacyAuthor->method('isEmpty')->willReturn(FALSE);
-    $topic->method('get')->with('field_autor_legado')->willReturn($legacyAuthor);
-
     $this->assertFalse($policy->supportsTopic($topic));
+  }
+
+  /**
+   * Creates a forum notice policy fixture.
+   */
+  private function policy(string $origin = DiscussionOrigin::CURRENT): ForumNoticeAccessPolicy {
+    $entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
+    $siteManager = new DomainSiteManager(
+      $entityTypeManager,
+      $this->createMock(DomainNegotiatorInterface::class),
+      $this->createMock(ConfigFactoryInterface::class),
+      new RequestStack(),
+    );
+    $originResolver = $this->createMock(DiscussionOriginResolverInterface::class);
+    $originResolver->method('classify')->willReturn(
+      DiscussionOriginClassification::from($origin, new CacheableMetadata()),
+    );
+    return new ForumNoticeAccessPolicy($entityTypeManager, $siteManager, $originResolver);
   }
 
 }

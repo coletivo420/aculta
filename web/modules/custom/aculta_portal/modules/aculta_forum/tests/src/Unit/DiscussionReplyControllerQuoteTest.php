@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_forum\Unit;
 
-use Drupal\aculta_forum\Context\DiscussionContextResolver;
 use Drupal\aculta_forum\Controller\DiscussionReplyController;
+use Drupal\aculta_forum\Origin\DiscussionOrigin;
+use Drupal\aculta_forum\Origin\DiscussionOriginClassification;
+use Drupal\aculta_forum\Origin\DiscussionOriginResolverInterface;
 use Drupal\aculta_forum\Service\DiscussionReplyAccess;
 use Drupal\aculta_forum\Service\DiscussionReplyFormBuilder;
 use Drupal\aculta_forum\Service\ForumQuoteBuilder;
@@ -13,6 +15,7 @@ use Drupal\comment\CommentInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\KeyValueStore\KeyValueFactoryInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Tests\UnitTestCase;
@@ -49,7 +52,7 @@ final class DiscussionReplyControllerQuoteTest extends UnitTestCase {
   /**
    * Builds a controller with a readable destination but untrusted quote ID.
    *
-   * @return array<string, mixed>
+   * @return array<mixed>
    *   The composer render array.
    */
   private function composer(CommentInterface $source): array {
@@ -77,12 +80,23 @@ final class DiscussionReplyControllerQuoteTest extends UnitTestCase {
       $manager,
       $builder,
       $this->createMock(DiscussionReplyAccess::class),
-      new DiscussionContextResolver([]),
+      $this->originResolver(),
       new ForumQuoteBuilder(),
       $account,
       $this->createMock(KeyValueFactoryInterface::class),
     );
     return $controller->composer('node', '23', Request::create('/discussoes/compositor/node/23?citar=42'));
+  }
+
+  /**
+   * Creates a resolver for the contextual host in the quote fixture.
+   */
+  private function originResolver(): DiscussionOriginResolverInterface {
+    $resolver = $this->createMock(DiscussionOriginResolverInterface::class);
+    $resolver->method('classify')->willReturn(
+      DiscussionOriginClassification::from(DiscussionOrigin::CONTEXTUAL, new CacheableMetadata()),
+    );
+    return $resolver;
   }
 
   /**

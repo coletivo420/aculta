@@ -6,6 +6,8 @@ namespace Drupal\aculta_messenger\Aviso;
 
 use Drupal\comment\CommentInterface;
 use Drupal\aculta_forum\Entity\ForumPost;
+use Drupal\aculta_forum\Origin\DiscussionOrigin;
+use Drupal\aculta_forum\Origin\DiscussionOriginResolverInterface;
 use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\Core\Entity\EntityInterface;
@@ -21,6 +23,7 @@ final class ForumNoticeAccessPolicy implements ForumNoticeAccessPolicyInterface 
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly DomainSiteManager $siteManager,
+    private readonly DiscussionOriginResolverInterface $originResolver,
   ) {}
 
   /**
@@ -28,10 +31,11 @@ final class ForumNoticeAccessPolicy implements ForumNoticeAccessPolicyInterface 
    */
   public function supportsTopic(EntityInterface $entity): bool {
     if (!$entity instanceof NodeInterface || $entity->bundle() !== 'aculta_forum_topic'
-      || $entity->isSyncing()) {
+      || $entity->isSyncing()
+      || $this->originResolver->classify($entity)->origin !== DiscussionOrigin::CURRENT) {
       return FALSE;
     }
-    return !$entity->hasField('field_autor_legado') || $entity->get('field_autor_legado')->isEmpty();
+    return TRUE;
   }
 
   /**
@@ -63,7 +67,7 @@ final class ForumNoticeAccessPolicy implements ForumNoticeAccessPolicyInterface 
    */
   public function canViewComment(CommentInterface $comment, int|UserInterface $recipient): bool {
     if (!$comment->isPublished() || $comment->bundle() !== 'aculta_discussion_post'
-      || ($comment->hasField('field_autor_legado') && !$comment->get('field_autor_legado')->isEmpty())) {
+      || $this->originResolver->classify($comment)->origin !== DiscussionOrigin::CURRENT) {
       return FALSE;
     }
     $topic = $comment->getCommentedEntity();
@@ -84,6 +88,7 @@ final class ForumNoticeAccessPolicy implements ForumNoticeAccessPolicyInterface 
   public function canViewPost(ForumPost $post, int|UserInterface $recipient): bool {
     if (!$post->isPublished() || !$post->isDefaultRevision()
       || $post->isSyncing()
+      || $this->originResolver->classify($post)->origin !== DiscussionOrigin::CURRENT
       || !$post->hasField('topic') || $post->get('topic')->isEmpty()) {
       return FALSE;
     }

@@ -4,14 +4,20 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_forum\Unit;
 
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Drupal\Core\Routing\UrlGeneratorInterface;
 use Drupal\aculta_forum\Context\DiscussionContext;
 use Drupal\aculta_forum\Context\DiscussionContextProviderInterface;
 use Drupal\aculta_forum\Context\DiscussionContextResolver;
 use Drupal\aculta_forum\Hook\ForumQuoteHooks;
+use Drupal\aculta_forum\Origin\DiscussionOrigin;
+use Drupal\aculta_forum\Origin\DiscussionOriginClassification;
+use Drupal\aculta_forum\Origin\DiscussionOriginResolverInterface;
 use Drupal\aculta_forum\Service\ForumQuoteBuilder;
 use Drupal\comment\CommentInterface;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Render\Element\Link;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
@@ -22,17 +28,21 @@ use PHPUnit\Framework\Attributes\Group;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
- * Tests that ForumQuoteHooks produces neutral Drupal links in #links structure
- * compatible with Link::preRenderLinks and without direct SDC component instantiation.
+ * Tests neutral link rendering for quote actions.
+ *
+ * The render array remains compatible with Drupal's link pre-renderer.
  */
 #[Group('aculta_forum')]
 final class ForumQuoteNeutralRenderTest extends UnitTestCase {
 
+  /**
+   * Initializes the neutral render test fixture.
+   */
   protected function setUp(): void {
     parent::setUp();
-    $generator = $this->createMock(\Drupal\Core\Routing\UrlGeneratorInterface::class);
+    $generator = $this->createMock(UrlGeneratorInterface::class);
     $generator->method('generateFromRoute')->willReturn('/resposta/comentar/node/1/field_aculta_discussion/10?quote=10#comment-form');
-    $container = new \Symfony\Component\DependencyInjection\ContainerBuilder();
+    $container = new ContainerBuilder();
     $container->set('url_generator', $generator);
     $container->set('string_translation', $this->getStringTranslationStub());
     \Drupal::setContainer($container);
@@ -75,6 +85,7 @@ final class ForumQuoteNeutralRenderTest extends UnitTestCase {
       new ForumQuoteBuilder(),
       new RequestStack(),
       $translation,
+      $this->originResolver(),
     );
 
     $comment = $this->createMock(CommentInterface::class);
@@ -92,7 +103,7 @@ final class ForumQuoteNeutralRenderTest extends UnitTestCase {
     $comment->method('getCacheTags')->willReturn([]);
     $comment->method('getCacheMaxAge')->willReturn(-1);
 
-    // Initial links as prepared by CommentLazyBuilders
+    // Initial links as prepared by CommentLazyBuilders.
     $links = [
       '#theme' => 'links__comment__comment',
       '#pre_render' => [[Link::class, 'preRenderLinks']],
@@ -116,14 +127,14 @@ final class ForumQuoteNeutralRenderTest extends UnitTestCase {
 
     $hooks->commentLinksAlter($links, $comment, $hookContext);
 
-    // Verifies action structure: must not instantiate SDC directly in module
+    // Verifies action structure: must not instantiate SDC directly in module.
     self::assertArrayNotHasKey('#component', $links);
     $commentLinks = is_array($links['comment'] ?? NULL) ? $links['comment'] : [];
     $commentInnerLinks = is_array($commentLinks['#links'] ?? NULL) ? $commentLinks['#links'] : [];
     $rootLinks = is_array($links['#links'] ?? NULL) ? $links['#links'] : [];
     self::assertTrue(isset($commentInnerLinks['resposta-citar']) || isset($rootLinks['resposta-citar']));
 
-    // Call Link::preRenderLinks to verify Core collecting
+    // Call Link::preRenderLinks to verify Core collecting.
     $rendered = Link::preRenderLinks($links);
     self::assertArrayHasKey('#links', $rendered);
     /** @var array<string, mixed> $renderedLinks */
@@ -138,6 +149,15 @@ final class ForumQuoteNeutralRenderTest extends UnitTestCase {
     self::assertSame('resposta-citar', $attributes['data-action']);
     $quoteId = $attributes['data-quote-id'];
     self::assertSame('10', is_scalar($quoteId) || $quoteId instanceof \Stringable ? (string) $quoteId : '');
+  }
+
+  /**
+   * Creates an origin resolver fixture.
+   */
+  private function originResolver(): DiscussionOriginResolverInterface {
+    $resolver = $this->createMock(DiscussionOriginResolverInterface::class);
+    $resolver->method('classify')->willReturn(DiscussionOriginClassification::from(DiscussionOrigin::CONTEXTUAL, new CacheableMetadata()));
+    return $resolver;
   }
 
 }

@@ -5,9 +5,12 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_forum\Kernel;
 
 use Drupal\aculta_forum\Entity\ForumPost;
+use Drupal\aculta_forum\Context\DiscussionContextResolver;
+use Drupal\aculta_forum\Origin\CoreDiscussionOriginClassifier;
+use Drupal\aculta_forum\Origin\DiscussionOriginResolver;
+use Drupal\aculta_forum_legacy\Origin\LegacyDiscussionOriginClassifier;
 use Drupal\aculta_game\ForumParticipationPolicy;
 use Drupal\aculta_portal\Domain\DomainSiteManager;
-use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\RevisionableStorageInterface;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
@@ -101,12 +104,17 @@ final class ForumPostParticipationPolicyKernelTest extends KernelTestBase {
     ]);
     $this->topic->save();
 
-    $this->policy = new ForumParticipationPolicy(new DomainSiteManager(
+    $siteManager = new DomainSiteManager(
       $this->container->get('entity_type.manager'),
       $this->container->get('domain.negotiator'),
       $this->container->get('config.factory'),
       new RequestStack(),
-    ));
+    );
+    $originResolver = new DiscussionOriginResolver([
+      new CoreDiscussionOriginClassifier(new DiscussionContextResolver([])),
+      new LegacyDiscussionOriginClassifier(),
+    ]);
+    $this->policy = new ForumParticipationPolicy($originResolver, $siteManager);
   }
 
   /**

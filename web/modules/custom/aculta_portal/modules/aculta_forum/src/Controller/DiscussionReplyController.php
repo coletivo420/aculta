@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_forum\Controller;
 
-use Drupal\aculta_forum\Context\DiscussionContextResolver;
+use Drupal\aculta_forum\Origin\DiscussionOrigin;
+use Drupal\aculta_forum\Origin\DiscussionOriginResolverInterface;
 use Drupal\aculta_forum\Service\DiscussionReplyAccess;
 use Drupal\aculta_forum\Service\DiscussionReplyFormBuilder;
 use Drupal\aculta_forum\Service\ForumQuoteBuilder;
@@ -14,15 +15,15 @@ use Drupal\comment\CommentInterface;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\Core\KeyValueStore\KeyValueFactoryInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\node\NodeInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
- * Controller for rendering the inline discussion reply composer via HTMX or fallback.
+ * Renders the discussion reply composer through HTMX or a full-page fallback.
  */
 class DiscussionReplyController extends ControllerBase {
 
@@ -30,7 +31,7 @@ class DiscussionReplyController extends ControllerBase {
     protected readonly EntityTypeManagerInterface $forumEntityTypeManager,
     protected readonly DiscussionReplyFormBuilder $replyFormBuilder,
     protected readonly DiscussionReplyAccess $replyAccess,
-    protected readonly DiscussionContextResolver $contextResolver,
+    protected readonly DiscussionOriginResolverInterface $originResolver,
     protected readonly ForumQuoteBuilder $quoteBuilder,
     protected readonly AccountProxyInterface $forumCurrentUser,
     protected readonly KeyValueFactoryInterface $forumKeyValue,
@@ -40,11 +41,17 @@ class DiscussionReplyController extends ControllerBase {
    * Returns the discussion reply composer render array.
    *
    * @return array<mixed>
+   *   The composer render array.
    */
   public function composer(string $entity_type, string $entity_id, Request $request): array {
     $storage = $this->forumEntityTypeManager->getStorage($entity_type);
     $host = $storage->load($entity_id);
     if (!$host instanceof EntityInterface) {
+      throw new NotFoundHttpException();
+    }
+
+    $hostOrigin = $this->originResolver->classify($host);
+    if (in_array($hostOrigin->origin, [DiscussionOrigin::ARCHIVE, DiscussionOrigin::UNKNOWN], TRUE)) {
       throw new NotFoundHttpException();
     }
 
@@ -78,16 +85,16 @@ class DiscussionReplyController extends ControllerBase {
     if ($editId !== NULL && ctype_digit($editId)) {
       $editComment = $this->forumEntityTypeManager->getStorage('comment')->load((int) $editId);
       $tombstoned = $editComment instanceof CommentInterface && (bool) $this->forumKeyValue->get('aculta_forum_comment_tombstones')->get((string) $editComment->id());
-      // Resposta excluída pelo autor não pode mais ser editada, nem pelo administrador.
+      // Respostas excluídas pelo autor não podem mais ser editadas.
       if ($tombstoned) {
-        throw new \Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException('Resposta excluída.');
+        throw new AccessDeniedHttpException('Resposta excluída.');
       }
       if ($editComment instanceof CommentInterface
         && $editComment->bundle() === 'aculta_discussion_post'
         && $editComment->getFieldName() === 'field_aculta_discussion'
         && $editComment->getCommentedEntityTypeId() === $host->getEntityTypeId()
         && (string) $editComment->getCommentedEntityId() === (string) $host->id()
-        && !$this->isHistoricalComment($editComment, $host)) {
+        && $this->originResolver->classify($editComment)->origin === DiscussionOrigin::CONTEXTUAL) {
         return $this->replyFormBuilder->buildEditForm($editComment, $this->forumCurrentUser);
       }
       throw new NotFoundHttpException();
@@ -116,7 +123,7 @@ class DiscussionReplyController extends ControllerBase {
         && (string) $quoteComment->getCommentedEntityId() === (string) $host->id()
         && $quoteComment->isPublished()
         && $quoteComment->access('view', $this->forumCurrentUser)
-        && !$this->isHistoricalComment($quoteComment, $host)
+        && $this->originResolver->classify($quoteComment)->origin === DiscussionOrigin::CONTEXTUAL
         && !$this->forumKeyValue->get('aculta_forum_comment_tombstones')->get((string) $quoteComment->id())
         && $quoteComment->hasField('comment_body')) {
         $bodyItem = $quoteComment->get('comment_body')->get(0);
@@ -129,19 +136,6 @@ class DiscussionReplyController extends ControllerBase {
     }
 
     return $this->replyFormBuilder->buildReplyForm($host, $this->forumCurrentUser, $parentId, $quote);
-  }
-
-  /**
-   * Keeps read-only Growroom archive records out of the live composer.
-   */
-  private function isHistoricalComment(CommentInterface $comment, EntityInterface $host): bool {
-    if ($comment->hasField('field_autor_legado')
-      && !$comment->get('field_autor_legado')->isEmpty()) {
-      return TRUE;
-    }
-    return $host instanceof FieldableEntityInterface
-      && $host->hasField('field_autor_legado')
-      && !$host->get('field_autor_legado')->isEmpty();
   }
 
 }

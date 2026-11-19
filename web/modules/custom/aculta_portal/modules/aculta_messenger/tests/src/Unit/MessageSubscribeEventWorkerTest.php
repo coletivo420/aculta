@@ -4,10 +4,16 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_messenger\Unit;
 
+use Drupal\aculta_forum\Origin\DiscussionOrigin;
+use Drupal\aculta_forum\Origin\DiscussionOriginClassification;
+use Drupal\aculta_forum\Origin\DiscussionOriginResolverInterface;
+use Drupal\aculta_messenger\Aviso\ForumNoticeAccessPolicy;
 use Drupal\aculta_messenger\Aviso\ForumNoticeEventProducerInterface;
 use Drupal\aculta_messenger\Plugin\QueueWorker\MessageSubscribeEventWorker;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Cache\CacheableMetadata;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\RevisionableStorageInterface;
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Lock\LockBackendInterface;
@@ -15,10 +21,13 @@ use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Queue\RequeueException;
 use Drupal\node\NodeInterface;
 use Drupal\path_alias\AliasManagerInterface;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\domain\DomainNegotiatorInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Tests age-based retry behavior for queued Forum topic notices.
@@ -123,7 +132,25 @@ final class MessageSubscribeEventWorkerTest extends TestCase {
       $time,
       $lock,
       $loggerFactory,
+      $this->noticeAccessPolicy($entityTypeManager),
     );
+  }
+
+  /**
+   * Creates the forum notice access policy fixture.
+   */
+  private function noticeAccessPolicy(EntityTypeManagerInterface $entityTypeManager): ForumNoticeAccessPolicy {
+    $siteManager = new DomainSiteManager(
+      $entityTypeManager,
+      $this->createMock(DomainNegotiatorInterface::class),
+      $this->createMock(ConfigFactoryInterface::class),
+      new RequestStack(),
+    );
+    $originResolver = $this->createMock(DiscussionOriginResolverInterface::class);
+    $originResolver->method('classify')->willReturn(
+      DiscussionOriginClassification::from(DiscussionOrigin::CURRENT, new CacheableMetadata()),
+    );
+    return new ForumNoticeAccessPolicy($entityTypeManager, $siteManager, $originResolver);
   }
 
   /**

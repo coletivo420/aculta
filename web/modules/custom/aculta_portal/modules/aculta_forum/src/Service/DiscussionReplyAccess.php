@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace Drupal\aculta_forum\Service;
 
 use Drupal\aculta_forum\Context\DiscussionContextResolver;
+use Drupal\aculta_forum\Entity\ForumPost;
+use Drupal\aculta_forum\Origin\DiscussionOrigin;
+use Drupal\aculta_forum\Origin\DiscussionOriginResolverInterface;
 use Drupal\comment\CommentInterface;
 use Drupal\comment\CommentingStatus;
 use Drupal\Core\Access\AccessResult;
@@ -13,6 +16,7 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\node\NodeInterface;
 
 /**
  * Validates access to reply in a discussion context.
@@ -22,19 +26,17 @@ class DiscussionReplyAccess {
   public function __construct(
     protected readonly DiscussionContextResolver $contextResolver,
     protected readonly EntityTypeManagerInterface $entityTypeManager,
+    protected readonly DiscussionOriginResolverInterface $originResolver,
   ) {}
 
   /**
    * Checks whether the given account can reply to the discussion host.
    */
   public function checkAccess(EntityInterface $host, AccountInterface $account, ?int $parentId = NULL): AccessResultInterface {
-    // The historical Growroom is an immutable archive, not a live
-    // shared-Comment discussion, even when it shares a Node bundle.
-    if ($host instanceof FieldableEntityInterface
-      && $host->hasField('field_autor_legado')
-      && !$host->get('field_autor_legado')->isEmpty()) {
-      return AccessResult::forbidden('Historical Growroom topic is read-only.')
-        ->addCacheableDependency($host);
+    $origin = $this->originResolver->classify($host);
+    if (in_array($origin->origin, [DiscussionOrigin::ARCHIVE, DiscussionOrigin::UNKNOWN], TRUE)) {
+      return AccessResult::forbidden('Discussion origin is not writable.')
+        ->addCacheableDependency($origin);
     }
     $context = $this->contextResolver->resolve($host, $account);
     if ($context === NULL) {
@@ -67,14 +69,44 @@ class DiscussionReplyAccess {
 
     // If replying to a specific parent comment, validate parent.
     if ($parentId !== NULL && $parentId > 0) {
+      if ($host instanceof NodeInterface && $host->bundle() === 'aculta_forum_topic') {
+        $parentPost = $this->entityTypeManager->getStorage('aculta_forum_post')->load($parentId);
+        if (!$parentPost instanceof ForumPost) {
+          return AccessResult::forbidden('Parent ForumPost not found.');
+        }
+        $parentOrigin = $this->originResolver->classify($parentPost);
+        if (in_array($parentOrigin->origin, [DiscussionOrigin::ARCHIVE, DiscussionOrigin::UNKNOWN], TRUE)) {
+          return AccessResult::forbidden('Parent ForumPost origin is not writable.')
+            ->addCacheableDependency($parentOrigin);
+        }
+        if (!$parentPost->isPublished()
+          || !$parentPost->isDefaultRevision()
+          || (string) $parentPost->get('topic')->target_id !== (string) $host->id()) {
+          return AccessResult::forbidden('Parent ForumPost is not part of this published topic.')
+            ->addCacheableDependency($parentPost);
+        }
+        $parentAccess = $parentPost->access('view', $account, TRUE);
+        if (!$parentAccess->isAllowed()) {
+          return AccessResult::forbidden('Parent ForumPost is not accessible.')
+            ->addCacheableDependency($parentAccess);
+        }
+
+        return AccessResult::allowed()
+          ->addCacheableDependency($host)
+          ->addCacheableDependency($parentPost)
+          ->addCacheableDependency($parentAccess)
+          ->addCacheableDependency($readAccess)
+          ->addCacheableDependency($writeAccess);
+      }
+
       $parentComment = $this->entityTypeManager->getStorage('comment')->load($parentId);
       if (!$parentComment instanceof CommentInterface) {
         return AccessResult::forbidden('Parent comment not found.');
       }
-      if ($parentComment->hasField('field_autor_legado')
-        && !$parentComment->get('field_autor_legado')->isEmpty()) {
-        return AccessResult::forbidden('Historical Growroom reply is read-only.')
-          ->addCacheableDependency($parentComment);
+      $parentOrigin = $this->originResolver->classify($parentComment);
+      if (in_array($parentOrigin->origin, [DiscussionOrigin::ARCHIVE, DiscussionOrigin::UNKNOWN], TRUE)) {
+        return AccessResult::forbidden('Parent discussion origin is not writable.')
+          ->addCacheableDependency($parentOrigin);
       }
       if (!$parentComment->isPublished()) {
         return AccessResult::forbidden('Parent comment is not published.')->addCacheableDependency($parentComment);

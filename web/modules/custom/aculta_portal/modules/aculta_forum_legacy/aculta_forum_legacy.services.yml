@@ -1,0 +1,5 @@
+services:
+  aculta_forum_legacy.discussion_origin_classifier:
+    class: Drupal\aculta_forum_legacy\Origin\LegacyDiscussionOriginClassifier
+    tags:
+      - { name: aculta_forum.discussion_origin_classifier }

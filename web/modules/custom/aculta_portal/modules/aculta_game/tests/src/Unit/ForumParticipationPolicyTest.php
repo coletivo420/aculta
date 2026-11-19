@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_game\Unit;
 
 use Drupal\aculta_game\ForumParticipationPolicy;
+use Drupal\aculta_forum\Origin\DiscussionOrigin;
+use Drupal\aculta_forum\Origin\DiscussionOriginClassification;
+use Drupal\aculta_forum\Origin\DiscussionOriginResolverInterface;
 use Drupal\comment\CommentInterface;
-use Drupal\Core\Entity\FieldableEntityInterface;
-use Drupal\Core\Field\FieldItemListInterface;
+use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\node\NodeInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Group;
@@ -22,7 +24,7 @@ final class ForumParticipationPolicyTest extends UnitTestCase {
    * A new published reply in a public topic is eligible. */
   public function testPublishedReplyOnCurrentPublicTopicIsEligible(): void {
     self::assertTrue(
-      (new ForumParticipationPolicy())->isEligible($this->comment(), $this->topic()),
+      $this->policy()->isEligible($this->comment(), $this->topic()),
     );
   }
 
@@ -30,7 +32,7 @@ final class ForumParticipationPolicyTest extends UnitTestCase {
    * A pending reply does not count until publication. */
   public function testPendingReplyIsNotEligible(): void {
     self::assertFalse(
-      (new ForumParticipationPolicy())->isEligible($this->comment(published: FALSE), $this->topic()),
+      $this->policy()->isEligible($this->comment(published: FALSE), $this->topic()),
     );
   }
 
@@ -42,7 +44,7 @@ final class ForumParticipationPolicyTest extends UnitTestCase {
     $original->method('isPublished')->willReturn(FALSE);
 
     self::assertTrue(
-      (new ForumParticipationPolicy())->isEligible(
+      $this->policy()->isEligible(
         $this->comment(original: $original),
         $this->topic(),
       ),
@@ -54,7 +56,7 @@ final class ForumParticipationPolicyTest extends UnitTestCase {
    */
   public function testAnonymousReplyIsNotEligible(): void {
     self::assertFalse(
-      (new ForumParticipationPolicy())->isEligible($this->comment(uid: 0), $this->topic()),
+      $this->policy()->isEligible($this->comment(uid: 0), $this->topic()),
     );
   }
 
@@ -65,7 +67,7 @@ final class ForumParticipationPolicyTest extends UnitTestCase {
     $original->method('isPublished')->willReturn(TRUE);
 
     self::assertFalse(
-      (new ForumParticipationPolicy())->isEligible($this->comment(original: $original), $this->topic()),
+      $this->policy()->isEligible($this->comment(original: $original), $this->topic()),
     );
   }
 
@@ -73,7 +75,7 @@ final class ForumParticipationPolicyTest extends UnitTestCase {
    * Publication comments do not feed the public Forum trigger. */
   public function testOtherHostContextIsNotEligible(): void {
     self::assertFalse(
-      (new ForumParticipationPolicy())->isEligible($this->comment(), $this->topic('article')),
+      $this->policy()->isEligible($this->comment(), $this->topic('article')),
     );
   }
 
@@ -82,7 +84,7 @@ final class ForumParticipationPolicyTest extends UnitTestCase {
    */
   public function testLmsTopicDoesNotEarnPublicForumParticipation(): void {
     self::assertFalse(
-      (new ForumParticipationPolicy())->isEligible(
+      $this->policy()->isEligible(
         $this->comment(),
         $this->topic('aculta_lms_topic'),
       ),
@@ -92,9 +94,9 @@ final class ForumParticipationPolicyTest extends UnitTestCase {
   /**
    * Either historical author marker excludes a contemporaneous award. */
   public function testLegacyAuthorshipOnEitherEntityIsNotEligible(): void {
-    $policy = new ForumParticipationPolicy();
-    self::assertFalse($policy->isEligible($this->comment(), $this->topic(legacyAuthor: TRUE)));
-    self::assertFalse($policy->isEligible($this->comment(legacyAuthor: TRUE), $this->topic()));
+    $policy = $this->policy(DiscussionOrigin::ARCHIVE);
+    self::assertFalse($policy->isEligible($this->comment(), $this->topic()));
+    self::assertFalse($policy->isEligible($this->comment(), $this->topic()));
   }
 
   /**
@@ -102,23 +104,22 @@ final class ForumParticipationPolicyTest extends UnitTestCase {
    */
   public function testDrupalForumContributedBundleIsNotEligible(): void {
     $comment = $this->comment(bundle: 'comment_forum', field: 'comment_forum');
-    self::assertFalse((new ForumParticipationPolicy())->isEligible($comment, $this->topic('forum')));
+    self::assertFalse($this->policy()->isEligible($comment, $this->topic('forum')));
   }
 
   /**
    * A mismatched Comment field is not the public Forum context. */
   public function testMismatchedBundleAndFieldAreNotEligible(): void {
     $comment = $this->comment(bundle: 'aculta_discussion_post', field: 'other_comment_field');
-    self::assertFalse((new ForumParticipationPolicy())->isEligible($comment, $this->topic()));
+    self::assertFalse($this->policy()->isEligible($comment, $this->topic()));
   }
 
   /**
    * Builds a published or historical forum topic. */
-  private function topic(string $bundle = 'aculta_forum_topic', bool $legacyAuthor = FALSE): NodeInterface {
+  private function topic(string $bundle = 'aculta_forum_topic'): NodeInterface {
     $topic = $this->createMock(NodeInterface::class);
     $topic->method('bundle')->willReturn($bundle);
     $topic->method('isPublished')->willReturn(TRUE);
-    $this->legacyAuthorField($topic, $legacyAuthor);
     return $topic;
   }
 
@@ -126,7 +127,6 @@ final class ForumParticipationPolicyTest extends UnitTestCase {
    * Builds a Comment for a selected host/field. */
   private function comment(
     bool $published = TRUE,
-    bool $legacyAuthor = FALSE,
     ?CommentInterface $original = NULL,
     string $bundle = 'aculta_discussion_post',
     string $field = 'field_aculta_discussion',
@@ -138,17 +138,18 @@ final class ForumParticipationPolicyTest extends UnitTestCase {
     $comment->method('isPublished')->willReturn($published);
     $comment->method('getOwnerId')->willReturn($uid);
     $comment->method('getOriginal')->willReturn($original);
-    $this->legacyAuthorField($comment, $legacyAuthor);
     return $comment;
   }
 
   /**
-   * Sets an empty or populated legacy-author field on an entity mock. */
-  private function legacyAuthorField(FieldableEntityInterface $entity, bool $hasLegacyAuthor): void {
-    $items = $this->createMock(FieldItemListInterface::class);
-    $items->method('isEmpty')->willReturn(!$hasLegacyAuthor);
-    $entity->method('hasField')->with('field_autor_legado')->willReturn(TRUE);
-    $entity->method('get')->with('field_autor_legado')->willReturn($items);
+   * Creates a policy with a generic origin classification.
+   */
+  private function policy(string $origin = DiscussionOrigin::CURRENT): ForumParticipationPolicy {
+    $resolver = $this->createMock(DiscussionOriginResolverInterface::class);
+    $resolver->method('classify')->willReturn(
+      DiscussionOriginClassification::from($origin, new CacheableMetadata()),
+    );
+    return new ForumParticipationPolicy($resolver);
   }
 
 }

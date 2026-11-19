@@ -115,7 +115,7 @@ services:
     class: Drupal\aculta_forum\Hook\ForumPostMigrationFieldHooks
   Drupal\aculta_forum\Hook\ForumQuoteHooks:
     class: Drupal\aculta_forum\Hook\ForumQuoteHooks
-    arguments: ['@aculta_forum.discussion_context_resolver', '@current_user', '@aculta_forum.quote_builder', '@request_stack', '@string_translation']
+    arguments: ['@aculta_forum.discussion_context_resolver', '@current_user', '@aculta_forum.quote_builder', '@request_stack', '@string_translation', '@aculta_forum.discussion_origin_resolver']
   Drupal\aculta_forum\Hook\ForumTopicMoveHooks:
     class: Drupal\aculta_forum\Hook\ForumTopicMoveHooks
     arguments: ['@aculta_forum.topic_mover', '@current_user']
@@ -183,6 +183,17 @@ services:
   aculta_forum.discussion_context_resolver:
     class: Drupal\aculta_forum\Context\DiscussionContextResolver
     arguments: [!tagged_iterator aculta_forum.discussion_context_provider]
+
+  aculta_forum.discussion_origin_resolver:
+    class: Drupal\aculta_forum\Origin\DiscussionOriginResolver
+    arguments: [!tagged_iterator aculta_forum.discussion_origin_classifier]
+  Drupal\aculta_forum\Origin\DiscussionOriginResolverInterface: '@aculta_forum.discussion_origin_resolver'
+
+  aculta_forum.discussion_origin_classifier.core:
+    class: Drupal\aculta_forum\Origin\CoreDiscussionOriginClassifier
+    arguments: ['@aculta_forum.discussion_context_resolver']
+    tags:
+      - { name: aculta_forum.discussion_origin_classifier }
 
   aculta_forum.discussion_context_provider.public_forum:
     class: Drupal\aculta_forum\Context\Provider\PublicForumContextProvider
@@ -296,6 +307,7 @@ services:
     arguments:
       - '@aculta_forum.discussion_context_resolver'
       - '@entity_type.manager'
+      - '@aculta_forum.discussion_origin_resolver'
 
   aculta_forum.discussion_reply_url_builder:
     class: Drupal\aculta_forum\Service\DiscussionReplyUrlBuilder
@@ -351,7 +363,7 @@ services:
       - '@entity_type.manager'
       - '@aculta_forum.discussion_reply_form_builder'
       - '@aculta_forum.discussion_reply_access'
-      - '@aculta_forum.discussion_context_resolver'
+      - '@aculta_forum.discussion_origin_resolver'
       - '@aculta_forum.quote_builder'
       - '@current_user'
       - '@keyvalue'
@@ -362,6 +374,7 @@ services:
       - '@aculta_forum.discussion_context_resolver'
       - '@entity_type.manager'
       - '@config.factory'
+      - '@aculta_forum.discussion_origin_resolver'
 
   aculta_forum.discussion_reaction_manager:
     class: Drupal\aculta_forum\Service\DiscussionReactionManager
@@ -371,6 +384,8 @@ services:
       - '@aculta_forum.analytics_scope_resolver'
       - '@event_dispatcher'
       - '@datetime.time'
+      - '@entity_type.manager'
+      - '@aculta_forum.discussion_origin_resolver'
 
   aculta_forum.discussion_reaction_endpoint_access:
     class: Drupal\aculta_forum\Access\DiscussionReactionEndpointAccess

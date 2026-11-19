@@ -24,10 +24,15 @@ final class TopicDeletionRoutesTest extends UnitTestCase {
 
     foreach (['aculta_forum.topic_deletion_approve', 'aculta_forum.topic_deletion_reject'] as $name) {
       self::assertArrayHasKey($name, $routes);
-      $defaults = $routes[$name]['defaults'];
+      $route = $routes[$name];
+      self::assertIsArray($route);
+      $defaults = $route['defaults'] ?? NULL;
+      self::assertIsArray($defaults);
       self::assertSame('\\Drupal\\aculta_forum\\Form\\TopicDeletionDecisionForm', $defaults['_form']);
       self::assertArrayNotHasKey('_controller', $defaults);
-      self::assertContains('POST', $routes[$name]['methods']);
+      $methods = $route['methods'] ?? NULL;
+      self::assertIsArray($methods);
+      self::assertContains('POST', $methods);
     }
   }
 

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_messenger\Plugin\QueueWorker;
 
 use Drupal\aculta_messenger\Aviso\ForumNoticeEventProducerInterface;
+use Drupal\aculta_messenger\Aviso\ForumNoticeAccessPolicy;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Lock\LockBackendInterface;
@@ -45,6 +46,7 @@ final class MessageSubscribeEventWorker extends QueueWorkerBase implements Conta
     protected readonly TimeInterface $time,
     protected readonly LockBackendInterface $lock,
     protected readonly LoggerChannelFactoryInterface $loggerFactory,
+    protected readonly ForumNoticeAccessPolicy $noticeAccessPolicy,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }
@@ -63,6 +65,7 @@ final class MessageSubscribeEventWorker extends QueueWorkerBase implements Conta
       $container->get('datetime.time'),
       $container->get('lock'),
       $container->get('logger.factory'),
+      $container->get('aculta_messenger.forum_notice_access_policy'),
     );
   }
 
@@ -79,9 +82,9 @@ final class MessageSubscribeEventWorker extends QueueWorkerBase implements Conta
     $current = $storage->load((int) $data['node_id']);
     $node = $storage->loadRevision((int) $data['revision_id']);
     if (!$current instanceof NodeInterface || !$current->isPublished()
-      || !$node instanceof NodeInterface || $node->bundle() !== 'aculta_forum_topic' || !$node->isPublished()
+      || !$node instanceof NodeInterface || !$this->noticeAccessPolicy->supportsTopic($node) || !$node->isPublished()
       || (int) $node->id() !== (int) $current->id()
-      || ($node->hasField('field_autor_legado') && !$node->get('field_autor_legado')->isEmpty())) {
+      || !$this->noticeAccessPolicy->supportsTopic($current)) {
       return;
     }
 

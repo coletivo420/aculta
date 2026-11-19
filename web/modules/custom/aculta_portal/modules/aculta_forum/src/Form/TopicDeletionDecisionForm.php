@@ -7,7 +7,6 @@ namespace Drupal\aculta_forum\Form;
 use Drupal\aculta_forum\Service\TopicDeletionModerationManager;
 use Drupal\Core\Form\ConfirmFormBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -25,12 +24,12 @@ final class TopicDeletionDecisionForm extends ConfirmFormBase {
   /**
    * Decision selected by the current route.
    */
-  private string $decision = '';
+  protected string $decision = '';
 
   public function __construct(
-    private readonly TopicDeletionModerationManager $moderationManager,
-    private readonly RouteMatchInterface $routeMatch,
-  ) {}
+    protected readonly TopicDeletionModerationManager $moderationManager,
+  ) {
+  }
 
   /**
    * {@inheritdoc}
@@ -38,7 +37,6 @@ final class TopicDeletionDecisionForm extends ConfirmFormBase {
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('aculta_forum.topic_deletion_moderation_manager'),
-      $container->get('current_route_match'),
     );
   }
 
@@ -76,14 +74,22 @@ final class TopicDeletionDecisionForm extends ConfirmFormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $form
+   *   Form structure being built.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Current state of the form.
+   *
+   * @return array<mixed>
+   *   The form render array.
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
-    $this->decision = match ($this->routeMatch->getRouteName()) {
+    $this->decision = match ($this->getRouteMatch()->getRouteName()) {
       'aculta_forum.topic_deletion_approve' => 'approve',
       'aculta_forum.topic_deletion_reject' => 'reject',
       default => '',
     };
-    $rawId = $this->routeMatch->getRawParameter('id');
+    $rawId = $this->getRouteMatch()->getRawParameter('id');
     if ($this->decision === '' || !is_scalar($rawId) || !ctype_digit((string) $rawId)
       || (int) $rawId < 1) {
       throw new NotFoundHttpException();
@@ -91,12 +97,22 @@ final class TopicDeletionDecisionForm extends ConfirmFormBase {
     $form_state->set('deletion_request_id', (int) $rawId);
     $form_state->set('deletion_decision', $this->decision);
     $form = parent::buildForm($form, $form_state);
-    $form['#cache']['max-age'] = 0;
+    $cache = $form['#cache'] ?? [];
+    if (!is_array($cache)) {
+      $cache = [];
+    }
+    $cache['max-age'] = 0;
+    $form['#cache'] = $cache;
     return $form;
   }
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $form
+   *   Submitted form structure.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Current state of the form.
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $account = $this->currentUser();

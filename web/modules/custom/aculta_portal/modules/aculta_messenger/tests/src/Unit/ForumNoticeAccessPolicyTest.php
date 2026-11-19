@@ -5,8 +5,12 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_messenger\Unit;
 
 use Drupal\aculta_messenger\Aviso\ForumNoticeAccessPolicy;
+use Drupal\aculta_forum\Origin\DiscussionOrigin;
+use Drupal\aculta_forum\Origin\DiscussionOriginClassification;
+use Drupal\aculta_forum\Origin\DiscussionOriginResolverInterface;
 use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -107,7 +111,11 @@ final class ForumNoticeAccessPolicyTest extends UnitTestCase {
     $topic->method('get')->with('field_domain_source')->willReturn($source);
     $topic->method('access')->willReturn($access);
 
-    return [new ForumNoticeAccessPolicy($entityTypeManager, $siteManager), $topic, $account];
+    $originResolver = $this->createMock(DiscussionOriginResolverInterface::class);
+    $originResolver->method('classify')->willReturn(
+      DiscussionOriginClassification::from(DiscussionOrigin::CURRENT, new CacheableMetadata()),
+    );
+    return [new ForumNoticeAccessPolicy($entityTypeManager, $siteManager, $originResolver), $topic, $account];
   }
 
 }
