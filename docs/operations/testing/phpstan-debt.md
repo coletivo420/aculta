@@ -1,10 +1,10 @@
 # Dívida PHPStan — ACULTA
 
-Gerado em 2026-11-18T23:54:57+00:00 por `scripts/phpstan-debt-report.php`.
+Gerado em 2026-11-19T01:03:51+00:00 por `scripts/phpstan-debt-report.php`.
 
 | Item | Valor |
 | --- | --- |
-| Commit | `043fd09906a6bb079cdbd685c4a07867ab3d1d67` |
+| Commit | `2de6bfebf0be747e9225ff13bc3dea8452e6e640` |
 | PHP | 8.4.27 |
 | PHPStan | PHPStan - PHP Static Analysis Tool 2.3.5 |
 | Nível | 10 |
@@ -15,19 +15,19 @@ Gerado em 2026-11-18T23:54:57+00:00 por `scripts/phpstan-debt-report.php`.
 
 | Medida | Ocorrências |
 | --- | ---: |
-| Total bruto no nível 10 | 17703 |
-| Dívida congelada no baseline | 17703 |
+| Total bruto no nível 10 | 17687 |
+| Dívida congelada no baseline | 17687 |
 | Erros não suprimidos | 0 |
-| Entradas no baseline | 10445 |
+| Entradas no baseline | 10435 |
 | Produção | 10570 |
-| Testes | 7133 |
+| Testes | 7117 |
 
 ## Criticidade funcional
 
 | Criticidade | Ocorrências |
 | --- | ---: |
 | alta | 212 |
-| media | 15650 |
+| media | 15634 |
 | baixa | 1841 |
 
 ## Dívida por módulo (prioridade de redução)
@@ -40,7 +40,7 @@ Gerado em 2026-11-18T23:54:57+00:00 por `scripts/phpstan-debt-report.php`.
 | aculta_wiki | 1368 |
 | aculta_portal | 1152 |
 | aculta_forum | 1076 |
-| aculta_lms | 1031 |
+| aculta_lms | 1015 |
 | aculta_lms_h5p | 928 |
 | aculta_index | 915 |
 | aculta_commerce | 623 |
@@ -69,8 +69,8 @@ Gerado em 2026-11-18T23:54:57+00:00 por `scripts/phpstan-debt-report.php`.
 
 | Identificador | Ocorrências |
 | --- | ---: |
-| `offsetAccess.nonOffsetAccessible` | 4623 |
-| `argument.type` | 3370 |
+| `offsetAccess.nonOffsetAccessible` | 4610 |
+| `argument.type` | 3367 |
 | `method.nonObject` | 2082 |
 | `missingType.iterableValue` | 1725 |
 | `cast.string` | 1605 |
