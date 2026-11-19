@@ -41,6 +41,9 @@ final class AvisosPrivacyFormTest extends UnitTestCase {
 
     $this->formBuilder($account)->build($form);
 
+    self::assertIsArray($form['avisos'] ?? NULL);
+    self::assertIsArray($form['avisos']['email_settings'] ?? NULL);
+    self::assertInstanceOf(\Drupal\Core\Url::class, $form['avisos']['email_settings']['#url'] ?? NULL);
     self::assertArrayHasKey('aviso_sempre', $form['avisos']);
     self::assertArrayHasKey('assinaturas', $form['avisos']);
     self::assertArrayNotHasKey('email_wiki', $form['avisos']);
@@ -80,15 +83,26 @@ final class AvisosPrivacyFormTest extends UnitTestCase {
 
     $formBuilder->build($form);
 
+    self::assertIsArray($form['avisos'] ?? NULL);
+    self::assertIsArray($form['avisos']['assinaturas'] ?? NULL);
+    self::assertIsArray($form['avisos']['assinaturas']['topics'] ?? NULL);
+    self::assertIsArray($form['avisos']['assinaturas']['topics']['#rows'] ?? NULL);
     $rows = $form['avisos']['assinaturas']['topics']['#rows'];
-    self::assertArrayHasKey('701', $rows);
-    self::assertArrayHasKey('702', $rows);
+    self::assertIsArray($rows['702'] ?? NULL);
+    self::assertIsArray($rows['702']['remove'] ?? NULL);
+    self::assertIsArray($rows['701'] ?? NULL);
+    self::assertIsArray($rows['701']['topic'] ?? NULL);
+    self::assertIsArray($form['avisos']['assinaturas']['remove_selected'] ?? NULL);
     self::assertArrayNotHasKey('703', $rows);
     self::assertArrayNotHasKey('704', $rows);
+    self::assertInstanceOf(\Drupal\Core\StringTranslation\TranslatableMarkup::class, $rows['702']['remove']['#title'] ?? NULL);
     $restrictedTitle = $rows['702']['remove']['#title']->getArguments()['@topic'];
+    self::assertInstanceOf(\Drupal\Core\StringTranslation\TranslatableMarkup::class, $restrictedTitle);
     self::assertSame('Tópico indisponível', $restrictedTitle->getUntranslatedString());
+    self::assertInstanceOf(\Drupal\Core\Url::class, $rows['701']['topic']['#url'] ?? NULL);
     self::assertSame('Tópico público', $rows['701']['topic']['#title']);
     self::assertSame('entity.node.canonical', $rows['701']['topic']['#url']->getRouteName());
+    self::assertIsArray($form['avisos']['assinaturas']['remove_selected']['#submit'] ?? NULL);
     self::assertSame(
       ['aculta_messenger.avisos_privacy_form:removeSubscriptionsSubmit'],
       $form['avisos']['assinaturas']['remove_selected']['#submit'],
