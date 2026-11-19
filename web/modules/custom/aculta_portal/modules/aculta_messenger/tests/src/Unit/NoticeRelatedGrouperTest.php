@@ -38,13 +38,18 @@ final class NoticeRelatedGrouperTest extends UnitTestCase {
     $grouped = NoticeRelatedGrouper::group([$first, $unrelated, $second, $single]);
 
     self::assertCount(3, $grouped);
-    self::assertSame('details', $grouped[0]['#type']);
-    self::assertCount(2, $grouped[0]['items']['#items']);
-    self::assertSame('read-1', $grouped[0]['items']['#items'][0]['read_state_action']['#id']);
-    self::assertSame('read-2', $grouped[0]['items']['#items'][1]['read_state_action']['#id']);
-    self::assertArrayNotHasKey('data-aculta-notice-group-key', $grouped[0]['items']['#items'][0]['#attributes']);
-    self::assertSame($unrelated, $grouped[1]);
-    self::assertArrayNotHasKey('data-aculta-notice-group-key', $grouped[2]['#attributes']);
+    $firstGroup = self::arrayAt($grouped, 0);
+    self::assertSame('details', $firstGroup['#type']);
+    $itemsElement = self::arrayAt($firstGroup, 'items');
+    self::assertIsArray($itemsElement['#items']);
+    self::assertCount(2, $itemsElement['#items']);
+    $firstItem = self::arrayAt($itemsElement['#items'], 0);
+    $secondItem = self::arrayAt($itemsElement['#items'], 1);
+    self::assertSame('read-1', self::arrayAt($firstItem, 'read_state_action')['#id']);
+    self::assertSame('read-2', self::arrayAt($secondItem, 'read_state_action')['#id']);
+    self::assertArrayNotHasKey('data-aculta-notice-group-key', self::arrayAt($firstItem, '#attributes'));
+    self::assertSame($unrelated, self::arrayAt($grouped, 1));
+    self::assertArrayNotHasKey('data-aculta-notice-group-key', self::arrayAt(self::arrayAt($grouped, 2), '#attributes'));
   }
 
   /**
@@ -58,6 +63,21 @@ final class NoticeRelatedGrouperTest extends UnitTestCase {
       NoticeRelatedGrouper::sourceKey('wiki', 'same-uuid'),
       NoticeRelatedGrouper::sourceKey('doacao', 'same-uuid'),
     );
+  }
+
+  /**
+   * Validates and returns one item from the generated render array.
+   *
+   * @param array<mixed> $items
+   *   Render items produced by the grouper.
+   *
+   * @return array<mixed>
+   *   One render array.
+   */
+  private static function arrayAt(array $items, int|string $key): array {
+    self::assertArrayHasKey($key, $items);
+    self::assertIsArray($items[$key]);
+    return $items[$key];
   }
 
 }

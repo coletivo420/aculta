@@ -9,6 +9,7 @@ use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Query\QueryInterface;
 use Drupal\Core\Field\FieldItemListInterface;
+use Drupal\Core\Field\FieldItemInterface;
 use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\Queue\QueueFactory;
 use Drupal\Core\Queue\QueueInterface;
@@ -225,6 +226,9 @@ final class FriendshipNoticeQueueTest extends UnitTestCase {
 
   /**
    * Creates a friendship Message fixture with the technical queue fields.
+   *
+   * @return MessageInterface&\PHPUnit\Framework\MockObject\MockObject
+   *   Mocked message with PHPUnit expectations available.
    */
   private function message(int $enqueueAttempts, string $status, bool $mailerManaged = FALSE): MessageInterface {
     $message = $this->createMock(MessageInterface::class);
@@ -263,7 +267,11 @@ final class FriendshipNoticeQueueTest extends UnitTestCase {
   }
 
   /**
-   * Creates a field list whose value can be read by the queue service. */
+   * Creates a field list whose value can be read by the queue service.
+   *
+   * @return FieldItemListInterface<FieldItemInterface>&\PHPUnit\Framework\MockObject\MockObject
+   *   Mocked field list with one value.
+   */
   private function fieldValue(mixed $value): FieldItemListInterface {
     $field = $this->createMock(FieldItemListInterface::class);
     $field->method('__get')->with('value')->willReturn($value);

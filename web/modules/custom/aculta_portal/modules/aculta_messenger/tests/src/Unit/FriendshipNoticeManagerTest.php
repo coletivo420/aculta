@@ -9,8 +9,11 @@ use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Query\QueryInterface;
 use Drupal\Core\Field\FieldItemListInterface;
+use Drupal\Core\Field\FieldItemInterface;
 use Drupal\Core\GeneratedUrl;
 use Drupal\Core\Routing\UrlGeneratorInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\Core\Template\Attribute;
 use Drupal\message\MessageInterface;
 use Drupal\Tests\UnitTestCase;
 use Drupal\user\UserInterface;
@@ -70,11 +73,18 @@ final class FriendshipNoticeManagerTest extends UnitTestCase {
         0,
       ));
       self::assertCount(1, $items);
-      self::assertSame('amizade', $items[0]['#attributes']['data-aculta-notice-origin']);
-      self::assertSame('unread', $items[0]['#attributes']['data-aculta-notice-read']);
-      self::assertSame('81', $items[0]['#attributes']['data-aculta-notice-message-id']);
-      self::assertSame('/avisos-mensagens/mensagens', (string) $items[0]['link']['#element_attributes']->offsetGet('href'));
-      self::assertSame('Pedido de amizade aceito', (string) $items[0]['link']['#value']['title']['#value']);
+      $item = self::arrayAt($items, 0);
+      $attributes = self::arrayAt($item, '#attributes');
+      self::assertSame('amizade', $attributes['data-aculta-notice-origin']);
+      self::assertSame('unread', $attributes['data-aculta-notice-read']);
+      self::assertSame('81', $attributes['data-aculta-notice-message-id']);
+      $link = self::arrayAt($item, 'link');
+      self::assertInstanceOf(Attribute::class, $link['#element_attributes']);
+      self::assertSame('/avisos-mensagens/mensagens', (string) $link['#element_attributes']->offsetGet('href'));
+      $linkValue = self::arrayAt($link, '#value');
+      $title = self::arrayAt($linkValue, 'title');
+      self::assertInstanceOf(TranslatableMarkup::class, $title['#value']);
+      self::assertSame('Pedido de amizade aceito', $title['#value']->getUntranslatedString());
     }
     finally {
       if ($oldContainer instanceof ContainerInterface) {
@@ -150,6 +160,10 @@ final class FriendshipNoticeManagerTest extends UnitTestCase {
   /**
    * Creates a persisted friendship notice.
    */
+  /**
+   * @return MessageInterface&\PHPUnit\Framework\MockObject\MockObject
+   *   Mocked persisted message.
+   */
   private function notice(int $id, int $uid, string $event, int $read): MessageInterface {
     $message = $this->createMock(MessageInterface::class);
     $message->method('id')->willReturn((string) $id);
@@ -166,10 +180,29 @@ final class FriendshipNoticeManagerTest extends UnitTestCase {
   /**
    * Creates a field list with one scalar value.
    */
+  /**
+   * @return FieldItemListInterface<FieldItemInterface>&\PHPUnit\Framework\MockObject\MockObject
+   *   Mocked field list with one value.
+   */
   private function fieldValue(mixed $value): FieldItemListInterface {
     $field = $this->createMock(FieldItemListInterface::class);
     $field->method('__get')->with('value')->willReturn($value);
     return $field;
+  }
+
+  /**
+   * Validates and returns one item from the generated render array.
+   *
+   * @param array<mixed> $items
+   *   Render items produced by the manager.
+   *
+   * @return array<mixed>
+   *   One notice render array.
+   */
+  private static function arrayAt(array $items, int|string $key): array {
+    self::assertArrayHasKey($key, $items);
+    self::assertIsArray($items[$key]);
+    return $items[$key];
   }
 
 }
