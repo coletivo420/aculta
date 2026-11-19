@@ -21,6 +21,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Links a Forum post search result to its anchored position in the host topic.
+ *
+ * @extends FormatterBase<\Drupal\Core\Field\FieldItemListInterface<\Drupal\Core\Field\FieldItemInterface>>
  */
 #[FieldFormatter(
   id: 'forum_post_search_topic_link',
@@ -29,6 +31,30 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 )]
 final class ForumPostSearchTopicLinkFormatter extends FormatterBase implements ContainerFactoryPluginInterface {
 
+  /**
+   * Constructs a ForumPostSearchTopicLinkFormatter object.
+   *
+   * @param string $plugin_id
+   *   The plugin ID for the formatter.
+   * @param mixed $plugin_definition
+   *   The plugin implementation definition.
+   * @param \Drupal\Core\Field\FieldDefinitionInterface $field_definition
+   *   The definition of the field to which the formatter is associated.
+   * @param array<string, mixed> $settings
+   *   The formatter settings.
+   * @param string $label
+   *   The formatter label display setting.
+   * @param string $view_mode
+   *   The view mode.
+   * @param array<string, mixed> $third_party_settings
+   *   Any third party settings.
+   * @param \Drupal\Core\Session\AccountProxyInterface $currentUser
+   *   The current user.
+   * @param \Drupal\aculta_portal\Domain\DomainSiteManager $siteManager
+   *   The domain site manager.
+   * @param \Drupal\aculta_forum\Service\ForumPostThreadBuilder $threadBuilder
+   *   The forum post thread builder.
+   */
   public function __construct(
     $plugin_id,
     $plugin_definition,
@@ -46,6 +72,17 @@ final class ForumPostSearchTopicLinkFormatter extends FormatterBase implements C
 
   /**
    * {@inheritdoc}
+   *
+   * @param \Symfony\Component\DependencyInjection\ContainerInterface $container
+   *   The service container.
+   * @param array<string, mixed> $configuration
+   *   A configuration array containing information about the plugin instance.
+   * @param string $plugin_id
+   *   The plugin ID for the plugin instance.
+   * @param mixed $plugin_definition
+   *   The plugin implementation definition.
+   *
+   * @phpstan-param array{field_definition: \Drupal\Core\Field\FieldDefinitionInterface, settings: array<string, mixed>, label: string, view_mode: string, third_party_settings: array<string, mixed>, ...} $configuration
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): static {
     return new static(
@@ -64,6 +101,9 @@ final class ForumPostSearchTopicLinkFormatter extends FormatterBase implements C
 
   /**
    * {@inheritdoc}
+   *
+   * @param \Drupal\Core\Field\FieldItemListInterface<\Drupal\Core\Field\FieldItemInterface> $items
+   * @param string $langcode
    */
   public function viewElements(FieldItemListInterface $items, $langcode): array {
     $post = $items->getEntity();

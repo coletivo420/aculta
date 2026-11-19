@@ -36,6 +36,22 @@ final class MoveForumTopicsAction extends ViewsBulkOperationsActionBase implemen
    */
   public const MAX_SELECTION = 50;
 
+  /**
+   * Constructs a MoveForumTopicsAction object.
+   *
+   * @param array<string, mixed> $configuration
+   *   A configuration array containing information about the plugin instance.
+   * @param string $plugin_id
+   *   The plugin ID for the plugin instance.
+   * @param mixed $plugin_definition
+   *   The plugin implementation definition.
+   * @param \Drupal\aculta_forum\Service\ForumTopicMover $mover
+   *   The forum topic mover.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
+   *   The entity type manager.
+   * @param \Drupal\Core\Session\AccountInterface $currentUser
+   *   The current user account.
+   */
   public function __construct(
     array $configuration,
     $plugin_id,
@@ -49,6 +65,8 @@ final class MoveForumTopicsAction extends ViewsBulkOperationsActionBase implemen
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $configuration
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): static {
     return new static(
@@ -79,7 +97,10 @@ final class MoveForumTopicsAction extends ViewsBulkOperationsActionBase implemen
       $result = $this->mover->access($object, $account);
       $destination_access = $destination->access('view', $account, TRUE);
       $result = $result->andIf($destination_access);
-      if ((int) ($object->get('field_aculta_categories')->getValue()[0]['target_id'] ?? 0) === (int) $destination->id()) {
+      $cat_items = $object->hasField('field_aculta_categories') ? $object->get('field_aculta_categories')->getValue() : [];
+      $cat_first = is_array($cat_items) && isset($cat_items[0]) && is_array($cat_items[0]) ? $cat_items[0] : [];
+      $cat_id = isset($cat_first['target_id']) && is_numeric($cat_first['target_id']) ? (int) $cat_first['target_id'] : 0;
+      if ($cat_id === (int) $destination->id()) {
         $result = $result->andIf(AccessResult::forbidden()->addCacheableDependency($object));
       }
     }
@@ -89,6 +110,9 @@ final class MoveForumTopicsAction extends ViewsBulkOperationsActionBase implemen
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $form
+   * @return array<string, mixed>
    */
   public function buildConfigurationForm(array $form, FormStateInterface $form_state): array {
     $selected_count = $this->getSelectedCount();
@@ -112,6 +136,8 @@ final class MoveForumTopicsAction extends ViewsBulkOperationsActionBase implemen
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $form
    */
   public function validateConfigurationForm(array &$form, FormStateInterface $form_state): void {
     // ConfigureAction restores the selection to FormState for validation but
@@ -137,13 +163,18 @@ final class MoveForumTopicsAction extends ViewsBulkOperationsActionBase implemen
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $form
    */
   public function submitConfigurationForm(array &$form, FormStateInterface $form_state): void {
-    $this->configuration['destination_category'] = (int) $form_state->getValue('destination_category');
+    $destVal = $form_state->getValue('destination_category');
+    $this->configuration['destination_category'] = is_numeric($destVal) ? (int) $destVal : 0;
   }
 
   /**
    * {@inheritdoc}
+   *
+   * @return array<string, mixed>
    */
   public function execute(?object $object = NULL): array {
     if ($this->getSelectedCount() > self::MAX_SELECTION
@@ -156,7 +187,9 @@ final class MoveForumTopicsAction extends ViewsBulkOperationsActionBase implemen
     }
 
     try {
-      $this->mover->move((int) $object->id(), (int) $this->configuration['destination_category'], $this->currentUser);
+      $destCat = $this->configuration['destination_category'] ?? 0;
+      $destCatId = is_numeric($destCat) ? (int) $destCat : 0;
+      $this->mover->move((int) $object->id(), $destCatId, $this->currentUser);
       return ['message' => $this->t('Tópico movido para a categoria selecionada.')];
     }
     catch (\InvalidArgumentException) {
@@ -169,6 +202,9 @@ final class MoveForumTopicsAction extends ViewsBulkOperationsActionBase implemen
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<int, mixed> $objects
+   * @return array<int, mixed>
    */
   public function executeMultiple(array $objects): array {
     if ($this->getSelectedCount() > self::MAX_SELECTION) {
@@ -211,16 +247,20 @@ final class MoveForumTopicsAction extends ViewsBulkOperationsActionBase implemen
 
   /**
    * Counts the persisted VBO selection without trusting display labels.
+   *
+   * @param array<array-key, mixed>|null $context
    */
   private function getSelectedCount(?array $context = NULL): int {
-    $context ??= $this->context ?? [];
+    $context ??= $this->context;
     $list = $context['list'] ?? [];
     if (!is_array($list)) {
       return 0;
     }
 
     if (!empty($context['exclude_mode'])) {
-      return max(0, (int) ($context['total_results'] ?? 0) - count($list));
+      $total = $context['total_results'] ?? 0;
+      $totalInt = is_numeric($total) ? (int) $total : 0;
+      return max(0, $totalInt - count($list));
     }
     return count($list);
   }

@@ -16,11 +16,14 @@ use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\file\FileInterface;
 use Drupal\file\Plugin\Field\FieldType\FileFieldItemList;
+use Drupal\file\Plugin\Field\FieldType\FileItem;
 use Drupal\media\MediaInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Renders Forum images and delegates local document previews to their owners.
+ *
+ * @extends FormatterBase<\Drupal\Core\Field\FieldItemListInterface>
  */
 #[FieldFormatter(
   id: 'aculta_forum_attachment',
@@ -29,6 +32,32 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 )]
 final class ForumAttachmentFormatter extends FormatterBase implements ContainerFactoryPluginInterface {
 
+  /**
+   * Constructs a ForumAttachmentFormatter object.
+   *
+   * @param string $plugin_id
+   *   The plugin ID for the formatter.
+   * @param mixed $plugin_definition
+   *   The plugin implementation definition.
+   * @param \Drupal\Core\Field\FieldDefinitionInterface $field_definition
+   *   The definition of the field to which the formatter is associated.
+   * @param array<string, mixed> $settings
+   *   The formatter settings.
+   * @param string $label
+   *   The formatter label display setting.
+   * @param string $view_mode
+   *   The view mode.
+   * @param array<string, mixed> $third_party_settings
+   *   Any third party settings.
+   * @param \Drupal\aculta_image\ImageRenderer $imageRenderer
+   *   The image renderer service.
+   * @param \Drupal\aculta_document_viewer\Docx\DocxViewerBuilder $docxViewerBuilder
+   *   The docx viewer builder.
+   * @param \Drupal\aculta_document_viewer\Spreadsheet\SpreadsheetViewerBuilder $spreadsheetViewerBuilder
+   *   The spreadsheet viewer builder.
+   * @param \Drupal\aculta_document_viewer\Pdf\PdfViewerBuilderInterface $pdfViewerBuilder
+   *   The pdf viewer builder.
+   */
   public function __construct(
     $plugin_id,
     $plugin_definition,
@@ -47,6 +76,17 @@ final class ForumAttachmentFormatter extends FormatterBase implements ContainerF
 
   /**
    * {@inheritdoc}
+   *
+   * @param \Symfony\Component\DependencyInjection\ContainerInterface $container
+   *   The service container.
+   * @param array<string, mixed> $configuration
+   *   A configuration array containing information about the plugin instance.
+   * @param string $plugin_id
+   *   The plugin ID for the plugin instance.
+   * @param mixed $plugin_definition
+   *   The plugin implementation definition.
+   *
+   * @phpstan-param array{field_definition: \Drupal\Core\Field\FieldDefinitionInterface, settings: array<string, mixed>, label: string, view_mode: string, third_party_settings: array<string, mixed>, ...} $configuration
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): static {
     return new static(
@@ -66,6 +106,9 @@ final class ForumAttachmentFormatter extends FormatterBase implements ContainerF
 
   /**
    * {@inheritdoc}
+   *
+   * @param \Drupal\Core\Field\FieldItemListInterface<\Drupal\Core\Field\FieldItemInterface> $items
+   * @param string $langcode
    */
   public function viewElements(FieldItemListInterface $items, $langcode): array {
     if (!$items instanceof FileFieldItemList) {
@@ -105,14 +148,21 @@ final class ForumAttachmentFormatter extends FormatterBase implements ContainerF
       $image_field = $media->hasField('field_media_forum_image')
         ? $media->get('field_media_forum_image')
         : NULL;
-      $field_marks_this_file_as_image = $image_field !== NULL
-        && !$image_field->isEmpty()
-        && (string) $image_field->target_id === (string) $file->id();
+      $targetId = $image_field !== NULL && !$image_field->isEmpty() && isset($image_field->target_id)
+        ? (string) $image_field->target_id
+        : '';
+      $field_marks_this_file_as_image = $targetId !== '' && $targetId === (string) $file->id();
       if (str_starts_with((string) $file->getMimeType(), 'image/') || $field_marks_this_file_as_image) {
-        $alt = $media->hasField('field_media_forum_image')
-          ? (string) ($media->get('field_media_forum_image')->alt ?: $file->getFilename())
-          : $file->getFilename();
-        $image = $this->imageRenderer->build('galeria_visualizacao', $file->getFileUri(), $alt, ['loading' => 'lazy']);
+        $filename = (string) $file->getFilename();
+        $altVal = '';
+        if ($image_field !== NULL && !$image_field->isEmpty()) {
+          $firstItem = $image_field->first();
+          $rawAlt = $firstItem ? $firstItem->get('alt')->getValue() : '';
+          $altVal = is_scalar($rawAlt) ? (string) $rawAlt : '';
+        }
+        $alt = $altVal !== '' ? $altVal : $filename;
+        $fileUri = (string) $file->getFileUri();
+        $image = $this->imageRenderer->build('galeria_visualizacao', $fileUri, $alt, ['loading' => 'lazy']);
         if ($image !== NULL) {
           $elements[$delta] = $image;
           $file_cacheability->applyTo($elements[$delta]);
@@ -125,7 +175,8 @@ final class ForumAttachmentFormatter extends FormatterBase implements ContainerF
         '#file' => $file,
         '#description' => $this->fileDescription($items, $delta),
       ];
-      $extension = strtolower(pathinfo($file->getFilename(), PATHINFO_EXTENSION));
+      $filename = (string) $file->getFilename();
+      $extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
       $mime = strtolower((string) $file->getMimeType());
       $viewer = NULL;
       if ($extension === 'pdf' && $mime === 'application/pdf'
@@ -137,10 +188,10 @@ final class ForumAttachmentFormatter extends FormatterBase implements ContainerF
         }
       }
       elseif ($extension === 'docx' && $mime === DocxViewerBuilder::DOCX_MIME) {
-        $viewer = $this->docxViewerBuilder->build($file, (string) $file->getFilename());
+        $viewer = $this->docxViewerBuilder->build($file, $filename);
       }
       elseif (isset(SpreadsheetViewerBuilder::FORMATS[$extension]) && in_array($mime, SpreadsheetViewerBuilder::FORMATS[$extension], TRUE)) {
-        $viewer = $this->spreadsheetViewerBuilder->build($file, (string) $file->getFilename());
+        $viewer = $this->spreadsheetViewerBuilder->build($file, $filename);
       }
       $elements[$delta] = $link;
       if ($viewer !== NULL) {
@@ -161,7 +212,9 @@ final class ForumAttachmentFormatter extends FormatterBase implements ContainerF
    * Reads the optional description from a file field item value.
    */
   private function fileDescription(FileFieldItemList $items, int|string $delta): ?string {
-    $description = $items->get($delta)->getValue()['description'] ?? NULL;
+    $item = $items->get($delta);
+    $values = $item !== NULL ? $item->getValue() : NULL;
+    $description = is_array($values) ? ($values['description'] ?? NULL) : NULL;
     return is_string($description) && $description !== '' ? $description : NULL;
   }
 

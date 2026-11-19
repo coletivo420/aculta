@@ -1,10 +1,10 @@
 # Dívida PHPStan — ACULTA
 
-Gerado em 2026-11-19T02:22:28+00:00 por `scripts/phpstan-debt-report.php`.
+Gerado em 2026-11-19T02:47:06+00:00 por `scripts/phpstan-debt-report.php`.
 
 | Item | Valor |
 | --- | --- |
-| Commit | `37b300c93e6ff34cda1536c90f3723e88a0cf3af` |
+| Commit | `0af87652610b01dc5946d1b3f1fec6e712cbd25e` |
 | PHP | 8.4.27 |
 | PHPStan | PHPStan - PHP Static Analysis Tool 2.3.5 |
 | Nível | 10 |
@@ -15,11 +15,11 @@ Gerado em 2026-11-19T02:22:28+00:00 por `scripts/phpstan-debt-report.php`.
 
 | Medida | Ocorrências |
 | --- | ---: |
-| Total bruto no nível 10 | 17287 |
-| Dívida congelada no baseline | 17287 |
+| Total bruto no nível 10 | 17162 |
+| Dívida congelada no baseline | 17162 |
 | Erros não suprimidos | 0 |
-| Entradas no baseline | 10160 |
-| Produção | 10171 |
+| Entradas no baseline | 10057 |
+| Produção | 10046 |
 | Testes | 7116 |
 
 ## Criticidade funcional
@@ -27,8 +27,8 @@ Gerado em 2026-11-19T02:22:28+00:00 por `scripts/phpstan-debt-report.php`.
 | Criticidade | Ocorrências |
 | --- | ---: |
 | alta | 212 |
-| media | 15299 |
-| baixa | 1776 |
+| media | 15223 |
+| baixa | 1727 |
 
 ## Dívida por módulo (prioridade de redução)
 
@@ -42,11 +42,11 @@ Gerado em 2026-11-19T02:22:28+00:00 por `scripts/phpstan-debt-report.php`.
 | aculta_lms | 1014 |
 | aculta_lms_h5p | 928 |
 | aculta_index | 915 |
-| aculta_forum | 677 |
 | aculta_commerce | 623 |
 | aculta_pagamentos_mercadopago | 594 |
 | aculta_studio | 592 |
 | aculta_mailer | 580 |
+| aculta_forum | 552 |
 | aculta_linkweed | 377 |
 | aculta_statistics | 351 |
 | aculta_deployer | 339 |
@@ -69,16 +69,16 @@ Gerado em 2026-11-19T02:22:28+00:00 por `scripts/phpstan-debt-report.php`.
 
 | Identificador | Ocorrências |
 | --- | ---: |
-| `offsetAccess.nonOffsetAccessible` | 4520 |
-| `argument.type` | 3303 |
-| `method.nonObject` | 2044 |
-| `missingType.iterableValue` | 1660 |
-| `cast.string` | 1566 |
-| `cast.int` | 995 |
+| `offsetAccess.nonOffsetAccessible` | 4513 |
+| `argument.type` | 3274 |
+| `method.nonObject` | 2042 |
+| `missingType.iterableValue` | 1617 |
+| `cast.string` | 1554 |
+| `cast.int` | 974 |
 | `method.notFound` | 706 |
-| `property.nonObject` | 464 |
-| `return.type` | 288 |
-| `foreach.nonIterable` | 264 |
+| `property.nonObject` | 462 |
+| `return.type` | 286 |
+| `foreach.nonIterable` | 263 |
 | `binaryOp.invalid` | 218 |
 | `offsetAccess.invalidOffset` | 126 |
 | `property.notFound` | 100 |
@@ -88,7 +88,7 @@ Gerado em 2026-11-19T02:22:28+00:00 por `scripts/phpstan-debt-report.php`.
 | `offsetAccess.notFound` | 68 |
 | `nullCoalesce.offset` | 67 |
 | `method.alreadyNarrowedType` | 61 |
-| `missingType.generics` | 45 |
+| `missingType.generics` | 39 |
 
 ## Arquivos com mais dívida
 

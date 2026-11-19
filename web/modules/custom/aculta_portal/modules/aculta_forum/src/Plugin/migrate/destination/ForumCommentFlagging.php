@@ -35,6 +35,32 @@ final class ForumCommentFlagging extends EntityContentBase {
    */
   protected ?int $sourceCommentId = NULL;
 
+  /**
+   * Constructs a ForumCommentFlagging object.
+   *
+   * @param array<string, mixed> $configuration
+   *   A configuration array containing information about the plugin instance.
+   * @param string $plugin_id
+   *   The plugin ID for the plugin instance.
+   * @param mixed $plugin_definition
+   *   The plugin implementation definition.
+   * @param \Drupal\migrate\Plugin\MigrationInterface $migration
+   *   The migration entity.
+   * @param \Drupal\Core\Entity\EntityStorageInterface $storage
+   *   The flagging entity storage.
+   * @param array<string> $bundles
+   *   The list of bundles.
+   * @param \Drupal\Core\Entity\EntityFieldManagerInterface $entity_field_manager
+   *   The entity field manager.
+   * @param \Drupal\Core\Field\FieldTypePluginManagerInterface $field_type_manager
+   *   The field type manager.
+   * @param \Drupal\aculta_forum\Migration\ForumFlaggingMigrationContext $migration_context
+   *   The forum flagging migration context.
+   * @param \Drupal\Core\Session\AccountSwitcherInterface|null $account_switcher
+   *   The account switcher.
+   * @param \Drupal\Core\Entity\EntityTypeBundleInfoInterface|null $entity_type_bundle_info
+   *   The bundle info service.
+   */
   public function __construct(
     array $configuration,
     $plugin_id,
@@ -53,8 +79,13 @@ final class ForumCommentFlagging extends EntityContentBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $configuration
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition, ?MigrationInterface $migration = NULL): static {
+    if (!$migration instanceof MigrationInterface) {
+      throw new \InvalidArgumentException('MigrationInterface é obrigatória.');
+    }
     $bundle_info = $container->get('entity_type.bundle.info');
     return new static(
       $configuration,
@@ -73,15 +104,21 @@ final class ForumCommentFlagging extends EntityContentBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<int|string, mixed> $old_destination_id_values
+   * @return array<int|string, mixed>|false
    */
-  public function import(Row $row, array $old_destination_id_values = []): array {
-    $this->sourceFlaggingId = (int) $row->getSourceProperty('fid');
-    $this->sourceCommentId = (int) $row->getSourceProperty('cid');
+  public function import(Row $row, array $old_destination_id_values = []): array|bool {
+    $fidVal = $row->getSourceProperty('fid');
+    $cidVal = $row->getSourceProperty('cid');
+    $this->sourceFlaggingId = is_numeric($fidVal) ? (int) $fidVal : 0;
+    $this->sourceCommentId = is_numeric($cidVal) ? (int) $cidVal : 0;
     if ($this->sourceFlaggingId < 1 || $this->sourceCommentId < 1) {
       throw new MigrateException('A linha de denúncia não contém IDs de origem válidos.');
     }
     try {
-      return parent::import($row, $old_destination_id_values);
+      $result = parent::import($row, $old_destination_id_values);
+      return is_array($result) ? $result : FALSE;
     }
     finally {
       $this->sourceFlaggingId = NULL;
@@ -91,6 +128,9 @@ final class ForumCommentFlagging extends EntityContentBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<int|string, mixed> $old_destination_id_values
+   * @return array<int|string, mixed>
    */
   protected function save(ContentEntityInterface $entity, array $old_destination_id_values = []): array {
     if (!$entity instanceof FlaggingInterface
@@ -98,6 +138,7 @@ final class ForumCommentFlagging extends EntityContentBase {
       || $this->sourceCommentId === NULL) {
       throw new MigrateException('O destino de denúncia recebeu entidade ou contexto de origem inválido.');
     }
+    /** @var array<int|string, mixed> */
     return $this->migration_context->saveImportedFlagging(
       $entity,
       $this->sourceFlaggingId,
@@ -108,6 +149,8 @@ final class ForumCommentFlagging extends EntityContentBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @return array<string, mixed>
    */
   public function fields(): array {
     return [];

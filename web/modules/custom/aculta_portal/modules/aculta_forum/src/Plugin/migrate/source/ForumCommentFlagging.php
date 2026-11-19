@@ -29,6 +29,22 @@ final class ForumCommentFlagging extends SourcePluginBase implements ContainerFa
 
   private const BATCH_SIZE = 200;
 
+  /**
+   * Constructs a ForumCommentFlagging object.
+   *
+   * @param array<string, mixed> $configuration
+   *   A configuration array containing information about the plugin instance.
+   * @param string $plugin_id
+   *   The plugin ID for the plugin instance.
+   * @param array<string, mixed> $plugin_definition
+   *   The plugin implementation definition.
+   * @param \Drupal\migrate\Plugin\MigrationInterface $migration
+   *   The migration entity.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
+   *   The entity type manager.
+   * @param \Drupal\aculta_portal\Domain\DomainSiteManager $siteManager
+   *   The domain site manager.
+   */
   public function __construct(
     array $configuration,
     string $plugin_id,
@@ -42,8 +58,14 @@ final class ForumCommentFlagging extends SourcePluginBase implements ContainerFa
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $configuration
+   * @param array<string, mixed> $plugin_definition
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition, ?MigrationInterface $migration = NULL): static {
+    if (!$migration instanceof MigrationInterface) {
+      throw new \InvalidArgumentException('MigrationInterface é obrigatória.');
+    }
     return new static(
       $configuration,
       $plugin_id,
@@ -56,44 +78,56 @@ final class ForumCommentFlagging extends SourcePluginBase implements ContainerFa
 
   /**
    * {@inheritdoc}
+   *
+   * @return \Generator<int, array<string, mixed>, void, void>
    */
   protected function initializeIterator(): \Generator {
     $storage = $this->entityTypeManager->getStorage('flagging');
-    $max_ids = $this->flaggingQuery()
+    $max_res = $this->flaggingQuery()
       ->sort('id', 'DESC')
       ->range(0, 1)
       ->execute();
-    $max_id = $max_ids === [] ? 0 : (int) reset($max_ids);
+    $max_ids = is_array($max_res) ? array_values($max_res) : [];
+    $first_max = reset($max_ids);
+    $max_id = is_numeric($first_max) ? (int) $first_max : 0;
     $last_id = 0;
 
     while ($last_id < $max_id) {
-      $ids = $this->flaggingQuery()
+      $ids_res = $this->flaggingQuery()
         ->condition('id', $last_id, '>')
         ->condition('id', $max_id, '<=')
         ->sort('id')
         ->range(0, self::BATCH_SIZE)
         ->execute();
+      $ids = is_array($ids_res) ? array_values($ids_res) : [];
       if ($ids === []) {
         break;
       }
-      $ids = array_values($ids);
-      $last_id = (int) end($ids);
+      $end_id = end($ids);
+      $last_id = is_numeric($end_id) ? (int) $end_id : 0;
 
-      foreach ($storage->loadMultiple($ids) as $flagging) {
+      /** @var array<int|string> $ids */
+      $flaggings = $storage->loadMultiple($ids);
+      foreach ($flaggings as $flagging) {
         if (!$flagging instanceof FlaggingInterface) {
           continue;
         }
         $comment = $this->entityTypeManager->getStorage('comment')->load($flagging->getFlaggableId());
-        $topic = $comment instanceof CommentInterface ? $comment->getCommentedEntity() : NULL;
+        if (!$comment instanceof CommentInterface) {
+          continue;
+        }
+        $topic = $comment->getCommentedEntity();
         if (!$this->isEligibleComment($comment, $topic)) {
           continue;
         }
+        $sessionIdVal = $flagging->get('session_id')->value;
+        $globalVal = $flagging->get('global')->value;
         yield [
           'fid' => (int) $flagging->id(),
           'cid' => (int) $comment->id(),
           'uid' => (int) $flagging->getOwnerId(),
-          'session_id' => (string) $flagging->get('session_id')->value,
-          'global' => (int) $flagging->get('global')->value,
+          'session_id' => is_scalar($sessionIdVal) ? (string) $sessionIdVal : '',
+          'global' => is_numeric($globalVal) ? (int) $globalVal : 0,
           'created' => (int) $flagging->getCreatedTime(),
         ];
       }
@@ -102,6 +136,8 @@ final class ForumCommentFlagging extends SourcePluginBase implements ContainerFa
 
   /**
    * {@inheritdoc}
+   *
+   * @return array<string, string>
    */
   public function fields(): array {
     return [
@@ -116,6 +152,8 @@ final class ForumCommentFlagging extends SourcePluginBase implements ContainerFa
 
   /**
    * {@inheritdoc}
+   *
+   * @return array<string, array<string, string>>
    */
   public function getIds(): array {
     return ['fid' => ['type' => 'integer']];
