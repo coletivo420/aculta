@@ -272,4 +272,5 @@ final class ReportService {
     }
     return 'portal';
   }
+
 }

@@ -22,7 +22,6 @@ use Drupal\node\NodeInterface;
 use Drupal\Tests\UnitTestCase;
 use Drupal\user\UserInterface;
 use PHPUnit\Framework\Attributes\Group;
-use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
@@ -74,11 +73,7 @@ final class ForumNoticeAccessPolicyTest extends UnitTestCase {
   /**
    * Creates the Forum domain, active recipient, and topic fixtures.
    *
-   * @return array{ForumNoticeAccessPolicy, NodeInterface&MockObject, UserInterface}
-   *   Policy, topic, and recipient fixtures.
-   */
-  /**
-   * @return array{ForumNoticeAccessPolicy, NodeInterface&MockObject, UserInterface&MockObject}
+   * @return array{ForumNoticeAccessPolicy, NodeInterface&\PHPUnit\Framework\MockObject\MockObject, UserInterface&\PHPUnit\Framework\MockObject\MockObject}
    *   Access policy and its node/account fixtures.
    */
   private function fixture(string $assignedDomain, AccessResult $access, bool $active = TRUE): array {

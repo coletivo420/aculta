@@ -9,6 +9,7 @@ use Drupal\taxonomy\Entity\Term;
 use Drupal\aculta_forum\Attachment\ForumAttachmentCleanup;
 use Drupal\Core\Url;
 use Drupal\domain\Entity\Domain;
+use Drupal\node\Entity\Node;
 use Drupal\Tests\BrowserTestBase;
 use Drupal\user\UserInterface;
 use PHPUnit\Framework\Attributes\Group;
@@ -156,7 +157,7 @@ final class ForumRoutesFunctionalTest extends BrowserTestBase {
     $termStorage = $this->container->get('entity_type.manager')->getStorage('taxonomy_term');
     $terms = $termStorage->loadByProperties(['vid' => 'aculta_forum_categories']);
     $term = reset($terms);
-    self::assertInstanceOf(\Drupal\taxonomy\Entity\Term::class, $term);
+    self::assertInstanceOf(Term::class, $term);
     $select = $page->findField('field_aculta_categories[]')
       ?: $page->findField('field_aculta_categories');
     self::assertNotNull($select);
@@ -170,6 +171,44 @@ final class ForumRoutesFunctionalTest extends BrowserTestBase {
     self::assertCount(1, $node, 'Status ' . $this->getSession()->getStatusCode() . ' | ' . $text);
     $topic = reset($node);
     self::assertSame('aculta_forum_topic', $topic->bundle());
+  }
+
+  /**
+   * A current topic's HTTP composer renders a revisionable ForumPost form.
+   */
+  public function testReplyComposerUsesForumPostFormOverHttp(): void {
+    $author = $this->drupalCreateUser([
+      'create aculta_forum_topic content',
+      'create aculta_forum posts',
+      'access content',
+    ]);
+    $this->drupalLogin($author);
+    $terms = $this->container->get('entity_type.manager')->getStorage('taxonomy_term')
+      ->loadByProperties(['vid' => 'aculta_forum_categories']);
+    $term = reset($terms);
+    self::assertInstanceOf(Term::class, $term);
+    $topic = Node::create([
+      'type' => 'aculta_forum_topic',
+      'title' => 'Tópico para resposta revisionável',
+      'uid' => $author->id(),
+      'status' => 1,
+      'body' => ['value' => 'Tópico funcional.', 'format' => 'forum'],
+      'field_domain_source' => ['target_id' => 'forum_aculta_org'],
+      'field_aculta_categories' => ['target_id' => $term->id()],
+    ]);
+    $topic->save();
+
+    $this->drupalGet('/discussoes/compositor/node/' . $topic->id());
+
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->fieldExists('body[0][value]');
+    $this->assertSession()->fieldNotExists('comment_body[0][value]');
+    self::assertCount(0, $this->container->get('entity_type.manager')->getStorage('comment')
+      ->loadByProperties([
+        'entity_type' => 'node',
+        'entity_id' => $topic->id(),
+        'field_name' => 'field_aculta_discussion',
+      ]));
   }
 
   /**

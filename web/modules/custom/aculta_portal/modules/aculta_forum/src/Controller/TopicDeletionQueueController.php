@@ -17,11 +17,28 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 final class TopicDeletionQueueController extends ControllerBase {
 
+  /**
+   * Creates the queue controller.
+   *
+   * @param \Drupal\aculta_forum\Service\TopicDeletionModerationManager $moderationManager
+   *   The topic deletion moderation manager.
+   * @param \Drupal\Core\Datetime\DateFormatterInterface $dateFormatter
+   *   The date formatter.
+   */
   public function __construct(
     protected readonly TopicDeletionModerationManager $moderationManager,
     protected readonly DateFormatterInterface $dateFormatter,
   ) {}
 
+  /**
+   * Creates the controller from the service container.
+   *
+   * @param \Symfony\Component\DependencyInjection\ContainerInterface $container
+   *   The service container.
+   *
+   * @return static
+   *   A controller instance.
+   */
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('aculta_forum.topic_deletion_moderation_manager'),
@@ -33,6 +50,7 @@ final class TopicDeletionQueueController extends ControllerBase {
    * Displays topics awaiting deletion moderation.
    *
    * @return array<string, mixed>
+   *   The moderation queue render array.
    */
   public function queue(): array {
     $requests = $this->moderationManager->getPendingRequests();
