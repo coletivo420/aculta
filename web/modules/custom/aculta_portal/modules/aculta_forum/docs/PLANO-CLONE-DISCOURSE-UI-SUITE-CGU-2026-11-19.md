@@ -38,18 +38,21 @@ não apenas para Index e Statistics. A ausência do addon deixa o motor corrente
 funcional; origens sem provider autorizado falham fechadas. O addon opcional
 não é requisito do `aculta_forum` nem do `aculta_portal`.
 
-### Fronteiras dos módulos e decisões ainda pendentes
+### Fronteiras dos módulos pela política vigente
 
 O addon não pode criar dependência reversa de CGU, Game, Messenger ou
-`aculta_user`. Ele publica a origem `ARCHIVE` por contrato genérico e mantém
-seus providers próprios; cada módulo principal decide como tratar essa origem
-dentro de suas responsabilidades, sem conhecer entidades, campos ou rotas do
-addon. O plano ainda precisa especificar, à luz da política do acervo, se e
-como registros históricos podem aparecer em denúncia/revisão do CGU, e quais
-eventos de Messenger/Game devem ser suprimidos em importações ou reconstruções.
-Importar ou reconstruir o acervo não pode, por si só, gerar participação,
-avisos, XP ou conquistas. Esses critérios devem ser validados antes de virar
-contrato de produto ou regra de exclusão nos consumidores.
+`aculta_user`. Ele publicará a origem `ARCHIVE` por contrato genérico e manterá
+seus providers próprios; cada módulo principal trata a origem dentro de suas
+responsabilidades sem conhecer entidades, campos ou rotas do addon. Pelo
+contrato vigente do acervo, conteúdo histórico fica fora das filas ordinárias
+do CGU; medida excepcional exige protocolo específico, auditável e autorizado.
+O CGU continua dono de denúncias, casos e decisões e não deve oferecer ação
+ordinária que altere o arquivo imutável.
+
+O arquivo não cria avisos, assinaturas, XP, participação ou perfil de usuário
+corrente. Importação, rebuild, migração ou restauração também não podem gerar
+esses eventos colaterais. Os consumidores implementam essas exclusões por
+contratos genéricos de origem, sem acoplamento direto ao addon.
 
 `aculta_user` continua responsável por usuários atuais. Autores históricos
 seguem a entidade e a apresentação definidas em F-D44, sem converter autoria
@@ -124,7 +127,7 @@ orientar a extração e a revisão:
 | Classificação de origem | Não foram encontrados `ForumDiscussionOriginPolicy`, `CurrentDiscussionOriginClassifier` ou provider `aculta_forum_legacy` em PHP. `DiscussionContextResolver` resolve hosts de discussão; `ForumAnalyticsScopeResolver` trata escopo analítico. Ambos são contratos diferentes de classificar legado/corrente/contextual. O histórico ainda é detectado por campos/classes diretamente. | Projetar e testar um resolver central genérico para `ARCHIVE`, `CURRENT`, `CONTEXTUAL` e `UNKNOWN`; provider de arquivo pertence ao addon opcional. Testar addon ausente/presente, marker ausente, precedência, host cruzado e saída inválida. Falhas de origem para escrita/eventos devem ser fechadas. Views, Search API e agregadores ainda precisam consumir a classificação. |
 | Views e navegação | Views públicas/administrativas filtram `node:aculta_forum_topic` por bundle/status; `PublicForumListViewHooks` calcula contagens por bundle/categoria. Esses caminhos não filtram a origem histórica por si mesmos. | Separar listagem atual, filas e contagens do catálogo histórico. Aplicar filtro de origem por provider em Views/query/access e nas contagens auxiliares; preservar rota/canonical de leitura histórica e grants. Só usar marker após o census provar cobertura; não presumir que todo registro possui marker. |
 | Index/Search | `ForumContentIndexProvider::isIndexable()` aceita tópicos do bundle, ForumPosts default e Comments `aculta_discussion_post` do host tópico; não consulta origem nem `field_autor_legado`. O texto descritivo chama isso de indexação durante migração. Portanto o índice corrente pode misturar origem histórica e corrente se dados marcados existirem. | Não executar rebuild. Testar filtros de origem e acesso direto; excluir `ARCHIVE`/`UNKNOWN` do índice corrente usando classificador genérico. O addon futuro deve prover catálogo histórico separado, ACL-aware, sem depender do Search público corrente. |
-| CGU e sinalizações | `CguReportQueue`, `ForumReportCguBridgeHooks`, `CguReport` e o contrato CGU mantêm compatibilidade com `ReportQueue`/Flagging antigos (`legacy_flag_id`, `sinalizacao_legada_forum`, ARQ-06D/06F). | Census deve separar flags associadas ao acervo importado, flags antigas de conteúdo corrente e relatórios UGC genéricos. Mover para o addon somente adaptadores/proveniência exclusivos do acervo; CGU continua dono de denúncias, casos e decisões. Não migrar nem remover linhas nesta fase. |
+| CGU e sinalizações | `CguReportQueue`, `ForumReportCguBridgeHooks`, `CguReport` e o contrato CGU mantêm compatibilidade com `ReportQueue`/Flagging antigos (`legacy_flag_id`, `sinalizacao_legada_forum`, ARQ-06D/06F). | Census deve separar flags associadas ao acervo, flags antigas de conteúdo corrente e relatórios UGC genéricos. O arquivo fica fora das filas ordinárias; qualquer exceção exige protocolo específico, auditável e autorizado. CGU mantém ownership genérico de denúncias, casos e decisões. Não migrar nem remover linhas nesta fase. |
 | Estatísticas | Não foi encontrado `LegacyArchiveMetricsProvider`. `AuthorizedEntityMetricAggregator` valida bundle/permissão para `forum.replies.created`, mas não consulta origem. Os subscribers de atividade/reação do Statistics precisam ser revisados para eventos importados/sincronizados. | Projetar provider de série histórica no addon e consumi-lo por API genérica; validar cada candidato por origem antes do drilldown. Separar séries histórica/corrente, evitar dupla contagem e não reconstruir nesta fase. |
 | Catálogo histórico | `LegacyMemorialController` em `aculta_user` busca/pagina nomes de autores; não foi encontrado catálogo ou busca de texto de tópicos/respostas no arquivo. O `ForumContentIndexProvider` corrente não exige origem `CURRENT` e não é substituto seguro para um índice histórico separado. | Especificar índice/catálogo no addon com ACL, hierarquia, URLs e busca de tópicos/Comments históricos. Excluir origem ARCHIVE do índice corrente e contextual do arquivo. Sem rebuild até autorização operacional. |
 | Autoria e UI | Não existe `LegacyAuthorCardBuilder` no código da branch. `aculta_user` implementa `AuthorCardBuilder`, `LegacyAuthorDisplayName`, `DiscussionCommentAuthorHooks` e `LegacyMemorialController`; há SDC `author-card` no tema. | Extrair autoria histórica e memorial para o addon e reutilizar o SDC com variante somente leitura/archive; não duplicar componente nem criar perfil individual. Verificar slots/cache/access antes de remover Twig/hooks existentes. |
@@ -159,6 +162,21 @@ Nenhuma exclusão persistente será executada nesta fase de planejamento, e
 nenhuma tabela histórica será removida como atalho para a extração. O censo
 FDC-11.0 deve registrar essa distinção sem exportar dados pessoais.
 
+Para identificar dados eventualmente criados pela refatoração, o census deve
+correlacionar a proveniência das migrations antes de propor limpeza:
+
+| Migration | Evidência de proveniência | Possível efeito da refatoração |
+| --- | --- | --- |
+| `aculta_forum_comment_posts` | Map/message tables do Migrate: cada CID de origem mapeado para ID de destino `aculta_forum_post`; conferir CID de origem, ID de destino e existência/estado sem expor corpo ou autoria. | Cria ou atualiza ForumPosts a partir de Comments, incluindo dados `legacy_author`; somente destinos provados pelo map desta migration podem ser candidatos a limpeza. |
+| `aculta_forum_comment_parents` | Mapa da migration e IDs de destino; compara `parent` atual com a relação derivada dos CIDs de origem/pai. | Atualiza a hierarquia dos ForumPosts destino; não apaga o Comment origem. Reverter somente o efeito nos ForumPosts provadamente gerados pela migration. |
+| `aculta_forum_comment_flaggings` | Map/message tables próprios e campo `entity_type/entity_id` dos flaggings mapeados, cruzados com lookup da migration de posts. | Cria flaggings contra ForumPosts destino; somente flaggings comprovadamente gerados e ligados a esses destinos podem ser candidatos a limpeza. |
+
+Mapas ausentes, incompletos ou incompatíveis não autorizam inferir origem por
+UID, data, texto ou semelhança do conteúdo. Nesses casos, manter os registros
+e exigir evidência de clone/backup e revisão antes de qualquer plano reversível.
+Os Comments, autores, tópicos, referências e arquivos preexistentes nunca são
+alvos dessa limpeza.
+
 ### Inventário a migrar para o addon
 
 - **Dados e autoria:** entidade existente `aculta_legado_autor`, manager/upsert por ID de origem, `field_autor_legado` e referências legadas, configuração de storage/form/display e a propriedade desses contratos. Autores continuam sem conta User/login; `uid=0` e as chaves, IDs, referências e relações existentes devem ser preservados conforme plano aprovado. Os arquivos de autoria são inventariados e preservados, sem mudar seu armazenamento nesta fase. A localização atual em `aculta_user` não torna `aculta_user` dono futuro do legado.
@@ -179,7 +197,7 @@ O requisito “portável a outros projetos” exige auditoria adicional do manif
 ### Sequência planejada e critérios de aceite
 
 1. **FDC-11.0 — Census somente leitura:** inventariar tipos/bundles/fields/rotas/Views/config, tabelas, referências de autoria, flags, Search API, eventos/consumidores e caches; incluir IDs/histórico de execução das migrations, map tables, ForumPosts e flaggings de destino com provenance agregada; reportar contagens sem exportar PII. Distinguir registros anteriores à refatoração de registros que ela eventualmente criou. Mapear cada referência em `aculta_forum`, `aculta_portal`, `aculta_user`, CGU, Index, Statistics, Messenger, Game e outros consumidores. Para cada integração, registrar owner atual, contrato de destino e arquivo futuro no addon. Não executar rebuild, import, sync, update, uninstall ou limpeza.
-2. **FDC-11.1 — Contratos e matriz de instalação:** definir interfaces/providers genéricos e testar os módulos principais sem o addon, o addon instalado e consumidores opcionais ausentes. Provar que os módulos principais não carregam código/config do addon e que o manifesto só declara a dependência unidirecional do addon para as APIs necessárias. Provar que novas respostas Growroom usam ForumPost; Wiki/Revista/LMS preservam Comment contextual e seus grants; origem desconhecida falha fechada; CGU distingue denúncia, decisão e ação de moderação, respeitando a política do acervo ainda a confirmar; importação/reconstrução não gera eventos de participação, avisos, XP ou conquistas; autoria histórica continua fora das contas/perfis `aculta_user`.
+2. **FDC-11.1 — Contratos e matriz de instalação:** definir interfaces/providers genéricos e testar os módulos principais sem o addon, o addon instalado e consumidores opcionais ausentes. Provar que os módulos principais não carregam código/config do addon e que o manifesto só declara a dependência unidirecional do addon para as APIs necessárias. Provar que novas respostas Growroom usam ForumPost; Wiki/Revista/LMS preservam Comment contextual e seus grants; origem desconhecida falha fechada; arquivo fora das filas ordinárias do CGU e exceção somente por protocolo autorizado/auditável; arquivo e importações/reconstruções não geram aviso, assinatura, XP, participação ou perfil corrente; autoria histórica continua fora de contas/perfis `aculta_user`.
 3. **FDC-11.2 — Extração de código/config:** criar o módulo opcional e mover para ele toda semântica, configuração, rotas, ferramentas read-only, projeções e providers específicos do acervo. Remover/substituir referências diretas nos principais a `aculta_legado_autor`, `field_autor_legado`, `legacy_author`, classes, IDs de config/rotas e equivalentes. Corrigir o escopo das migrations para que Comment `ARCHIVE` nunca entre em ForumPost/parent/flagging; qualquer migração de Comments correntes exige escopo e autorização próprios. Módulos consumidores integram-se pelo resolver genérico, sem depender do addon. Nenhum comportamento histórico pode depender de `aculta_user` nem tornar addon obrigatório para `aculta_forum`/`aculta_portal`.
 4. **FDC-11.3 — Dados e ownership:** primeiro reproduzir a extração em clone restaurável, comparar contagens, entity IDs, UUIDs, source IDs, chaves, autoria, árvore/ordem, URLs, timestamps, idiomas, avatares (quantidade, checksums, paths, referências e render) antes/depois; verificar acesso anônimo/autenticado/moderador. Preservar conteúdo e bytes. Preservar o ID `aculta_legado_autor`, as referências existentes e os arquivos de autoria. A mudança de módulo dono de entity/field/config e a cópia de arquivos são operações estruturais: requerem clone restaurável, plano de reversão, backup, análise das definições e autorização operacional específica. Nunca desinstalar `aculta_user` para “transferir” storage.
 5. **FDC-11.4 — Projeções separadas:** implementar em `aculta_forum_legacy` o provider do catálogo/pesquisa próprios do arquivo e o provider da série intitulada **“Estatísticas Históricas da Restauração do Growroom”**. `aculta_index` e `aculta_statistics` fornecem apenas as APIs genéricas de extensão, consulta e agregação; não recebem lógica, configuração ou nomenclatura histórica específica. O catálogo e a pesquisa devem ser ACL-aware e isolados do índice/pesquisa do fórum atual; a série histórica não pode ser somada nem duplicada nas métricas correntes. Provar escopos, regras de acesso e separação das contagens. Reações históricas são sempre ocultas e recusadas. Fazer census de eventuais rows de reação sem apagar ou corrigir dados. Não rodar rebuild de índice nem reconstrução de métricas sem autorização operacional.
