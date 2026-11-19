@@ -24,7 +24,26 @@ final readonly class AccountCourseSummary {
   public const STATUS_AWAITING_EVALUATION = 'awaiting_evaluation';
 
   /**
+   * Creates a neutral course summary for the account's learning section.
+   *
+   * @param string $id
+   *   The provider's course identifier.
+   * @param string $label
+   *   The course title shown to the account.
+   * @param string $description
+   *   The course description, already filtered by the provider.
+   * @param string $descriptionFormat
+   *   The text format of the description, if any.
+   * @param string $status
+   *   One of the STATUS_* constants of this class.
+   * @param int|float|null $score
+   *   The final score, when the provider has one.
+   * @param bool $finished
+   *   Whether the account has finished the course.
+   * @param \Drupal\Core\Url|null $url
+   *   The canonical course URL, or NULL when it must not be linked.
    * @param array<int, string> $cacheTags
+   *   Cache tags the provider needs to invalidate this summary.
    */
   public function __construct(
     public string $id,
