@@ -160,8 +160,9 @@ movidas automaticamente para o addon apenas por conter “forum” no nome.
 
 O censo documental fora dos módulos encontrou regras históricas que precisam
 de fonte normativa única na extração: `docs/portal/PAPEIS-PARTICIPACAO.md`
-repete `field_autor_legado` e diz que conteúdo legado não será importado,
-trecho superado por F-D43; `ACULTA-USER-PLAN.md`, `SOURCE-OF-TRUTH.md`,
+agora descreve `ARCHIVE`, registra o field direto apenas como implementação
+atual e data o estado antigo de Runtime; após a extração deve remover também
+essa referência de implementação. `ACULTA-USER-PLAN.md`, `SOURCE-OF-TRUTH.md`,
 `docs/architecture/aculta_forum.md` e `docs/architecture/avatar.md` ainda
 descrevem autoria, campos e ownership em User/Forum; `ROUTES-SITEMAP.md` e
 `FRIENDLY-PORTUGUESE-SLUGS.md` registram a rota e reserva do memorial; e

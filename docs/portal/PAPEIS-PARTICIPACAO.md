@@ -36,13 +36,13 @@ Um usuário pode ter mais de um papel. `estudante` é concedido na matrícula me
   2026-10-16.
 - Como moderador do Fórum, pode **ocultar, despublicar ou excluir** tópicos e comentários.
 - Pode mover tópicos novos do Growroom entre categorias pela permissão `move aculta forum topics`; isso não concede edição do bundle. A permissão efetiva continua condicionada à confirmação de e-mail pela hierarquia vigente.
-- Conteúdo ativo novo segue a fila de moderação e exige e-mail confirmado. Conteúdo Growroom histórico marcado com `field_autor_legado` não entra em denúncia/moderação e não pode ser reaberto ou alterado, inclusive por `content_editor`.
+- Conteúdo ativo novo segue a fila de moderação e exige e-mail confirmado. Conteúdo classificado `ARCHIVE` do Growroom não entra na denúncia/moderação corrente e não pode ser reaberto ou alterado, inclusive por `content_editor`. A implementação atual detecta parte desse conteúdo por `field_autor_legado`; F-D48 prevê substituir a leitura direta por um contrato genérico de origem, provido pelo addon opcional.
 - Concedido somente pelo administrador.
 
 ## 3. Papel `administrator`
 
 - Concedido somente pelo administrador.
-- Tem bypass administrativo geral, exceto os guards explícitos do acervo Growroom histórico, que também vedam operações de conteúdo para administrador. O Runtime de desenvolvimento está sem dados do Forum contrib após F-D33/dev.50; a estrutura de autoria histórica fica preparada para futura restauração controlada.
+- Tem bypass administrativo geral, exceto os guards do conteúdo `ARCHIVE` do Growroom, que vedam operações de conteúdo também para administrador. O registro de F-D33/dev.50 dizia que o Runtime de desenvolvimento estava sem Nodes `forum` e Comments `comment_forum` naquele momento; F-D43 posteriormente definiu a preparação do acervo curado para Runtime de testes, sujeita a pipeline idempotente, validação isolada, prévia, backup e rollback. Nenhuma importação atual é presumida ou autorizada por esta descrição.
 - É o único que atribui papéis administrativos, edita contas e confirma e-mail manualmente. Essas ações não ficam com
   nenhum outro papel.
 
@@ -106,8 +106,12 @@ homologação funcional.
   Fórum público.
 - Os bundles do Forum contrib foram desinstalados em dev.50. As políticas de
   participação atuais só se aplicam a Comments compartilhados em contextos
-  ACULTA; conteúdos Growroom importados com autoria histórica ficam isentos da
-  moderação inicial e fora da fila de denúncias.
+  ACULTA; conteúdo histórico classificado `ARCHIVE` fica isento da moderação
+  inicial e fora da fila ordinária de denúncias, conforme F-D49. Importação ou
+  reconstrução não deve gerar participação, avisos, XP ou conquistas. A regra
+  normativa vem de [DECISOES.md](../../web/modules/custom/aculta_portal/modules/aculta_forum/docs/DECISOES.md);
+  detalhes de ownership e extração ficam no
+  [plano FDC-11](../../web/modules/custom/aculta_portal/modules/aculta_forum/docs/PLANO-CLONE-DISCOURSE-UI-SUITE-CGU-2026-11-19.md).
   O Comment compartilhado está instalado em `article` e
   `blog` no Runtime de desenvolvimento; formulário foi renderizado em memória para a
   conta de teste, mas HTTP/envio de comentário segue sem homologação.
