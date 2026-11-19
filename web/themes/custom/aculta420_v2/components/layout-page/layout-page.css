@@ -42,11 +42,8 @@
 
 @media (min-width: 60rem) {
   .layout-page--studio-dashboard {
-    position: relative;
     max-inline-size: var(--aculta-container-width, 84rem);
     margin-inline: auto;
-    padding-inline-start: 16rem;
-    padding-inline-end: 21rem;
   }
 
   .layout-page--studio-dashboard .layout-page__content {
