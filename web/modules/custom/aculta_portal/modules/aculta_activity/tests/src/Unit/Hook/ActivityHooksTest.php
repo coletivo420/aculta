@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_activity\Unit\Hook;
 
 use Drupal\aculta_activity\Hook\ActivityHooks;
+use Drupal\Core\Entity\EntityFormInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
@@ -26,18 +27,8 @@ final class ActivityHooksTest extends UnitTestCase {
   public function testActivityFormIsGroupedAndUsesOwnerCallback(): void {
     $node = $this->createMock(NodeInterface::class);
     $node->method('bundle')->willReturn('activity');
-    $formObject = new class($node) {
-
-      public function __construct(private readonly NodeInterface $node) {}
-
-      /**
-       * Devolve a entidade de teste.
-       */
-      public function getEntity(): NodeInterface {
-        return $this->node;
-      }
-
-    };
+    $formObject = $this->createMock(EntityFormInterface::class);
+    $formObject->method('getEntity')->willReturn($node);
     $formState = $this->createMock(FormStateInterface::class);
     $formState->method('getFormObject')->willReturn($formObject);
     $translation = $this->createMock(TranslationInterface::class);
@@ -71,18 +62,8 @@ final class ActivityHooksTest extends UnitTestCase {
   public function testOtherBundlesAreUnaffected(): void {
     $node = $this->createMock(NodeInterface::class);
     $node->method('bundle')->willReturn('revista');
-    $formObject = new class($node) {
-
-      public function __construct(private readonly NodeInterface $node) {}
-
-      /**
-       * Devolve a entidade de teste.
-       */
-      public function getEntity(): NodeInterface {
-        return $this->node;
-      }
-
-    };
+    $formObject = $this->createMock(EntityFormInterface::class);
+    $formObject->method('getEntity')->willReturn($node);
     $formState = $this->createMock(FormStateInterface::class);
     $formState->method('getFormObject')->willReturn($formObject);
     $translation = $this->createMock(TranslationInterface::class);
