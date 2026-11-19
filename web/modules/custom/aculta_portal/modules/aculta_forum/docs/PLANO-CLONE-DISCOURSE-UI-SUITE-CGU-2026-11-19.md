@@ -134,6 +134,21 @@ orientar a extração e a revisão:
 | Autoria e UI | `aculta_user::DiscussionCommentAuthorHooks` renderiza cartão legado sempre que um Comment `aculta_discussion_post` tem `field_autor_legado`; em hosts diferentes de `author_forum`, chama `buildLegacy()`. `aculta_magazine/docs/README.md` descreve autoria vinculada ao acervo no Comment editorial `revista`. O hook também renderiza `legacy_author` em `aculta_forum_post`, entidade de publicação corrente, embora ForumPost não seja conteúdo histórico autorizado por F-D44. Isso pode expor autoria Growroom fora de tópicos/comentários do arquivo. `AuthorCardBuilder` e o SDC `author-card` declaram o cartão/variante históricos no User/tema. | Mover classificação, nome de exibição e decisão de renderizar autoria histórica ao addon. Exibir o cartão somente quando tópico/comentário for classificado `ARCHIVE` dentro do Fórum legado; um marker isolado em Wiki, Revista, LMS, ForumPost ou host desconhecido não pode expor `LegacyAuthor`. ForumPosts correntes usam identidade de User. Qualquer `legacy_author` persistido em ForumPost é candidato de refatoração somente se a provenance da migration o provar. Manter o SDC e a variante visual reutilizáveis, mas sem política de origem no tema. Atualizar `aculta_magazine/docs/README.md` e cobrir testes de host cruzado para que F-D44 só se aplique a tópicos e comentários do arquivo. |
 | Dependências e testes de ownership | Não há manifesto do addon para auditar. `aculta_forum.info.yml` declara `aculta_user` como dependência obrigatória, além de serviços atuais de identidade/participação; `aculta_user` guarda hoje entity/schema/rota históricos, embora seu `.info.yml` não declare dependência do Fórum. `AcultaUserInstallRollbackKernelTest` lista `aculta_legado_autor` como tabela/entity de User e espera que uninstall de `aculta_user` a remova. | Não remover em bloco a integração de identidade ACULTA corrente. Separar no census dependências correntes necessárias de serviços/fields legados; substituir apenas a parte corrente por adapter opcional quando requerido por portabilidade e mover ownership histórico para addon. Rever o teste de rollback de User para enumerar só o storage que continuar pertencendo a User. Criar testes do addon para instalar com a entidade existente, preservar ID/linhas/referências ao retirar ownership de User e bloquear uninstall do addon enquanto houver acervo; provar também a matriz sem `aculta_user` e com addon ausente/presente. Manifestos e service containers dos módulos principais não podem exigir o addon. |
 
+A integração CGU precisa preservar a fronteira de ownership da F-D48: o
+`aculta_cgu` conserva denúncia, caso, decisão, auditoria e ACL genéricos; o
+backfill, a deduplicação e o rollback do antigo Flagging ficam em adapter ou
+ferramenta de `aculta_forum_legacy`. `CguReport.legacy_flag_id` e o motivo
+`sinalizacao_legada_forum` são compatibilidade específica que não pode continuar
+como regra de domínio no CGU. Se denúncias correntes ainda precisarem de
+idempotência por origem, projetar um vínculo genérico provider/source ID e
+transferir os registros existentes em clone sem perder relatórios ou decisões.
+A bridge corrente deve classificar o alvo via contrato neutro antes de criar
+qualquer denúncia: `ARCHIVE` segue o protocolo excepcional aprovado,
+`UNKNOWN` falha fechado e `CURRENT`/`CONTEXTUAL` respeitam seus donos locais.
+Revisar também `aculta_cgu/docs/CONTRATO-INTEGRACAO-FORUM-CGU-2026-11-19.md`;
+a retirada de campo/motivo ou mudança de storage requer censo, plano de
+reversão e autorização próprios.
+
 O acoplamento do Fórum a `aculta_user` deve ser decomposto por responsabilidade,
 não removido em bloco: `ForumThemeHooks` injeta `avatar_resolver` e
 `author_card_builder` para autoria User corrente; `ForumPublicationTimeHooks`
