@@ -318,7 +318,11 @@ para `aculta_forum_legacy` não autoriza apagar nem recriar esses registros.
 artefatos persistidos que foram criados pela própria refatoração; antes de
 qualquer remoção, provar sua origem e separá-los do acervo anterior.
 Nenhuma exclusão persistente será executada nesta fase de planejamento, e
-nenhuma tabela histórica será removida como atalho para a extração. O censo
+a extração não exige manter uma tabela temporária/paralela criada pela
+refatoração. A tabela/base canônica `aculta_legado_autor` e os registros
+originais de autores, tópicos e comentários permanecem; qualquer tabela ou
+registro comprovadamente criado pela refatoração pode ser candidato à limpeza
+em plano próprio, sem ser preservado apenas por ser “histórico”. O censo
 FDC-11.0 deve registrar essa distinção sem exportar dados pessoais.
 
 Para identificar dados eventualmente criados pela refatoração, o census deve
