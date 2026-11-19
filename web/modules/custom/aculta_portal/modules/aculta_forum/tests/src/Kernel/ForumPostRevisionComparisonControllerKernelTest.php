@@ -117,7 +117,7 @@ final class ForumPostRevisionComparisonControllerKernelTest extends KernelTestBa
     $title = $build['#title'] ?? '';
     self::assertSame(
       'Comparando revisão ' . $this->firstRevision . ' com ' . $this->secondRevision,
-      is_scalar($title) ? (string) $title : '',
+      $title instanceof \Stringable ? (string) $title : '',
     );
     $comparison = $build['comparison'] ?? [];
     self::assertIsArray($comparison);
@@ -128,8 +128,9 @@ final class ForumPostRevisionComparisonControllerKernelTest extends KernelTestBa
     foreach ($rows as $row) {
       if (is_array($row) && isset($row[0]) && is_array($row[0])) {
         $data = $row[0]['data'] ?? NULL;
-        if (is_array($data) && isset($data['#plain_text']) && is_scalar($data['#plain_text'])) {
-          $labels[] = (string) $data['#plain_text'];
+        $plain = is_array($data) ? ($data['#plain_text'] ?? NULL) : NULL;
+        if (is_scalar($plain) || $plain instanceof \Stringable) {
+          $labels[] = (string) $plain;
         }
       }
     }
