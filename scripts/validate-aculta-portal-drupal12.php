@@ -819,8 +819,12 @@ $check(
 // the Portal only adapts that contract, and the dependency stays optional.
 $coursesManagerSource = $read($srcRoot . '/AccountCoursesManager.php');
 $servicesSource = $read(dirname($srcRoot) . '/aculta_portal.services.yml');
+$coursePresenterSource = $read($srcRoot . '/Presentation/AccountCoursePresenter.php');
 $check(
   !str_contains($coursesManagerSource, 'GroupMembership')
+    && !str_contains($coursesManagerSource, 'aculta_learning_contracts')
+    && !str_contains($coursePresenterSource, 'Drupal\\aculta_lms\\Learning\\AccountCourseSummary')
+    && str_contains($coursePresenterSource, 'Drupal\\aculta_portal\\Learning\\AccountCourseSummary')
     && str_contains($coursesManagerSource, 'AccountCoursesReaderInterface $reader')
     && str_contains($servicesSource, "'@?Drupal\\aculta_portal\\Learning\\AccountCoursesReaderInterface'"),
   'P5.5 AccountCoursesManager must consume the AccountCoursesReader contract instead of reading Group memberships.',

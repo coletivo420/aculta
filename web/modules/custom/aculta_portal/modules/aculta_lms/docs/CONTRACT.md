@@ -33,7 +33,7 @@ armazenamento paralelo de conclusão.
 As interfaces e DTOs neutros de leitura educacional agora residem diretamente sob `Drupal\aculta_lms\Learning`:
 - `CourseJourneyReaderInterface` / `CourseJourneyDTO`
 - `StudentLearningSummaryReaderInterface` / `StudentLearningSummaryDTO`
-- `AccountCoursesReaderInterface` / `AccountCourseSummaryDTO`
+- Contratos da Conta: `Drupal\aculta_portal\Learning\AccountCoursesReaderInterface` / `AccountCourseSummary` (implementação no LMS)
 
 Estes contratos permitem que módulos de apresentação como `aculta_studio` e `aculta_user` consumam dados curriculares e jornadas de aprendizado de forma desacoplada, sem acoplamento a implementações internas de banco ou armazenamento.
 

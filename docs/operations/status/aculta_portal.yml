@@ -15,3 +15,4 @@ progress_note: >-
 # 2026-10-24: regra transversal de desenvolvimento: aliases temporários removidos.
 # Rotas canônicas apenas; código alterado, homologação Runtime ainda pendente.
 # Gate: scripts/validate-no-temporary-route-aliases.php.
+# 2026-11-18: Contrato de cursos da Conta migrado para o Portal; desinstalação de aculta_learning_contracts é etapa estrutural pendente.

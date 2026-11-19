@@ -1,5 +1,11 @@
 # Cobertura Kernel adicional F7 — 2026-11-04
 
+## 2026-11-18 - Interface da Conta hospedada no Portal
+
+- `AccountCoursesReader` e `LearningDashboardManager` usam a interface e o DTO de `Drupal\aculta_portal\Learning`.
+- Removidos wrappers duplicados de `aculta_lms/src/Learning` e preservadas regras de acesso, endpoints e contratos de jornada do GanjaLab.
+
+
 - Kernel Commerce confirma que pedido gratuito em rascunho não matricula; ao
   concluir a transição real do pedido, o hook concede membership e grava a
   origem `field_course_order`, sem gateway remoto.

@@ -43,10 +43,10 @@ o teste nega aluno e Group diferente do proprietário do tópico.
 
 `Drupal\aculta_lms\LearningDashboardManager` implementa o contrato como adaptador LMS/Group; o alias `aculta_lms.course_journey_reader` é o ponto de composição. `CourseRoomBuilder` (matrícula/roster no LMS) e `CourseJourneyPresentationHooks` (jornada/sala no Studio) consomem o contrato; `CourseJourneyComposer` consome apenas o DTO e não importa classes internas do contrib nem de detalhes de infraestrutura do `aculta_lms`. O `aculta_lms` não depende de `aculta_studio`.
 
-Na consolidação arquitetural, os contratos residem sob `aculta_lms\Learning`:
+Na consolidação arquitetural, a jornada GanjaLab permanece sob `aculta_lms\Learning`; o contrato da Conta é propriedade do Portal:
 - `CourseJourneyReaderInterface`
 - `StudentLearningSummaryReaderInterface` (consumido pelo `LearnerDashboardComposer` no Studio)
-- `AccountCoursesReaderInterface`
+- `Drupal\aculta_portal\Learning\AccountCoursesReaderInterface` / `AccountCourseSummary` (implementação em `aculta_lms`)
 - `CourseCompletedEvent` em `Drupal\aculta_lms\Event\CourseCompletedEvent`
 
 A fonte de verdade permanece no LMS/Group durante a transição. Nenhum dado é duplicado, nenhuma escrita é redirecionada e a autorização continua decidida no servidor pelo adaptador. O inventário e a contagem reproduzível de imports estão em [LMS-CONTRIB-DEPENDENCY-INVENTORY.md](../modules/LMS-CONTRIB-DEPENDENCY-INVENTORY.md).
