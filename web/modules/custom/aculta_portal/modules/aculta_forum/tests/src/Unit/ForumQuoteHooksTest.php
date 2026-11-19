@@ -221,7 +221,7 @@ final class ForumQuoteHooksTest extends UnitTestCase {
     $host = $this->createMock(EntityInterface::class);
     $this->makeCacheable($host);
     $parent = $this->comment(AccessResult::allowed());
-    $parent->method('hasField')->with('comment_body')->willReturn(TRUE);
+    $parent->method('hasField')->willReturnCallback(static fn (string $name): bool => $name === 'comment_body');
     $processed = new class('<p>Original <strong>mensagem</strong>.</p>') implements CacheableDependencyInterface {
 
       /**

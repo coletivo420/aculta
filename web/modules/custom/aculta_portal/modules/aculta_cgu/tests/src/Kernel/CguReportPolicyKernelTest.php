@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_cgu\Kernel;
 
 use Drupal\Core\DependencyInjection\ContainerBuilder;
+use Drupal\comment\CommentInterface;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\aculta_cgu\Entity\CguReport;
 use Drupal\aculta_cgu\Exception\ReportNotAllowedException;
@@ -95,6 +96,9 @@ final class CguReportPolicyKernelTest extends KernelTestBase {
 
     NodeType::create(['type' => 'article', 'name' => 'Article'])->save();
     NodeType::create(['type' => 'aculta_forum_topic', 'name' => 'Topic'])->save();
+    NodeType::create(['type' => 'revista', 'name' => 'Revista'])->save();
+    NodeType::create(['type' => 'wiki_entry', 'name' => 'Wiki'])->save();
+    NodeType::create(['type' => 'aculta_lms_topic', 'name' => 'LMS'])->save();
 
     Role::load('authenticated')?->grantPermission('access content')->save();
     $this->makeRole('mod_portal', [ModerationScope::permissionFor('portal')]);
@@ -214,6 +218,33 @@ final class CguReportPolicyKernelTest extends KernelTestBase {
 
     $report = $this->service->createReport($topic, $this->reporter, 'spam', 'forum');
     $this->assertSame('forum', $report->get('purpose')->value);
+  }
+
+  /**
+   * Shared Comment bundles inherit their actual host's moderation purpose.
+   */
+  public function testCommentPurposeFollowsHost(): void {
+    foreach ([
+      'aculta_forum_topic' => 'forum',
+      'revista' => 'revista',
+      'wiki_entry' => 'wiki',
+    ] as $bundle => $purpose) {
+      $host = $this->makeNode($bundle);
+      $comment = $this->createMock(CommentInterface::class);
+      $comment->method('getCommentedEntity')->willReturn($host);
+      self::assertSame($purpose, $this->service->resolvePurpose($comment));
+    }
+  }
+
+  /**
+   * LMS feedback must never fall into the public Forum moderation queue.
+   */
+  public function testUnsupportedLmsCommentContextFailsClosed(): void {
+    $host = $this->makeNode('aculta_lms_topic');
+    $comment = $this->createMock(CommentInterface::class);
+    $comment->method('getCommentedEntity')->willReturn($host);
+    $this->expectException(ReportNotAllowedException::class);
+    $this->service->resolvePurpose($comment);
   }
 
   /**
