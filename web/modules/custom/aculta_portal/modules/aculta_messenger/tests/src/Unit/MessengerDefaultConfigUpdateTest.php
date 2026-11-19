@@ -200,7 +200,9 @@ final class MessengerDefaultConfigUpdateTest extends UnitTestCase {
     $field->expects(self::once())->method('setSetting')->with('allowed_values', self::callback(
       static function (array $updated) use (&$allowedValues): bool {
         $allowedValues = $updated;
-        return count($updated) === 3 && $updated[2]['value'] === 'submitted';
+        return count($updated) === 3
+          && is_array($updated[2] ?? NULL)
+          && ($updated[2]['value'] ?? NULL) === 'submitted';
       },
     ))->willReturnSelf();
     $field->expects(self::once())->method('save')->willReturn($field);
@@ -315,18 +317,20 @@ final class MessengerDefaultConfigUpdateTest extends UnitTestCase {
       'field.field.message.aculta_msg_game_award.field_aculta_game_award_uuid',
       'field.field.message.aculta_msg_game_award.field_aculta_game_read',
     ];
-    $created_storages = [];
+    $created_storages = new FieldStorageConfigTestMap();
     $field_storage = $this->createMock(EntityStorageInterface::class);
     $field_storage->expects(self::exactly(6))->method('load')
-      ->willReturnCallback(static function (string $id) use (&$created_storages): ?FieldStorageConfigInterface {
-        return $created_storages[$id] ?? NULL;
+      ->willReturnCallback(static function (string $id) use ($created_storages): ?FieldStorageConfigInterface {
+        return $created_storages->entities[$id] ?? NULL;
       });
     $field_storage->expects(self::exactly(3))->method('create')
-      ->willReturnCallback(function (array $values) use (&$created_storages): FieldStorageConfigInterface {
+      ->willReturnCallback(function (array $values) use ($created_storages): FieldStorageConfigInterface {
+        self::assertIsString($values['id'] ?? NULL);
+        self::assertIsString($values['type'] ?? NULL);
         $entity = $this->createMock(FieldStorageConfigInterface::class);
         $entity->expects(self::once())->method('save')->willReturn(1);
         $entity->method('getType')->willReturn($values['type']);
-        $created_storages[$values['id']] = $entity;
+        $created_storages->entities[$values['id']] = $entity;
         return $entity;
       });
     $field_config = $this->createMock(EntityStorageInterface::class);
@@ -351,7 +355,7 @@ final class MessengerDefaultConfigUpdateTest extends UnitTestCase {
       foreach ([...$storage_ids, ...$instance_ids] as $id) {
         self::assertIsArray($defaults->read($id));
       }
-      self::assertCount(3, $created_storages);
+      self::assertCount(3, $created_storages->entities);
     }
     finally {
       \Drupal::unsetContainer();
@@ -365,16 +369,19 @@ final class MessengerDefaultConfigUpdateTest extends UnitTestCase {
     $module_path = dirname(__DIR__, 3);
     $defaults = new FileStorage($module_path . '/config/install');
     $field_storage = $this->createMock(EntityStorageInterface::class);
+    $entities = new FieldStorageConfigTestMap();
     $field_storage->expects(self::exactly(3))->method('load')
-      ->willReturnCallback(function (string $id) use ($defaults): FieldStorageConfigInterface {
-        static $entities = [];
-        if (!isset($entities[$id])) {
+      ->willReturnCallback(function (string $id) use ($defaults, $entities): FieldStorageConfigInterface {
+        if (!isset($entities->entities[$id])) {
           $config_name = 'field.storage.' . str_replace('.', '.', $id);
+          $defaultConfig = $defaults->read($config_name);
+          self::assertIsArray($defaultConfig);
+          self::assertIsString($defaultConfig['type'] ?? NULL);
           $entity = $this->createMock(FieldStorageConfigInterface::class);
-          $entity->method('getType')->willReturn($defaults->read($config_name)['type']);
-          $entities[$id] = $entity;
+          $entity->method('getType')->willReturn($defaultConfig['type']);
+          $entities->entities[$id] = $entity;
         }
-        return $entities[$id];
+        return $entities->entities[$id];
       });
     $field_storage->expects(self::never())->method('create');
     $field_config = $this->createMock(EntityStorageInterface::class);
@@ -404,9 +411,23 @@ final class MessengerDefaultConfigUpdateTest extends UnitTestCase {
    * Creates the public Drupal resolver used by update hooks.
    */
   private function extensionPathResolver(string $modulePath): ExtensionPathResolver {
-    $resolver = $this->createStub(ExtensionPathResolver::class);
+    $resolver = $this->createMock(ExtensionPathResolver::class);
     $resolver->method('getPath')->with('module', 'aculta_messenger')->willReturn($modulePath);
     return $resolver;
   }
+
+}
+
+/**
+ * Stores typed field-storage mocks across entity-storage callbacks.
+ */
+final class FieldStorageConfigTestMap {
+
+  /**
+   * Created or loaded field-storage fixtures keyed by config entity ID.
+   *
+   * @var array<string, FieldStorageConfigInterface>
+   */
+  public array $entities = [];
 
 }
