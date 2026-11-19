@@ -22,6 +22,31 @@ use PHPUnit\Framework\Attributes\Group;
 #[Group('aculta_forum')]
 final class DiscussionReplyAccessTest extends UnitTestCase {
 
+  /**
+   * A historical Growroom host is never writable through Comment APIs.
+   */
+  public function testHistoricalTopicCannotReceiveStandardComments(): void {
+    $host = $this->createMock(ContentEntityInterface::class);
+    $host->method('getCacheContexts')->willReturn([]);
+    $host->method('getCacheTags')->willReturn([]);
+    $host->method('getCacheMaxAge')->willReturn(-1);
+    $host->method('hasField')->willReturnCallback(
+      static fn (string $name): bool => $name === 'field_autor_legado',
+    );
+    $archive = $this->createMock(FieldItemListInterface::class);
+    $archive->method('isEmpty')->willReturn(FALSE);
+    $host->method('get')->with('field_autor_legado')->willReturn($archive);
+
+    $provider = $this->createMock(DiscussionContextProviderInterface::class);
+    $provider->expects(self::never())->method('supports');
+
+    $access = new DiscussionReplyAccess(
+      new DiscussionContextResolver([$provider]),
+      $this->createMock(EntityTypeManagerInterface::class),
+    );
+    self::assertFalse($access->checkAccess($host, $this->createMock(AccountInterface::class))->isAllowed());
+  }
+
   public function testCheckAccessForbiddenWhenNoContextResolved(): void {
     $provider = $this->createMock(DiscussionContextProviderInterface::class);
     $provider->method('supports')->willReturn(FALSE);
@@ -69,7 +94,7 @@ final class DiscussionReplyAccessTest extends UnitTestCase {
     $fieldItemList->method('__get')->with('status')->willReturn($fieldItem->status);
     $fieldItemList->method('isEmpty')->willReturn(FALSE);
 
-    $host->method('hasField')->with('field_aculta_discussion')->willReturn(TRUE);
+    $host->method('hasField')->willReturnCallback(static fn (string $name): bool => $name === 'field_aculta_discussion');
     $host->method('get')->with('field_aculta_discussion')->willReturn($fieldItemList);
 
     $access = new DiscussionReplyAccess($resolver, $entityTypeManager);
@@ -105,7 +130,7 @@ final class DiscussionReplyAccessTest extends UnitTestCase {
     $fieldItemList->method('__get')->with('status')->willReturn($fieldItem->status);
     $fieldItemList->method('isEmpty')->willReturn(FALSE);
 
-    $host->method('hasField')->with('field_aculta_discussion')->willReturn(TRUE);
+    $host->method('hasField')->willReturnCallback(static fn (string $name): bool => $name === 'field_aculta_discussion');
     $host->method('get')->with('field_aculta_discussion')->willReturn($fieldItemList);
 
     $access = new DiscussionReplyAccess($resolver, $entityTypeManager);
