@@ -4,6 +4,13 @@ Submódulo: `aculta_portal/modules/aculta_user`. Tema: ACULTA420.
 Regra de avatar e identidade: [`architecture/avatar.md`](../architecture/avatar.md).
 Decisões históricas: `docs/portal/ACULTA-USER-DECISOES-E-IMPLEMENTACAO.md`; plano original: `docs/portal/ACULTA-USER-PLAN.md`.
 
+Este contrato cobre perfis e identidade de contas Drupal. Autores do acervo
+Growroom não são Users/Profiles e não ganham página individual. F-D44 limita a
+apresentação histórica a tópicos e comentários do Fórum legado; F-D48 transfere
+essa política ao addon opcional `aculta_forum_legacy`. O cartão visual continua
+no SDC compartilhado. O cartão editorial da Revista neste documento usa autores
+e coautores User correntes.
+
 ## 1. Regra de separação (tema x módulo)
 
 Toda ferramenta funciona com outro tema. O módulo entrega dados, regras de privacidade, URLs e marcação neutra
@@ -69,6 +76,13 @@ esticado (`base.css`). A apresentação usa a foto liberada pela policy ou o ava
 (`AvatarResolver`); a inicial do nome nunca é usada. Ver
 [`architecture/avatar.md`](../architecture/avatar.md).
 
+Isso descreve avatar de conta User. Autoria histórica não ganha User/Profile;
+a apresentação do autor dentro dos tópicos e comentários do Fórum legado segue
+F-D44 e a política legada que será transferida ao addon. Se houver imagem nessa
+apresentação, sua decisão e proveniência pertencem ao addon, que pode consumir
+os serviços genéricos `aculta_image`; não criar storage paralelo nem ampliar a
+apresentação além de F-D44.
+
 ## 7. Links de perfil
 
 Todo link para `/u/<apelido>` é gerado pela rota com o apelido atual, no propósito `main`, e a cache acompanha
@@ -101,8 +115,11 @@ O link "Sortear novo avatar" leva token CSRF válido: requisição com o link do
 ## 10. Pendências
 
 Registro único: [`operations/DEBT-REGISTER.md`](../operations/DEBT-REGISTER.md). Nesta frente:
-reimportação da foto do Google sob demanda, importação dos avatares do Growroom legado e verificação
-visual do roster/feedback do LMS quando houver turma no Runtime.
+reimportação da foto do Google sob demanda e verificação visual do roster/feedback
+do LMS quando houver turma no Runtime. A decisão, proveniência e eventual
+ingestão de imagens do acervo Growroom pertencem ao plano do
+[`aculta_forum_legacy`](../../web/modules/custom/aculta_portal/modules/aculta_forum/docs/PLANO-CLONE-DISCOURSE-UI-SUITE-CGU-2026-11-19.md);
+esta pendência não autoriza importar imagens nem associá-las a contas User.
 
 ## Exceção registrada: autoria nos verbetes da Wiki (2026-10-27)
 
