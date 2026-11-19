@@ -822,7 +822,7 @@ $servicesSource = $read(dirname($srcRoot) . '/aculta_portal.services.yml');
 $check(
   !str_contains($coursesManagerSource, 'GroupMembership')
     && str_contains($coursesManagerSource, 'AccountCoursesReaderInterface $reader')
-    && str_contains($servicesSource, "'@?Drupal\\aculta_learning_contracts\\Learning\\AccountCoursesReaderInterface'"),
+    && str_contains($servicesSource, "'@?Drupal\\aculta_portal\\Learning\\AccountCoursesReaderInterface'"),
   'P5.5 AccountCoursesManager must consume the AccountCoursesReader contract instead of reading Group memberships.',
 );
 $storageStaticPattern = '/\\\\Drupal::(?:entityTypeManager|entityQuery)\(\)|\\\\Drupal::service\(\'entity_type\.manager\'\)/';
