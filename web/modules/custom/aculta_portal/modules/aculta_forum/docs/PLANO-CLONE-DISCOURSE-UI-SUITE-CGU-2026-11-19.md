@@ -168,6 +168,12 @@ genérico de origem, sem mover a missão ou tornar Game dependente do addon.
 Strings genéricas como “histórico do Game” também não são acoplamento ao acervo
 Growroom sem evidência de fluxo ou dado compartilhado.
 
+`aculta_deployer/config/deploy.json` contém hosts e regras de deploy do site
+atual, não código do acervo, e permanece no deployer. Referências em testes e
+documentos de Magazine ao Growroom verificam que Comments contextuais editoriais
+não entram no host do Fórum; devem migrar para contratos genéricos de origem e
+contexto, sem fazer `aculta_magazine` depender do addon.
+
 No tema V2, o SDC compartilhado `author-card` declara a variante visual
 `author_growroom_historico`; templates, stories e `PagePresentationHooks`
 também contêm apresentação do Growroom por rota/bundle. Esses são pontos de
