@@ -357,9 +357,13 @@ importação futura até o teste provar zero efeitos externos.
 ### Fase condicional: limpeza de artefatos comprovados da refatoração
 
 Esta é uma fase separada do FDC-11.0 (census) e do FDC-11.3 (transferência de
-ownership); nenhum dos dois autoriza exclusão. Depois do census, identificar
-IDs exatos de ForumPosts, relações pai/filho e Flagging criados pelas migrations
-e denúncias CGU relacionadas por `legacy_flag_id`. Em clone restaurável,
+ownership); nenhum dos dois autoriza exclusão. Ela ocorre depois do FDC-11.0 e
+antes de desativar ou retirar em FDC-11.2 as definições/plugins necessários à
+proveniência. Manter mapas e definições de migration disponíveis até a decisão
+documentada de limpeza; não os apagar para simplificar a extração. Depois do
+census, identificar IDs exatos de ForumPosts, relações pai/filho e Flagging
+criados pelas migrations e denúncias CGU relacionadas por `legacy_flag_id`.
+Em clone restaurável,
 inspecionar revisões, filhos, reações, referências, casos/decisões, filas e
 efeitos já entregues; criar prévia e plano reversível por conjunto de IDs. A
 validação deve provar que Comments, tópicos, autores, relações, URLs e arquivos
