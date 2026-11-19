@@ -4,7 +4,6 @@ status: true
 dependencies:
   module:
     - message
-    - private_message
   enforced:
     module:
       - aculta_messenger

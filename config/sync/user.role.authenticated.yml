@@ -16,7 +16,6 @@ dependencies:
     - filter
     - flag
     - media
-    - private_message
     - profile
     - social_auth
     - system

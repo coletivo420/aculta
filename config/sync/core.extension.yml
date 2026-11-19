@@ -162,7 +162,6 @@ module:
   photoswipe: 0
   photoswipe_dynamic_caption: 0
   physical: 0
-  private_message: 0
   profile: 0
   redirect: 0
   rename_admin_paths: 0
