@@ -12,9 +12,11 @@ use Drupal\aculta_forum\RestrictedForum\RestrictedForumMembershipSync;
 use Drupal\aculta_user\Associado\AssociadoMarker;
 use Drupal\aculta_user\Entity\AssociadoMarcador;
 use Drupal\Core\Access\AccessResultInterface;
+use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Session\AnonymousUserSession;
 use Drupal\group\Entity\GroupInterface;
-use Drupal\group\Entity\Storage\GroupRelationshipTypeStorageInterface;
+use Drupal\group\Entity\GroupTypeInterface;
+use Drupal\group\Entity\GroupRelationshipTypeInterface;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\node\Entity\NodeType;
 use Drupal\node\NodeInterface;
@@ -100,14 +102,15 @@ final class RestrictedForumGroupAclKernelTest extends KernelTestBase {
 
     $relationship_type_storage = $this->container->get('entity_type.manager')
       ->getStorage('group_relationship_type');
-    self::assertInstanceOf(GroupRelationshipTypeStorageInterface::class, $relationship_type_storage);
     foreach ([self::GROUP_TYPE, self::OTHER_GROUP_TYPE, 'lms_course'] as $type) {
-      $relationship_type_storage->save(
-        $relationship_type_storage->createFromPlugin(
-          $group_type_storage->load($type),
-          'group_node:aculta_forum_topic',
-        ),
+      $group_type = $group_type_storage->load($type);
+      self::assertInstanceOf(GroupTypeInterface::class, $group_type);
+      /** @var \Drupal\group\Entity\Storage\GroupRelationshipTypeStorageInterface $relationship_type_storage */
+      $relationship = $relationship_type_storage->createFromPlugin(
+        $group_type,
+        'group_node:aculta_forum_topic',
       );
+      $relationship_type_storage->save($relationship);
     }
 
     $this->configureGroupType(self::GROUP_TYPE);
@@ -128,7 +131,7 @@ final class RestrictedForumGroupAclKernelTest extends KernelTestBase {
     $hooks = $this->hooks();
     $result = $hooks->entityAccess($topic, 'view', $user);
 
-    self::assertInstanceOf(AccessResultInterface::class, $result);
+    self::assertInstanceOf(AccessResult::class, $result);
     self::assertTrue($result->isNeutral());
     self::assertFalse($result->isForbidden());
     self::assertSame(
@@ -232,7 +235,9 @@ final class RestrictedForumGroupAclKernelTest extends KernelTestBase {
       $marker->set('situacao', $situation)->save();
 
       self::assertNotFalse($group->getMember($user), 'A membership permanece para provar que a revocation não depende dela.');
-      self::assertTrue($hooks->entityAccess($topic, 'view', $user)?->isForbidden());
+      $accessResult = $hooks->entityAccess($topic, 'view', $user);
+      self::assertInstanceOf(AccessResult::class, $accessResult);
+      self::assertTrue($accessResult->isForbidden());
       self::assertSame([], $hooks->nodeGrants($user, 'view'));
     }
 
@@ -243,7 +248,9 @@ final class RestrictedForumGroupAclKernelTest extends KernelTestBase {
     $topic = $this->createTopic('Tópico sem marca', $owner);
     $this->restrictTopic($topic, $group);
 
-    self::assertTrue($hooks->entityAccess($topic, 'view', $sem_marca)?->isForbidden());
+    $noMarkAccess = $hooks->entityAccess($topic, 'view', $sem_marca);
+    self::assertInstanceOf(AccessResult::class, $noMarkAccess);
+    self::assertTrue($noMarkAccess->isForbidden());
     self::assertSame([], $hooks->nodeGrants($sem_marca, 'view'));
   }
 
@@ -261,11 +268,15 @@ final class RestrictedForumGroupAclKernelTest extends KernelTestBase {
     $gid = (int) $group->id();
 
     $hooks = $this->hooks();
-    self::assertTrue($hooks->entityAccess($topic, 'view', $user)?->isForbidden());
+    $forbiddenAccess = $hooks->entityAccess($topic, 'view', $user);
+    self::assertInstanceOf(AccessResult::class, $forbiddenAccess);
+    self::assertTrue($forbiddenAccess->isForbidden());
 
     $marker->set('situacao', AssociadoMarker::ATIVO)->save();
 
-    self::assertTrue($hooks->entityAccess($topic, 'view', $user)?->isNeutral());
+    $neutralAccess = $hooks->entityAccess($topic, 'view', $user);
+    self::assertInstanceOf(AccessResult::class, $neutralAccess);
+    self::assertTrue($neutralAccess->isNeutral());
     self::assertSame(
       [RestrictedForumAccessHooks::REALM => [$gid]],
       $hooks->nodeGrants($user, 'view'),
@@ -286,7 +297,8 @@ final class RestrictedForumGroupAclKernelTest extends KernelTestBase {
     $hooks = $this->hooks();
     $result = $hooks->entityAccess($topic, 'view', $anonymous);
 
-    self::assertTrue($result?->isForbidden());
+    self::assertInstanceOf(AccessResult::class, $result);
+    self::assertTrue($result->isForbidden());
     self::assertContains('user:0', $result->getCacheTags());
     self::assertSame([], $hooks->nodeGrants($anonymous, 'view'));
   }
@@ -356,7 +368,7 @@ final class RestrictedForumGroupAclKernelTest extends KernelTestBase {
       /**
        * {@inheritdoc}
        */
-      public function configuredGroupType(): ?string {
+      public function configuredGroupType(): string {
         return 'associado_forum';
       }
 
@@ -379,7 +391,8 @@ final class RestrictedForumGroupAclKernelTest extends KernelTestBase {
     $hooks = $this->hooks($failing);
     $result = $hooks->entityAccess($topic, 'view', $user);
 
-    self::assertTrue($result?->isForbidden());
+    self::assertInstanceOf(AccessResult::class, $result);
+    self::assertTrue($result->isForbidden());
     self::assertSame(0, $result->getCacheMaxAge());
     self::assertSame([], $hooks->nodeGrants($user, 'view'));
     self::assertSame(
@@ -486,6 +499,7 @@ final class RestrictedForumGroupAclKernelTest extends KernelTestBase {
         'label' => $label,
         'uid' => $owner->id(),
       ]);
+    self::assertInstanceOf(GroupInterface::class, $group);
     $group->save();
     return $group;
   }
@@ -514,8 +528,10 @@ final class RestrictedForumGroupAclKernelTest extends KernelTestBase {
     }
     else {
       $marker = $storage->load(reset($ids));
+      self::assertInstanceOf(AssociadoMarcador::class, $marker);
       $marker->set('situacao', $situation);
     }
+    self::assertInstanceOf(AssociadoMarcador::class, $marker);
     $marker->save();
     return $marker;
   }

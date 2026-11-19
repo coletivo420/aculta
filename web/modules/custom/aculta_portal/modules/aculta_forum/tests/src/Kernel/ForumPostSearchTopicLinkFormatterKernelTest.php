@@ -10,6 +10,7 @@ use Drupal\aculta_forum\Entity\ForumPost;
 use Drupal\aculta_forum\Plugin\Field\FieldFormatter\ForumPostSearchTopicLinkFormatter;
 use Drupal\aculta_forum\Service\ForumPostThreadBuilder;
 use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\Core\Url;
 use Drupal\domain\Entity\Domain;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
@@ -84,8 +85,13 @@ final class ForumPostSearchTopicLinkFormatterKernelTest extends KernelTestBase {
         'is_default' => $id === 'aculta_org',
       ])->save();
     }
-    Role::load(RoleInterface::ANONYMOUS_ID)->grantPermission('access content')->save();
-    Role::load(RoleInterface::AUTHENTICATED_ID)->grantPermission('access content')->save();
+    $anonRole = Role::load(RoleInterface::ANONYMOUS_ID);
+    self::assertInstanceOf(Role::class, $anonRole);
+    $anonRole->grantPermission('access content')->save();
+
+    $authRole = Role::load(RoleInterface::AUTHENTICATED_ID);
+    self::assertInstanceOf(Role::class, $authRole);
+    $authRole->grantPermission('access content')->save();
     NodeType::create(['type' => 'aculta_forum_topic', 'name' => 'Tópico'])->save();
     FieldStorageConfig::create([
       'entity_type' => 'node',
@@ -125,12 +131,18 @@ final class ForumPostSearchTopicLinkFormatterKernelTest extends KernelTestBase {
    */
   public function testPublishedPostLinksToAnchoredTopicPage(): void {
     $post = $this->post();
+    /** @var array<int, array<string, mixed>> $build */
     $build = $this->purpose->runInSite('forum', fn () => $this->renderLink($post));
 
     self::assertNotEmpty($build);
-    self::assertSame('entity.node.canonical', $build[0]['#url']->getRouteName());
-    self::assertSame('forum-post-' . $post->id(), $build[0]['#url']->getOption('fragment'));
-    self::assertArrayHasKey('page', $build[0]['#url']->getOption('query'));
+    $firstElement = $build[0];
+    $url = $firstElement['#url'] ?? NULL;
+    self::assertInstanceOf(Url::class, $url);
+    self::assertSame('entity.node.canonical', $url->getRouteName());
+    self::assertSame('forum-post-' . (string) $post->id(), $url->getOption('fragment'));
+    $query = $url->getOption('query');
+    self::assertIsArray($query);
+    self::assertArrayHasKey('page', $query);
   }
 
   /**
@@ -139,26 +151,33 @@ final class ForumPostSearchTopicLinkFormatterKernelTest extends KernelTestBase {
   public function testUnpublishedAndOutsidePurposeRenderNothing(): void {
     $post = $this->post();
     $post->setUnpublished()->save();
+    /** @var array<int, array<string, mixed>> $unpublished */
     $unpublished = $this->purpose->runInSite('forum', fn () => $this->renderLink($post));
-    self::assertTrue($unpublished[0]['#access'] === FALSE);
+    self::assertNotEmpty($unpublished);
+    self::assertTrue(($unpublished[0]['#access'] ?? NULL) === FALSE);
 
     $post->setPublished()->save();
+    /** @var array<int, array<string, mixed>> $outside */
     $outside = $this->purpose->runInSite('main', fn () => $this->renderLink($post));
     self::assertSame([], $outside);
   }
 
   /**
    * Renders the topic field with the search formatter.
+   *
+   * @return array<int, array<string, mixed>>
    */
   private function renderLink(ForumPost $post): array {
     $builder = new ForumPostThreadBuilder(
       $this->container->get('entity_type.manager'),
       $this->purpose,
     );
+    $fieldDefinition = $post->getFieldDefinition('topic');
+    self::assertNotNull($fieldDefinition);
     $formatter = new ForumPostSearchTopicLinkFormatter(
       'forum_post_search_topic_link',
       ['id' => 'forum_post_search_topic_link'],
-      $post->getFieldDefinition('topic'),
+      $fieldDefinition,
       [],
       'hidden',
       'search_result',
@@ -167,7 +186,9 @@ final class ForumPostSearchTopicLinkFormatterKernelTest extends KernelTestBase {
       $this->purpose,
       $builder,
     );
-    return $formatter->viewElements($post->get('topic'), 'en');
+    /** @var array<int, array<string, mixed>> $elements */
+    $elements = $formatter->viewElements($post->get('topic'), 'en');
+    return $elements;
   }
 
   /**

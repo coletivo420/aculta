@@ -4,7 +4,7 @@ Gerado em 2026-11-19T03:40:09+00:00 por `scripts/phpstan-debt-report.php`.
 
 | Item | Valor |
 | --- | --- |
-| Commit | `76585ddf6f701f583294a23786e463c66d545317` |
+| Commit | `d0844954f010a076d6c1842d5e9ac63d1df92ca8` |
 | PHP | 8.4.27 |
 | PHPStan | PHPStan - PHP Static Analysis Tool 2.3.5 |
 | Nível | 10 |
@@ -15,12 +15,12 @@ Gerado em 2026-11-19T03:40:09+00:00 por `scripts/phpstan-debt-report.php`.
 
 | Medida | Ocorrências |
 | --- | ---: |
-| Total bruto no nível 10 | 16906 |
-| Dívida congelada no baseline | 16906 |
+| Total bruto no nível 10 | 16796 |
+| Dívida congelada no baseline | 16796 |
 | Erros não suprimidos | 0 |
-| Entradas no baseline | 9889 |
+| Entradas no baseline | 9816 |
 | Produção | 9989 |
-| Testes | 6917 |
+| Testes | 6807 |
 
 ## Criticidade funcional
 
@@ -50,11 +50,12 @@ Gerado em 2026-11-19T03:40:09+00:00 por `scripts/phpstan-debt-report.php`.
 | aculta_statistics | 351 |
 | aculta_deployer | 339 |
 | aculta420_v2 | 339 |
-| aculta_forum | 296 |
 | aculta_document_viewer | 295 |
 | aculta_mail_confirmer | 241 |
 | aculta_calendar | 240 |
 | aculta_image | 229 |
+| aculta_cgu | 216 |
+| aculta_forum | 186 |
 | aculta_cgu | 216 |
 | aculta_file_uploader | 153 |
 | aculta_magazine | 149 |
