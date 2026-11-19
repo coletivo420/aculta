@@ -28,6 +28,14 @@ class DiscussionReplyAccess {
    * Checks whether the given account can reply to the discussion host.
    */
   public function checkAccess(EntityInterface $host, AccountInterface $account, ?int $parentId = NULL): AccessResultInterface {
+    // The historical Growroom is an immutable archive, not a live
+    // shared-Comment discussion, even when it shares a Node bundle.
+    if ($host instanceof FieldableEntityInterface
+      && $host->hasField('field_autor_legado')
+      && !$host->get('field_autor_legado')->isEmpty()) {
+      return AccessResult::forbidden('Historical Growroom topic is read-only.')
+        ->addCacheableDependency($host);
+    }
     $context = $this->contextResolver->resolve($host, $account);
     if ($context === NULL) {
       return AccessResult::forbidden('Host does not have a registered discussion context.')->addCacheableDependency($host);
@@ -62,6 +70,11 @@ class DiscussionReplyAccess {
       $parentComment = $this->entityTypeManager->getStorage('comment')->load($parentId);
       if (!$parentComment instanceof CommentInterface) {
         return AccessResult::forbidden('Parent comment not found.');
+      }
+      if ($parentComment->hasField('field_autor_legado')
+        && !$parentComment->get('field_autor_legado')->isEmpty()) {
+        return AccessResult::forbidden('Historical Growroom reply is read-only.')
+          ->addCacheableDependency($parentComment);
       }
       if (!$parentComment->isPublished()) {
         return AccessResult::forbidden('Parent comment is not published.')->addCacheableDependency($parentComment);
