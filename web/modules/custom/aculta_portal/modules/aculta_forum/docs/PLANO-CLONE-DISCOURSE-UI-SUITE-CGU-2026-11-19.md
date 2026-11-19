@@ -127,18 +127,37 @@ orientar a extração e a revisão:
 | Classificação de origem | Não foram encontrados `ForumDiscussionOriginPolicy`, `CurrentDiscussionOriginClassifier` ou provider `aculta_forum_legacy` em PHP. `DiscussionContextResolver` resolve hosts de discussão; `ForumAnalyticsScopeResolver` trata escopo analítico. Ambos são contratos diferentes de classificar legado/corrente/contextual. O histórico ainda é detectado por campos/classes diretamente. | Projetar e testar um resolver central genérico para `ARCHIVE`, `CURRENT`, `CONTEXTUAL` e `UNKNOWN`; provider de arquivo pertence ao addon opcional. Testar addon ausente/presente, marker ausente, precedência, host cruzado e saída inválida. Falhas de origem para escrita/eventos devem ser fechadas. Views, Search API e agregadores ainda precisam consumir a classificação. |
 | Views e navegação | Views públicas/administrativas filtram `node:aculta_forum_topic` por bundle/status; `PublicForumListViewHooks` calcula contagens por bundle/categoria. Esses caminhos não filtram a origem histórica por si mesmos. | Separar listagem atual, filas e contagens do catálogo histórico. Aplicar filtro de origem por provider em Views/query/access e nas contagens auxiliares; preservar rota/canonical de leitura histórica e grants. Só usar marker após o census provar cobertura; não presumir que todo registro possui marker. |
 | Index/Search | `ForumContentIndexProvider::isIndexable()` aceita tópicos do bundle, ForumPosts default e Comments `aculta_discussion_post` do host tópico; não consulta origem nem `field_autor_legado`. O texto descritivo chama isso de indexação durante migração. Portanto o índice corrente pode misturar origem histórica e corrente se dados marcados existirem. | Não executar rebuild. Testar filtros de origem e acesso direto; excluir `ARCHIVE`/`UNKNOWN` do índice corrente usando classificador genérico. O addon futuro deve prover catálogo histórico separado, ACL-aware, sem depender do Search público corrente. |
-| CGU e sinalizações | `CguReportQueue`, `ForumReportCguBridgeHooks`, `CguReport` e o contrato CGU mantêm compatibilidade com `ReportQueue`/Flagging antigos (`legacy_flag_id`, `sinalizacao_legada_forum`, ARQ-06D/06F). | Census deve separar flags associadas ao acervo, flags antigas de conteúdo corrente e relatórios UGC genéricos. O arquivo fica fora das filas ordinárias; qualquer exceção exige protocolo específico, auditável e autorizado. CGU mantém ownership genérico de denúncias, casos e decisões. Não migrar nem remover linhas nesta fase. |
+| CGU e sinalizações | O acoplamento é dividido entre `aculta_forum/src/Hook/ForumReportCguBridgeHooks.php` (cria/remove denúncia ao criar/remover Flagging e grava `legacy_flag_id`/`sinalizacao_legada_forum`), `aculta_cgu/src/Service/CguReportQueue.php` (reconcilia flags, evita duplicatas e oferece migração/rollback) e `aculta_cgu/src/Entity/CguReport.php` (campo `legacy_flag_id`). É uma ponte executável de Flagging legado, não apenas referência documental. | Identificar cada Flagging por alvo e proveniência: acervo histórico, conteúdo corrente ou origem desconhecida. O arquivo fica fora das filas ordinárias; exceções exigem protocolo específico, auditável e autorizado. CGU conserva a propriedade genérica de denúncias, casos e decisões; o addon fornece integração histórica por contrato/adaptador e não passa a ser dependência de CGU. Não migrar, excluir nem reconciliar linhas nesta fase. Em etapa futura, remover a ponte somente após mapear referências/relatórios já persistidos e provar compatibilidade sem perda da auditoria. |
 | Estatísticas | Não foi encontrado `LegacyArchiveMetricsProvider`. `AuthorizedEntityMetricAggregator` valida bundle/permissão para `forum.replies.created`, mas não consulta origem. Os subscribers de atividade/reação do Statistics precisam ser revisados para eventos importados/sincronizados. | Projetar provider de série histórica no addon e consumi-lo por API genérica; validar cada candidato por origem antes do drilldown. Separar séries histórica/corrente, evitar dupla contagem e não reconstruir nesta fase. |
 | Catálogo histórico | `LegacyMemorialController` em `aculta_user` busca/pagina nomes de autores; não foi encontrado catálogo ou busca de texto de tópicos/respostas no arquivo. O `ForumContentIndexProvider` corrente não exige origem `CURRENT` e não é substituto seguro para um índice histórico separado. | Especificar índice/catálogo no addon com ACL, hierarquia, URLs e busca de tópicos/Comments históricos. Excluir origem ARCHIVE do índice corrente e contextual do arquivo. Sem rebuild até autorização operacional. |
 | Autoria e UI | Não existe `LegacyAuthorCardBuilder` no código da branch. `aculta_user` implementa `AuthorCardBuilder`, `LegacyAuthorDisplayName`, `DiscussionCommentAuthorHooks` e `LegacyMemorialController`; há SDC `author-card` no tema. | Extrair autoria histórica e memorial para o addon e reutilizar o SDC com variante somente leitura/archive; não duplicar componente nem criar perfil individual. Verificar slots/cache/access antes de remover Twig/hooks existentes. |
 | Dependências | Não há manifesto do addon para auditar. `aculta_forum.info.yml` declara `aculta_user` como dependência obrigatória, além de serviços atuais de identidade/participação; `aculta_user` guarda hoje entity/schema/rota históricos, embora seu `.info.yml` não declare dependência do Fórum. | Não remover em bloco a integração de identidade ACULTA corrente. Separar no census dependências correntes necessárias de serviços/fields legados; substituir apenas a parte corrente por adapter opcional quando requerido por portabilidade e mover ownership histórico para addon. Definir/testar matriz sem `aculta_user` e com addon ausente/presente; manifestos e service containers não podem exigir o addon. |
 
-O inventário literal encontrou referências de produção legadas no Fórum
-(respostas, citações, fila/flag, autoria, movers e migrations), em `aculta_user`
-(entidade/tabela, manager, access handler, memorial/reserva de slug, cartões,
-moderação, fila de denúncia e participação), em Game (elegibilidade de
-participação) e Messenger (política, enfileiramento e consumo de avisos e
-assinaturas). As migrations
+O census estático ampliado de PHP e YAML de produção (excluídos testes e
+documentação) encontrou referências específicas ao acervo em `aculta_forum`
+(respostas, citações, fila/flag, autoria, movers, auditoria e migrations), em
+`aculta_user` (entidade/tabela, manager, access handler, memorial/reserva de
+slug, cartões, moderação, fila de denúncia e participação), em `aculta_game`
+(elegibilidade de participação), `aculta_messenger` (política, enfileiramento e
+consumo de avisos/assinaturas) e `aculta_cgu` (ponte Flagging→denúncia e
+`legacy_flag_id`). A ausência de um literal específico nos demais módulos não
+prova ausência de acoplamento indireto: eventos e contratos genéricos ainda
+precisam ser auditados pelos efeitos que produzem.
+
+O census também separou referências genéricas ao Fórum de referências ao
+acervo. `aculta_statistics` consome eventos correntes de atividade sem
+classificar proveniência no subscriber; sua integração deve ser validada para
+que import/replay histórico não gere métricas. `aculta_messenger` possui
+caminhos genéricos para tópicos atuais além das guardas históricas diretas.
+`aculta_gallery` e `aculta_document_viewer` referenciam o bundle de anexos do
+Fórum para publicação/acesso a arquivos; não há evidência estática de que esse
+uso seja específico do arquivo histórico, então permanece no domínio genérico
+do Fórum salvo prova em contrário. Referências a `aculta_forum_topic` em
+Statistics, User, Messenger, Game, Index, CGU e no próprio Fórum são integração
+com o host atual e devem ser avaliadas por contrato/origem; não devem ser
+movidas automaticamente para o addon apenas por conter “forum” no nome.
+
+As migrations
 Comment→ForumPost atualmente registradas não excluem autoria histórica da
 origem. A busca estática não prova se alguma migration foi executada nem
 quantos registros a refatoração criou; isso exige census somente leitura no
