@@ -9,6 +9,16 @@ declare(strict_types=1);
 
 use Symfony\Component\Yaml\Yaml;
 
+/** @param mixed $value */
+function inventoryString(mixed $value, string $fallback = ''): string {
+  return is_scalar($value) ? (string) $value : $fallback;
+}
+
+/** @param mixed $value */
+function inventoryScalar(mixed $value): string|int|float|bool|null {
+  return is_scalar($value) ? $value : NULL;
+}
+
 $root = dirname(__DIR__);
 $output = $root . '/docs/architecture/inventarios/ui-suite-consumidores-iniciais.csv';
 $sync = $root . '/config/sync';
@@ -39,6 +49,7 @@ $rows = [];
 $runtimeSnapshot = is_file($runtimeSnapshotPath)
   ? json_decode((string) file_get_contents($runtimeSnapshotPath), TRUE, flags: JSON_THROW_ON_ERROR)
   : [];
+$runtimeSnapshot = is_array($runtimeSnapshot) ? $runtimeSnapshot : [];
 $runtimeStatuses = is_array($runtimeSnapshot['ui_suite_modules'] ?? NULL)
   ? $runtimeSnapshot['ui_suite_modules']
   : [];
@@ -51,18 +62,33 @@ $runtimeViewDisplays = is_array($runtimeSnapshot['view_displays'] ?? NULL)
 
 foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
   $view = Yaml::parseFile($path);
-  $viewId = (string) ($view['id'] ?? basename($path));
-  foreach (($view['display'] ?? []) as $displayId => $display) {
-    $options = $display['display_options'] ?? [];
-    $defaults = $options['defaults'] ?? [];
-    $baseOptions = $view['display']['default']['display_options'] ?? [];
-    $rowOptions = $options['row'] ?? (($defaults['row'] ?? TRUE) ? ($baseOptions['row'] ?? []) : []);
-    $styleOptions = $options['style'] ?? (($defaults['style'] ?? TRUE) ? ($baseOptions['style'] ?? []) : []);
-    $rowPlugin = (string) ($rowOptions['type'] ?? '');
-    $stylePlugin = (string) ($styleOptions['type'] ?? '');
-    $rowPatterns = $rowOptions['options']['ui_patterns'] ?? NULL;
-    $stylePatterns = $styleOptions['options']['ui_patterns']['ui_patterns'] ?? NULL;
-    $displayPatterns = $options['ui_patterns'] ?? NULL;
+  if (!is_array($view)) {
+    continue;
+  }
+  $viewId = inventoryString($view['id'] ?? NULL, basename($path));
+  $viewDisplays = is_array($view['display'] ?? NULL) ? $view['display'] : [];
+  foreach ($viewDisplays as $displayId => $display) {
+    if (!is_array($display)) {
+      continue;
+    }
+    $options = is_array($display['display_options'] ?? NULL) ? $display['display_options'] : [];
+    $defaults = is_array($options['defaults'] ?? NULL) ? $options['defaults'] : [];
+    $defaultDisplay = is_array($viewDisplays['default'] ?? NULL) ? $viewDisplays['default'] : [];
+    $baseOptions = is_array($defaultDisplay['display_options'] ?? NULL) ? $defaultDisplay['display_options'] : [];
+    $rowOptions = is_array($options['row'] ?? NULL)
+      ? $options['row']
+      : (($defaults['row'] ?? TRUE) ? (is_array($baseOptions['row'] ?? NULL) ? $baseOptions['row'] : []) : []);
+    $styleOptions = is_array($options['style'] ?? NULL)
+      ? $options['style']
+      : (($defaults['style'] ?? TRUE) ? (is_array($baseOptions['style'] ?? NULL) ? $baseOptions['style'] : []) : []);
+    $rowOptionSettings = is_array($rowOptions['options'] ?? NULL) ? $rowOptions['options'] : [];
+    $styleOptionSettings = is_array($styleOptions['options'] ?? NULL) ? $styleOptions['options'] : [];
+    $stylePatternSettings = is_array($styleOptionSettings['ui_patterns'] ?? NULL) ? $styleOptionSettings['ui_patterns'] : [];
+    $rowPlugin = inventoryString($rowOptions['type'] ?? NULL);
+    $stylePlugin = inventoryString($styleOptions['type'] ?? NULL);
+    $rowPatterns = is_array($rowOptionSettings['ui_patterns'] ?? NULL) ? $rowOptionSettings['ui_patterns'] : NULL;
+    $stylePatterns = is_array($stylePatternSettings['ui_patterns'] ?? NULL) ? $stylePatternSettings['ui_patterns'] : NULL;
+    $displayPatterns = is_array($options['ui_patterns'] ?? NULL) ? $options['ui_patterns'] : NULL;
     $patternsConfigured = ($rowPlugin === 'ui_patterns' && is_array($rowPatterns) && !empty($rowPatterns['component_id']))
       || (is_array($stylePatterns) && !empty($stylePatterns['component_id']))
       || (is_array($displayPatterns) && !empty($displayPatterns['component_id']));
@@ -117,7 +143,7 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
       && $stylePlugin === 'ui_patterns'
       && ($stylePatterns['component_id'] ?? NULL) === 'aculta420_v2:layout-grid'
       && $rowPlugin === 'entity:group'
-      && ($rowOptions['options']['view_mode'] ?? '') === 'default';
+      && ($rowOptionSettings['view_mode'] ?? '') === 'default';
     $isUpstreamVvjsExample = preg_match('/^vvj[a-z]_example$/', $viewId) === 1;
     $isWebformSubmissions = $viewId === 'webform_submissions';
     $isNativeCoreView = in_array($viewId, [
@@ -164,14 +190,14 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
       && $stylePlugin === 'ui_patterns'
       && ($stylePatterns['component_id'] ?? NULL) === 'aculta420_v2:layout-grid'
       && $rowPlugin === 'entity:commerce_product'
-      && ($rowOptions['options']['view_mode'] ?? '') === 'catalog'
+      && ($rowOptionSettings['view_mode'] ?? '') === 'catalog'
       && $isProductCardAdapter;
     $wikiTeaserHook = $theme . '/src/Hook/PagePresentationHooks.php';
     $isWikiEntriesPilot = $viewId === 'wiki_entries'
       && $stylePlugin === 'ui_patterns'
       && ($stylePatterns['component_id'] ?? NULL) === 'aculta420_v2:layout-grid'
       && $rowPlugin === 'entity:node'
-      && ($rowOptions['options']['view_mode'] ?? '') === 'teaser'
+      && ($rowOptionSettings['view_mode'] ?? '') === 'teaser'
       && is_file($wikiTeaserHook)
       && str_contains((string) file_get_contents($wikiTeaserHook), "aculta420_v2:wiki-entry")
       && str_contains((string) file_get_contents($wikiTeaserHook), 'composeWikiTeaser');
@@ -179,13 +205,13 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
       && $stylePlugin === 'ui_patterns'
       && ($stylePatterns['component_id'] ?? NULL) === 'aculta420_v2:layout-grid'
       && $rowPlugin === 'entity:taxonomy_term'
-      && ($rowOptions['options']['view_mode'] ?? '') === 'default';
+      && ($rowOptionSettings['view_mode'] ?? '') === 'default';
     $isEventsBase = $viewId === 'eventos_publicos' && (string) $displayId === 'default';
     $revistaTeaserTemplate = $theme . '/templates/content/node--revista--teaser.html.twig';
     $revistaTeaserHook = $theme . '/src/Hook/PagePresentationHooks.php';
     $isRevistaTeaserSdc = $viewId === 'revista_sessoes'
       && str_starts_with($rowPlugin, 'entity:node')
-      && ($rowOptions['options']['view_mode'] ?? '') === 'teaser'
+      && ($rowOptionSettings['view_mode'] ?? '') === 'teaser'
       && ((is_file($revistaTeaserTemplate)
         && str_contains((string) file_get_contents($revistaTeaserTemplate), "aculta420_v2:revista-teaser"))
         || (is_file($revistaTeaserHook)
@@ -193,10 +219,14 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
           && str_contains((string) file_get_contents($revistaTeaserHook), 'composeRevistaTeaser')));
     $isViewsDefaultBase = (string) $displayId === 'default';
     $isViewsFunctionalBase = $isViewsDefaultBase;
-    $displayPath = (string) ($options['path'] ?? '');
+    $displayPath = inventoryString($options['path'] ?? NULL);
     $isAdminViewNative = $stylePlugin === 'table'
       && (str_starts_with($displayPath, 'admin/') || str_starts_with($displayPath, 'painel-administrativo/'));
     $runtimeView = $runtimeViewDisplays[$viewId] ?? NULL;
+    $runtimeViewArray = is_array($runtimeView) ? $runtimeView : [];
+    $runtimeDisplays = is_array($runtimeViewArray['displays'] ?? NULL) ? $runtimeViewArray['displays'] : [];
+    $runtimeDisplayCandidate = $runtimeDisplays[$displayId] ?? NULL;
+    $runtimeDisplayData = is_array($runtimeDisplayCandidate) ? $runtimeDisplayCandidate : [];
     // Code-level adapter changes invalidate older Runtime/browser snapshots.
     $runtimeEvidenceDateFloor = [
       'aculta_documents' => '2026-11-14',
@@ -204,6 +234,10 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
       'wiki_entries' => '2026-11-14',
     ];
     $runtimeEvidenceCurrent = ($runtimeEvidenceDateFloor[$viewId] ?? '0000-00-00') <= $runtimeObservedDate;
+    $runtimeAnonymousRender = is_array($runtimeViewArray['anonymous_render'] ?? NULL) ? $runtimeViewArray['anonymous_render'] : [];
+    $wikiCategoryRuntimeView = is_array($runtimeViewDisplays['wiki_categories'] ?? NULL) ? $runtimeViewDisplays['wiki_categories'] : [];
+    $wikiCategoryRuntimeDisplays = is_array($wikiCategoryRuntimeView['displays'] ?? NULL) ? $wikiCategoryRuntimeView['displays'] : [];
+    $wikiCategoryRuntimeBlock = is_array($wikiCategoryRuntimeDisplays['block_1'] ?? NULL) ? $wikiCategoryRuntimeDisplays['block_1'] : [];
     $wikiRuntimeVerified = $runtimeEvidenceCurrent
       && $isWikiEntriesPilot
       && is_array($runtimeView)
@@ -215,46 +249,46 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
       && is_array($runtimeView)
       && ($runtimeView['status'] ?? '') === 'runtime_verified';
     $forumRuntimeDisplay = $isForumCategoryPilot && is_array($runtimeView)
-      ? ($runtimeView['displays'][$displayId] ?? NULL)
+      ? ($runtimeDisplays[$displayId] ?? NULL)
       : NULL;
     $forumRuntimeVerified = is_array($forumRuntimeDisplay)
       && ($forumRuntimeDisplay['status'] ?? '') === 'runtime_verified';
     $eventsRuntimeDisplay = $isEventsCataloguePilot && is_array($runtimeView)
-      ? ($runtimeView['displays'][$displayId] ?? NULL)
+      ? ($runtimeDisplays[$displayId] ?? NULL)
       : NULL;
     $eventsRuntimeVerified = is_array($eventsRuntimeDisplay)
       && ($eventsRuntimeDisplay['status'] ?? '') === 'runtime_verified'
       && ($eventsRuntimeDisplay['style_plugin'] ?? '') === 'ui_patterns'
       && ($eventsRuntimeDisplay['style_component'] ?? '') === 'aculta420_v2:layout-grid';
     $revistaNewsRuntimeDisplay = $isRevistaNewsPilot && is_array($runtimeView)
-      ? ($runtimeView['displays'][$displayId] ?? NULL)
+      ? ($runtimeDisplays[$displayId] ?? NULL)
       : NULL;
     $revistaNewsRuntimeVerified = is_array($revistaNewsRuntimeDisplay)
       && ($revistaNewsRuntimeDisplay['status'] ?? '') === 'runtime_verified'
       && ($revistaNewsRuntimeDisplay['style_component'] ?? '') === 'aculta420_v2:revista-listing';
     $homeEditorialRuntimeDisplay = $isHomeEditorialPilot && is_array($runtimeView)
-      ? ($runtimeView['displays'][$displayId] ?? NULL)
+      ? ($runtimeDisplays[$displayId] ?? NULL)
       : NULL;
     $homeEditorialRuntimeVerified = is_array($homeEditorialRuntimeDisplay)
       && ($homeEditorialRuntimeDisplay['status'] ?? '') === 'runtime_verified'
       && ($homeEditorialRuntimeDisplay['style_component'] ?? '') === 'aculta420_v2:layout-grid';
     $albumPhotosRuntimeDisplay = $isAlbumPhotosPilot && is_array($runtimeView)
-      ? ($runtimeView['displays'][$displayId] ?? NULL)
+      ? ($runtimeDisplays[$displayId] ?? NULL)
       : NULL;
     $albumPhotosRuntimeVerified = is_array($albumPhotosRuntimeDisplay)
       && ($albumPhotosRuntimeDisplay['status'] ?? '') === 'runtime_verified'
       && ($albumPhotosRuntimeDisplay['style_component'] ?? '') === 'aculta420_v2:layout-grid';
     $forumGalleryRuntimeConfigured = $isForumGalleryPilot
       && is_array($runtimeView)
-      && is_array($runtimeView['displays'][$displayId] ?? NULL)
-      && ($runtimeView['displays'][$displayId]['status'] ?? '') === 'runtime_configured_no_fixture';
+      && is_array($runtimeDisplays[$displayId] ?? NULL)
+      && ($runtimeDisplays[$displayId]['status'] ?? '') === 'runtime_configured_no_fixture';
     $documentRuntimeVerified = $runtimeEvidenceCurrent
       && $isDocumentsPilot
       && is_array($runtimeView)
-      && is_array($runtimeView['displays'][$displayId] ?? NULL)
-      && ($runtimeView['displays'][$displayId]['status'] ?? '') === 'runtime_verified_sdc_grid';
+      && is_array($runtimeDisplays[$displayId] ?? NULL)
+      && ($runtimeDisplays[$displayId]['status'] ?? '') === 'runtime_verified_sdc_grid';
     $shopRuntimeDisplay = $isShopCatalogPilot && is_array($runtimeView)
-      ? ($runtimeView['displays'][$displayId] ?? NULL)
+      ? ($runtimeDisplays[$displayId] ?? NULL)
       : NULL;
     $shopRuntimeVerified = $runtimeEvidenceCurrent
       && is_array($shopRuntimeDisplay)
@@ -262,12 +296,12 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
       && ($shopRuntimeDisplay['style_component'] ?? '') === 'aculta420_v2:layout-grid';
     $productGalleryRuntimeConfigured = $isProductGalleryPilot
       && is_array($runtimeView)
-      && is_array($runtimeView['displays'][$displayId] ?? NULL)
-      && ($runtimeView['displays'][$displayId]['status'] ?? '') === 'runtime_configured_visual_deferred';
+      && is_array($runtimeDisplays[$displayId] ?? NULL)
+      && ($runtimeDisplays[$displayId]['status'] ?? '') === 'runtime_configured_visual_deferred';
     $mediaGalleriesRuntimeVerified = $isMediaGalleriesPilot
       && is_array($runtimeView)
-      && is_array($runtimeView['displays'][$displayId] ?? NULL)
-      && ($runtimeView['displays'][$displayId]['status'] ?? '') === 'runtime_verified';
+      && is_array($runtimeDisplays[$displayId] ?? NULL)
+      && ($runtimeDisplays[$displayId]['status'] ?? '') === 'runtime_verified';
     $revistaRuntimeView = $runtimeViewDisplays[$viewId] ?? NULL;
     $revistaRuntimeVerified = $isRevistaTeaserSdc
       && is_array($revistaRuntimeView)
@@ -300,7 +334,7 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
       'config_path' => relative_path($root, $path),
       'consumer_type' => 'view_display',
       'consumer_id' => (string) $displayId,
-      'display_plugin' => (string) ($display['display_plugin'] ?? ''),
+      'display_plugin' => inventoryString($display['display_plugin'] ?? NULL),
       'row_plugin' => $rowPlugin,
       'style_plugin' => $stylePlugin,
       'ui_patterns_configured' => $components !== [] ? implode(',', $components) : 'not_detected_by_plugin_id_scan',
@@ -358,7 +392,7 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
         $isDocumentCardSdc => 'Document SDC adapter is present; Runtime row rendering and grid integration are pending',
         $isForumTopicsRowPilot => 'UI Patterns ComponentRow configured in Sync/install; Runtime snapshot predates this change and cannot verify row output, public-author policy, access or cache; browser comparison remains pending',
         $isForumSearchPilot => 'UI Patterns Views configured in Sync/install; Runtime still has divergent display config, so source output, Search API results, contextual links, access/cache and browser comparison remain pending',
-        $isForumTopicsSdc && is_array($runtimeView) && is_array($runtimeView['displays'][$displayId] ?? NULL) => 'Runtime config matches Sync; executable View returns 10 rows; access-profile and browser visual evidence not re-run in this inventory pass',
+        $isForumTopicsSdc && is_array($runtimeView) && is_array($runtimeDisplays[$displayId] ?? NULL) => 'Runtime config matches Sync; executable View returns 10 rows; access-profile and browser visual evidence not re-run in this inventory pass',
         $isForumTopicsSdc => 'Existing SDC row adapter is confirmed in source; Runtime output, access profiles and browser evidence need verification',
         $isProductGalleryPilot => $productGalleryRuntimeConfigured
           ? 'Runtime View returned seven Media rows for the published Commerce product; browser visual, access and cache acceptance remain DEFERRED'
@@ -397,36 +431,36 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
         $isUpstreamVvjsExample => 'upstream contributed demonstration; Runtime status not changed or claimed',
         $isLmsCourseGridPilot => 'configured in Sync/install; previous Runtime read found a native Views style; import and render/access/cache/browser validation pending',
         $isDocumentsPilot && $documentRuntimeVerified => 'active; UI Patterns layout-grid; 3 published document rows; anonymous View output with Field API slots; visual browser acceptance pending',
-        $isShopCatalogPilot && $shopRuntimeVerified => sprintf('active; UI Patterns layout-grid; %d product rows; Commerce catalog view mode and native add-to-cart retained', $shopRuntimeDisplay['result_count']),
+        $isShopCatalogPilot && $shopRuntimeVerified => sprintf('active; UI Patterns layout-grid; %d product rows; Commerce catalog view mode and native add-to-cart retained', inventoryScalar($shopRuntimeDisplay['result_count'] ?? NULL)),
         $isShopCatalogPilot => 'configured in Sync/source; SDC hook adapter changed after the Runtime snapshot; Runtime price/access/cache validation pending',
-        $isWikiEntriesPilot && $wikiRuntimeVerified => sprintf('active; UI Patterns layout-grid; %d published node teaser rows; wiki-entry SDC adapter and native access retained', $runtimeView['anonymous_render']['result_count_before_after'] ?? 0),
-        $isWikiCategoriesPilot && $wikiCategoriesRuntimeVerified => sprintf('active; UI Patterns layout-grid; %d native taxonomy term rows; anonymous category links and editorial order retained', $runtimeViewDisplays['wiki_categories']['displays']['block_1']['result_count_before_after'] ?? 0),
+        $isWikiEntriesPilot && $wikiRuntimeVerified => sprintf('active; UI Patterns layout-grid; %d published node teaser rows; wiki-entry SDC adapter and native access retained', inventoryScalar($runtimeAnonymousRender['result_count_before_after'] ?? 0)),
+        $isWikiCategoriesPilot && $wikiCategoriesRuntimeVerified => sprintf('active; UI Patterns layout-grid; %d native taxonomy term rows; anonymous category links and editorial order retained', inventoryScalar($wikiCategoryRuntimeBlock['result_count_before_after'] ?? 0)),
         $isDocumentsPilot => 'configured in Sync/source; SDC hook adapter changed after the Runtime snapshot; Runtime access/render/cache validation pending',
         $isDocumentCardSdc => 'document teaser SDC adapter is confirmed in source; View style migration and Runtime output remain pending',
         $isWikiEntriesPilot => 'configured in Sync/source; SDC hook adapter changed after the Runtime snapshot; Runtime access/render/cache validation pending',
         $isForumTopicsRowPilot => 'configured in Sync/install; Runtime snapshot predates UI Patterns row; import, row output, author policy, access/cache and visual acceptance pending',
         $isForumSearchPilot => 'configured in Sync/install; Runtime display config is divergent; import and Search API output/access/cache/visual validation pending',
-        $isForumTopicsSdc && is_array($runtimeView) && is_array($runtimeView['displays'][$displayId] ?? NULL) => 'active; native Views fields row uses forum-topic-row SDC adapter; 10 results; browser/access acceptance not re-run',
+        $isForumTopicsSdc && is_array($runtimeDisplayCandidate) => 'active; native Views fields row uses forum-topic-row SDC adapter; 10 results; browser/access acceptance not re-run',
         $isForumTopicsSdc => 'existing SDC row adapter confirmed in source; Runtime output not recorded',
         $isProductGalleryPilot && $productGalleryRuntimeConfigured => 'active; Commerce product 1 supplies seven media IDs; UI Patterns style returns seven rows; visual acceptance deferred',
         $isProductGalleryPilot => 'configured; Commerce product View has a programmatic consumer; Runtime evidence not recorded',
         $isForumGalleryPilot && $forumGalleryRuntimeConfigured => 'active; UI Patterns View executable; zero published Forum galleries; visual acceptance deferred',
-        $isMediaGalleriesPilot && $mediaGalleriesRuntimeVerified => sprintf('active; HTTP 200; %d cards after; anonymous access allowed; Firefox 320/390/768/1024/1440 light/dark', $runtimeView['displays'][$displayId]['result_count_before_after'] ?? 0),
+        $isMediaGalleriesPilot && $mediaGalleriesRuntimeVerified => sprintf('active; HTTP 200; %d cards after; anonymous access allowed; Firefox 320/390/768/1024/1440 light/dark', inventoryScalar($runtimeDisplayData['result_count_before_after'] ?? 0)),
         $isMediaGalleriesPilot => 'configured; Runtime/browser evidence not recorded',
         $isNativeCoreView => 'functional native Core/contrib View; owner module presentation',
         $isWebformSubmissions => 'functional native Webform submission View; Drupal table presentation',
         $isAdminViewNative => 'functional native administrative View; Drupal table presentation',
         $isViewsFunctionalBase || $isEventsBase => 'functional native base; no direct route/display consumer',
-        $albumsRuntimeVerified => sprintf('active; HTTP %d; %d results before/after; anonymous access allowed; browser 1280/320 light/dark', $runtimeView['after_http_status'], $runtimeView['result_count_after']),
-        $forumRuntimeVerified => sprintf('active; HTTP %d; %d taxonomy cards; anonymous access allowed; browser 320/390/768/1024/1440 light and 320/1440 dark', $forumRuntimeDisplay['after_http_status'], $forumRuntimeDisplay['result_count_after']),
+        $albumsRuntimeVerified => sprintf('active; HTTP %d; %d results before/after; anonymous access allowed; browser 1280/320 light/dark', inventoryScalar($runtimeViewArray['after_http_status'] ?? NULL), inventoryScalar($runtimeViewArray['result_count_after'] ?? NULL)),
+        $forumRuntimeVerified => sprintf('active; HTTP %d; %d taxonomy cards; anonymous access allowed; browser 320/390/768/1024/1440 light and 320/1440 dark', inventoryScalar($forumRuntimeDisplay['after_http_status'] ?? NULL), inventoryScalar($forumRuntimeDisplay['result_count_after'] ?? NULL)),
         $isForumCategoryPilot && $displayId === 'block_landing' => 'active row plugin; block placement hidden on public home; no visible output claimed',
-        $eventsRuntimeVerified => sprintf('active; HTTP %d; %d native rows; UI Patterns layout-grid; anonymous access allowed; Firefox 320/1440 light/dark', $eventsRuntimeDisplay['after_http_status'], $eventsRuntimeDisplay['result_count']),
+        $eventsRuntimeVerified => sprintf('active; HTTP %d; %d native rows; UI Patterns layout-grid; anonymous access allowed; Firefox 320/1440 light/dark', inventoryScalar($eventsRuntimeDisplay['after_http_status'] ?? NULL), inventoryScalar($eventsRuntimeDisplay['result_count'] ?? NULL)),
         $isEventsCataloguePilot => 'configured; Runtime/browser evidence not recorded',
-        $revistaNewsRuntimeVerified => sprintf('active; HTTP %d; %d native teaser nodes before/after; anonymous access; UI Patterns revista-listing style; Firefox 320/390/768/1024/1440 light/dark', $revistaNewsRuntimeDisplay['after_http_status'], $revistaNewsRuntimeDisplay['result_count_after']),
+        $revistaNewsRuntimeVerified => sprintf('active; HTTP %d; %d native teaser nodes before/after; anonymous access; UI Patterns revista-listing style; Firefox 320/390/768/1024/1440 light/dark', inventoryScalar($revistaNewsRuntimeDisplay['after_http_status'] ?? NULL), inventoryScalar($revistaNewsRuntimeDisplay['result_count_after'] ?? NULL)),
         $isRevistaNewsPilot => 'configured; Runtime/browser evidence not recorded',
-        $homeEditorialRuntimeVerified => sprintf('active; HTTP %d; three curated native editorial rows; UI Patterns layout-grid; anonymous access allowed; Firefox 320/390/768/1024/1440 light/dark', $homeEditorialRuntimeDisplay['after_http_status']),
+        $homeEditorialRuntimeVerified => sprintf('active; HTTP %d; three curated native editorial rows; UI Patterns layout-grid; anonymous access allowed; Firefox 320/390/768/1024/1440 light/dark', inventoryScalar($homeEditorialRuntimeDisplay['after_http_status'] ?? NULL)),
         $isHomeEditorialPilot => 'configured; Runtime/browser evidence not recorded',
-        $albumPhotosRuntimeVerified => sprintf('active; HTTP %d; %d PhotoSwipe media images; UI Patterns layout-grid; anonymous published album', $albumPhotosRuntimeDisplay['after_http_status'], $albumPhotosRuntimeDisplay['result_count_after']),
+        $albumPhotosRuntimeVerified => sprintf('active; HTTP %d; %d PhotoSwipe media images; UI Patterns layout-grid; anonymous published album', inventoryScalar($albumPhotosRuntimeDisplay['after_http_status'] ?? NULL), inventoryScalar($albumPhotosRuntimeDisplay['result_count_after'] ?? NULL)),
         $isAlbumPhotosPilot => 'configured; Runtime/browser evidence not recorded',
         $isRevistaTeaserSdc => 'Theme adapter verified in source; route output not attributable to this display',
         default => 'not_observed',
@@ -437,14 +471,20 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
 
 foreach (glob($sync . '/core.entity_view_display.*.yml') ?: [] as $path) {
   $display = Yaml::parseFile($path);
-  $enabled = $display['third_party_settings']['layout_builder']['enabled'] ?? FALSE;
+  if (!is_array($display)) {
+    continue;
+  }
+  $thirdPartySettings = is_array($display['third_party_settings'] ?? NULL) ? $display['third_party_settings'] : [];
+  $layoutBuilder = is_array($thirdPartySettings['layout_builder'] ?? NULL) ? $thirdPartySettings['layout_builder'] : [];
+  $enabled = $layoutBuilder['enabled'] ?? FALSE;
   if ($enabled !== TRUE) {
     continue;
   }
-  $id = (string) ($display['id'] ?? basename($path));
-  $sections = $display['third_party_settings']['layout_builder']['sections'] ?? [];
+  $id = inventoryString($display['id'] ?? NULL, basename($path));
+  $sections = $layoutBuilder['sections'] ?? [];
+  $sections = is_array($sections) ? $sections : [];
   $layoutIds = array_values(array_map(
-    static fn (array $section): string => (string) ($section['layout_id'] ?? ''),
+    static fn (array $section): string => inventoryString($section['layout_id'] ?? NULL),
     array_filter($sections, 'is_array'),
   ));
   $componentLayoutIds = array_values(array_filter(
@@ -453,20 +493,25 @@ foreach (glob($sync . '/core.entity_view_display.*.yml') ?: [] as $path) {
   ));
   $allSectionsUseComponentLayout = $layoutIds !== [] && count($componentLayoutIds) === count($layoutIds);
   $runtimeConfigId = 'core.entity_view_display.' . $id;
-  $runtimeLayout = $runtimeSnapshot['layout_builder_displays'][$runtimeConfigId] ?? NULL;
+  $runtimeLayouts = is_array($runtimeSnapshot['layout_builder_displays'] ?? NULL) ? $runtimeSnapshot['layout_builder_displays'] : [];
+  $runtimeLayout = $runtimeLayouts[$runtimeConfigId] ?? NULL;
   $legacyLayoutIds = array_values(array_diff($layoutIds, $componentLayoutIds));
   $rows[] = [
     'id' => $id,
     'owner_module' => 'Drupal entity display',
     'config_path' => relative_path($root, $path),
     'consumer_type' => 'entity_view_display',
-    'consumer_id' => (string) ($display['mode'] ?? ''),
+    'consumer_id' => inventoryString($display['mode'] ?? NULL),
     'display_plugin' => 'layout_builder',
     'row_plugin' => '',
     'style_plugin' => '',
     'ui_patterns_configured' => $allSectionsUseComponentLayout
       ? implode(',', array_unique(array_map(
-        static fn (array $section): string => (string) ($section['layout_settings']['ui_patterns']['component_id'] ?? 'component_id_unset'),
+        static function (array $section): string {
+          $layoutSettings = is_array($section['layout_settings'] ?? NULL) ? $section['layout_settings'] : [];
+          $uiPatterns = is_array($layoutSettings['ui_patterns'] ?? NULL) ? $layoutSettings['ui_patterns'] : [];
+          return inventoryString($uiPatterns['component_id'] ?? NULL, 'component_id_unset');
+        },
         array_filter($sections, 'is_array'),
       )))
       : 'layout_builder_core_layout',
@@ -484,28 +529,43 @@ foreach (glob($sync . '/core.entity_view_display.*.yml') ?: [] as $path) {
     'rollback' => 'Restore captured display configuration; no entity/data changes',
     'detected_consumers' => '',
     'runtime_status' => is_array($runtimeLayout)
-      ? (string) ($runtimeLayout['runtime_status'] ?? 'observed')
+      ? inventoryString($runtimeLayout['runtime_status'] ?? NULL, 'observed')
       : 'not_observed',
   ];
 }
 
 foreach (glob($sync . '/block.block.*.yml') ?: [] as $path) {
   $block = Yaml::parseFile($path);
-  $id = (string) ($block['id'] ?? basename($path));
-  $pluginId = (string) ($block['plugin'] ?? 'unknown');
-  $styles = $block['third_party_settings']['ui_styles'] ?? [];
+  if (!is_array($block)) {
+    continue;
+  }
+  $id = inventoryString($block['id'] ?? NULL, basename($path));
+  $pluginId = inventoryString($block['plugin'] ?? NULL, 'unknown');
+  $thirdPartySettings = is_array($block['third_party_settings'] ?? NULL) ? $block['third_party_settings'] : [];
+  $styles = is_array($thirdPartySettings['ui_styles'] ?? NULL) ? $thirdPartySettings['ui_styles'] : [];
   $selectedStyles = [];
   foreach ($styles as $part => $settings) {
-    foreach (($settings['selected'] ?? []) as $styleId => $classes) {
-      $selectedStyles[] = $part . ':' . $styleId . '=' . $classes;
+    if (!is_array($settings)) {
+      continue;
+    }
+    $selected = is_array($settings['selected'] ?? NULL) ? $settings['selected'] : [];
+    foreach ($selected as $styleId => $classes) {
+      if (is_string($classes) || is_int($classes) || is_float($classes)) {
+        $selectedStyles[] = $part . ':' . $styleId . '=' . $classes;
+      }
     }
   }
-  $runtimeBlock = $runtimeSnapshot['block_styles'][$id] ?? NULL;
+  $runtimeBlocks = is_array($runtimeSnapshot['block_styles'] ?? NULL) ? $runtimeSnapshot['block_styles'] : [];
+  $runtimeBlock = $runtimeBlocks[$id] ?? NULL;
+  $runtimeBlockData = is_array($runtimeBlock) ? $runtimeBlock : [];
   $viewId = preg_match('/^views_block:([^:]+)-/', $pluginId, $matches) ? $matches[1] : NULL;
   $viewDisplayId = preg_match('/^views_block:[^:]+-(.+)$/', $pluginId, $matches) ? $matches[1] : NULL;
   $runtimeView = $viewId !== NULL ? ($runtimeViewDisplays[$viewId] ?? NULL) : NULL;
-  $runtimeViewDisplay = is_array($runtimeView) && is_array($runtimeView['displays'] ?? NULL)
-    && $viewDisplayId !== NULL ? ($runtimeView['displays'][$viewDisplayId] ?? NULL) : NULL;
+  $runtimeViewData = is_array($runtimeView) ? $runtimeView : [];
+  $runtimeViewDisplaysForBlock = is_array($runtimeViewData['displays'] ?? NULL) ? $runtimeViewData['displays'] : [];
+  $runtimeViewDisplay = $viewDisplayId !== NULL ? ($runtimeViewDisplaysForBlock[$viewDisplayId] ?? NULL) : NULL;
+  $runtimeViewDisplayData = is_array($runtimeViewDisplay) ? $runtimeViewDisplay : [];
+  $runtimeViewComponent = inventoryString($runtimeViewDisplayData['style_component'] ?? $runtimeViewDisplayData['row_component'] ?? $runtimeViewDisplayData['display_component'] ?? NULL);
   $viewStyleVerified = is_array($runtimeViewDisplay)
     && ($runtimeViewDisplay['status'] ?? '') === 'runtime_verified'
     && (is_string($runtimeViewDisplay['style_component'] ?? NULL) || is_string($runtimeViewDisplay['row_component'] ?? NULL) || is_string($runtimeViewDisplay['display_component'] ?? NULL));
@@ -522,16 +582,17 @@ foreach (glob($sync . '/block.block.*.yml') ?: [] as $path) {
     $viewId !== NULL => 'views:' . $viewId,
     str_starts_with($pluginId, 'system_menu_block:') => 'system',
     str_starts_with($pluginId, 'block_content:') => 'block_content',
-    default => (string) ($block['provider'] ?? 'unresolved_from_config'),
+    default => inventoryString($block['provider'] ?? NULL, 'unresolved_from_config'),
   };
   /* Keep the block-placement evidence separate from View-owned visual evidence. */
   $blockUiStylesVerified = is_array($runtimeBlock)
     && ($runtimeBlock['status'] ?? '') === 'runtime_verified'
     && $selectedStyles !== [];
+  $visibilityConditions = is_array($block['visibility'] ?? NULL) ? $block['visibility'] : [];
   $visibility = implode(',', array_map(
-    static fn (string $key, array $condition): string => $key . '=' . json_encode($condition, JSON_UNESCAPED_SLASHES),
-    array_keys($block['visibility'] ?? []),
-    array_values($block['visibility'] ?? []),
+    static fn (int|string $key, mixed $condition): string => $key . '=' . (json_encode($condition, JSON_UNESCAPED_SLASHES) ?: 'null'),
+    array_keys($visibilityConditions),
+    array_values($visibilityConditions),
   ));
   $isUpcomingEventsSdcBlock = FALSE;
   if ($pluginId === 'aculta_events_upcoming') {
@@ -560,7 +621,7 @@ foreach (glob($sync . '/block.block.*.yml') ?: [] as $path) {
     'display_plugin' => 'block',
     'row_plugin' => '',
     'style_plugin' => $blockUiStylesVerified ? 'ui_styles_block' : ($viewStyleVerified ? 'ui_patterns_views' : ''),
-    'ui_patterns_configured' => $blockUiStylesVerified ? implode(',', $selectedStyles) : ($viewStyleVerified ? 'style:' . ($runtimeViewDisplay['style_component'] ?? $runtimeViewDisplay['row_component'] ?? $runtimeViewDisplay['display_component']) : 'no_ui_styles_selection'),
+    'ui_patterns_configured' => $blockUiStylesVerified ? implode(',', $selectedStyles) : ($viewStyleVerified ? 'style:' . $runtimeViewComponent : 'no_ui_styles_selection'),
     'status' => ($runtimeVerified || $isDonationSdcPlacement || $isUpcomingEventsSdcBlock) ? 'UI_SUITE_NATIVE' : ($isNativeBlockPlacement ? 'FUNCTIONAL_NATIVE_EXCEPTION' : 'MIGRATION_IN_PROGRESS'),
     'replacement_or_action' => $runtimeVerified
       ? ($blockUiStylesVerified
@@ -584,8 +645,8 @@ foreach (glob($sync . '/block.block.*.yml') ?: [] as $path) {
       : $pluginId,
     'runtime_status' => $runtimeVerified
       ? ($blockUiStylesVerified
-        ? 'active; ' . ($runtimeBlock['region'] ?? 'region unknown') . '; ' . ($runtimeBlock['row_count'] ?? 'unknown') . ' rows; anonymous access; ' . ($runtimeBlock['evidence_manifest'] ?? 'browser evidence recorded')
-        : 'active; View display ' . $viewId . ':' . $viewDisplayId . '; ' . ($runtimeViewDisplay['result_count_after'] ?? $runtimeViewDisplay['result_count'] ?? 'unknown') . ' results; anonymous access; UI Patterns output evidenced in runtime inventory')
+        ? 'active; ' . inventoryString($runtimeBlockData['region'] ?? NULL, 'region unknown') . '; ' . inventoryString($runtimeBlockData['row_count'] ?? NULL, 'unknown') . ' rows; anonymous access; ' . inventoryString($runtimeBlockData['evidence_manifest'] ?? NULL, 'browser evidence recorded')
+        : 'active; View display ' . $viewId . ':' . $viewDisplayId . '; ' . inventoryString($runtimeViewDisplayData['result_count_after'] ?? $runtimeViewDisplayData['result_count'] ?? NULL, 'unknown') . ' results; anonymous access; UI Patterns output evidenced in runtime inventory')
       : 'not_observed',
   ];
 }
@@ -601,6 +662,9 @@ $themeTemplateIterator = new RecursiveIteratorIterator(
   new RecursiveDirectoryIterator($theme . '/templates', FilesystemIterator::SKIP_DOTS),
 );
 foreach ($themeTemplateIterator as $themeTemplate) {
+  if (!$themeTemplate instanceof SplFileInfo) {
+    continue;
+  }
   if (!$themeTemplate->isFile() || !str_ends_with($themeTemplate->getFilename(), '.html.twig')) {
     continue;
   }
@@ -626,6 +690,9 @@ $moduleIterator = new RecursiveIteratorIterator(
   RecursiveIteratorIterator::SELF_FIRST,
 );
 foreach ($moduleIterator as $directory) {
+  if (!$directory instanceof SplFileInfo) {
+    continue;
+  }
   if (!$directory->isDir() || $directory->getFilename() !== 'templates') {
     continue;
   }
@@ -644,6 +711,9 @@ foreach ($moduleIterator as $directory) {
 foreach ($templateRoots as $owner => $templateRoot) {
   $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($templateRoot, FilesystemIterator::SKIP_DOTS));
   foreach ($iterator as $file) {
+    if (!$file instanceof SplFileInfo) {
+      continue;
+    }
     if (!$file->isFile() || !str_ends_with($file->getFilename(), '.html.twig')) {
       continue;
     }
@@ -687,8 +757,15 @@ foreach ($templateRoots as $owner => $templateRoot) {
       $viewPath = $sync . '/views.view.' . $viewId . '.yml';
       if (is_file($viewPath)) {
         $viewDefinition = Yaml::parseFile($viewPath);
-        $viewDisplayUsesPatternsRow = ($viewDefinition['display'][$displayId]['display_options']['row']['type'] ?? '') === 'ui_patterns';
-        $viewDisplayUsesPatternsStyle = ($viewDefinition['display'][$displayId]['display_options']['style']['type'] ?? '') === 'ui_patterns';
+        if (is_array($viewDefinition)) {
+          $viewDefinitionDisplays = is_array($viewDefinition['display'] ?? NULL) ? $viewDefinition['display'] : [];
+          $viewDefinitionDisplay = is_array($viewDefinitionDisplays[$displayId] ?? NULL) ? $viewDefinitionDisplays[$displayId] : [];
+          $viewDefinitionOptions = is_array($viewDefinitionDisplay['display_options'] ?? NULL) ? $viewDefinitionDisplay['display_options'] : [];
+          $viewDefinitionRow = is_array($viewDefinitionOptions['row'] ?? NULL) ? $viewDefinitionOptions['row'] : [];
+          $viewDefinitionStyle = is_array($viewDefinitionOptions['style'] ?? NULL) ? $viewDefinitionOptions['style'] : [];
+          $viewDisplayUsesPatternsRow = ($viewDefinitionRow['type'] ?? '') === 'ui_patterns';
+          $viewDisplayUsesPatternsStyle = ($viewDefinitionStyle['type'] ?? '') === 'ui_patterns';
+        }
       }
     }
     $isBypassedViewTemplate = ($viewDisplayUsesPatternsRow || $viewDisplayUsesPatternsStyle)
@@ -829,6 +906,9 @@ foreach ($scanRoots as $scanRoot) {
   }
   $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($scanRoot, FilesystemIterator::SKIP_DOTS));
   foreach ($iterator as $file) {
+    if (!$file instanceof SplFileInfo) {
+      continue;
+    }
     if (!$file->isFile() || !in_array($file->getExtension(), ['php', 'twig', 'yml', 'yaml', 'css', 'js'], TRUE)) {
       continue;
     }
@@ -881,12 +961,20 @@ foreach ($componentIds as $componentId => $manifest) {
 $composer = json_decode((string) file_get_contents($root . '/composer.json'), TRUE, flags: JSON_THROW_ON_ERROR);
 $lock = json_decode((string) file_get_contents($root . '/composer.lock'), TRUE, flags: JSON_THROW_ON_ERROR);
 $syncExtensions = Yaml::parseFile($sync . '/core.extension.yml');
+$composer = is_array($composer) ? $composer : [];
+$lock = is_array($lock) ? $lock : [];
+$syncExtensions = is_array($syncExtensions) ? $syncExtensions : [];
+$composerRequire = is_array($composer['require'] ?? NULL) ? $composer['require'] : [];
+$composerRequireDev = is_array($composer['require-dev'] ?? NULL) ? $composer['require-dev'] : [];
+$lockPackages = is_array($lock['packages'] ?? NULL) ? $lock['packages'] : [];
+$lockPackagesDev = is_array($lock['packages-dev'] ?? NULL) ? $lock['packages-dev'] : [];
 $lockedPackages = [];
-foreach (array_merge($lock['packages'] ?? [], $lock['packages-dev'] ?? []) as $package) {
-  if (is_array($package) && isset($package['name'])) {
+foreach (array_merge($lockPackages, $lockPackagesDev) as $package) {
+  if (is_array($package) && is_string($package['name'] ?? NULL)) {
     $lockedPackages[$package['name']] = $package;
   }
 }
+/** @var array<string, array{module: string, status: string, replacement: string, risk: string, configs?: list<string>}> $moduleInventory */
 $moduleInventory = [
   'drupal/ui_patterns' => [
     'module' => 'ui_patterns', 'status' => 'MIGRATION_IN_PROGRESS',
@@ -1076,10 +1164,14 @@ $moduleInventory = [
 ];
 foreach ($moduleInventory as $packageName => $metadata) {
   $package = $lockedPackages[$packageName] ?? NULL;
-  $required = isset($composer['require'][$packageName]) || isset($composer['require-dev'][$packageName]);
-  $moduleVersion = is_array($package) ? (string) ($package['version'] ?? 'not locked') : 'not locked';
-  $moduleReference = is_array($package) ? (string) ($package['source']['reference'] ?? $package['dist']['reference'] ?? 'no reference') : 'no lock reference';
-  $enabledInSync = isset($syncExtensions['module'][$metadata['module']]);
+  $required = isset($composerRequire[$packageName]) || isset($composerRequireDev[$packageName]);
+  $packageData = is_array($package) ? $package : [];
+  $moduleVersion = is_array($package) ? inventoryString($packageData['version'] ?? NULL, 'not locked') : 'not locked';
+  $packageSource = is_array($packageData['source'] ?? NULL) ? $packageData['source'] : [];
+  $packageDist = is_array($packageData['dist'] ?? NULL) ? $packageData['dist'] : [];
+  $moduleReference = is_array($package) ? inventoryString($packageSource['reference'] ?? $packageDist['reference'] ?? NULL, 'no reference') : 'no lock reference';
+  $syncModules = is_array($syncExtensions['module'] ?? NULL) ? $syncExtensions['module'] : [];
+  $enabledInSync = isset($syncModules[$metadata['module']]);
   $risk = $metadata['risk'];
   if ($enabledInSync && str_contains($risk, 'absent from Sync')) {
     $risk = str_replace('module is absent from Sync', 'module is enabled in Sync', $risk);
@@ -1112,11 +1204,15 @@ foreach ($moduleInventory as $packageName => $metadata) {
     default => $packageName,
   };
   $ownerPackage = $lockedPackages[$packageOwner] ?? NULL;
-  $ownerVersion = is_array($ownerPackage) ? (string) ($ownerPackage['version'] ?? $moduleVersion) : $moduleVersion;
-  $ownerReference = is_array($ownerPackage) ? (string) ($ownerPackage['source']['reference'] ?? $ownerPackage['dist']['reference'] ?? $moduleReference) : $moduleReference;
+  $ownerPackageData = is_array($ownerPackage) ? $ownerPackage : [];
+  $ownerSource = is_array($ownerPackageData['source'] ?? NULL) ? $ownerPackageData['source'] : [];
+  $ownerDist = is_array($ownerPackageData['dist'] ?? NULL) ? $ownerPackageData['dist'] : [];
+  $ownerVersion = is_array($ownerPackage) ? inventoryString($ownerPackageData['version'] ?? NULL, $moduleVersion) : $moduleVersion;
+  $ownerReference = is_array($ownerPackage) ? inventoryString($ownerSource['reference'] ?? $ownerDist['reference'] ?? NULL, $moduleReference) : $moduleReference;
+  $metadataConfigs = is_array($metadata['configs'] ?? NULL) ? $metadata['configs'] : [];
   $configPaths = array_merge(
     ['composer.json', 'composer.lock', 'config/sync/core.extension.yml'],
-    $metadata['configs'] ?? [],
+    $metadataConfigs,
     [relative_path($root, $runtimeSnapshotPath)],
   );
   $rows[] = [
@@ -1136,8 +1232,8 @@ foreach ($moduleInventory as $packageName => $metadata) {
     'detected_consumers' => '',
     'runtime_status' => array_key_exists($metadata['module'], $runtimeStatuses)
       ? (is_array($runtimeStatuses[$metadata['module']])
-        ? 'observed_' . $runtimeObservedDate . ':' . ($runtimeStatuses[$metadata['module']]['status'] ?? 'unknown') . '; version=' . ($runtimeStatuses[$metadata['module']]['version'] ?? 'unknown')
-        : 'observed_' . $runtimeObservedDate . ':' . $runtimeStatuses[$metadata['module']])
+        ? 'observed_' . $runtimeObservedDate . ':' . inventoryString($runtimeStatuses[$metadata['module']]['status'] ?? NULL, 'unknown') . '; version=' . inventoryString($runtimeStatuses[$metadata['module']]['version'] ?? NULL, 'unknown')
+        : 'observed_' . $runtimeObservedDate . ':' . inventoryString($runtimeStatuses[$metadata['module']]) )
       : 'current_runtime=not_observed',
   ];
 }
