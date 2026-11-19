@@ -157,6 +157,14 @@ Statistics, User, Messenger, Game, Index, CGU e no próprio Fórum são integra�
 com o host atual e devem ser avaliadas por contrato/origem; não devem ser
 movidas automaticamente para o addon apenas por conter “forum” no nome.
 
+No tema V2, o SDC compartilhado `author-card` declara a variante visual
+`author_growroom_historico`; templates, stories e `PagePresentationHooks`
+também contêm apresentação do Growroom por rota/bundle. Esses são pontos de
+apresentação, não classificadores de origem. Manter o SDC e a variante visual
+no tema conforme a UI Suite, mas preparar os dados/política de autoria e
+somente-leitura no addon; revisar hooks do tema para que não decidam origem por
+bundle nem carreguem regras ou acesso do acervo.
+
 As migrations
 Comment→ForumPost atualmente registradas não excluem autoria histórica da
 origem. A busca estática não prova se alguma migration foi executada nem
