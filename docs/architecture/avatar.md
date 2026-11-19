@@ -90,13 +90,23 @@ Fonte de verdade dos dados: [data-ownership.md](data-ownership.md).
 
 ### 3.2 Identidade e cartões (`aculta_user`)
 
+F-D48 mantém neste módulo a identidade comum das contas Drupal, seus perfis e
+avatares. O código atual ainda contém a entidade e os builders de autores
+legados, mas a propriedade desses dados, classificação e política de autoria
+será transferida para o opcional `aculta_forum_legacy`. F-D44 restringe o cartão
+histórico a tópicos e comentários do Fórum legado; não há User/Profile ou rota
+individual. Até a extração, `DiscussionCommentAuthorHooks` ainda lê markers
+diretamente e pode renderizar esse cartão fora do host Fórum; isso é um defeito
+de escopo a corrigir, não uma regra desta arquitetura. O SDC visual permanece
+no tema ACULTA420 e não decide origem.
+
 | Componente | Serviço/arquivo | Responsabilidade |
 | --- | --- | --- |
 | `PublicProfilePolicy` | `src/PublicProfilePolicy.php` | Decide, campo a campo, o que aparece: perfil privado mostra foto e apelido; perfil público segue opt-in de foto, bio, e-mail e redes; `content_editor` é obrigatoriamente público; sem apelido não há identidade. |
 | `PublicProfileController` | `src/Controller/PublicProfileController.php` | Página `/u/{apelido}` no purpose `main`; usa `AvatarResolver` com o item `foto` da policy. |
 | `AuthorIdentity` | `src/Identity/AuthorIdentity.php` | View-model escalar e cacheável: variante, nome, link opcional, avatar, ano, bio e redes autorizadas. |
 | `AuthorIdentityResolver` | `aculta_user.author_identity_resolver` / `src/Identity/AuthorIdentityResolver.php` | `resolve()` para identidade pública (apelido/link/policy/avatar); `resolveFallback()` para quem não tem perfil público (nome de exibição + acervo, sem link/foto/bio/redes); `publicDisplayName()` para consumidores que só podem ver o apelido. |
-| `AuthorCardBuilder` | `aculta_user.author_card_builder` / `src/Identity/AuthorCardBuilder.php` | `build()` devolve `NULL` sem identidade pública; `buildFallback()` monta o cartão nome + acervo para contextos que já mostram o nome; `buildLegacy()`/`buildLegacyForum()` montam a autoria histórica Growroom sem User. |
+| `AuthorCardBuilder` | `aculta_user.author_card_builder` / `src/Identity/AuthorCardBuilder.php` | No código atual, `build()` devolve `NULL` sem identidade pública e `buildFallback()` monta nome + acervo para contextos que já mostram o nome; também existem `buildLegacy()`/`buildLegacyForum()`. Pela F-D48, somente identidade e fallback de contas permanecem em User; autoria histórica passa ao addon e só é chamada para conteúdo `ARCHIVE` no host Fórum, conforme F-D44. |
 | `AuthorCardVariantResolver` | `aculta_user.author_card_variant_resolver` / `src/Identity/AuthorCardVariantResolver.php` | Mapeia o bundle do host para `author_forum`, `author_comment`, `author_lms` ou `author_wiki`; bundle desconhecido não herda cartão. |
 | `PublicMemberIdentityInterface` | `src/Identity/PublicMemberIdentityInterface.php` | Expõe somente o apelido aprovado pela policy; o nome interno da conta não é fallback público. |
 
@@ -107,7 +117,7 @@ Fonte de verdade dos dados: [data-ownership.md](data-ownership.md).
 | `hook_theme` | `AuthorCardThemeHooks` | Declara `aculta_user_author_card` e mantém render neutro quando o tema não estiliza. |
 | `views_data_alter` | `AuthorCardViewsDataHooks` | Declara o campo virtual `aculta_user_author_card` em `users_field_data`. |
 | Campo de Views | `Plugin\views\field\AuthorCard` (`aculta_user_author_card`) | Renderiza o cartão por linha; `query()` não altera a consulta e `render()` carrega a conta pelo `uid` quando o cache da query não traz `_entity`. Opções: variante e tamanho. |
-| `entity_view` (Comment) | `DiscussionCommentAuthorHooks` | Cartão em comentários de discussão e posts do Fórum; usa `author_wiki` em `wiki_entry`, `author_lms` em `aculta_lms_topic`, `author_comment` em `revista` e `author_forum` no Fórum. Autor histórico usa `buildLegacy*`. |
+| `entity_view` (Comment) | `DiscussionCommentAuthorHooks` | Cartão em comentários de discussão e posts do Fórum; usa `author_wiki` em `wiki_entry`, `author_lms` em `aculta_lms_topic`, `author_comment` em `revista` e `author_forum` no Fórum. O código atual usa `buildLegacy*` para qualquer Comment com `field_autor_legado`, inclusive fora do Fórum; corrigir para exigir host e comentário classificados `ARCHIVE`, sem conceder esse fallback a Wiki/Revista/LMS ou origem desconhecida. |
 | `entity_view` (tópico) | `PublicForumTopicAuthorHooks` | Cartão do autor do tópico público; autor histórico não vira User. |
 | `preprocess_views_view_fields` (Fórum) | `aculta_forum` `PublicForumLastActivityAuthorHooks` | Identidade da última atividade do Fórum com o mesmo builder. |
 | View "Perfis públicos" | `config/sync/views.view.perfis_publicos.yml`, `/membros` | Base `users_field_data`, perfil público e apelido preenchidos; campo `aculta_user_author_card` (`profile_compact`, `sm`). |
@@ -121,7 +131,7 @@ Fonte de verdade dos dados: [data-ownership.md](data-ownership.md).
 | LMS — feedback | `aculta_lms` `EducatorFeedbackAuthorCardHooks` + `EducatorFeedbackPolicy` | `lms_answer_comment` pode ser do aluno dono da resposta ou de educador; só educador recebe "Educador(a)" e notifica. Aluno usa cartão comum, sem rótulo. |
 | Mensagens privadas | `aculta_messenger` `PrivateMessagePresentationHooks` | `AvatarResolver` para o remetente: foto quando existir, senão acervo. |
 | Wiki | `aculta_wiki`, template do tema, `DiscussionCommentAuthorHooks` | A entrada não exibe autor; a autoria aparece somente na discussão (`author_wiki`). |
-| Fórum | `aculta_forum` / `aculta_user` | Tópicos, comentários, posts revisionáveis e última atividade usam o cartão; autoria Growroom histórica usa `LegacyAuthor`. |
+| Fórum | `aculta_forum` / `aculta_user` atualmente; addon como destino F-D48 | Tópicos, comentários, posts revisionáveis e última atividade corrente usam cartões de conta. F-D44 permite cartão de autoria histórica apenas nos tópicos e comentários do arquivo; ForumPost é publicação corrente e não deve expor `LegacyAuthor`. O addon fornecerá a decisão/dados históricos e o tema manterá só a apresentação. |
 | Tema | ACULTA420 SDC `author-card` | Variantes, tamanhos `sm`/`md`/`lg`, UI Styles e `aculta-user-author-card.html.twig`; sem o tema, o módulo entrega o render neutro. |
 
 ## 4. Fluxos

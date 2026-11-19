@@ -20,9 +20,15 @@ seus próprios contextos e consomem adapters do Fórum quando aplicável.
   convertê-lo em conteúdo novo moderável nem criar conta Drupal para o autor.
   Origem: `0.1.0-dev.8`, [histórico arquivado](../history/changelog/aculta_forum.md).
   `field_autor_legado` identifica o conteúdo e os hooks de fila/movimentação
-  barram operações administrativas sobre ele. A identidade do autor é
-  especificada em [DECISOES.md](../../web/modules/custom/aculta_portal/modules/aculta_forum/docs/DECISOES.md)
-  e no contrato de [aculta_user](aculta_user.md).
+  barram operações administrativas sobre ele no código atual. F-D44 limita a
+  autoria histórica aos tópicos e comentários do Fórum legado; o marker sozinho
+  não autoriza exposição em outro host. F-D48 transfere classificação, acesso e
+  autoria ao opcional `aculta_forum_legacy`; o motor deverá consultar contrato
+  genérico de origem sem depender do addon nem ler seu campo. Até a extração,
+  a implementação ainda mantém a entidade em `aculta_user` e fields/hooks em
+  `aculta_forum`. A fonte normativa é
+  [DECISOES.md](../../web/modules/custom/aculta_portal/modules/aculta_forum/docs/DECISOES.md)
+  e o [plano de extração](../../web/modules/custom/aculta_portal/modules/aculta_forum/docs/PLANO-CLONE-DISCOURSE-UI-SUITE-CGU-2026-11-19.md).
 - **2026-10-20 — Apagar o acervo legado do Runtime como estado final.** Situação:
   superada por F-D43 em [DECISOES.md](../../web/modules/custom/aculta_portal/modules/aculta_forum/docs/DECISOES.md).
   Origem: `0.1.0-dev.45`, [histórico arquivado](../history/changelog/aculta_forum.md).
