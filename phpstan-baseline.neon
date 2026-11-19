@@ -54562,11 +54562,6 @@ parameters:
 			count: 1
 			path: web/themes/custom/aculta420_v2/src/Hook/MailEnvelopeHooks.php
 
-		-
-			rawMessage: 'Call to an undefined method object::id().'
-			identifier: method.notFound
-			count: 1
-			path: web/themes/custom/aculta420_v2/src/Hook/PagePresentationHooks.php
 
 		-
 			rawMessage: Cannot access an offset on mixed.
@@ -55303,7 +55298,7 @@ parameters:
 		-
 			rawMessage: 'Cannot call method hasClass() on mixed.'
 			identifier: method.nonObject
-			count: 3
+			count: 2
 			path: web/themes/custom/aculta420_v2/tests/src/Unit/PagePresentationHooksTest.php
 
 		-

@@ -20,6 +20,7 @@ use Drupal\Core\Routing\CurrentRouteMatch;
 use Drupal\Core\Theme\ComponentPluginManager;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\node\NodeInterface;
+use Drupal\node\NodeTypeInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -74,7 +75,7 @@ final class PagePresentationHooks {
   #[Hook('preprocess_page')]
   public function preprocessPage(array &$variables): void {
     $routeName = (string) $this->currentRouteMatch?->getRouteName();
-    $variables['aculta_studio_account_dashboard'] = $routeName === 'aculta_studio.account';
+    $variables['aculta_studio_account_dashboard'] = in_array($routeName, ['aculta_studio.dashboard', 'aculta_studio.account'], TRUE);
     $variables['aculta_layout_variant'] = $this->getPageLayoutVariant();
     // ADR-054 P7: CSS de estatísticas carregado só nas rotas do painel.
     if (in_array($this->currentRouteMatch?->getRouteName(), self::STATISTICS_ROUTES, TRUE)) {
@@ -1486,7 +1487,7 @@ final class PagePresentationHooks {
     }
     // Páginas do fórum (tópico, criação de tópico) usam o mesmo container da lista.
     $formNodeType = $this->currentRouteMatch->getParameter('node_type');
-    if ($routeName === 'node.add' && is_object($formNodeType) && $formNodeType->id() === 'aculta_forum_topic') {
+    if ($routeName === 'node.add' && $formNodeType instanceof NodeTypeInterface && $formNodeType->id() === 'aculta_forum_topic') {
       return 'full';
     }
 

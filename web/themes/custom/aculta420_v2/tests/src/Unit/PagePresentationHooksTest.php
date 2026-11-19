@@ -17,6 +17,9 @@ use Drupal\Core\Theme\ComponentPluginManager;
 use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
 use Drupal\user\UserInterface;
+use Drupal\Core\DependencyInjection\ContainerBuilder;
+use Drupal\Core\Path\PathValidatorInterface;
+use Drupal\Core\Utility\UnroutedUrlAssemblerInterface;
 use Drupal\Tests\UnitTestCase;
 use Drupal\aculta420_v2\Hook\PagePresentationHooks;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -102,7 +105,9 @@ final class PagePresentationHooksTest extends UnitTestCase {
     $hooks->preprocessNode($variables);
 
     self::assertSame('green', $variables['aculta_revista_accent']);
-    self::assertTrue($variables['attributes']->hasClass('revista-teaser--accent-green'));
+    $attributes = $variables['attributes'];
+    self::assertInstanceOf(Attribute::class, $attributes);
+    self::assertTrue($attributes->hasClass('revista-teaser--accent-green'));
     self::assertContains('config:aculta420_v2.settings', $variables['elements']['#cache']['tags']);
   }
 
@@ -362,6 +367,54 @@ final class PagePresentationHooksTest extends UnitTestCase {
 
       self::assertSame('aside', $method->invoke($hooks), $routeName);
     }
+  }
+
+  /**
+   * Studio dashboard route flags account dashboard layout.
+   */
+  public function testStudioDashboardActivatesAccountDashboardLayout(): void {
+    $container = new ContainerBuilder();
+    $assembler = $this->createMock(UnroutedUrlAssemblerInterface::class);
+    $assembler->method('assemble')->willReturnCallback(
+      static fn(string $uri): string => '/' . ltrim(substr($uri, strlen('base:')), '/'),
+    );
+    $container->set('unrouted_url_assembler', $assembler);
+    $pathValidator = $this->createMock(PathValidatorInterface::class);
+    $pathValidator->method('getUrlIfValidWithoutAccessCheck')->willReturn(NULL);
+    $container->set('path.validator', $pathValidator);
+    \Drupal::setContainer($container);
+
+    foreach (['aculta_studio.dashboard', 'aculta_studio.account'] as $routeName) {
+      $routeMatch = $this->createMock(CurrentRouteMatch::class);
+      $routeMatch->method('getRouteName')->willReturn($routeName);
+      $currentUser = $this->createMock(AccountProxyInterface::class);
+      $currentUser->method('isAuthenticated')->willReturn(TRUE);
+      $hooks = new PagePresentationHooks(
+        $this->createMock(ConfigFactoryInterface::class),
+        $this->createMock(ExtensionList::class),
+        $currentUser,
+        $routeMatch,
+        $this->createMock(PathMatcherInterface::class),
+      );
+      $variables = ['page' => ['content' => []]];
+      $hooks->preprocessPage($variables);
+      self::assertTrue($variables['aculta_studio_account_dashboard'], $routeName);
+    }
+
+    $routeMatch = $this->createMock(CurrentRouteMatch::class);
+    $routeMatch->method('getRouteName')->willReturn('aculta_portal.home');
+    $currentUser = $this->createMock(AccountProxyInterface::class);
+    $currentUser->method('isAuthenticated')->willReturn(FALSE);
+    $hooks = new PagePresentationHooks(
+      $this->createMock(ConfigFactoryInterface::class),
+      $this->createMock(ExtensionList::class),
+      $currentUser,
+      $routeMatch,
+      $this->createMock(PathMatcherInterface::class),
+    );
+    $variables = ['page' => ['content' => []]];
+    $hooks->preprocessPage($variables);
+    self::assertFalse($variables['aculta_studio_account_dashboard']);
   }
 
   /**
