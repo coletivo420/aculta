@@ -61,13 +61,18 @@ dos módulos que integra.
 ### Projetos aprovados para evolução — 2026-10-15
 
 O [ACULTA Forum/Growroom420](../../web/modules/custom/aculta_portal/modules/aculta_forum/README.md)
-tem reconstrução aprovada (`0.1.0-dev.1`): Node/Comment/Taxonomy/Views/Search API
-em quatro contextos, com retirada controlada do Drupal Forum. O código atual
-ainda usa Forum contrib; consulte
-[`MIGRATION-REMOVAL.md`](../../web/modules/custom/aculta_portal/modules/aculta_forum/docs/MIGRATION-REMOVAL.md)
-antes de afirmar substituição concluída. O purpose `forum` permanece. Autoria
-histórica segue a entidade `aculta_legado_autor`, sem User ativo, com destino
-coletivo `/u/lendashistoricas`.
+usa o motor Drupal próprio de discussões e comentários; o manifesto atual não
+depende de Drupal Forum contrib. [`MIGRATION-REMOVAL.md`](../../web/modules/custom/aculta_portal/modules/aculta_forum/docs/MIGRATION-REMOVAL.md)
+é o registro histórico da retirada controlada do contrib. O purpose `forum`
+permanece. A autoria histórica usa a entidade `aculta_legado_autor`, sem User
+ativo, com memorial coletivo `/u/lendashistoricas`; no código atual, entidade,
+rota, campos e apresentação ainda pertencem a `aculta_user`/`aculta_forum`.
+F-D48 determina que esses componentes históricos sejam transferidos ao addon
+opcional `aculta_forum_legacy`, mantendo o Forum e os outros módulos sem
+dependência dele. Até a extração planejada, `aculta_user` continua sendo o
+owner do registro de autoria e da rota no domínio MAIN; a URL pública deve ser
+preservada na transferência. O plano de extração é
+[`PLANO-CLONE-DISCOURSE-UI-SUITE-CGU-2026-11-19.md`](../../web/modules/custom/aculta_portal/modules/aculta_forum/docs/PLANO-CLONE-DISCOURSE-UI-SUITE-CGU-2026-11-19.md).
 
 O [ACULTA Game](../../web/modules/custom/aculta_portal/modules/aculta_game/README.md)
 tem como fonte inicial de concessões a entidade existente `aculta_badge_award`,
