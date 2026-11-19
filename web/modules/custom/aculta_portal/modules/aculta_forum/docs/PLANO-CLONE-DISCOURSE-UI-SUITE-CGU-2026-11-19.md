@@ -134,6 +134,24 @@ orientar a extração e a revisão:
 | Autoria e UI | `aculta_user::DiscussionCommentAuthorHooks` renderiza cartão legado sempre que um Comment `aculta_discussion_post` tem `field_autor_legado`; em hosts diferentes de `author_forum`, chama `buildLegacy()`. `aculta_magazine/docs/README.md` descreve autoria vinculada ao acervo no Comment editorial `revista`. O hook também renderiza `legacy_author` em `aculta_forum_post`, entidade de publicação corrente, embora ForumPost não seja conteúdo histórico autorizado por F-D44. Isso pode expor autoria Growroom fora de tópicos/comentários do arquivo. `AuthorCardBuilder` e o SDC `author-card` declaram o cartão/variante históricos no User/tema. | Mover classificação, nome de exibição e decisão de renderizar autoria histórica ao addon. Exibir o cartão somente quando tópico/comentário for classificado `ARCHIVE` dentro do Fórum legado; um marker isolado em Wiki, Revista, LMS, ForumPost ou host desconhecido não pode expor `LegacyAuthor`. ForumPosts correntes usam identidade de User. Qualquer `legacy_author` persistido em ForumPost é candidato de refatoração somente se a provenance da migration o provar. Manter o SDC e a variante visual reutilizáveis, mas sem política de origem no tema. Atualizar `aculta_magazine/docs/README.md` e cobrir testes de host cruzado para que F-D44 só se aplique a tópicos e comentários do arquivo. |
 | Dependências e testes de ownership | Não há manifesto do addon para auditar. `aculta_forum.info.yml` declara `aculta_user` como dependência obrigatória, além de serviços atuais de identidade/participação; `aculta_user` guarda hoje entity/schema/rota históricos, embora seu `.info.yml` não declare dependência do Fórum. `AcultaUserInstallRollbackKernelTest` lista `aculta_legado_autor` como tabela/entity de User e espera que uninstall de `aculta_user` a remova. | Não remover em bloco a integração de identidade ACULTA corrente. Separar no census dependências correntes necessárias de serviços/fields legados; substituir apenas a parte corrente por adapter opcional quando requerido por portabilidade e mover ownership histórico para addon. Rever o teste de rollback de User para enumerar só o storage que continuar pertencendo a User. Criar testes do addon para instalar com a entidade existente, preservar ID/linhas/referências ao retirar ownership de User e bloquear uninstall do addon enquanto houver acervo; provar também a matriz sem `aculta_user` e com addon ausente/presente. Manifestos e service containers dos módulos principais não podem exigir o addon. |
 
+O acoplamento do Fórum a `aculta_user` deve ser decomposto por responsabilidade,
+não removido em bloco: `ForumThemeHooks` injeta `avatar_resolver` e
+`author_card_builder` para autoria User corrente; `ForumPublicationTimeHooks`
+usa `participation_rules`; serviços de acesso restrito usam `active_associate`;
+`LmsEditWindowExemption` é provider corrente registrado na extensão
+`aculta_user.edit_window_exemption`. Esses contratos dizem respeito a identidade,
+associação, LMS e participação ACULTA e não migram para o addon histórico. Em
+contraste, `PublicForumLastActivityAuthorHooks` usa o mesmo `AuthorCardBuilder`
+para carregar `aculta_legado_autor` e renderizar `buildLegacyForum()`; essa
+ramificação e sua leitura histórica devem migrar ao addon, mantendo no core um
+slot/provider genérico de autoria de atividade. `ForumAdminOverviewController`
+também aponta para `aculta_user.denuncias_forum`; esse caminho deve ser
+reavaliado no FDC-04 para apontar ao owner CGU, sem confundi-lo com autoria
+legada. A portabilidade de `aculta_forum` requer testar a ausência de
+`aculta_forum_legacy` separadamente da eventual ausência de adapters ACULTA de
+User: o primeiro caso é obrigatório para F-D48; o segundo é uma etapa de
+portabilidade adicional, não condição para redefinir a propriedade do legado.
+
 O census estático ampliado de PHP e YAML de produção (excluídos testes e
 documentação) encontrou referências específicas ao acervo em `aculta_forum`
 (respostas, citações, fila/flag, autoria, movers, auditoria e migrations), em
