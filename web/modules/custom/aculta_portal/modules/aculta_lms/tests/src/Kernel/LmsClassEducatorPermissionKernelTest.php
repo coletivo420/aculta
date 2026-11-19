@@ -22,6 +22,7 @@ use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Form\FormState;
 use Drupal\Core\Routing\RouteMatch;
 use Drupal\Core\Routing\RouteObjectInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Utility\CallableResolver;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
@@ -383,8 +384,8 @@ final class LmsClassEducatorPermissionKernelTest extends KernelTestBase {
     $slots = $this->arrayOffset($forumOverview, '#slots');
     $header = $this->arrayOffset($slots, 'header');
     $contextTitle = $header['#plain_text'] ?? NULL;
-    self::assertIsString($contextTitle);
-    self::assertSame('Fóruns por curso', $contextTitle);
+    self::assertInstanceOf(TranslatableMarkup::class, $contextTitle);
+    self::assertSame('Fóruns por curso', (string) $contextTitle);
     $content = $this->arrayOffset($slots, 'content');
     $contextItems = $this->arrayOffset($content, '#items');
     self::assertCount(1, $contextItems);

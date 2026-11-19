@@ -61,20 +61,20 @@
   "generation_command": "vendor/bin/phpstan analyse --configuration=<configuração sem include do baseline> --no-progress --memory-limit=2G --generate-baseline=<baseline candidato>; revisar e remover somente entradas cuja correção foi confirmada.",
   "post_freeze_reductions": {
     "date": "2026-11-19",
-    "entries_removed": 2693,
-    "occurrences_removed": 4278,
-    "current_entries": 10435,
-    "current_occurrences": 17687,
+    "entries_removed": 2694,
+    "occurrences_removed": 4279,
+    "current_entries": 10434,
+    "current_occurrences": 17686,
     "current_production": 10570,
-    "current_tests": 7117,
-    "current_baseline_sha256": "cf4d0d8bdef11c5639f7039612408ebe9a684faba7f10dd512c25fffba101c93",
-    "reason": "Concilia a fotografia acumulada com o baseline nível 10 em dev; inclui redução confirmada de 26 entradas/30 ocorrências em três arquivos PHP do tema aculta420_v2, a tipagem do CspReportRequestGuardSubscriber e a remoção de 29 entradas/43 ocorrências nos testes Kernel corrigidos, sem diagnósticos não cobertos. Inclui ainda 40 entradas/52 ocorrências removidas de testes Kernel do calendário e LMS após correção de tipagens. Inclui ainda 52 entradas/64 ocorrências removidas de testes Kernel do calendário e LMS após correção de tipagens. Inclui ainda a redução de 26 entradas/39 ocorrências em testes Kernel e serviços LMS após correção de contrato SDC, autorização contextual e campos duplicados. A validação Kernel também corrigiu três ocorrências de tipagem no provider de contexto LMS, removidas do baseline com a aprovação do PHPStan nível 10. Corrigi também as tipagens das linhas do histórico e do cache no teste Kernel do dashboard, removendo dez entradas e 16 ocorrências antigas do baseline.",
+    "current_tests": 7116,
+    "current_baseline_sha256": "6d0401f9d051ac49100dbdeaa33eef36e6a0b7d65ee09b003422d3ecfcad6ab4",
+    "reason": "Concilia a fotografia acumulada com o baseline nível 10 em dev; inclui redução confirmada de 26 entradas/30 ocorrências em três arquivos PHP do tema aculta420_v2, a tipagem do CspReportRequestGuardSubscriber e a remoção de 29 entradas/43 ocorrências nos testes Kernel corrigidos, sem diagnósticos não cobertos. Inclui ainda 40 entradas/52 ocorrências removidas de testes Kernel do calendário e LMS após correção de tipagens. Inclui ainda 52 entradas/64 ocorrências removidas de testes Kernel do calendário e LMS após correção de tipagens. Inclui ainda a redução de 26 entradas/39 ocorrências em testes Kernel e serviços LMS após correção de contrato SDC, autorização contextual e campos duplicados. A validação Kernel também corrigiu três ocorrências de tipagem no provider de contexto LMS, removidas do baseline com a aprovação do PHPStan nível 10. Corrigi também as tipagens das linhas do histórico e do cache no teste Kernel do dashboard, removendo dez entradas e 16 ocorrências antigas do baseline. A validação da visão de moderação confirmou o tipo TranslatableMarkup; o helper YAML de papéis agora valida o mapa antes de usar array_intersect_key, removendo mais uma ocorrência PHPStan.",
     "latest_reduction": {
       "date": "2026-11-19",
-      "entries_removed": 10,
-      "occurrences_removed": 16,
+      "entries_removed": 1,
+      "occurrences_removed": 1,
       "paths": [
-        "web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/ClassDashboardKernelTest.php"
+        "web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/LmsCommentModerationMatrixKernelTest.php"
       ],
       "phpstan_level": 10,
       "uncovered_errors": 0

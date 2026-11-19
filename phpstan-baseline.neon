@@ -33775,12 +33775,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/LmsCommentModerationMatrixKernelTest.php
 
 		-
-			rawMessage: 'Parameter #1 $array of function array_intersect_key expects array, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/LmsCommentModerationMatrixKernelTest.php
-
-		-
 			rawMessage: 'Parameter #1 $id of method Drupal\Core\Entity\ContentEntityStorageBase::loadUnchanged() expects int|string, int|string|null given.'
 			identifier: argument.type
 			count: 1

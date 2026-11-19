@@ -355,6 +355,7 @@ final class LmsCommentModerationMatrixKernelTest extends KernelTestBase {
     $configPath = dirname(__DIR__, 9) . '/config/sync/' . $configName . '.yml';
     self::assertFileExists($configPath);
     $config = Yaml::parseFile($configPath);
+    self::assertIsArray($config);
     $role = array_intersect_key($config, array_flip([
       'id',
       'label',
