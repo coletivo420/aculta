@@ -209,6 +209,16 @@ acervo. `aculta_statistics` consome eventos correntes de atividade sem
 classificar proveniência no subscriber; sua integração deve ser validada para
 que import/replay histórico não gere métricas. `aculta_messenger` possui
 caminhos genéricos para tópicos atuais além das guardas históricas diretas.
+Uma busca direcionada em PHP/configuração de produção dos módulos Forum, User,
+CGU, Messenger, Game, Index, Statistics, Wiki e Magazine não encontrou uso
+direto dos identificadores contrib `comment_forum`, `field_discussao` ou
+`taxonomy_term.forums`; ocorrências restantes aparecem em documentação e
+changelogs históricos. Os hits da substring `forum_topic` referem-se ao bundle
+corrente `aculta_forum_topic`, a suas rotas/Views e à tabela própria
+`aculta_forum_topic_deletion`; não provam dependência do Forum contrib nem do
+arquivo Growroom. Preservar esse motor corrente e os Comments contextuais;
+revisar cada caminho por origem/contexto, sem mover infraestrutura atual por
+semelhança de nome.
 `aculta_gallery` e `aculta_document_viewer` referenciam o bundle de anexos do
 Fórum para publicação/acesso a arquivos; não há evidência estática de que esse
 uso seja específico do arquivo histórico, então permanece no domínio genérico
