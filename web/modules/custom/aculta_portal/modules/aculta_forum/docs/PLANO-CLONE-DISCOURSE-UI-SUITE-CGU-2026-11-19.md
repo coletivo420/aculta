@@ -182,6 +182,25 @@ descrevem autoria, campos e ownership em User/Forum. `docs/modules/PERFIL-PUBLIC
 delimita o contrato de perfis User, remete a apresentação histórica em
 tópicos/comentários à F-D44 e ao addon, e deixa proveniência/imagens históricas
 sob responsabilidade do addon, sem autorizar ingestão ou associação a contas.
+Dentro dos módulos, `aculta_user/docs/AUTHOR-CARDS.md`,
+`AUTHOR-CARD-VARIANTS.md`, `AUTHOR-CARD-API.md`, `AUTHOR-PANE-PORT.md`,
+`CLASSES-E-HOOKS.md` e `README.md` ainda descrevem a entidade, cartões,
+memorial e hooks atuais; mover a política histórica para a documentação do
+addon e manter nos docs de identidade somente o contrato genérico e a variante
+visual reutilizável. `aculta_forum/README.md`, `ARQUITETURA.md`, `OWNERSHIP.md`,
+`CONTEXTS.md`, `CLASSES-AND-HOOKS.md`, `MOVE-TOOLS.md`, `RECONSTRUCAO.md` e
+`REVISIONABLE-DISCUSSION-WORKFLOW.md` contêm ownership, campos e regras de
+moderação/migração; atualizar os contratos correntes e preservar changelogs e
+ROADMAP como registros datados, explicitamente supersedidos quando necessário.
+`aculta_game/docs/ARQUITETURA.md`, `EXECUCAO.md` e `ROADMAP.md`, e
+`aculta_messenger/docs/AVISOS-E-MENSAGENS.md` devem descrever exclusões de
+eventos por origem neutra, sem citar field ou entidade históricos. O README de
+`aculta_magazine` atualmente permite autoria `author_growroom_historico` em
+Comment editorial, em conflito com F-D44: corrigir para resolver apenas
+contexto/editoria e nunca carregar autoria histórica por marcador. Os docs
+`aculta_image/docs/IMPORTACAO-GROWROOM.md`, auditoria e handoff mantêm detalhes
+normativos de seleção, autoria e imagens; transferir essa política ao addon,
+preservando a documentação de APIs genéricas de mídia em `aculta_image`.
 `ROUTES-SITEMAP.md` e
 `FRIENDLY-PORTUGUESE-SLUGS.md` registram a rota e reserva do memorial; e
 `FORUM-GAME-PESQUISA-VALIDACAO.md` resume regras de integração. No FDC-11.2,
