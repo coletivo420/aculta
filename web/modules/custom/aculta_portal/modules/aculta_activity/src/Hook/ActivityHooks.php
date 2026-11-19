@@ -211,7 +211,7 @@ final class ActivityHooks {
   #[Hook('form_node_form_alter')]
   public function formNodeFormAlter(array &$form, FormStateInterface $formState, string $formId): void {
     $formObject = $formState->getFormObject();
-    $node = method_exists($formObject, 'getEntity') ? $formObject->getEntity() : NULL;
+    $node = $formObject instanceof EntityFormInterface ? $formObject->getEntity() : NULL;
     if (!$node instanceof NodeInterface || $node->bundle() !== 'activity') {
       return;
     }
