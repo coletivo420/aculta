@@ -11,10 +11,12 @@ Regra compartilhada de Claude, Codex e demais agentes. Politica de revisao: `doc
 
 ## Git e entrega
 
-- Integrar em `dev`, por commit atomico em portugues e push fast-forward em `origin/dev`; selecionar apenas arquivos da tarefa e revisar diff/staged. Todos os agentes trabalham na mesma worktree: isolar os proprios commits (staged apenas por caminho explicito, revisando o diff) e preservar alteracoes de outros agentes, sem reset, stash, checkout ou clean que descarte trabalho alheio. Worktree separada nao e obrigatoria.
+- O checkout principal do repositorio e o ambiente servido pelo Apache e deve permanecer permanentemente fixado na branch `dev` e intacto. E estritamente proibido desatrelar ou trocar a branch do checkout principal (`git checkout <outra-branch>`).
+- Novas branches e frentes de desenvolvimento exigem obrigatoriamente novos checkouts/worktrees isolados (ex.: `git worktree add ../<nome-da-worktree> -b <nome-da-branch> dev`). O trabalho do agente e desenvolvido e validado no seu proprio checkout.
+- Integrar em `dev`, por commit atomico em portugues e push fast-forward em `origin/dev`; selecionar apenas arquivos da tarefa e revisar diff/staged. Isolar os proprios commits (staged apenas por caminho explicito, revisando o diff) e preservar alteracoes de outros agentes, sem reset, stash, checkout ou clean que descarte trabalho alheio.
 - Nao usar force push, reset destrutivo ou reescrita de historico compartilhado. Se `dev` avancar, integrar sem perder o trabalho alheio e revisar de novo. PR, merge em `main` e tag so sob pedido explicito.
 - Trailer de CLI e opcional e deve identificar a sessao real; nao atribuir coautoria ficticia. Informar hashes confirmados, resultados de testes e pendencias.
-- Apos push que altera codigo servido, consultar a skill `aculta-runtime-sync` quando houver ambiente comprovado. O checkout de desenvolvimento compartilhado com o Apache e o ambiente esperado; worktree isolada nao e pre-requisito. Alteracao apenas documental nao exige sincronizacao/cache. Sem acesso ou baseline confiavel, registrar DEFERRED/BLOCKED; preservar os demais gates do preflight e nunca contorna-los manualmente.
+- Testes no Runtime real compartilhada so sao permitidos apos integracao em `dev` no checkout principal. Durante o desenvolvimento em branches/worktrees, testes devem ocorrer em ambiente simulado/isolado do proprio checkout de trabalho (ex.: mocks, testes unitarios/kernel com banco de teste isolado). Apos push em `dev` que altera codigo servido, consultar a skill `aculta-runtime-sync` no checkout principal devidamente sincronizado. Alteracao apenas documental nao exige sincronizacao/cache. Sem acesso ou baseline confiavel, registrar DEFERRED/BLOCKED; preservar os demais gates do preflight e nunca contorna-los manualmente.
 
 ## Seguranca e Runtime
 
