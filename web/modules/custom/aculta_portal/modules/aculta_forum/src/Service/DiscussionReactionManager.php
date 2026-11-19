@@ -40,11 +40,18 @@ class DiscussionReactionManager {
    */
   public function getAllowedReactions(): array {
     $config = $this->configFactory->get('aculta_forum.settings');
-    $raw = $config->get('allowed_reactions') ?: [];
+    $raw = $config->get('allowed_reactions');
     $allowed = [];
-    foreach ($raw as $item) {
-      if (!empty($item['enabled'])) {
-        $allowed[$item['id']] = $item;
+    if (is_iterable($raw)) {
+      foreach ($raw as $item) {
+        if (is_array($item) && !empty($item['enabled']) && isset($item['id'], $item['icon'], $item['label']) && is_string($item['id']) && is_string($item['icon']) && is_string($item['label'])) {
+          $allowed[$item['id']] = [
+            'id' => $item['id'],
+            'icon' => $item['icon'],
+            'label' => $item['label'],
+            'enabled' => (bool) $item['enabled'],
+          ];
+        }
       }
     }
     return $allowed;
@@ -54,7 +61,8 @@ class DiscussionReactionManager {
    * Returns default reaction ID.
    */
   public function getDefaultReaction(): string {
-    return (string) ($this->configFactory->get('aculta_forum.settings')->get('default_reaction') ?: 'broccoli');
+    $default = $this->configFactory->get('aculta_forum.settings')->get('default_reaction');
+    return is_string($default) && $default !== '' ? $default : 'broccoli';
   }
 
   /**
@@ -92,7 +100,8 @@ class DiscussionReactionManager {
     $query->addExpression('COUNT(id)', 'reaction_count');
     $query->groupBy('reaction');
 
-    $records = $query->execute()->fetchAllKeyed();
+    $recordsRaw = $query->execute()?->fetchAllKeyed();
+    $records = is_array($recordsRaw) ? $recordsRaw : [];
 
     if ($currentUid !== NULL && $currentUid > 0) {
       $userRec = $this->database->select(self::TABLE_REACTIONS, 'r')
@@ -102,14 +111,14 @@ class DiscussionReactionManager {
         ->condition('uid', $currentUid)
         ->range(0, 1)
         ->execute()
-        ->fetchField();
-      if ($userRec) {
+        ?->fetchField();
+      if (is_scalar($userRec) && (string) $userRec !== '') {
         $result['user_reaction'] = (string) $userRec;
       }
     }
 
     foreach ($allowed as $id => $item) {
-      $count = isset($records[$id]) ? (int) $records[$id] : 0;
+      $count = isset($records[$id]) && is_numeric($records[$id]) ? (int) $records[$id] : 0;
       $isUserReacted = ($result['user_reaction'] === $id);
       if ($count > 0 || $isUserReacted) {
         $result['reactions'][$id] = [
@@ -165,22 +174,23 @@ class DiscussionReactionManager {
       ->condition('uid', $uid)
       ->range(0, 1)
       ->execute()
-      ->fetchAssoc();
+      ?->fetchAssoc();
 
     $now = $this->time->getRequestTime();
     $transaction = $this->database->startTransaction();
 
     try {
-      if ($existing) {
-        $prevReaction = (string) $existing['reaction'];
+      if (is_array($existing) && !empty($existing['id'])) {
+        $existingId = is_numeric($existing['id']) ? (int) $existing['id'] : (is_scalar($existing['id']) ? (string) $existing['id'] : 0);
+        $prevReaction = isset($existing['reaction']) && is_scalar($existing['reaction']) ? (string) $existing['reaction'] : '';
         // O decremento usa o escopo gravado no momento da reação. Recalcular
         // a visibilidade atual e subtrair de um contador antigo desalinharia
         // agregados quando o conteúdo mudou de escopo.
-        $wasPublic = (int) $existing['is_public_context'] === 1;
+        $wasPublic = isset($existing['is_public_context']) && is_numeric($existing['is_public_context']) && (int) $existing['is_public_context'] === 1;
         if ($prevReaction === $reactionId) {
           // Same emoji: remove reaction.
           $this->database->delete(self::TABLE_REACTIONS)
-            ->condition('id', $existing['id'])
+            ->condition('id', $existingId)
             ->execute();
 
           if ($wasPublic) {
@@ -205,7 +215,7 @@ class DiscussionReactionManager {
             'host_entity_type' => $host ? $host->getEntityTypeId() : '',
             'host_entity_id' => $host ? (int) $host->id() : 0,
           ])
-          ->condition('id', $existing['id'])
+          ->condition('id', $existingId)
           ->execute();
 
         if ($wasPublic !== $isPublic) {
@@ -306,7 +316,10 @@ class DiscussionReactionManager {
         $topicQuery = $this->database->select('node_field_data', 'n');
         $topicQuery->condition('n.uid', $uid);
         if ($this->scopeResolver->applyPublicTopicConditions($topicQuery, 'n')) {
-          $count += (int) $topicQuery->countQuery()->execute()->fetchField();
+          $val = $topicQuery->countQuery()->execute()?->fetchField();
+          if (is_numeric($val)) {
+            $count += (int) $val;
+          }
         }
       }
 
@@ -320,7 +333,10 @@ class DiscussionReactionManager {
         $commentQuery->condition('c.comment_type', 'aculta_discussion_post');
         $commentQuery->condition('c.default_langcode', 1);
         if ($this->scopeResolver->applyPublicTopicConditions($commentQuery, 'n')) {
-          $count += (int) $commentQuery->countQuery()->execute()->fetchField();
+          $val = $commentQuery->countQuery()->execute()?->fetchField();
+          if (is_numeric($val)) {
+            $count += (int) $val;
+          }
         }
       }
 
@@ -333,7 +349,10 @@ class DiscussionReactionManager {
         $postQuery->condition('p.status', 1);
         $postQuery->condition('p.default_langcode', 1);
         if ($this->scopeResolver->applyPublicTopicConditions($postQuery, 'n')) {
-          $count += (int) $postQuery->countQuery()->execute()->fetchField();
+          $val = $postQuery->countQuery()->execute()?->fetchField();
+          if (is_numeric($val)) {
+            $count += (int) $val;
+          }
         }
       }
     }
@@ -365,12 +384,12 @@ class DiscussionReactionManager {
       ->condition('uid', $uid)
       ->range(0, 1)
       ->execute()
-      ->fetchAssoc();
+      ?->fetchAssoc();
 
-    if ($record) {
+    if (is_array($record)) {
       return [
-        'reactions_received' => (int) $record['reactions_received'],
-        'reactions_given' => (int) $record['reactions_given'],
+        'reactions_received' => isset($record['reactions_received']) && is_numeric($record['reactions_received']) ? (int) $record['reactions_received'] : 0,
+        'reactions_given' => isset($record['reactions_given']) && is_numeric($record['reactions_given']) ? (int) $record['reactions_given'] : 0,
       ];
     }
 

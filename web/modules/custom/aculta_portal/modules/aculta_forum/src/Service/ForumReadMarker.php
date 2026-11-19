@@ -50,7 +50,7 @@ final class ForumReadMarker {
    *   Authenticated account captured when the user confirmed the action.
    * @param int $total
    *   Eligible topic count captured when the batch was created.
-   * @param array $context
+   * @param array<string, mixed> $context
    *   Core Batch API context.
    */
   public function markBatch(int $accountId, int $total, array &$context): void {
@@ -75,12 +75,16 @@ final class ForumReadMarker {
         return FALSE;
       }
 
-      $lastId = (int) ($context['sandbox']['last_id'] ?? 0);
-      $ids = $this->topicQuery((string) $domain->id())
+      $sandbox = isset($context['sandbox']) && is_array($context['sandbox']) ? $context['sandbox'] : [];
+      $lastIdVal = $sandbox['last_id'] ?? 0;
+      $lastId = is_numeric($lastIdVal) ? (int) $lastIdVal : 0;
+      $rawIds = $this->topicQuery((string) $domain->id())
         ->condition('nid', $lastId, '>')
         ->sort('nid', 'ASC')
         ->range(0, self::BATCH_SIZE)
         ->execute();
+
+      $ids = is_array($rawIds) ? array_values($rawIds) : [];
 
       if ($ids === []) {
         $context['finished'] = 1;
@@ -88,19 +92,28 @@ final class ForumReadMarker {
         return TRUE;
       }
 
+      $results = isset($context['results']) && is_array($context['results']) ? $context['results'] : [];
+      $markedVal = $results['marked'] ?? 0;
+      $markedCount = is_numeric($markedVal) ? (int) $markedVal : 0;
+
       foreach ($ids as $id) {
-        // history_write() is the installed History module's public API.
-        history_write((int) $id, $account);
-        $lastId = (int) $id;
-        $context['results']['marked'] = (int) ($context['results']['marked'] ?? 0) + 1;
+        if (is_numeric($id)) {
+          // history_write() is the installed History module's public API.
+          history_write((int) $id, $account);
+          $lastId = (int) $id;
+          $markedCount++;
+        }
       }
-      $context['sandbox']['last_id'] = $lastId;
+      $results['marked'] = $markedCount;
+      $context['results'] = $results;
+
+      $sandbox['last_id'] = $lastId;
+      $context['sandbox'] = $sandbox;
       // Progress follows the number of topics actually marked, not the sparse
       // node IDs, because IDs advance far faster than the eligible count.
-      $marked = (int) ($context['results']['marked'] ?? 0);
-      $context['finished'] = min(0.99, $total > 0 ? $marked / $total : 0.99);
+      $context['finished'] = min(0.99, $total > 0 ? $markedCount / $total : 0.99);
       $context['message'] = $this->stringTranslation->translate('Marcando discussões como lidas (@count processadas).', [
-        '@count' => $context['results']['marked'],
+        '@count' => (string) $markedCount,
       ]);
       return TRUE;
     });
@@ -112,15 +125,22 @@ final class ForumReadMarker {
   }
 
   /**
-   * Reports the final result of the Core batch. */
+   * Reports the final result of the Core batch.
+   *
+   * @param array<string, mixed> $results
+   *   The batch results.
+   * @param array<int|string, mixed> $operations
+   *   Remaining batch operations.
+   */
   public function finishBatch(bool $success, array $results, array $operations, string $elapsed): void {
     if (!$success) {
       $this->messenger->addError($this->stringTranslation->translate('O histórico foi atualizado parcialmente. Você pode executar a ação novamente com segurança.'));
       return;
     }
-    $count = (int) ($results['marked'] ?? 0);
+    $countVal = $results['marked'] ?? 0;
+    $count = is_numeric($countVal) ? (int) $countVal : 0;
     $this->messenger->addStatus($this->stringTranslation->translate('Foram marcadas @count discussões como lidas.', [
-      '@count' => $count,
+      '@count' => (string) $count,
     ]));
   }
 

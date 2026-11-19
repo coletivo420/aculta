@@ -50,8 +50,13 @@ final class ForumPostThreadBuilder {
 
     $storage = $this->entityTypeManager->getStorage('aculta_forum_post');
     $query = $storage->getQuery()->accessCheck(TRUE);
-    $position = (int) $post->get('thread_position')->value;
-    $created = (int) $post->get('created')->value;
+    $posVal = $post->get('thread_position')->value;
+    $createdVal = $post->get('created')->value;
+    if (!is_numeric($posVal) || !is_numeric($createdVal)) {
+      return NULL;
+    }
+    $position = (int) $posVal;
+    $created = (int) $createdVal;
     $postId = (int) $post->id();
     $preceding = $query->orConditionGroup()
       ->condition('thread_position', $position, '<')

@@ -110,15 +110,25 @@ class TopicDeletionModerationManager {
    * Returns count of topics pending deletion review.
    */
   public function countPending(): int {
-    return (int) $this->database->select('aculta_forum_topic_deletion', 'd')
+    $count = $this->database->select('aculta_forum_topic_deletion', 'd')
       ->condition('d.status', 'pending')
       ->countQuery()
       ->execute()
-      ->fetchField();
+      ?->fetchField();
+    return is_numeric($count) ? (int) $count : 0;
   }
 
   /**
    * Loads pending deletion requests with topic details.
+   *
+   * @return list<array{
+   *   id: int,
+   *   nid: int,
+   *   uid: int,
+   *   topic: \Drupal\node\NodeInterface|null,
+   *   requester: \Drupal\user\UserInterface|null,
+   *   created: int
+   * }>
    */
   public function getPendingRequests(int $limit = 50, int $offset = 0): array {
     $query = $this->database->select('aculta_forum_topic_deletion', 'd')
@@ -127,21 +137,32 @@ class TopicDeletionModerationManager {
       ->orderBy('d.created', 'DESC')
       ->range($offset, $limit);
 
-    $results = $query->execute()->fetchAll();
+    $results = $query->execute()?->fetchAll();
     $items = [];
     $nodeStorage = $this->entityTypeManager->getStorage('node');
     $userStorage = $this->entityTypeManager->getStorage('user');
 
-    foreach ($results as $row) {
-      $node = $nodeStorage->load($row->nid);
-      $author = $userStorage->load($row->uid);
-      $items[] = [
-        'id' => (int) $row->id,
-        'nid' => (int) $row->nid,
-        'topic' => $node,
-        'requester' => $author,
-        'created' => (int) $row->created,
-      ];
+    if (is_iterable($results)) {
+      foreach ($results as $row) {
+        if (!is_object($row)) {
+          continue;
+        }
+        $nid = property_exists($row, 'nid') && is_numeric($row->nid) ? (int) $row->nid : 0;
+        $uid = property_exists($row, 'uid') && is_numeric($row->uid) ? (int) $row->uid : 0;
+        $id = property_exists($row, 'id') && is_numeric($row->id) ? (int) $row->id : 0;
+        $created = property_exists($row, 'created') && is_numeric($row->created) ? (int) $row->created : 0;
+
+        $node = $nid > 0 ? $nodeStorage->load($nid) : NULL;
+        $author = $uid > 0 ? $userStorage->load($uid) : NULL;
+        $items[] = [
+          'id' => $id,
+          'nid' => $nid,
+          'uid' => $uid,
+          'topic' => $node instanceof NodeInterface ? $node : NULL,
+          'requester' => $author instanceof \Drupal\user\UserInterface ? $author : NULL,
+          'created' => $created,
+        ];
+      }
     }
 
     return $items;
@@ -156,14 +177,15 @@ class TopicDeletionModerationManager {
       ->condition('d.id', $id)
       ->condition('d.status', 'pending')
       ->execute()
-      ->fetchObject();
+      ?->fetchObject();
 
-    if (!$row) {
+    if (!is_object($row) || !property_exists($row, 'nid') || !is_numeric($row->nid)) {
       return FALSE;
     }
 
+    $nid = (int) $row->nid;
     $nodeStorage = $this->entityTypeManager->getStorage('node');
-    $node = $nodeStorage->load($row->nid);
+    $node = $nodeStorage->load($nid);
     if ($node instanceof NodeInterface) {
       $node->delete();
     }
@@ -179,7 +201,7 @@ class TopicDeletionModerationManager {
 
     $this->logger->notice('Deletion request @id for topic @nid approved by moderator @uid.', [
       '@id' => $id,
-      '@nid' => $row->nid,
+      '@nid' => $nid,
       '@uid' => $moderator->id(),
     ]);
 
@@ -195,14 +217,15 @@ class TopicDeletionModerationManager {
       ->condition('d.id', $id)
       ->condition('d.status', 'pending')
       ->execute()
-      ->fetchObject();
+      ?->fetchObject();
 
-    if (!$row) {
+    if (!is_object($row) || !property_exists($row, 'nid') || !is_numeric($row->nid)) {
       return FALSE;
     }
 
+    $nid = (int) $row->nid;
     $nodeStorage = $this->entityTypeManager->getStorage('node');
-    $node = $nodeStorage->load($row->nid);
+    $node = $nodeStorage->load($nid);
     if ($node instanceof NodeInterface) {
       $node->setPublished();
       $node->save();
@@ -219,7 +242,7 @@ class TopicDeletionModerationManager {
 
     $this->logger->notice('Deletion request @id for topic @nid rejected by moderator @uid.', [
       '@id' => $id,
-      '@nid' => $row->nid,
+      '@nid' => $nid,
       '@uid' => $moderator->id(),
     ]);
 
@@ -234,7 +257,7 @@ class TopicDeletionModerationManager {
 
   protected function getAuthorDeletePolicy(): string {
     $val = $this->configFactory->get('aculta_forum.settings')->get('topic_author_delete_policy');
-    return $val ? (string) $val : 'moderation_queue';
+    return is_string($val) && $val !== '' ? $val : 'moderation_queue';
   }
 
 }

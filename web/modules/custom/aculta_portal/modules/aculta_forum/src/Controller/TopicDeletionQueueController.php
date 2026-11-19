@@ -37,6 +37,8 @@ final class TopicDeletionQueueController extends ControllerBase {
 
   /**
    * Displays topics awaiting deletion moderation.
+   *
+   * @return array<string, mixed>
    */
   public function queue(): array {
     $requests = $this->moderationManager->getPendingRequests();
@@ -47,8 +49,8 @@ final class TopicDeletionQueueController extends ControllerBase {
       $requester = $item['requester'];
       $id = $item['id'];
 
-      $topicTitle = $topic instanceof NodeInterface ? $topic->label() : $this->t('Tópico ID @nid (inexistente)', ['@nid' => $item['nid']]);
-      $topicLink = $topic instanceof NodeInterface ? Link::fromTextAndUrl($topicTitle, $topic->toUrl())->toString() : $topicTitle;
+      $topicTitle = $topic instanceof NodeInterface ? $topic->label() : (string) $this->t('Tópico ID @nid (inexistente)', ['@nid' => $item['nid']]);
+      $topicLink = $topic instanceof NodeInterface ? Link::fromTextAndUrl($topicTitle ?? '', $topic->toUrl())->toString() : $topicTitle;
 
       $requesterName = $requester ? $requester->getDisplayName() : $this->t('Usuário ID @uid', ['@uid' => $item['uid']]);
       $date = $this->dateFormatter->format($item['created'], 'short');

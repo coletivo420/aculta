@@ -72,8 +72,8 @@ class DiscussionReplyIdempotencyManager {
     $query->orderBy('c.cid', 'DESC');
     $query->range(0, 1);
 
-    $result = $query->execute()->fetchField();
-    return $result ? (int) $result : NULL;
+    $result = $query->execute()?->fetchField();
+    return is_numeric($result) ? (int) $result : NULL;
   }
 
 }
