@@ -38,9 +38,10 @@ final class MessengerMailDisplayConfigTest extends TestCase {
       foreach ($config_names as $name) {
         $path = $directory . '/' . $name . '.yml';
         self::assertFileExists($path);
-        $config = Yaml::parseFile($path);
+        $config = self::yamlArray($path);
+        $hidden = self::arrayAt($config, 'hidden');
         foreach (['entity_print_view_epub', 'entity_print_view_pdf', 'entity_print_view_word_docx'] as $field) {
-          self::assertTrue($config['hidden'][$field] ?? FALSE, sprintf('%s must stay hidden in %s.', $field, $name));
+          self::assertTrue($hidden[$field] ?? FALSE, sprintf('%s must stay hidden in %s.', $field, $name));
         }
       }
     }
@@ -58,15 +59,15 @@ final class MessengerMailDisplayConfigTest extends TestCase {
     ] as $directory) {
       $storage_path = $directory . '/field.storage.message.field_aculta_enqueue_attempts.yml';
       self::assertFileExists($storage_path);
-      $storage = Yaml::parseFile($storage_path);
+      $storage = self::yamlArray($storage_path);
       self::assertSame('integer', $storage['type']);
       self::assertSame(['unsigned' => FALSE, 'size' => 'normal'], $storage['settings']);
 
       $field_path = $directory . '/field.field.message.aculta_msg_friendship.field_aculta_enqueue_attempts.yml';
       self::assertFileExists($field_path);
-      $field = Yaml::parseFile($field_path);
+      $field = self::yamlArray($field_path);
       self::assertSame('integer', $field['field_type']);
-      self::assertSame('field.storage.message.field_aculta_enqueue_attempts', $field['dependencies']['config'][0]);
+      self::assertSame('field.storage.message.field_aculta_enqueue_attempts', self::arrayAt(self::arrayAt($field, 'dependencies'), 'config')[0]);
     }
   }
 
@@ -86,14 +87,43 @@ final class MessengerMailDisplayConfigTest extends TestCase {
       ] as $name) {
         $path = $directory . '/' . $name . '.yml';
         self::assertFileExists($path);
-        $config = Yaml::parseFile($path);
-        self::assertTrue($config['hidden']['field_aculta_friendship_event'] ?? FALSE);
+        $config = self::yamlArray($path);
+        $hidden = self::arrayAt($config, 'hidden');
+        self::assertTrue($hidden['field_aculta_friendship_event'] ?? FALSE);
+        $dependencies = self::arrayAt(self::arrayAt($config, 'dependencies'), 'config');
         self::assertContains(
           'field.field.message.aculta_msg_friendship.field_aculta_friendship_event',
-          $config['dependencies']['config'] ?? [],
+          $dependencies,
         );
       }
     }
+  }
+
+  /**
+   * Parses a YAML configuration file and validates its array shape.
+   *
+   * @return array<mixed>
+   *   Parsed configuration data.
+   */
+  private static function yamlArray(string $path): array {
+    $config = Yaml::parseFile($path);
+    self::assertIsArray($config);
+    return $config;
+  }
+
+  /**
+   * Returns a nested configuration array after checking its runtime shape.
+   *
+   * @param array<mixed> $parent
+   *   Parsed configuration or a nested config section.
+   *
+   * @return array<mixed>
+   *   Nested configuration values.
+   */
+  private static function arrayAt(array $parent, int|string $key): array {
+    self::assertArrayHasKey($key, $parent);
+    self::assertIsArray($parent[$key]);
+    return $parent[$key];
   }
 
 }

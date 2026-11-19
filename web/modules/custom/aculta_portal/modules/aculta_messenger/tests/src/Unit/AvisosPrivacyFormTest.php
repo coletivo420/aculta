@@ -11,6 +11,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormState;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\aculta_messenger\Form\AvisosPrivacyForm;
 use Drupal\domain\DomainInterface;
@@ -41,10 +42,13 @@ final class AvisosPrivacyFormTest extends UnitTestCase {
 
     $this->formBuilder($account)->build($form);
 
-    self::assertArrayHasKey('aviso_sempre', $form['avisos']);
-    self::assertArrayHasKey('assinaturas', $form['avisos']);
-    self::assertArrayNotHasKey('email_wiki', $form['avisos']);
-    self::assertSame('aculta_messenger.communication_settings', $form['avisos']['email_settings']['#url']->getRouteName());
+    $avisos = self::arrayAt($form, 'avisos');
+    self::assertArrayHasKey('aviso_sempre', $avisos);
+    self::assertArrayHasKey('assinaturas', $avisos);
+    self::assertArrayNotHasKey('email_wiki', $avisos);
+    $emailSettings = self::arrayAt($avisos, 'email_settings');
+    self::assertInstanceOf(\Drupal\Core\Url::class, $emailSettings['#url']);
+    self::assertSame('aculta_messenger.communication_settings', $emailSettings['#url']->getRouteName());
   }
 
   /**
@@ -80,18 +84,31 @@ final class AvisosPrivacyFormTest extends UnitTestCase {
 
     $formBuilder->build($form);
 
-    $rows = $form['avisos']['assinaturas']['topics']['#rows'];
+    $avisos = self::arrayAt($form, 'avisos');
+    $assinaturas = self::arrayAt($avisos, 'assinaturas');
+    $topics = self::arrayAt($assinaturas, 'topics');
+    self::assertIsArray($topics['#rows']);
+    $rows = $topics['#rows'];
     self::assertArrayHasKey('701', $rows);
     self::assertArrayHasKey('702', $rows);
     self::assertArrayNotHasKey('703', $rows);
     self::assertArrayNotHasKey('704', $rows);
-    $restrictedTitle = $rows['702']['remove']['#title']->getArguments()['@topic'];
-    self::assertSame('Tópico indisponível', $restrictedTitle->getUntranslatedString());
-    self::assertSame('Tópico público', $rows['701']['topic']['#title']);
-    self::assertSame('entity.node.canonical', $rows['701']['topic']['#url']->getRouteName());
+    $restrictedRemove = self::arrayAt(self::arrayAt($rows, '702'), 'remove');
+    $restrictedTitle = $restrictedRemove['#title'];
+    self::assertInstanceOf(TranslatableMarkup::class, $restrictedTitle);
+    $titleArguments = $restrictedTitle->getArguments();
+    self::assertArrayHasKey('@topic', $titleArguments);
+    self::assertInstanceOf(TranslatableMarkup::class, $titleArguments['@topic']);
+    self::assertSame('Tópico indisponível', $titleArguments['@topic']->getUntranslatedString());
+    $publicTopic = self::arrayAt(self::arrayAt($rows, '701'), 'topic');
+    $publicTopicLink = $publicTopic['#url'];
+    self::assertSame('Tópico público', $publicTopic['#title']);
+    self::assertInstanceOf(\Drupal\Core\Url::class, $publicTopicLink);
+    self::assertSame('entity.node.canonical', $publicTopicLink->getRouteName());
+    $removeSelected = self::arrayAt($assinaturas, 'remove_selected');
     self::assertSame(
       ['aculta_messenger.avisos_privacy_form:removeSubscriptionsSubmit'],
-      $form['avisos']['assinaturas']['remove_selected']['#submit'],
+      $removeSelected['#submit'],
       'Removing follows does not invoke the unrelated profile form submit handlers.',
     );
   }
@@ -191,6 +208,21 @@ final class AvisosPrivacyFormTest extends UnitTestCase {
       $this->siteManager(),
       $messenger ?? $this->createMock(MessengerInterface::class),
     );
+  }
+
+  /**
+   * Returns one form or render element after validating its array shape.
+   *
+   * @param array<mixed> $parent
+   *   Parent form or render element.
+   *
+   * @return array<mixed>
+   *   Requested nested element.
+   */
+  private static function arrayAt(array $parent, int|string $key): array {
+    self::assertArrayHasKey($key, $parent);
+    self::assertIsArray($parent[$key]);
+    return $parent[$key];
   }
 
   /**
