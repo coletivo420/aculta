@@ -140,7 +140,7 @@ final class LearningDashboardManagerTest extends UnitTestCase {
   /**
    * Monta o gerenciador do painel com leitores simulados.
    *
-   * @param \Drupal\aculta_lms\Learning\AccountCoursesReaderInterface|null $coursesReader
+   * @param \Drupal\aculta_portal\Learning\AccountCoursesReaderInterface|null $coursesReader
    *   Leitor de cursos da conta.
    * @param \Drupal\aculta_lms\Certificate\CourseCertificateManagerInterface $certificates
    *   Gerenciador de certificados.
