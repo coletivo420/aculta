@@ -17,6 +17,13 @@ use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 #[ViewsField('aculta_forum_reply_count')]
 final class PublicForumReplyCount extends NumericField implements ContainerFactoryPluginInterface {
 
+  /**
+   * {@inheritdoc}
+   *
+   * @param array<string, mixed> $configuration
+   * @param string $plugin_id
+   * @param mixed $plugin_definition
+   */
   public function __construct(
     array $configuration,
     $plugin_id,
@@ -28,6 +35,10 @@ final class PublicForumReplyCount extends NumericField implements ContainerFacto
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $configuration
+   * @param string $plugin_id
+   * @param mixed $plugin_definition
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): static {
     return new static(
@@ -61,12 +72,15 @@ final class PublicForumReplyCount extends NumericField implements ContainerFacto
   public function preRender(&$values): void {
     $topicIds = [];
     foreach ($values as $row) {
-      $topicIds[] = (int) $this->getValue($row, 'nid');
+      $val = $this->getValue($row, 'nid');
+      $topicIds[] = is_numeric($val) ? (int) $val : 0;
     }
     $statistics = $this->postStatistics->getByTopics($topicIds);
     foreach ($values as $row) {
-      $topicId = (int) $this->getValue($row, 'nid');
-      $commentCount = (int) ($this->getValue($row, 'comment_count') ?? 0);
+      $val = $this->getValue($row, 'nid');
+      $topicId = is_numeric($val) ? (int) $val : 0;
+      $commentVal = $this->getValue($row, 'comment_count');
+      $commentCount = is_numeric($commentVal) ? (int) $commentVal : 0;
       $postCount = $statistics[$topicId]['count'] ?? 0;
       $row->{$this->field_alias} = $commentCount + $postCount;
     }

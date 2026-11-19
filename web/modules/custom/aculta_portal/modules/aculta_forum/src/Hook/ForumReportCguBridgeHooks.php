@@ -11,6 +11,7 @@ use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\aculta_cgu\Service\ReportService;
+use Drupal\aculta_cgu\Service\ModerationNotifier;
 use Drupal\flag\FlaggingInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -27,7 +28,7 @@ final class ForumReportCguBridgeHooks {
     #[Autowire(service: 'entity_type.manager')]
     private readonly EntityTypeManagerInterface $entityTypeManager,
     #[Autowire(service: 'aculta_cgu.moderation_notifier')]
-    private readonly mixed $notifier = NULL,
+    private readonly ?ModerationNotifier $notifier = NULL,
     #[Autowire(service: 'lock')]
     private readonly ?LockBackendInterface $lock = NULL,
     #[Autowire(service: 'datetime.time')]
@@ -162,7 +163,7 @@ final class ForumReportCguBridgeHooks {
     }
 
     // 10. Notificação segura sem interromper o fluxo em caso de falha de envio.
-    if ($this->notifier !== NULL && method_exists($this->notifier, 'notifyNewReport')) {
+    if ($this->notifier instanceof ModerationNotifier) {
       try {
         $this->notifier->notifyNewReport($report);
       }

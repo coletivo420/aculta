@@ -35,6 +35,10 @@ final class ViewContextualLinksSource extends ViewsSourceBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $configuration
+   * @param string $plugin_id
+   * @param mixed $plugin_definition
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): static {
     $base = parent::create($container, $configuration, $plugin_id, $plugin_definition);
@@ -64,7 +68,7 @@ final class ViewContextualLinksSource extends ViewsSourceBase {
     ];
     $this->contextualLinks->addLinks($element, 'view', $view->current_display);
     $links = $element['#contextual_links'] ?? [];
-    if ($links === []) {
+    if (!\is_array($links) || $links === []) {
       return [];
     }
 
@@ -77,6 +81,9 @@ final class ViewContextualLinksSource extends ViewsSourceBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $form
+   * @return array<string, mixed>
    */
   public function settingsForm(array $form, FormStateInterface $form_state): array {
     return $form;

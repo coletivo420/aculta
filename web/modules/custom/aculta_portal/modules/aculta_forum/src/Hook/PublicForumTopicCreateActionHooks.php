@@ -38,6 +38,12 @@ final class PublicForumTopicCreateActionHooks {
     }
 
     // O popup de criação (e o link "+ Novo tópico" do template) precisam da biblioteca na página.
+    if (!isset($view->element['#attached']) || !is_array($view->element['#attached'])) {
+      $view->element['#attached'] = [];
+    }
+    if (!isset($view->element['#attached']['library']) || !is_array($view->element['#attached']['library'])) {
+      $view->element['#attached']['library'] = [];
+    }
     $view->element['#attached']['library'][] = 'aculta_forum/topic-create-popup';
 
     $access = $this->accessManager->checkNamedRoute(

@@ -21,11 +21,13 @@ final class PublicForumNoReplies extends FilterPluginBase {
     if (!$this->query instanceof Sql) {
       throw new \LogicException('Public Forum no-replies filter requires a SQL Views query.');
     }
+    $rawGroup = $this->options['group'] ?? 0;
+    $group = is_scalar($rawGroup) ? (string) $rawGroup : '0';
     $statisticsAlias = $this->ensureMyTable();
     $nodeAlias = $this->query->ensureTable('node_field_data', $this->relationship);
     if (!is_string($statisticsAlias) || !preg_match('/^[A-Za-z0-9_]+$/', $statisticsAlias)
       || !is_string($nodeAlias) || !preg_match('/^[A-Za-z0-9_]+$/', $nodeAlias)) {
-      $this->query->addWhereExpression($this->options['group'], '1 = 0');
+      $this->query->addWhereExpression($group, '1 = 0');
       return;
     }
 
@@ -34,7 +36,7 @@ final class PublicForumNoReplies extends FilterPluginBase {
       . ' WHERE forum_no_reply.topic = ' . $nodeAlias . '.nid'
       . ' AND forum_no_reply.status = 1'
       . ' AND forum_no_reply.default_langcode = 1)';
-    $this->query->addWhereExpression($this->options['group'], $expression);
+    $this->query->addWhereExpression($group, $expression);
   }
 
 }

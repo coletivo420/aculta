@@ -44,9 +44,10 @@ final class ForumReactionReconciliationCommand extends Command {
    */
   protected function execute(InputInterface $input, OutputInterface $output): int {
     $apply = (bool) $input->getOption('apply');
-    $batchSize = (int) $input->getOption('batch-size');
+    $rawBatch = $input->getOption('batch-size');
+    $batchSize = is_numeric($rawBatch) ? (int) $rawBatch : ForumReactionReconciliation::DEFAULT_BATCH_SIZE;
     $limitOption = $input->getOption('limit');
-    $limit = $limitOption === NULL || $limitOption === '' ? NULL : (int) $limitOption;
+    $limit = is_numeric($limitOption) ? (int) $limitOption : NULL;
 
     try {
       $report = $this->reconciliation->run($apply, $batchSize, $limit);

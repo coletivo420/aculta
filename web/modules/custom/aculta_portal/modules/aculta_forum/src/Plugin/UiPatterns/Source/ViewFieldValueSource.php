@@ -33,10 +33,12 @@ final class ViewFieldValueSource extends ViewsSourceBase {
    */
   public function getPropValue(): mixed {
     $view = $this->getView();
-    $field_id = (string) ($this->getSetting('ui_patterns_views_field') ?? '');
-    $row_index = isset($this->context['ui_patterns_views:row:index'])
-      ? (int) $this->getContextValue('ui_patterns_views:row:index')
-      : 0;
+    $rawFieldId = $this->getSetting('ui_patterns_views_field');
+    $field_id = is_scalar($rawFieldId) ? (string) $rawFieldId : '';
+    $rawRowIndex = isset($this->context['ui_patterns_views:row:index'])
+      ? $this->getContextValue('ui_patterns_views:row:index')
+      : NULL;
+    $row_index = is_numeric($rawRowIndex) ? (int) $rawRowIndex : 0;
     if (!$view instanceof ViewExecutable || $field_id === '' || !isset($view->field[$field_id], $view->result[$row_index])) {
       return NULL;
     }
@@ -81,6 +83,9 @@ final class ViewFieldValueSource extends ViewsSourceBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<array-key, mixed> $form
+   * @return array<array-key, mixed>
    */
   public function settingsForm(array $form, FormStateInterface $form_state): array {
     $form = parent::settingsForm($form, $form_state);
@@ -103,12 +108,14 @@ final class ViewFieldValueSource extends ViewsSourceBase {
    * {@inheritdoc}
    */
   public function settingsSummary(): array {
-    $field_id = (string) ($this->getSetting('ui_patterns_views_field') ?? '');
+    $rawFieldId = $this->getSetting('ui_patterns_views_field');
+    $field_id = is_scalar($rawFieldId) ? (string) $rawFieldId : '';
     if ($field_id === '') {
       return [];
     }
     $options = self::getViewsFieldOptions($this->getView());
-    return [(string) ($options[$field_id] ?? $field_id)];
+    $value = is_array($options) ? ($options[$field_id] ?? $field_id) : $field_id;
+    return [is_scalar($value) || $value instanceof \Stringable ? (string) $value : ''];
   }
 
 }

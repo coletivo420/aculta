@@ -31,8 +31,6 @@ use PHPUnit\Framework\TestCase;
 #[Group('aculta_forum')]
 final class LmsEditWindowExemptionTest extends TestCase {
 
-  private const NODE_RELATIONSHIP = 'group_node:aculta_lms_topic';
-
   /**
    * Entities that are not comments never touch the contextual decision.
    */
@@ -44,6 +42,7 @@ final class LmsEditWindowExemptionTest extends TestCase {
     $result = $this->exemption($entityTypeManager)->access($entity, $this->account());
 
     self::assertTrue($result->isNeutral());
+    self::assertInstanceOf(\Drupal\Core\Cache\CacheableDependencyInterface::class, $result);
     self::assertSame([], $result->getCacheContexts());
   }
 
@@ -56,6 +55,7 @@ final class LmsEditWindowExemptionTest extends TestCase {
     $result = $this->exemption()->access($comment, $this->account());
 
     self::assertTrue($result->isNeutral());
+    self::assertInstanceOf(\Drupal\Core\Cache\CacheableDependencyInterface::class, $result);
     self::assertSame(['comment:1'], $result->getCacheTags());
     self::assertSame([], $result->getCacheContexts());
   }
@@ -70,6 +70,7 @@ final class LmsEditWindowExemptionTest extends TestCase {
     $result = $this->exemption($this->entityTypeManager([]))->access($this->comment($host), $this->account());
 
     self::assertTrue($result->isNeutral());
+    self::assertInstanceOf(\Drupal\Core\Cache\CacheableDependencyInterface::class, $result);
     self::assertSame(['comment:1'], $result->getCacheTags());
     self::assertSame([], $result->getCacheContexts());
   }
@@ -86,6 +87,7 @@ final class LmsEditWindowExemptionTest extends TestCase {
     $result = $this->exemption($this->entityTypeManager([]))->access($this->comment($topic), $this->account());
 
     self::assertTrue($result->isNeutral());
+    self::assertInstanceOf(\Drupal\Core\Cache\CacheableDependencyInterface::class, $result);
     self::assertContains('user.group_permissions', $result->getCacheContexts());
     self::assertContains('aculta_lms_topic:5', $result->getCacheTags());
   }
@@ -103,6 +105,7 @@ final class LmsEditWindowExemptionTest extends TestCase {
     $result = $this->exemption($this->entityTypeManager([]))->access($this->comment($topic), $this->account());
 
     self::assertTrue($result->isNeutral());
+    self::assertInstanceOf(\Drupal\Core\Cache\CacheableDependencyInterface::class, $result);
     self::assertContains('comment:1', $result->getCacheTags());
     self::assertContains('aculta_lms_topic:5', $result->getCacheTags());
   }
@@ -118,6 +121,7 @@ final class LmsEditWindowExemptionTest extends TestCase {
     $result = $this->exemption($this->entityTypeManager([]))->access($this->comment($topic), $this->account());
 
     self::assertTrue($result->isNeutral());
+    self::assertInstanceOf(\Drupal\Core\Cache\CacheableDependencyInterface::class, $result);
     self::assertContains('comment:1', $result->getCacheTags());
   }
 
@@ -135,6 +139,7 @@ final class LmsEditWindowExemptionTest extends TestCase {
       ->access($this->comment($topic), $this->account());
 
     self::assertTrue($result->isAllowed());
+    self::assertInstanceOf(\Drupal\Core\Cache\CacheableDependencyInterface::class, $result);
     self::assertContains('user.group_permissions', $result->getCacheContexts());
     self::assertContains('group:3', $result->getCacheTags());
   }
@@ -149,6 +154,7 @@ final class LmsEditWindowExemptionTest extends TestCase {
       ->access($this->comment($this->topic()), $this->account());
 
     self::assertTrue($result->isNeutral());
+    self::assertInstanceOf(\Drupal\Core\Cache\CacheableDependencyInterface::class, $result);
     self::assertContains('user.group_permissions', $result->getCacheContexts());
   }
 

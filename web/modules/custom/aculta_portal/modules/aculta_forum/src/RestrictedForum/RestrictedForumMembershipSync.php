@@ -144,7 +144,9 @@ final class RestrictedForumMembershipSync {
    */
   private function uid(FieldableEntityInterface $marca): int {
     $values = $marca->get('uid')->getValue();
-    return isset($values[0]['target_id']) ? (int) $values[0]['target_id'] : 0;
+    $firstItem = is_array($values) && isset($values[0]) && is_array($values[0]) ? $values[0] : [];
+    $rawUid = $firstItem['target_id'] ?? 0;
+    return is_numeric($rawUid) ? (int) $rawUid : 0;
   }
 
   /**

@@ -49,9 +49,12 @@ final class PublicForumFrontNavigationHooks {
     $cacheability = new CacheableMetadata();
     $tasks = $this->localTaskManager->getTasksBuild(self::TASKS_ROUTE, $cacheability);
     $cacheability = CacheableMetadata::createFromObject($cacheability);
-    $primary = $tasks[0] ?? [];
+    $rawPrimary = $tasks[0] ?? [];
+    $primary = is_array($rawPrimary) ? $rawPrimary : [];
     foreach ($primary as &$task) {
-      $task['#active'] = FALSE;
+      if (is_array($task)) {
+        $task['#active'] = FALSE;
+      }
     }
     unset($task);
     $frontUrl = Url::fromUri('base:/');
@@ -69,10 +72,11 @@ final class PublicForumFrontNavigationHooks {
       ],
     ] + $primary;
 
+    $rawSecondary = $tasks[1] ?? [];
     $navigation = [
       '#theme' => 'menu_local_tasks',
       '#primary' => $primary,
-      '#secondary' => $tasks[1] ?? [],
+      '#secondary' => is_array($rawSecondary) ? $rawSecondary : [],
     ];
     $cacheability->addCacheContexts(['url.path', 'url.site']);
     $cacheability->applyTo($navigation);

@@ -24,6 +24,8 @@ final class TopicOpeningPostHooks {
 
   /**
    * Implements hook_preprocess_node().
+   *
+   * @param array<string, mixed> $variables
    */
   #[Hook('preprocess_node')]
   public function preprocessNode(array &$variables): void {
@@ -51,6 +53,12 @@ final class TopicOpeningPostHooks {
     }
 
     // Ensure discussion reply popup library is attached even if there are 0 comments yet.
+    if (!isset($variables['#attached']) || !is_array($variables['#attached'])) {
+      $variables['#attached'] = [];
+    }
+    if (!isset($variables['#attached']['library']) || !is_array($variables['#attached']['library'])) {
+      $variables['#attached']['library'] = [];
+    }
     $variables['#attached']['library'][] = 'aculta_forum/discussion-reply-popup';
   }
 

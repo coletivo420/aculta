@@ -30,6 +30,8 @@ final class ForumPostModerationQueueController extends ControllerBase {
 
   /**
    * Builds a moderation queue using Core's Content Moderation state storage.
+   *
+   * @return array<array-key, mixed>
    */
   public function queue(): array {
     $moderationStateStorage = $this->forumEntityTypeManager->getStorage('content_moderation_state');
@@ -86,11 +88,13 @@ final class ForumPostModerationQueueController extends ControllerBase {
       $owner = $post->getOwner();
       $cacheability->addCacheableDependency($owner);
 
+      $createdVal = $post->get('created')->value;
+      $createdTime = is_numeric($createdVal) ? (int) $createdVal : 0;
       $rows[] = [
         ['data' => ['#plain_text' => (string) $post->label()]],
         ['data' => ['#plain_text' => $topic->label()]],
         ['data' => ['#plain_text' => $owner->getDisplayName()]],
-        ['data' => ['#plain_text' => $this->dateFormatter->format((int) $post->get('created')->value, 'short')]],
+        ['data' => ['#plain_text' => $this->dateFormatter->format($createdTime, 'short')]],
         [
           'data' => [
             '#type' => 'operations',
@@ -131,7 +135,7 @@ final class ForumPostModerationQueueController extends ControllerBase {
   /**
    * Extracts revision IDs from Content Moderation aggregate-query rows.
    *
-   * @param array $rows
+   * @param array<array-key, mixed> $rows
    *   Result rows returned by the aggregate entity query.
    *
    * @return list<string>

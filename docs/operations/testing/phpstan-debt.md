@@ -1,10 +1,10 @@
 # Dívida PHPStan — ACULTA
 
-Gerado em 2026-11-19T02:47:06+00:00 por `scripts/phpstan-debt-report.php`.
+Gerado em 2026-11-19T03:13:25+00:00 por `scripts/phpstan-debt-report.php`.
 
 | Item | Valor |
 | --- | --- |
-| Commit | `0af87652610b01dc5946d1b3f1fec6e712cbd25e` |
+| Commit | `e385982f8dc612ee851232aeb2385cf3c91c7516` |
 | PHP | 8.4.27 |
 | PHPStan | PHPStan - PHP Static Analysis Tool 2.3.5 |
 | Nível | 10 |
@@ -15,20 +15,20 @@ Gerado em 2026-11-19T02:47:06+00:00 por `scripts/phpstan-debt-report.php`.
 
 | Medida | Ocorrências |
 | --- | ---: |
-| Total bruto no nível 10 | 17162 |
-| Dívida congelada no baseline | 17162 |
+| Total bruto no nível 10 | 17028 |
+| Dívida congelada no baseline | 17028 |
 | Erros não suprimidos | 0 |
-| Entradas no baseline | 10057 |
-| Produção | 10046 |
-| Testes | 7116 |
+| Entradas no baseline | 9977 |
+| Produção | 9989 |
+| Testes | 7039 |
 
 ## Criticidade funcional
 
 | Criticidade | Ocorrências |
 | --- | ---: |
 | alta | 212 |
-| media | 15223 |
-| baixa | 1727 |
+| media | 15105 |
+| baixa | 1711 |
 
 ## Dívida por módulo (prioridade de redução)
 
@@ -46,7 +46,7 @@ Gerado em 2026-11-19T02:47:06+00:00 por `scripts/phpstan-debt-report.php`.
 | aculta_pagamentos_mercadopago | 594 |
 | aculta_studio | 592 |
 | aculta_mailer | 580 |
-| aculta_forum | 552 |
+| aculta_forum | 418 |
 | aculta_linkweed | 377 |
 | aculta_statistics | 351 |
 | aculta_deployer | 339 |
@@ -69,17 +69,17 @@ Gerado em 2026-11-19T02:47:06+00:00 por `scripts/phpstan-debt-report.php`.
 
 | Identificador | Ocorrências |
 | --- | ---: |
-| `offsetAccess.nonOffsetAccessible` | 4513 |
-| `argument.type` | 3274 |
-| `method.nonObject` | 2042 |
-| `missingType.iterableValue` | 1617 |
-| `cast.string` | 1554 |
-| `cast.int` | 974 |
-| `method.notFound` | 706 |
+| `offsetAccess.nonOffsetAccessible` | 4464 |
+| `argument.type` | 3257 |
+| `method.nonObject` | 2030 |
+| `missingType.iterableValue` | 1601 |
+| `cast.string` | 1550 |
+| `cast.int` | 962 |
+| `method.notFound` | 686 |
 | `property.nonObject` | 462 |
 | `return.type` | 286 |
-| `foreach.nonIterable` | 263 |
-| `binaryOp.invalid` | 218 |
+| `foreach.nonIterable` | 261 |
+| `binaryOp.invalid` | 217 |
 | `offsetAccess.invalidOffset` | 126 |
 | `property.notFound` | 100 |
 | `encapsedStringPart.nonString` | 86 |

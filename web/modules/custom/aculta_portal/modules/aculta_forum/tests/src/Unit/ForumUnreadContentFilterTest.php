@@ -33,7 +33,7 @@ final class ForumUnreadContentFilterTest extends TestCase {
 
     $filter->query();
 
-    self::assertSame([[0, '1 = 0', []]], $captured);
+    self::assertSame([['0', '1 = 0', []]], $captured);
   }
 
   /**

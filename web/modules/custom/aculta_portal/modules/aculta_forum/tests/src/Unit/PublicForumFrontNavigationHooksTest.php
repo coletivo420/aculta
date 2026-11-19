@@ -59,21 +59,38 @@ final class PublicForumFrontNavigationHooksTest extends UnitTestCase {
     );
     $hooks->viewsPreRender($view);
 
+    /** @var array<string, mixed> $navigation */
     $navigation = $view->attachment_before['aculta_forum_front_navigation'];
     self::assertSame('menu_local_tasks', $navigation['#theme']);
-    self::assertSame('base:/', $navigation['#primary']['aculta_forum.public_front']['#link']['url']->getUri());
+    /** @var array<string, mixed> $primary */
+    $primary = $navigation['#primary'];
+    /** @var array<string, mixed> $frontTask */
+    $frontTask = $primary['aculta_forum.public_front'];
+    /** @var array<string, mixed> $link */
+    $link = $frontTask['#link'];
+    /** @var \Drupal\Core\Url $url */
+    $url = $link['url'];
+    self::assertSame('base:/', $url->getUri());
+    /** @var array<string, mixed> $attributes */
+    $attributes = $url->getOption('attributes');
     self::assertSame(
       'page',
-      $navigation['#primary']['aculta_forum.public_front']['#link']['url']->getOption('attributes')['aria-current'],
+      $attributes['aria-current'],
     );
-    self::assertTrue($navigation['#primary']['aculta_forum.public_front']['#active']);
-    self::assertFalse($navigation['#primary']['new_topics']['#active']);
+    self::assertTrue($frontTask['#active']);
+    /** @var array<string, mixed> $newTopicsTask */
+    $newTopicsTask = $primary['new_topics'];
+    self::assertFalse($newTopicsTask['#active']);
     self::assertSame($taskBuild[1], $navigation['#secondary']);
+    /** @var array{contexts: list<string>} $cache */
+    $cache = $navigation['#cache'];
     self::assertEqualsCanonicalizing(
       ['url.path', 'url.site', 'user.permissions'],
-      $navigation['#cache']['contexts'],
+      $cache['contexts'],
     );
-    self::assertSame($navigation['#cache']['contexts'], $view->element['#cache']['contexts']);
+    /** @var array{contexts: list<string>} $elementCache */
+    $elementCache = $view->element['#cache'];
+    self::assertSame($cache['contexts'], $elementCache['contexts']);
   }
 
   /**

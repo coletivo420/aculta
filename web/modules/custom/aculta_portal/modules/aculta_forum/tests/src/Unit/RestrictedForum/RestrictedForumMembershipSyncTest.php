@@ -15,6 +15,7 @@ use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupMembershipInterface;
 use Drupal\user\UserInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
@@ -142,6 +143,8 @@ final class RestrictedForumMembershipSyncTest extends TestCase {
 
   /**
    * Builds the synchronisation service with stubbed collaborators.
+   *
+   * @param array<int, GroupInterface> $groups
    */
   private function sync(array $groups, bool $active, CacheTagsInvalidatorInterface $invalidator): RestrictedForumMembershipSync {
     $lock = $this->createMock(LockBackendInterface::class);
@@ -168,6 +171,8 @@ final class RestrictedForumMembershipSyncTest extends TestCase {
 
   /**
    * Returns a resolver yielding the given groups or topic group ids.
+   *
+   * @param array<int, GroupInterface> $groups
    */
   private function resolver(array $groups): RestrictedForumGroupResolverInterface {
     $resolver = $this->createMock(RestrictedForumGroupResolverInterface::class);
@@ -206,8 +211,10 @@ final class RestrictedForumMembershipSyncTest extends TestCase {
 
   /**
    * Returns a group fixture whose getMember() reflects membership.
+   *
+   * @return GroupInterface&MockObject
    */
-  private function group(int $gid, bool $member): GroupInterface {
+  private function group(int $gid, bool $member): GroupInterface&MockObject {
     $group = $this->createMock(GroupInterface::class);
     $group->method('id')->willReturn($gid);
     $group->method('getMember')->willReturn($member ? $this->createMock(GroupMembershipInterface::class) : FALSE);

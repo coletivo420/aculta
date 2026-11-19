@@ -51,8 +51,11 @@ final class PublicationContextProvider implements DiscussionContextProviderInter
     $field = $entity->get(self::FIELD);
     $readAccess = $entity->access('view', $account, TRUE)
       ->andIf($field->access('view', $account, TRUE));
-    $fieldValue = $field->getValue()[0] ?? [];
-    $isOpen = (int) ($fieldValue['status'] ?? CommentingStatus::Closed->value) === CommentingStatus::Open->value;
+    $rawValues = $field->getValue();
+    $fieldValue = is_array($rawValues) && isset($rawValues[0]) && is_array($rawValues[0]) ? $rawValues[0] : [];
+    $rawStatus = $fieldValue['status'] ?? CommentingStatus::Closed->value;
+    $statusInt = is_numeric($rawStatus) ? (int) $rawStatus : CommentingStatus::Closed->value;
+    $isOpen = $statusInt === CommentingStatus::Open->value;
     $writeAccess = $readAccess
       ->andIf(AccessResult::allowedIf($isOpen)->addCacheableDependency($entity))
       ->andIf(AccessResult::allowedIf($account->hasPermission('post comments'))->addCacheContexts(['user.permissions']));

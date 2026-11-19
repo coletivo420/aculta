@@ -63,7 +63,9 @@ final class RestrictedForumMembershipHooks {
       return;
     }
     $values = $marca->get('uid')->getValue();
-    $uid = isset($values[0]['target_id']) ? (int) $values[0]['target_id'] : 0;
+    $firstItem = is_array($values) && isset($values[0]) && is_array($values[0]) ? $values[0] : [];
+    $rawUid = $firstItem['target_id'] ?? 0;
+    $uid = is_numeric($rawUid) ? (int) $rawUid : 0;
     if ($uid > 0) {
       $this->membershipSync->syncAccount($uid);
     }

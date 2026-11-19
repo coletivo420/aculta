@@ -39,7 +39,7 @@ final class PublicForumTopicCreateActionHooksTest extends UnitTestCase {
    * Tests the action and its cache metadata when route access allows it. */
   public function testActionAppearsOnlyAfterRouteAccessAllowsIt(): void {
     $view = $this->view();
-    $view->element['#cache']['contexts'] = ['url.query_args'];
+    $view->element['#cache'] = ['contexts' => ['url.query_args']];
     $access_manager = $this->createMock(AccessManagerInterface::class);
     $access_manager->expects(self::once())
       ->method('checkNamedRoute')
@@ -49,14 +49,25 @@ final class PublicForumTopicCreateActionHooksTest extends UnitTestCase {
     $hooks = new PublicForumTopicCreateActionHooks($access_manager, $this->siteManager('forum'));
     $hooks->viewsPreRender($view);
 
+    /** @var array<string, mixed> $create */
     $create = $view->attachment_before['aculta_forum_create_topic'];
     self::assertSame('link', $create['#type']);
-    self::assertSame('topico-criar', $create['#attributes']['data-action']);
-    self::assertContains('use-htmx', $create['#attributes']['class']);
-    self::assertSame('#aculta-topic-dialog-body', $create['#attributes']['data-hx-target']);
-    self::assertContains('aculta_forum/topic-create-popup', $view->element['#attached']['library']);
-    self::assertSame(['user.permissions'], $view->attachment_before['aculta_forum_create_topic']['#cache']['contexts']);
-    self::assertEqualsCanonicalizing(['url.query_args', 'user.permissions'], $view->element['#cache']['contexts']);
+    /** @var array<string, mixed> $attributes */
+    $attributes = $create['#attributes'];
+    self::assertSame('topico-criar', $attributes['data-action']);
+    /** @var list<string> $classes */
+    $classes = $attributes['class'];
+    self::assertContains('use-htmx', $classes);
+    self::assertSame('#aculta-topic-dialog-body', $attributes['data-hx-target']);
+    /** @var array{library?: list<string>} $attached */
+    $attached = $view->element['#attached'];
+    self::assertContains('aculta_forum/topic-create-popup', $attached['library'] ?? []);
+    /** @var array{contexts?: list<string>} $createCache */
+    $createCache = $create['#cache'];
+    self::assertSame(['user.permissions'], $createCache['contexts'] ?? []);
+    /** @var array{contexts?: list<string>} $elementCache */
+    $elementCache = $view->element['#cache'];
+    self::assertEqualsCanonicalizing(['url.query_args', 'user.permissions'], $elementCache['contexts'] ?? []);
   }
 
   /**
@@ -72,7 +83,9 @@ final class PublicForumTopicCreateActionHooksTest extends UnitTestCase {
     $hooks->viewsPreRender($view);
 
     self::assertArrayNotHasKey('aculta_forum_create_topic', $view->attachment_before);
-    self::assertSame(['user.permissions'], $view->element['#cache']['contexts']);
+    /** @var array{contexts?: list<string>} $elementCache */
+    $elementCache = $view->element['#cache'];
+    self::assertSame(['user.permissions'], $elementCache['contexts'] ?? []);
   }
 
   /**

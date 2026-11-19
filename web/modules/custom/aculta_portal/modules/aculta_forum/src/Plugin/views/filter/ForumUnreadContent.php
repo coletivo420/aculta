@@ -17,6 +17,13 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 #[ViewsFilter('aculta_forum_unread_content')]
 final class ForumUnreadContent extends FilterPluginBase implements ContainerFactoryPluginInterface {
 
+  /**
+   * {@inheritdoc}
+   *
+   * @param array<string, mixed> $configuration
+   * @param string $plugin_id
+   * @param mixed $plugin_definition
+   */
   public function __construct(
     array $configuration,
     $plugin_id,
@@ -28,6 +35,10 @@ final class ForumUnreadContent extends FilterPluginBase implements ContainerFact
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $configuration
+   * @param string $plugin_id
+   * @param mixed $plugin_definition
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): static {
     return new static(
@@ -45,8 +56,10 @@ final class ForumUnreadContent extends FilterPluginBase implements ContainerFact
     if (!$this->query instanceof Sql) {
       throw new \LogicException('Forum unread content filter requires a SQL Views query.');
     }
+    $rawGroup = $this->options['group'] ?? 0;
+    $group = is_scalar($rawGroup) ? (string) $rawGroup : '0';
     if ($this->currentUser->isAnonymous()) {
-      $this->query->addWhereExpression($this->options['group'], '1 = 0');
+      $this->query->addWhereExpression($group, '1 = 0');
       return;
     }
 
@@ -56,7 +69,7 @@ final class ForumUnreadContent extends FilterPluginBase implements ContainerFact
     if (!is_string($nodeAlias) || !preg_match('/^[A-Za-z0-9_]+$/', $nodeAlias)
       || !is_string($statisticsAlias) || !preg_match('/^[A-Za-z0-9_]+$/', $statisticsAlias)
       || !is_string($historyAlias) || !preg_match('/^[A-Za-z0-9_]+$/', $historyAlias)) {
-      $this->query->addWhereExpression($this->options['group'], '1 = 0');
+      $this->query->addWhereExpression($group, '1 = 0');
       return;
     }
 
@@ -68,7 +81,7 @@ final class ForumUnreadContent extends FilterPluginBase implements ContainerFact
       . " AND forum_unread_post.status = 1"
       . " AND forum_unread_post.default_langcode = 1"
       . " AND forum_unread_post.first_published > GREATEST(COALESCE({$historyAlias}.timestamp, :forum_history_limit_post), :forum_history_limit_old)))";
-    $this->query->addWhereExpression($this->options['group'], $expression, [
+    $this->query->addWhereExpression($group, $expression, [
       ':forum_history_limit_missing' => HISTORY_READ_LIMIT,
       ':forum_history_limit_comments' => HISTORY_READ_LIMIT,
       ':forum_history_limit_post' => HISTORY_READ_LIMIT,
