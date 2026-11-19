@@ -136,7 +136,17 @@ Não envia nenhum e-mail. Cada confirmação é registrada no log do canal `acul
 Autores legados **não são usuários do Drupal**. Não têm conta, login, perfil nem aparecem na lista de usuários do
 administrador. A autoria fica na entidade própria `aculta_legado_autor`, acessível só pela permissão
 **administer aculta legado**. Tópicos e comentários históricos têm uid 0 e apontam para a autoria pelo campo
-`field_autor_legado`. O responsável determinou F-D33 e o Runtime de desenvolvimento não contém mais Nodes `forum`, Comments `comment_forum`, termos `forums` nem referências editoriais antigas. A extensão contrib ainda fornece estruturas vazias até o uninstall seguro. Nenhum conteúdo legado será importado para o novo fórum; autores históricos continuam distintos de contas Drupal e não são convertidos em usuários ativos.
+`field_autor_legado` na implementação atual. O registro de F-D33/dev.50 sobre ausência de Nodes `forum`, Comments
+`comment_forum`, termos `forums` e referências editoriais antigas descreve o Runtime de desenvolvimento naquele
+momento; não afirma que o acervo histórico ou a autoria devam ser apagados.
+
+F-D43 substitui a frase anterior “Nenhum conteúdo legado será importado para o novo fórum”: o acervo Growroom
+curado deve ser preparado para importação no Runtime de testes, depois de pipeline idempotente, validação isolada,
+prévia, backup e rollback. Isso não registra que a importação ocorreu nem autoriza executá-la agora. A extração
+planejada em F-D48 transfere para o opcional `aculta_forum_legacy` a propriedade da entidade, dos fields e das
+regras específicas do acervo, preservando autores, tópicos, comentários, referências e URLs históricos. F-D44
+continua definindo a identidade: sem User/Profile nem página individual pública; memorial coletivo único
+`/u/lendashistoricas`, com a apresentação individual legada restrita a tópicos e comentários do Fórum legado.
 
 ## 9. Mudanças em relação à versão anterior e pendências
 
