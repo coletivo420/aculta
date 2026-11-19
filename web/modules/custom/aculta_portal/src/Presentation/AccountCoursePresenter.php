@@ -46,7 +46,8 @@ final class AccountCoursePresenter {
 
     foreach ($this->courses->getCourses($account) as $course) {
       $statusCode = (string) ($course['status'] ?? AccountCourseSummary::STATUS_NOT_STARTED);
-      $score = $course['score'];
+      $rawScore = $course['score'];
+      $score = is_int($rawScore) || is_float($rawScore) ? $rawScore : NULL;
       $url = $course['url'];
 
       $items[] = [

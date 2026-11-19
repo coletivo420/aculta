@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_lms\Unit;
 
-use Drupal\aculta_portal\Learning\AccountCourseSummary;
 use Drupal\aculta_lms\Account\AccountCoursesReader;
 use Drupal\aculta_lms\Group\GroupMembershipReaderInterface;
 use Drupal\aculta_lms\Learning\CourseProgress;

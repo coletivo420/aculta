@@ -160,8 +160,9 @@ if (class_exists(Yaml::class)) {
     sort($documented);
     $check($tagged === $documented, sprintf('%s tags and Status registry metadata must match exactly.', $tagName));
     foreach ($definitions as $serviceId => $metadata) {
+      $docs = is_array($metadata) && is_string($metadata['docs'] ?? NULL) ? $metadata['docs'] : '';
       $check(
-        is_file($root . '/' . $metadata['docs']),
+        $docs !== '' && is_file($root . '/' . $docs),
         sprintf('%s (%s) must reference existing documentation.', $tagName, $serviceId),
       );
     }
